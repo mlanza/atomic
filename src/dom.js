@@ -1,0 +1,16 @@
+import {subj} from './core/function.js';
+import * as dom from './core/dom.js';
+export {attrs, parent, text, tag} from './core/dom.js';
+export const append      = subj(dom.append);
+export const prepend     = subj(dom.prepend);
+export const getAttr     = subj(dom.getAttr);
+export const setAttr     = subj(dom.setAttr);
+export const hasClass    = subj(dom.hasClass);
+export const addClass    = subj(dom.addClass);
+export const removeClass = subj(dom.removeClass);
+export const closest     = subj(dom.closest);
+export const find        = subj(dom.find);
+export const first       = subj(dom.first);
+export const style       = subj(dom.style);
+export const show        = style(["display", "inherit"]);
+export const hide        = style(["display", "none"]);

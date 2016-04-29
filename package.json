@@ -1,0 +1,8 @@
+{
+  "name": "Handy",
+  "version": "1.0.0",
+  "devDependencies": {
+    "rollup-plugin-babel": "~2.4.0",
+    "rollup-plugin-json": "^2.0.0"
+  }
+}
