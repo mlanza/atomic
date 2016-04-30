@@ -26,14 +26,14 @@ export const into = multiarity(function(to, from){
   return transduce(xform, append, to, from);
 });
 
-export function tap(f){
+/*export function tap(f){
   return function(xf){
     return overload(xf, xf, function(memo, value){
       f(value);
       return xf(memo, value);
     });
   }
-}
+}*/
 
 export function map(f){
   return function(xf){

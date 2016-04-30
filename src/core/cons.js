@@ -106,6 +106,21 @@ export function takeWhile(pred, coll){
   }) : EMPTY;
 }
 
+export function takeNth(n, coll){
+  if (isEmpty(coll)) return EMPTY;
+  var s = seq(coll);
+  return cons(Seq.first(s), function(){
+    return takeNth(n, drop(n, s));
+  });
+}
+
+export function drop(n, coll){
+  var remaining = n;
+  return dropWhile(function(){
+    return remaining-- > 0;
+  }, coll);
+}
+
 export function dropWhile(pred, coll){
   if (isEmpty(coll)) return EMPTY;
   do {

@@ -1,6 +1,6 @@
 import {subj} from './core/function.js';
 import * as dom from './core/dom.js';
-export {attrs, parent, text, tag} from './core/dom.js';
+export {parent, text, tag} from './core/dom.js';
 export const append      = subj(dom.append);
 export const prepend     = subj(dom.prepend);
 export const getAttr     = subj(dom.getAttr);
