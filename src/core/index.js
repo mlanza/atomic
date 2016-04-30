@@ -19,5 +19,5 @@ export function reduce(self, f, init) {
     var key = ks[i++];
     memo = f(memo, self[key]);
   }
-  return memo;
+  return memo instanceof Reduced ? memo.valueOf() : memo;
 }

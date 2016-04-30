@@ -1,4 +1,4 @@
-import {chain, doto, flip, compose, constantly, multiarity, complement, partial} from './core/function.js';
+import {chain, curry, doto, flip, compose, constantly, multiarity, complement, partial, overload} from './core/function.js';
 import {reduced} from './core/reduced.js';
 import {eq, gt, lt} from './compare.js';
 import {join} from './array.js';
@@ -9,22 +9,28 @@ import Seq from './protocols/seq.js';
 import {each} from './protocols/seq.js';
 import {log} from './log.js';
 import * as dom from './dom.js';
-import {repeatedly, repeat, some, isEvery,
-  take as $take, 
-  map as $map, 
-  filter as $filter, 
-  remove as $remove, 
-  takeWhile as $takeWhile, 
-  dropWhile as $dropWhile}
-from './core/cons.js';
+import {repeatedly, repeat, some, isEvery} from './core/cons.js';
 import {inc, increasingly, range} from './number.js';
-import {transduce, into, map, take, drop, filter, takeNth} from './core/transduce.js';
+import {transduce, into} from './core/transduce.js';
+import {map, take, drop, filter, remove, takeNth, takeWhile, dropWhile, property} from './core.js';
+
+const attr = curry(function(key, el){
+  return el.attributes.getNamedItem(key);
+});
+
+const assign = curry(function assign(key, value, obj){
+  obj[key] = value;
+  return obj;
+});
+
+const value = assign("value");
 
 window.onload = function(){
   var div  = dom.tag('div'), 
       span = dom.tag('span'),
       body = dom.first("body", document);
   append(div({id: 'branding'}, span("Greetings!")), body);
+  chain(document, dom.first("#branding"), attr("id"), value("brand"), partial(log, "attr")); 
   dom.hide(body);  
   each(log, ["ace", "king", "queen"]);
   chain(body, doto(dom.setAttr(['id', 'main']), dom.setAttr(['id', 'main']), dom.addClass('post'), dom.addClass('entry'), dom.removeClass('entry')));
@@ -43,13 +49,13 @@ window.onload = function(){
   chain(transduce(takeNth(2), Extend.append, [], range(10)), partial(log, "take-nth"));
   chain(into([], repeatedly(0, constantly(1))), log);
   chain(into([], repeatedly(10, constantly(2))), log);
-  chain(into([], $take(5, range(10))), partial(log, "$take"));
-  chain(into([], $filter(gt(5), range(10))), partial(log, "$filter > 5"));
-  chain(into([], $remove(gt(5), range(10))), partial(log, "$remove > 5"));
-  chain(into([], $takeWhile(lt(5), range(10))), partial(log, "$takeWhile < 5"));
-  chain(into([], $dropWhile(gt(5), range(10))), partial(log, "$dropWhile > 5"));
+  chain(into([], take(5, range(10))), partial(log, "take"));
+  chain(into([], filter(gt(5), range(10))), partial(log, "filter > 5"));
+  chain(into([], remove(gt(5), range(10))), partial(log, "remove > 5"));
+  chain(into([], takeWhile(lt(5), range(10))), partial(log, "takeWhile < 5"));
+  chain(into([], dropWhile(gt(5), range(10))), partial(log, "dropWhile > 5"));
   chain(transduce(take(5), Extend.append, [], increasingly(0)), log);
-  chain(into([], $map(inc, range(1, 5))), partial(log, "$map"));
+  chain(into([], map(inc, range(1, 5))), partial(log, "map"));
   chain(transduce(map(inc), Extend.append, [], [10, 11, 12]), log);
   chain(transduce(filter(gt(6)), Extend.append, "", [5, 6, 7, 8, 9]), log);
   chain(transduce(compose(filter(gt(6)), map(inc), take(2)), Extend.append, [], [5, 6, 7, 8, 9]), log);

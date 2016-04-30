@@ -85,9 +85,11 @@ export function tag(name){
   }
 }
 
+/*
+
 export function attrs(el){
   return index.reduce(el.attributes, function(memo, attr){
     memo[attr.nodeName] = attr.nodeValue;
     return memo;
   }, {});
-}
+}*/

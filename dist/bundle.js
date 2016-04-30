@@ -16,7 +16,7 @@
     return new Reduced(value);
   }
 
-  var assign = Object.assign; //TODO polyfill
+  var assign$1 = Object.assign; //TODO polyfill
   var keys = Object.keys;
 
   function identity(value) {
@@ -28,11 +28,11 @@
   }
 
   function append$1(self, obj) {
-    return assign({}, self, obj);
+    return assign$1({}, self, obj);
   }
 
   function prepend(self, obj) {
-    return assign({}, obj, self);
+    return assign$1({}, obj, self);
   }
 
   function each(self, f) {
@@ -157,7 +157,7 @@
   }
 
   function arities(lkp, fallback) {
-    return assign(function () {
+    return assign$1(function () {
       var f = lkp[arguments.length] || fallback;
       return f.apply(this, arguments);
     }, lkp);
@@ -232,7 +232,7 @@
         dispatch = function dispatch(value) {
       return dispatcher.get(constructs(value)) || defaultFn;
     };
-    return assign(multimethod(dispatch), { dispatcher: dispatcher, dispatch: dispatch });
+    return assign$1(multimethod(dispatch), { dispatcher: dispatcher, dispatch: dispatch });
   }
 
   function _extend(self, constructor, f) {
@@ -388,7 +388,7 @@
       var key = ks[i++];
       memo = f(memo, self[key]);
     }
-    return memo;
+    return memo instanceof Reduced ? memo.valueOf() : memo;
   }
 
   function append$6(el, child) {
@@ -469,6 +469,15 @@
       return el;
     };
   }
+
+  /*
+
+  export function attrs(el){
+    return index.reduce(el.attributes, function(memo, attr){
+      memo[attr.nodeName] = attr.nodeValue;
+      return memo;
+    }, {});
+  }*/
 
   function fail(target) {
     throw new Error("Cannot resolve protocol for target: " + target);
@@ -600,6 +609,21 @@
     }) : EMPTY;
   }
 
+  function takeNth(n, coll) {
+    if (isEmpty$3(coll)) return EMPTY;
+    var s = seq(coll);
+    return cons(Seq.first(s), function () {
+      return takeNth(n, drop(n, s));
+    });
+  }
+
+  function drop(n, coll) {
+    var remaining = n;
+    return dropWhile(function () {
+      return remaining-- > 0;
+    }, coll);
+  }
+
   function dropWhile(pred, coll) {
     if (isEmpty$3(coll)) return EMPTY;
     do {
@@ -716,6 +740,15 @@
     return transduce(xform, append, to, from);
   });
 
+  /*export function tap(f){
+    return function(xf){
+      return overload(xf, xf, function(memo, value){
+        f(value);
+        return xf(memo, value);
+      });
+    }
+  }*/
+
   function map$1(f) {
     return function (xf) {
       return overload(xf, xf, function (memo, value) {
@@ -743,7 +776,15 @@
     };
   }
 
-  function takeNth(n) {
+  function takeWhile$1(pred) {
+    return function (xf) {
+      return overload(xf, xf, function (memo, value) {
+        return pred(value) ? xf(memo, value) : reduced(memo);
+      });
+    };
+  }
+
+  function takeNth$1(n) {
     return function (xf) {
       var x = -1;
       return overload(xf, xf, function (memo, value) {
@@ -753,11 +794,54 @@
     };
   }
 
+  function drop$1(n) {
+    return function (xf) {
+      var dropping = n;
+      return overload(xf, xf, function (memo, value) {
+        return dropping-- > 0 ? memo : xf(memo, value);
+      });
+    };
+  }
+
+  function dropWhile$1(pred) {
+    return function (xf) {
+      var dropping = true;
+      return overload(xf, xf, function (memo, value) {
+        !dropping || (dropping = pred(value));
+        return dropping ? memo : xf(memo, value);
+      });
+    };
+  }
+
+  var map$2 = multiarity(map$1, map);
+  var filter$2 = multiarity(filter$1, filter);
+  var remove$2 = multiarity(remove$1, remove);
+  var take$2 = multiarity(take$1, take);
+  var takeWhile$2 = multiarity(takeWhile$1, takeWhile);
+  var takeNth$2 = multiarity(takeNth$1, takeNth);
+  var drop$2 = multiarity(drop$1, drop);
+  var dropWhile$2 = multiarity(dropWhile$1, dropWhile);
+  var property = curry(function (key, obj) {
+    return obj[key];
+  });
+
+  var attr = curry(function (key, el) {
+    return el.attributes.getNamedItem(key);
+  });
+
+  var assign = curry(function assign(key, value, obj) {
+    obj[key] = value;
+    return obj;
+  });
+
+  var value = assign("value");
+
   window.onload = function () {
     var div = tag('div'),
         span = tag('span'),
         body = first$4("body", document);
     append$4(div({ id: 'branding' }, span("Greetings!")), body);
+    chain(document, first$4("#branding"), attr("id"), value("brand"), partial(log, "attributes"));
     hide(body);
     each$5(log, ["ace", "king", "queen"]);
     chain(body, doto(setAttr$1(['id', 'main']), setAttr$1(['id', 'main']), addClass$1('post'), addClass$1('entry'), removeClass$1('entry')));
@@ -773,20 +857,20 @@
     chain(into([], repeat(5, "X")), log);
     chain(some(gt(5), range(10)), log);
     chain(isEvery(gt(5), range(10)), log);
-    chain(transduce(takeNth(2), Extend.append, [], range(10)), partial(log, "take-nth"));
+    chain(transduce(takeNth$2(2), Extend.append, [], range(10)), partial(log, "take-nth"));
     chain(into([], repeatedly(0, constantly(1))), log);
     chain(into([], repeatedly(10, constantly(2))), log);
-    chain(into([], take(5, range(10))), partial(log, "$take"));
-    chain(into([], filter(gt(5), range(10))), partial(log, "$filter > 5"));
-    chain(into([], remove(gt(5), range(10))), partial(log, "$remove > 5"));
-    chain(into([], takeWhile(lt(5), range(10))), partial(log, "$takeWhile < 5"));
-    chain(into([], dropWhile(gt(5), range(10))), partial(log, "$dropWhile > 5"));
-    chain(transduce(take$1(5), Extend.append, [], increasingly(0)), log);
-    chain(into([], map(inc, range(1, 5))), partial(log, "$map"));
-    chain(transduce(map$1(inc), Extend.append, [], [10, 11, 12]), log);
-    chain(transduce(filter$1(gt(6)), Extend.append, "", [5, 6, 7, 8, 9]), log);
-    chain(transduce(compose(filter$1(gt(6)), map$1(inc), take$1(2)), Extend.append, [], [5, 6, 7, 8, 9]), log);
-    chain(transduce(take$1(10), Extend.append, [], range(7, 15)), log);
+    chain(into([], take$2(5, range(10))), partial(log, "take"));
+    chain(into([], filter$2(gt(5), range(10))), partial(log, "filter > 5"));
+    chain(into([], remove$2(gt(5), range(10))), partial(log, "remove > 5"));
+    chain(into([], takeWhile$2(lt(5), range(10))), partial(log, "takeWhile < 5"));
+    chain(into([], dropWhile$2(gt(5), range(10))), partial(log, "dropWhile > 5"));
+    chain(transduce(take$2(5), Extend.append, [], increasingly(0)), log);
+    chain(into([], map$2(inc, range(1, 5))), partial(log, "map"));
+    chain(transduce(map$2(inc), Extend.append, [], [10, 11, 12]), log);
+    chain(transduce(filter$2(gt(6)), Extend.append, "", [5, 6, 7, 8, 9]), log);
+    chain(transduce(compose(filter$2(gt(6)), map$2(inc), take$2(2)), Extend.append, [], [5, 6, 7, 8, 9]), log);
+    chain(transduce(take$2(10), Extend.append, [], range(7, 15)), log);
     chain(into([], range(5)), log);
     show(body);
     chain(body, first$4("span"), text, log);
