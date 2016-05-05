@@ -46,9 +46,7 @@ export function overload(){
 export function flip(self, len){
   var at = (len || 2) - 1;
   return function(){
-    var tail = first(arguments, at),
-        head = rest(arguments, at),
-        args = concat(head, tail);
+    var args = concat(slice(arguments, at, len), concat(first(arguments, at), rest(arguments, len)));
     return self.apply(this, args);
   }
 }
@@ -106,6 +104,7 @@ export function multimethod(dispatch){
 export function method(defaultFn){
   var dispatcher = new Map(),
       dispatch   = function(value){
+        if (value == null) return defaultFn;
         return dispatcher.get(constructs(value)) || defaultFn;
       };
   return assign(multimethod(dispatch), {dispatcher: dispatcher, dispatch: dispatch});

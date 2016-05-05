@@ -1,7 +1,10 @@
-(function () {
+(function (exports) {
   'use strict';
 
   var unbind = Function.call.bind(Function.bind, Function.call);
+  function isIdentical(a, b) {
+    return a === b;
+  }
 
   function Reduced(value) {
     this.value = value;
@@ -16,8 +19,107 @@
     return new Reduced(value);
   }
 
-  var assign$1 = Object.assign; //TODO polyfill
+  /*TODO consider that slice takes from, to args and that both are optional: slice(arr, from, to) in curried form slice (from, to, arr)
+    as such an alternative to curry/subj would be config where all configurations are provided in the first call, thus...
+      slice(1, 2, ["manny", "moe", "jack"]) invokes immediately as before
+      slice(1, 2) awaits payload as usual
+      slice(1) also awaits payload, not `to` as one might expect
+    another alternative it to require configurations passed in as an object: 
+      slice({from: 1, to: 2}, ["manny", "moe", "jack"]) invokes immediately as before
+      slice({from: 1, to: 2}) awaits payload as usual
+      slice({from: 1}) awaits payload as usual
+    Both styles means that we cannot add additional options later as the last entry in both styles is missing the `to` arg.  With that being
+    the case I prefer the former. We could make all options required:
+      slice(1, 2, ["manny", "moe", "jack"]) invokes immediately as before
+      slice(1, 2) awaits payload as usual
+      slice(1) expects to option
+      slice(1, null) uses default `to` value
+    This is the trouble with currying variadic functions.  Another option is to create two versions of the curried function:
+      slice(from, to, arr)
+      through(from, arr);
+    The main thing for curried functions is they must have a fixed number of arguments.  An options argument could be last.
+    Another option is to allow partial with placeholders.
+      through = partial(slice, _, null);
+    Now what about options?  How do they work with currying?
+  */
+
+  var slice$1 = unbind(Array.prototype.slice);
+  var splice = unbind(Array.prototype.splice);
+  var reverse = unbind(Array.prototype.reverse);
+  var join = unbind(Array.prototype.join);
+  var concat = unbind(Array.prototype.concat);
+
+  function empty$1() {
+    return [];
+  }
+
+  function isEmpty$1(self) {
+    return self.length === 0;
+  }
+
+  function append$2(self, item) {
+    return self.concat([item]);
+  }
+
+  function prepend$1(self, item) {
+    return [item].concat(self);
+  }
+
+  function each$1(self, f) {
+    var len = self.length,
+        i = 0,
+        result = null;
+    while (i < len && !(result instanceof Reduced)) {
+      result = f(self[i++]);
+    }
+  }
+
+  function reduce$1(self, f, init) {
+    var len = self.length,
+        i = 0,
+        memo = init;
+    while (i < len && !(memo instanceof Reduced)) {
+      memo = f(memo, self[i++]);
+    }
+    return memo instanceof Reduced ? memo.valueOf() : memo;
+  }
+
+  function first$1(self, len) {
+    return len ? slice$1(self, 0, len) : self[0];
+  }
+
+  function last(self, len) {
+    return len ? slice$1(self, self.length - len) : self[self.length - 1];
+  }
+
+  function initial(self, offset) {
+    return slice$1(self, 0, self.length - (offset || 1));
+  }
+
+  function rest$1(self, idx) {
+    return slice$1(self, idx || 1);
+  }
+
+  function assoc$1(arr, idx, value) {
+    var result = slice$1(arr);
+    result.splice(idx, 1, value);
+    return result;
+  }
+
+  function hasKey$1(arr, idx) {
+    return idx > -1 && idx < arr.length;
+  }
+
+  var assign = Object.assign; //TODO polyfill
   var keys = Object.keys;
+
+  function empty() {
+    return {};
+  }
+
+  function isEmpty(self) {
+    return keys(self).length === 0;
+  }
 
   function identity(value) {
     return value;
@@ -28,11 +130,11 @@
   }
 
   function append$1(self, obj) {
-    return assign$1({}, self, obj);
+    return assign({}, self, obj);
   }
 
   function prepend(self, obj) {
-    return assign$1({}, obj, self);
+    return assign({}, obj, self);
   }
 
   function each(self, f) {
@@ -62,86 +164,34 @@
     return value.constructor;
   }
 
-  /*TODO consider that slice takes from, to args and that both are optional: slice(arr, from, to) in curried form slice (from, to, arr)
-    as such an alternative to curry/subj would be config where all configurations are provided in the first call, thus...
-      slice(1, 2, ["manny", "moe", "jack"]) invokes immediately as before
-      slice(1, 2) awaits payload as usual
-      slice(1) also awaits payload, not `to` as one might expect
-    another alternative it to require configurations passed in as an object: 
-      slice({from: 1, to: 2}, ["manny", "moe", "jack"]) invokes immediately as before
-      slice({from: 1, to: 2}) awaits payload as usual
-      slice({from: 1}) awaits payload as usual
-    Both styles means that we cannot add additional options later as the last entry in both styles is missing the `to` arg.  With that being
-    the case I prefer the former. We could make all options required:
-      slice(1, 2, ["manny", "moe", "jack"]) invokes immediately as before
-      slice(1, 2) awaits payload as usual
-      slice(1) expects to option
-      slice(1, null) uses default `to` value
-    This is the trouble with currying variadic functions.  Another option is to create two versions of the curried function:
-      slice(from, to, arr)
-      through(from, arr);
-    The main thing for curried functions is they must have a fixed number of arguments.  An options argument could be last.
-    Another option is to allow partial with placeholders.
-      through = partial(slice, _, null);
-    Now what about options?  How do they work with currying?
-  */
-
-  var slice = unbind(Array.prototype.slice);
-  var splice = unbind(Array.prototype.splice);
-  var reverse = unbind(Array.prototype.reverse);
-  var join = unbind(Array.prototype.join);
-  var concat = unbind(Array.prototype.concat);
-
-  function append$2(self, item) {
-    return self.concat([item]);
+  function assoc(obj, key, value) {
+    var add = {};
+    add[key] = value;
+    return assign({}, obj, add);
   }
 
-  function prepend$1(self, item) {
-    return [item].concat(self);
+  function hasKey(obj, key) {
+    return obj.hasOwnProperty(key);
   }
 
-  function each$1(self, f) {
-    var len = self.length,
-        i = 0,
-        result = null;
-    while (i < len && !(result instanceof Reduced)) {
-      result = f(self[i++]);
-    }
+  function first(obj) {
+    var ks = keys(obj).sort(),
+        key = ks[0];
+    return ks.length ? [key, obj[key]] : null;
   }
 
-  function reduce$1(self, f, init) {
-    var len = self.length,
-        i = 0,
-        memo = init;
-    while (i < len && !(memo instanceof Reduced)) {
-      memo = f(memo, self[i++]);
-    }
-    return memo instanceof Reduced ? memo.valueOf() : memo;
+  function rest(obj) {
+    return reduce$1(keys(obj).sort().slice(1), function (memo, key) {
+      memo[key] = obj[key];
+      return memo;
+    }, {});
   }
-
-  function first(self, len) {
-    return len ? slice(self, 0, len) : self[0];
-  }
-
-  function last(self, len) {
-    return len ? slice(self, self.length - len) : self[self.length - 1];
-  }
-
-  function initial(self, offset) {
-    return slice(self, 0, self.length - (offset || 1));
-  }
-
-  function rest(self, idx) {
-    return slice(self, idx || 1);
-  }
-
-  function noop() {}
 
   function curry(self, len, applied) {
     if (arguments.length === 1) len = self.length;
     return function () {
       //a call without args applies a single undefined arg potentially allowing the curried function to substitute a default value.
-      var args = (applied || []).concat(arguments.length === 0 ? [undefined] : slice(arguments));
+      var args = (applied || []).concat(arguments.length === 0 ? [undefined] : slice$1(arguments));
       if (args.length >= len) {
         return self.apply(this, args);
       } else {
@@ -157,7 +207,7 @@
   }
 
   function arities(lkp, fallback) {
-    return assign$1(function () {
+    return assign(function () {
       var f = lkp[arguments.length] || fallback;
       return f.apply(this, arguments);
     }, lkp);
@@ -177,9 +227,7 @@
   function flip(self, len) {
     var at = (len || 2) - 1;
     return function () {
-      var tail = first(arguments, at),
-          head = rest(arguments, at),
-          args = concat(head, tail);
+      var args = concat(slice$1(arguments, at, len), concat(first$1(arguments, at), rest$1(arguments, len)));
       return self.apply(this, args);
     };
   }
@@ -190,7 +238,7 @@
   }
 
   function pipe() {
-    var fs = slice(arguments); //TODO could slice be part of the Seq protocol?
+    var fs = slice$1(arguments); //TODO could slice be part of the Seq protocol?
     return function (value) {
       return reduce$1(fs, function (value, self) {
         return self(value);
@@ -199,25 +247,11 @@
   }
 
   function chain(target) {
-    return pipe.apply(this, rest(arguments))(target);
+    return pipe.apply(this, rest$1(arguments))(target);
   }
 
   function compose() {
-    return pipe.apply(this, reverse(slice(arguments)));
-  }
-
-  function invokeWith() {
-    var args = arguments;
-    return function (self) {
-      return self.apply(this, args);
-    };
-  }
-
-  function doto() {
-    var fs = arguments;
-    return fs.length === 0 ? noop : fs.length === 1 ? fs[0] : function () {
-      each$1(fs, invokeWith.apply(this, arguments).bind(this));
-    };
+    return pipe.apply(this, reverse(slice$1(arguments)));
   }
 
   function multimethod(dispatch) {
@@ -230,9 +264,10 @@
   function method(defaultFn) {
     var dispatcher = new Map(),
         dispatch = function dispatch(value) {
+      if (value == null) return defaultFn;
       return dispatcher.get(constructs(value)) || defaultFn;
     };
-    return assign$1(multimethod(dispatch), { dispatcher: dispatcher, dispatch: dispatch });
+    return assign(multimethod(dispatch), { dispatcher: dispatcher, dispatch: dispatch });
   }
 
   function _extend(self, constructor, f) {
@@ -249,15 +284,6 @@
       return value;
     };
   }
-
-  function partial(f) {
-    var applied = rest(arguments);
-    return function () {
-      return f.apply(this, concat(applied, slice(arguments)));
-    };
-  }
-
-  //TODO implement Extend protocol?
 
   function eq$1(a, b) {
     return a == b;
@@ -285,16 +311,16 @@
   var lte = subj(lte$1);
   var lt = subj(lt$1);
 
-  var slice$1 = subj(slice, 3);
+  var slice$2 = subj(slice$1, 3);
   var join$1 = subj(join, 2);
   var append$3 = subj(append$2);
   var prepend$2 = subj(prepend$1);
   var each$2 = subj(each$1);
   var reduce$2 = subj(reduce$1);
-  var first$1 = subj(first); //TODO consider affect of optional params: i.e. chain(["larry", "moe"], first()) vs chain(["larry", "moe"], first);
+  var first$2 = subj(first$1); //TODO consider affect of optional params: i.e. chain(["larry", "moe"], first()) vs chain(["larry", "moe"], first);
   var last$1 = subj(last);
   var initial$1 = subj(initial);
-  var rest$1 = subj(rest);
+  var rest$2 = subj(rest$1);
 
   function def$1(self, template) {
     for (var key in template) {
@@ -340,6 +366,14 @@
   var toUpperCase = unbind(String.prototype.toUpperCase);
   var toLowerCase = unbind(String.prototype.toLowerCase);
 
+  function empty$2() {
+    return "";
+  }
+
+  function isEmpty$2(str) {
+    return str === "";
+  }
+
   function append$5(str, suffix) {
     return str + suffix;
   }
@@ -368,6 +402,18 @@
     return memo instanceof Reduced ? memo.valueOf() : memo;
   }
 
+  function assoc$2(str, idx, ch) {
+    return slice(str).splice(idx, 1, ch).join("");
+  }
+
+  function hasKey$2(str, idx) {
+    return idx > -1 && idx < str.length;
+  }
+
+  function empty$3() {
+    return {};
+  }
+
   function each$4(self, f) {
     var ks = keys(self),
         l = ks.length,
@@ -390,6 +436,8 @@
     }
     return memo instanceof Reduced ? memo.valueOf() : memo;
   }
+
+  //TODO use get/assoc protocol with attributes
 
   function append$6(el, child) {
     el.appendChild(is(child, String) ? document.createTextNode(child) : child);
@@ -429,11 +477,15 @@
     return el;
   }
 
-  function find(el, selector) {
+  function parent(el) {
+    return el.parentNode;
+  }
+
+  function query(el, selector) {
     return el.querySelectorAll(selector);
   }
 
-  function first$2(el, selector) {
+  function find(el, selector) {
     return el.querySelector(selector);
   }
 
@@ -446,6 +498,11 @@
 
   function text(el) {
     return el.textContent;
+  }
+
+  function remove(el) {
+    el.parentElement.removeChild(el);
+    return el;
   }
 
   //TODO use lazy list of parents -- also create lazy seq of nextSibling and previousSibling
@@ -503,8 +560,73 @@
     prepend: prepend
   }));
 
-  var append$4 = subj(Extend.append, 2);
-  var prepend$3 = subj(Extend.prepend, 2);
+  var log = console.log.bind(console);
+
+  var append$7 = subj(append$6);
+  var prepend$6 = subj(prepend$5);
+  var getAttr$1 = subj(getAttr);
+  var setAttr$1 = subj(setAttr);
+  var hasClass$1 = subj(hasClass);
+  var addClass$1 = subj(addClass);
+  var removeClass$1 = subj(removeClass);
+  var closest$1 = subj(closest);
+  var query$1 = subj(query);
+  var find$1 = subj(find);
+  var style$1 = subj(style);
+  var remove$1 = remove;
+  var show = style$1(["display", "inherit"]);
+  var hide = style$1(["display", "none"]);
+
+var dom$1 = Object.freeze({
+  	append: append$7,
+  	prepend: prepend$6,
+  	getAttr: getAttr$1,
+  	setAttr: setAttr$1,
+  	hasClass: hasClass$1,
+  	addClass: addClass$1,
+  	removeClass: removeClass$1,
+  	closest: closest$1,
+  	query: query$1,
+  	find: find$1,
+  	style: style$1,
+  	remove: remove$1,
+  	show: show,
+  	hide: hide,
+  	parent: parent,
+  	text: text,
+  	tag: tag
+  });
+
+  var Seq = chain(protocol({
+    each: each$4,
+    reduce: reduce$4,
+    first: function first(value) {
+      return value;
+    },
+    rest: function rest(value) {
+      return value;
+    }
+  }), extend(String, {
+    each: each$3,
+    reduce: reduce$3,
+    first: first$1,
+    rest: rest$1
+  }), extend(Cons, {
+    each: each$5,
+    reduce: reduce$5,
+    first: first$3,
+    rest: rest$3
+  }), extend(Array, {
+    each: each$1,
+    reduce: reduce$1,
+    first: first$1,
+    rest: rest$1
+  }), extend(Object, {
+    each: each,
+    reduce: reduce,
+    first: first,
+    rest: rest
+  }));
 
   function Cons(head, tail) {
     this.head = head;
@@ -516,11 +638,13 @@
   }
 
   var EMPTY = cons(null);
+  var empty$4 = constantly(EMPTY);
+
   function isEmpty$3(self) {
     return self === EMPTY;
   }
 
-  function each$6(self, f) {
+  function each$5(self, f) {
     var result = null,
         next = self;
     while (next !== EMPTY && !(result instanceof Reduced)) {
@@ -529,7 +653,7 @@
     }
   }
 
-  function reduce$6(self, f, init) {
+  function reduce$5(self, f, init) {
     var memo = init,
         next = self;
     while (next !== EMPTY && !(memo instanceof Reduced)) {
@@ -569,7 +693,7 @@
     return self === EMPTY ? null : self.head;
   }
 
-  function rest$2(self) {
+  function rest$3(self) {
     return self === EMPTY ? EMPTY : self.tail();
   }
 
@@ -590,7 +714,7 @@
     }) : EMPTY;
   }
 
-  function remove(pred, coll) {
+  function remove$2(pred, coll) {
     return filter(complement(pred), coll);
   }
 
@@ -645,52 +769,6 @@
       return !pred(value) ? reduced(false) : memo;
     }, true);
   }
-
-  var Seq = chain(protocol({
-    each: each$4,
-    reduce: reduce$4,
-    first: null,
-    rest: null
-  }), extend(String, {
-    each: each$3,
-    reduce: reduce$3,
-    first: first,
-    rest: rest
-  }), extend(Cons, {
-    each: each$6,
-    reduce: reduce$6,
-    first: first$3,
-    rest: rest$2
-  }), extend(Array, {
-    each: each$1,
-    reduce: reduce$1,
-    first: first,
-    rest: rest
-  }), extend(Object, {
-    each: each,
-    reduce: reduce,
-    first: null,
-    rest: null
-  }));
-
-  var each$5 = subj(Seq.each, 2); //TODO don't export as curried at this time -- do above as other top-level modules do.
-  var reduce$5 = subj(Seq.reduce, 3);
-
-  var log = console.log.bind(console);
-
-  var append$7 = subj(append$6);
-  var prepend$6 = subj(prepend$5);
-  var getAttr$1 = subj(getAttr);
-  var setAttr$1 = subj(setAttr);
-  var hasClass$1 = subj(hasClass);
-  var addClass$1 = subj(addClass);
-  var removeClass$1 = subj(removeClass);
-  var closest$1 = subj(closest);
-  var find$1 = subj(find);
-  var first$4 = subj(first$2);
-  var style$1 = subj(style);
-  var show = style$1(["display", "inherit"]);
-  var hide = style$1(["display", "none"]);
 
   function add$1(x, y) {
     return x + y;
@@ -765,7 +843,7 @@
     };
   }
 
-  var remove$1 = compose(filter$1, complement);
+  var remove$3 = compose(filter$1, complement);
 
   function take$1(n) {
     return function (xf) {
@@ -813,67 +891,206 @@
     };
   }
 
+  var Empty = chain(protocol({
+    empty: empty$3,
+    isEmpty: null
+  }), extend(Cons, {
+    empty: empty$4,
+    isEmpty: isEmpty$3
+  }), extend(String, {
+    empty: empty$2,
+    isEmpty: isEmpty$2
+  }), extend(Array, {
+    empty: empty$1,
+    isEmpty: isEmpty$1
+  }), extend(Object, {
+    empty: empty,
+    isEmpty: isEmpty
+  }));
+
+  var isEmpty$4 = Empty.isEmpty;
+
+  var Seq$1 = chain(protocol({
+    each: each$4,
+    reduce: reduce$4,
+    first: function first(value) {
+      return value;
+    },
+    rest: function rest(value) {
+      return value;
+    }
+  }), extend(String, {
+    each: each$3,
+    reduce: reduce$3,
+    first: first$1,
+    rest: rest$1
+  }), extend(Cons, {
+    each: each$5,
+    reduce: reduce$5,
+    first: first$3,
+    rest: rest$3
+  }), extend(Array, {
+    each: each$1,
+    reduce: reduce$1,
+    first: first$1,
+    rest: rest$1
+  }), extend(Object, {
+    each: each,
+    reduce: reduce,
+    first: first,
+    rest: rest
+  }));
+
+  var rest$5 = Seq$1.rest;
+  var first$5 = Seq$1.first;
+
+  function sameContent(self, other) {
+    if (self == null || other == null) return self == other;
+    return isEmpty$4(self) && isEmpty$4(other) || eq$3(first$5(self), first$5(other)) && sameContent(rest$5(self), rest$5(other));
+  }
+
+  var Eq = chain(protocol({
+    eq: sameContent
+  }), extend(Cons, {
+    eq: sameContent
+  }), extend(Number, {
+    eq: isIdentical
+  }), extend(String, {
+    eq: isIdentical
+  }), extend(Array, {
+    eq: function eq(self, other) {
+      return self.constructor === self.constructor && self.length === self.length && sameContent(self, other);
+    }
+  }));
+
+  var eq$3 = Eq.eq;
+
+  var Get = protocol({
+    get: function get(self, key) {
+      return self instanceof HTMLElement ? getAttr(self, key) : self[key];
+    }
+  });
+
+  function fail$1() {
+    throw "fail";
+  }
+
+  var Assoc = chain(protocol({
+    assoc: function assoc(self, key, value) {
+      return self instanceof HTMLElement ? dom.setAttr(self, key, value) : fail$1();
+    },
+    hasKey: null
+  }), extend(String, {
+    assoc: assoc$2,
+    hasKey: hasKey$2
+  }), extend(Array, {
+    assoc: assoc$1,
+    hasKey: hasKey$1
+  }), extend(Object, {
+    assoc: assoc,
+    hasKey: hasKey
+  }));
+
+  var each$7 = subj(Seq.each, 2);
+  var reduce$7 = subj(Seq.reduce, 3);
+  var get = subj(Get.get, 2);
+  var assoc$3 = subj(Assoc.assoc, 3);
+  var hasKey$3 = subj(Assoc.hasKey, 2);
+  var eq$2 = subj(Eq.eq, 2);
+  var append$8 = subj(Extend.append, 2);
+  var prepend$7 = subj(Extend.prepend, 2);
   var map$2 = multiarity(map$1, map);
   var filter$2 = multiarity(filter$1, filter);
-  var remove$2 = multiarity(remove$1, remove);
+  var remove$4 = multiarity(remove$3, remove$2);
   var take$2 = multiarity(take$1, take);
   var takeWhile$2 = multiarity(takeWhile$1, takeWhile);
   var takeNth$2 = multiarity(takeNth$1, takeNth);
   var drop$2 = multiarity(drop$1, drop);
   var dropWhile$2 = multiarity(dropWhile$1, dropWhile);
-  var property = curry(function (key, obj) {
-    return obj[key];
+
+  var div = tag('div');
+  var span = tag('span');
+  //chain(body, doto(dom.setAttr(['id', 'main']), dom.setAttr(['id', 'main']), dom.addClass('post'), dom.addClass('entry'), dom.removeClass('entry')));
+  //chain(body, dom.getAttr('id'), eq('main'), log);
+  //chain(body, dom.closest("html"), log);
+  //dom.show(body);
+  //chain(body, dom.find("span"), dom.text, log);
+  QUnit.test("Traverse and manipulate the dom", function (assert) {
+    var body = find$1("body", document);
+    assert.ok(body instanceof HTMLBodyElement, "Found by tag");
+    append$8(div({ id: 'branding' }, span("Greetings!")), body);
+    assert.ok(find$1("#branding", body) instanceof HTMLDivElement, "Found by id");
+    assert.ok(chain(find$1("#branding span", body), text, eq$2("Greetings!")), "Read text content");
+    var greeting = find$1("#branding span", document);
+    hide(greeting);
+    var hidden = getAttr$1("style", greeting);
+    assert.ok(hidden == "display: none;", "Hidden");
+    show(greeting);
+    var shown = getAttr$1("style", greeting);
+    assert.ok(shown == "display: inherit;", "Shown");
+    var branding = find$1("#branding", body);
+    remove$1(branding);
+    assert.ok(branding.parentElement == null, "Removed");
   });
 
-  var attr = curry(function (key, el) {
-    return el.attributes.getNamedItem(key);
+  QUnit.test("Append/Prepend", function (assert) {
+    assert.equal(chain(["Moe"], append$8("Howard"), join$1(" ")), "Moe Howard", "String append");
+    var moe = append$8({ fname: "Moe" }, { lname: "Howard" }),
+        ks = Object.keys(moe);
+    assert.ok(ks.length === 2 && ks.indexOf("fname") > -1 && ks.indexOf("lname") > -1, "Object append");
+    assert.deepEqual(append$8(3, [1, 2]), [1, 2, 3]);
+    assert.deepEqual(prepend$7(0, [1, 2]), [0, 1, 2]);
   });
 
-  var assign = curry(function assign(key, value, obj) {
-    obj[key] = value;
-    return obj;
+  QUnit.test("Assoc", function (assert) {
+    assert.deepEqual(chain({ lname: "Howard" }, assoc$3("fname", "Moe")), { fname: "Moe", lname: "Howard" });
+    assert.deepEqual(chain([1, 2, 3], assoc$3(1, 0)), [1, 0, 3]);
   });
 
-  var value = assign("value");
+  QUnit.test("Get", function (assert) {
+    assert.equal(chain({ fname: "Moe", lname: "Howard" }, get("fname")), "Moe");
+    assert.equal(chain(["ace", "king", "queen"], get(2)), "queen");
+  });
 
-  window.onload = function () {
-    var div = tag('div'),
-        span = tag('span'),
-        body = first$4("body", document);
-    append$4(div({ id: 'branding' }, span("Greetings!")), body);
-    chain(document, first$4("#branding"), attr("id"), value("brand"), partial(log, "attributes"));
-    hide(body);
-    each$5(log, ["ace", "king", "queen"]);
-    chain(body, doto(setAttr$1(['id', 'main']), setAttr$1(['id', 'main']), addClass$1('post'), addClass$1('entry'), removeClass$1('entry')));
-    chain(body, getAttr$1('id'), eq('main'), log);
-    chain(body, closest$1("html"), log);
-    chain(["Moe"], append$4("Howard"), join$1(" "), log);
-    chain(["Curly"], append$4("Howard"), join$1(" "), log);
-    log(append$4({ fname: "Moe" }, { lname: "Howard" }));
-    log(append$4(3, [1, 2]));
-    log(prepend$3(0, [1, 2]));
-    chain(into([], "Polo"), log);
-    chain(into("Marco ", "Polo"), log);
-    chain(into([], repeat(5, "X")), log);
-    chain(some(gt(5), range(10)), log);
-    chain(isEvery(gt(5), range(10)), log);
-    chain(transduce(takeNth$2(2), Extend.append, [], range(10)), partial(log, "take-nth"));
-    chain(into([], repeatedly(0, constantly(1))), log);
-    chain(into([], repeatedly(10, constantly(2))), log);
-    chain(into([], take$2(5, range(10))), partial(log, "take"));
-    chain(into([], filter$2(gt(5), range(10))), partial(log, "filter > 5"));
-    chain(into([], remove$2(gt(5), range(10))), partial(log, "remove > 5"));
-    chain(into([], takeWhile$2(lt(5), range(10))), partial(log, "takeWhile < 5"));
-    chain(into([], dropWhile$2(gt(5), range(10))), partial(log, "dropWhile > 5"));
-    chain(transduce(take$2(5), Extend.append, [], increasingly(0)), log);
-    chain(into([], map$2(inc, range(1, 5))), partial(log, "map"));
-    chain(transduce(map$2(inc), Extend.append, [], [10, 11, 12]), log);
-    chain(transduce(filter$2(gt(6)), Extend.append, "", [5, 6, 7, 8, 9]), log);
-    chain(transduce(compose(filter$2(gt(6)), map$2(inc), take$2(2)), Extend.append, [], [5, 6, 7, 8, 9]), log);
-    chain(transduce(take$2(10), Extend.append, [], range(7, 15)), log);
-    chain(into([], range(5)), log);
-    show(body);
-    chain(body, first$4("span"), text, log);
-  };
+  QUnit.test("Equality", function (assert) {
+    assert.ok(eq$2("Curly", "Curly"), "Equal strings");
+    assert.notOk(eq$2("Curly", "Curlers"), "Unequal strings");
+    assert.ok(eq$2(45, 45), "Equal numbers");
+    assert.ok(eq$2([1, 2, 3], [1, 2, 3]), "Equal arrays");
+    assert.notOk(eq$2([1, 2, 3], [2, 3]), "Unequal arrays");
+    assert.notOk(eq$2([1, 2, 3], [3, 2, 1]), "Unequal arrays");
+    assert.ok(eq$2({ fname: "Moe", lname: "Howard" }, { fname: "Moe", lname: "Howard" }), "Equal objects");
+    assert.notOk(eq$2({ fname: "Moe", middle: "Harry", lname: "Howard" }, { fname: "Moe", lname: "Howard" }), "Unequal objects");
+  });
 
-}());
+  QUnit.test("Into", function (assert) {
+    assert.deepEqual(into([], "Polo"), ["P", "o", "l", "o"]);
+    assert.equal(into("Marco ", "Polo"), "Marco Polo");
+  });
+
+  QUnit.test("Transducers", function (assert) {
+    assert.deepEqual(into([], repeat(5, "X")), ["X", "X", "X", "X", "X"]);
+    assert.equal(some(gt(5), range(10)), 6);
+    assert.notOk(isEvery(gt(5), range(10)));
+    assert.deepEqual(transduce(takeNth$2(2), Extend.append, [], range(10)), [0, 2, 4, 6, 8]);
+    assert.deepEqual(into([], repeatedly(0, constantly(1))), []);
+    assert.deepEqual(into([], repeatedly(10, constantly(2))), [2, 2, 2, 2, 2, 2, 2, 2, 2, 2]);
+    assert.deepEqual(into([], take$2(5, range(10))), [0, 1, 2, 3, 4]);
+    assert.deepEqual(into([], filter$2(gt(5), range(10))), [6, 7, 8, 9]);
+    assert.deepEqual(into([], remove$4(gt(5), range(10))), [0, 1, 2, 3, 4, 5]);
+    assert.deepEqual(into([], takeWhile$2(lt(5), range(10))), [0, 1, 2, 3, 4]);
+    assert.deepEqual(into([], dropWhile$2(gt(5), range(10))), [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
+    assert.deepEqual(transduce(take$2(5), Extend.append, [], increasingly(0)), [0, 1, 2, 3, 4]);
+    assert.deepEqual(into([], map$2(inc, range(1, 5))), [2, 3, 4, 5]);
+    assert.deepEqual(transduce(map$2(inc), Extend.append, [], [10, 11, 12]), [11, 12, 13]);
+    assert.deepEqual(transduce(filter$2(gt(6)), Extend.append, "", [5, 6, 7, 8, 9]), "789");
+    assert.deepEqual(transduce(compose(filter$2(gt(6)), map$2(inc), take$2(2)), Extend.append, [], [5, 6, 7, 8, 9]), [8, 9]);
+    assert.deepEqual(transduce(take$2(10), Extend.append, [], range(7, 15)), [7, 8, 9, 10, 11, 12, 13, 14]);
+    assert.deepEqual(into([], range(5)), [0, 1, 2, 3, 4]);
+  });
+
+  exports.dom = dom$1;
+  exports.get = get;
+  exports.chain = chain;
+
+}((this.App = this.App || {})));

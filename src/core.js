@@ -1,7 +1,20 @@
-import {multiarity, curry} from './core/function.js';
+import {multiarity, curry, subj} from './core/function.js';
 import * as cons from './core/cons.js';
 import * as transduce from './core/transduce.js';
+import Eq from './protocols/eq.js';
+import Seq from './protocols/seq.js';
+import Extend from './protocols/extend.js';
+import Get from './protocols/get.js';
+import Assoc from './protocols/assoc.js';
 
+export const each = subj(Seq.each, 2);
+export const reduce = subj(Seq.reduce, 3);
+export const get = subj(Get.get, 2);
+export const assoc = subj(Assoc.assoc, 3);
+export const hasKey = subj(Assoc.hasKey, 2);
+export const eq = subj(Eq.eq, 2);
+export const append = subj(Extend.append, 2);
+export const prepend = subj(Extend.prepend, 2);
 export const map = multiarity(transduce.map, cons.map);
 export const filter = multiarity(transduce.filter, cons.filter);
 export const remove = multiarity(transduce.remove, cons.remove);
@@ -10,6 +23,3 @@ export const takeWhile = multiarity(transduce.takeWhile, cons.takeWhile);
 export const takeNth = multiarity(transduce.takeNth, cons.takeNth);
 export const drop = multiarity(transduce.drop, cons.drop);
 export const dropWhile = multiarity(transduce.dropWhile, cons.dropWhile);
-export const property = curry(function(key, obj){
-  return obj[key];
-});

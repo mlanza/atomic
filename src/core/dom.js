@@ -2,6 +2,8 @@ import * as array  from './array.js';
 import * as object from './object.js';
 import * as index  from './index.js';
 
+//TODO use get/assoc protocol with attributes
+
 export function append(el, child){
   el.appendChild(object.is(child, String) ? document.createTextNode(child) : child);
   return el;
@@ -44,11 +46,11 @@ export function parent(el){
   return el.parentNode;
 }
 
-export function find(el, selector){
+export function query(el, selector){
   return el.querySelectorAll(selector);
 }
 
-export function first(el ,selector){
+export function find(el, selector){
   return el.querySelector(selector);
 }
 
@@ -60,6 +62,11 @@ export function style(el, pair){
 
 export function text(el){
   return el.textContent;
+}
+
+export function remove(el){
+  el.parentElement.removeChild(el);
+  return el;
 }
 
 //TODO use lazy list of parents -- also create lazy seq of nextSibling and previousSibling

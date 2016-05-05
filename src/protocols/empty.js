@@ -6,6 +6,7 @@ import * as object   from '../core/object.js';
 import * as array    from '../core/array.js';
 import * as string   from '../core/string.js';
 import * as cons     from '../core/cons.js';
+import Cons          from '../core/cons.js';
 
 const Empty = chain(
   protocol({
@@ -31,3 +32,4 @@ const Empty = chain(
 
 export default Empty;
 export const empty  = Empty.empty;
+export const isEmpty = Empty.isEmpty;

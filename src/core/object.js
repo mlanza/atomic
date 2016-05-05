@@ -1,4 +1,5 @@
 import {reduced, Reduced} from "./reduced.js";
+import * as array from "./array.js";
 
 export var assign = Object.assign; //TODO polyfill
 export var keys   = Object.keys;
@@ -54,4 +55,27 @@ export function isSome(value){
 
 export function isNil(value){
   return value == null;
+}
+
+export function assoc(obj, key, value){
+  var add = {};
+  add[key] = value;
+  return assign({}, obj, add);
+}
+
+export function hasKey(obj, key){
+  return obj.hasOwnProperty(key);
+}
+
+export function first(obj){
+  var ks  = keys(obj).sort(),
+      key = ks[0];
+  return ks.length ? [key, obj[key]] : null;
+}
+
+export function rest(obj){
+  return array.reduce(keys(obj).sort().slice(1), function(memo, key){
+    memo[key] = obj[key];
+    return memo;
+  }, {});      
 }
