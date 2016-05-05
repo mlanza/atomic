@@ -35,3 +35,11 @@ export function reduce(str, f, init) {
   }
   return memo instanceof Reduced ? memo.valueOf() : memo;
 }
+
+export function assoc(str, idx, ch){
+  return slice(str).splice(idx, 1, ch).join("");
+}
+
+export function hasKey(str, idx){
+  return idx > -1 && idx < str.length;
+}

@@ -1,6 +1,6 @@
 import {extend} from '../protocol.js';
 import protocol from '../protocol.js';
-import {chain, subj, multimethod} from '../core/function.js';
+import {chain, multimethod} from '../core/function.js';
 import * as object   from '../core/object.js';
 import * as array    from '../core/array.js';
 import * as string   from '../core/string.js';
@@ -35,5 +35,5 @@ const Extend = chain(
   }));
 
 export default Extend;
-export const append  = subj(Extend.append, 2);
-export const prepend = subj(Extend.prepend, 2);
+export const append  = Extend.append;
+export const prepend = Extend.prepend;

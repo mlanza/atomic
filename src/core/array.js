@@ -77,3 +77,13 @@ export function initial(self, offset){
 export function rest(self, idx){
   return slice(self, idx || 1);
 }
+
+export function assoc(arr, idx, value){
+  var result = slice(arr);
+  result.splice(idx, 1, value);
+  return result;
+}
+
+export function hasKey(arr, idx){
+  return idx > -1 && idx < arr.length;
+}
