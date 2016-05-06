@@ -2,7 +2,8 @@ import {overload, multiarity, partial, constantly, complement, compose} from './
 import {identity} from './object.js';
 import {Reduced, reduced} from './reduced.js';
 import Extend from '../protocols/extend.js';
-import Seq from '../protocols/seq.js';
+import Seq    from '../protocols/seq.js';
+import Reduce from '../protocols/reduce.js';
 
 export default function Cons(head, tail){
   this.head = head;
@@ -132,13 +133,13 @@ export function dropWhile(pred, coll){
 }
 
 export function some(pred, coll){
-  return Seq.reduce(coll, function(memo, value){
+  return Reduce.reduce(coll, function(memo, value){
     return pred(value) ? reduced(value) : memo;
   }, null);
 }
 
 export function isEvery(pred, coll){
-  return Seq.reduce(coll, function(memo, value){
+  return Reduce.reduce(coll, function(memo, value){
     return !pred(value) ? reduced(false) : memo;
   }, true);
 }

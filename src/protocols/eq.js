@@ -1,7 +1,7 @@
 import {extend} from '../protocol.js';
 import protocol from '../protocol.js';
-import {isEmpty} from '../protocols/Empty.js';
-import {first, rest} from '../protocols/Seq.js';
+import {isEmpty} from '../protocols/empty.js';
+import {first, rest} from '../protocols/seq.js';
 import {isIdentical} from '../core/core.js';
 import {chain, subj} from '../core/function.js';
 import * as index    from '../core/index.js';

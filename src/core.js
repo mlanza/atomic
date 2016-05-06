@@ -1,14 +1,16 @@
 import {multiarity, curry, subj} from './core/function.js';
 import * as cons from './core/cons.js';
 import * as transduce from './core/transduce.js';
-import Eq from './protocols/eq.js';
-import Seq from './protocols/seq.js';
+import Eq     from './protocols/eq.js';
+import Seq    from './protocols/seq.js';
+import Each   from './protocols/each.js';
+import Reduce from './protocols/reduce.js';
 import Extend from './protocols/extend.js';
-import Get from './protocols/get.js';
-import Assoc from './protocols/assoc.js';
+import Get    from './protocols/get.js';
+import Assoc  from './protocols/assoc.js';
 
-export const each = subj(Seq.each, 2);
-export const reduce = subj(Seq.reduce, 3);
+export const each = subj(Each.each, 2);
+export const reduce = subj(Reduce.reduce, 3);
 export const get = subj(Get.get, 2);
 export const assoc = subj(Assoc.assoc, 3);
 export const hasKey = subj(Assoc.hasKey, 2);
