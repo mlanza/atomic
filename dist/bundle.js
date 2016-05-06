@@ -57,7 +57,7 @@
     return self.length === 0;
   }
 
-  function append$2(self, item) {
+  function append$1(self, item) {
     return self.concat([item]);
   }
 
@@ -129,7 +129,7 @@
     return value != null && value.constructor === constructor;
   }
 
-  function append$1(self, obj) {
+  function append(self, obj) {
     return assign({}, self, obj);
   }
 
@@ -313,7 +313,7 @@
 
   var slice$2 = subj(slice$1, 3);
   var join$1 = subj(join, 2);
-  var append$3 = subj(append$2);
+  var append$2 = subj(append$1);
   var prepend$2 = subj(prepend$1);
   var each$2 = subj(each$1);
   var reduce$2 = subj(reduce$1);
@@ -374,7 +374,7 @@
     return str === "";
   }
 
-  function append$5(str, suffix) {
+  function append$4(str, suffix) {
     return str + suffix;
   }
 
@@ -439,7 +439,7 @@
 
   //TODO use get/assoc protocol with attributes
 
-  function append$6(el, child) {
+  function append$5(el, child) {
     el.appendChild(is(child, String) ? document.createTextNode(child) : child);
     return el;
   }
@@ -521,7 +521,7 @@
       each$1(arguments, function (item) {
         is(item, Object) ? each(item, function (pair) {
           setAttr(el, pair);
-        }) : append$6(el, item);
+        }) : append$5(el, item);
       });
       return el;
     };
@@ -547,22 +547,24 @@
   }
 
   var Extend = chain(protocol({ //TODO protocol should provide secondary means of dynamically extending -- use multimethod as defaultFn
-    append: multimethod(whenElement(append$6)), //TODO provide a dynamic means of setting defaultFn of protocol.
+    append: multimethod(whenElement(append$5)), //TODO provide a dynamic means of setting defaultFn of protocol.
     prepend: multimethod(whenElement(prepend$5)) //TODO alternately, provide a way of wrapping an existing function with an alternative handler -- this mechanism doesn't make a multimethod easy to extend (or unextend) and it should be
   }), extend(String, {
-    append: append$5,
+    append: append$4,
     prepend: prepend$4
   }), extend(Array, {
-    append: append$2,
+    append: append$1,
     prepend: prepend$1
   }), extend(Object, {
-    append: append$1,
+    append: append,
     prepend: prepend
   }));
 
+  var append$3 = Extend.append;
+
   var log = console.log.bind(console);
 
-  var append$7 = subj(append$6);
+  var append$6 = subj(append$5);
   var prepend$6 = subj(prepend$5);
   var getAttr$1 = subj(getAttr);
   var setAttr$1 = subj(setAttr);
@@ -578,7 +580,7 @@
   var hide = style$1(["display", "none"]);
 
 var dom$1 = Object.freeze({
-  	append: append$7,
+  	append: append$6,
   	prepend: prepend$6,
   	getAttr: getAttr$1,
   	setAttr: setAttr$1,
@@ -598,8 +600,6 @@ var dom$1 = Object.freeze({
   });
 
   var Seq = chain(protocol({
-    each: each$4,
-    reduce: reduce$4,
     first: function first(value) {
       return value;
     },
@@ -607,26 +607,35 @@ var dom$1 = Object.freeze({
       return value;
     }
   }), extend(String, {
-    each: each$3,
-    reduce: reduce$3,
     first: first$1,
     rest: rest$1
   }), extend(Cons, {
-    each: each$5,
-    reduce: reduce$5,
     first: first$3,
     rest: rest$3
   }), extend(Array, {
-    each: each$1,
-    reduce: reduce$1,
     first: first$1,
     rest: rest$1
   }), extend(Object, {
-    each: each,
-    reduce: reduce,
     first: first,
     rest: rest
   }));
+
+  var rest$4 = Seq.rest;
+  var first$4 = Seq.first;
+
+  var Reduce = chain(protocol({
+    reduce: reduce$4
+  }), extend(Cons, {
+    reduce: reduce$5
+  }), extend(String, {
+    reduce: reduce$3
+  }), extend(Array, {
+    reduce: reduce$1
+  }), extend(Object, {
+    reduce: reduce
+  }));
+
+  var reduce$6 = Reduce.reduce;
 
   function Cons(head, tail) {
     this.head = head;
@@ -642,15 +651,6 @@ var dom$1 = Object.freeze({
 
   function isEmpty$3(self) {
     return self === EMPTY;
-  }
-
-  function each$5(self, f) {
-    var result = null,
-        next = self;
-    while (next !== EMPTY && !(result instanceof Reduced)) {
-      result = f(next.head);
-      next = next.tail();
-    }
   }
 
   function reduce$5(self, f, init) {
@@ -759,13 +759,13 @@ var dom$1 = Object.freeze({
   }
 
   function some(pred, coll) {
-    return Seq.reduce(coll, function (memo, value) {
+    return Reduce.reduce(coll, function (memo, value) {
       return pred(value) ? reduced(value) : memo;
     }, null);
   }
 
   function isEvery(pred, coll) {
-    return Seq.reduce(coll, function (memo, value) {
+    return Reduce.reduce(coll, function (memo, value) {
       return !pred(value) ? reduced(false) : memo;
     }, true);
   }
@@ -807,15 +807,15 @@ var dom$1 = Object.freeze({
 
   var transduce = multiarity(function (xform, f, coll) {
     var xf = xform(f);
-    return xf(Seq.reduce(coll, xf, f()));
+    return xf(reduce$6(coll, xf, f()));
   }, function (xform, f, seed, coll) {
     return transduce(xform, seeding(f, constantly(seed)), coll);
   });
 
   var into = multiarity(function (to, from) {
-    return Seq.reduce(from, Extend.append, to);
+    return reduce$6(from, append$3, to);
   }, function (to, xform, from) {
-    return transduce(xform, append, to, from);
+    return transduce(xform, append$3, to, from);
   });
 
   /*export function tap(f){
@@ -910,43 +910,9 @@ var dom$1 = Object.freeze({
 
   var isEmpty$4 = Empty.isEmpty;
 
-  var Seq$1 = chain(protocol({
-    each: each$4,
-    reduce: reduce$4,
-    first: function first(value) {
-      return value;
-    },
-    rest: function rest(value) {
-      return value;
-    }
-  }), extend(String, {
-    each: each$3,
-    reduce: reduce$3,
-    first: first$1,
-    rest: rest$1
-  }), extend(Cons, {
-    each: each$5,
-    reduce: reduce$5,
-    first: first$3,
-    rest: rest$3
-  }), extend(Array, {
-    each: each$1,
-    reduce: reduce$1,
-    first: first$1,
-    rest: rest$1
-  }), extend(Object, {
-    each: each,
-    reduce: reduce,
-    first: first,
-    rest: rest
-  }));
-
-  var rest$5 = Seq$1.rest;
-  var first$5 = Seq$1.first;
-
   function sameContent(self, other) {
     if (self == null || other == null) return self == other;
-    return isEmpty$4(self) && isEmpty$4(other) || eq$3(first$5(self), first$5(other)) && sameContent(rest$5(self), rest$5(other));
+    return isEmpty$4(self) && isEmpty$4(other) || eq$3(first$4(self), first$4(other)) && sameContent(rest$4(self), rest$4(other));
   }
 
   var Eq = chain(protocol({
@@ -964,6 +930,18 @@ var dom$1 = Object.freeze({
   }));
 
   var eq$3 = Eq.eq;
+
+  var Each = chain(protocol({
+    each: each$4
+  }), extend(Cons, {
+    //each: cons.each
+  }), extend(String, {
+    each: each$3
+  }), extend(Array, {
+    each: each$1
+  }), extend(Object, {
+    each: each
+  }));
 
   var Get = protocol({
     get: function get(self, key) {
@@ -991,13 +969,13 @@ var dom$1 = Object.freeze({
     hasKey: hasKey
   }));
 
-  var each$7 = subj(Seq.each, 2);
-  var reduce$7 = subj(Seq.reduce, 3);
+  var each$6 = subj(Each.each, 2);
+  var reduce$7 = subj(Reduce.reduce, 3);
   var get = subj(Get.get, 2);
   var assoc$3 = subj(Assoc.assoc, 3);
   var hasKey$3 = subj(Assoc.hasKey, 2);
   var eq$2 = subj(Eq.eq, 2);
-  var append$8 = subj(Extend.append, 2);
+  var append$7 = subj(Extend.append, 2);
   var prepend$7 = subj(Extend.prepend, 2);
   var map$2 = multiarity(map$1, map);
   var filter$2 = multiarity(filter$1, filter);
@@ -1018,7 +996,7 @@ var dom$1 = Object.freeze({
   QUnit.test("Traverse and manipulate the dom", function (assert) {
     var body = find$1("body", document);
     assert.ok(body instanceof HTMLBodyElement, "Found by tag");
-    append$8(div({ id: 'branding' }, span("Greetings!")), body);
+    append$7(div({ id: 'branding' }, span("Greetings!")), body);
     assert.ok(find$1("#branding", body) instanceof HTMLDivElement, "Found by id");
     assert.ok(chain(find$1("#branding span", body), text, eq$2("Greetings!")), "Read text content");
     var greeting = find$1("#branding span", document);
@@ -1034,11 +1012,11 @@ var dom$1 = Object.freeze({
   });
 
   QUnit.test("Append/Prepend", function (assert) {
-    assert.equal(chain(["Moe"], append$8("Howard"), join$1(" ")), "Moe Howard", "String append");
-    var moe = append$8({ fname: "Moe" }, { lname: "Howard" }),
+    assert.equal(chain(["Moe"], append$7("Howard"), join$1(" ")), "Moe Howard", "String append");
+    var moe = append$7({ fname: "Moe" }, { lname: "Howard" }),
         ks = Object.keys(moe);
     assert.ok(ks.length === 2 && ks.indexOf("fname") > -1 && ks.indexOf("lname") > -1, "Object append");
-    assert.deepEqual(append$8(3, [1, 2]), [1, 2, 3]);
+    assert.deepEqual(append$7(3, [1, 2]), [1, 2, 3]);
     assert.deepEqual(prepend$7(0, [1, 2]), [0, 1, 2]);
   });
 

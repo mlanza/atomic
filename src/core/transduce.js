@@ -2,8 +2,8 @@ import {overload, multiarity, partial, constantly, compose, complement} from './
 import {reduced} from './reduced.js';
 export {reduced} from './reduced.js';
 import {identity, is} from './object.js';
-import Seq from '../protocols/seq.js';
-import Extend from '../protocols/extend.js';
+import {reduce} from '../protocols/reduce.js';
+import {append} from '../protocols/extend.js';
 
 export function completing(f, complete){
   return overload(f, complete || identity, f);
@@ -15,13 +15,13 @@ export function seeding(f, init){
 
 export const transduce = multiarity(function(xform, f, coll){
   var xf = xform(f);
-  return xf(Seq.reduce(coll, xf, f()));
+  return xf(reduce(coll, xf, f()));
 }, function(xform, f, seed, coll){
   return transduce(xform, seeding(f, constantly(seed)), coll);
 });
 
 export const into = multiarity(function(to, from){
-  return Seq.reduce(from, Extend.append, to);
+  return reduce(from, append, to);
 }, function(to, xform, from){
   return transduce(xform, append, to, from);
 });
