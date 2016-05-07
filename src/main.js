@@ -1,27 +1,14 @@
-import {chain, curry, doto, flip, compose, constantly, multiarity, complement, partial, overload} from './core/function.js';
-import {reduced} from './core/reduced.js';
-import {gt, lt} from './compare.js';
-import {join} from './array.js';
-import {deref} from './protocols/deref.js';
-import Extend from './protocols/extend.js';
-import {log} from './log.js';
 import * as dom from './dom.js';
-import {repeatedly, repeat, some, isEvery} from './core/cons.js';
-import {inc, increasingly, range} from './number.js';
-import {transduce, into} from './core/transduce.js';
-import {each, reduce, map, take, drop, filter, remove, takeNth, takeWhile, dropWhile, get, eq, append, prepend, assoc, hasKey} from './core.js';
-export {dom, get, chain};
+import {tap, chain, curry, doto, flip, compose, constantly, multiarity, complement, partial, overload, gt, lt, repeatedly, repeat, some, isEvery, log, inc, increasingly, range, transduce, into, join, each, reduce, map, take, drop, filter, remove, takeNth, takeWhile, dropWhile, get, eq, append, prepend, assoc, hasKey} from './core.js';
 
-var div  = dom.tag('div'), 
-    span = dom.tag('span');
-
-//chain(body, doto(dom.setAttr(['id', 'main']), dom.setAttr(['id', 'main']), dom.addClass('post'), dom.addClass('entry'), dom.removeClass('entry')));
-//chain(body, dom.getAttr('id'), eq('main'), log);
-//chain(body, dom.closest("html"), log);
-//dom.show(body);
-//chain(body, dom.find("span"), dom.text, log);
 QUnit.test("Traverse and manipulate the dom", function(assert){
+  let ul = dom.tag('ul'), li = dom.tag('li');
+  var stooges = ul(li({id: 'moe'}, "Moe Howard"), li({id: 'curly'}, "Curly Howard"), li({id: 'larry'}, "Larry Fine")); 
+  let div  = dom.tag('div'), 
+      span = dom.tag('span');
   var body = dom.find("body", document);
+  chain(stooges, tap(dom.query("li"), each(dom.addClass("stooge"))), log);
+  assert.equal(chain(body, dom.addClass("main"), assoc("data-tagged", "tests"), get("data-tagged")), "tests");
   assert.ok(body instanceof HTMLBodyElement, "Found by tag");
   append(div({id: 'branding'}, span("Greetings!")), body);  
   assert.ok(dom.find("#branding", body) instanceof HTMLDivElement, "Found by id");
@@ -69,15 +56,9 @@ QUnit.test("Equality", function(assert){
 });
 
 QUnit.test("Into", function(assert){
-  assert.deepEqual(into([], "Polo"), ["P", "o", "l", "o"]);
   assert.equal(into("Marco ", "Polo"), "Marco Polo");
-});
-
-QUnit.test("Transducers", function(assert){
-  assert.deepEqual(into([], repeat(5, "X")), ["X", "X", "X", "X", "X"]);
-  assert.equal(some(gt(5), range(10)), 6);
-  assert.notOk(isEvery(gt(5), range(10)));
-  assert.deepEqual(transduce(takeNth(2), Extend.append, [], range(10)), [0, 2, 4, 6, 8]);
+  assert.deepEqual(into([], "Polo"), ["P", "o", "l", "o"]);
+  assert.deepEqual(into([], takeNth(2), range(10)), [0, 2, 4, 6, 8]);
   assert.deepEqual(into([], repeatedly(0, constantly(1))), []);
   assert.deepEqual(into([], repeatedly(10, constantly(2))), [2, 2, 2, 2, 2, 2, 2, 2, 2, 2]);
   assert.deepEqual(into([], take(5, range(10))), [0, 1, 2, 3, 4]);
@@ -85,11 +66,17 @@ QUnit.test("Transducers", function(assert){
   assert.deepEqual(into([], remove(gt(5), range(10))), [0, 1, 2, 3, 4, 5]);
   assert.deepEqual(into([], takeWhile(lt(5), range(10))), [0, 1, 2, 3, 4]);
   assert.deepEqual(into([], dropWhile(gt(5), range(10))), [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
-  assert.deepEqual(transduce(take(5), Extend.append, [], increasingly(0)), [0, 1, 2, 3, 4]);
+  assert.deepEqual(into([], take(5), increasingly(0)), [0, 1, 2, 3, 4]);
   assert.deepEqual(into([], map(inc, range(1, 5))), [2, 3, 4, 5]);
-  assert.deepEqual(transduce(map(inc), Extend.append, [], [10, 11, 12]), [11, 12, 13]);
-  assert.deepEqual(transduce(filter(gt(6)), Extend.append, "", [5, 6, 7, 8, 9]), "789");
-  assert.deepEqual(transduce(compose(filter(gt(6)), map(inc), take(2)), Extend.append, [], [5, 6, 7, 8, 9]), [8, 9]);
-  assert.deepEqual(transduce(take(10), Extend.append, [], range(7, 15)), [7, 8, 9, 10, 11, 12, 13, 14]);
+  assert.deepEqual(into([], map(inc), [10, 11, 12]), [11, 12, 13]);
+  assert.deepEqual(into([], compose(filter(gt(6)), map(inc), take(2)), [5, 6, 7, 8, 9]), [8, 9]);
+  assert.deepEqual(into([], take(10), range(7, 15)), [7, 8, 9, 10, 11, 12, 13, 14]);
   assert.deepEqual(into([], range(5)), [0, 1, 2, 3, 4]);
+  assert.deepEqual(into("", filter(gt(6)), [5, 6, 7, 8, 9]), "789");
+  assert.deepEqual(into([], repeat(5, "X")), ["X", "X", "X", "X", "X"]);
+});
+
+QUnit.test("Sequences", function(assert){
+  assert.equal(some(gt(5), range(10)), 6);
+  assert.notOk(isEvery(gt(5), range(10)));
 });

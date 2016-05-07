@@ -3,34 +3,28 @@ import protocol from '../protocol.js';
 import {chain} from '../core/function.js';
 import {identity} from '../core/core.js';
 import Cons from '../core/cons.js';
-import * as cons     from '../core/cons.js';
-import * as index    from '../core/index.js';
+import Seq  from '../protocols/seq.js';
+import {seq as _seq} from '../protocols/seq.js';
 import * as object   from '../core/object.js';
 import * as array    from '../core/array.js';
 import * as string   from '../core/string.js';
 
-const Seq = chain(
+const Seqable = chain(
   protocol({
-    first: array.first, //TODO fix first & rest
-    rest: array.rest
+    seq: _seq
   }),
   extend(String, {
-    first: array.first,
-    rest: array.rest
+    seq: array.seq
   }), 
   extend(Cons, {
-    first: cons.first,
-    rest: cons.rest
+    seq: identity
   }), 
   extend(Array, {
-    first: array.first,
-    rest: array.rest
+    seq: array.seq
   }), 
   extend(Object, {
-    first: object.first,
-    rest: object.rest
+    seq: object.seq
   }));
 
-export default Seq;
-export const rest   = Seq.rest;
-export const first  = Seq.first;
+export default Seqable;
+export const seq   = Seqable.seq;

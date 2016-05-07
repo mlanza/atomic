@@ -14,7 +14,7 @@ const Reduce = chain(
   }),
   extend(Cons, {
     reduce: cons.reduce
-  }), 
+  }),
   extend(String, {
     reduce: string.reduce
   }), 

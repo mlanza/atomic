@@ -1,9 +1,6 @@
-import {overload, multiarity, partial, constantly, complement, compose} from './function.js';
-import {identity} from './object.js';
 import {Reduced, reduced} from './reduced.js';
-import Extend from '../protocols/extend.js';
-import Seq    from '../protocols/seq.js';
-import Reduce from '../protocols/reduce.js';
+import {overload, multiarity, partial, constantly, complement, compose} from './function.js';
+import {identity} from './core.js';
 
 export default function Cons(head, tail){
   this.head = head;
@@ -23,7 +20,7 @@ export function isEmpty(self){
 
 export function each(self, f){
   var result = null, next = self;
-  while(next !== EMPTY && !(result instanceof Reduced)){
+  while (next !== EMPTY && !(result instanceof Reduced)){
     result = f(next.head);
     next = next.tail();
   }
@@ -31,17 +28,11 @@ export function each(self, f){
 
 export function reduce(self, f, init) {
   var memo = init, next = self;
-  while(next !== EMPTY && !(memo instanceof Reduced)){
+  while (next !== EMPTY && !(memo instanceof Reduced)){
     memo = f(memo, next.head);
     next = next.tail();
   }
   return memo instanceof Reduced ? memo.valueOf() : memo;
-}
-
-export function seq(coll){
-  return isEmpty(coll) ? EMPTY : cons(Seq.first(coll), function(){
-    return seq(Seq.rest(coll));
-  });
 }
 
 export function iterate(generate, seed){
@@ -71,81 +62,3 @@ export function first(self){
 export function rest(self){
   return self === EMPTY ? EMPTY : self.tail();
 }
-
-export function map(f, coll){
-  return isEmpty(coll) ? EMPTY : cons(f(Seq.first(coll)), function(){
-    return map(f, Seq.rest(coll));
-  });
-}
-
-export function filter(pred, coll){
-  if (isEmpty(coll)) return EMPTY;
-  var item;
-  do {
-    item = Seq.first(coll), coll = Seq.rest(coll);
-  } while (!pred(item));
-  return item != null ? cons(item, function(){
-    return filter(pred, coll);
-  }) : EMPTY;
-}
-
-export function remove(pred, coll){
-  return filter(complement(pred), coll);
-}
-
-export function take(n, coll){
-  return n && !isEmpty(coll) ? cons(Seq.first(coll), function(){
-    return take(n - 1, Seq.rest(coll));
-  }) : EMPTY;
-}
-
-export function takeWhile(pred, coll){
-  if (isEmpty(coll)) return EMPTY;
-  var item = Seq.first(coll), coll = Seq.rest(coll);
-  return pred(item) ? cons(item, function(){
-    return takeWhile(pred, coll);
-  }) : EMPTY;
-}
-
-export function takeNth(n, coll){
-  if (isEmpty(coll)) return EMPTY;
-  var s = seq(coll);
-  return cons(Seq.first(s), function(){
-    return takeNth(n, drop(n, s));
-  });
-}
-
-export function drop(n, coll){
-  var remaining = n;
-  return dropWhile(function(){
-    return remaining-- > 0;
-  }, coll);
-}
-
-export function dropWhile(pred, coll){
-  if (isEmpty(coll)) return EMPTY;
-  do {
-    var item = Seq.first(coll);
-    if (!pred(item)) break;
-    coll = Seq.rest(coll);
-  } while (true);
-  return seq(coll);
-}
-
-export function some(pred, coll){
-  return Reduce.reduce(coll, function(memo, value){
-    return pred(value) ? reduced(value) : memo;
-  }, null);
-}
-
-export function isEvery(pred, coll){
-  return Reduce.reduce(coll, function(memo, value){
-    return !pred(value) ? reduced(false) : memo;
-  }, true);
-}
-
-export function isAny(pred, coll){
-  return some(pred, coll) !== null;
-}
-
-export const isNotAny = complement(isAny);

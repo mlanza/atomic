@@ -1,5 +1,6 @@
 import {unbind} from "./core.js";
 import {reduced, Reduced} from "./reduced.js";
+//import {cons, EMPTY} from "./cons.js";
 
 /*TODO consider that slice takes from, to args and that both are optional: slice(arr, from, to) in curried form slice (from, to, arr)
   as such an alternative to curry/subj would be config where all configurations are provided in the first call, thus...
@@ -31,6 +32,20 @@ export const reverse = unbind(Array.prototype.reverse)
 export const join    = unbind(Array.prototype.join);
 export const concat  = unbind(Array.prototype.concat);
 
+export function each(self, f){
+  var len = self.length, i = 0, result = null;
+  while(i < len && !(result instanceof Reduced)){
+    result = f(self[i++]);
+  }
+}
+export function reduce(self, f, init) {
+  var len = self.length, i = 0, memo = init;
+  while(i < len && !(memo instanceof Reduced)){
+    memo = f(memo, self[i++]);
+  }
+  return memo instanceof Reduced ? memo.valueOf() : memo;
+}
+
 export function empty(){
   return [];
 }
@@ -45,21 +60,6 @@ export function append(self, item){
 
 export function prepend(self, item){
   return [item].concat(self);
-}
-
-export function each(self, f){
-  var len = self.length, i = 0, result = null;
-  while(i < len && !(result instanceof Reduced)){
-    result = f(self[i++]);
-  }
-}
-
-export function reduce(self, f, init) {
-  var len = self.length, i = 0, memo = init;
-  while(i < len && !(memo instanceof Reduced)){
-    memo = f(memo, self[i++]);
-  }
-  return memo instanceof Reduced ? memo.valueOf() : memo;
 }
 
 export function first(self, len){
@@ -86,4 +86,14 @@ export function assoc(arr, idx, value){
 
 export function hasKey(arr, idx){
   return idx > -1 && idx < arr.length;
+}
+
+export function seqFrom(arr, idx){
+  /* return idx > arr.length - 1 ? cons(arr[idx || 0], function(){
+    return seqFrom(arr, idx + 1);
+  }) : EMPTY; */
+}
+
+export function seq(arr){
+  return seqFrom(arr, 0);
 }

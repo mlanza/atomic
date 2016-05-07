@@ -1,6 +1,8 @@
 export {unbind} from './core.js';
-import {assign, constructs} from './object.js';
-import {last, slice, reverse, rest, first, reduce, each, concat} from './array.js';
+import {constructs} from './core.js';
+import {reduce, each, last, slice, reverse, rest, first, concat} from './array.js';
+
+const assign = Object.assign;
 
 export function noop(){
 }
@@ -73,7 +75,8 @@ export function compose(){
   return pipe.apply(this, reverse(slice(arguments)));
 }
 
-export function tap(f){
+export function tap(){
+  var f = pipe.apply(this, arguments);
   return function(value){
     f(value);
     return value;
