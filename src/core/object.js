@@ -12,10 +12,6 @@ export function isEmpty(self){
   return keys(self).length === 0;
 }
 
-export function identity(value){
-  return value;
-}
-
 export function is(value, constructor) {
   return value != null && value.constructor === constructor;
 }
@@ -68,14 +64,25 @@ export function hasKey(obj, key){
 }
 
 export function first(obj){
-  var ks  = keys(obj).sort(),
+  var ks  = keys(obj),
       key = ks[0];
   return ks.length ? [key, obj[key]] : null;
 }
 
 export function rest(obj){
-  return array.reduce(keys(obj).sort().slice(1), function(memo, key){
+  return array.reduce(keys(obj).slice(1), function(memo, key){
     memo[key] = obj[key];
     return memo;
   }, {});      
+}
+
+export function seqFrom(obj, ks){
+  var key = ks[0], value = obj[key];
+  return ks.length ? cons([key, value], function(){
+    return seq(obj, array.rest(ks));
+  }) : EMPTY;
+}
+
+export function seq(obj){
+  return seqFrom(obj, keys(obj));
 }

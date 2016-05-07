@@ -5,9 +5,13 @@ export function empty(){
   return {};
 }
 
+export function isEmpty(index){
+  return !index.length;
+}
+
 export function each(self, f){
   var ks = keys(self), l = ks.length, i = 0, result = null;
-  while(i < l && !(memo instanceof Reduced)){
+  while(i < l && !(result instanceof Reduced)){
     var key = ks[i++];
     result = f(self[key]);
   }

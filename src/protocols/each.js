@@ -13,7 +13,7 @@ const Each = chain(
     each: index.each
   }),
   extend(Cons, {
-    //each: cons.each
+    each: cons.each
   }), 
   extend(String, {
     each: string.each

@@ -1,7 +1,8 @@
 import {overload, multiarity, partial, constantly, compose, complement} from './function.js';
 import {reduced} from './reduced.js';
 export {reduced} from './reduced.js';
-import {identity, is} from './object.js';
+import {identity} from './core.js';
+import {is} from './object.js';
 import {reduce} from '../protocols/reduce.js';
 import {append} from '../protocols/extend.js';
 
@@ -25,15 +26,6 @@ export const into = multiarity(function(to, from){
 }, function(to, xform, from){
   return transduce(xform, append, to, from);
 });
-
-/*export function tap(f){
-  return function(xf){
-    return overload(xf, xf, function(memo, value){
-      f(value);
-      return xf(memo, value);
-    });
-  }
-}*/
 
 export function map(f){
   return function(xf){
