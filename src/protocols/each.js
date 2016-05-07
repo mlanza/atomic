@@ -1,6 +1,6 @@
 import {extend} from '../protocol.js';
 import protocol from '../protocol.js';
-import {chain, subj} from '../core/function.js';
+import {chain} from '../core/function.js';
 import * as object   from '../core/object.js';
 import * as index    from '../core/index.js';
 import * as array    from '../core/array.js';

@@ -1,5 +1,5 @@
 import * as dom from './dom.js';
-import {tap, chain, curry, doto, flip, compose, constantly, multiarity, complement, partial, overload, gt, lt, repeatedly, repeat, some, isEvery, log, inc, increasingly, range, transduce, into, join, each, reduce, map, take, drop, filter, remove, takeNth, takeWhile, dropWhile, get, eq, append, prepend, assoc, hasKey} from './core.js';
+import {keys, tap, chain, curry, doto, flip, compose, constantly, multiarity, complement, partial, overload, gt, lt, repeatedly, repeat, some, isEvery, log, inc, increasingly, range, transduce, into, join, each, reduce, map, take, drop, filter, remove, takeNth, takeWhile, dropWhile, get, eq, append, prepend, assoc, hasKey} from './core.js';
 
 QUnit.test("Traverse and manipulate the dom", function(assert){
   let ul = dom.tag('ul'), li = dom.tag('li');
@@ -15,10 +15,10 @@ QUnit.test("Traverse and manipulate the dom", function(assert){
   assert.ok(chain(dom.find("#branding span", body), dom.text, eq("Greetings!")), "Read text content");
   var greeting = dom.find("#branding span", document);
   dom.hide(greeting);
-  var hidden = dom.getAttr("style", greeting);
+  var hidden = get("style", greeting);
   assert.ok(hidden == "display: none;", "Hidden");
   dom.show(greeting);
-  var shown = dom.getAttr("style", greeting);
+  var shown = get("style", greeting);
   assert.ok(shown == "display: inherit;", "Shown");
   var branding = dom.find("#branding", body);
   dom.remove(branding);
@@ -28,7 +28,7 @@ QUnit.test("Traverse and manipulate the dom", function(assert){
 QUnit.test("Append/Prepend", function(assert){
   assert.equal(chain(["Moe"], append("Howard"), join(" ")), "Moe Howard", "String append");
   var moe = append({fname: "Moe"}, {lname: "Howard"}),
-      ks  = Object.keys(moe);
+      ks  = keys(moe);
   assert.ok(ks.length === 2 && ks.indexOf("fname") > -1 && ks.indexOf("lname") > -1, "Object append");
   assert.deepEqual(append(3, [1, 2]), [1, 2, 3]);
   assert.deepEqual(prepend(0, [1, 2]), [0, 1, 2]);

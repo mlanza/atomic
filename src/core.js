@@ -9,6 +9,7 @@ import Get    from './protocols/get.js';
 import Assoc  from './protocols/assoc.js';
 import * as cons from './core/cons.js';
 import * as coll from './core/coll.js';
+export {keys, assign} from './core/object.js';
 import * as transduce from './core/transduce.js';
 export {some, isEvery, isAny, isNotAny} from './core/coll.js';
 export {transduce, into} from './core/transduce.js';

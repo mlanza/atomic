@@ -2,8 +2,6 @@ import * as array  from './array.js';
 import * as object from './object.js';
 import * as index  from './index.js';
 
-//TODO use get/assoc protocol with attributes
-
 export function append(el, child){
   el.appendChild(object.is(child, String) ? document.createTextNode(child) : child);
   return el;
@@ -14,15 +12,13 @@ export function prepend(el, child){
   return el;
 }
 
-export function getAttr(el, key){
+export function get(el, key){
   var attr = el.attributes.getNamedItem(key);
   return attr && attr.value;
 }
 
-export function setAttr(el, pair){
-  var key   = pair[0], 
-      value = pair[1],
-      attr  = document.createAttribute(key);
+export function assoc(el, key, value){
+  var attr  = document.createAttribute(key);
   attr.value = value;
   el.attributes.setNamedItem(attr);
   return el;
@@ -85,18 +81,9 @@ export function tag(name){
     var el = document.createElement(name);
     array.each(arguments, function(item){
       object.is(item, Object) ? object.each(item, function(pair){
-        setAttr(el, pair);
+        assoc(el, pair[0], pair[1]);
       }) : append(el, item);
     });
     return el;
   }
 }
-
-/*
-
-export function attrs(el){
-  return index.reduce(el.attributes, function(memo, attr){
-    memo[attr.nodeName] = attr.nodeValue;
-    return memo;
-  }, {});
-}*/

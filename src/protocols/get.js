@@ -4,7 +4,7 @@ import * as dom from '../core/dom.js';
 
 const Get = protocol({
   get: function(self, key){
-    return self instanceof HTMLElement ? dom.getAttr(self, key) : self[key];
+    return self instanceof HTMLElement ? dom.get(self, key) : self[key];
   }
 });
 
