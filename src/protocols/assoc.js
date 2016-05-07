@@ -13,7 +13,7 @@ function fail(){
 const Assoc = chain(
   protocol({
     assoc: function(self, key, value){
-      return self instanceof HTMLElement ? dom.setAttr(self, [key, value]) : fail();
+      return self instanceof HTMLElement ? dom.assoc(self, key, value) : fail();
     },
     hasKey: null
   }),
