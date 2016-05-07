@@ -940,10 +940,11 @@
 
   var slice$2 = subj(slice$1, 3);
   var join$1 = subj(join, 2);
-  var first$2 = subj(Seq.first); //TODO consider affect of optional params: i.e. chain(["larry", "moe"], first()) vs chain(["larry", "moe"], first);
-  var rest$2 = subj(Seq.rest);
   var last$1 = subj(last);
   var initial$1 = subj(initial);
+
+  var first$2 = subj(Seq.first); //TODO consider affect of optional params: i.e. chain(["larry", "moe"], first()) vs chain(["larry", "moe"], first);
+  var rest$2 = subj(Seq.rest);
   var each$3 = subj(Each.each, 2);
   var reduce$3 = subj(Reduce.reduce, 3);
   var get = subj(Get.get, 2);
