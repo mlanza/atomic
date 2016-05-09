@@ -1,5 +1,6 @@
 import * as dom from './dom.js';
-import {keys, tap, chain, curry, doto, flip, compose, constantly, multiarity, complement, partial, overload, gt, lt, repeatedly, repeat, some, isEvery, log, inc, increasingly, range, transduce, into, join, each, reduce, map, take, drop, filter, remove, takeNth, takeWhile, dropWhile, get, eq, append, prepend, assoc, hasKey} from './core.js';
+import {fold, keys, tap, chain, curry, doto, flip, compose, constantly, multiarity, complement, partial, overload, gt, lt, repeatedly, repeat, some, isEvery, log, inc, increasingly, range, transduce, into, join, each, reduce, map, take, drop, filter, remove, takeNth, takeWhile, dropWhile, get, eq, append, prepend, assoc, hasKey} from './core.js';
+export {fold};
 
 QUnit.test("Traverse and manipulate the dom", function(assert){
   let ul = dom.tag('ul'), li = dom.tag('li');

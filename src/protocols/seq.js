@@ -2,6 +2,8 @@ import {extend} from '../protocol.js';
 import protocol from '../protocol.js';
 import {chain} from '../core/function.js';
 import {identity} from '../core/core.js';
+import Empty from '../core/empty.js';
+import * as empty from '../core/empty.js';
 import Cons from '../core/cons.js';
 import * as cons     from '../core/cons.js';
 import * as index    from '../core/index.js';
@@ -14,22 +16,11 @@ const Seq = chain(
     first: array.first, //TODO fix first & rest
     rest: array.rest
   }),
-  extend(String, {
-    first: array.first,
-    rest: array.rest
-  }), 
-  extend(Cons, {
-    first: cons.first,
-    rest: cons.rest
-  }), 
-  extend(Array, {
-    first: array.first,
-    rest: array.rest
-  }), 
-  extend(Object, {
-    first: object.first,
-    rest: object.rest
-  }));
+  extend(String, array), 
+  extend(Empty, empty), 
+  extend(Cons, cons), 
+  extend(Array, array), 
+  extend(Object, object));
 
 export default Seq;
 export const rest   = Seq.rest;

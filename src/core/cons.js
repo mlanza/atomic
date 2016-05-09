@@ -1,4 +1,5 @@
 import {Reduced, reduced} from './reduced.js';
+import {Empty, empty as EMPTY} from './empty.js';
 import {overload, multiarity, partial, constantly, complement, compose} from './function.js';
 import {identity} from './core.js';
 
@@ -11,11 +12,12 @@ export function cons(head, tail){
   return new Cons(head, tail || constantly(EMPTY));
 }
 
-export const EMPTY = cons(null);
-export const empty = constantly(EMPTY);
-
 export function isEmpty(self){
-  return self === EMPTY;
+  return false;
+}
+
+export function empty(){
+  return EMPTY;
 }
 
 export function each(self, f){
@@ -56,9 +58,9 @@ export const repeat = overload(null, function(value){
 });
 
 export function first(self){
-  return self === EMPTY ? null : self.head;
+  return self.head;
 }
 
 export function rest(self){
-  return self === EMPTY ? EMPTY : self.tail();
+  return self.tail();
 }

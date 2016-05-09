@@ -21,18 +21,9 @@ const Extend = chain(
     append: multimethod(whenElement(dom.append)), //TODO provide a dynamic means of setting defaultFn of protocol.
     prepend: multimethod(whenElement(dom.prepend)) //TODO alternately, provide a way of wrapping an existing function with an alternative handler -- this mechanism doesn't make a multimethod easy to extend (or unextend) and it should be
   }),
-  extend(String, {
-    append: string.append,
-    prepend: string.prepend
-  }), 
-  extend(Array, {
-    append: array.append,
-    prepend: array.prepend
-  }), 
-  extend(Object, {
-    append: object.append,
-    prepend: object.prepend
-  }));
+  extend(String, string), 
+  extend(Array, array), 
+  extend(Object, object));
 
 export default Extend;
 export const append  = Extend.append;
