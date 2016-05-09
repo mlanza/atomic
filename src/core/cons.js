@@ -1,7 +1,7 @@
 import {Reduced, reduced} from './reduced.js';
-import {Empty, empty as EMPTY} from './empty.js';
 import {overload, multiarity, partial, constantly, complement, compose} from './function.js';
-import {identity} from './core.js';
+import * as empty from './empty.js';
+export {rest as empty} from './empty.js';
 
 export default function Cons(head, tail){
   this.head = head;
@@ -9,20 +9,14 @@ export default function Cons(head, tail){
 }
 
 export function cons(head, tail){
-  return new Cons(head, tail || constantly(EMPTY));
+  return new Cons(head, tail || empty.rest);
 }
 
-export function isEmpty(self){
-  return false;
-}
-
-export function empty(){
-  return EMPTY;
-}
+export const isEmpty = constantly(false);
 
 export function each(self, f){
   var result = null, next = self;
-  while (next !== EMPTY && !(result instanceof Reduced)){
+  while (next !== empty.empty && !(result instanceof Reduced)){
     result = f(next.head);
     next = next.tail();
   }
@@ -30,7 +24,7 @@ export function each(self, f){
 
 export function reduce(self, f, init) {
   var memo = init, next = self;
-  while (next !== EMPTY && !(memo instanceof Reduced)){
+  while (next !== empty.empty && !(memo instanceof Reduced)){
     memo = f(memo, next.head);
     next = next.tail();
   }
@@ -48,7 +42,7 @@ export const repeatedly = multiarity(function(f){
 }, function(n, f){
   return n > 0 ? cons(f(), function(){
     return repeatedly(n - 1, f);
-  }) : EMPTY;
+  }) : empty.empty;
 });
 
 export const repeat = overload(null, function(value){

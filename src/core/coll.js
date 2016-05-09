@@ -21,13 +21,10 @@ export function map(f, coll){
 
 export function filter(pred, coll){
   if (isEmpty(coll)) return empty;
-  var item;
-  do {
-    item = first(coll), coll = rest(coll);
-  } while (!pred(item));
-  return item != null ? cons(item, function(){
-    return filter(pred, coll);
-  }) : empty;
+  var item = first(coll);
+  return pred(item) ? cons(item, function(){
+    return filter(pred, rest(coll));
+  }) : filter(pred, rest(coll));
 }
 
 export function remove(pred, coll){
@@ -42,17 +39,15 @@ export function take(n, coll){
 
 export function takeWhile(pred, coll){
   if (isEmpty(coll)) return empty;
-  var item = first(coll), coll = rest(coll);
+  var item = first(coll);
   return pred(item) ? cons(item, function(){
-    return takeWhile(pred, coll);
+    return takeWhile(pred, rest(coll));
   }) : empty;
 }
 
 export function takeNth(n, coll){
-  if (isEmpty(coll)) return empty;
-  var s = seq(coll);
-  return cons(first(s), function(){
-    return takeNth(n, drop(n, s));
+  return isEmpty(coll) ? empty : cons(first(coll), function(){
+    return takeNth(n, drop(n, coll));
   });
 }
 
@@ -65,12 +60,8 @@ export function drop(n, coll){
 
 export function dropWhile(pred, coll){
   if (isEmpty(coll)) return empty;
-  do {
-    var item = first(coll);
-    if (!pred(item)) break;
-    coll = rest(coll);
-  } while (true);
-  return seq(coll);
+  var item = first(coll);
+  return pred(item) ? dropWhile(pred, rest(coll)) : seq(coll);
 }
 
 export function some(pred, coll){
@@ -93,4 +84,8 @@ export const isNotAny = complement(isAny);
 
 export function fold(self, f, init){
   return init instanceof Reduced || isEmpty(self) ? deref(init) : fold(rest(self), f, f(init, first(self)));
+}
+
+export function all(self, f){
+  !isEmpty(self) && f(first(self)) && all(rest(self), f);
 }
