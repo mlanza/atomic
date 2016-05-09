@@ -16,7 +16,7 @@ export function create(template){
 }
 
 export function extend(self, constructor, template){
-  for(var key in template){
+  for(var key in self){
     _extend(self[key], constructor, template[key]);
   }
   return self;

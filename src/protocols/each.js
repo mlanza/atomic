@@ -7,23 +7,18 @@ import * as array    from '../core/array.js';
 import * as string   from '../core/string.js';
 import * as cons     from '../core/cons.js';
 import Cons          from '../core/cons.js';
+import Empty from '../core/empty.js';
+import * as empty from '../core/empty.js';
 
 const Each = chain(
   protocol({
     each: index.each
   }),
-  extend(Cons, {
-    each: cons.each
-  }), 
-  extend(String, {
-    each: string.each
-  }), 
-  extend(Array, {
-    each: array.each
-  }), 
-  extend(Object, {
-    each: object.each
-  }));
+  extend(Empty, empty), 
+  extend(Cons, cons), 
+  extend(String, string), 
+  extend(Array, array), 
+  extend(Object, object));
 
 export default Each;
-export const each  = Each.each;
+export const each = Each.each;

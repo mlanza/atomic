@@ -3,6 +3,7 @@ import protocol from '../protocol.js';
 import {chain} from '../core/function.js';
 import {identity} from '../core/core.js';
 import Cons from '../core/cons.js';
+import Empty from '../core/empty.js';
 import Seq  from '../protocols/seq.js';
 import {seq as _seq} from '../protocols/seq.js';
 import * as object   from '../core/object.js';
@@ -16,6 +17,9 @@ const Seqable = chain(
   extend(String, {
     seq: array.seq
   }), 
+  extend(Empty, {
+    seq: identity
+  }), 
   extend(Cons, {
     seq: identity
   }), 
@@ -27,4 +31,4 @@ const Seqable = chain(
   }));
 
 export default Seqable;
-export const seq   = Seqable.seq;
+export const seq = Seqable.seq;

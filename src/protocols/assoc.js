@@ -17,18 +17,9 @@ const Assoc = chain(
     },
     hasKey: null
   }),
-  extend(String, {
-    assoc: string.assoc,
-    hasKey: string.hasKey
-  }), 
-  extend(Array, {
-    assoc: array.assoc,
-    hasKey: array.hasKey
-  }), 
-  extend(Object, {
-    assoc: object.assoc,
-    hasKey: object.hasKey
-  }));
+  extend(String, string), 
+  extend(Array, array), 
+  extend(Object, object));
 
 export default Assoc;
 export const assoc  = Assoc.assoc;
