@@ -64,6 +64,10 @@ export function keep(f){
   return compose(map(f), filter(isSome));
 }
 
+export function keepIndexed(f){
+  return compose(mapIndexed(f), filter(isSome));
+}
+
 export const remove = compose(filter, complement);
 
 export function take(n){

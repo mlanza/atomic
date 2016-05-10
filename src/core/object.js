@@ -1,5 +1,7 @@
 import {reduced, Reduced} from "./reduced.js";
+import {empty as EMPTY} from "./empty.js";
 import * as array from "./array.js";
+import {cons} from "./cons.js";
 
 export var assign = Object.assign; //TODO polyfill
 export var keys   = Object.keys;
@@ -64,22 +66,17 @@ export function hasKey(obj, key){
 }
 
 export function first(obj){
-  var ks  = keys(obj),
-      key = ks[0];
-  return ks.length ? [key, obj[key]] : null;
+  return isEmpty(obj) ? null : seq(obj).head;
 }
 
 export function rest(obj){
-  return array.reduce(keys(obj).slice(1), function(memo, key){
-    memo[key] = obj[key];
-    return memo;
-  }, {});      
+  return isEmpty(obj) ? EMPTY : seq(obj).tail();
 }
 
 export function seqFrom(obj, ks){
   var key = ks[0], value = obj[key];
   return ks.length ? cons([key, value], function(){
-    return seq(obj, array.rest(ks));
+    return seqFrom(obj, array.rest(ks));
   }) : EMPTY;
 }
 

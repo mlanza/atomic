@@ -1,6 +1,7 @@
 import {unbind} from "./core.js";
 import {reduced, Reduced} from "./reduced.js";
-//import {cons, EMPTY} from "./cons.js";
+//import {empty as EMPTY} from "./empty.js";
+//import {cons} from "./cons.js";
 
 /*TODO consider that slice takes from, to args and that both are optional: slice(arr, from, to) in curried form slice (from, to, arr)
   as such an alternative to curry/subj would be config where all configurations are provided in the first call, thus...
@@ -70,7 +71,7 @@ export function last(self, len){
   return len ? slice(self, self.length - len) : self[self.length - 1];
 }
 
-export function initial(self, offset){
+export function initial(self, offset){ //TODO use drop
   return slice(self, 0, self.length - (offset || 1));
 }
 
@@ -95,5 +96,5 @@ export function seqFrom(arr, idx){
 }
 
 export function seq(arr){
-  return seqFrom(arr, 0);
+  //return seqFrom(arr, 0);
 }

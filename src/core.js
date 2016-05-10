@@ -11,6 +11,7 @@ import Deref  from './protocols/deref.js';
 import {isEmpty} from './protocols/emptiable.js';
 import * as cons from './core/cons.js';
 import * as coll from './core/coll.js';
+export {concat} from './core/coll.js';
 export {keys, assign} from './core/object.js';
 import * as transduce from './core/transduce.js';
 export {some, isEvery, isAny, isNotAny} from './core/coll.js';
