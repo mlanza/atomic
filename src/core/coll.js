@@ -1,6 +1,7 @@
 import {Reduced, reduced} from './reduced.js';
 import {complement} from './function.js';
 import {empty} from './empty.js';
+import {isSome} from './object.js';
 import {cons} from './cons.js';
 import {deref} from '../protocols/deref.js';
 import {isEmpty} from '../protocols/emptiable.js';
@@ -19,12 +20,23 @@ export function map(f, coll){
   });
 }
 
+export function mapIndexed(f, coll){
+  var idx = -1;
+  return map(function(x){
+    return f(++idx, x);
+  }, coll);
+}
+
 export function filter(pred, coll){
   if (isEmpty(coll)) return empty;
   var item = first(coll);
   return pred(item) ? cons(item, function(){
     return filter(pred, rest(coll));
   }) : filter(pred, rest(coll));
+}
+
+export function keep(f, coll){
+  return filter(isSome, map(f, coll));
 }
 
 export function remove(pred, coll){

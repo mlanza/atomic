@@ -1,5 +1,5 @@
 import * as dom from './dom.js';
-import {fold, keys, tap, chain, curry, doto, flip, compose, constantly, multiarity, complement, partial, overload, gt, lt, repeatedly, repeat, some, isEvery, log, inc, increasingly, range, transduce, into, join, each, reduce, map, take, drop, filter, remove, takeNth, takeWhile, dropWhile, get, eq, append, prepend, assoc, hasKey} from './core.js';
+import {fold, keys, tap, chain, curry, doto, flip, compose, constantly, multiarity, complement, partial, overload, gt, lt, repeatedly, repeat, some, isEvery, log, inc, increasingly, range, transduce, into, join, each, reduce, map, mapIndexed, take, drop, filter, remove, takeNth, takeWhile, dropWhile, get, eq, append, prepend, assoc, hasKey} from './core.js';
 export {fold};
 
 QUnit.test("Traverse and manipulate the dom", function(assert){
@@ -75,6 +75,9 @@ QUnit.test("Into", function(assert){
   assert.deepEqual(into([], range(5)), [0, 1, 2, 3, 4]);
   assert.deepEqual(into("", filter(gt(6)), [5, 6, 7, 8, 9]), "789");
   assert.deepEqual(into([], repeat(5, "X")), ["X", "X", "X", "X", "X"]);
+  assert.deepEqual(into([], mapIndexed(function(idx, value){
+    return [idx, inc(value)];
+  }, [10, 11, 12])), [[0, 11], [1, 12], [2, 13]]);
 });
 
 QUnit.test("Sequences", function(assert){
