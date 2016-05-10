@@ -13,8 +13,8 @@ import * as string   from '../core/string.js';
 
 const Seq = chain(
   protocol({
-    first: array.first, //TODO fix first & rest
-    rest: array.rest
+    first: index.first,
+    rest: index.rest
   }),
   extend(String, array), 
   extend(Empty, empty), 

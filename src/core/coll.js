@@ -1,7 +1,8 @@
 import {Reduced, reduced} from './reduced.js';
-import {complement} from './function.js';
+import {complement, overload, constantly} from './function.js';
 import {empty} from './empty.js';
 import {isSome} from './object.js';
+import {slice} from './array.js';
 import {cons} from './cons.js';
 import {deref} from '../protocols/deref.js';
 import {isEmpty} from '../protocols/emptiable.js';
@@ -13,6 +14,13 @@ export function seq(coll){
     return seq(rest(coll));
   });
 }
+
+export const concat = overload(constantly(empty), seq, function(coll){
+  var tail = rest(arguments);
+  return isEmpty(coll) ? concat.apply(this, tail) : cons(first(coll), function(){
+    return concat.apply(this, [rest(coll)].concat(tail));
+  });
+});
 
 export function map(f, coll){
   return isEmpty(coll) ? empty : cons(f(first(coll)), function(){

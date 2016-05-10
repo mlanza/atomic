@@ -1,5 +1,6 @@
 import {Reduced} from "./reduced.js";
 import {keys} from './object.js';
+export {first, rest} from './array.js';
 
 export function empty(){
   return {};
