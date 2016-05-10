@@ -2,7 +2,7 @@ import {overload, multiarity, partial, constantly, compose, complement} from './
 import {reduced} from './reduced.js';
 export {reduced} from './reduced.js';
 import {identity} from './core.js';
-import {is} from './object.js';
+import {is, isSome} from './object.js';
 import {reduce} from '../protocols/reduce.js';
 import {append} from '../protocols/extend.js';
 
@@ -27,6 +27,10 @@ export const into = multiarity(function(to, from){
   return transduce(xform, append, to, from);
 });
 
+export function mapa(f, coll){
+  return into([], map(f), coll);
+}
+
 export function map(f){
   return function(xf){
     return overload(xf, xf, function(memo, value){
@@ -35,12 +39,29 @@ export function map(f){
   }
 }
 
+export function mapIndexed(f){
+  return function(xf){
+    var idx = -1;
+    return overload(xf, xf, function(memo, value){
+      return xf(memo, f(++idx, value));
+    });
+  }
+} 
+
+export function filtera(f, coll){
+  return into([], filter(f), coll);
+}
+
 export function filter(pred){
   return function(xf){
     return overload(xf, xf, function(memo, value){
       return pred(value) ? xf(memo, value) : memo;
     });
   }
+}
+
+export function keep(f){
+  return compose(map(f), filter(isSome));
 }
 
 export const remove = compose(filter, complement);

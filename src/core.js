@@ -33,6 +33,7 @@ export const append = subj(Extend.append, 2);
 export const prepend = subj(Extend.prepend, 2);
 export const deref = Deref.deref;
 export const map = multiarity(transduce.map, coll.map);
+export const mapIndexed = multiarity(transduce.mapIndexed, coll.mapIndexed);
 export const filter = multiarity(transduce.filter, coll.filter);
 export const remove = multiarity(transduce.remove, coll.remove);
 export const take = multiarity(transduce.take, coll.take);

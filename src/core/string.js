@@ -3,6 +3,7 @@ import {reduced, Reduced} from "./reduced.js";
 
 export const toUpperCase = unbind(String.prototype.toUpperCase);
 export const toLowerCase = unbind(String.prototype.toLowerCase);
+export const trim = unbind(String.prototype.trim);
 
 export function empty(){
   return "";
@@ -10,6 +11,10 @@ export function empty(){
 
 export function isEmpty(str){
   return str === "";
+}
+
+export function isBlank(str){
+  return str === null || str.trim() === ""; 
 }
 
 export function append(str, suffix){
