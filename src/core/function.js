@@ -1,8 +1,8 @@
 export {unbind} from './core.js';
+import {reduce, each, slice, splice, reverse, concat, head, tail, last} from './core.js';
 import {constructs} from './core.js';
-import {reduce, each, last, slice, reverse, rest, first, concat} from './array.js';
 
-const assign = Object.assign;
+const assign  = Object.assign;
 
 export function noop(){
 }
@@ -48,7 +48,7 @@ export function overload(){
 export function flip(self, len){
   var at = (len || 2) - 1;
   return function(){
-    var args = concat(slice(arguments, at, len), concat(first(arguments, at), rest(arguments, len)));
+    var args = concat(slice(arguments, at, len), concat(head(arguments, at), tail(arguments, len)));
     return self.apply(this, args);
   }
 }

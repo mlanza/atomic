@@ -1,7 +1,7 @@
-import {unbind} from "./core.js";
-import {reduced, Reduced} from "./reduced.js";
-//import {empty as EMPTY} from "./empty.js";
-//import {cons} from "./cons.js";
+import {slice, splice, reverse, join, concat, each, reduce, last} from "./core.js";
+export {slice, splice, reverse, join, concat, each, reduce, last} from "./core.js";
+import {empty as EMPTY} from "./empty.js";
+import {cons} from "./cons.js";
 
 /*TODO consider that slice takes from, to args and that both are optional: slice(arr, from, to) in curried form slice (from, to, arr)
   as such an alternative to curry/subj would be config where all configurations are provided in the first call, thus...
@@ -27,24 +27,15 @@ import {reduced, Reduced} from "./reduced.js";
   Now what about options?  How do they work with currying?
 */
 
-export const slice   = unbind(Array.prototype.slice);
-export const splice  = unbind(Array.prototype.splice);
-export const reverse = unbind(Array.prototype.reverse)
-export const join    = unbind(Array.prototype.join);
-export const concat  = unbind(Array.prototype.concat);
-
-export function each(self, f){
-  var len = self.length, i = 0, result = null;
-  while(i < len && !(result instanceof Reduced)){
-    result = f(self[i++]);
-  }
+export function rest(arr, idx){
+  var pos = arguments.length === 2 ? idx : 1;
+  return pos < 0 || pos > arr.length - 1 ? EMPTY : cons(arr[pos], function(){
+    return rest(arr, pos + 1);
+  });
 }
-export function reduce(self, f, init) {
-  var len = self.length, i = 0, memo = init;
-  while(i < len && !(memo instanceof Reduced)){
-    memo = f(memo, self[i++]);
-  }
-  return memo instanceof Reduced ? memo.valueOf() : memo;
+
+export function seq(arr){
+  return rest(arr, 0);
 }
 
 export function empty(){
@@ -63,20 +54,12 @@ export function prepend(self, item){
   return [item].concat(self);
 }
 
-export function first(self, len){
-  return len ? slice(self, 0, len) : self[0];
-}
-
-export function last(self, len){
-  return len ? slice(self, self.length - len) : self[self.length - 1];
-}
-
-export function initial(self, offset){ //TODO use drop
+export function initial(self, offset){
   return slice(self, 0, self.length - (offset || 1));
 }
 
-export function rest(self, idx){
-  return slice(self, idx || 1);
+export function first(self){
+  return len ? slice(self, 0, len) : self[0];
 }
 
 export function assoc(arr, idx, value){
@@ -87,14 +70,4 @@ export function assoc(arr, idx, value){
 
 export function hasKey(arr, idx){
   return idx > -1 && idx < arr.length;
-}
-
-export function seqFrom(arr, idx){
-  /* return idx > arr.length - 1 ? cons(arr[idx || 0], function(){
-    return seqFrom(arr, idx + 1);
-  }) : EMPTY; */
-}
-
-export function seq(arr){
-  //return seqFrom(arr, 0);
 }

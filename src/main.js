@@ -76,6 +76,7 @@ QUnit.test("Into", function(assert){
   assert.deepEqual(into("", filter(gt(6)), [5, 6, 7, 8, 9]), "789");
   assert.deepEqual(into([], repeat(5, "X")), ["X", "X", "X", "X", "X"]);
   assert.deepEqual(into([], concat([1, 2, 3], [4, 5, 6])), [1, 2, 3, 4, 5, 6]);
+  assert.deepEqual(into([], concat([1, 2], [3, 4], [5, 6])), [1, 2, 3, 4, 5, 6]);
   assert.deepEqual(into([], mapIndexed(function(idx, value){
     return [idx, inc(value)];
   }, [10, 11, 12])), [[0, 11], [1, 12], [2, 13]]);
