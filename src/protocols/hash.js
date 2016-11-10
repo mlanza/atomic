@@ -1,4 +1,4 @@
-import protocol from '../protocol';
+import {protocol} from '../protocol.js';
 import {flip} from '../core';
 
 export const Hash = protocol({
