@@ -1,4 +1,13 @@
-import {method} from './core.js';
+import {multimethod} from './core.js';
+
+function method(f){
+  var map = new Map(),
+      set = map.set.bind(map);
+  function dispatch(self){
+    return map.get(self) || map.get(self.constructor) || f;
+  }
+  return Object.assign(multimethod(dispatch), {set: set, dispatch: dispatch});
+}
 
 export function Protocol(template){
   for(var key in template){
@@ -10,15 +19,15 @@ export function protocol(template){
   return new Protocol(template);
 }
 
-export function satisfies(self, value){
-  for(var key in self) {
+export function satisfies(self, value, ...keys){
+  var ks = keys || self;
+  for(var key in ks) {
     if (!self[key].dispatch(value)) return false;
   }
   return true;
 }
 
-export function extend(self, template){
-  var kinds = Array.prototype.slice.call(arguments, 2);
+export function extend(self, template, ...kinds){
   for(var k in kinds){
     var kind = kinds[k];
     for(var key in self){
