@@ -1,5 +1,8 @@
 #Cloe
 
-A functional programming library based on Clojure.
+A functional programming inspired by Clojure but using native JavaScript data structures (e.g. Array, Object).
 
-Not released.  No warranty.  Batteries not included.
+No mutations.
+Uses protocols.
+Curried functions.
+Transducers.
