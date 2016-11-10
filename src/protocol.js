@@ -19,7 +19,7 @@ export function protocol(template){
   return new Protocol(template);
 }
 
-export function satisfies(self, value, ...keys){
+export function satisfies(self, keys, value){
   var ks = keys || self;
   for(var key in ks) {
     if (!self[key].dispatch(value)) return false;
