@@ -103,10 +103,12 @@ export function multimethod(dispatch){
 }
 
 export function method(f){
-  var map = new Map();
-  return Object.assign(multimethod(function(self){
+  var map = new Map(),
+      set = map.set.bind(map);
+  function dispatch(self){
     return map.get(self) || map.get(self.constructor) || f;
-  }), {map: map});
+  }
+  return Object.assign(multimethod(dispatch), {set: set, dispatch: dispatch});
 }
 
 export function always(value){
