@@ -102,15 +102,6 @@ export function multimethod(dispatch){
   }
 }
 
-export function method(f){
-  var map = new Map(),
-      set = map.set.bind(map);
-  function dispatch(self){
-    return map.get(self) || map.get(self.constructor) || f;
-  }
-  return Object.assign(multimethod(dispatch), {set: set, dispatch: dispatch});
-}
-
 export function always(value){
   return function(){
     return value;
