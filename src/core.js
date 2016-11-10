@@ -1,45 +1,146 @@
-import {Reduced, reduced} from './core/reduced.js';
-import {multiarity, curry, subj, complement} from './core/function.js';
-import Eq     from './protocols/eq.js';
-import Seq    from './protocols/seq.js';
-import Each   from './protocols/each.js';
-import Reduce from './protocols/reduce.js';
-import Extend from './protocols/extend.js';
-import Get    from './protocols/get.js';
-import Assoc  from './protocols/assoc.js';
-import Deref  from './protocols/deref.js';
-import {isEmpty} from './protocols/emptiable.js';
-import * as cons from './core/cons.js';
-import * as coll from './core/coll.js';
-export {concat} from './core/coll.js';
-export {keys, assign} from './core/object.js';
-import * as transduce from './core/transduce.js';
-export {some, isEvery, isAny, isNotAny} from './core/coll.js';
-export {transduce, into} from './core/transduce.js';
-export {inc, increasingly, range} from './number.js';
-export {log} from './log.js';
-export {repeatedly, repeat} from './core/cons.js';
-export {gt, lt, gte, lte} from './compare.js';
-export {tap, chain, curry, doto, flip, compose, constantly, multiarity, complement, partial, overload} from './core/function.js';
-export {slice, join, last, init} from './array.js';
-export const first = subj(Seq.first); //TODO consider affect of optional params: i.e. chain(["larry", "moe"], first()) vs chain(["larry", "moe"], first);
-export const rest = subj(Seq.rest);
-export const each = subj(Each.each, 2);
-export const reduce = subj(Reduce.reduce, 3);
-export const get = subj(Get.get, 2);
-export const assoc = subj(Assoc.assoc, 3);
-export const hasKey = subj(Assoc.hasKey, 2);
-export const eq = subj(Eq.eq, 2);
-export const append = subj(Extend.append, 2);
-export const prepend = subj(Extend.prepend, 2);
-export const deref = Deref.deref;
-export const map = multiarity(transduce.map, coll.map);
-export const mapIndexed = multiarity(transduce.mapIndexed, coll.mapIndexed);
-export const filter = multiarity(transduce.filter, coll.filter);
-export const remove = multiarity(transduce.remove, coll.remove);
-export const take = multiarity(transduce.take, coll.take);
-export const takeWhile = multiarity(transduce.takeWhile, coll.takeWhile);
-export const takeNth = multiarity(transduce.takeNth, coll.takeNth);
-export const drop = multiarity(transduce.drop, coll.drop);
-export const dropWhile = multiarity(transduce.dropWhile, coll.dropWhile);
-export const fold = subj(coll.fold);
+import unbind from './unbind';
+
+export const log = console.log.bind(console);
+export const slice = unbind(Array.prototype.slice);
+
+export function reverse(xs){
+  return slice(xs).reverse();
+}
+
+export function reduce(self, xf, init){
+  var memo = init, len = self.length;
+  for(var i = 0; i < len; i++){
+    memo = xf(memo, self[i]);
+  }
+  return memo;
+}
+
+export function identity(value){
+  return value;
+}
+
+export function curry(f, len, applied){
+  return len ? function(){
+    //every call to a curried function advances by at least one argument (see `undefined`).
+    var args = (applied || []).concat(arguments.length === 0 ? [undefined] : slice(arguments));
+    if (args.length >= len) {
+      return f.apply(this, args);
+    } else {
+      return curry(f, len, args);
+    }
+  } : curry(f, f.length);
+}
+
+export const arity = function(len, f){
+  return function(){
+    return f.apply(this, slice(arguments, 0, len));
+  }
+};
+
+export function map(self, f){
+  var xs = [], len = self.length;
+  for(var i = 0; i < len; i++){
+    xs.push(f(self[i]));
+  }
+  return xs;
+}
+
+export function filter(self, pred){
+  var xs = [], len = self.length;
+  for(var i = 0; i < len; i++){
+    if (pred(self[i]))
+      xs.push(self[i]);
+  }
+  return xs;
+}
+
+export function find(self, pred){
+  var len = self.length;
+  for(var i = 0; i < len; i++){
+    if (pred(self[i])) return self[i];
+  }
+}
+
+export function append(self, value){
+  return self.concat([value]);
+}
+
+export function flip(f, len){
+  var l = len || f.length;
+  return curry(arity(l, function(){
+    var size = arguments.length,
+        last = arguments[size - 1],
+        rest = slice(arguments, 0, size - 1),
+        args = [last].concat(rest);
+    return f.apply(this, args);
+  }), l);
+}
+
+export function chain(init){
+  return reduce(slice(arguments, 1), function(value, f){
+    return f(value);
+  }, init);
+}
+
+export function pipe(){
+  var fs = slice(arguments);
+  return function(init){
+    return reduce(fs, function(value, f){
+      return f(value);
+    }, init);
+  }
+}
+
+export function compose(){
+  return pipe.apply(this, chain(arguments, slice, reverse));
+}
+
+export function multimethod(dispatch){
+  return function(){
+    var f = dispatch.apply(this, arguments);
+    return f.apply(this, arguments);
+  }
+}
+
+export function method(f){
+  var map = new Map();
+  return Object.assign(multimethod(function(self){
+    return map.get(self) || map.get(self.constructor) || f;
+  }), {map: map});
+}
+
+export function always(value){
+  return function(){
+    return value;
+  }
+}
+
+export function noop(){
+}
+
+export function add(a, b){
+  return a + b;
+}
+
+export function subtract(a, b){
+  return a - b;
+}
+
+export function eq(a, b){
+  return a == b;
+}
+
+export function lookup(obj, key){
+  return obj[key];
+}
+
+export function juxt(){
+  var fs = slice(arguments);
+  return function(){
+    var self = this,
+        args = slice(arguments);
+    return map(function(f){
+      return f.apply(self, args);
+    }, fs);
+  }
+}

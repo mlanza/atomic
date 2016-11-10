@@ -1,0 +1,11 @@
+export {log, chain, pipe, compose} from './core';
+export * from './curried';
+import * as cons   from './cons';
+import * as string from './string';
+import * as object from './object';
+import * as array  from './array';
+export * from './protocols/seq';
+export * from './protocols/trim';
+export * from './protocols/clone';
+export * from './protocols/hash';
+export * from './protocols/coll';
