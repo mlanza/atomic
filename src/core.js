@@ -71,7 +71,7 @@ export function overload(){
   return arities(arguments, arguments[arguments.length - 1]);
 }
 
-export const arity = function(len, f){
+export function arity(len, f){
   return function(){
     return f.apply(this, slice(arguments, 0, len));
   }
