@@ -1,4 +1,5 @@
 import {identity, always, noop} from './core';
+import Reduced from './reduced';
 import {extend} from './protocol';
 import Seq from './protocols/seq';
 import Coll from './protocols/coll';
@@ -22,7 +23,7 @@ export function each(self, f){
 }
 
 export function reduce(self, f, init){ //TODO add reduced fn to test whether reduction is complete? will this affect transducers?
-  return Coll.reduce(self.tail(), f, f(init, self.head));
+  return init instanceof Reduced ? init.valueOf() : Coll.reduce(self.tail(), f, f(init, self.head));
 }
 
 export function map(self, f){

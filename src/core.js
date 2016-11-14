@@ -1,18 +1,22 @@
 import unbind from './unbind';
+import Reduced from './reduced';
 
 export const log = console.log.bind(console);
 export const slice = unbind(Array.prototype.slice);
+export const assign  = Object.assign;
 
 export function reverse(xs){
   return slice(xs).reverse();
 }
 
-export function reduce(self, xf, init){
-  var memo = init, len = self.length;
+export function reduce(xs, xf, init){
+  var memo = init, len = xs.length;
   for(var i = 0; i < len; i++){
-    memo = xf(memo, self[i]);
+    if (memo instanceof Reduced)
+      break;
+    memo = xf(memo, xs[i]);
   }
-  return memo;
+  return memo.valueOf();
 }
 
 export function identity(value){
@@ -29,6 +33,30 @@ export function curry(f, len, applied){
       return curry(f, len, args);
     }
   } : curry(f, f.length);
+}
+
+export function complement(f){
+  return function(){
+    return !f.apply(this, arguments);
+  }
+}
+
+function arities(lkp, fallback){
+  return assign(function(){
+    var f = lkp[arguments.length] || fallback;
+    return f.apply(this, arguments);
+  }, lkp);
+}
+
+export function multiarity(){
+  return arities(reduce(arguments, function(memo, f){
+    memo[f.length] = f;
+    return memo;
+  }, {}));
+}
+
+export function overload(){
+  return arities(arguments, arguments[arguments.length - 1]);
 }
 
 export const arity = function(len, f){
@@ -102,11 +130,13 @@ export function multimethod(dispatch){
   }
 }
 
-export function always(value){
+export function constantly(value){
   return function(){
     return value;
   }
 }
+
+export const always = constantly;
 
 export function noop(){
 }
@@ -132,8 +162,8 @@ export function juxt(){
   return function(){
     var self = this,
         args = slice(arguments);
-    return map(function(f){
+    return map(fs, function(f){
       return f.apply(self, args);
-    }, fs);
+    });
   }
 }
