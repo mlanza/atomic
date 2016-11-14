@@ -2,8 +2,8 @@ import unbind from './unbind';
 import {slice, reverse, reduce, map, filter, find, append, first, rest, initial, identity, always, arity} from './core';
 export {slice, reverse, reduce, map, filter, find, append, first, rest, initial, identity as toArray};
 import {extend} from './protocol';
-import Cons from './cons';
 import {EMPTY} from './empty';
+import List from './list';
 import Coll from './protocols/coll';
 import Seq from './protocols/seq';
 import Trim from './protocols/trim';
@@ -19,7 +19,7 @@ export function isEmpty(self){
 
 export function seq(self, at){
   var pos = at || 0;
-  return pos < self.length ? new Cons(self[pos], function(){
+  return pos < self.length ? new List(self[pos], function(){
     return seq(self, pos + 1);
   }) : EMPTY;
 }

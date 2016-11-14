@@ -5,13 +5,13 @@ import Seq from './protocols/seq';
 import Coll from './protocols/coll';
 import Clone from './protocols/clone';
 
-export function Cons(head, tail){
+export function List(head, tail){
   this.head = head;
   this.tail = tail;
 }
 
-export function cons(head, tail){
-  return new Cons(head, tail);
+export function list(head, tail){
+  return new List(head, tail);
 }
 
 export const empty = always(null);
@@ -32,7 +32,7 @@ export function rest(self){
 
 export function initial(self){
   var tail = self.tail();
-  return Coll.isEmpty(tail) ? tail : new Cons(self.head, function(){
+  return Coll.isEmpty(tail) ? tail : new List(self.head, function(){
     return Coll.initial(tail);
   });
 }
@@ -42,7 +42,7 @@ export function reduce(self, f, init){ //TODO add reduced fn to test whether red
 }
 
 export function map(self, f){
-  return new Cons(f(self.head), function(){
+  return new List(f(self.head), function(){
     return Coll.map(self.tail(), f);
   });
 }
@@ -52,7 +52,7 @@ export function find(self, pred){
 }
 
 export function filter(self, pred){
-  return pred(self.head) ? new Cons(self.head, function(){
+  return pred(self.head) ? new List(self.head, function(){
     return Coll.filter(self.tail(), pred);
   }) : Coll.filter(self.tail(), pred);
 }
@@ -69,7 +69,7 @@ export function toObject(self){
 }
 
 export function append(self, value){
-  return new Cons(value, always(self));
+  return new List(value, always(self));
 }
 
 extend(Coll, {
@@ -86,14 +86,14 @@ extend(Coll, {
   filter: filter,
   find: find,
   append: append
-}, Cons);
+}, List);
 
 extend(Seq, {
   seq: identity
-}, Cons);
+}, List);
 
 extend(Clone, {
   clone: identity
-}, Cons);
+}, List);
 
-export default Cons;
+export default List;

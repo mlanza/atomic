@@ -1,6 +1,6 @@
 import {always, arity, identity} from './core';
 import {extend} from './protocol';
-import Cons from './cons';
+import List from './list';
 import {EMPTY} from './empty';
 import Coll from './protocols/coll';
 import Clone from './protocols/clone';
@@ -9,7 +9,7 @@ import Hash from './protocols/hash';
 
 export function seq(obj, ks, at){
   var pos = at || 0, keys = ks || Object.keys(obj), key = keys[pos];
-  return pos < keys.length ? new Cons([key, obj[key]], function(){
+  return pos < keys.length ? new List([key, obj[key]], function(){
     return seq(obj, keys, pos + 1);
   }) : EMPTY;
 }

@@ -1,6 +1,7 @@
 import {identity, always, noop} from './core';
 import Reduced from './reduced';
 import {extend} from './protocol';
+import List from './list';
 import Seq from './protocols/seq';
 import Coll from './protocols/coll';
 import Clone from './protocols/clone';
@@ -11,10 +12,10 @@ export function Empty(){
 export const EMPTY = new Empty();
 
 export function append(self, value){
-  return new Cons(value, always(self));
+  return new List(value, always(self));
 }
 
-function init(){
+function reduce(){
   return arguments[2];
 }
 
@@ -28,7 +29,7 @@ extend(Coll, {
   initial: identity,
   append: append,
   each: noop,
-  reduce: init,
+  reduce: reduce,
   map: identity,
   filter: identity,
   find: identity
