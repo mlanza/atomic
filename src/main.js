@@ -9,9 +9,11 @@ import * as empty  from './empty';
 import * as string from './string';
 import * as object from './object';
 import * as array  from './array';
+import * as nil    from './nil';
 export {transduce, into, take, map, filter, transform} from './transduce';
-export {compose} from './core';
+export {compose, chain} from './core';
 export {initial, first, rest} from './protocols/coll';
+export {get, set, has} from './protocols/hash';
 export {seq} from './protocols/seq';
 
 //TODO create a Pair constructor for kvps in an array?  better implement IMapEntry a thing with a key and a val.

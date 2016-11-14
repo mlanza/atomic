@@ -1,10 +1,10 @@
-import {multimethod} from './core.js';
+import {multimethod} from './core';
 
 function method(f){
   var map = new Map(),
       set = map.set.bind(map);
   function dispatch(self){
-    return self == null ? f : map.get(self.constructor) || f;
+    return map.get(self == null ? null : self.constructor) || f;
   }
   return Object.assign(multimethod(dispatch), {set: set, dispatch: dispatch});
 }
