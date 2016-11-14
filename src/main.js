@@ -12,7 +12,7 @@ import * as array  from './array';
 import * as nil    from './nil';
 export {transduce, into, take, map, filter, transform} from './transduce';
 export {compose, chain} from './core';
-export {initial, first, rest} from './protocols/coll';
+export {initial, first, rest, toObject, toArray} from './protocols/coll';
 export {get, set, has} from './protocols/hash';
 export {seq} from './protocols/seq';
 

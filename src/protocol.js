@@ -27,12 +27,9 @@ export function satisfies(self, keys, value){
   return true;
 }
 
-export function extend(self, template, ...kinds){
-  for(var k in kinds){
-    var kind = kinds[k];
-    for(var key in self){
-      template[key] && self[key].set(kind, template[key]);
-    }
+export function extend(self, template, constructor){
+  for(var key in self){
+    template[key] && self[key].set(constructor, template[key]);
   }
   return self;
 }
