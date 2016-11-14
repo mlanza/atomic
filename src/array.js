@@ -1,8 +1,9 @@
 import unbind from './unbind';
-import {slice, reverse, reduce, map, filter, find, append, identity, always, arity} from './core';
-export {slice, reverse, reduce, map, filter, find, append, identity as toArray};
+import {slice, reverse, reduce, map, filter, find, append, first, rest, initial, identity, always, arity} from './core';
+export {slice, reverse, reduce, map, filter, find, append, first, rest, initial, identity as toArray};
 import {extend} from './protocol';
 import Cons from './cons';
+import {EMPTY} from './empty';
 import Coll from './protocols/coll';
 import Seq from './protocols/seq';
 import Trim from './protocols/trim';
@@ -20,7 +21,7 @@ export function seq(self, at){
   var pos = at || 0;
   return pos < self.length ? new Cons(self[pos], function(){
     return seq(self, pos + 1);
-  }) : null;
+  }) : EMPTY;
 }
 
 //TODO invent another type called Pairs or just use raw data?
@@ -62,6 +63,9 @@ extend(Coll, {
   isEmpty: isEmpty,
   toArray: identity,
   toObject: toObject,
+  first: first,
+  rest: rest,
+  initial: initial,
   map: map,
   reduce: reduce,
   filter: filter,

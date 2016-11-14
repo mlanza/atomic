@@ -23,6 +23,18 @@ export function identity(value){
   return value;
 }
 
+export function first(self){
+  return self[0];
+}
+
+export function rest(self){
+  return slice(self, 1);
+}
+
+export function initial(self){
+  return slice(self, 0, self.length - 1);
+}
+
 export function curry(f, len, applied){
   return len ? function(){
     //every call to a curried function advances by at least one argument (see `undefined`).

@@ -22,6 +22,21 @@ export function each(self, f){
   Coll.each(self.tail(), f);
 }
 
+export function first(self){
+  return self.head;
+}
+
+export function rest(self){
+  return self.tail();
+}
+
+export function initial(self){
+  var tail = self.tail();
+  return Coll.isEmpty(tail) ? tail : new Cons(self.head, function(){
+    return Coll.initial(tail);
+  });
+}
+
 export function reduce(self, f, init){ //TODO add reduced fn to test whether reduction is complete? will this affect transducers?
   return init instanceof Reduced ? init.valueOf() : Coll.reduce(self.tail(), f, f(init, self.head));
 }
@@ -57,15 +72,14 @@ export function append(self, value){
   return new Cons(value, always(self));
 }
 
-function init(){
-  return arguments[2];
-}
-
 extend(Coll, {
   empty: empty,
   isEmpty: isEmpty,
   toArray: toArray,
   toObject: toObject,
+  first: first,
+  rest: rest,
+  initial: initial,
   each: each,
   reduce: reduce,
   map: map,
@@ -74,25 +88,12 @@ extend(Coll, {
   append: append
 }, Cons);
 
-extend(Coll, {
-  empty: always(null),
-  isEmpty: always(true),
-  toArray: always([]),
-  toObject: always({}),
-  append: append,
-  each: noop,
-  reduce: init,
-  map: identity,
-  filter: identity,
-  find: identity
-}, null, undefined);
-
 extend(Seq, {
   seq: identity
-}, Cons, null, undefined);
+}, Cons);
 
 extend(Clone, {
   clone: identity
-}, Cons, null, undefined);
+}, Cons);
 
 export default Cons;

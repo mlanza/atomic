@@ -1,6 +1,7 @@
 import {always, arity, identity} from './core';
 import {extend} from './protocol';
 import Cons from './cons';
+import {EMPTY} from './empty';
 import Coll from './protocols/coll';
 import Clone from './protocols/clone';
 import Seq from './protocols/seq';
@@ -10,7 +11,7 @@ export function seq(obj, ks, at){
   var pos = at || 0, keys = ks || Object.keys(obj), key = keys[pos];
   return pos < keys.length ? new Cons([key, obj[key]], function(){
     return seq(obj, keys, pos + 1);
-  }) : null;
+  }) : EMPTY;
 }
 
 export function append(self, pair){
@@ -27,6 +28,14 @@ export function toArray(self){
 
 export function reduce(self, f, init){
   return Coll.reduce(seq(self), f, init);
+}
+
+export function first(self){
+  return Coll.reduce(Coll.first(seq(self)), Coll.append, {});
+}
+
+export function rest(self){
+  return Coll.reduce(Coll.rest(seq(self)), Coll.append, {});
 }
 
 export function map(self, f){
@@ -72,6 +81,8 @@ extend(Coll, {
   isEmpty: isEmpty,
   toArray: toArray,
   toObject: identity,
+  first: first,
+  rest: rest,
   reduce: reduce,
   map: map,
   filter: filter,
