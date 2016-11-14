@@ -8,9 +8,7 @@ import {EMPTY} from './empty.js';
 export const get = always(null);
 
 export function set(self, key, value){
-  var obj = {};
-  obj[key] = value;
-  return obj;
+  return Hash.set({}, key, value);
 }
 
 export const has = always(false);
