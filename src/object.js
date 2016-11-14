@@ -72,6 +72,7 @@ extend(Coll, {
   isEmpty: isEmpty,
   toArray: toArray,
   toObject: identity,
+  reduce: reduce,
   map: map,
   filter: filter,
   find: find,

@@ -1,5 +1,15 @@
-import {add} from './core';
-import {log, chain, pipe, seq, toArray, toObject, reduce, trim, get, set, filter, eq} from './lib';
+import {log, chain, pipe, add} from './core';
+import {eq} from './curried';
+import {seq} from './protocols/seq';
+import {trim} from './protocols/trim';
+import {reduce, filter, toArray, toObject} from './protocols/coll';
+import {get, set} from './protocols/hash';
+import * as cons   from './cons';
+import * as string from './string';
+import * as object from './object';
+import * as array  from './array';
+export {transduce, into, take, map, filter, transform} from './transduce';
+export {compose} from './core';
 
 //TODO create a Pair constructor for kvps in an array?  better implement IMapEntry a thing with a key and a val.
 
