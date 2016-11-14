@@ -4,7 +4,7 @@ import {seq} from './protocols/seq';
 import {trim} from './protocols/trim';
 import {reduce, filter, initial, first, rest, toArray, toObject} from './protocols/coll';
 import {get, set} from './protocols/hash';
-import * as cons   from './cons';
+import * as list   from './list';
 import * as empty  from './empty';
 import * as string from './string';
 import * as object from './object';
