@@ -1,3 +1,6 @@
+import {extend} from './protocol';
+import Deref from './protocols/deref';
+
 export function Reduced(value){
   this.value = value;
 }
@@ -13,5 +16,11 @@ export function reduced(value){
 export function isReduced(value){
   return value instanceof Reduced;
 }
+
+extend(Deref, {
+  deref: function(reduced){
+    return reduced.valueOf();
+  }
+}, Reduced);
 
 export default Reduced;

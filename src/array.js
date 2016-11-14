@@ -2,7 +2,7 @@ import unbind from './unbind';
 import {slice, reverse, reduce, map, filter, find, append, identity, always, arity} from './core';
 export {slice, reverse, reduce, map, filter, find, append, identity as toArray};
 import {extend} from './protocol';
-import {Cons} from './cons';
+import Cons from './cons';
 import Coll from './protocols/coll';
 import Seq from './protocols/seq';
 import Trim from './protocols/trim';
