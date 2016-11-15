@@ -1,4 +1,4 @@
-import {always, arity, identity} from '../core';
+import {always, arity, identity, slice, reduce as _reduce} from '../core';
 import {extend} from '../protocol';
 import List from '../types/list';
 import {EMPTY} from '../types/empty';
@@ -11,6 +11,10 @@ export function seq(obj, ks, at){
   return pos < keys.length ? new List([key, obj[key]], function(){
     return seq(obj, keys, pos + 1);
   }) : EMPTY;
+}
+
+export function concat(){
+  return _reduce(slice(arguments), Object.assign, {});
 }
 
 export function append(self, pair){
@@ -82,7 +86,8 @@ extend(Coll, {
   map: map,
   filter: filter,
   find: find,
-  append: append
+  append: append,
+  concat: concat
 }, Object);
 
 extend(Seq, {

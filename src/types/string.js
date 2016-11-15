@@ -1,5 +1,5 @@
 import unbind from '../unbind.js';
-import {flip, identity, add} from '../core.js';
+import {flip, identity, add, first, rest} from '../core.js';
 import {extend} from '../protocol';
 import Trim from '../protocols/trim';
 import Coll from '../protocols/coll';
@@ -15,6 +15,10 @@ export const substring   = flip(unbind(String.prototype.substring), 3);
 export const startsWith  = flip(unbind(String.prototype.startsWith), 2);
 export const endsWith    = flip(unbind(String.prototype.endsWith), 2);
 export const append      = add;
+
+export function concat(){
+  return reduce(slice(arguments), add, "");
+}
 
 export function empty(){
   return "";
@@ -41,11 +45,14 @@ extend(Coll, {
   empty: empty,
   isEmpty: isEmpty,
   toArray: toArray,
+  first: first,
+  rest: rest,
   map: map,
   reduce: reduce,
   filter: filter,
   find: find,
-  append: append
+  append: append,
+  concat: concat
 }, String);
 
 extend(Seq, {
