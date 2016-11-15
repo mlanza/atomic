@@ -1,10 +1,9 @@
-import {identity, always, noop} from './core';
-import Reduced from './reduced';
-import {extend} from './protocol';
-import List from './list';
-import Seq from './protocols/seq';
-import Coll from './protocols/coll';
-import Clone from './protocols/clone';
+import {identity, always, noop} from '../core';
+import {extend} from '../protocol';
+import Reduced from '../types/reduced';
+import List from '../types/list';
+import Seq from '../protocols/seq';
+import Coll from '../protocols/coll';
 
 export function Empty(){
 }
@@ -37,10 +36,6 @@ extend(Coll, {
 
 extend(Seq, {
   seq: identity
-}, Empty);
-
-extend(Clone, {
-  clone: identity
 }, Empty);
 
 export default Empty;

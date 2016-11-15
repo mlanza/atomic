@@ -1,11 +1,10 @@
-import unbind from './unbind.js';
-import {flip, identity, add} from './core.js';
-import {extend} from './protocol';
-import Trim from './protocols/trim';
-import Coll from './protocols/coll';
-import Seq from './protocols/seq';
-import Clone from './protocols/clone';
-import {isEmpty, map as toArray, find, seq, reduce} from './array';
+import unbind from '../unbind.js';
+import {flip, identity, add} from '../core.js';
+import {extend} from '../protocol';
+import Trim from '../protocols/trim';
+import Coll from '../protocols/coll';
+import Seq from '../protocols/seq';
+import {isEmpty, map as toArray, find, seq, reduce} from '../types/array';
 
 export const trim        = unbind(String.prototype.trim);
 export const toLowerCase = unbind(String.prototype.toLowerCase);
@@ -55,8 +54,4 @@ extend(Seq, {
 
 extend(Trim, {
   trim: trim
-}, String);
-
-extend(Clone, {
-  clone: identity
 }, String);

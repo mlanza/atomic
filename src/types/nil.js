@@ -1,9 +1,8 @@
-import {identity, always, noop} from './core';
-import Clone from './protocols/clone';
-import Hash from './protocols/hash';
-import Seq from './protocols/seq';
-import {extend} from './protocol';
-import {EMPTY} from './empty.js';
+import {always, noop} from '../core';
+import Hash from '../protocols/hash';
+import Seq from '../protocols/seq';
+import {extend} from '../protocol';
+import {EMPTY} from '../types/empty.js';
 
 export const get = always(null);
 
@@ -25,8 +24,4 @@ extend(Hash, {
   get: get,
   set: set,
   has: has
-}, null);
-
-extend(Clone, {
-  clone: identity
 }, null);

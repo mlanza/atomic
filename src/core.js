@@ -1,5 +1,5 @@
 import unbind from './unbind';
-import Reduced from './reduced';
+import Reduced from './types/reduced';
 
 export const log = console.log.bind(console);
 export const slice = unbind(Array.prototype.slice);
@@ -117,7 +117,7 @@ export function flip(f, len){
 }
 
 export function chain(init){
-  return reduce(slice(arguments, 1), function(value, f){
+  return reduce(rest(arguments), function(value, f){
     return f(value);
   }, init);
 }
@@ -179,3 +179,9 @@ export function juxt(){
     });
   }
 }
+
+export function odd(n){
+  return n % 2;
+}
+
+export const even = complement(odd);

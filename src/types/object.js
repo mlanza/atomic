@@ -1,11 +1,10 @@
-import {always, arity, identity} from './core';
-import {extend} from './protocol';
-import List from './list';
-import {EMPTY} from './empty';
-import Coll from './protocols/coll';
-import Clone from './protocols/clone';
-import Seq from './protocols/seq';
-import Hash from './protocols/hash';
+import {always, arity, identity} from '../core';
+import {extend} from '../protocol';
+import List from '../types/list';
+import {EMPTY} from '../types/empty';
+import Coll from '../protocols/coll';
+import Seq from '../protocols/seq';
+import Hash from '../protocols/hash';
 
 export function seq(obj, ks, at){
   var pos = at || 0, keys = ks || Object.keys(obj), key = keys[pos];
@@ -58,10 +57,6 @@ export function isEmpty(self){
   return Object.keys(self).length === 0;
 }
 
-export function clone(self){
-  return Object.assign({}, self);
-}
-
 export function has(self, key){
   return self.hasOwnProperty(key);
 }
@@ -71,9 +66,9 @@ export function get(self, key){
 }
 
 export function set(self, key, value){
-  var cloned = clone(self);
-  cloned[key] = value;
-  return cloned;
+  var obj = Object.assign({}, self);
+  obj[key] = value;
+  return obj;
 }
 
 extend(Coll, {
@@ -92,10 +87,6 @@ extend(Coll, {
 
 extend(Seq, {
   seq: arity(1, seq)
-}, Object);
-
-extend(Clone, {
-  clone: clone
 }, Object);
 
 extend(Hash, {

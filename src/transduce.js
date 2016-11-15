@@ -1,4 +1,4 @@
-import {reduced} from './reduced.js';
+import {reduced} from './types/reduced.js';
 import {overload, multiarity, constantly, complement, compose, identity} from './core.js';
 import {Coll} from './protocols/coll.js';
 
