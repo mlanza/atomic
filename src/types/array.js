@@ -1,14 +1,13 @@
-import unbind from './unbind';
-import {slice, reverse, reduce, map, filter, find, append, first, rest, initial, identity, always, arity} from './core';
+import unbind from '../unbind';
+import {slice, reverse, reduce, map, filter, find, append, first, rest, initial, identity, always, arity} from '../core';
 export {slice, reverse, reduce, map, filter, find, append, first, rest, initial, identity as toArray};
-import {extend} from './protocol';
-import {EMPTY} from './empty';
-import List from './list';
-import Coll from './protocols/coll';
-import Seq from './protocols/seq';
-import Trim from './protocols/trim';
-import Clone from './protocols/clone';
-import Hash from './protocols/hash';
+import {extend} from '../protocol';
+import {EMPTY} from '../types/empty';
+import List from '../types/list';
+import Coll from '../protocols/coll';
+import Seq from '../protocols/seq';
+import Trim from '../protocols/trim';
+import Hash from '../protocols/hash';
 
 export const join = unbind(Array.prototype.join);
 export const empty = always([]);
@@ -36,8 +35,6 @@ export function trim(self){
   return filter(self, identity);
 }
 
-export const clone = arity(1, slice);
-
 export function has(self, key){
   return key > -1 && key < self.length;
 }
@@ -47,9 +44,9 @@ export function get(self, key){
 }
 
 export function set(self, key, value){
-  var cloned = clone(self);
-  cloned[key] = value;
-  return cloned;
+  var arr = slice(self);
+  arr[key] = value;
+  return arr;
 }
 
 extend(Hash, {
@@ -79,8 +76,4 @@ extend(Seq, {
 
 extend(Trim, {
   trim: trim
-}, Array);
-
-extend(Clone, {
-  clone: clone
 }, Array);

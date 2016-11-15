@@ -1,5 +1,5 @@
-import {extend} from './protocol';
-import Deref from './protocols/deref';
+import {extend} from '../protocol';
+import Deref from '../protocols/deref';
 
 export function Reduced(value){
   this.value = value;

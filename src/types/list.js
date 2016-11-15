@@ -1,9 +1,9 @@
-import {identity, always, noop} from './core';
-import Reduced from './reduced';
-import {extend} from './protocol';
-import Seq from './protocols/seq';
-import Coll from './protocols/coll';
-import Clone from './protocols/clone';
+import {identity, always, noop} from '../core';
+import Reduced from '../types/reduced';
+import {EMPTY} from '../types/empty';
+import {extend} from '../protocol';
+import Seq from '../protocols/seq';
+import Coll from '../protocols/coll';
 
 export function List(head, tail){
   this.head = head;
@@ -14,7 +14,7 @@ export function list(head, tail){
   return new List(head, tail);
 }
 
-export const empty = always(null);
+export const empty = always(EMPTY);
 export const isEmpty = always(false);
 
 export function each(self, f){
@@ -90,10 +90,6 @@ extend(Coll, {
 
 extend(Seq, {
   seq: identity
-}, List);
-
-extend(Clone, {
-  clone: identity
 }, List);
 
 export default List;
