@@ -1,5 +1,6 @@
 import unbind from './unbind';
 import Reduced from './types/reduced';
+import {deref} from './protocols/deref';
 
 export const log = console.log.bind(console);
 export const slice = unbind(Array.prototype.slice);
@@ -16,7 +17,7 @@ export function reduce(xs, xf, init){
       break;
     memo = xf(memo, xs[i]);
   }
-  return memo.valueOf();
+  return deref(memo);
 }
 
 export function identity(value){

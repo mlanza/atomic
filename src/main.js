@@ -10,10 +10,9 @@ import * as string from './types/string';
 import * as object from './types/object';
 import * as array  from './types/array';
 import * as nil    from './types/nil';
-import * as conct  from './types/concat';
-export {transduce, into, take, map, filter, transform} from './transduce';
-export {compose, chain, odd} from './core';
-export {initial, first, rest, concat, toObject, toArray} from './protocols/coll';
+export {transduce, into, transform} from './transduce';
+export {compose, chain, odd, add, log} from './core';
+export {initial, first, rest, concat, each, filter, find, map, reduce, toObject, toArray} from './protocols/coll';
 export {get, set, has} from './protocols/hash';
 export {seq} from './protocols/seq';
 
