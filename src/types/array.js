@@ -3,6 +3,7 @@ import {slice, reverse, reduce, map, filter, find, append, first, rest, initial,
 export {slice, reverse, reduce, map, filter, find, append, first, rest, initial, identity as toArray};
 import {extend} from '../protocol';
 import {EMPTY} from '../types/empty';
+import {concat as _concat} from '../types/concat';
 import List from '../types/list';
 import Coll from '../protocols/coll';
 import Seq from '../protocols/seq';
@@ -14,6 +15,10 @@ export const empty = always([]);
 
 export function isEmpty(self){
   return self.length === 0;
+}
+
+export function concat(){
+  return Coll.toArray(_concat.apply(this, arguments));
 }
 
 export function seq(self, at){
@@ -45,7 +50,7 @@ export function get(self, key){
 
 export function set(self, key, value){
   var arr = slice(self);
-  arr[key] = value;
+  arr.splice(key, 1, value);
   return arr;
 }
 
@@ -67,7 +72,8 @@ extend(Coll, {
   reduce: reduce,
   filter: filter,
   find: find,
-  append: append
+  append: append,
+  concat: concat
 }, Array);
 
 extend(Seq, {
