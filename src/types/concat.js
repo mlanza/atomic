@@ -7,40 +7,42 @@ import Seq from '../protocols/seq';
 import Coll from '../protocols/coll';
 
 export function Concat(){
-  this.parts = arguments.length ? Coll.filter(slice(arguments), complement(Coll.isEmpty)) : [];
+  this.contents = arguments.length ? Coll.map(Coll.filter(slice(arguments), complement(Coll.isEmpty)), Seq.seq) : [];
 }
 
 export function concat(){
-  var that = new Concat();
-  that.parts = arguments.length ? Coll.filter(slice(arguments), complement(Coll.isEmpty)) : [];
-  return that;
+  var contents = arguments.length ? Coll.map(Coll.filter(slice(arguments), complement(Coll.isEmpty)), Seq.seq) : [],
+      self     = new Concat();
+  self.contents = contents;
+  return self;
 }
 
 export function isEmpty(self){
-  return self.parts.length === 0;
+  return self.contents.length === 0;
 }
 
 export function toArray(self){
   return Coll.toArray(seq(self));
 }
 
+export function toObject(self){
+  return Coll.toObject(seq(self));
+}
+
 export function first(self){
-  return Coll.first(Coll.first(self.parts));
+  return Coll.first(seq(self));
 }
 
 export function rest(self){
-  if (isEmpty(self)) return EMPTY;
-  var fst = Coll.first(self.parts),
-      rst = Coll.rest(fst);
-  return Coll.isEmpty(rst) ? concat.apply(this, Coll.rest(self.parts)) : concat.apply(this, [rst].concat(Coll.rest(self.parts)));
+  return Coll.rest(seq(self));
 }
 
 export function initial(self){
-  return Coll.initial(seq(self));
+  return concat(Coll.initial(seq(self)));
 }
 
 export function append(self, value){
-  return new Concat(self, [value]);
+  return new Concat(self.contents, [value]);
 }
 
 export function each(self, f){
@@ -52,11 +54,11 @@ export function reduce(self, f, init){
 }
 
 export function map(self, f){
-  return Coll.map(seq(self), f);
+  return concat(Coll.map(seq(self), f));
 }
 
 export function filter(self, pred){
-  return Coll.filter(seq(self), pred);
+  return concat(Coll.filter(seq(self), pred));
 }
 
 export function find(self, pred){
@@ -64,10 +66,14 @@ export function find(self, pred){
 }
 
 export function seq(self){
-  return isEmpty(self) ? EMPTY : new List(first(self), function(){
-    return rest(self);
+  if (isEmpty(self)) return EMPTY;
+  var fst = Coll.first(self.contents);
+  return new List(Coll.first(fst), function(){
+    return seq(concat.apply(this, [Coll.rest(fst)].concat(Coll.rest(self.contents))));
   });
 }
+
+export default Concat;
 
 extend(Seq, {
   seq: seq
@@ -77,10 +83,10 @@ extend(Coll, {
   empty: always(EMPTY),
   isEmpty: isEmpty,
   toArray: toArray,
-  toObject: null,
+  toObject: toObject,
   first: first,
   rest: rest,
-  initial: null,
+  initial: initial,
   append: append,
   concat: concat,
   each: each,

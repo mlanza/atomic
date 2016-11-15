@@ -16,7 +16,7 @@ export function append(self, value){
 }
 
 export function concat(self, other){
-  return other;
+  return Coll.isEmpty(other) ? EMPTY : other;
 }
 
 function reduce(){

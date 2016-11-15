@@ -1,6 +1,7 @@
 import {identity, always, noop} from '../core';
 import Reduced from '../types/reduced';
 import {EMPTY} from '../types/empty';
+import {concat as _concat, seq as _seq} from '../types/concat';
 import {extend} from '../protocol';
 import Seq from '../protocols/seq';
 import Coll from '../protocols/coll';
@@ -48,7 +49,7 @@ export function map(self, f){
 }
 
 export function find(self, pred){
-  return pred(self.head) ? self.head : find(self.tail(), pred);
+  return pred(self.head) ? self.head : Coll.find(self.tail(), pred);
 }
 
 export function filter(self, pred){
@@ -72,6 +73,10 @@ export function append(self, value){
   return new List(value, always(self));
 }
 
+export function concat(){
+  return _seq(_concat.apply(this, arguments));
+}
+
 extend(Coll, {
   empty: empty,
   isEmpty: isEmpty,
@@ -85,7 +90,8 @@ extend(Coll, {
   map: map,
   filter: filter,
   find: find,
-  append: append
+  append: append,
+  concat: concat
 }, List);
 
 extend(Seq, {
