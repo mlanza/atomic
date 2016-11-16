@@ -14,6 +14,7 @@ export const Coll = protocol({
   reduce: null,
   append: null,
   concat: null,
+  flatten: null,
   toArray: null,
   toObject: null
 });
@@ -32,4 +33,5 @@ export const filter = flip(Coll.filter, 2);
 export const find = flip(Coll.find, 2);
 export const append = flip(Coll.append, 2);
 export const concat = flip(Coll.concat, 2);
+export const flatten = Coll.flatten;
 export default Coll;

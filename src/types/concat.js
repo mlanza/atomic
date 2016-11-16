@@ -38,7 +38,7 @@ export function rest(self){
 }
 
 export function initial(self){
-  return concat(Coll.initial(seq(self)));
+  return Coll.initial(seq(self));
 }
 
 export function append(self, value){
@@ -54,7 +54,7 @@ export function reduce(self, f, init){
 }
 
 export function map(self, f){
-  return concat(Coll.map(seq(self), f));
+  return Coll.map(seq(self), f);
 }
 
 export function filter(self, pred){
@@ -63,6 +63,10 @@ export function filter(self, pred){
 
 export function find(self, pred){
   return Coll.find(seq(self), pred);
+}
+
+export function flatten(self){
+  return Coll.flatten(seq(self));
 }
 
 export function seq(self){

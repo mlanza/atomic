@@ -73,6 +73,18 @@ export function append(self, value){
   return new List(value, always(self));
 }
 
+export function flatten(self){
+  if (Coll.isEmpty(self)) return EMPTY;
+  var nested = dispatch(Coll, 'isEmpty', self.head);
+  return nested ? Coll.isEmpty(self.head) ? flatten(new List(Coll.first(self.tail()), function(){
+    return Coll.rest(self.tail());
+  })) : flatten(new List(Coll.first(self.head), function(){
+    return flatten(new List(Coll.rest(self.head), self.tail));
+  })) : new List(self.head, function(){
+    return Coll.flatten(self.tail());
+  });
+}
+
 export function concat(){
   return _seq(_concat.apply(this, arguments));
 }
