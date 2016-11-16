@@ -1,28 +1,13 @@
 import {multimethod} from './core';
 
-function method(defaultFn){
-  var map = new Map(),
-      set = map.set.bind(map);
-  function dispatch(self){
-    if (self == null) {
-      f = map.get(null);
-    } else {
-      var pointer = self,
-          f = map.get(pointer.constructor);
-      while (!f && pointer) {
-        pointer = pointer.__proto__;
-        if (pointer)
-          f = map.get(pointer.constructor);
-      }
-    }
-    return f || defaultFn;
-  }
-  return Object.assign(multimethod(dispatch), {set: set, dispatch: dispatch});
-}
+let TEMPLATE = Symbol('template'),
+    MAP = Symbol('map');
 
 export function Protocol(template){
+  this[TEMPLATE] = template;
+  this[MAP] = new Map();
   for(var key in template){
-    this[key] = method(template[key]);
+    this[key] = method(this, key);
   }
 }
 
@@ -30,18 +15,21 @@ export function protocol(template){
   return new Protocol(template);
 }
 
-export function satisfies(self, keys, value){
-  var ks = keys || self;
-  for(var key in ks) {
-    if (!self[key].dispatch(value)) return false;
-  }
-  return true;
+export function satisfies(self, value){
+  return self[MAP].get(value == null ? null : value.constructor);
 }
 
-export function extend(self, template, constructor){
-  for(var key in self){
-    template[key] && self[key].set(constructor, template[key]);
+function method(protocol, key){
+  function dispatch(value){
+    var f = (satisfies(protocol, value) || {})[key];
+    return f ? f : value.__proto__.constructor !== Object ? dispatch(value.__proto__) : protocol[TEMPLATE][key];
   }
+  return multimethod(dispatch);
+}
+
+export function extend(self, constructor, template){
+  var curr = self[MAP].get(constructor) || {};
+  self[MAP].set(constructor, Object.assign(curr, template));
   return self;
 }
 

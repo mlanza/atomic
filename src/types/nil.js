@@ -16,12 +16,12 @@ export function isNil(value){
   return null == value;
 }
 
-extend(Seq, {
+extend(Seq, null, {
   seq: always(EMPTY)
-}, null);
+});
 
-extend(Hash, {
+extend(Hash, null, {
   get: get,
   set: set,
   has: has
-}, null);
+});

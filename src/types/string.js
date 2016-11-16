@@ -41,7 +41,7 @@ export function filter(self, pred){
   return memo;
 }
 
-extend(Coll, {
+extend(Coll, String, {
   empty: empty,
   isEmpty: isEmpty,
   toArray: toArray,
@@ -53,12 +53,12 @@ extend(Coll, {
   find: find,
   append: append,
   concat: concat
-}, String);
+});
 
-extend(Seq, {
+extend(Seq, String, {
   seq: seq
-}, String);
+});
 
-extend(Trim, {
+extend(Trim, String, {
   trim: trim
-}, String);
+});
