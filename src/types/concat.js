@@ -4,7 +4,6 @@ import Reduced from '../types/reduced';
 import {EMPTY} from '../types/empty';
 import List from '../types/list';
 import Seq from '../protocols/seq';
-import Coll from '../protocols/coll';
 
 export function Concat(){
   this.contents = arguments.length ? Coll.map(Coll.filter(slice(arguments), complement(Coll.isEmpty)), Seq.seq) : [];
@@ -81,21 +80,4 @@ export default Concat;
 
 extend(Seq, Concat, {
   seq: seq
-});
-
-extend(Coll, Concat, {
-  empty: always(EMPTY),
-  isEmpty: isEmpty,
-  toArray: toArray,
-  toObject: toObject,
-  first: first,
-  rest: rest,
-  initial: initial,
-  append: append,
-  concat: concat,
-  each: each,
-  reduce: reduce,
-  map: map,
-  filter: filter,
-  find: find
 });

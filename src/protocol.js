@@ -1,4 +1,4 @@
-import {multimethod} from './core';
+import {multimethod, curry} from './core';
 
 let TEMPLATE = Symbol('template'),
     MAP = Symbol('map');
@@ -15,14 +15,14 @@ export function protocol(template){
   return new Protocol(template);
 }
 
-export function satisfies(self, value){
+export const satisfies = curry(function(self, value){
   return self[MAP].get(value == null ? null : value.constructor);
-}
+});
 
 function method(protocol, key){
   function dispatch(value){
     var f = (satisfies(protocol, value) || {})[key];
-    return f ? f : value.__proto__.constructor !== Object ? dispatch(value.__proto__) : protocol[TEMPLATE][key];
+    return f ? f : value != null && value.__proto__.constructor !== Object ? dispatch(value.__proto__) : protocol[TEMPLATE][key];
   }
   return multimethod(dispatch);
 }
