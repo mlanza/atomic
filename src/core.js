@@ -36,17 +36,9 @@ export function initial(self){
   return slice(self, 0, self.length - 1);
 }
 
-export const placeholder = {};
-
 export function partial(f){
   var applied = rest(arguments);
-  return find(applied, eq(placeholder)) ? function(){
-    var args = slice(arguments);
-    var appl = map(applied, function(arg){
-      return arg === placeholder ? args.shift() : arg;
-    });
-    return f.apply(this, concat(appl, args));
-  } : function(){
+  return function(){
     return f.apply(this, concat(applied, arguments));
   }
 }
@@ -92,30 +84,6 @@ export function arity(len, f){
     return f.apply(this, slice(arguments, 0, len));
   }
 };
-
-export function map(self, f){
-  var xs = [], len = self.length;
-  for(var i = 0; i < len; i++){
-    xs.push(f(self[i]));
-  }
-  return xs;
-}
-
-export function filter(self, pred){
-  var xs = [], len = self.length;
-  for(var i = 0; i < len; i++){
-    if (pred(self[i]))
-      xs.push(self[i]);
-  }
-  return xs;
-}
-
-export function find(self, pred){
-  var len = self.length;
-  for(var i = 0; i < len; i++){
-    if (pred(self[i])) return self[i];
-  }
-}
 
 export function append(self, value){
   return self.concat([value]);
@@ -190,9 +158,9 @@ export function juxt(){
   return function(){
     var self = this,
         args = slice(arguments);
-    return map(fs, function(f){
-      return f.apply(self, args);
-    });
+    return reduce(fs, function(memo, f){
+      return memo.concat([f.apply(self, args)]);
+    }, []);
   }
 }
 

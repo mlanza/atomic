@@ -2,9 +2,9 @@ import {identity, always, noop} from '../core';
 import {extend} from '../protocol';
 import Reduced from '../types/reduced';
 import List from '../types/list';
-import Seq from '../protocols/seq';
-import Coll from '../protocols/coll';
-import {seq} from '../protocols/seq';
+import Seqable from '../protocols/seqable';
+import Reduce from '../protocols/reduce';
+import {deref} from '../protocols/deref';
 
 export function Empty(){
 }
@@ -19,10 +19,11 @@ export function concat(self, other){
   return Coll.isEmpty(other) ? EMPTY : other;
 }
 
-function reduce(){
-  return arguments[2];
+export function reduce(){
+  return deref(arguments[2]);
 }
 
+/*
 extend(Coll, Empty, {
   empty: identity,
   isEmpty: always(true),
@@ -40,9 +41,14 @@ extend(Coll, Empty, {
   filter: identity,
   find: identity
 });
+*/
 
-extend(Seq, Empty, {
-  seq: identity
+extend(Reduce, Empty, {
+  reduce: reduce
+});
+
+extend(Seqable, Empty, {
+  seq: always(null)
 });
 
 export default Empty;
