@@ -13,7 +13,7 @@ import Collection from '../protocols/collection';
 export function seq(obj, ks, at){
   var pos = at || 0, keys = ks || Object.keys(obj), key = keys[pos];
   return pos < keys.length ? new List([key, obj[key]], function(){
-    return seq(obj, keys, pos + 1);
+    return seq(obj, keys, pos + 1) || EMPTY;
   }) : null;
 }
 

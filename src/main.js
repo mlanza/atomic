@@ -16,10 +16,9 @@ export {nth} from './protocols/indexed';
 export {count} from './protocols/counted';
 export {next} from './protocols/next';
 export {reduce} from './protocols/reduce';
-import {satisfies} from './protocol';
 import {Reduce} from './protocols/reduce';
-import {map, filter, find, toArray, toObject} from './coll';
-export {map, filter, find, toArray, toObject} from './coll';
+import {toArray, toObject} from './coll';
+import {each, map, filter, find, satisfies} from './curried';
 
 QUnit.test("IndexedSeq", function(assert){
   assert.equal(chain(letters, first), "g");
@@ -30,4 +29,5 @@ QUnit.test("IndexedSeq", function(assert){
   assert.ok(chain(nums, satisfies(Reduce)));
   assert.equal(chain(nums, reduce(add, 0)), 39);
   assert.deepEqual(chain([["Moe", "Howard"], ["Curly", "Howard"]], toObject), {Moe: "Howard", Curly: "Howard"});
+  assert.deepEqual(chain({Moe: "Howard", Curly: "Howard"}, toArray), [["Moe", "Howard"], ["Curly", "Howard"]]);
 });

@@ -1,4 +1,4 @@
-import {identity, always, multiarity} from '../core';
+import {identity, always, partial} from '../core';
 import {EMPTY} from '../types/empty';
 import Reduced from '../types/reduced';
 import List from '../types/list';
@@ -25,7 +25,7 @@ export function indexedSeq(indexed, start){
 }
 
 export const empty = always(indexedSeq([]));
-export const isIndexedSeq = satisfies(IndexedSeq);
+export const isIndexedSeq = partial(satisfies. IndexedSeq);
 
 export function next(self){
   var start = self.start + 1;

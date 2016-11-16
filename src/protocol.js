@@ -15,9 +15,9 @@ export function protocol(template){
   return new Protocol(template);
 }
 
-export const satisfies = curry(function(self, value){
+export function satisfies(self, value){
   return self[MAP].get(value == null ? null : value.constructor);
-});
+}
 
 function method(protocol, key){
   function dispatch(value){

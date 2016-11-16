@@ -86,10 +86,5 @@ export function concat(){
   return _seq(_concat.apply(this, arguments));
 }
 
-extend(Coll, List, {
-  toObject: toObject,
-  concat: concat
-});
-
 */
 export default List;

@@ -1,3 +1,4 @@
+import {partial} from '../core.js';
 import {protocol, satisfies} from '../protocol.js';
 export const Seq = protocol({
   first: null,
@@ -5,5 +6,5 @@ export const Seq = protocol({
 });
 export const first = Seq.first;
 export const rest  = Seq.rest;
-export const isSeq = satisfies(Seq);
+export const isSeq = partial(satisfies, Seq);
 export default Seq;

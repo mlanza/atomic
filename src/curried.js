@@ -1,8 +1,13 @@
 import * as core from './core';
+import * as coll from './coll';
+import * as protocol from './protocol';
 import {curry, flip} from './core';
-import protocol from './protocol';
 export const arity     = curry(core.arity);
 export const eq        = curry(core.eq);
 export const add       = curry(core.add);
 export const subtract  = flip(core.subtract);
-export const satisfies = flip(protocol.satisfies);
+export const satisfies = curry(protocol.satisfies);
+export const each      = curry(coll.each);
+export const map       = curry(coll.map);
+export const filter    = curry(coll.filter);
+export const find      = curry(coll.find);
