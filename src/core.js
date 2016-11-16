@@ -145,13 +145,48 @@ export function subtract(a, b){
   return a - b;
 }
 
+export function identical(a, b){
+  return a === b;
+}
+
 export function eq(a, b){
   return a == b;
+}
+
+export function ne(a, b){
+  return a != b;
+}
+
+export function gt(a, b){
+  return a > b;
+}
+
+export function gte(a, b){
+  return a >= b;
+}
+
+export function lt(a, b){
+  return a < b;
+}
+
+export function lte(a, b){
+  return a <= b;
+}
+
+export function tap(f, value){
+  f(value);
+  return value;
 }
 
 export function lookup(obj, key){
   return obj[key];
 }
+
+export function odd(n){
+  return n % 2;
+}
+
+export const even = complement(odd);
 
 export function juxt(){
   var fs = slice(arguments);
@@ -164,8 +199,16 @@ export function juxt(){
   }
 }
 
-export function odd(n){
-  return n % 2;
+export function doto(){
+  var f = juxt.apply(this, arguments);
+  return function(value){
+    f(value);
+  }
 }
 
-export const even = complement(odd);
+export function invokeWith(){
+  var args = arguments;
+  return function(self){
+    return self.apply(this, args);
+  }
+}
