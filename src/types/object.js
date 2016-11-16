@@ -75,7 +75,7 @@ export function set(self, key, value){
   return obj;
 }
 
-extend(Coll, {
+extend(Coll, Object, {
   empty: empty,
   isEmpty: isEmpty,
   toArray: toArray,
@@ -88,14 +88,14 @@ extend(Coll, {
   find: find,
   append: append,
   concat: concat
-}, Object);
+});
 
-extend(Seq, {
+extend(Seq, Object, {
   seq: arity(1, seq)
-}, Object);
+});
 
-extend(Hash, {
+extend(Hash, Object, {
   has: has,
   get: get,
   set: set
-}, Object);
+});

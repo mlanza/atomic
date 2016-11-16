@@ -23,7 +23,7 @@ function reduce(){
   return arguments[2];
 }
 
-extend(Coll, {
+extend(Coll, Empty, {
   empty: identity,
   isEmpty: always(true),
   toArray: always([]),
@@ -38,10 +38,10 @@ extend(Coll, {
   map: identity,
   filter: identity,
   find: identity
-}, Empty);
+});
 
-extend(Seq, {
+extend(Seq, Empty, {
   seq: identity
-}, Empty);
+});
 
 export default Empty;

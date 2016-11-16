@@ -77,7 +77,7 @@ export function concat(){
   return _seq(_concat.apply(this, arguments));
 }
 
-extend(Coll, {
+extend(Coll, List, {
   empty: empty,
   isEmpty: isEmpty,
   toArray: toArray,
@@ -92,10 +92,10 @@ extend(Coll, {
   find: find,
   append: append,
   concat: concat
-}, List);
+});
 
-extend(Seq, {
+extend(Seq, List, {
   seq: identity
-}, List);
+});
 
 export default List;

@@ -54,13 +54,13 @@ export function set(self, key, value){
   return arr;
 }
 
-extend(Hash, {
+extend(Hash, Array, {
   has: has,
   get: get,
   set: set
-}, Array);
+});
 
-extend(Coll, {
+extend(Coll, Array, {
   empty: empty,
   isEmpty: isEmpty,
   toArray: identity,
@@ -74,12 +74,12 @@ extend(Coll, {
   find: find,
   append: append,
   concat: concat
-}, Array);
+});
 
-extend(Seq, {
+extend(Seq, Array, {
   seq: arity(1, seq)
-}, Array);
+});
 
-extend(Trim, {
+extend(Trim, Array, {
   trim: trim
-}, Array);
+});

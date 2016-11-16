@@ -75,11 +75,11 @@ export function seq(self){
 
 export default Concat;
 
-extend(Seq, {
+extend(Seq, Concat, {
   seq: seq
-}, Concat);
+});
 
-extend(Coll, {
+extend(Coll, Concat, {
   empty: always(EMPTY),
   isEmpty: isEmpty,
   toArray: toArray,
@@ -94,4 +94,4 @@ extend(Coll, {
   map: map,
   filter: filter,
   find: find
-}, Concat);
+});
