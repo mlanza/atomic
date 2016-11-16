@@ -18,7 +18,13 @@ export function isEmpty(self){
 }
 
 export function concat(){
-  return Coll.toArray(_concat.apply(this, arguments));
+  return reduce(slice(arguments), function(memo, arr){
+    return memo.concat(arr);
+  }, []);
+}
+
+export function flatten(arr){
+  return Coll.flatten(Seq.seq(arr));
 }
 
 export function seq(self, at){

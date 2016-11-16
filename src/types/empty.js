@@ -33,6 +33,7 @@ extend(Coll, Empty, {
   initial: identity,
   append: append,
   concat: concat,
+  flatten: identity,
   each: noop,
   reduce: reduce,
   map: identity,
