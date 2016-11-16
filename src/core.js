@@ -186,6 +186,10 @@ export function odd(n){
   return n % 2;
 }
 
+export function is(value, constructor) {
+  return value != null && value.constructor === constructor;
+}
+
 export const even = complement(odd);
 
 export function juxt(){

@@ -14,6 +14,7 @@ export function isEmpty(self){
   return keys(self).length === 0;
 }
 
+//TODO use protocol?
 export function is(value, constructor) {
   return value != null && value.constructor === constructor;
 }
