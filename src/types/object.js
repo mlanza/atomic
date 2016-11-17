@@ -1,8 +1,5 @@
 import {constantly, arity, identity} from '../core';
 import {extend} from '../protocol';
-import {EMPTY} from '../types/empty';
-import List from '../types/list';
-import IndexedSeq from '../types/indexed-seq';
 import Seq from '../protocols/seq';
 import Seqable from '../protocols/seqable';
 import Associative from '../protocols/associative';
@@ -10,6 +7,9 @@ import Reduce from '../protocols/reduce';
 import Lookup from '../protocols/lookup';
 import Emptyable from '../protocols/emptyable';
 import Collection from '../protocols/collection';
+import {EMPTY} from '../types/empty';
+import List from '../types/list';
+import IndexedSeq from '../types/indexed-seq';
 
 function seq(obj, ks, at){
   if (obj && obj.hasOwnProperty("callee") && obj.hasOwnProperty("length")) return obj.length ? new IndexedSeq(obj) : null; //arguments object

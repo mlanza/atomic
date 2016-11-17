@@ -1,18 +1,7 @@
-import List from './types/list';
-import Array from './types/array';
-import Object from './types/object';
-import Number from './types/number';
-import String from './types/string';
-import Reduced from './types/reduced';
-import {EMPTY} from './types/empty';
-import nil from './types/null';
-import HTMLDocument from './types/html-document';
-import HTMLElement from './types/html-element';
-import IndexedSeq from './types/indexed-seq';
-import Reduce from './protocols/reduce';
 import {log, chain, pipe, add, juxt, query, fetch, get, assoc, hasKey, first, second, third, rest, nth, next, count, reduce, each, map, filter, find, satisfies, concat, toArray, toObject} from './composable';
 export {log, chain, pipe, add, juxt, query, fetch, get, assoc, hasKey, first, second, third, rest, nth, next, count, reduce, each, map, filter, find, satisfies, concat, toArray, toObject} from './composable';
-
+import Reduce from './protocols/reduce';
+import IndexedSeq from './types/indexed-seq';
 export const nums = new IndexedSeq([11,12,13,14], 1);
 export const letters = new IndexedSeq("grace");
 
@@ -27,5 +16,3 @@ QUnit.test("IndexedSeq", function(assert){
   assert.deepEqual(chain([["Moe", "Howard"], ["Curly", "Howard"]], toObject), {Moe: "Howard", Curly: "Howard"});
   assert.deepEqual(chain({Moe: "Howard", Curly: "Howard"}, toArray), [["Moe", "Howard"], ["Curly", "Howard"]]);
 });
-
-//export {query} from './composable';
