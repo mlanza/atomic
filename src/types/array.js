@@ -4,6 +4,7 @@ export {slice, first, rest, reverse, reduce, conj};
 import {extend} from '../protocol';
 import {EMPTY} from '../types/empty';
 import {concat as _concat} from '../types/concat';
+import Compact from '../protocols/compact';
 import Next from '../protocols/next';
 import Seq from '../protocols/seq';
 import Seqable from '../protocols/seqable';
@@ -14,9 +15,14 @@ import Emptyable from '../protocols/emptyable';
 import Lookup from '../protocols/lookup';
 import Associative from '../protocols/associative';
 import Collection from '../protocols/collection';
+import {filter} from '../coll';
 
 export const join = unbind(Array.prototype.join);
 export const empty = always([]);
+
+export function compact(self){
+  return filter(self, identity);
+}
 
 export function seq(self){
   return self.length === 0 ? null : self;
@@ -88,6 +94,10 @@ extend(Reduce, Array, {
   reduce: reduce
 });
 
+extend(Compact, Array, {
+  compact: compact
+});
+
 /*
 
 export function concat(){
@@ -100,13 +110,6 @@ export function flatten(arr){
   return Coll.flatten(Seq.seq(arr));
 }
 
-export function trim(self){
-  return filter(self, identity);
-}
-
-extend(Trim, Array, {
-  trim: trim
-});
 */
 
 export default Array;

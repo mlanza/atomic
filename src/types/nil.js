@@ -5,13 +5,15 @@ import Seqable from '../protocols/seqable';
 import Seq from '../protocols/seq';
 import Next from '../protocols/next';
 import Reduce from '../protocols/reduce';
-import Collection from '../protocols/reduce';
+import Deref from '../protocols/deref';
+import Collection from '../protocols/collection';
 import {extend} from '../protocol';
 import {EMPTY} from '../types/empty.js';
 
 export const rest = always(EMPTY);
 export const first = always(null);
 export const next = always(null);
+export const deref = always(null);
 
 export function set(self, key, value){
   return Hash.set({}, key, value);
@@ -27,10 +29,6 @@ export function reduce(){
   return arguments[2];
 }
 
-export function next(){
-  return null;
-}
-
 export const hasKey = always(false);
 
 export function assoc(self, key, value){
@@ -42,6 +40,10 @@ export function assoc(self, key, value){
 export function conj(self, value){
   return new List(value, always(EMPTY));
 }
+
+extend(Deref, null, {
+  deref: deref
+});
 
 extend(Collection, null, {
   conj: conj

@@ -1,83 +1,51 @@
 import {identity, always, noop, slice, complement} from '../core';
 import {extend} from '../protocol';
 import Reduced from '../types/reduced';
-import {EMPTY} from '../types/empty';
-import List from '../types/list';
 import Seq from '../protocols/seq';
+import Seqable from '../protocols/seqable';
+import Reduce from '../protocols/reduce';
+import {compact} from '../protocols/compact';
+import {map} from '../coll';
 
 export function Concat(){
-  this.contents = arguments.length ? Coll.map(Coll.filter(slice(arguments), complement(Coll.isEmpty)), Seq.seq) : [];
+  this.contents = arguments.length ? compact(map(arguments, Seqable.seq)) : [];
 }
 
 export function concat(){
-  var contents = arguments.length ? Coll.map(Coll.filter(slice(arguments), complement(Coll.isEmpty)), Seq.seq) : [],
+  var contents = arguments.length ? compact(map(arguments, Seqable.seq)) : [],
       self     = new Concat();
   self.contents = contents;
   return self;
 }
 
-export function isEmpty(self){
-  return self.contents.length === 0;
-}
-
-export function toArray(self){
-  return Coll.toArray(seq(self));
-}
-
-export function toObject(self){
-  return Coll.toObject(seq(self));
-}
-
 export function first(self){
-  return Coll.first(seq(self));
+  return self.contents.length === 0 ? null : Seq.first(Seq.first(self.contents));
 }
 
 export function rest(self){
-  return Coll.rest(seq(self));
-}
-
-export function initial(self){
-  return Coll.initial(seq(self));
-}
-
-export function append(self, value){
-  return new Concat(self.contents, [value]);
-}
-
-export function each(self, f){
-  Coll.each(seq(self), f);
-}
-
-export function reduce(self, f, init){
-  return Coll.reduce(seq(self), f, init);
-}
-
-export function map(self, f){
-  return Coll.map(seq(self), f);
-}
-
-export function filter(self, pred){
-  return concat(Coll.filter(seq(self), pred));
-}
-
-export function find(self, pred){
-  return Coll.find(seq(self), pred);
-}
-
-export function flatten(self){
-  return Coll.flatten(seq(self));
+  var fst = Seq.first(self.contents);
+  return Seqable.seq(fst) ? concat.apply(this, [Seq.rest(fst)].concat(Seq.rest(self.contents))) : concat.apply(this, Seq.rest(self.contents));
 }
 
 export function seq(self){
-  if (isEmpty(self)) return EMPTY;
-  var fst = Coll.first(self.contents);
-  return new List(Coll.first(fst), function(){
-    return seq(concat.apply(this, [Coll.rest(fst)].concat(Coll.rest(self.contents))));
-  });
+  return self.contents.length === 0 ? null : self;
 }
 
-export default Concat;
+export function reduce(self, f, init){
+  throw new "reduce not implemented"; //TODO
+}
+
+extend(Reduce, Concat, {
+  reduce: reduce
+});
 
 extend(Seq, Concat, {
+  first: first,
+  rest: rest
+});
+
+extend(Seqable, Concat, {
   seq: seq
 });
+
+export default Concat;

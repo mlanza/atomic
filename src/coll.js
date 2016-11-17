@@ -1,4 +1,4 @@
-import {curry} from './core';
+import {curry, complement} from './core';
 import {seq} from './protocols/seqable';
 import Seq from './protocols/seq';
 import Reduce from './protocols/reduce';
@@ -28,6 +28,10 @@ export function filter(xs, pred){
   return pred(fst) ? new List(fst, function(){
     return filter(Seq.rest(coll), pred);
   }) : filter(Seq.rest(coll), pred);
+}
+
+export function reject(xs, pred){
+  return filter(xs, complement(pred));
 }
 
 export function find(xs, pred){
