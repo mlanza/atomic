@@ -11,6 +11,7 @@ import Seqable from '../protocols/seqable';
 import Emptyable from '../protocols/emptyable';
 import Lookup from '../protocols/lookup';
 import Associative from '../protocols/associative';
+import Collection from '../protocols/collection';
 import Deref from '../protocols/deref';
 
 export const trim        = unbind(String.prototype.trim);
@@ -75,8 +76,21 @@ function assoc(self, key, value){
   return arr;
 }
 
+function conj(self, str){
+  return self + str;
+}
+
+function cons(self, str){
+  return str + self;
+}
+
 extend(Lookup, String, {
   get: nth
+});
+
+extend(Collection, String, {
+  conj: conj,
+  cons: cons
 });
 
 extend(Associative, String, {
