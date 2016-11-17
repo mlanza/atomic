@@ -1,6 +1,6 @@
 import unbind from '../unbind';
-import {slice, first, rest, reverse, reduce, append as conj, identity, constantly, arity} from '../core';
-export {slice, first, rest, reverse, reduce, conj};
+import {slice, reverse, reduce, append as conj, identity, constantly, arity} from '../core';
+export {slice, reverse, reduce, conj};
 import {extend} from '../protocol';
 import {EMPTY} from '../types/empty';
 import Next from '../protocols/next';
@@ -15,6 +15,14 @@ import Associative from '../protocols/associative';
 import Collection from '../protocols/collection';
 
 export const join = unbind(Array.prototype.join);
+
+function first(self){
+  return self[0];
+}
+
+function rest(self){
+  return slice(self, 1);
+}
 
 function seq(self){
   return self.length === 0 ? null : self;

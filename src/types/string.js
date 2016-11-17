@@ -1,5 +1,5 @@
 import unbind from '../unbind.js';
-import {flip, identity, add, first, rest, slice} from '../core.js';
+import {flip, identity, add, slice} from '../core.js';
 import {extend} from '../protocol';
 import Next from '../protocols/next';
 import Seq from '../protocols/seq';
@@ -28,6 +28,14 @@ export function concat(){
 
 function empty(){
   return "";
+}
+
+function first(self){
+  return self[0];
+}
+
+function rest(self){
+  return slice(self, 1);
 }
 
 function next(self){

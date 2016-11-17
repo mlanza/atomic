@@ -1,5 +1,5 @@
-import {identity, constantly, noop} from '../core';
-import List from '../types/list';
+import {identity, constantly, noop, isNull} from '../core';
+import {extend} from '../protocol';
 import Emptyable from '../protocols/emptyable';
 import Seqable from '../protocols/seqable';
 import Seq from '../protocols/seq';
@@ -7,12 +7,10 @@ import Next from '../protocols/next';
 import Reduce from '../protocols/reduce';
 import Deref from '../protocols/deref';
 import Collection from '../protocols/collection';
-import {extend} from '../protocol';
+import Associative from '../protocols/associative';
+import Lookup from '../protocols/lookup';
+import List from '../types/list';
 import {EMPTY} from '../types/empty.js';
-
-export function isNil(value){
-  return null == value;
-}
 
 function reduce(){
   return arguments[2];
@@ -37,7 +35,7 @@ extend(Collection, null, {
 });
 
 extend(Lookup, null, {
-  lookup: lookup
+  lookup: constantly(null)
 });
 
 extend(Associative, null, {
@@ -53,7 +51,7 @@ extend(Seqable, null, {
   seq: identity
 });
 
-extend(reduce, null, {
+extend(Reduce, null, {
   reduce: reduce
 });
 
