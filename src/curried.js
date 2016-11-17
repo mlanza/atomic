@@ -60,3 +60,5 @@ export const removeClass = flip(el.removeClass, 2);
 export const toggleClass = flip(el.toggleClass, 2);
 export const inc       = add(+1);
 export const dec       = add(-1);
+export const second    = nth(1);
+export const third     = nth(2);
