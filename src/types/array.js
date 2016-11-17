@@ -13,38 +13,30 @@ import Emptyable from '../protocols/emptyable';
 import Lookup from '../protocols/lookup';
 import Associative from '../protocols/associative';
 import Collection from '../protocols/collection';
-import {filter} from '../coll';
 
 export const join = unbind(Array.prototype.join);
-export const empty = constantly([]);
 
-export function compact(self){
-  return filter(self, identity);
-}
-
-export function seq(self){
+function seq(self){
   return self.length === 0 ? null : self;
 }
 
-export function count(self){
+function count(self){
   return self.length;
 }
 
-export function nth(self, n){
+function nth(self, n){
   return n < self.length ? self[n] : null;
 }
 
-export function next(self){
+function next(self){
   return self.length === 0 ? null : rest(self);
 }
 
-export const lookup = nth;
-
-export function hasKey(self, key){
+function hasKey(self, key){
   return key > -1 && key < self.length;
 }
 
-export function assoc(self, key, value){
+function assoc(self, key, value){
   var arr = slice(self);
   arr.splice(key, 1, value);
   return arr;
@@ -55,7 +47,7 @@ extend(Collection, Array, {
 });
 
 extend(Lookup, Array, {
-  lookup: lookup
+  lookup: nth
 });
 
 extend(Associative, Array, {
@@ -64,7 +56,7 @@ extend(Associative, Array, {
 });
 
 extend(Emptyable, Array, {
-  empty: empty
+  empty: constantly([])
 });
 
 extend(Seqable, Array, {

@@ -5,39 +5,51 @@ import Hierarchy from '../protocols/hierarchy';
 import Associative from '../protocols/associative';
 import Lookup from '../protocols/lookup';
 import Collection from '../protocols/collection';
-import {query, fetch} from '../types/html-document';
-export {query, fetch} from '../types/html-document';
+import IndexedSeq from './indexed-seq';
 
-export function parent(el){
+function fetch(self, selector){
+  return self.querySelector(selector) || null;
+}
+
+function query(self, selector){
+  return new IndexedSeq(self.querySelectorAll(selector));
+}
+
+function parent(el){
   return el.parentNode;
 }
 
-export function closest(el, selector){
+function closest(el, selector){
   return el == null ? null : el.matches(selector) ? el : Hierarchy.closest(parent(el), selector);
 }
 
-export function hasKey(el, key){
+function remove(el){
+  el.parentElement.removeChild(el);
+  return el;
+}
+
+function hasKey(el, key){
   return !!el.attributes.getNamedItem(key);
 }
 
-export function assoc(el, key, value){
+function assoc(el, key, value){
   var attr  = document.createAttribute(key);
   attr.value = value;
   el.attributes.setNamedItem(attr);
   return el;
 }
 
-export function get(el, key){
+function get(el, key){
   var attr = el.attributes.getNamedItem(key);
   return attr ? attr.value : null;
 }
 
-export function conj(el, child){
+function conj(el, child){
   el.appendChild(is(child, String) ? document.createTextNode(child) : child);
   return el;
 }
 
-export function cons(el, child){
+function cons(el, child){
   el.insertBefore(is(child, String) ? document.createTextNode(child) : child, el.firstChild);
   return el;
 }
@@ -48,11 +60,6 @@ export function text(el){
 
 export function style(key, value, el){
   el.style[key] = value;
-  return el;
-}
-
-export function remove(el){
-  el.parentElement.removeChild(el);
   return el;
 }
 
@@ -70,7 +77,7 @@ export function removeClass(str, el){
   return el;
 }
 
-export function toggleClass(str, v){
+export function toggleClass(str, el){
   return setClass(!hasClass(str, el), str, el)
 }
 

@@ -1,4 +1,4 @@
-import {complement, identity, isSome} from './core';
+import {complement, identity, isSome, multiarity, overload} from './core';
 import Seqable from './protocols/seqable';
 import Seq from './protocols/seq';
 import Collection from './protocols/collection';
@@ -142,3 +142,37 @@ export function toObject(obj){
   if (!coll) return {};
   return Reduce.reduce(coll, Collection.conj, {});
 }
+
+export function iterate(generate, seed){
+  return new List(seed, function(){
+    return iterate(generate, generate(seed));
+  });
+}
+
+export const repeatedly = multiarity(function(f){
+  return iterate(f, f());
+}, function(n, f){
+  return n > 0 ? new List(f(), function(){
+    return repeatedly(n - 1, f);
+  }) : EMPTY;
+});
+
+export const repeat = overload(null, function(value){
+  return repeatedly(constantly(value));
+}, function(n, value){
+  return repeatedly(n, constantly(value))
+});
+
+//TODO fix cons
+export const range = multiarity(function(){ //TODO number range, date range, string range, etc.
+  return iterate(inc, 0);
+}, function(end){
+  return range(0, end, 1);
+}, function(start, end){
+  return range(start, end, 1);
+}, function(start, end, step){
+  var next = start + step;
+  return next >= end ? cons(start) : cons(start, function(){
+    return range(next, end, step);
+  });
+});

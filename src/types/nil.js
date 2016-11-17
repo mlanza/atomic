@@ -10,39 +10,26 @@ import Collection from '../protocols/collection';
 import {extend} from '../protocol';
 import {EMPTY} from '../types/empty.js';
 
-export const rest = constantly(EMPTY);
-export const first = constantly(null);
-export const next = constantly(null);
-export const deref = constantly(null);
-
-export function set(self, key, value){
-  return Hash.set({}, key, value);
-}
-
-export const has = constantly(false);
-
 export function isNil(value){
   return null == value;
 }
 
-export function reduce(){
+function reduce(){
   return arguments[2];
 }
 
-export const hasKey = constantly(false);
-
-export function assoc(self, key, value){
+function assoc(self, key, value){
   var obj = {};
   obj[key] = value;
   return obj;
 }
 
-export function conj(self, value){
+function conj(self, value){
   return new List(value, constantly(EMPTY));
 }
 
 extend(Deref, null, {
-  deref: deref
+  deref: constantly(null)
 });
 
 extend(Collection, null, {
@@ -55,7 +42,7 @@ extend(Lookup, null, {
 
 extend(Associative, null, {
   assoc: assoc,
-  hasKey: hasKey
+  hasKey: constantly(false)
 });
 
 extend(Emptyable, null, {
@@ -71,10 +58,12 @@ extend(reduce, null, {
 });
 
 extend(Seq, null, {
-  first: first,
-  rest: rest
+  first: constantly(null),
+  rest:  constantly(EMPTY)
 });
 
 extend(Next, null, {
-  next: next
+  next: constantly(null)
 });
+
+export default null;

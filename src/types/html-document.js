@@ -1,21 +1,17 @@
 import {identity, constantly, noop} from '../core';
 import {extend} from '../protocol';
-import IndexedSeq from './indexed-seq';
 import Query from '../protocols/query';
 import Hierarchy from '../protocols/hierarchy';
 import Lookup from '../protocols/lookup';
+import IndexedSeq from './indexed-seq';
 
-export function fetch(self, selector){
+function fetch(self, selector){
   return self.querySelector(selector) || null;
 }
 
-export function query(self, selector){
+function query(self, selector){
   return new IndexedSeq(self.querySelectorAll(selector));
 }
-
-export const parent = constantly(null);
-export const closest = constantly(null);
-export const get = constantly(null);
 
 extend(Query, HTMLDocument, {
   query: query,
@@ -23,12 +19,12 @@ extend(Query, HTMLDocument, {
 });
 
 extend(Hierarchy, HTMLDocument, {
-  parent: parent,
-  closest: closest
+  parent: constantly(null),
+  closest: constantly(null)
 });
 
 extend(Lookup, HTMLDocument, {
-  get: get
+  get: constantly(null)
 });
 
 export default HTMLDocument;

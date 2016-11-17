@@ -24,34 +24,34 @@ export function indexedSeq(indexed, start){
   return new IndexedSeq(indexed, start);
 }
 
-export const empty = constantly(indexedSeq([]));
+const empty = constantly(indexedSeq([]));
 
-export function next(self){
+function next(self){
   var start = self.start + 1;
   return start < self.indexed.length ? new IndexedSeq(self.indexed, start) : null;
 }
 
-export function first(self){
+function first(self){
   return self.indexed[self.start];
 }
 
-export function rest(self){
+function rest(self){
   var start = self.start + 1;
   return start < self.indexed.length ? new IndexedSeq(self.indexed, start) : EMPTY;
 }
 
-export function count(self){
+function count(self){
   return self.indexed.length - self.start;
 }
 
-export function nth(self, n){
+function nth(self, n){
   var i = self.start + n;
   return i < self.indexed.length ? self.indexed[i] : null;
 }
 
-export const get = nth;
+const get = nth;
 
-export function reduce(self, f, init) {
+function reduce(self, f, init) {
   var memo = init, len = self.indexed.length;
   for(var i = self.start; i < len; i++) {
     if (memo instanceof Reduced)
@@ -61,21 +61,21 @@ export function reduce(self, f, init) {
   return Deref.deref(memo);
 }
 
-export function seq(self){
+function seq(self){
   return self.start < self.indexed.length ? self : nil;
 }
 
-export function hasKey(self, key){
+function hasKey(self, key){
   return key > -1 && key < self.indexed.length - self.start;
 }
 
-export function assoc(self, key, value){
+function assoc(self, key, value){
   var arr = slice(self.indexed, self.start);
   arr.splice(key, 1, value);
   return arr;
 }
 
-export function conj(self, value){
+function conj(self, value){
   return Seqable.seq(self) ? new List(value, self) : [value];
 }
 

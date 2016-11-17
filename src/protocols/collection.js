@@ -1,4 +1,8 @@
+import {constantly} from '../core';
 import {protocol} from '../protocol';
-import {conj as _conj} from '../types/list';
-export const Collection = protocol({conj: _conj, cons: _conj});
+import List from '../types/list';
+function conj(self, value){
+  return new List(value, constantly(self));
+}
+export const Collection = protocol({conj: conj, cons: conj});
 export default Collection;
