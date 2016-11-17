@@ -1,9 +1,11 @@
-import {curry, complement, identity, slice} from './core';
+import {curry, complement, identity, slice, isSome} from './core';
 import {seq} from './protocols/seqable';
 import Seq from './protocols/seq';
 import Reduce from './protocols/reduce';
 import Collection from './protocols/collection';
+import {deref} from './protocols/deref';
 import {EMPTY} from './types/empty';
+import {reduced} from './types/reduced';
 import {indexedSeq} from './types/indexed-seq';
 import List from './types/list';
 
@@ -20,6 +22,76 @@ export function map(xs, f){
   return new List(f(Seq.first(coll)), function(){
     return map(Seq.rest(coll), f);
   });
+}
+
+export function mapIndexed(xs, f){
+  var idx = -1;
+  return map(xs, function(x){
+    return f(++idx, x);
+  });
+}
+
+export function keep(xs, f){
+  return filter(map(xs, f), isSome);
+}
+
+export function take(xs, n){
+  return n > 0 && seq(xs) ? new List(Seq.first(xs), function(){
+    return take(Seq.rest(xs), n - 1);
+  }) : EMPTY;
+}
+
+export function takeWhile(xs, pred){
+  if (!seq(xs)) return EMPTY;
+  var item = Seq.first(xs);
+  return pred(item) ? new List(item, function(){
+    return takeWhile(Seq.rest(xs), pred);
+  }) : EMPTY;
+}
+
+export function takeNth(xs, n){
+  return seq(xs) ? new List(Seq.first(xs), function(){
+    return takeNth(drop(xs, n), n);
+  }) : EMPTY;
+}
+
+export function drop(xs, n){
+  var remaining = n;
+  return dropWhile(xs, function(){
+    return remaining-- > 0;
+  });
+}
+
+export function dropWhile(xs, pred){
+  return seq(xs) ? pred(Seq.first(xs)) ? dropWhile(Seq.rest(xs), pred) : seq(xs) : EMPTY;
+}
+
+export function some(xs, pred){
+  return Reduce.reduce(xs, function(memo, value){
+    return pred(value) ? reduced(value) : memo;
+  }, null);
+}
+
+export function isEvery(xs, pred){
+  return Reduce.reduce(xs, function(memo, value){
+    return !pred(value) ? reduced(false) : memo;
+  }, true);
+}
+
+export function isAny(xs, pred){
+  return some(xs, pred) !== null;
+}
+
+export function isNotAny(xs, pred){
+  return isAny(xs, complement(pred));
+}
+
+export function fold(xs, f, init){
+  return init instanceof Reduced || seq(xs) ? fold(Seq.rest(xs), f, f(init, Seq.first(xs))) : deref(init);
+}
+
+export function all(xs, pred){
+  return seq(xs) && pred(Seq.first(xs)) && all(Seq.rest(xs), pred);
 }
 
 export function filter(xs, pred){

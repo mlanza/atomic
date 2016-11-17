@@ -173,6 +173,10 @@ export function lte(a, b){
   return a <= b;
 }
 
+export function isSome(x){
+  return x != null;
+}
+
 export function tap(f, value){
   f(value);
   return value;
