@@ -1,137 +1,136 @@
-import {curry, complement, identity, slice, isSome} from './core';
-import {seq} from './protocols/seqable';
+import {complement, identity, isSome} from './core';
+import Seqable from './protocols/seqable';
 import Seq from './protocols/seq';
-import Reduce from './protocols/reduce';
 import Collection from './protocols/collection';
-import {deref} from './protocols/deref';
-import {EMPTY} from './types/empty';
-import {reduced} from './types/reduced';
-import {indexedSeq} from './types/indexed-seq';
+import Deref from './protocols/deref';
+import Reduce from './protocols/reduce';
+import Reduced from './types/reduced';
 import List from './types/list';
+import {EMPTY} from './types/empty';
 
-export function each(xs, f){
-  var coll = seq(xs);
+export function each(f, xs){
+  var coll = Seqable.seq(xs);
   if (!coll) return;
   f(Seq.first(coll));
-  each(Seq.rest(coll), f);
+  each(f, Seq.rest(coll));
 }
 
-export function map(xs, f){
-  var coll = seq(xs);
+export function map(f, xs){
+  var coll = Seqable.seq(xs);
   if (!coll) return EMPTY;
   return new List(f(Seq.first(coll)), function(){
-    return map(Seq.rest(coll), f);
+    return map(f, Seq.rest(coll));
   });
 }
 
-export function mapIndexed(xs, f){
+export function mapIndexed(f, xs){
   var idx = -1;
-  return map(xs, function(x){
+  return map(function(x){
     return f(++idx, x);
-  });
+  }, xs);
 }
 
-export function keep(xs, f){
-  return filter(map(xs, f), isSome);
+export function keep(f, xs){
+  return filter(isSome, map(f, xs));
 }
 
-export function take(xs, n){
-  return n > 0 && seq(xs) ? new List(Seq.first(xs), function(){
-    return take(Seq.rest(xs), n - 1);
+export function take(n, xs){
+  return n > 0 && Seqable.seq(xs) ? new List(Seq.first(xs), function(){
+    return take(n - 1, Seq.rest(xs));
   }) : EMPTY;
 }
 
-export function takeWhile(xs, pred){
-  if (!seq(xs)) return EMPTY;
+export function takeWhile(pred, xs){
+  if (!Seqable.seq(xs)) return EMPTY;
   var item = Seq.first(xs);
   return pred(item) ? new List(item, function(){
-    return takeWhile(Seq.rest(xs), pred);
+    return takeWhile(pred, Seq.rest(xs));
   }) : EMPTY;
 }
 
-export function takeNth(xs, n){
-  return seq(xs) ? new List(Seq.first(xs), function(){
-    return takeNth(drop(xs, n), n);
+export function takeNth(n, xs){
+  return Seqable.seq(xs) ? new List(Seq.first(xs), function(){
+    return takeNth(n, drop(xs, n));
   }) : EMPTY;
 }
 
-export function drop(xs, n){
+export function drop(n, xs){
   var remaining = n;
-  return dropWhile(xs, function(){
+  return dropWhile(function(){
     return remaining-- > 0;
-  });
+  }, xs);
 }
 
-export function dropWhile(xs, pred){
-  return seq(xs) ? pred(Seq.first(xs)) ? dropWhile(Seq.rest(xs), pred) : seq(xs) : EMPTY;
+export function dropWhile(pred, xs){
+  return Seqable.seq(xs) ? pred(Seq.first(xs)) ? dropWhile(pred, Seq.rest(xs)) : xs : EMPTY;
 }
 
-export function some(xs, pred){
+export function some(pred, xs){
   return Reduce.reduce(xs, function(memo, value){
-    return pred(value) ? reduced(value) : memo;
+    return pred(value) ? new Reduced(value) : memo;
   }, null);
 }
 
-export function isEvery(xs, pred){
+export function isEvery(pred, xs){
   return Reduce.reduce(xs, function(memo, value){
-    return !pred(value) ? reduced(false) : memo;
+    return !pred(value) ? new Reduced(false) : memo;
   }, true);
 }
 
-export function isAny(xs, pred){
-  return some(xs, pred) !== null;
+export function isAny(pred, xs){
+  return some(pred, xs) !== null;
 }
 
-export function isNotAny(xs, pred){
-  return isAny(xs, complement(pred));
+export function isNotAny(pred, xs){
+  return isAny(complement(pred), xs);
 }
 
-export function fold(xs, f, init){
-  return init instanceof Reduced || seq(xs) ? fold(Seq.rest(xs), f, f(init, Seq.first(xs))) : deref(init);
+export function fold(f, init, xs){
+  return init instanceof Reduced || Seqable.seq(xs) ? fold(f, f(init, Seq.first(xs)), Seq.rest(xs)) : Deref.deref(init);
 }
 
-export function all(xs, pred){
-  return seq(xs) && pred(Seq.first(xs)) && all(Seq.rest(xs), pred);
+export function all(pred, xs){
+  return Seqable.seq(xs) && pred(Seq.first(xs)) && all(pred, Seq.rest(xs));
 }
 
-export function filter(xs, pred){
-  var coll = seq(xs);
+export function filter(pred, xs){
+  var coll = Seqable.seq(xs);
   if (!coll) return EMPTY;
   var fst = Seq.first(coll);
   return pred(fst) ? new List(fst, function(){
-    return filter(Seq.rest(coll), pred);
-  }) : filter(Seq.rest(coll), pred);
+    return filter(pred, Seq.rest(coll));
+  }) : filter(pred, Seq.rest(coll));
 }
 
-export function reject(xs, pred){
-  return filter(xs, complement(pred));
+export function reject(pred, xs){
+  return filter(complement(pred), xs);
 }
 
 export function compact(xs){
-  return filter(xs, identity);
+  return filter(identity, xs);
 }
 
-export function find(xs, pred){
-  var coll = seq(xs);
+export function find(pred, xs){
+  var coll = Seqable.seq(xs);
   if (!coll) return null;
   var fst = Seq.first(coll);
-  return pred(fst) ? fst : find(Seq.rest(coll), pred);
+  return pred(fst) ? fst : find(pred, Seq.rest(coll));
 }
 
 //TODO flatten
 export function concat(xs){
-  var coll = toArray(compact(map(arguments, seq))),
+  var coll = toArray(compact(map(arguments, Seqable.seq))),
       fst  = Seq.first(coll),
       rst  = Seq.rest(coll);
-  if (!seq(coll)) return EMPTY;
+  if (!Seqable.seq(coll)) return EMPTY;
   return new List(Seq.first(fst), function(){
-    return seq(fst) ? concat.apply(this, [Seq.rest(fst)].concat(Seq.rest(coll))) : concat.apply(this, Seq.rest(coll));
+    return Seqable.seq(fst) ? concat.apply(this, [Seq.rest(fst)].concat(Seq.rest(coll))) : concat.apply(this, Seq.rest(coll));
   });
 }
 
 export function toArray(xs){
   if (xs instanceof Array) return xs;
-  var coll = seq(xs);
+  var coll = Seqable.seq(xs);
   if (!coll) return [];
   return Reduce.reduce(coll, Collection.conj, []);
 }
@@ -139,7 +138,7 @@ export function toArray(xs){
 export function toObject(obj){
   if (obj == null) return {};
   if (obj.constructor === Object) return obj;
-  var coll = seq(obj);
+  var coll = Seqable.seq(obj);
   if (!coll) return {};
   return Reduce.reduce(coll, Collection.conj, {});
 }

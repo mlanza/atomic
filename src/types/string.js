@@ -11,7 +11,7 @@ import Seqable from '../protocols/seqable';
 import Emptyable from '../protocols/emptyable';
 import Lookup from '../protocols/lookup';
 import Associative from '../protocols/associative';
-import {deref} from '../protocols/deref';
+import Deref from '../protocols/deref';
 
 export const trim        = unbind(String.prototype.trim);
 export const toLowerCase = unbind(String.prototype.toLowerCase);
@@ -58,7 +58,7 @@ export function reduce(self, f, init) {
       break;
     memo = f(memo, self[i]);
   }
-  return deref(memo);
+  return Deref.deref(memo);
 }
 
 export function seq(self){

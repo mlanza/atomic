@@ -1,6 +1,6 @@
-import {identity, always, noop} from '../core';
+import {identity, constantly, noop} from '../core';
 import {extend} from '../protocol';
-import {indexedSeq} from './indexed-seq';
+import IndexedSeq from './indexed-seq';
 import Query from '../protocols/query';
 import Hierarchy from '../protocols/hierarchy';
 import Lookup from '../protocols/lookup';
@@ -10,12 +10,12 @@ export function fetch(self, selector){
 }
 
 export function query(self, selector){
-  return indexedSeq(self.querySelectorAll(selector));
+  return new IndexedSeq(self.querySelectorAll(selector));
 }
 
-export const parent = always(null);
-export const closest = always(null);
-export const get = always(null);
+export const parent = constantly(null);
+export const closest = constantly(null);
+export const get = constantly(null);
 
 extend(Query, HTMLDocument, {
   query: query,
