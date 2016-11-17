@@ -7,6 +7,7 @@ import Seq from '../protocols/seq';
 import Seqable from '../protocols/seqable';
 import Reduce from '../protocols/reduce';
 import Emptyable from '../protocols/emptyable';
+import Collection from '../protocols/collection';
 import {deref} from '../protocols/deref';
 
 export function Empty(){
@@ -14,16 +15,12 @@ export function Empty(){
 
 export const EMPTY = new Empty();
 
-export function append(self, value){
-  return new List(value, always(self));
-}
-
-export function concat(self, other){
-  return Coll.isEmpty(other) ? EMPTY : other;
-}
-
 export function reduce(){
   return deref(arguments[2]);
+}
+
+export function conj(self, value){
+  return new List(value, always(EMPTY));
 }
 
 export const seq = always(null);
@@ -31,14 +28,12 @@ export const first = always(null);
 export const next = always(null);
 export const rest = identity;
 export const empty = identity;
+export const cons = conj;
 
-/*
-extend(Coll, Empty, {
-  append: append,
-  concat: concat,
-  flatten: identity,
+extend(Collection, Empty, {
+  conj: conj,
+  cons: cons
 });
-*/
 
 extend(Emptyable, Empty, {
   empty: empty

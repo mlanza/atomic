@@ -1,5 +1,5 @@
-import {partial} from '../core.js';
-import {protocol, satisfies} from '../protocol.js';
+import {partial} from '../core';
+import {protocol, satisfies} from '../protocol';
 export const Seq = protocol({
   first: null,
   rest: null

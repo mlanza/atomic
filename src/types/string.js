@@ -2,7 +2,6 @@ import unbind from '../unbind.js';
 import {flip, identity, add, first, rest, slice} from '../core.js';
 import {extend} from '../protocol';
 import {indexedSeq} from '../types/indexed-seq';
-import Compact from '../protocols/compact';
 import Next from '../protocols/next';
 import Seq from '../protocols/seq';
 import Counted from '../protocols/counted';
@@ -23,7 +22,6 @@ export const substring   = flip(unbind(String.prototype.substring), 3);
 export const startsWith  = flip(unbind(String.prototype.startsWith), 2);
 export const endsWith    = flip(unbind(String.prototype.endsWith), 2);
 export const append      = add;
-export const compact     = trim;
 
 export function concat(){
   return reduce(slice(arguments), add, "");
@@ -115,8 +113,4 @@ extend(Indexed, String, {
 
 extend(Reduce, String, {
   reduce: reduce
-});
-
-extend(Compact, String, {
-  compact: compact
 });

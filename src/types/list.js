@@ -2,7 +2,6 @@ import {identity, always, noop, multiarity, overload} from '../core';
 import {inc} from '../curried';
 import Reduced from '../types/reduced';
 import {EMPTY} from '../types/empty';
-import {concat as _concat, seq as _seq} from '../types/concat';
 import {extend} from '../protocol';
 import {seq} from '../protocols/seqable';
 import Seq from '../protocols/seq';
@@ -102,23 +101,4 @@ extend(Seq, List, {
   rest: rest
 });
 
-/*
-
-export function flatten(self){
-  if (Coll.isEmpty(self)) return EMPTY;
-  var nested = dispatch(Coll, 'isEmpty', self.head);
-  return nested ? Coll.isEmpty(self.head) ? flatten(new List(Coll.first(self.tail()), function(){
-    return Coll.rest(self.tail());
-  })) : flatten(new List(Coll.first(self.head), function(){
-    return flatten(new List(Coll.rest(self.head), self.tail));
-  })) : new List(self.head, function(){
-    return Coll.flatten(self.tail());
-  });
-}
-
-export function concat(){
-  return _seq(_concat.apply(this, arguments));
-}
-
-*/
 export default List;

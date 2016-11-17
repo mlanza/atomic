@@ -19,12 +19,12 @@ export {next} from './protocols/next';
 export {reduce, Reduce} from './protocols/reduce';
 import {reduce, Reduce} from './protocols/reduce';
 import {toArray, toObject} from './coll';
+export {concat, toArray} from './coll';
 import {each, map, filter, find, satisfies} from './curried';
 export {parent, closest, remove} from './protocols/hierarchy';
 export {query, fetch} from './protocols/query';
 export {each, map, filter, find, satisfies} from './curried';
 export {assoc, hasKey} from './protocols/associative';
-export {compact} from './protocols/compact';
 export {get} from './protocols/lookup';
 
 QUnit.test("IndexedSeq", function(assert){

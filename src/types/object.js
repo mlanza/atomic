@@ -1,7 +1,8 @@
-import {always, arity, identity, slice, reduce as _reduce} from '../core';
+import {always, arity, identity, slice} from '../core';
 import {extend} from '../protocol';
 import List from '../types/list';
 import {EMPTY} from '../types/empty';
+import {indexedSeq} from '../types/indexed-seq';
 import Seq from '../protocols/seq';
 import Seqable from '../protocols/seqable';
 import Associative from '../protocols/associative';
@@ -11,14 +12,11 @@ import Emptyable from '../protocols/emptyable';
 import Collection from '../protocols/collection';
 
 export function seq(obj, ks, at){
+  if (obj && obj.hasOwnProperty("callee") && obj.hasOwnProperty("length")) return obj.length ? indexedSeq(obj) : null; //arguments object
   var pos = at || 0, keys = ks || Object.keys(obj), key = keys[pos];
   return pos < keys.length ? new List([key, obj[key]], function(){
     return seq(obj, keys, pos + 1) || EMPTY;
   }) : null;
-}
-
-export function concat(){
-  return _reduce(slice(arguments), Object.assign, {});
 }
 
 export const empty = always({});

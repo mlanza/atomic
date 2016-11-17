@@ -3,8 +3,6 @@ import {slice, first, rest, reverse, reduce, append as conj, identity, always, a
 export {slice, first, rest, reverse, reduce, conj};
 import {extend} from '../protocol';
 import {EMPTY} from '../types/empty';
-import {concat as _concat} from '../types/concat';
-import Compact from '../protocols/compact';
 import Next from '../protocols/next';
 import Seq from '../protocols/seq';
 import Seqable from '../protocols/seqable';
@@ -93,23 +91,5 @@ extend(Indexed, Array, {
 extend(Reduce, Array, {
   reduce: reduce
 });
-
-extend(Compact, Array, {
-  compact: compact
-});
-
-/*
-
-export function concat(){
-  return reduce(slice(arguments), function(memo, arr){
-    return memo.concat(arr);
-  }, []);
-}
-
-export function flatten(arr){
-  return Coll.flatten(Seq.seq(arr));
-}
-
-*/
 
 export default Array;
