@@ -8,83 +8,75 @@ import Collection from '../protocols/collection';
 import {query, fetch} from '../types/html-document';
 export {query, fetch} from '../types/html-document';
 
-export function parent(self){
-  return self.parentNode;
+export function parent(el){
+  return el.parentNode;
 }
 
-export function closest(self, selector){
-  return self == null ? null : self.matches(selector) ? self : Hierarchy.closest(parent(self), selector);
+export function closest(el, selector){
+  return el == null ? null : el.matches(selector) ? el : Hierarchy.closest(parent(el), selector);
 }
 
-export function hasKey(self, key){
-  return !!self.attributes.getNamedItem(key);
+export function hasKey(el, key){
+  return !!el.attributes.getNamedItem(key);
 }
 
-export function assoc(self, key, value){
+export function assoc(el, key, value){
   var attr  = document.createAttribute(key);
   attr.value = value;
-  self.attributes.setNamedItem(attr);
-  return self;
+  el.attributes.setNamedItem(attr);
+  return el;
 }
 
-export function get(self, key){
-  var attr = self.attributes.getNamedItem(key);
+export function get(el, key){
+  var attr = el.attributes.getNamedItem(key);
   return attr ? attr.value : null;
 }
 
-export function conj(self, child){
-  self.appendChild(is(child, String) ? document.createTextNode(child) : child);
-  return self;
+export function conj(el, child){
+  el.appendChild(is(child, String) ? document.createTextNode(child) : child);
+  return el;
 }
 
-export function cons(self, child){
-  self.insertBefore(is(child, String) ? document.createTextNode(child) : child, self.firstChild);
-  return self;
+export function cons(el, child){
+  el.insertBefore(is(child, String) ? document.createTextNode(child) : child, el.firstChild);
+  return el;
 }
 
-export function text(self){
-  return self.textContent;
+export function text(el){
+  return el.textContent;
 }
 
-export function style(self, key, value){
-  self.style[key] = value;
-  return self;
+export function style(key, value, el){
+  el.style[key] = value;
+  return el;
 }
 
-export function show(self){
-  return style(self, "display", "inherit");
+export function remove(el){
+  el.parentElement.removeChild(el);
+  return el;
 }
 
-export function hide(self){
-  return style(self, "display", "none");
+export function hasClass(str, el){
+  return el.classList.contains(str);
 }
 
-export function remove(self){
-  self.parentElement.removeChild(self);
-  return self;
+export function addClass(str, el){
+  el.classList.add(str);
+  return el;
 }
 
-export function hasClass(self, str){
-  return self.classList.contains(str);
+export function removeClass(str, el){
+  el.classList.remove(str);
+  return el;
 }
 
-export function addClass(self, str){
-  self.classList.add(str);
-  return self;
+export function toggleClass(str, v){
+  return setClass(!hasClass(str, el), str, el)
 }
 
-export function removeClass(self, str){
-  self.classList.remove(str);
-  return self;
-}
-
-export function toggleClass(self, str){
-  return setClass(self, str, !hasClass(self, str))
-}
-
-export function setClass(self, str, on){
-  var f = on ? addClass : removeClass;
-  return f(self, str);
+export function setClass(on, str, el){
+  el.classList[on ? 'add' : 'remove'](str);
+  return f(str, el);
 }
 
 //TODO extract logic in util.js tag for passing in unrealized functions until non-functions are passed in and all results are fully resolved

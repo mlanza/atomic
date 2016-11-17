@@ -5,8 +5,8 @@ import HTMLDocument from './types/html-document';
 import HTMLElement from './types/html-element';
 import IndexedSeq from './types/indexed-seq';
 import Reduce from './protocols/reduce';
-import {log, chain, pipe, add, juxt, query, fetch, get, assoc, hasKey, first, second, third, rest, nth, next, count, reduce, each, map, filter, find, satisfies, concat, toArray, toObject} from './curried';
-export {log, chain, pipe, add, juxt, query, fetch, get, assoc, hasKey, first, second, third, rest, nth, next, count, reduce, each, map, filter, find, satisfies, concat, toArray, toObject} from './curried';
+import {log, chain, pipe, add, juxt, query, fetch, get, assoc, hasKey, first, second, third, rest, nth, next, count, reduce, each, map, filter, find, satisfies, concat, toArray, toObject} from './composable';
+export {log, chain, pipe, add, juxt, query, fetch, get, assoc, hasKey, first, second, third, rest, nth, next, count, reduce, each, map, filter, find, satisfies, concat, toArray, toObject} from './composable';
 export const nums = new IndexedSeq([11,12,13,14], 1);
 export const letters = new IndexedSeq("grace");
 
