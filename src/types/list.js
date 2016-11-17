@@ -1,5 +1,5 @@
 import {identity, constantly, noop, multiarity, overload} from '../core';
-import {inc} from '../curried';
+import {inc} from '../composable';
 import Reduced from '../types/reduced';
 import {EMPTY} from '../types/empty';
 import {extend} from '../protocol';
