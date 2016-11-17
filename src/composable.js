@@ -16,7 +16,7 @@ import Lookup from './protocols/lookup';
 import Query from './protocols/query';
 import {log, curry, pipe, juxt, flip, partial, chain} from './core';
 export {log, curry, pipe, juxt, flip, partial, chain} from './core';
-export {text, show, hide} from './types/html-element';
+export {text} from './types/html-element';
 export {concat, toObject, toArray} from './coll';
 export const seq       = Seqable.seq;
 export const query     = flip(Query.query,2); //TODO queryTop

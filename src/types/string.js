@@ -27,31 +27,31 @@ export function concat(){
   return reduce(slice(arguments), add, "");
 }
 
-export function empty(){
+function empty(){
   return "";
 }
 
-export function next(self){
+function next(self){
   return self.length < 2 ? null : indexedSeq(self, 1);
 }
 
-export function first(self){
+function first(self){
   return self[0];
 }
 
-export function rest(self){
+function rest(self){
   return indexedSeq(self, 1);
 }
 
-export function count(self){
+function count(self){
   return self.length;
 }
 
-export function nth(self, n){
+function nth(self, n){
   return self[n] || null;
 }
 
-export function reduce(self, f, init) {
+function reduce(self, f, init) {
   var memo = init, len = self.length;
   for(var i = self.start; i < len; i++) {
     if (memo instanceof Reduced)
@@ -61,24 +61,22 @@ export function reduce(self, f, init) {
   return Deref.deref(memo);
 }
 
-export function seq(self){
+function seq(self){
   return self.length ? self : null;
 }
 
-export const get = nth;
-
-export function hasKey(self, key){
+function hasKey(self, key){
   return key > -1 && key < self.length;
 }
 
-export function assoc(self, key, value){
+function assoc(self, key, value){
   var arr = slice(self);
   arr.splice(key, 1, value);
   return arr;
 }
 
 extend(Lookup, String, {
-  get: get
+  get: nth
 });
 
 extend(Associative, String, {
