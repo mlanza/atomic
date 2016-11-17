@@ -50,7 +50,7 @@ export function nth(self, n){
   return i < self.indexed.length ? self.indexed[i] : null;
 }
 
-export const lookup = nth;
+export const get = nth;
 
 export function reduce(self, f, init) {
   var memo = init, len = self.indexed.length;
@@ -110,7 +110,7 @@ extend(Indexed, IndexedSeq, {
 });
 
 extend(Lookup, IndexedSeq, {
-  lookup: lookup
+  get: get
 });
 
 extend(Associative, IndexedSeq, {
