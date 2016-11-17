@@ -1,11 +1,67 @@
 import {identity, noop, is} from '../core';
 import {extend} from '../protocol';
+import {each} from '../coll';
+import Seqable from '../protocols/seqable';
 import Query from '../protocols/query';
 import Hierarchy from '../protocols/hierarchy';
 import Associative from '../protocols/associative';
 import Lookup from '../protocols/lookup';
 import Collection from '../protocols/collection';
 import IndexedSeq from './indexed-seq';
+
+export function text(el){
+  return el.textContent;
+}
+
+export function attr(obj, el){
+  each(Seqable.seq(obj), function(pair){
+    assoc(el, pair[0], pair[1]);
+  });
+  return el
+}
+
+export function css(obj, el){
+  each(Seqable.seq(obj), function(pair){
+    el.style[pair[0]] = pair[1];
+  });
+  return el;
+}
+
+export function hasClass(str, el){
+  return el.classList.contains(str);
+}
+
+export function addClass(str, el){
+  el.classList.add(str);
+  return el;
+}
+
+export function removeClass(str, el){
+  el.classList.remove(str);
+  return el;
+}
+
+export function toggleClass(str, el){
+  return setClass(!hasClass(str, el), str, el)
+}
+
+export function setClass(on, str, el){
+  el.classList[on ? 'add' : 'remove'](str);
+  return f(str, el);
+}
+
+//TODO extract logic in util.js tag for passing in unrealized functions until non-functions are passed in and all results are fully resolved
+export function tag(name){
+  return function(){
+    var el = document.createElement(name);
+    array.each(arguments, function(item){
+      object.is(item, Object) ? object.each(item, function(pair){
+        assoc(el, pair[0], pair[1]);
+      }) : append(el, item);
+    });
+    return el;
+  }
+}
 
 function fetch(self, selector){
   return self.querySelector(selector) || null;
@@ -52,51 +108,6 @@ function conj(el, child){
 function cons(el, child){
   el.insertBefore(is(child, String) ? document.createTextNode(child) : child, el.firstChild);
   return el;
-}
-
-export function text(el){
-  return el.textContent;
-}
-
-export function style(key, value, el){
-  el.style[key] = value;
-  return el;
-}
-
-export function hasClass(str, el){
-  return el.classList.contains(str);
-}
-
-export function addClass(str, el){
-  el.classList.add(str);
-  return el;
-}
-
-export function removeClass(str, el){
-  el.classList.remove(str);
-  return el;
-}
-
-export function toggleClass(str, el){
-  return setClass(!hasClass(str, el), str, el)
-}
-
-export function setClass(on, str, el){
-  el.classList[on ? 'add' : 'remove'](str);
-  return f(str, el);
-}
-
-//TODO extract logic in util.js tag for passing in unrealized functions until non-functions are passed in and all results are fully resolved
-export function tag(name){
-  return function(){
-    var el = document.createElement(name);
-    array.each(arguments, function(item){
-      object.is(item, Object) ? object.each(item, function(pair){
-        assoc(el, pair[0], pair[1]);
-      }) : append(el, item);
-    });
-    return el;
-  }
 }
 
 extend(Collection, HTMLElement, {

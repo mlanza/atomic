@@ -112,3 +112,5 @@ extend(Indexed, String, {
 extend(Reduce, String, {
   reduce: reduce
 });
+
+export default String;
