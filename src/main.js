@@ -24,6 +24,7 @@ export {parent, closest, remove} from './protocols/hierarchy';
 export {query, fetch} from './protocols/query';
 export {each, map, filter, find, satisfies} from './curried';
 export {assoc, hasKey} from './protocols/associative';
+export {compact} from './protocols/compact';
 export {get} from './protocols/lookup';
 
 QUnit.test("IndexedSeq", function(assert){

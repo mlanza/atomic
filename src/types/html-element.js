@@ -79,6 +79,15 @@ export function removeClass(self, str){
   return self;
 }
 
+export function toggleClass(self, str){
+  return setClass(self, str, !hasClass(self, str))
+}
+
+export function setClass(self, str, on){
+  var f = on ? addClass : removeClass;
+  return f(self, str);
+}
+
 //TODO extract logic in util.js tag for passing in unrealized functions until non-functions are passed in and all results are fully resolved
 export function tag(name){
   return function(){
