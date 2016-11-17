@@ -1,9 +1,10 @@
-import {curry, complement} from './core';
+import {curry, complement, identity, slice} from './core';
 import {seq} from './protocols/seqable';
 import Seq from './protocols/seq';
 import Reduce from './protocols/reduce';
 import Collection from './protocols/collection';
 import {EMPTY} from './types/empty';
+import {indexedSeq} from './types/indexed-seq';
 import List from './types/list';
 
 export function each(xs, f){
@@ -34,11 +35,26 @@ export function reject(xs, pred){
   return filter(xs, complement(pred));
 }
 
+export function compact(xs){
+  return filter(xs, identity);
+}
+
 export function find(xs, pred){
   var coll = seq(xs);
   if (!coll) return null;
   var fst = Seq.first(coll);
   return pred(fst) ? fst : find(Seq.rest(coll), pred);
+}
+
+//TODO flatten
+export function concat(xs){
+  var coll = toArray(compact(map(arguments, seq))),
+      fst  = Seq.first(coll),
+      rst  = Seq.rest(coll);
+  if (!seq(coll)) return EMPTY;
+  return new List(Seq.first(fst), function(){
+    return seq(fst) ? concat.apply(this, [Seq.rest(fst)].concat(Seq.rest(coll))) : concat.apply(this, Seq.rest(coll));
+  });
 }
 
 export function toArray(xs){

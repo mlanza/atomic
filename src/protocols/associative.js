@@ -1,5 +1,5 @@
-import {flip} from '../core.js';
-import {protocol} from '../protocol.js';
+import {flip} from '../core';
+import {protocol} from '../protocol';
 export const Associative = protocol({
   assoc: null,
   hasKey: null
