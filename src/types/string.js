@@ -1,7 +1,6 @@
 import unbind from '../unbind.js';
 import {flip, identity, add, first, rest, slice} from '../core.js';
 import {extend} from '../protocol';
-import {indexedSeq} from '../types/indexed-seq';
 import Next from '../protocols/next';
 import Seq from '../protocols/seq';
 import Counted from '../protocols/counted';
@@ -17,15 +16,14 @@ import Deref from '../protocols/deref';
 export const trim        = unbind(String.prototype.trim);
 export const toLowerCase = unbind(String.prototype.toLowerCase);
 export const toUpperCase = unbind(String.prototype.toUpperCase);
-export const split       = flip(unbind(String.prototype.split), 2);
-export const replace     = flip(unbind(String.prototype.replace), 3);
-export const substring   = flip(unbind(String.prototype.substring), 3);
-export const startsWith  = flip(unbind(String.prototype.startsWith), 2);
-export const endsWith    = flip(unbind(String.prototype.endsWith), 2);
-export const append      = add;
+export const split       = unbind(String.prototype.split);
+export const replace     = unbind(String.prototype.replace);
+export const substring   = unbind(String.prototype.substring);
+export const startsWith  = unbind(String.prototype.startsWith);
+export const endsWith    = unbind(String.prototype.endsWith);
 
 export function concat(){
-  return reduce(slice(arguments), add, "");
+  return reduce(arguments, conj, "");
 }
 
 function empty(){
@@ -33,15 +31,7 @@ function empty(){
 }
 
 function next(self){
-  return self.length < 2 ? null : indexedSeq(self, 1);
-}
-
-function first(self){
-  return self[0];
-}
-
-function rest(self){
-  return indexedSeq(self, 1);
+  return self.length < 2 ? null : rest(self);
 }
 
 function count(self){
@@ -76,21 +66,13 @@ function assoc(self, key, value){
   return arr;
 }
 
-function conj(self, str){
-  return self + str;
-}
-
-function cons(self, str){
-  return str + self;
-}
-
 extend(Lookup, String, {
   get: nth
 });
 
 extend(Collection, String, {
-  conj: conj,
-  cons: cons
+  conj: add,
+  cons: flip(add)
 });
 
 extend(Associative, String, {
