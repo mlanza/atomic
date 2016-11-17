@@ -1,8 +1,8 @@
-import {identity, always, partial} from '../core';
+import {identity, constantly, partial} from '../core';
+import {extend} from '../protocol';
 import {EMPTY} from '../types/empty';
 import Reduced from '../types/reduced';
 import List from '../types/list';
-import {extend, satisfies} from '../protocol';
 import Next from '../protocols/next';
 import Seq from '../protocols/seq';
 import Counted from '../protocols/counted';
@@ -13,7 +13,7 @@ import Emptyable from '../protocols/emptyable';
 import Lookup from '../protocols/lookup';
 import Associative from '../protocols/associative';
 import Collection from '../protocols/collection';
-import {deref} from '../protocols/deref';
+import Deref from '../protocols/deref';
 
 export function IndexedSeq(indexed, start){
   this.indexed = indexed;
@@ -24,8 +24,7 @@ export function indexedSeq(indexed, start){
   return new IndexedSeq(indexed, start);
 }
 
-export const empty = always(indexedSeq([]));
-export const isIndexedSeq = partial(satisfies. IndexedSeq);
+export const empty = constantly(indexedSeq([]));
 
 export function next(self){
   var start = self.start + 1;
@@ -59,7 +58,7 @@ export function reduce(self, f, init) {
       break;
     memo = f(memo, self.indexed[i]);
   }
-  return deref(memo);
+  return Deref.deref(memo);
 }
 
 export function seq(self){

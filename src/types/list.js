@@ -1,16 +1,15 @@
-import {identity, always, noop, multiarity, overload} from '../core';
+import {identity, constantly, noop, multiarity, overload} from '../core';
 import {inc} from '../curried';
 import Reduced from '../types/reduced';
 import {EMPTY} from '../types/empty';
 import {extend} from '../protocol';
-import {seq} from '../protocols/seqable';
 import Seq from '../protocols/seq';
 import Next from '../protocols/next';
 import Emptyable from '../protocols/emptyable';
 import Seqable from '../protocols/seqable';
 import Reduce from '../protocols/reduce';
 import Collection from '../protocols/reduce';
-import {deref} from '../protocols/deref';
+import Deref from '../protocols/deref';
 
 export function List(head, tail){
   this.head = head;
@@ -36,11 +35,12 @@ export const repeatedly = multiarity(function(f){
 });
 
 export const repeat = overload(null, function(value){
-  return repeatedly(always(value));
+  return repeatedly(constantly(value));
 }, function(n, value){
-  return repeatedly(n, always(value))
+  return repeatedly(n, constantly(value))
 });
 
+//TODO fix cons
 export const range = multiarity(function(){ //TODO number range, date range, string range, etc.
   return iterate(inc, 0);
 }, function(end){
@@ -54,7 +54,7 @@ export const range = multiarity(function(){ //TODO number range, date range, str
   });
 });
 
-export const empty = always(EMPTY);
+export const empty = constantly(EMPTY);
 
 export function first(self){
   return self.head;
@@ -65,15 +65,15 @@ export function rest(self){
 }
 
 export function next(self){
-  return seq(self.tail());
+  return Seqable.seq(self.tail());
 }
 
 export function reduce(self, f, init){
-  return init instanceof Reduced ? deref(init) : Reduce.reduce(self.tail(), f, f(init, self.head));
+  return init instanceof Reduced ? Deref.deref(init) : Reduce.reduce(self.tail(), f, f(init, self.head));
 }
 
 export function conj(self, value){
-  return new List(value, always(self));
+  return new List(value, constantly(self));
 }
 
 extend(Collection, List, {

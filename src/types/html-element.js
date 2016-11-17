@@ -1,6 +1,5 @@
-import {identity, always, noop, is} from '../core';
+import {identity, noop, is} from '../core';
 import {extend} from '../protocol';
-import {indexedSeq} from './indexed-seq';
 import Query from '../protocols/query';
 import Hierarchy from '../protocols/hierarchy';
 import Associative from '../protocols/associative';

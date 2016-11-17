@@ -4,5 +4,4 @@ export const Deref = protocol({
     return self.valueOf();
   }
 });
-export const deref = Deref.deref;
 export default Deref;

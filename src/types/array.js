@@ -1,5 +1,5 @@
 import unbind from '../unbind';
-import {slice, first, rest, reverse, reduce, append as conj, identity, always, arity} from '../core';
+import {slice, first, rest, reverse, reduce, append as conj, identity, constantly, arity} from '../core';
 export {slice, first, rest, reverse, reduce, conj};
 import {extend} from '../protocol';
 import {EMPTY} from '../types/empty';
@@ -16,7 +16,7 @@ import Collection from '../protocols/collection';
 import {filter} from '../coll';
 
 export const join = unbind(Array.prototype.join);
-export const empty = always([]);
+export const empty = constantly([]);
 
 export function compact(self){
   return filter(self, identity);

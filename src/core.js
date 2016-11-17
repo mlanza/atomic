@@ -1,6 +1,6 @@
 import unbind from './unbind';
 import Reduced from './types/reduced';
-import {deref} from './protocols/deref';
+import Deref from './protocols/deref';
 
 export const log = console.log.bind(console);
 export const slice = unbind(Array.prototype.slice);
@@ -17,7 +17,7 @@ export function reduce(xs, xf, init){
       break;
     memo = xf(memo, xs[i]);
   }
-  return deref(memo);
+  return Deref.deref(memo);
 }
 
 export function identity(value){
@@ -39,7 +39,7 @@ export function initial(self){
 export function partial(f){
   var applied = rest(arguments);
   return function(){
-    return f.apply(this, concat(applied, arguments));
+    return f.apply(this, applied.concat(arguments));
   }
 }
 
@@ -131,8 +131,6 @@ export function constantly(value){
     return value;
   }
 }
-
-export const always = constantly;
 
 export function noop(){
 }

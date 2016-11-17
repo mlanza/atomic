@@ -1,31 +1,14 @@
-import {log, chain, pipe, add, curry} from './core';
-import {indexedSeq} from './types/indexed-seq';
 import List from './types/list';
 import Array from './types/array';
 import Object from './types/object';
 import HTMLDocument from './types/html-document';
 import HTMLElement from './types/html-element';
-import {first, rest} from './protocols/seq';
-import {nth} from './protocols/indexed';
-import {count} from './protocols/counted';
-import {next} from './protocols/next';
-export const nums = indexedSeq([11,12,13,14], 1);
-export const letters = indexedSeq("grace");
-export {log, chain, pipe, add, juxt} from './core';
-export {first, rest} from './protocols/seq';
-export {nth} from './protocols/indexed';
-export {count} from './protocols/counted';
-export {next} from './protocols/next';
-export {reduce, Reduce} from './protocols/reduce';
-import {reduce, Reduce} from './protocols/reduce';
-import {toArray, toObject} from './coll';
-export {concat, toArray} from './coll';
-import {each, map, filter, find, satisfies} from './curried';
-export {parent, closest, remove} from './protocols/hierarchy';
-export {query, fetch} from './protocols/query';
-export {each, map, filter, find, satisfies} from './curried';
-export {assoc, hasKey} from './protocols/associative';
-export {get} from './protocols/lookup';
+import IndexedSeq from './types/indexed-seq';
+import Reduce from './protocols/reduce';
+import {log, chain, pipe, add, juxt, query, fetch, get, assoc, hasKey, first, rest, nth, next, count, reduce, each, map, filter, find, satisfies, concat, toArray, toObject} from './curried';
+export {log, chain, pipe, add, juxt, query, fetch, get, assoc, hasKey, first, rest, nth, next, count, reduce, each, map, filter, find, satisfies, concat, toArray, toObject} from './curried';
+export const nums = new IndexedSeq([11,12,13,14], 1);
+export const letters = new IndexedSeq("grace");
 
 QUnit.test("IndexedSeq", function(assert){
   assert.equal(chain(letters, first), "g");

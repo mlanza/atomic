@@ -1,4 +1,4 @@
-import {identity, always, noop} from '../core';
+import {identity, constantly, noop} from '../core';
 import List from '../types/list';
 import Emptyable from '../protocols/emptyable';
 import Seqable from '../protocols/seqable';
@@ -10,16 +10,16 @@ import Collection from '../protocols/collection';
 import {extend} from '../protocol';
 import {EMPTY} from '../types/empty.js';
 
-export const rest = always(EMPTY);
-export const first = always(null);
-export const next = always(null);
-export const deref = always(null);
+export const rest = constantly(EMPTY);
+export const first = constantly(null);
+export const next = constantly(null);
+export const deref = constantly(null);
 
 export function set(self, key, value){
   return Hash.set({}, key, value);
 }
 
-export const has = always(false);
+export const has = constantly(false);
 
 export function isNil(value){
   return null == value;
@@ -29,7 +29,7 @@ export function reduce(){
   return arguments[2];
 }
 
-export const hasKey = always(false);
+export const hasKey = constantly(false);
 
 export function assoc(self, key, value){
   var obj = {};
@@ -38,7 +38,7 @@ export function assoc(self, key, value){
 }
 
 export function conj(self, value){
-  return new List(value, always(EMPTY));
+  return new List(value, constantly(EMPTY));
 }
 
 extend(Deref, null, {
