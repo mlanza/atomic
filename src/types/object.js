@@ -39,7 +39,7 @@ export function hasKey(self, key){
   return self.hasOwnProperty(key);
 }
 
-export function lookup(self, key){
+export function get(self, key){
   return self[key];
 }
 
@@ -70,7 +70,7 @@ extend(Seqable, Object, {
 });
 
 extend(Lookup, Object, {
-  lookup: lookup
+  get: get
 });
 
 extend(Associative, Object, {

@@ -1,5 +1,5 @@
-import {flip} from '../core.js';
-import {protocol} from '../protocol.js';
-export const Lookup = protocol({lookup: null});
-export const lookup = flip(Lookup.lookup, 2);
+import {flip} from '../core';
+import {protocol} from '../protocol';
+export const Lookup = protocol({get: null});
+export const get = flip(Lookup.get, 2);
 export default Lookup;

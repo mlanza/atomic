@@ -66,7 +66,7 @@ export function seq(self){
   return self.length ? self : null;
 }
 
-export const lookup = nth;
+export const get = nth;
 
 export function hasKey(self, key){
   return key > -1 && key < self.length;
@@ -79,7 +79,7 @@ export function assoc(self, key, value){
 }
 
 extend(Lookup, String, {
-  lookup: lookup
+  get: get
 });
 
 extend(Associative, String, {

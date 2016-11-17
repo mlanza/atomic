@@ -6,35 +6,35 @@ import Collection from './protocols/collection';
 import {EMPTY} from './types/empty';
 import List from './types/list';
 
-export function each(f, xs){
+export function each(xs, f){
   var coll = seq(xs);
   if (!coll) return;
   f(Seq.first(coll));
-  each(f, Seq.rest(coll));
+  each(Seq.rest(coll), f);
 }
 
-export function map(f, xs){
+export function map(xs, f){
   var coll = seq(xs);
   if (!coll) return EMPTY;
   return new List(f(Seq.first(coll)), function(){
-    return map(f, Seq.rest(coll));
+    return map(Seq.rest(coll), f);
   });
 }
 
-export function filter(pred, xs){
+export function filter(xs, pred){
   var coll = seq(xs);
   if (!coll) return EMPTY;
   var fst = Seq.first(coll);
   return pred(fst) ? new List(fst, function(){
-    return filter(pred, Seq.rest(coll));
-  }) : filter(pred, Seq.rest(coll));
+    return filter(Seq.rest(coll), pred);
+  }) : filter(Seq.rest(coll), pred);
 }
 
-export function find(pred, xs){
+export function find(xs, pred){
   var coll = seq(xs);
   if (!coll) return null;
   var fst = Seq.first(coll);
-  return pred(fst) ? fst : find(pred, Seq.rest(coll));
+  return pred(fst) ? fst : find(Seq.rest(coll), pred);
 }
 
 export function toArray(xs){
