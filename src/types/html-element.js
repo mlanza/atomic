@@ -1,6 +1,5 @@
 import {identity, noop, is} from '../core';
 import {extend} from '../protocol';
-import {each} from '../coll';
 import Seqable from '../protocols/seqable';
 import Query from '../protocols/query';
 import Hierarchy from '../protocols/hierarchy';
@@ -8,6 +7,7 @@ import Associative from '../protocols/associative';
 import Lookup from '../protocols/lookup';
 import Collection from '../protocols/collection';
 import IndexedSeq from './indexed-seq';
+import {each} from '../coll';
 
 export function text(el){
   return el.textContent;

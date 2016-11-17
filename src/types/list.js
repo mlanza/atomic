@@ -1,5 +1,5 @@
 import {identity, constantly} from '../core';
-import {extend} from '../protocol';
+import {extend, def} from '../protocol';
 import Seq from '../protocols/seq';
 import Next from '../protocols/next';
 import Emptyable from '../protocols/emptyable';
@@ -37,9 +37,11 @@ function reduce(self, f, init){
   return init instanceof Reduced ? Deref.deref(init) : Reduce.reduce(self.tail(), f, f(init, self.head));
 }
 
-function conj(self, value){
+export function conj(self, value){
   return new List(value, constantly(self));
 }
+
+def(Collection, {conj: conj, cons: conj})
 
 extend(Collection, List, {
   conj: conj

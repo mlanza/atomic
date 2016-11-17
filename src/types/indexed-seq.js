@@ -1,8 +1,5 @@
 import {identity, constantly, partial} from '../core';
 import {extend} from '../protocol';
-import {EMPTY} from '../types/empty';
-import Reduced from '../types/reduced';
-import List from '../types/list';
 import Next from '../protocols/next';
 import Seq from '../protocols/seq';
 import Counted from '../protocols/counted';
@@ -14,6 +11,9 @@ import Lookup from '../protocols/lookup';
 import Associative from '../protocols/associative';
 import Collection from '../protocols/collection';
 import Deref from '../protocols/deref';
+import {EMPTY} from '../types/empty';
+import Reduced from '../types/reduced';
+import List from '../types/list';
 
 export function IndexedSeq(indexed, start){
   this.indexed = indexed;

@@ -1,13 +1,17 @@
 import {multimethod, curry} from './core';
 
 let TEMPLATE = Symbol('template'),
-    MAP = Symbol('map');
+    MAP      = Symbol('map');
 
 export function Protocol(template){
   this[TEMPLATE] = template;
   this[MAP] = new Map();
+  def(this, template);
+}
+
+export function def(self, template){
   for(var key in template){
-    this[key] = method(this, key);
+    self[key] = method(self, key);
   }
 }
 
