@@ -20,6 +20,13 @@ export function reduce(xs, xf, init){
   return Deref.deref(memo);
 }
 
+export function each(xs, f){
+  var len = xs.length;
+  for(var i = 0; i < len; i++){
+    f(xs[i]);
+  }
+}
+
 export function identity(value){
   return value;
 }
