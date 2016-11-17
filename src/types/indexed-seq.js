@@ -62,7 +62,7 @@ function reduce(self, f, init) {
 }
 
 function seq(self){
-  return self.start < self.indexed.length ? self : nil;
+  return self.start < self.indexed.length ? self : null;
 }
 
 function hasKey(self, key){

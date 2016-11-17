@@ -31,20 +31,12 @@ export function identity(value){
   return value;
 }
 
-export function first(self){
-  return self[0];
-}
-
-export function rest(self){
-  return slice(self, 1);
-}
-
 export function initial(self){
   return slice(self, 0, self.length - 1);
 }
 
 export function partial(f){
-  var applied = rest(arguments);
+  var applied = slice(arguments, 1);
   return function(){
     return f.apply(this, applied.concat(arguments));
   }
@@ -101,14 +93,14 @@ export function flip(f, len){
   return curry(arity(l, function(){
     var size = arguments.length,
         last = arguments[size - 1],
-        rest = slice(arguments, 0, size - 1),
-        args = [last].concat(rest);
+        tail = slice(arguments, 0, size - 1),
+        args = [last].concat(tail);
     return f.apply(this, args);
   }), l);
 }
 
 export function chain(init){
-  return reduce(rest(arguments), function(value, f){
+  return reduce(slice(arguments, 1), function(value, f){
     return f(value);
   }, init);
 }
@@ -182,24 +174,24 @@ export function isSome(x){
   return x != null;
 }
 
+export function isNull(value){
+  return null == value;
+}
+
 export function tap(f, value){
   f(value);
   return value;
-}
-
-export function lookup(obj, key){
-  return obj[key];
 }
 
 export function odd(n){
   return n % 2;
 }
 
+export const even = complement(odd);
+
 export function is(value, constructor) {
   return value != null && value.constructor === constructor;
 }
-
-export const even = complement(odd);
 
 export function juxt(){
   var fs = slice(arguments);
