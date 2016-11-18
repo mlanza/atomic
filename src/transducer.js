@@ -1,27 +1,5 @@
-import {reduced} from './types/reduced.js';
-import {overload, multiarity, constantly, complement, compose, identity} from './core.js';
-import {Coll} from './protocols/coll.js';
-
-export function seeding(f, init){
-  return overload(init, identity, f);
-}
-
-export const transduce = multiarity(function(xform, f, coll){
-  var xf = xform(f);
-  return xf(Coll.reduce(coll, xf, f()));
-}, function(xform, f, seed, coll){
-  return transduce(xform, seeding(f, constantly(seed)), coll);
-});
-
-export const into = multiarity(function(to, from){
-  return Coll.reduce(from, Coll.append, to);
-}, function(to, xform, from){
-  return transduce(xform, Coll.append, to, from);
-});
-
-export function transform(xform, coll){
-  return into(Coll.empty(coll), xform, coll);
-}
+import Reduced from './types/reduced.js';
+import {overload, complement, compose} from './core.js';
 
 export function map(f){
   return function(xf){
@@ -62,7 +40,7 @@ export function take(n){
   return function(xf){
     var taking = n;
     return overload(xf, xf, function(memo, value){
-      return taking-- > 0 ? xf(memo, value) : reduced(memo);
+      return taking-- > 0 ? xf(memo, value) : new Reduced(memo);
     });
   }
 }
@@ -70,7 +48,7 @@ export function take(n){
 export function takeWhile(pred){
   return function(xf){
     return overload(xf, xf, function(memo, value){
-      return pred(value) ? xf(memo, value) : reduced(memo);
+      return pred(value) ? xf(memo, value) : new Reduced(memo);
     });
   }
 }

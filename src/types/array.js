@@ -1,8 +1,7 @@
 import unbind from '../unbind';
-import {slice, reverse, reduce, append as conj, identity, constantly, arity} from '../core';
-export {slice, reverse, reduce, conj};
+import {slice, reverse, reduce, identity, constantly, arity} from '../core';
+export {slice, reverse, reduce};
 import {extend} from '../protocol';
-import {EMPTY} from '../types/empty';
 import Next from '../protocols/next';
 import Seq from '../protocols/seq';
 import Seqable from '../protocols/seqable';
@@ -13,6 +12,9 @@ import Emptyable from '../protocols/emptyable';
 import Lookup from '../protocols/lookup';
 import Associative from '../protocols/associative';
 import Collection from '../protocols/collection';
+import Append from '../protocols/append';
+import Prepend from '../protocols/prepend';
+import {EMPTY} from '../types/empty';
 
 export const join = unbind(Array.prototype.join);
 
@@ -50,10 +52,22 @@ function assoc(self, key, value){
   return arr;
 }
 
-export default extend(Array, Collection, {
-  conj: conj
+function append(self, value){
+  return self.concat([value]);
+}
+
+function prepend(self, value){
+  return [value].concat(self);
+}
+
+export default extend(Array, Append, {
+  append: append
+}, Prepend, {
+  prepend: prepend
+}, Collection, {
+  conj: append
 }, Lookup, {
-  lookup: nth
+  get: nth
 }, Associative, {
   assoc: assoc,
   hasKey: hasKey

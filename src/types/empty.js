@@ -7,9 +7,10 @@ import Seqable from '../protocols/seqable';
 import Reduce from '../protocols/reduce';
 import Emptyable from '../protocols/emptyable';
 import Collection from '../protocols/collection';
+import Prepend from '../protocols/prepend';
 import Reduced from '../types/reduced';
 import LazyList from '../types/lazy-list';
-import {conj} from '../types/list';
+import {prepend} from '../types/list';
 
 export function Empty(){
 }
@@ -21,8 +22,9 @@ export function reduce(){
 }
 
 export default extend(Empty, Collection, {
-  conj: conj,
-  cons: conj
+  conj: prepend
+}, Prepend, {
+  prepend: prepend
 }, Emptyable, {
   empty: identity
 }, Reduce, {

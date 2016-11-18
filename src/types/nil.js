@@ -1,4 +1,4 @@
-import {identity, constantly, noop, isNull} from '../core';
+import {identity, constantly} from '../core';
 import {extend} from '../protocol';
 import Emptyable from '../protocols/emptyable';
 import Seqable from '../protocols/seqable';
@@ -7,6 +7,7 @@ import Next from '../protocols/next';
 import Reduce from '../protocols/reduce';
 import Deref from '../protocols/deref';
 import Collection from '../protocols/collection';
+import Prepend from '../protocols/prepend';
 import Associative from '../protocols/associative';
 import Lookup from '../protocols/lookup';
 import List from '../types/list';
@@ -22,17 +23,18 @@ function assoc(self, key, value){
   return obj;
 }
 
-function conj(self, value){
-  return new List(value, EMPTY);
+function prepend(self, value){
+  return new List(value);
 }
 
 export default extend(null, Deref, {
   deref: constantly(null)
 }, Collection, {
-  conj: conj,
-  cons: conj
+  conj: prepend
+}, Prepend, {
+  prepend: prepend
 }, Lookup, {
-  lookup: constantly(null)
+  get: constantly(null)
 }, Associative, {
   assoc: assoc,
   hasKey: constantly(false)

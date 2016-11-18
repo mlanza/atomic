@@ -6,6 +6,8 @@ import Hierarchy from '../protocols/hierarchy';
 import Associative from '../protocols/associative';
 import Lookup from '../protocols/lookup';
 import Collection from '../protocols/collection';
+import Append from '../protocols/append';
+import Prepend from '../protocols/prepend';
 import IndexedSeq from './indexed-seq';
 import {each} from '../coll';
 
@@ -79,7 +81,7 @@ function closest(el, selector){
   return el == null ? null : el.matches(selector) ? el : Hierarchy.closest(parent(el), selector);
 }
 
-function remove(el){
+function detach(el){
   el.parentElement.removeChild(el);
   return el;
 }
@@ -100,19 +102,22 @@ function get(el, key){
   return attr ? attr.value : null;
 }
 
-function conj(el, child){
+function append(el, child){
   el.appendChild(is(child, String) ? document.createTextNode(child) : child);
   return el;
 }
 
-function cons(el, child){
+function prepend(el, child){
   el.insertBefore(is(child, String) ? document.createTextNode(child) : child, el.firstChild);
   return el;
 }
 
-export default extend(HTMLElement, Collection, {
-  cons: cons,
-  conj: conj
+export default extend(HTMLElement, Append, {
+  append: append
+}, Prepend, {
+  prepend: prepend
+}, Collection, {
+  conj: append
 }, Lookup, {
   get: get
 }, Associative, {
@@ -124,5 +129,5 @@ export default extend(HTMLElement, Collection, {
 }, Hierarchy, {
   parent: parent,
   closest: closest,
-  remove: remove
+  detach: detach
 });
