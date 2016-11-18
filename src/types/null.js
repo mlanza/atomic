@@ -26,42 +26,24 @@ function conj(self, value){
   return new List(value, constantly(EMPTY));
 }
 
-extend(Deref, null, {
+export default extend(null, Deref, {
   deref: constantly(null)
-});
-
-extend(Collection, null, {
+}, Collection, {
   conj: conj
-});
-
-extend(Lookup, null, {
+}, Lookup, {
   lookup: constantly(null)
-});
-
-extend(Associative, null, {
+}, Associative, {
   assoc: assoc,
   hasKey: constantly(false)
-});
-
-extend(Emptyable, null, {
+}, Emptyable, {
   seq: identity
-});
-
-extend(Seqable, null, {
+}, Seqable, {
   seq: identity
-});
-
-extend(Reduce, null, {
+}, Reduce, {
   reduce: reduce
-});
-
-extend(Seq, null, {
+}, Seq, {
   first: constantly(null),
   rest:  constantly(EMPTY)
-});
-
-extend(Next, null, {
+}, Next, {
   next: constantly(null)
 });
-
-export default null;

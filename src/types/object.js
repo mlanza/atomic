@@ -49,29 +49,17 @@ function conj(self, pair){
   return assoc(self, pair[0], pair[1]);
 }
 
-extend(Collection, Object, {
+export default extend(Object, Collection, {
   conj: conj
-});
-
-extend(Reduce, Object, {
+}, Reduce, {
   reduce: reduce
-});
-
-extend(Emptyable, Object, {
+}, Emptyable, {
   empty: constantly({})
-});
-
-extend(Seqable, Object, {
+}, Seqable, {
   seq: arity(1, seq)
-});
-
-extend(Lookup, Object, {
+}, Lookup, {
   get: get
-});
-
-extend(Associative, Object, {
+}, Associative, {
   hasKey: hasKey,
   assoc: assoc,
 });
-
-export default Object;

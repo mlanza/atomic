@@ -3,7 +3,7 @@ import {multimethod, curry} from './core';
 let TEMPLATE = Symbol('template'),
     MAP      = Symbol('map');
 
-export function Protocol(template){
+export default function Protocol(template){
   this[MAP] = new Map();
   def(this, template);
 }
@@ -32,10 +32,9 @@ function method(protocol, key){
   return multimethod(dispatch);
 }
 
-export function extend(self, constructor, template){
-  var curr = self[MAP].get(constructor) || {};
-  self[MAP].set(constructor, Object.assign(curr, template));
-  return self;
+export function extend(constructor, protocol, template){
+  var tail = Array.prototype.slice.call(arguments, 3),
+    curr = protocol[MAP].get(constructor) || {};
+  protocol[MAP].set(constructor, Object.assign(curr, template));
+  return tail.length ? extend.apply(this, [constructor].concat(tail)) : constructor;
 }
-
-export default Protocol;

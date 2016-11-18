@@ -30,30 +30,18 @@ export const rest = identity;
 export const empty = identity;
 export const cons = conj;
 
-extend(Collection, Empty, {
+export default extend(Empty, Collection, {
   conj: conj,
   cons: cons
-});
-
-extend(Emptyable, Empty, {
+}, Emptyable, {
   empty: empty
-});
-
-extend(Reduce, Empty, {
+}, Reduce, {
   reduce: reduce
-});
-
-extend(Seqable, Empty, {
+}, Seqable, {
   seq: seq
-});
-
-extend(Next, Empty, {
+}, Next, {
   next: next
-});
-
-extend(Seq, Empty, {
+}, Seq, {
   first: first,
   rest: rest
 });
-
-export default Empty;

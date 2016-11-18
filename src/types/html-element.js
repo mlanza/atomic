@@ -110,29 +110,19 @@ function cons(el, child){
   return el;
 }
 
-extend(Collection, HTMLElement, {
+export default extend(HTMLElement, Collection, {
   cons: cons,
   conj: conj
-});
-
-extend(Lookup, HTMLElement, {
+}, Lookup, {
   get: get
-})
-
-extend(Associative, HTMLElement, {
+}, Associative, {
   assoc: assoc,
   hasKey: hasKey
-});
-
-extend(Query, HTMLElement, {
+}, Query, {
   query: query,
   fetch: fetch
-});
-
-extend(Hierarchy, HTMLElement, {
+}, Hierarchy, {
   parent: parent,
   closest: closest,
   remove: remove
 });
-
-export default HTMLElement;

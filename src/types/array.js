@@ -50,46 +50,26 @@ function assoc(self, key, value){
   return arr;
 }
 
-extend(Collection, Array, {
+export default extend(Array, Collection, {
   conj: conj
-});
-
-extend(Lookup, Array, {
+}, Lookup, {
   lookup: nth
-});
-
-extend(Associative, Array, {
+}, Associative, {
   assoc: assoc,
   hasKey: hasKey
-});
-
-extend(Emptyable, Array, {
+}, Emptyable, {
   empty: constantly([])
-});
-
-extend(Seqable, Array, {
+}, Seqable, {
   seq: seq
-});
-
-extend(Next, Array, {
+}, Next, {
   next: next
-});
-
-extend(Seq, Array, {
+}, Seq, {
   first: first,
   rest: rest
-});
-
-extend(Counted, Array, {
+}, Counted, {
   count: count
-});
-
-extend(Indexed, Array, {
+}, Indexed, {
   nth: nth
-});
-
-extend(Reduce, Array, {
+}, Reduce, {
   reduce: reduce
 });
-
-export default Array;

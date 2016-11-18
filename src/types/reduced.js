@@ -17,10 +17,8 @@ export function isReduced(value){
   return value instanceof Reduced;
 }
 
-extend(Deref, Reduced, {
+export default extend(Reduced, Deref, {
   deref: function(reduced){
     return reduced.valueOf();
   }
 });
-
-export default Reduced;
