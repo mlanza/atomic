@@ -26,6 +26,13 @@ export function each(xs, f){
   }
 }
 
+export function eachkv(obj, f){
+  for(var key in obj){
+    var value = obj[key];
+    f(key, value);
+  }
+}
+
 export function identity(value){
   return value;
 }
@@ -37,7 +44,7 @@ export function initial(self){
 export function partial(f){
   var applied = slice(arguments, 1);
   return function(){
-    return f.apply(this, applied.concat(arguments));
+    return f.apply(this, applied.concat(slice(arguments)));
   }
 }
 
@@ -196,7 +203,7 @@ export function odd(n){
 
 export const even = complement(odd);
 
-export function is(value, constructor) {
+export function is(constructor, value) {
   return value != null && value.constructor === constructor;
 }
 

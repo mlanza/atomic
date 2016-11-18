@@ -1,7 +1,31 @@
-import {log, into, append, prepend, inc, gt, lt, some, isEvery, mapIndexed, range, constantly, conj, take, takeNth, repeat, repeatedly, chain, compose, pipe, add, juxt, query, fetch, get, assoc, hasKey, first, second, third, rest, nth, next, count, reduce, each, map, filter, remove, takeWhile, dropWhile, find, satisfies, concat, toArray, toObject} from './composable';
-export {log, into, append, prepend, inc, gt, lt, some, isEvery, mapIndexed, range, constantly, conj, take, takeNth, repeat, repeatedly, chain, compose, pipe, add, juxt, query, fetch, get, assoc, hasKey, first, second, third, rest, nth, next, count, reduce, each, map, filter, remove, takeWhile, dropWhile, find, satisfies, concat, toArray, toObject} from './composable';
+import {log, eq, into, text, hide, show, tag, tap, detach, parent, addClass, append, prepend, inc, gt, lt, some, isEvery, mapIndexed, range, constantly, conj, take, takeNth, repeat, repeatedly, chain, compose, pipe, add, juxt, query, fetch, get, assoc, hasKey, first, second, third, rest, nth, next, count, reduce, each, map, filter, remove, takeWhile, dropWhile, find, satisfies, concat, toArray, toObject} from './composable';
+export {log, eq, into, text, hide, show, tag, tap, detach, parent, addClass, append, prepend, inc, gt, lt, some, isEvery, mapIndexed, range, constantly, conj, take, takeNth, repeat, repeatedly, chain, compose, pipe, add, juxt, query, fetch, get, assoc, hasKey, first, second, third, rest, nth, next, count, reduce, each, map, filter, remove, takeWhile, dropWhile, find, satisfies, concat, toArray, toObject} from './composable';
 import Reduce from './protocols/reduce';
 import IndexedSeq from './types/indexed-seq';
+
+QUnit.test("Traverse and manipulate the dom", function(assert){
+  let ul = tag('ul'), li = tag('li');
+  var stooges = ul(li({id: 'moe'}, "Moe Howard"), li({id: 'curly'}, "Curly Howard"), li({id: 'larry'}, "Larry Fine"));
+  let div  = tag('div'),
+      span = tag('span');
+  var body = fetch("body", document);
+  chain(stooges, query("li"), tap(each(addClass("stooge"))), log);
+  assert.equal(chain(body, addClass("main"), assoc("data-tagged", "tests"), get("data-tagged")), "tests");
+  assert.ok(body instanceof HTMLBodyElement, "Found by tag");
+  append(div({id: 'branding'}, span("Greetings!")), body);
+  assert.ok(fetch("#branding", body) instanceof HTMLDivElement, "Found by id");
+  assert.equal(chain(fetch("#branding span", body), text), "Greetings!", "Read text content");
+  var greeting = fetch("#branding span", document);
+  hide(greeting);
+  var hidden = get("style", greeting);
+  assert.equal(hidden, "display: none;", "Hidden");
+  show(greeting);
+  var shown = get("style", greeting);
+  assert.equal(shown, "display: inherit;", "Shown");
+  var branding = fetch("#branding", body);
+  detach(branding);
+  assert.equal(parent(branding), null, "Removed");
+});
 
 QUnit.test("Associative", function(assert){
   assert.deepEqual(chain({lname: "Howard"}, assoc("fname", "Moe")), {fname: "Moe", lname: "Howard"});

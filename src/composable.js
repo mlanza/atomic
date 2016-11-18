@@ -90,6 +90,7 @@ export const isEvery   = curry(coll.isEvery);
 export const isAny     = curry(coll.isAny);
 export const fold      = curry(coll.fold);
 export const iterate   = curry(coll.iterate);
+export const tag       = curry(el.tag, 2);
 export const attr      = curry(el.attr);
 export const css       = curry(el.css);
 export const show      = css({display: "inherit"});
