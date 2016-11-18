@@ -1,4 +1,4 @@
-import {complement, identity, isSome, multiarity, overload, constantly, partial} from './core';
+import {complement, identity, isSome, multiarity, overload, constantly, partial, add} from './core';
 import {satisfies} from './protocol';
 import Seqable from './protocols/seqable';
 import Seq from './protocols/seq';
@@ -179,14 +179,13 @@ export const repeat = overload(null, function(value){
 export const range = multiarity(function(){ //TODO number range, date range, string range, etc.
   return iterate(inc, 0);
 }, function(end){
-  return range(0, end, 1);
+  return range(0, end);
 }, function(start, end){
   return range(start, end, 1);
 }, function(start, end, step){
-  var next = start + step;
-  return next >= end ? new List(start) : new LazyList(start, function(){
-    return range(next, end, step);
-  });
+  return start < end ? new LazyList(start, function(){
+    return range(start + step, end, step);
+  }) : EMPTY;
 });
 
 export function seeding(f, init){
