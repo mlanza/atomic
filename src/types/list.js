@@ -7,8 +7,7 @@ import Seqable from '../protocols/seqable';
 import Reduce from '../protocols/reduce';
 import Collection from '../protocols/collection';
 import Prepend from '../protocols/prepend';
-import Deref from '../protocols/deref';
-import Reduced from '../types/reduced';
+import {Reduced, reduced} from '../types/reduced';
 import {EMPTY} from '../types/empty';
 
 export function List(head, tail){
@@ -35,7 +34,8 @@ function next(self){
 }
 
 function reduce(self, f, init){
-  return init instanceof Reduced ? Deref.deref(init) : Reduce.reduce(self.tail, f, f(init, self.head));
+  if (init instanceof Reduced) return init.valueOf();
+  return Reduce.reduce(self.tail, f, f(init, self.head));
 }
 
 export function prepend(self, value){

@@ -3,12 +3,23 @@ import Seqable from './protocols/seqable';
 import Seq from './protocols/seq';
 import Collection from './protocols/collection';
 import Emptyable from './protocols/emptyable';
-import Deref from './protocols/deref';
 import Reduce from './protocols/reduce';
 import Reduced from './types/reduced';
 import List from './types/list';
 import LazyList from './types/lazy-list';
 import {EMPTY} from './types/empty';
+
+export function iterator(xs){
+  var coll = xs;
+  return {
+    next: function(){
+      var done = !Seqable.seq(coll),
+          resp = {value: done ? null : Seq.first(coll), done: done};
+      coll = Seq.rest(coll);
+      return resp;
+    }
+  }
+}
 
 export function each(f, xs){
   var coll = Seqable.seq(xs);
@@ -83,7 +94,7 @@ export function isAny(pred, xs){
 }
 
 export function fold(f, init, xs){
-  return init instanceof Reduced || Seqable.seq(xs) ? fold(f, f(init, Seq.first(xs)), Seq.rest(xs)) : Deref.deref(init);
+  return init instanceof Reduced ? init.valueOf() : Seqable.seq(xs) ? fold(f, f(init, Seq.first(xs)), Seq.rest(xs)) : init instanceof Reduced ? init.valueOf() : init;
 }
 
 export function filter(pred, xs){

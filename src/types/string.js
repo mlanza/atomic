@@ -13,7 +13,6 @@ import Associative from '../protocols/associative';
 import Collection from '../protocols/collection';
 import Append from '../protocols/append';
 import Prepend from '../protocols/prepend';
-import Deref from '../protocols/deref';
 import Reduced from '../types/reduced';
 
 export const trim        = unbind(String.prototype.trim);
@@ -60,7 +59,7 @@ function reduce(self, f, init) {
       break;
     memo = f(memo, self[i]);
   }
-  return Deref.deref(memo);
+  return memo instanceof Reduced ? memo.valueOf() : memo;
 }
 
 function seq(self){

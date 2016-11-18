@@ -1,6 +1,5 @@
 import {identity, constantly, noop} from '../core';
 import {extend} from '../protocol';
-import Deref from '../protocols/deref';
 import Next from '../protocols/next';
 import Seq from '../protocols/seq';
 import Seqable from '../protocols/seqable';
@@ -17,8 +16,8 @@ export function Empty(){
 
 export const EMPTY = new Empty();
 
-export function reduce(){
-  return Deref.deref(arguments[2]);
+export function reduce(a, b, memo){
+  return memo instanceof Reduced ? memo.valueOf() : memo;
 }
 
 export default extend(Empty, Collection, {
