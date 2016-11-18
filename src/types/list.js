@@ -44,7 +44,8 @@ export function conj(self, value){
 def(Collection, {conj: conj, cons: conj})
 
 export default extend(List, Collection, {
-  conj: conj
+  conj: conj,
+  cons: conj
 }, Emptyable, {
   empty: empty
 }, Reduce, {
