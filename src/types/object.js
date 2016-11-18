@@ -8,13 +8,13 @@ import Lookup from '../protocols/lookup';
 import Emptyable from '../protocols/emptyable';
 import Collection from '../protocols/collection';
 import {EMPTY} from '../types/empty';
-import List from '../types/list';
+import LazyList from '../types/lazy-list';
 import IndexedSeq from '../types/indexed-seq';
 
 function seq(obj, ks, at){
   if (obj && obj.hasOwnProperty("callee") && obj.hasOwnProperty("length")) return obj.length ? new IndexedSeq(obj) : null; //arguments object
   var pos = at || 0, keys = ks || Object.keys(obj), key = keys[pos];
-  return pos < keys.length ? new List([key, obj[key]], function(){
+  return pos < keys.length ? new LazyList([key, obj[key]], function(){
     return seq(obj, keys, pos + 1) || EMPTY;
   }) : null;
 }

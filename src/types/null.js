@@ -9,7 +9,7 @@ import Deref from '../protocols/deref';
 import Collection from '../protocols/collection';
 import Associative from '../protocols/associative';
 import Lookup from '../protocols/lookup';
-import List from '../types/list';
+import LazyList from '../types/lazy-list';
 import {EMPTY} from '../types/empty.js';
 
 function reduce(){
@@ -23,7 +23,7 @@ function assoc(self, key, value){
 }
 
 function conj(self, value){
-  return new List(value, constantly(EMPTY));
+  return new LazyList(value, constantly(EMPTY));
 }
 
 export default extend(null, Deref, {
