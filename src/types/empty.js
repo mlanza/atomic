@@ -8,7 +8,7 @@ import Reduce from '../protocols/reduce';
 import Emptyable from '../protocols/emptyable';
 import Collection from '../protocols/collection';
 import Reduced from '../types/reduced';
-import List from '../types/list';
+import LazyList from '../types/lazy-list';
 
 export function Empty(){
 }
@@ -20,7 +20,7 @@ export function reduce(){
 }
 
 export function conj(self, value){
-  return new List(value, constantly(EMPTY));
+  return new LazyList(value, constantly(EMPTY));
 }
 
 export const seq = constantly(null);

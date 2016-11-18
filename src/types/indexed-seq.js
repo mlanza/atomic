@@ -13,7 +13,7 @@ import Collection from '../protocols/collection';
 import Deref from '../protocols/deref';
 import {EMPTY} from '../types/empty';
 import Reduced from '../types/reduced';
-import List from '../types/list';
+import LazyList from '../types/lazy-list';
 
 export function IndexedSeq(indexed, start){
   this.indexed = indexed;
@@ -76,7 +76,7 @@ function assoc(self, key, value){
 }
 
 function conj(self, value){
-  return Seqable.seq(self) ? new List(value, self) : [value];
+  return Seqable.seq(self) ? new LazyList(value, constantly(self)) : [value];
 }
 
 export default extend(IndexedSeq, Collection, {

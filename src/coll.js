@@ -5,7 +5,7 @@ import Collection from './protocols/collection';
 import Deref from './protocols/deref';
 import Reduce from './protocols/reduce';
 import Reduced from './types/reduced';
-import List from './types/list';
+import LazyList from './types/lazy-list';
 import {EMPTY} from './types/empty';
 
 export function each(f, xs){
@@ -18,7 +18,7 @@ export function each(f, xs){
 export function map(f, xs){
   var coll = Seqable.seq(xs);
   if (!coll) return EMPTY;
-  return new List(f(Seq.first(coll)), function(){
+  return new LazyList(f(Seq.first(coll)), function(){
     return map(f, Seq.rest(coll));
   });
 }
@@ -35,7 +35,7 @@ export function keep(f, xs){
 }
 
 export function take(n, xs){
-  return n > 0 && Seqable.seq(xs) ? new List(Seq.first(xs), function(){
+  return n > 0 && Seqable.seq(xs) ? new LazyList(Seq.first(xs), function(){
     return take(n - 1, Seq.rest(xs));
   }) : EMPTY;
 }
@@ -43,13 +43,13 @@ export function take(n, xs){
 export function takeWhile(pred, xs){
   if (!Seqable.seq(xs)) return EMPTY;
   var item = Seq.first(xs);
-  return pred(item) ? new List(item, function(){
+  return pred(item) ? new LazyList(item, function(){
     return takeWhile(pred, Seq.rest(xs));
   }) : EMPTY;
 }
 
 export function takeNth(n, xs){
-  return Seqable.seq(xs) ? new List(Seq.first(xs), function(){
+  return Seqable.seq(xs) ? new LazyList(Seq.first(xs), function(){
     return takeNth(n, drop(xs, n));
   }) : EMPTY;
 }
@@ -97,7 +97,7 @@ export function filter(pred, xs){
   var coll = Seqable.seq(xs);
   if (!coll) return EMPTY;
   var fst = Seq.first(coll);
-  return pred(fst) ? new List(fst, function(){
+  return pred(fst) ? new LazyList(fst, function(){
     return filter(pred, Seq.rest(coll));
   }) : filter(pred, Seq.rest(coll));
 }
@@ -123,7 +123,7 @@ export function concat(xs){
       fst  = Seq.first(coll),
       rst  = Seq.rest(coll);
   if (!Seqable.seq(coll)) return EMPTY;
-  return new List(Seq.first(fst), function(){
+  return new LazyList(Seq.first(fst), function(){
     return Seqable.seq(fst) ? concat.apply(this, [Seq.rest(fst)].concat(Seq.rest(coll))) : concat.apply(this, Seq.rest(coll));
   });
 }
@@ -144,7 +144,7 @@ export function toObject(obj){
 }
 
 export function iterate(generate, seed){
-  return new List(seed, function(){
+  return new LazyList(seed, function(){
     return iterate(generate, generate(seed));
   });
 }
@@ -152,7 +152,7 @@ export function iterate(generate, seed){
 export const repeatedly = multiarity(function(f){
   return iterate(f, f());
 }, function(n, f){
-  return n > 0 ? new List(f(), function(){
+  return n > 0 ? new LazyList(f(), function(){
     return repeatedly(n - 1, f);
   }) : EMPTY;
 });

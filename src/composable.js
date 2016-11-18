@@ -16,6 +16,7 @@ import * as el from './types/html-element';
 import * as string from './types/string';
 import * as array from './types/array';
 export {text} from './types/html-element';
+import LazyList from './types/lazy-list';
 import List from './types/list';
 import Array from './types/array';
 import Object from './types/object';

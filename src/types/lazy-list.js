@@ -10,13 +10,13 @@ import Deref from '../protocols/deref';
 import Reduced from '../types/reduced';
 import {EMPTY} from '../types/empty';
 
-export function List(head, tail){
+export function LazyList(head, tail){
   this.head = head;
   this.tail = tail;
 }
 
-export function list(head, tail){
-  return new List(head, tail);
+export function lazyList(head, tail){
+  return new LazyList(head, tail);
 }
 
 const empty = constantly(EMPTY);
@@ -26,24 +26,24 @@ function first(self){
 }
 
 function rest(self){
-  return self.tail;
+  return self.tail();
 }
 
 function next(self){
-  return Seqable.seq(self.tail);
+  return Seqable.seq(self.tail());
 }
 
 function reduce(self, f, init){
-  return init instanceof Reduced ? Deref.deref(init) : Reduce.reduce(self.tail, f, f(init, self.head));
+  return init instanceof Reduced ? Deref.deref(init) : Reduce.reduce(self.tail(), f, f(init, self.head));
 }
 
 export function conj(self, value){
-  return new List(value, self);
+  return new LazyList(value, constantly(self));
 }
 
 def(Collection, {conj: conj, cons: conj})
 
-export default extend(List, Collection, {
+export default extend(LazyList, Collection, {
   conj: conj,
   cons: conj
 }, Emptyable, {
