@@ -10,10 +10,15 @@ import Prepend from '../protocols/prepend';
 import Reduced from '../types/reduced';
 import {prepend} from '../types/list';
 import {EMPTY} from '../types/empty';
+import {iterator} from '../coll';
 
 export function LazyList(head, tail){
   this.head = head;
   this.tail = arguments.length > 1 ? tail : empty;
+}
+
+LazyList.prototype[Symbol.iterator] = function(){
+  return iterator(this);
 }
 
 export function lazyList(head, tail){

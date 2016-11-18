@@ -3,6 +3,7 @@ import Seqable from './protocols/seqable';
 import Seq from './protocols/seq';
 import Collection from './protocols/collection';
 import Emptyable from './protocols/emptyable';
+import Next from './protocols/next';
 import Reduce from './protocols/reduce';
 import Reduced from './types/reduced';
 import List from './types/list';
@@ -10,12 +11,11 @@ import LazyList from './types/lazy-list';
 import {EMPTY} from './types/empty';
 
 export function iterator(xs){
-  var coll = xs;
+  var coll = Seqable.seq(xs);
   return {
     next: function(){
-      var done = !Seqable.seq(coll),
-          resp = {value: done ? null : Seq.first(coll), done: done};
-      coll = Seq.rest(coll);
+      var resp = {value: Seq.first(coll), done: !coll};
+      coll = Next.next(coll);
       return resp;
     }
   }
