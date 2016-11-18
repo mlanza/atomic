@@ -24,7 +24,7 @@ export function indexedSeq(indexed, start){
   return new IndexedSeq(indexed, start);
 }
 
-const empty = constantly(indexedSeq([]));
+const empty = constantly([]);
 
 function next(self){
   var start = self.start + 1;
