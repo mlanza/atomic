@@ -84,10 +84,6 @@ export function arity(len, f){
   }
 };
 
-export function append(self, value){
-  return self.concat([value]);
-}
-
 export function flip(f, len){
   var l = len || f.length;
   return curry(arity(l, function(){
@@ -186,7 +182,7 @@ export function isSome(x){
   return x != null;
 }
 
-export function isNull(value){
+export function isNil(value){
   return null == value;
 }
 

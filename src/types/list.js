@@ -5,7 +5,8 @@ import Next from '../protocols/next';
 import Emptyable from '../protocols/emptyable';
 import Seqable from '../protocols/seqable';
 import Reduce from '../protocols/reduce';
-import Collection from '../protocols/reduce';
+import Collection from '../protocols/collection';
+import Prepend from '../protocols/prepend';
 import Deref from '../protocols/deref';
 import Reduced from '../types/reduced';
 import {EMPTY} from '../types/empty';
@@ -37,15 +38,16 @@ function reduce(self, f, init){
   return init instanceof Reduced ? Deref.deref(init) : Reduce.reduce(self.tail, f, f(init, self.head));
 }
 
-export function conj(self, value){
+export function prepend(self, value){
   return new List(value, self);
 }
 
-def(Collection, {conj: conj, cons: conj})
+def(Collection, {conj: prepend})
 
 export default extend(List, Collection, {
-  conj: conj,
-  cons: conj
+  conj: prepend
+}, Prepend, {
+  prepend: prepend
 }, Emptyable, {
   empty: empty
 }, Reduce, {

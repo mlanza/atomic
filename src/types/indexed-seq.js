@@ -10,10 +10,13 @@ import Emptyable from '../protocols/emptyable';
 import Lookup from '../protocols/lookup';
 import Associative from '../protocols/associative';
 import Collection from '../protocols/collection';
+import Append from '../protocols/append';
+import Prepend from '../protocols/prepend';
 import Deref from '../protocols/deref';
 import {EMPTY} from '../types/empty';
 import Reduced from '../types/reduced';
 import List from '../types/list';
+import {toArray} from '../coll';
 
 export function IndexedSeq(indexed, start){
   this.indexed = indexed;
@@ -75,12 +78,20 @@ function assoc(self, key, value){
   return arr;
 }
 
-function conj(self, value){
-  return Seqable.seq(self) ? new List(value, self) : [value];
+function append(self, value){
+  return Append.append(toArray(self), value);
 }
 
-export default extend(IndexedSeq, Collection, {
-  conj: conj
+function prepend(self, value){
+  return Seqable.seq(self) ? new List(value, self) : new List(value);
+}
+
+export default extend(IndexedSeq, Append, {
+  append: append
+}, Prepend, {
+  prepend: prepend
+}, Collection, {
+  conj: prepend
 }, Emptyable, {
   empty: empty
 }, Seqable, {

@@ -11,7 +11,10 @@ import Emptyable from '../protocols/emptyable';
 import Lookup from '../protocols/lookup';
 import Associative from '../protocols/associative';
 import Collection from '../protocols/collection';
+import Append from '../protocols/append';
+import Prepend from '../protocols/prepend';
 import Deref from '../protocols/deref';
+import Reduced from '../types/reduced';
 
 export const trim        = unbind(String.prototype.trim);
 export const toLowerCase = unbind(String.prototype.toLowerCase);
@@ -52,7 +55,7 @@ function nth(self, n){
 
 function reduce(self, f, init) {
   var memo = init, len = self.length;
-  for(var i = self.start; i < len; i++) {
+  for(var i = 0; i < len; i++) {
     if (memo instanceof Reduced)
       break;
     memo = f(memo, self[i]);
@@ -76,9 +79,12 @@ function assoc(self, key, value){
 
 export default extend(String, Lookup, {
   get: nth
+}, Append, {
+  append: add
+}, Prepend, {
+  prepend: flip(add)
 }, Collection, {
-  conj: add,
-  cons: flip(add)
+  conj: add
 }, Associative, {
   assoc: assoc,
   hasKey: hasKey

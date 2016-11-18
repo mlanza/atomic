@@ -1,7 +1,8 @@
-import {complement, identity, isSome, multiarity, overload} from './core';
+import {complement, identity, isSome, multiarity, overload, constantly} from './core';
 import Seqable from './protocols/seqable';
 import Seq from './protocols/seq';
 import Collection from './protocols/collection';
+import Emptyable from './protocols/emptyable';
 import Deref from './protocols/deref';
 import Reduce from './protocols/reduce';
 import Reduced from './types/reduced';
@@ -67,31 +68,22 @@ export function dropWhile(pred, xs){
 }
 
 export function some(pred, xs){
-  return Reduce.reduce(xs, function(memo, value){
-    return pred(value) ? new Reduced(value) : memo;
-  }, null);
+  if (!Seqable.seq(xs)) return null;
+  var fst = Seq.first(xs);
+  return pred(fst) ? fst : some(pred, Seq.rest(xs));
 }
 
 export function isEvery(pred, xs){
-  return Reduce.reduce(xs, function(memo, value){
-    return !pred(value) ? new Reduced(false) : memo;
-  }, true);
+  if (!Seqable.seq(xs)) return true;
+  return pred(Seq.first(xs)) && isEvery(pred, Seq.rest(xs));
 }
 
 export function isAny(pred, xs){
   return some(pred, xs) !== null;
 }
 
-export function isNotAny(pred, xs){
-  return isAny(complement(pred), xs);
-}
-
 export function fold(f, init, xs){
   return init instanceof Reduced || Seqable.seq(xs) ? fold(f, f(init, Seq.first(xs)), Seq.rest(xs)) : Deref.deref(init);
-}
-
-export function all(pred, xs){
-  return Seqable.seq(xs) && pred(Seq.first(xs)) && all(pred, Seq.rest(xs));
 }
 
 export function filter(pred, xs){
@@ -103,7 +95,7 @@ export function filter(pred, xs){
   }) : filter(pred, Seq.rest(coll));
 }
 
-export function reject(pred, xs){
+export function remove(pred, xs){
   return filter(complement(pred), xs);
 }
 
@@ -164,7 +156,6 @@ export const repeat = overload(null, function(value){
   return repeatedly(n, constantly(value))
 });
 
-//TODO fix cons
 export const range = multiarity(function(){ //TODO number range, date range, string range, etc.
   return iterate(inc, 0);
 }, function(end){
@@ -177,3 +168,24 @@ export const range = multiarity(function(){ //TODO number range, date range, str
     return range(next, end, step);
   });
 });
+
+export function seeding(f, init){
+  return overload(init, identity, f);
+}
+
+export const transduce = multiarity(function(xform, f, coll){
+  var xf = xform(f);
+  return xf(Reduce.reduce(coll, xf, f()));
+}, function(xform, f, seed, coll){
+  return transduce(xform, seeding(f, constantly(seed)), coll);
+});
+
+export const into = multiarity(function(to, from){
+  return Reduce.reduce(from, Collection.conj, to);
+}, function(to, xform, from){
+  return transduce(xform, Collection.conj, to, from);
+});
+
+export function transform(xform, coll){
+  return into(Emptyable.empty(coll), xform, coll);
+}

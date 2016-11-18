@@ -7,6 +7,7 @@ import Reduce from '../protocols/reduce';
 import Lookup from '../protocols/lookup';
 import Emptyable from '../protocols/emptyable';
 import Collection from '../protocols/collection';
+import Append from '../protocols/append';
 import {EMPTY} from '../types/empty';
 import LazyList from '../types/lazy-list';
 import IndexedSeq from '../types/indexed-seq';
@@ -45,12 +46,14 @@ function assoc(self, key, value){
   return obj;
 }
 
-function conj(self, pair){
+function append(self, pair){
   return assoc(self, pair[0], pair[1]);
 }
 
 export default extend(Object, Collection, {
-  conj: conj
+  conj: append
+}, Append, {
+  append: append
 }, Reduce, {
   reduce: reduce
 }, Emptyable, {
