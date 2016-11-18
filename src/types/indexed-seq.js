@@ -15,11 +15,15 @@ import Prepend from '../protocols/prepend';
 import {EMPTY} from '../types/empty';
 import Reduced from '../types/reduced';
 import List from '../types/list';
-import {toArray} from '../coll';
+import {iterator, toArray} from '../coll';
 
 export function IndexedSeq(indexed, start){
   this.indexed = indexed;
   this.start = start < 0 ? 0 : start || 0;
+}
+
+IndexedSeq.prototype[Symbol.iterator] = function(){
+  return iterator(this);
 }
 
 export function indexedSeq(indexed, start){

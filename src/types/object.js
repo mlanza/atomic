@@ -11,6 +11,11 @@ import Append from '../protocols/append';
 import {EMPTY} from '../types/empty';
 import LazyList from '../types/lazy-list';
 import IndexedSeq from '../types/indexed-seq';
+import {iterator} from '../coll';
+
+Object.prototype[Symbol.iterator] = function(){
+  return iterator(this);
+}
 
 function seq(obj, ks, at){
   if (obj && obj.hasOwnProperty("callee") && obj.hasOwnProperty("length")) return obj.length ? new IndexedSeq(obj) : null; //arguments object

@@ -2,6 +2,10 @@ import {log, eq, into, text, hide, show, tag, tap, detach, parent, addClass, app
 export {log, eq, into, text, hide, show, tag, tap, detach, parent, addClass, append, prepend, inc, gt, lt, some, isEvery, mapIndexed, range, constantly, conj, take, takeNth, repeat, repeatedly, chain, compose, pipe, add, juxt, query, fetch, get, assoc, hasKey, first, second, third, rest, nth, next, count, reduce, each, map, filter, remove, takeWhile, dropWhile, find, satisfies, concat, toArray, toObject} from './composable';
 import Reduce from './protocols/reduce';
 import IndexedSeq from './types/indexed-seq';
+import {List} from './types/list';
+export {List} from './types/list';
+
+export const stooge = new List("Curly", new List("Moe"));
 
 QUnit.test("Traverse and manipulate the dom", function(assert){
   let ul = tag('ul'), li = tag('li');

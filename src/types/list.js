@@ -9,10 +9,15 @@ import Collection from '../protocols/collection';
 import Prepend from '../protocols/prepend';
 import {Reduced, reduced} from '../types/reduced';
 import {EMPTY} from '../types/empty';
+import {iterator} from '../coll';
 
 export function List(head, tail){
   this.head = head;
   this.tail = arguments.length > 1 ? tail : EMPTY;
+}
+
+List.prototype[Symbol.iterator] = function(){
+  return iterator(this);
 }
 
 export function list(head, tail){
