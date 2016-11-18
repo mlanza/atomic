@@ -1,4 +1,5 @@
-import {complement, identity, isSome, multiarity, overload, constantly} from './core';
+import {complement, identity, isSome, multiarity, overload, constantly, partial} from './core';
+import {satisfies} from './protocol';
 import Seqable from './protocols/seqable';
 import Seq from './protocols/seq';
 import Collection from './protocols/collection';
@@ -121,14 +122,22 @@ export function find(pred, xs){
   return pred(fst) ? fst : find(pred, Seq.rest(coll));
 }
 
-//TODO flatten
-export function concat(xs){
-  var coll = toArray(compact(map(arguments, Seqable.seq))),
-      fst  = Seq.first(coll),
-      rst  = Seq.rest(coll);
+export function flatten(xs){
+  if (!Seqable.seq(xs)) return EMPTY;
+  var fst = Seq.first(xs),
+      rst = Seq.rest(xs);
+  return satisfies(Seqable, fst) ? flatten(concat(fst, rst)) : new LazyList(fst, function(){
+    return flatten(rst);
+  });
+}
+
+export function concat(){
+  const coll = compact(map(Seqable.seq, arguments));
   if (!Seqable.seq(coll)) return EMPTY;
+  const fst = Seq.first(coll),
+        rst = Seq.rest(coll);
   return new LazyList(Seq.first(fst), function(){
-    return Seqable.seq(fst) ? concat.apply(this, [Seq.rest(fst)].concat(Seq.rest(coll))) : concat.apply(this, Seq.rest(coll));
+    return Seqable.seq(fst) ? concat.apply(this, [Seq.rest(fst)].concat(toArray(rst))) : concat.apply(this, toArray(rst));
   });
 }
 

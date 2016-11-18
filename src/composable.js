@@ -32,7 +32,7 @@ import HTMLElement from './types/html-element';
 import IndexedSeq from './types/indexed-seq';
 import * as coll from './coll';
 import * as transducer from './transducer';
-export {transduce, into, transform, concat, toObject, toArray, repeatedly, repeat, range} from './coll'; //TODO concat for string different from concat for sequence
+export {transduce, into, transform, concat, flatten, toObject, toArray, repeatedly, repeat, range} from './coll'; //TODO concat for string different from concat for sequence
 import {curry, flip, multiarity} from './core';
 export {log, curry, pipe, juxt, flip, partial, chain, reverse, identity, complement, multiarity, overload, compose, multimethod, constantly, noop, identical, odd, even, is, doto, invokeWith, isSome, isNil} from './core';
 export const join      = flip(array.join, 2);
