@@ -1,5 +1,5 @@
 import Reduced from './types/reduced.js';
-import {overload, complement, compose} from './core.js';
+import {overload, complement, compose, isSome} from './core.js';
 
 export function map(f){
   return function(xf){
@@ -22,6 +22,14 @@ export function filter(pred){
   return function(xf){
     return overload(xf, xf, function(memo, value){
       return pred(value) ? xf(memo, value) : memo;
+    });
+  }
+}
+
+export function find(pred){
+  return function(xf){
+    return overload(xf, xf, function(memo, value){
+      return pred(value) ? new Reduced(value) : null;
     });
   }
 }
