@@ -9,6 +9,7 @@ import Emptyable from '../protocols/emptyable';
 import Collection from '../protocols/collection';
 import Reduced from '../types/reduced';
 import LazyList from '../types/lazy-list';
+import {conj} from '../types/list';
 
 export function Empty(){
 }
@@ -19,29 +20,18 @@ export function reduce(){
   return Deref.deref(arguments[2]);
 }
 
-export function conj(self, value){
-  return new LazyList(value, constantly(EMPTY));
-}
-
-export const seq = constantly(null);
-export const first = constantly(null);
-export const next = constantly(null);
-export const rest = identity;
-export const empty = identity;
-export const cons = conj;
-
 export default extend(Empty, Collection, {
   conj: conj,
-  cons: cons
+  cons: conj
 }, Emptyable, {
-  empty: empty
+  empty: identity
 }, Reduce, {
   reduce: reduce
 }, Seqable, {
-  seq: seq
+  seq: constantly(null)
 }, Next, {
-  next: next
+  next: constantly(null)
 }, Seq, {
-  first: first,
-  rest: rest
+  first: constantly(null),
+  rest: identity
 });
