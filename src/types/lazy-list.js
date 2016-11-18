@@ -8,11 +8,12 @@ import Reduce from '../protocols/reduce';
 import Collection from '../protocols/reduce';
 import Deref from '../protocols/deref';
 import Reduced from '../types/reduced';
+import {conj} from '../types/list';
 import {EMPTY} from '../types/empty';
 
 export function LazyList(head, tail){
   this.head = head;
-  this.tail = tail;
+  this.tail = arguments.length > 1 ? tail : empty;
 }
 
 export function lazyList(head, tail){
@@ -36,12 +37,6 @@ function next(self){
 function reduce(self, f, init){
   return init instanceof Reduced ? Deref.deref(init) : Reduce.reduce(self.tail(), f, f(init, self.head));
 }
-
-export function conj(self, value){
-  return new LazyList(value, constantly(self));
-}
-
-def(Collection, {conj: conj, cons: conj})
 
 export default extend(LazyList, Collection, {
   conj: conj,
