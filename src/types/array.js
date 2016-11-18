@@ -1,5 +1,5 @@
 import unbind from '../unbind';
-import {slice, reverse, reduce, identity, constantly, arity} from '../core';
+import {slice, reverse, reduce, identity, constantly} from '../core';
 export {slice, reverse, reduce};
 import {extend} from '../protocol';
 import Next from '../protocols/next';

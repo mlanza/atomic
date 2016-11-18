@@ -12,7 +12,6 @@ import Associative from '../protocols/associative';
 import Collection from '../protocols/collection';
 import Append from '../protocols/append';
 import Prepend from '../protocols/prepend';
-import Deref from '../protocols/deref';
 import {EMPTY} from '../types/empty';
 import Reduced from '../types/reduced';
 import List from '../types/list';
@@ -61,7 +60,7 @@ function reduce(self, f, init) {
       break;
     memo = f(memo, self.indexed[i]);
   }
-  return Deref.deref(memo);
+  return memo instanceof Reduced ? memo.valueOf() : memo;
 }
 
 function seq(self){

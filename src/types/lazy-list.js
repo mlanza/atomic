@@ -7,7 +7,6 @@ import Seqable from '../protocols/seqable';
 import Reduce from '../protocols/reduce';
 import Collection from '../protocols/collection';
 import Prepend from '../protocols/prepend';
-import Deref from '../protocols/deref';
 import Reduced from '../types/reduced';
 import {prepend} from '../types/list';
 import {EMPTY} from '../types/empty';
@@ -36,7 +35,7 @@ function next(self){
 }
 
 function reduce(self, f, init){
-  return init instanceof Reduced ? Deref.deref(init) : Reduce.reduce(self.tail(), f, f(init, self.head));
+  return init instanceof Reduced ? init.valueOf() : Reduce.reduce(self.tail(), f, f(init, self.head));
 }
 
 export default extend(LazyList, Collection, {

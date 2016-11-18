@@ -13,12 +13,10 @@ export function reduced(value){
   return new Reduced(value);
 }
 
-export function isReduced(value){
-  return value instanceof Reduced;
+function deref(self){
+  return self.valueOf();
 }
 
 export default extend(Reduced, Deref, {
-  deref: function(reduced){
-    return reduced.valueOf();
-  }
+  deref: deref
 });

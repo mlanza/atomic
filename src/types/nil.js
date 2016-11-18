@@ -5,7 +5,6 @@ import Seqable from '../protocols/seqable';
 import Seq from '../protocols/seq';
 import Next from '../protocols/next';
 import Reduce from '../protocols/reduce';
-import Deref from '../protocols/deref';
 import Collection from '../protocols/collection';
 import Prepend from '../protocols/prepend';
 import Associative from '../protocols/associative';
@@ -27,9 +26,7 @@ function prepend(self, value){
   return new List(value);
 }
 
-export default extend(null, Deref, {
-  deref: constantly(null)
-}, Collection, {
+export default extend(null, Collection, {
   conj: prepend
 }, Prepend, {
   prepend: prepend
