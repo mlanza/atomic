@@ -5,6 +5,7 @@ import Collection from './protocols/collection';
 import Deref from './protocols/deref';
 import Reduce from './protocols/reduce';
 import Reduced from './types/reduced';
+import List from './types/list';
 import LazyList from './types/lazy-list';
 import {EMPTY} from './types/empty';
 
@@ -172,7 +173,7 @@ export const range = multiarity(function(){ //TODO number range, date range, str
   return range(start, end, 1);
 }, function(start, end, step){
   var next = start + step;
-  return next >= end ? cons(start) : cons(start, function(){
+  return next >= end ? new List(start) : new LazyList(start, function(){
     return range(next, end, step);
   });
 });

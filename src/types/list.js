@@ -12,7 +12,7 @@ import {EMPTY} from '../types/empty';
 
 export function List(head, tail){
   this.head = head;
-  this.tail = tail;
+  this.tail = arguments.length > 1 ? tail : EMPTY;
 }
 
 export function list(head, tail){
