@@ -43,29 +43,17 @@ export function conj(self, value){
 
 def(Collection, {conj: conj, cons: conj})
 
-extend(Collection, List, {
+export default extend(List, Collection, {
   conj: conj
-});
-
-extend(Emptyable, List, {
+}, Emptyable, {
   empty: empty
-});
-
-extend(Reduce, List, {
+}, Reduce, {
   reduce: reduce
-});
-
-extend(Seqable, List, {
+}, Seqable, {
   seq: identity
-});
-
-extend(Next, List, {
+}, Next, {
   next: next
-});
-
-extend(Seq, List, {
+}, Seq, {
   first: first,
   rest: rest
 });
-
-export default List;

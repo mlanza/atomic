@@ -13,18 +13,12 @@ function query(self, selector){
   return new IndexedSeq(self.querySelectorAll(selector));
 }
 
-extend(Query, HTMLDocument, {
+export default extend(HTMLDocument, Query, {
   query: query,
   fetch: fetch
-});
-
-extend(Hierarchy, HTMLDocument, {
+}, Hierarchy, {
   parent: constantly(null),
   closest: constantly(null)
-});
-
-extend(Lookup, HTMLDocument, {
+}, Lookup, {
   get: constantly(null)
 });
-
-export default HTMLDocument;

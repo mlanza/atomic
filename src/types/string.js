@@ -74,47 +74,27 @@ function assoc(self, key, value){
   return arr;
 }
 
-extend(Lookup, String, {
+export default extend(String, Lookup, {
   get: nth
-});
-
-extend(Collection, String, {
+}, Collection, {
   conj: add,
   cons: flip(add)
-});
-
-extend(Associative, String, {
+}, Associative, {
   assoc: assoc,
   hasKey: hasKey
-});
-
-extend(Emptyable, String, {
+}, Emptyable, {
   empty: empty
-});
-
-extend(Seqable, String, {
+}, Seqable, {
   seq: seq
-});
-
-extend(Next, String, {
+}, Next, {
   next: next
-});
-
-extend(Seq, String, {
+}, Seq, {
   first: first,
   rest: rest
-});
-
-extend(Counted, String, {
+}, Counted, {
   count: count
-});
-
-extend(Indexed, String, {
+}, Indexed, {
   nth: nth
-});
-
-extend(Reduce, String, {
+}, Reduce, {
   reduce: reduce
 });
-
-export default String;

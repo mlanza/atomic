@@ -79,46 +79,26 @@ function conj(self, value){
   return Seqable.seq(self) ? new List(value, self) : [value];
 }
 
-extend(Collection, IndexedSeq, {
+export default extend(IndexedSeq, Collection, {
   conj: conj
-});
-
-extend(Emptyable, IndexedSeq, {
+}, Emptyable, {
   empty: empty
-});
-
-extend(Seqable, IndexedSeq, {
+}, Seqable, {
   seq: seq
-});
-
-extend(Next, IndexedSeq, {
+}, Next, {
   next: next
-});
-
-extend(Seq, IndexedSeq, {
+}, Seq, {
   first: first,
   rest: rest
-});
-
-extend(Counted, IndexedSeq, {
+}, Counted, {
   count: count
-});
-
-extend(Indexed, IndexedSeq, {
+}, Indexed, {
   nth: nth
-});
-
-extend(Lookup, IndexedSeq, {
+}, Lookup, {
   get: get
-});
-
-extend(Associative, IndexedSeq, {
+}, Associative, {
   assoc: assoc,
   hasKey: hasKey
-});
-
-extend(Reduce, IndexedSeq, {
+}, Reduce, {
   reduce: reduce
 });
-
-export default IndexedSeq;
