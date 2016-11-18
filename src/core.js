@@ -125,6 +125,18 @@ export function multimethod(dispatch){
   }
 }
 
+function route(get, fallback, value){
+  var f = get(value == null ? null : value.constructor);
+  return f ? f : value != null && value.__proto__.constructor !== Object ? dispatch(get, fallback, value.__proto__) : fallback;
+}
+
+export function method(fallback){
+  var map = new Map(),
+      set = map.set.bind(map),
+      get = partial(route, map.get.bind(map), fallback);
+  return Object.assign(multimethod(get), {get, set});
+}
+
 export function constantly(value){
   return function(){
     return value;

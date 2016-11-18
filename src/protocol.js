@@ -4,14 +4,15 @@ let TEMPLATE = Symbol('template'),
     MAP      = Symbol('map');
 
 export function Protocol(template){
-  this[TEMPLATE] = template;
   this[MAP] = new Map();
   def(this, template);
 }
 
 export function def(self, template){
+  self[TEMPLATE] = Object.assign(self[TEMPLATE] || {}, template);
   for(var key in template){
-    self[key] = method(self, key);
+    if (!self.hasOwnProperty(key))
+      self[key] = method(self, key);
   }
 }
 
