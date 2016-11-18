@@ -82,7 +82,7 @@ export function arity(len, f){
   return function(){
     return f.apply(this, slice(arguments, 0, len));
   }
-};
+}
 
 export function flip(f, len){
   var l = len || f.length;
