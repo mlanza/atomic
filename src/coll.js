@@ -64,7 +64,7 @@ export function takeWhile(pred, xs){
 
 export function takeNth(n, xs){
   return Seqable.seq(xs) ? new LazyList(Seq.first(xs), function(){
-    return takeNth(n, drop(xs, n));
+    return takeNth(n, drop(n, xs));
   }) : EMPTY;
 }
 
