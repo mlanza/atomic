@@ -38,3 +38,10 @@ export function extend(constructor, protocol, template){
   protocol[MAP].set(constructor, Object.assign(curr, template));
   return tail.length ? extend.apply(this, [constructor].concat(tail)) : constructor;
 }
+
+export function reify(protocol, template){
+  function Reified(){
+  }
+  extend.apply(this, [Reified].concat(slice(arguments)));
+  return new Reified();
+}
