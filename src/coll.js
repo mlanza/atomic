@@ -23,10 +23,11 @@ export function iterator(xs){
 }
 
 export function each(f, xs){
-  var coll = Seqable.seq(xs);
-  if (!coll) return;
-  f(Seq.first(coll));
-  each(f, Seq.rest(coll));
+  var coll = xs;
+  while(coll = Seqable.seq(coll)){
+    f(Seq.first(coll));
+    coll = Seq.rest(coll);
+  }
 }
 
 export function map(f, xs){
