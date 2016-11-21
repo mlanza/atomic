@@ -1,6 +1,7 @@
-import {log, eq, into, text, hide, show, tag, tap, detach, parent, addClass, append, prepend, inc, gt, lt, some, isEvery, mapIndexed, range, constantly, conj, take, takeNth, repeat, repeatedly, chain, compose, pipe, add, juxt, query, fetch, get, assoc, hasKey, first, second, third, rest, nth, next, count, reduce, each, map, filter, remove, takeWhile, dropWhile, find, satisfies, concat, flatten, toArray, toObject} from './composable';
-export {log, eq, into, text, hide, show, tag, tap, detach, parent, addClass, append, prepend, inc, gt, lt, some, isEvery, mapIndexed, range, constantly, conj, take, takeNth, repeat, repeatedly, chain, compose, pipe, add, juxt, query, fetch, get, assoc, hasKey, first, second, third, rest, nth, next, count, reduce, each, map, filter, remove, takeWhile, dropWhile, find, satisfies, concat, flatten, toArray, toObject} from './composable';
+import {log, reify, eq, into, text, hide, show, tag, tap, detach, parent, addClass, append, prepend, inc, gt, lt, some, isEvery, mapIndexed, range, constantly, conj, take, takeNth, repeat, repeatedly, chain, compose, pipe, add, juxt, query, fetch, get, assoc, hasKey, first, second, third, rest, nth, next, count, reduce, each, map, filter, remove, takeWhile, dropWhile, find, satisfies, concat, flatten, toArray, toObject} from './composable';
+export {log, reify, eq, into, text, hide, show, tag, tap, detach, parent, addClass, append, prepend, inc, gt, lt, some, isEvery, mapIndexed, range, constantly, conj, take, takeNth, repeat, repeatedly, chain, compose, pipe, add, juxt, query, fetch, get, assoc, hasKey, first, second, third, rest, nth, next, count, reduce, each, map, filter, remove, takeWhile, dropWhile, find, satisfies, concat, flatten, toArray, toObject} from './composable';
 import Reduce from './protocols/reduce';
+import Lookup from './protocols/lookup';
 import IndexedSeq from './types/indexed-seq';
 
 QUnit.test("Traverse and manipulate the dom", function(assert){
@@ -89,4 +90,8 @@ QUnit.test("Into", function(assert){
   assert.deepEqual(into([], mapIndexed(function(idx, value){
     return [idx, inc(value)];
   }, [10, 11, 12])), [[0, 11], [1, 12], [2, 13]]);
+});
+
+QUnit.test("Reify", function(assert){
+  assert.equal(chain(reify(Lookup, {get: constantly("O")}), get(50)), "O");
 });
