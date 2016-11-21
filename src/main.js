@@ -9,9 +9,7 @@ QUnit.test("Traverse and manipulate the dom", function(assert){
   const stooges = ul(li({id: 'moe'}, "Moe Howard"), li({id: 'curly'}, "Curly Howard"), li({id: 'larry'}, "Larry Fine"));
   const body = fetch("body", document);
   const who = div(get("givenName"), " ", get("sn"));
-  const moe = who(function(stooge){
-    return Object.assign({}, stooge, {givenName: "Moe"});
-  });
+  const moe = who(assoc("givenName", "Moe"));
   assert.equal(chain({givenName: "Curly", sn: "Howard"}, moe, text), "Moe Howard");
   assert.equal(chain({givenName: "Curly", sn: "Howard"}, who, text), "Curly Howard");
   assert.equal(chain(body, addClass("main"), assoc("data-tagged", "tests"), get("data-tagged")), "tests");
