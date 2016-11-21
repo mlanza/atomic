@@ -89,6 +89,7 @@ export const tap       = curry(core.tap);
 export const add       = curry(core.add);
 export const subtract  = flip(core.subtract);
 export const satisfies = curry(protocol.satisfies);
+export const expansive = curry(coll.expansive);
 export const each      = curry(coll.each);
 export const map       = multiarity(transducer.map, coll.map);
 export const mapIndexed= multiarity(transducer.mapIndexed, coll.mapIndexed);

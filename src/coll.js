@@ -1,4 +1,4 @@
-import {complement, identity, isSome, multiarity, overload, constantly, partial, add} from './core';
+import {complement, identity, isSome, multiarity, overload, constantly, partial, add, is, slice} from './core';
 import {satisfies} from './protocol';
 import Seqable from './protocols/seqable';
 import Seq from './protocols/seq';
@@ -208,4 +208,19 @@ export const into = multiarity(function(to, from){
 
 export function transform(xform, coll){
   return into(Emptyable.empty(coll), xform, coll);
+}
+
+export function expansive(f){
+  var isFn = partial(is, Function);
+  return function expand(){
+    var args = slice(arguments);
+    return some(isFn, args) ? function(value){
+      while(some(isFn, args)){
+        args = map(function(arg){
+          return isFn(arg) ? arg(value) : arg;
+        }, args)
+      }
+      return f.apply(this, toArray(args));
+    } : f.apply(this, args);
+  }
 }
