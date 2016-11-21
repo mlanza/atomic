@@ -1,4 +1,5 @@
 import {multimethod, curry} from './core';
+import Reified from './types/reified';
 
 let TEMPLATE = Symbol('template'),
     MAP      = Symbol('map');
@@ -49,12 +50,4 @@ export function extend(self, protocol, template){
   }
   Object.assign(curr, template);
   return tail.length ? extend.apply(this, [self].concat(tail)) : self;
-}
-
-export function Reified(){
-  this.map = new Map();
-}
-
-export function reify(protocol, template){
-  return extend.apply(this, [new Reified()].concat(slice(arguments)));
 }
