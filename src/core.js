@@ -227,3 +227,9 @@ export function invokeWith(){
     return self.apply(this, args);
   }
 }
+
+export function detach(f){
+  return function(obj, ...args){
+    return f.apply(obj, args);
+  }
+}
