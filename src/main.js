@@ -1,13 +1,15 @@
-import {log, observable, publisher, reify, swap, reset, subscribe, publish, deref, eq, into, text, hide, show, tag, tap, detach, parent, addClass, append, prepend, inc, gt, lt, some, isEvery, mapIndexed, range, constantly, conj, take, takeNth, repeat, repeatedly, chain, compose, pipe, add, juxt, query, fetch, get, assoc, hasKey, first, second, third, rest, nth, next, count, reduce, each, map, filter, remove, takeWhile, dropWhile, find, satisfies, concat, flatten, toArray, toObject} from './composable';
-export {log, observable, publisher, reify, swap, reset, subscribe, publish, deref, eq, into, text, hide, show, tag, tap, detach, parent, addClass, append, prepend, inc, gt, lt, some, isEvery, mapIndexed, range, constantly, conj, take, takeNth, repeat, repeatedly, chain, compose, pipe, add, juxt, query, fetch, get, assoc, hasKey, first, second, third, rest, nth, next, count, reduce, each, map, filter, remove, takeWhile, dropWhile, find, satisfies, concat, flatten, toArray, toObject} from './composable';
+import {log, expansive, observable, publisher, reify, swap, reset, subscribe, publish, deref, eq, into, text, hide, show, tag, tap, detach, parent, addClass, append, prepend, inc, gt, lt, some, isEvery, mapIndexed, range, constantly, conj, take, takeNth, repeat, repeatedly, chain, compose, pipe, add, juxt, query, fetch, get, assoc, hasKey, first, second, third, rest, nth, next, count, reduce, each, map, filter, remove, takeWhile, dropWhile, find, satisfies, concat, flatten, toArray, toObject} from './composable';
+export {log, expansive, observable, publisher, reify, swap, reset, subscribe, publish, deref, eq, into, text, hide, show, tag, tap, detach, parent, addClass, append, prepend, inc, gt, lt, some, isEvery, mapIndexed, range, constantly, conj, take, takeNth, repeat, repeatedly, chain, compose, pipe, add, juxt, query, fetch, get, assoc, hasKey, first, second, third, rest, nth, next, count, reduce, each, map, filter, remove, takeWhile, dropWhile, find, satisfies, concat, flatten, toArray, toObject} from './composable';
 import Reduce from './protocols/reduce';
 import Lookup from './protocols/lookup';
 import IndexedSeq from './types/indexed-seq';
 
 QUnit.test("Traverse and manipulate the dom", function(assert){
-  const ul = tag('ul'), li = tag('li'), div = tag('div'), span = tag('span');
+  const ul = tag('ul'), li = tag('li'), div = expansive(tag('div')), span = tag('span');
   const stooges = ul(li({id: 'moe'}, "Moe Howard"), li({id: 'curly'}, "Curly Howard"), li({id: 'larry'}, "Larry Fine"));
   const body = fetch("body", document);
+  const who = div(get("givenName"), " ", get("sn"));
+  assert.equal(chain(who({givenName: "Curly", sn: "Howard"}), text), "Curly Howard");
   assert.equal(chain(body, addClass("main"), assoc("data-tagged", "tests"), get("data-tagged")), "tests");
   assert.ok(body instanceof HTMLBodyElement, "Found by tag");
   append(div({id: 'branding'}, span("Greetings!")), body);
