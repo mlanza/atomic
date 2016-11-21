@@ -1,4 +1,4 @@
-import {complement, identity, isSome, multiarity, overload, constantly, partial, add, is, slice} from './core';
+import {complement, identity, isSome, multiarity, overload, constantly, partial, add, is, slice, pipe} from './core';
 import {satisfies} from './protocol';
 import Seqable from './protocols/seqable';
 import Seq from './protocols/seq';
@@ -212,15 +212,19 @@ export function transform(xform, coll){
 
 export function expansive(f){
   var isFn = partial(is, Function);
-  return function expand(){
+  function expand(args, value){
+    if (isFn(value)){
+      return pipe(value, partial(expand, args));
+    }
+    while(some(isFn, args)){
+      args = map(function(arg){
+        return isFn(arg) ? arg(value) : arg;
+      }, args)
+    }
+    return f.apply(this, toArray(args));
+  }
+  return function(){
     var args = slice(arguments);
-    return some(isFn, args) ? function(value){
-      while(some(isFn, args)){
-        args = map(function(arg){
-          return isFn(arg) ? arg(value) : arg;
-        }, args)
-      }
-      return f.apply(this, toArray(args));
-    } : f.apply(this, args);
+    return some(isFn, args) ? partial(expand, args) : f.apply(this, args);
   }
 }
