@@ -9,9 +9,9 @@ export function reverse(xs){
   return slice(xs).reverse();
 }
 
-export function reduce(xs, xf, init){
+export function reduce(xs, xf, init, from){
   var memo = init, len = xs.length;
-  for(var i = 0; i < len; i++){
+  for(var i = from || 0; i < len; i++){
     if (memo instanceof Reduced)
       break;
     memo = xf(memo, xs[i]);
@@ -19,18 +19,14 @@ export function reduce(xs, xf, init){
   return memo instanceof Reduced ? memo.valueOf() : memo;
 }
 
-export function each(xs, f){
-  var len = xs.length;
-  for(var i = 0; i < len; i++){
-    f(xs[i]);
+export function reduceKV(xs, xf, init, from){
+  var memo = init, len = xs.length;
+  for(var i = from || 0; i < len; i++){
+    if (memo instanceof Reduced)
+      break;
+    memo = xf(memo, i, xs[i]);
   }
-}
-
-export function eachkv(obj, f){
-  for(var key in obj){
-    var value = obj[key];
-    f(key, value);
-  }
+  return memo instanceof Reduced ? memo.valueOf() : memo;
 }
 
 export function identity(value){
@@ -102,13 +98,13 @@ export function flip(f, len){
 }
 
 export function chain(init){
-  return reduce(slice(arguments, 1), function(value, f){
+  return reduce(arguments, function(value, f){
     return f(value);
-  }, init);
+  }, init, 1);
 }
 
 export function pipe(){
-  var fs = slice(arguments);
+  var fs = arguments;
   return function(init){
     return reduce(fs, function(value, f){
       return f(value);
@@ -208,7 +204,7 @@ export function is(constructor, value) {
 }
 
 export function juxt(){
-  var fs = slice(arguments);
+  var fs = arguments;
   return function(){
     var self = this,
         args = slice(arguments);

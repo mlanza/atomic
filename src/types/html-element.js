@@ -1,4 +1,4 @@
-import {identity, noop, is, each, eachkv, slice, partial} from '../core';
+import {is} from '../core';
 import {extend} from '../protocol';
 import Query from '../protocols/query';
 import Hierarchy from '../protocols/hierarchy';
@@ -8,6 +8,7 @@ import Collection from '../protocols/collection';
 import Append from '../protocols/append';
 import Prepend from '../protocols/prepend';
 import IndexedSeq from './indexed-seq';
+import {each} from '../coll';
 
 function hasKey(el, key){
   return !!el.attributes.getNamedItem(key);
@@ -25,14 +26,16 @@ export function text(el){
 }
 
 export function attr(obj, el){
-  eachkv(obj, partial(assoc, el));
+  each(function(pair){
+    assoc(el, pair[0], pair[1]);
+  }, obj);
   return el
 }
 
 export function css(obj, el){
-  eachkv(obj, function(key, value){
-    el.style[key] = value;
-  });
+  each(function(pair){
+    el.style[pair[0]] = pair[1];
+  }, obj);
   return el;
 }
 
@@ -59,11 +62,11 @@ export function setClass(on, str, el){
   return f(str, el);
 }
 
-export function tag(name){
+export function tag(name, ...params){
   var el = document.createElement(name);
-  each(slice(arguments, 1), function(item){
+  each(function(item){
     is(Object, item) ? attr(item, el) : append(el, item);
-  });
+  }, params);
   return el;
 }
 

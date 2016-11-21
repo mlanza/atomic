@@ -5,6 +5,7 @@ import Seq from '../protocols/seq';
 import Counted from '../protocols/counted';
 import Indexed from '../protocols/indexed';
 import Reduce from '../protocols/reduce';
+import ReduceKV from '../protocols/reduce-kv';
 import Seqable from '../protocols/seqable';
 import Emptyable from '../protocols/emptyable';
 import Lookup from '../protocols/lookup';
@@ -67,6 +68,16 @@ function reduce(self, f, init) {
   return memo instanceof Reduced ? memo.valueOf() : memo;
 }
 
+function reduceKV(self, f, init) {
+  var memo = init, len = self.indexed.length;
+  for(var i = self.start; i < len; i++) {
+    if (memo instanceof Reduced)
+      break;
+    memo = f(memo, i - self.start, self.indexed[i]);
+  }
+  return memo instanceof Reduced ? memo.valueOf() : memo;
+}
+
 function seq(self){
   return self.start < self.indexed.length ? self : null;
 }
@@ -115,4 +126,6 @@ export default extend(IndexedSeq, Append, {
   hasKey: hasKey
 }, Reduce, {
   reduce: reduce
+}, ReduceKV, {
+  reduceKV: reduceKV
 });
