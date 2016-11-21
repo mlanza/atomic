@@ -4,6 +4,7 @@ import Seq from '../protocols/seq';
 import Seqable from '../protocols/seqable';
 import Associative from '../protocols/associative';
 import Reduce from '../protocols/reduce';
+import ReduceKV from '../protocols/reduce-kv';
 import Lookup from '../protocols/lookup';
 import Emptyable from '../protocols/emptyable';
 import Collection from '../protocols/collection';
@@ -27,6 +28,16 @@ function seq(obj, ks, at){
 
 function reduce(self, f, init){
   return Reduce.reduce(seq(self), f, init);
+}
+
+function reduceKV(self, f, init){
+  var keys = Object.keys(self), memo = init;
+  for(var key in keys){
+    if (memo instanceof Reduced)
+      break;
+    memo = f(memo, key, self[key]);
+  }
+  return memo instanceof Reduced ? memo.valueOf() : memo;
 }
 
 function first(self){
@@ -61,6 +72,8 @@ export default extend(Object, Collection, {
   append: append
 }, Reduce, {
   reduce: reduce
+}, ReduceKV, {
+  reduceKV: reduceKV
 }, Emptyable, {
   empty: constantly({})
 }, Seqable, {

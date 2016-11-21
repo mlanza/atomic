@@ -1,6 +1,6 @@
 import unbind from '../unbind';
-import {slice, reverse, reduce, identity, constantly} from '../core';
-export {slice, reverse, reduce};
+import {slice, reverse, reduce, reduceKV, identity, constantly} from '../core';
+export {slice, reverse, reduce, reduceKV};
 import {extend} from '../protocol';
 import Next from '../protocols/next';
 import Seq from '../protocols/seq';
@@ -8,6 +8,7 @@ import Seqable from '../protocols/seqable';
 import Counted from '../protocols/counted';
 import Indexed from '../protocols/indexed';
 import Reduce from '../protocols/reduce';
+import ReduceKV from '../protocols/reduce-kv';
 import Emptyable from '../protocols/emptyable';
 import Lookup from '../protocols/lookup';
 import Associative from '../protocols/associative';
@@ -86,4 +87,6 @@ export default extend(Array, Append, {
   nth: nth
 }, Reduce, {
   reduce: reduce
+}, ReduceKV, {
+  reduceKV: reduceKV
 });
