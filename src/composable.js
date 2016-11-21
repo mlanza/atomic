@@ -36,6 +36,7 @@ import Reduced from './types/reduced';
 import {EMPTY} from './types/empty';
 export {observable} from './types/observable';
 export {publisher} from './types/publisher';
+export {toUpperCase, toLowerCase} from './types/string';
 import nil from './types/nil';
 import HTMLDocument from './types/html-document';
 import HTMLElement from './types/html-element';
