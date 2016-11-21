@@ -1,6 +1,6 @@
 import * as core from './core';
 import * as protocol from './protocol';
-export {reify, extend} from './protocol';
+export {extend} from './protocol';
 import Seq from './protocols/seq';
 import Next from './protocols/next';
 import Seqable from './protocols/seqable';
@@ -19,6 +19,7 @@ import * as el from './types/html-element';
 import * as string from './types/string';
 import * as array from './types/array';
 export {text} from './types/html-element';
+export {Reified, reify} from './types/reified';
 import List from './types/list';
 import LazyList from './types/lazy-list';
 import Array from './types/array';
