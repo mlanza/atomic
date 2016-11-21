@@ -21,7 +21,7 @@ export function protocol(template){
 }
 
 export function satisfies(self, value){
-  return self[MAP].get(value == null ? null : value.constructor);
+  return value instanceof Reified ? value.map.get(self) : self[MAP].get(value == null ? null : value.constructor);
 }
 
 function method(protocol, key){
@@ -32,16 +32,29 @@ function method(protocol, key){
   return multimethod(dispatch);
 }
 
-export function extend(constructor, protocol, template){
-  var tail = Array.prototype.slice.call(arguments, 3),
-    curr = protocol[MAP].get(constructor) || {};
-  protocol[MAP].set(constructor, Object.assign(curr, template));
-  return tail.length ? extend.apply(this, [constructor].concat(tail)) : constructor;
+export function extend(self, protocol, template){
+  var tail = Array.prototype.slice.call(arguments, 3);
+  if (self instanceof Reified) {
+    var curr = self.map.get(protocol);
+    if (!curr){
+      curr = {};
+      self.map.set(protocol, curr);
+    }
+  } else {
+    var curr = protocol[MAP].get(self || null);
+    if (!curr){
+      curr = {};
+      protocol[MAP].set(self, curr);
+    }
+  }
+  Object.assign(curr, template);
+  return tail.length ? extend.apply(this, [self].concat(tail)) : self;
+}
+
+export function Reified(){
+  this.map = new Map();
 }
 
 export function reify(protocol, template){
-  function Reified(){
-  }
-  extend.apply(this, [Reified].concat(slice(arguments)));
-  return new Reified();
+  return extend.apply(this, [new Reified()].concat(slice(arguments)));
 }
