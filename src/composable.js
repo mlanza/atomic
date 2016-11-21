@@ -1,5 +1,6 @@
 import * as core from './core';
 import * as protocol from './protocol';
+export {reify, extend} from './protocol';
 import Seq from './protocols/seq';
 import Next from './protocols/next';
 import Seqable from './protocols/seqable';
