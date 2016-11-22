@@ -1,5 +1,5 @@
-import {log, toUpperCase, expansive, observable, publisher, reify, swap, reset, subscribe, publish, deref, eq, into, text, hide, show, tag, tap, detach, parent, addClass, append, prepend, inc, gt, lt, some, isEvery, mapIndexed, range, constantly, conj, take, takeNth, repeat, repeatedly, chain, compose, pipe, add, juxt, query, fetch, get, assoc, hasKey, first, second, third, rest, nth, next, count, reduce, each, map, filter, remove, takeWhile, dropWhile, find, satisfies, concat, flatten, toArray, toObject} from './composable';
-export {log, toUpperCase, expansive, observable, publisher, reify, swap, reset, subscribe, publish, deref, eq, into, text, hide, show, tag, tap, detach, parent, addClass, append, prepend, inc, gt, lt, some, isEvery, mapIndexed, range, constantly, conj, take, takeNth, repeat, repeatedly, chain, compose, pipe, add, juxt, query, fetch, get, assoc, hasKey, first, second, third, rest, nth, next, count, reduce, each, map, filter, remove, takeWhile, dropWhile, find, satisfies, concat, flatten, toArray, toObject} from './composable';
+import {log, overload, toUpperCase, expansive, observable, publisher, reify, swap, reset, subscribe, publish, deref, eq, into, text, hide, show, tag, tap, detach, parent, addClass, append, prepend, inc, gt, lt, some, isEvery, mapIndexed, range, constantly, conj, take, takeNth, repeat, repeatedly, chain, compose, pipe, add, juxt, query, fetch, get, assoc, hasKey, first, second, third, rest, nth, next, count, reduce, each, map, filter, remove, takeWhile, dropWhile, find, satisfies, concat, flatten, toArray, toObject} from './composable';
+export {log, overload, toUpperCase, expansive, observable, publisher, reify, swap, reset, subscribe, publish, deref, eq, into, text, hide, show, tag, tap, detach, parent, addClass, append, prepend, inc, gt, lt, some, isEvery, mapIndexed, range, constantly, conj, take, takeNth, repeat, repeatedly, chain, compose, pipe, add, juxt, query, fetch, get, assoc, hasKey, first, second, third, rest, nth, next, count, reduce, each, map, filter, remove, takeWhile, dropWhile, find, satisfies, concat, flatten, toArray, toObject} from './composable';
 import Reduce from './protocols/reduce';
 import Lookup from './protocols/lookup';
 import IndexedSeq from './types/indexed-seq';
@@ -30,12 +30,16 @@ QUnit.test("Traverse and manipulate the dom", function(assert){
 });
 
 QUnit.test("Associative", function(assert){
-  assert.deepEqual(chain({lname: "Howard"}, assoc("fname", "Moe")), {fname: "Moe", lname: "Howard"});
+  assert.deepEqual(chain({sn: "Howard"}, assoc("givenName", "Moe")), {givenName: "Moe", sn: "Howard"});
   assert.deepEqual(chain([1,2,3], assoc(1, 0)), [1, 0, 3]);
 });
 
 QUnit.test("Lookup", function(assert){
-  assert.equal(chain({fname: "Moe", lname: "Howard"}, get("fname")), "Moe");
+  var moe = {givenName: "Moe", sn: "Howard"};
+  var givenName = overload(null, get("givenName"), assoc("givenName")); //lens
+  assert.equal(givenName(moe), "Moe");
+  assert.deepEqual(givenName("Curly", moe), {givenName: "Curly", sn: "Howard"});
+  assert.deepEqual(moe, {givenName: "Moe", sn: "Howard"}, "no lens mutation");
   assert.equal(chain(["ace", "king", "queen"], get(2)), "queen");
 });
 
@@ -65,7 +69,7 @@ QUnit.test("coersion", function(assert){
 
 QUnit.test("Append/Prepend", function(assert){
   assert.deepEqual(chain(["Moe"], append("Howard")), ["Moe", "Howard"]);
-  assert.deepEqual(chain({lname: "Howard"}, append(['fname', "Moe"])), {fname: "Moe", lname: "Howard"});
+  assert.deepEqual(chain({sn: "Howard"}, append(['givenName', "Moe"])), {givenName: "Moe", sn: "Howard"});
   assert.deepEqual(chain([1, 2], append(3)), [1, 2, 3]);
   assert.deepEqual(chain([1, 2], prepend(0)), [0, 1, 2]);
 });
