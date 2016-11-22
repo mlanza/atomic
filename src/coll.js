@@ -1,4 +1,4 @@
-import {complement, identity, isSome, multiarity, overload, constantly, partial, add, is, slice, pipe, arity} from './core';
+import {complement, identity, isSome, multiarity, overload, constantly, partial, add, is, slice, pipe, arity, unspread} from './core';
 import {satisfies} from './protocol';
 import Seqable from './protocols/seqable';
 import Seq from './protocols/seq';
@@ -85,6 +85,54 @@ export function some(pred, xs){
   var fst = Seq.first(xs);
   return pred(fst) ? fst : some(pred, Seq.rest(xs));
 }
+
+export function aberrant(pred, xs){
+  var x = Seq.first(xs);
+  var y = Reduce.reduce(Seq.rest(xs), function(a, b){
+    return pred(a, b) ? a : new Reduced(b);
+  }, x);
+  return y === x ? null : y;
+}
+
+export function exemplary(pred, xs){
+  return !aberrant(pred, xs);
+}
+
+export const eq = overload(constantly(true), constantly(true), unspread(partial(exemplary, function(a, b){
+  return a == b;
+})));
+
+export const ne = overload(constantly(false), constantly(false), unspread(partial(exemplary, function(a, b){
+  return a != b;
+})));
+
+export const gt = overload(constantly(false), constantly(true), unspread(partial(exemplary, function(a, b){
+  return a > b;
+})));
+
+export const gte = overload(constantly(true), constantly(true), unspread(partial(exemplary, function(a, b){
+  return a >= b;
+})));
+
+export const lt = overload(constantly(false), constantly(true), unspread(partial(exemplary, function(a, b){
+  return a < b;
+})));
+
+export const lte = overload(constantly(true), constantly(true), unspread(partial(exemplary, function(a, b){
+  return a <= b;
+})));
+
+export function indescriminate(x, ...xs){
+  if (!xs.length) return x;
+  return x ? indescriminate.apply(this, xs) : x;
+}
+
+export function coalesce(x, ...xs){
+  return x ? x : coalesce.apply(this, xs);
+}
+
+export const or  = overload(constantly(null), identity, coalesce);
+export const and = overload(constantly(true), identity, indescriminate);
 
 export function isEvery(pred, xs){
   if (!Seqable.seq(xs)) return true;

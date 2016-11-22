@@ -156,29 +156,7 @@ export function identical(a, b){
   return a === b;
 }
 
-export function eq(a, b){
-  return a == b;
-}
-
-export function ne(a, b){
-  return a != b;
-}
-
-export function gt(a, b){
-  return a > b;
-}
-
-export function gte(a, b){
-  return a >= b;
-}
-
-export function lt(a, b){
-  return a < b;
-}
-
-export function lte(a, b){
-  return a <= b;
-}
+export const rand = Math.random;
 
 export function isSome(x){
   return x != null;
@@ -249,18 +227,6 @@ export function unspread(f){
 export function not(value){
   return !value;
 }
-
-function _and(a, b, ...args){
-  return args.length > 2 ? a && b && _and.apply(this, args) : a && b;
-}
-
-function _or(a, b, ...args){
-  return args.length > 2 ? a || b || _or.apply(this, args) : a || b;
-}
-
-export const or   = overload(constantly(null), identity, _or);
-export const and  = overload(constantly(true), identity, _and);
-export const rand = Math.random;
 
 function s4() {
   return Math.floor((1 + rand()) * 0x10000).toString(16).substring(1);
