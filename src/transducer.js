@@ -1,5 +1,6 @@
-import Reduced from './types/reduced.js';
-import {overload, complement, compose, isSome} from './core.js';
+import Seqable from './protocols/seqable';
+import Reduced from './types/reduced';
+import {overload, complement, comp, isSome} from './core';
 
 export function map(f){
   return function(xf){
@@ -15,6 +16,28 @@ export function mapIndexed(f){
     return overload(xf, xf, function(memo, value){
       return xf(memo, f(++idx, value));
     });
+  }
+}
+
+export function dedupe(){
+  return function(xf){
+    var last = {};
+    return overload(xf, xf, function(memo, value){
+      var result = value === last ? memo : xf(memo, value);
+      last = value;
+      return result;
+    });
+  }
+}
+
+export function distinct(){
+  return function(xf){
+    return overload(function(){
+      return new Set();
+    }, function(xs){
+      var coll = Seqable.seq(xs);
+      return coll ? into([], coll) : EMPTY;
+    }, xf);
   }
 }
 
@@ -35,14 +58,14 @@ export function find(pred){
 }
 
 export function keep(f){
-  return compose(map(f), filter(isSome));
+  return comp(map(f), filter(isSome));
 }
 
 export function keepIndexed(f){
-  return compose(mapIndexed(f), filter(isSome));
+  return comp(mapIndexed(f), filter(isSome));
 }
 
-export const remove = compose(filter, complement);
+export const remove = comp(filter, complement);
 
 export function take(n){
   return function(xf){

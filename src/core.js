@@ -112,7 +112,7 @@ export function pipe(){
   }
 }
 
-export function compose(){
+export function comp(){
   return pipe.apply(this, chain(arguments, slice, reverse));
 }
 

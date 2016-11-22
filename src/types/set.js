@@ -9,10 +9,10 @@ import Reduce from '../protocols/reduce';
 import Emptyable from '../protocols/emptyable';
 import Lookup from '../protocols/lookup';
 import Collection from '../protocols/collection';
-import Reduced from '../protocols/collection';
+import Reduced from '../types/reduced';
 
 function first(self){
-  return self.values().next();
+  return self.values().next().value;
 }
 
 function rest(self){

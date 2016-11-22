@@ -21,10 +21,6 @@ LazyList.prototype[Symbol.iterator] = function(){
   return iterator(this);
 }
 
-export function lazyList(head, tail){
-  return new LazyList(head, tail);
-}
-
 const empty = constantly(EMPTY);
 
 function first(self){

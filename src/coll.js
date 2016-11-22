@@ -1,4 +1,4 @@
-import {complement, identity, isSome, multiarity, overload, constantly, partial, add, is, slice, pipe} from './core';
+import {complement, identity, isSome, multiarity, overload, constantly, partial, add, is, slice, pipe, arity} from './core';
 import {satisfies} from './protocol';
 import Seqable from './protocols/seqable';
 import Seq from './protocols/seq';
@@ -117,10 +117,7 @@ export function compact(xs){
 }
 
 export function find(pred, xs){
-  var coll = Seqable.seq(xs);
-  if (!coll) return null;
-  var fst = Seq.first(coll);
-  return pred(fst) ? fst : find(pred, Seq.rest(coll));
+  return Seq.first(filter(pred, xs));
 }
 
 export function flatten(xs){
@@ -132,21 +129,27 @@ export function flatten(xs){
   });
 }
 
-export function concat(){
-  const coll = compact(map(Seqable.seq, arguments));
+export function cat(xs){
+  const coll = compact(map(Seqable.seq, xs));
   if (!Seqable.seq(coll)) return EMPTY;
-  const fst = Seq.first(coll),
-        rst = Seq.rest(coll);
+  const fst = Seq.first(coll);
   return new LazyList(Seq.first(fst), function(){
-    return Seqable.seq(fst) ? concat.apply(this, [Seq.rest(fst)].concat(toArray(rst))) : concat.apply(this, toArray(rst));
+    const rst = Seq.rest(coll);
+    return Seqable.seq(fst) ? cat([Seq.rest(fst)].concat(toArray(rst))) : cat(rst);
   });
+}
+
+export function concat(){
+  return cat(slice(arguments));
+}
+
+export function mapcat(f, xs){
+  return cat(map(f, xs));
 }
 
 export function toArray(xs){
   if (xs instanceof Array) return xs;
-  var coll = Seqable.seq(xs);
-  if (!coll) return [];
-  return Reduce.reduce(coll, Collection.conj, []);
+  return Seqable.seq(xs) ? into([], xs) : [];
 }
 
 export function toObject(obj){
@@ -176,6 +179,31 @@ export const repeat = overload(null, function(value){
 }, function(n, value){
   return repeatedly(n, constantly(value))
 });
+
+function _cycle(xs, ys){
+  if (arguments.length === 1) return _cycle(xs, xs);
+  var coll = Seqable.seq(xs) || Seqable.seq(ys);
+  return coll ? new LazyList(Seq.first(coll), function(){
+    return _cycle(Seq.rest(coll), ys);
+  }) : EMPTY;
+}
+
+export const cycle = arity(1, _cycle);
+
+function _dedupe(xs, x){
+  const coll = Seqable.seq(xs),
+        fst  = Seq.first(coll);
+  return coll ? fst === x ?  _dedupe(Seq.rest(coll), fst) : new LazyList(fst, function(){
+    return _dedupe(Seq.rest(coll), fst);
+  }) : EMPTY;
+}
+
+export const dedupe = arity(1, _dedupe);
+
+export function distinct(xs){
+  var coll = Seqable.seq(xs);
+  return coll ? toArray(new Set(coll)) : EMPTY;
+}
 
 export const range = multiarity(function(){ //TODO number range, date range, string range, etc.
   return iterate(inc, 0);

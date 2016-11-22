@@ -20,7 +20,7 @@ List.prototype[Symbol.iterator] = function(){
   return iterator(this);
 }
 
-export function list(head, tail){
+export function cons(head, tail){
   return new List(head, tail);
 }
 
