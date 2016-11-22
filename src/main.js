@@ -1,5 +1,5 @@
-import {log, overload, toUpperCase, expansive, observable, publisher, reify, swap, reset, subscribe, publish, deref, eq, into, text, hide, show, tag, tap, detach, parent, addClass, append, prepend, inc, gt, lt, some, isEvery, mapIndexed, range, constantly, conj, take, takeNth, repeat, repeatedly, chain, compose, pipe, add, juxt, query, fetch, get, assoc, hasKey, first, second, third, rest, nth, next, count, reduce, each, map, filter, remove, takeWhile, dropWhile, find, satisfies, concat, flatten, toArray, toObject} from './composable';
-export {log, overload, toUpperCase, expansive, observable, publisher, reify, swap, reset, subscribe, publish, deref, eq, into, text, hide, show, tag, tap, detach, parent, addClass, append, prepend, inc, gt, lt, some, isEvery, mapIndexed, range, constantly, conj, take, takeNth, repeat, repeatedly, chain, compose, pipe, add, juxt, query, fetch, get, assoc, hasKey, first, second, third, rest, nth, next, count, reduce, each, map, filter, remove, takeWhile, dropWhile, find, satisfies, concat, flatten, toArray, toObject} from './composable';
+import {log, dedupe, distinct, cat, cycle, overload, toUpperCase, expansive, observable, publisher, reify, swap, reset, subscribe, publish, deref, eq, into, transduce, text, hide, show, tag, tap, detach, parent, addClass, append, prepend, inc, gt, lt, some, isEvery, mapIndexed, range, constantly, conj, take, takeNth, repeat, repeatedly, chain, comp, pipe, add, juxt, query, fetch, get, assoc, hasKey, first, second, third, rest, nth, next, count, reduce, each, map, filter, remove, takeWhile, dropWhile, find, satisfies, concat, flatten, toArray, toObject} from './composable';
+export {log, dedupe, distinct, cat, cycle, overload, toUpperCase, expansive, observable, publisher, reify, swap, reset, subscribe, publish, deref, eq, into, transduce, text, hide, show, tag, tap, detach, parent, addClass, append, prepend, inc, gt, lt, some, isEvery, mapIndexed, range, constantly, conj, take, takeNth, repeat, repeatedly, chain, comp, pipe, add, juxt, query, fetch, get, assoc, hasKey, first, second, third, rest, nth, next, count, reduce, each, map, filter, remove, takeWhile, dropWhile, find, satisfies, concat, flatten, toArray, toObject} from './composable';
 import Reduce from './protocols/reduce';
 import Lookup from './protocols/lookup';
 import IndexedSeq from './types/indexed-seq';
@@ -78,6 +78,10 @@ QUnit.test("Into", function(assert){
   assert.equal(into("Marco ", "Polo"), "Marco Polo");
   assert.deepEqual(into("", filter(gt(6)), [5, 6, 7, 8, 9]), "789");
   assert.deepEqual(into([], "Polo"), ["P", "o", "l", "o"]);
+  assert.deepEqual(into([], take(7), cycle([1, 2, 3])), [1, 2, 3, 1, 2, 3, 1]);
+  assert.deepEqual(into([], dedupe(), [1, 2, 3, 3, 4, 4, 4, 5, 6, 6, 7]), [1, 2, 3, 4, 5, 6, 7]);
+  assert.deepEqual(toArray(distinct([1, 2, 3, 1, 4, 3, 4, 3, 2, 2])), [1, 2, 3, 4]);
+  //assert.deepEqual(transduce(distinct, conj, [1, 2, 3, 1, 4, 3, 4, 3, 2, 2]), [1, 2, 3, 4]);
   assert.deepEqual(into([], takeNth(2), range(10)), [0, 2, 4, 6, 8]);
   assert.deepEqual(into([], repeatedly(0, constantly(1))), []);
   assert.deepEqual(into([], repeatedly(10, constantly(2))), [2, 2, 2, 2, 2, 2, 2, 2, 2, 2]);
@@ -88,11 +92,11 @@ QUnit.test("Into", function(assert){
   assert.deepEqual(into([], dropWhile(gt(5), range(10))), [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
   assert.deepEqual(into([], map(inc, range(1, 5))), [2, 3, 4, 5]);
   assert.deepEqual(into([], map(inc), [10, 11, 12]), [11, 12, 13]);
-  assert.deepEqual(into([], compose(filter(gt(6)), map(inc), take(2)), [5, 6, 7, 8, 9]), [8, 9]);
+  assert.deepEqual(into([], comp(filter(gt(6)), map(inc), take(2)), [5, 6, 7, 8, 9]), [8, 9]);
   assert.deepEqual(into([], take(10), range(7, 15)), [7, 8, 9, 10, 11, 12, 13, 14]);
   assert.deepEqual(into([], range(5)), [0, 1, 2, 3, 4]);
   assert.deepEqual(into([], repeat(5, "X")), ["X", "X", "X", "X", "X"]);
-  assert.deepEqual(into([], concat([1, 2, 3], [4, 5, 6])), [1, 2, 3, 4, 5, 6]);
+  assert.deepEqual(into([], cat([[1, 2, 3], [4, 5, 6]])), [1, 2, 3, 4, 5, 6]);
   assert.deepEqual(into([], concat([1, 2], [3, 4], [5, 6])), [1, 2, 3, 4, 5, 6]);
   assert.deepEqual(into([], mapIndexed(function(idx, value){
     return [idx, inc(value)];
