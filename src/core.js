@@ -233,3 +233,39 @@ export function detach(f){
     return f.apply(obj, args);
   }
 }
+
+export function spread(f){
+  return function(values){
+    return f.apply(this, values);
+  }
+}
+
+export function unspread(f){
+  return function(){
+    return f(slice(arguments));
+  }
+}
+
+export function not(value){
+  return !value;
+}
+
+function _and(a, b, ...args){
+  return args.length > 2 ? a && b && _and.apply(this, args) : a && b;
+}
+
+function _or(a, b, ...args){
+  return args.length > 2 ? a || b || _or.apply(this, args) : a || b;
+}
+
+export const or   = overload(constantly(null), identity, _or);
+export const and  = overload(constantly(true), identity, _and);
+export const rand = Math.random;
+
+function s4() {
+  return Math.floor((1 + rand()) * 0x10000).toString(16).substring(1);
+}
+
+export function guid() {
+  return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
+}
