@@ -86,41 +86,49 @@ export function some(pred, xs){
   return pred(fst) ? fst : some(pred, Seq.rest(xs));
 }
 
-export function aberrant(pred, xs){
-  var x = Seq.first(xs);
-  var y = Reduce.reduce(Seq.rest(xs), function(a, b){
-    return pred(a, b) ? a : new Reduced(b);
-  }, x);
-  return y === x ? null : y;
+export function scan(pred, xs){
+  if (!Seqable.seq(xs)) return true;
+  const fst  = Seq.first(xs),
+        rst  = Seq.rest(xs),
+        coll = Seqable.seq(rst);
+  return coll ? pred(fst, Seq.first(coll)) && scan(pred, rst) : true;
 }
 
-export function exemplary(pred, xs){
-  return !aberrant(pred, xs);
-}
+export const eq = overload(constantly(true), constantly(true), function(...xs){
+  return scan(function(x, y){
+    return x == y;
+  }, xs);
+});
 
-export const eq = overload(constantly(true), constantly(true), unspread(partial(exemplary, function(a, b){
-  return a == b;
-})));
+export const ne = overload(constantly(false), constantly(false), function(...xs){
+  return scan(function(x, y){
+    return x != y;
+  }, xs);
+});
 
-export const ne = overload(constantly(false), constantly(false), unspread(partial(exemplary, function(a, b){
-  return a != b;
-})));
+export const gt = overload(constantly(false), constantly(true), function(...xs){
+  return scan(function(x, y){
+    return x > y;
+  }, xs);
+});
 
-export const gt = overload(constantly(false), constantly(true), unspread(partial(exemplary, function(a, b){
-  return a > b;
-})));
+export const gte = overload(constantly(true), constantly(true), function(...xs){
+  return scan(function(x, y){
+    return x >= y;
+  }, xs);
+});
 
-export const gte = overload(constantly(true), constantly(true), unspread(partial(exemplary, function(a, b){
-  return a >= b;
-})));
+export const lt = overload(constantly(false), constantly(true), function(...xs){
+  return scan(function(x, y){
+    return x < y;
+  }, xs);
+});
 
-export const lt = overload(constantly(false), constantly(true), unspread(partial(exemplary, function(a, b){
-  return a < b;
-})));
-
-export const lte = overload(constantly(true), constantly(true), unspread(partial(exemplary, function(a, b){
-  return a <= b;
-})));
+export const lte = overload(constantly(true), constantly(true), function(...xs){
+  return scan(function(x, y){
+    return x <= y;
+  }, xs);
+});
 
 export function indescriminate(x, ...xs){
   if (!xs.length) return x;
@@ -141,6 +149,10 @@ export function isEvery(pred, xs){
 
 export function isAny(pred, xs){
   return some(pred, xs) !== null;
+}
+
+export function isNotAny(pred, xs){
+  return isAny(complement(pred), xs);
 }
 
 export function fold(f, init, xs){

@@ -4,7 +4,7 @@
 * update-in
 * sort
 * str
-* interpose 
+* interpose
     * is there a use with compose/pipe to abort process on null?
     * to observe intermediary values passing through?
 * rseq
@@ -72,3 +72,5 @@
 * zero?
 * shuffle
 * rand
+
+*eliminate recursion inefficiencies
