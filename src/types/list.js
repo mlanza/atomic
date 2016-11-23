@@ -1,7 +1,6 @@
 import {identity, constantly} from '../core';
 import {extend, def} from '../protocol';
 import Seq from '../protocols/seq';
-import Next from '../protocols/next';
 import Emptyable from '../protocols/emptyable';
 import Seqable from '../protocols/seqable';
 import Reduce from '../protocols/reduce';
@@ -34,10 +33,6 @@ function rest(self){
   return self.tail;
 }
 
-function next(self){
-  return Seqable.seq(self.tail);
-}
-
 function reduce(self, f, init){
   if (init instanceof Reduced) return init.valueOf();
   return Reduce.reduce(self.tail, f, f(init, self.head));
@@ -59,8 +54,6 @@ export default extend(List, Collection, {
   reduce: reduce
 }, Seqable, {
   seq: identity
-}, Next, {
-  next: next
 }, Seq, {
   first: first,
   rest: rest

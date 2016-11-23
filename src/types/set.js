@@ -1,6 +1,5 @@
 import {constantly} from '../core';
 import {extend} from '../protocol';
-import Next from '../protocols/next';
 import Seq from '../protocols/seq';
 import Seqable from '../protocols/seqable';
 import Counted from '../protocols/counted';
@@ -33,10 +32,6 @@ function nth(self, n){
   return n ? nth(rest(self), n - 1) : first(self);
 }
 
-function next(self){
-  return self.size === 0 ? null : rest(self);
-}
-
 function conj(self, value){
   var set = new Set(self);
   set.add(value);
@@ -60,8 +55,6 @@ export default extend(Set, Collection, {
   empty: constantly(new Set())
 }, Seqable, {
   seq: seq
-}, Next, {
-  next: next
 }, Seq, {
   first: first,
   rest: rest

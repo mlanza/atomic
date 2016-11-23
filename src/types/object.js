@@ -76,6 +76,9 @@ export default extend(Object, Collection, {
   reduceKV: reduceKV
 }, Emptyable, {
   empty: constantly({})
+}, Seq, {
+  first: first,
+  rest: rest
 }, Seqable, {
   seq: arity(1, seq)
 }, Lookup, {
