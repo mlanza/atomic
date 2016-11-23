@@ -99,11 +99,25 @@ export function ult(f){ //ultimately
 
 export function subj(f){
   return function(){
-    var applied = slice(arguments);
-    return function(){
-      return f.apply(this, slice(arguments).concat(applied));
+    const params = slice(arguments);
+    return function(obj){
+      return f.apply(this, [obj].concat(params));
     }
   }
+}
+
+export function reversed(f){
+  return function(){
+    return f.apply(this, reverse(slice(arguments)));
+  }
+}
+
+export function int(x){
+  return x == null ? 0 : parseInt(x);
+}
+
+export function float(x){
+  return x == null ? 0 : parseFloat(x);
 }
 
 export function chain(init){
@@ -112,35 +126,33 @@ export function chain(init){
   }, init, 1);
 }
 
-export function pipe(){
-  var fs = arguments;
-  return function(init){
-    return reduce(fs, function(value, f){
-      return f(value);
-    }, init);
-  }
+export function schain(init){
+  return reduce(arguments, function(value, f){
+    return value == null ? new Reduced(null) : f(value);
+  }, init, 1);
 }
 
-export function comp(){
-  return pipe.apply(this, chain(arguments, slice, reverse));
-}
+export const pipe  = subj(chain);
+export const spipe = subj(schain);
+export const comp  = reversed(pipe);
+export const scomp = reversed(spipe);
 
 export function multimethod(dispatch){
   return function(){
-    var f = dispatch.apply(this, arguments);
+    const f = dispatch.apply(this, arguments);
     return f.apply(this, arguments);
   }
 }
 
 function route(get, fallback, value){
-  var f = get(value == null ? null : value.constructor);
+  const f = get(value == null ? null : value.constructor);
   return f ? f : value != null && value.__proto__.constructor !== Object ? dispatch(get, fallback, value.__proto__) : fallback;
 }
 
 export function method(fallback){
-  var map = new Map(),
-      set = map.set.bind(map),
-      get = partial(route, map.get.bind(map), fallback);
+  const map = new Map(),
+        set = map.set.bind(map),
+        get = partial(route, map.get.bind(map), fallback);
   return Object.assign(multimethod(get), {get, set});
 }
 
@@ -153,13 +165,32 @@ export function constantly(value){
 export function noop(){
 }
 
-export function add(a, b){
-  return a + b;
+export function reducing(reducer){
+  return function(x){
+    return reduce(arguments, reducer, x, 1);
+  }
 }
 
 export function subtract(a, b){
   return a - b;
 }
+
+export function add(a, b){
+  return a + b;
+}
+
+export function multiply(a, b){
+  return a * b;
+}
+
+export function divide(a, b){
+  return a / b;
+}
+
+export const plus  = overload(constantly(0), identity, add, reducing(add));
+export const minus = overload(constantly(0), partial(multiply, -1), subtract, reducing(subtract));
+export const mult  = overload(constantly(1), identity, multiply, reducing(multiply));
+export const div   = overload(constantly(NaN), partial(divide, 1), divide, reducing(divide));
 
 export function isIdentical(a, b){
   return a === b;
@@ -208,10 +239,21 @@ export function isOdd(n){
   return n % 2;
 }
 
-export const isEven = complement(IsOdd);
+export const isEven = complement(isOdd);
 
 export function is(constructor, value) {
   return value != null && value.constructor === constructor;
+}
+
+/*
+export function unshift(xs){
+  const len = arguments.length;
+  return len === 1 ? xs : len ? slice(arguments, 0, len - 1).concat(slice(arguments[len - 1])) : [];
+}
+*/
+
+export function branch(value, pred, get){
+  return pred ? pred(value) ? get(value) : branch.apply(this, [value].concat(slice(arguments, 3))) : null;
 }
 
 export function juxt(){

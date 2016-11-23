@@ -2,15 +2,9 @@
 * dissoc
 * =
 * not= - ne
-* + / plus
-* - / minus
-* keys
 * group-by
 * keep-indexed
 * take-last
-* every-pred -- and?
-* some-fn
-* num
 * fnil
 * rseq
 * sort
@@ -19,12 +13,9 @@
 * merge
 * merge-with
 * select-keys
-* case
 * cond
 * condp
-* doseq
 * get-method
-* printf
 * replace
 * sequence
 * sequential?
@@ -38,9 +29,16 @@
 * shuffle
 * make-hierarchy (and related fns)
 * map-entry?
+* util.js and
+* util.js or
 
 *atom (observable?)
 *eliminate recursion inefficiencies, use reduce where possible
 *thread-first, thread-last
 *pipe that breaks on null
 *pipe that sends intermediary values passing through to log or other effect
+*channels? -- reuse existing lib, but wrap api?
+
+MAYBE SOMEDAY
+* doseq
+* printf
