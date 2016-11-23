@@ -1,5 +1,5 @@
-import {log, scan, best, getIn, update, interpose, interleave, min, max, and, or, dedupe, distinct, cat, cycle, overload, toUpperCase, expansive, observable, publisher, reify, swap, reset, subscribe, publish, deref, eq, into, transduce, text, hide, show, tag, tap, detach, parent, addClass, append, prepend, inc, gt, lt, some, isEvery, mapIndexed, range, constantly, conj, take, takeNth, repeat, repeatedly, chain, comp, pipe, add, juxt, query, fetch, get, assoc, hasKey, first, second, third, rest, nth, next, count, reduce, each, map, filter, remove, takeWhile, dropWhile, find, satisfies, concat, flatten, toArray, toObject} from './composable';
-export {log, scan, best, getIn, update, interpose, interleave, min, max, and, or, dedupe, distinct, cat, cycle, overload, toUpperCase, expansive, observable, publisher, reify, swap, reset, subscribe, publish, deref, eq, into, transduce, text, hide, show, tag, tap, detach, parent, addClass, append, prepend, inc, gt, lt, some, isEvery, mapIndexed, range, constantly, conj, take, takeNth, repeat, repeatedly, chain, comp, pipe, add, juxt, query, fetch, get, assoc, hasKey, first, second, third, rest, nth, next, count, reduce, each, map, filter, remove, takeWhile, dropWhile, find, satisfies, concat, flatten, toArray, toObject} from './composable';
+import {log, rand, scan, best, getIn, update, updateIn, interpose, interleave, min, max, and, or, dedupe, distinct, cat, cycle, overload, toUpperCase, expansive, observable, publisher, reify, swap, reset, subscribe, publish, deref, eq, into, transduce, text, hide, show, tag, tap, detach, parent, addClass, append, prepend, inc, gt, lt, some, isEvery, mapIndexed, range, constantly, conj, take, takeNth, repeat, repeatedly, chain, comp, pipe, add, juxt, query, fetch, get, assoc, hasKey, first, second, third, rest, nth, next, count, reduce, each, map, filter, remove, takeWhile, dropWhile, find, satisfies, concat, flatten, toArray, toObject} from './composable';
+export {log, rand, scan, best, getIn, update, updateIn, interpose, interleave, min, max, and, or, dedupe, distinct, cat, cycle, overload, toUpperCase, expansive, observable, publisher, reify, swap, reset, subscribe, publish, deref, eq, into, transduce, text, hide, show, tag, tap, detach, parent, addClass, append, prepend, inc, gt, lt, some, isEvery, mapIndexed, range, constantly, conj, take, takeNth, repeat, repeatedly, chain, comp, pipe, add, juxt, query, fetch, get, assoc, hasKey, first, second, third, rest, nth, next, count, reduce, each, map, filter, remove, takeWhile, dropWhile, find, satisfies, concat, flatten, toArray, toObject} from './composable';
 import Reduce from './protocols/reduce';
 import Lookup from './protocols/lookup';
 import IndexedSeq from './types/indexed-seq';
@@ -50,6 +50,14 @@ QUnit.test("Lookup", function(assert){
   var givenName = overload(null, get("givenName"), assoc("givenName")); //lens
   assert.equal(chain(boris, getIn(["address", "lines", 1])), "Suite 401");
   assert.equal(chain(boris, getIn(["address", "lines", 2])), null);
+  assert.deepEqual(chain(boris, updateIn(["address", "lines", 1], toUpperCase)), {givenName: "Boris", sn: "Lasky", address: {
+    lines: ["401 Mayor Ave.", "SUITE 401"],
+    city: "Mechanicsburg", state: "PA", zip: "17055"
+  }});
+  assert.deepEqual(boris, {givenName: "Boris", sn: "Lasky", address: {
+    lines: ["401 Mayor Ave.", "Suite 401"],
+    city: "Mechanicsburg", state: "PA", zip: "17055"
+  }});
   assert.equal(givenName(moe), "Moe");
   assert.deepEqual(givenName("Curly", moe), {givenName: "Curly", sn: "Howard"});
   assert.deepEqual(moe, {givenName: "Moe", sn: "Howard"}, "no lens mutation");
