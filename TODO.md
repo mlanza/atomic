@@ -7,6 +7,9 @@
 * keys
 * group-by
 * keep-indexed
+* take-last
+* every-pred -- and?
+* some-fn
 * num
 * fnil
 * rseq
@@ -16,7 +19,6 @@
 * merge
 * merge-with
 * select-keys
-* every-pred -- and?
 * case
 * cond
 * condp
@@ -37,6 +39,7 @@
 * make-hierarchy (and related fns)
 * map-entry?
 
+*atom (observable?)
 *eliminate recursion inefficiencies, use reduce where possible
 *thread-first, thread-last
 *pipe that breaks on null
