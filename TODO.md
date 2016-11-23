@@ -10,7 +10,6 @@
 * rseq
 * sort
 * distinct -- test
-* partition / partition-all / partition-by
 * merge
 * merge-with
 * select-keys

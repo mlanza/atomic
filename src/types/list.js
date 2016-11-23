@@ -6,6 +6,7 @@ import Seqable from '../protocols/seqable';
 import Reduce from '../protocols/reduce';
 import Collection from '../protocols/collection';
 import Prepend from '../protocols/prepend';
+import Counted from '../protocols/counted';
 import {Reduced, reduced} from '../types/reduced';
 import {EMPTY} from '../types/empty';
 import {iterator} from '../coll';
@@ -42,12 +43,23 @@ export function prepend(self, value){
   return new List(value, self);
 }
 
+export function count(self){
+  var i = 0, coll = self;
+  while(coll = Seqable.seq(coll)){
+    i++;
+    coll = Seq.rest(coll);
+  }
+  return i;
+}
+
 def(Collection, {conj: prepend})
 
 export default extend(List, Collection, {
   conj: prepend
 }, Prepend, {
   prepend: prepend
+}, Counted, {
+  count: count
 }, Emptyable, {
   empty: empty
 }, Reduce, {

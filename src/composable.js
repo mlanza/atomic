@@ -44,7 +44,7 @@ import HTMLElement from './types/html-element';
 import IndexedSeq from './types/indexed-seq';
 import * as coll from './coll';
 import * as transducer from './transducer';
-export {someFn, everyPred, cycle, doall, cat, interleave, butlast, dropLast, str, transduce, into, transform, concat, flatten, toObject, toArray, repeatedly, repeat, range, keys} from './coll'; //TODO concat for string different from concat for sequence
+export {someFn, partition, partitionBy, partitionAll, everyPred, cycle, doall, cat, interleave, butlast, dropLast, str, transduce, into, transform, concat, flatten, toObject, toArray, repeatedly, repeat, range, keys} from './coll'; //TODO concat for string different from concat for sequence
 import {curry, flip, subj, overload} from './core';
 export {plus, minus, mult, div, log, rand, curry, pipe, juxt, flip, partial, chain, reverse, identity, complement, overload, comp, multimethod, constantly, noop, isIdentical, isOdd, isEven, doto, invokeWith, isSome, isNil} from './core';
 export const deref     = Deref.deref;
