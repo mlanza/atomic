@@ -14,8 +14,12 @@ import LazyList from './types/lazy-list';
 import {EMPTY} from './types/empty';
 
 export function update(obj, key, f, ...args){
-  var value = Lookup.get(obj, key);
+  const value = Lookup.get(obj, key);
   return Associative.assoc(obj, key, f.apply(this, [value].concat(args)));
+}
+
+export function updateIn(obj, path, f, ...args){
+  return path.length > 1 ? update.apply(this, [obj, path[0], updateIn, slice(path, 1), f].concat(args)) : update.apply(this, [obj, path[0], f].concat(args));
 }
 
 export function getIn(obj, path){
@@ -23,6 +27,12 @@ export function getIn(obj, path){
     const found = Lookup.get(memo, key);
     return found == null ? new Reduced(null) : found;
   }, obj);
+}
+
+export function last(xs){
+  return Reduce.reduce(xs, function(memo, x){
+    return x;
+  }, null);
 }
 
 export function interpose(sep, xs){
@@ -185,6 +195,10 @@ export const and = overload(constantly(true), identity, indescriminate);
 export function isEvery(pred, xs){
   if (!Seqable.seq(xs)) return true;
   return pred(Seq.first(xs)) && isEvery(pred, Seq.rest(xs));
+}
+
+export function isNotEvery(pred, xs){
+  return isEvery(complement(pred), xs);
 }
 
 export function isAny(pred, xs){

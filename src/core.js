@@ -168,7 +168,7 @@ export function subtract(a, b){
   return a - b;
 }
 
-export function identical(a, b){
+export function isIdentical(a, b){
   return a === b;
 }
 
@@ -178,20 +178,32 @@ export function isSome(x){
   return x != null;
 }
 
-export function isNil(value){
-  return null == value;
+export function isNil(x){
+  return x == null;
 }
 
-export function tap(f, value){
-  f(value);
-  return value;
+export function isZero(x){
+  return x === 0;
 }
 
-export function odd(n){
+export function isPos(x){
+  return x > 0;
+}
+
+export function isNeg(x){
+  return x < 0;
+}
+
+export function tap(f, x){
+  f(x);
+  return x;
+}
+
+export function isOdd(n){
   return n % 2;
 }
 
-export const even = complement(odd);
+export const isEven = complement(IsOdd);
 
 export function is(constructor, value) {
   return value != null && value.constructor === constructor;

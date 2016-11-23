@@ -46,7 +46,7 @@ import * as coll from './coll';
 import * as transducer from './transducer';
 export {cycle, cat, transduce, into, transform, concat, flatten, toObject, toArray, repeatedly, repeat, range} from './coll'; //TODO concat for string different from concat for sequence
 import {curry, flip, subj, multiarity, overload} from './core';
-export {log, curry, pipe, juxt, flip, partial, chain, reverse, identity, complement, multiarity, overload, comp, multimethod, constantly, noop, identical, odd, even, is, doto, invokeWith, isSome, isNil} from './core';
+export {log, rand, curry, pipe, juxt, flip, partial, chain, reverse, identity, complement, multiarity, overload, comp, multimethod, constantly, noop, isIdentical, isOdd, isEven, is, doto, invokeWith, isSome, isNil} from './core';
 export const deref     = Deref.deref;
 export const swap      = flip(Swap.swap, 2);
 export const reset     = flip(Reset.reset, 2);
@@ -82,6 +82,7 @@ export const arity     = curry(core.arity);
 export const nullary   = arity(0);
 export const unary     = arity(1);
 export const update    = subj(coll.update);
+export const updateIn  = subj(coll.updateIn);
 export const scan      = curry(coll.scan);
 export const best      = curry(coll.best)
 export const min       = curry(coll.min, 2);
