@@ -6,8 +6,9 @@ import Seqable from '../protocols/seqable';
 import Reduce from '../protocols/reduce';
 import Collection from '../protocols/collection';
 import Prepend from '../protocols/prepend';
+import Counted from '../protocols/counted';
 import Reduced from '../types/reduced';
-import {prepend} from '../types/list';
+import {prepend, count} from '../types/list';
 import {EMPTY} from '../types/empty';
 import {iterator} from '../coll';
 
@@ -38,6 +39,8 @@ export default extend(LazyList, Collection, {
   conj: prepend
 }, Prepend, {
   prepend: prepend
+}, Counted, {
+  count: count
 }, Emptyable, {
   empty: empty
 }, Reduce, {

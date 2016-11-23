@@ -6,12 +6,64 @@ import Collection from './protocols/collection';
 import Emptyable from './protocols/emptyable';
 import Next from './protocols/next';
 import Lookup from './protocols/lookup';
+import Counted from './protocols/counted';
 import Associative from './protocols/associative';
 import Reduce from './protocols/reduce';
 import Reduced from './types/reduced';
-import List from './types/list';
+import {List, cons} from './types/list';
 import LazyList from './types/lazy-list';
 import {EMPTY} from './types/empty';
+
+function _partition(n, xs){
+  return partitionStep(n, n, xs);
+}
+
+function _partitionStep(n, step, xs){
+  const coll = Seqable.seq(xs);
+  if (!coll) return EMPTY;
+  const part = take(n, coll);
+  return n === Counted.count(part) ? cons(part, _partitionStep(n, step, drop(step, coll))) : EMPTY;
+}
+
+function _partitionStepPad(n, step, pad, xs){
+  const coll = Seqable.seq(xs);
+  if (!coll) return EMPTY;
+  const part = take(n, coll);
+  return n === Counted.count(part) ? cons(part, _partitionStepPad(n, step, pad, drop(step, coll))) : new List(take(n, concat(part, pad)));
+}
+
+function _partitionAll(n, xs){
+  return _partitionAllStep(n, n, xs);
+}
+
+function _partitionAllStep(n, step, xs){
+  const coll = Seqable.seq(xs);
+  if (!coll) return EMPTY;
+  return cons(take(n, coll), _partitionStep(n, step, drop(step, coll)));
+}
+
+function _partitionBy(f, xs){
+  const coll = Seqable.seq(xs);
+  if (!coll) return EMPTY;
+  const fst = Seq.first(coll),
+        val = f(fst),
+        run = cons(fst, takeWhile(function(x){
+          return val === f(x);
+        }, Next.next(coll)));
+  return cons(run, _partitionBy(f, Seqable.seq(drop(Counted.count(run), coll))));
+}
+
+export const partition = overload(null, null, _partition, _partitionStep, _partitionStepPad);
+export const partitionBy = overload(null, null, _partitionBy); //TODO transducer
+export const partitionAll = overload(null, null, _partitionAll, _partitionAllStep); //TODO transducer
+
+function _assoc(obj, ...kvs){
+  return Reduce.reduce(partition(2, kvs), function(memo, pair){
+    return Associative.assoc(memo, pair[0], pair[1]);
+  }, obj);
+}
+
+export const assoc = overload(null, null, null, Associative.assoc, _assoc);
 
 export function update(obj, key, f, ...args){
   const value = Lookup.get(obj, key);
