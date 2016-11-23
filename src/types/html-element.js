@@ -8,7 +8,7 @@ import Collection from '../protocols/collection';
 import Append from '../protocols/append';
 import Prepend from '../protocols/prepend';
 import IndexedSeq from './indexed-seq';
-import {each} from '../coll';
+import {each, coll} from '../coll';
 
 function hasKey(el, key){
   return !!el.attributes.getNamedItem(key);
@@ -74,8 +74,9 @@ function fetch(self, selector){
   return self.querySelector(selector) || null;
 }
 
-function query(self, selector){
-  return new IndexedSeq(self.querySelectorAll(selector));
+function query(self, selector, top){
+  const xs = top === 1 ? coll(self.querySelector(selector)) : new IndexedSeq(self.querySelectorAll(selector));
+  return arguments.length === 2 ? xs : take(top, xs);
 }
 
 function parent(el){

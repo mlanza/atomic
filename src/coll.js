@@ -31,6 +31,10 @@ export function getIn(obj, path){
 
 export const second = pipe(Seq.rest, Seq.first);
 
+export function coll(value){
+  return value == null ? [] : satisfies(Seqable, value) ? value : [value];
+}
+
 export function last(xs){
   return Reduce.reduce(xs, function(memo, x){
     return x;
