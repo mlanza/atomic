@@ -5,6 +5,7 @@
 * group-by
 * keep-indexed
 * take-last
+* when -- lazy (e.g. guard)
 * fnil
 * rseq
 * sort
@@ -25,15 +26,16 @@
 * memoize
 * time
 * tree-seq
-* when -- lazy (e.g. guard)
 * shuffle
 * make-hierarchy (and related fns)
 * map-entry?
 * util.js and
 * util.js or
 
+*refine api/tests to mirror clojure's; create chainable api as secondary
+*rewrite comparison operators (gt, lt, etc.) to be more like plus, minus
 *atom (observable?)
-*eliminate recursion inefficiencies, use reduce where possible
+*eliminate recursion inefficiencies using reduce or loop or laziness
 *thread-first, thread-last
 *pipe that breaks on null
 *pipe that sends intermediary values passing through to log or other effect
