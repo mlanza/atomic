@@ -2,7 +2,6 @@ import unbind from '../unbind';
 import {slice, reverse, reduce, reduceKV, identity, constantly} from '../core';
 export {slice, reverse, reduce, reduceKV};
 import {extend} from '../protocol';
-import Next from '../protocols/next';
 import Seq from '../protocols/seq';
 import Seqable from '../protocols/seqable';
 import Counted from '../protocols/counted';
@@ -39,10 +38,6 @@ function nth(self, n){
   return n < self.length ? self[n] : null;
 }
 
-function next(self){
-  return self.length === 0 ? null : rest(self);
-}
-
 function hasKey(self, key){
   return key > -1 && key < self.length;
 }
@@ -76,8 +71,6 @@ export default extend(Array, Append, {
   empty: constantly([])
 }, Seqable, {
   seq: seq
-}, Next, {
-  next: next
 }, Seq, {
   first: first,
   rest: rest

@@ -30,6 +30,14 @@ export function dedupe(){
   }
 }
 
+export function interpose(sep){
+  return function(xf){
+    return overload(xf, xf, function(memo, value){
+      return xf(Seqable.seq(memo) ? xf(memo, sep) : memo, value);
+    });
+  }
+}
+
 export function distinct(){
   return function(xf){
     return overload(function(){

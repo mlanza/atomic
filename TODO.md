@@ -1,6 +1,3 @@
-* vec -- arr?
-* get-in
-* update
 * update-in
 * sort
 * str
@@ -38,7 +35,6 @@
 * get-method
 * group-by
 * identical?
-* interleave
 * into-array -- toArray
 * keep-indexed
 * make-hierarchy (and related fns)
@@ -73,4 +69,4 @@
 * shuffle
 * rand
 
-*eliminate recursion inefficiencies
+*eliminate recursion inefficiencies, use reduce where possible

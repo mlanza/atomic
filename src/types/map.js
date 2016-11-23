@@ -54,6 +54,9 @@ function append(self, pair){
 
 export default extend(Map, Collection, {
   conj: append
+}, Seq, {
+  first: first,
+  rest: rest
 }, Append, {
   append: append
 }, Counted, {

@@ -5,11 +5,51 @@ import Seq from './protocols/seq';
 import Collection from './protocols/collection';
 import Emptyable from './protocols/emptyable';
 import Next from './protocols/next';
+import Lookup from './protocols/lookup';
+import Associative from './protocols/associative';
 import Reduce from './protocols/reduce';
 import Reduced from './types/reduced';
 import List from './types/list';
 import LazyList from './types/lazy-list';
 import {EMPTY} from './types/empty';
+
+export function update(obj, key, f, ...args){
+  var value = Lookup.get(obj, key);
+  return Associative.assoc(obj, key, f.apply(this, [value].concat(args)));
+}
+
+export function getIn(obj, path){
+  return Reduce.reduce(path, function(memo, key){
+    const found = Lookup.get(memo, key);
+    return found == null ? new Reduced(null) : found;
+  }, obj);
+}
+
+export function interpose(sep, xs){
+  const coll = Seqable.seq(xs),
+        fst  = Seq.first(coll);
+  if (!coll) return EMPTY;
+  const nxt = Next.next(coll);
+  return nxt ? new LazyList(fst, function(){
+    return nxt ? new LazyList(sep, function(){
+      return interpose(sep, nxt);
+    }) : EMPTY;
+  }) : new List(fst);
+}
+
+function _interleave(){
+  if (arguments.length < 2) return EMPTY;
+  const coll   = map(Seqable.seq, arguments),
+        firsts = map(Seq.first, coll),
+        nexts  = map(Next.next, coll);
+  return isEvery(isSome, firsts) ? nexts ? new LazyList(firsts, function(){
+    return _interleave.apply(this, toArray(nexts));
+  }) : new List(firsts) : EMPTY;
+}
+
+export function interleave(){
+  return cat(_interleave.apply(this, arguments));
+}
 
 export function iterator(xs){
   var coll = Seqable.seq(xs);
@@ -190,8 +230,9 @@ export function flatten(xs){
 }
 
 export function cat(xs){
-  const coll = compact(map(Seqable.seq, xs));
-  if (!Seqable.seq(coll)) return EMPTY;
+  const ys = Seqable.seq(xs);
+  const coll = Seqable.seq(compact(map(Seqable.seq, ys)));
+  if (!coll) return EMPTY;
   const fst = Seq.first(coll);
   return new LazyList(Seq.first(fst), function(){
     const rst = Seq.rest(coll);
@@ -200,11 +241,26 @@ export function cat(xs){
 }
 
 export function concat(){
-  return cat(slice(arguments));
+  return cat(arguments);
 }
 
 export function mapcat(f, xs){
   return cat(map(f, xs));
+}
+
+export function best(pred, xs){
+  const coll = Seqable.seq(xs);
+  return coll ? Reduce.reduce(Seq.rest(coll), function(a, b){
+    return pred(a, b) ? a : b;
+  }, Seq.first(coll)) : null;
+}
+
+export function max(){
+  return best(gt, arguments);
+}
+
+export function min(){
+  return best(lt, arguments);
 }
 
 export function toArray(xs){

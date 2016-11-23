@@ -97,6 +97,22 @@ export function flip(f, len){
   }), l);
 }
 
+export function ult(f){ //ultimately
+  var applied = slice(arguments, 1);
+  return function(){
+    return f.apply(this, slice(arguments).concat(applied));
+  }
+}
+
+export function subj(f){
+  return function(){
+    var applied = slice(arguments);
+    return function(){
+      return f.apply(this, slice(arguments).concat(applied));
+    }
+  }
+}
+
 export function chain(init){
   return reduce(arguments, function(value, f){
     return f(value);

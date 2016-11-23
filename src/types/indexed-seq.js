@@ -1,6 +1,5 @@
 import {identity, constantly, partial} from '../core';
 import {extend} from '../protocol';
-import Next from '../protocols/next';
 import Seq from '../protocols/seq';
 import Counted from '../protocols/counted';
 import Indexed from '../protocols/indexed';
@@ -32,11 +31,6 @@ export function indexedSeq(indexed, start){
 }
 
 const empty = constantly([]);
-
-function next(self){
-  var start = self.start + 1;
-  return start < self.indexed.length ? new IndexedSeq(self.indexed, start) : null;
-}
 
 function first(self){
   return self.indexed[self.start];
@@ -110,8 +104,6 @@ export default extend(IndexedSeq, Append, {
   empty: empty
 }, Seqable, {
   seq: seq
-}, Next, {
-  next: next
 }, Seq, {
   first: first,
   rest: rest
