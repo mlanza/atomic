@@ -1,56 +1,43 @@
-* sort
-* butlast
-* str
-* interpose
-    * is there a use with compose/pipe to abort process on null?
-    * to observe intermediary values passing through?
-* rseq
-* second
 * disj
 * dissoc
-* distinct -- test
-* memoize
-* merge
-* merge-with
-* keys
-* key
-* select-keys
-* every-pred -- and?
+* =
+* not= - ne
 * + / plus
 * - / minus
+* keys
+* group-by
+* keep-indexed
+* num
+* fnil
+* rseq
+* sort
+* distinct -- test
+* partition / partition-all / partition-by
+* merge
+* merge-with
+* select-keys
+* every-pred -- and?
 * case
 * cond
 * condp
-* doall
 * doseq
-* dotimes
-* drop-last
-* fnil
 * get-method
-* group-by
-* keep-indexed
-* make-hierarchy (and related fns)
-* map-entry?
-* not= - ne
-* num
-* number?
-* or
-* partition / partition-all / partition-by
 * printf
-* range
-* rem
 * replace
-* seq?
 * sequence
 * sequential?
-* set
 * sort-by
 * split-at
 * split-with
-* string? -- unnecessary? use is(String, "")?
+* memoize
 * time
 * tree-seq
 * when -- lazy (e.g. guard)
 * shuffle
+* make-hierarchy (and related fns)
+* map-entry?
 
 *eliminate recursion inefficiencies, use reduce where possible
+*thread-first, thread-last
+*pipe that breaks on null
+*pipe that sends intermediary values passing through to log or other effect

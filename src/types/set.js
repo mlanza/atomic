@@ -47,6 +47,10 @@ function reduce(self, f, init){ //TODO optimize?
   return seq(self) ? reduce(Seq.rest(self), f, f(init, Seq.first(self))) : init;
 }
 
+export function set(coll){
+  return new Set(coll);
+}
+
 export default extend(Set, Collection, {
   conj: conj
 }, Lookup, {

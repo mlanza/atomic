@@ -1,5 +1,5 @@
-import {log, rand, scan, best, getIn, update, updateIn, interpose, interleave, min, max, and, or, dedupe, distinct, cat, cycle, overload, toUpperCase, expansive, observable, publisher, reify, swap, reset, subscribe, publish, deref, eq, into, transduce, text, hide, show, tag, tap, detach, parent, addClass, append, prepend, inc, gt, lt, some, isEvery, mapIndexed, range, constantly, conj, take, takeNth, repeat, repeatedly, chain, comp, pipe, add, juxt, query, fetch, get, assoc, hasKey, first, second, third, rest, nth, next, count, reduce, each, map, filter, remove, takeWhile, dropWhile, find, satisfies, concat, flatten, toArray, toObject} from './composable';
-export {log, rand, scan, best, getIn, update, updateIn, interpose, interleave, min, max, and, or, dedupe, distinct, cat, cycle, overload, toUpperCase, expansive, observable, publisher, reify, swap, reset, subscribe, publish, deref, eq, into, transduce, text, hide, show, tag, tap, detach, parent, addClass, append, prepend, inc, gt, lt, some, isEvery, mapIndexed, range, constantly, conj, take, takeNth, repeat, repeatedly, chain, comp, pipe, add, juxt, query, fetch, get, assoc, hasKey, first, second, third, rest, nth, next, count, reduce, each, map, filter, remove, takeWhile, dropWhile, find, satisfies, concat, flatten, toArray, toObject} from './composable';
+import {log, str, doall, butlast, dropLast, rand, scan, best, getIn, update, updateIn, interpose, interleave, min, max, and, or, dedupe, distinct, cat, cycle, overload, toUpperCase, expansive, observable, publisher, reify, swap, reset, subscribe, publish, deref, eq, into, transduce, text, hide, show, tag, tap, detach, parent, addClass, append, prepend, inc, gt, lt, some, isEvery, mapIndexed, range, constantly, conj, take, takeNth, repeat, repeatedly, chain, comp, pipe, add, juxt, query, fetch, get, assoc, hasKey, first, second, third, rest, nth, next, count, reduce, each, map, filter, remove, takeWhile, dropWhile, find, satisfies, concat, flatten, toArray, toObject} from './composable';
+export {log, str, doall, butlast, dropLast, rand, scan, best, getIn, update, updateIn, interpose, interleave, min, max, and, or, dedupe, distinct, cat, cycle, overload, toUpperCase, expansive, observable, publisher, reify, swap, reset, subscribe, publish, deref, eq, into, transduce, text, hide, show, tag, tap, detach, parent, addClass, append, prepend, inc, gt, lt, some, isEvery, mapIndexed, range, constantly, conj, take, takeNth, repeat, repeatedly, chain, comp, pipe, add, juxt, query, fetch, get, assoc, hasKey, first, second, third, rest, nth, next, count, reduce, each, map, filter, remove, takeWhile, dropWhile, find, satisfies, concat, flatten, toArray, toObject} from './composable';
 import Reduce from './protocols/reduce';
 import Lookup from './protocols/lookup';
 import IndexedSeq from './types/indexed-seq';
@@ -36,6 +36,11 @@ QUnit.test("Traverse and manipulate the dom", function(assert){
   assert.equal(parent(branding), null, "Removed");
 });
 
+QUnit.test("String", function(assert){
+  assert.equal(str(1, 2, 3), "123");
+  assert.equal(str("Hello", " ", "World"), "Hello World");
+});
+
 QUnit.test("Associative", function(assert){
   assert.deepEqual(chain({sn: "Howard"}, assoc("givenName", "Moe")), {givenName: "Moe", sn: "Howard"});
   assert.deepEqual(chain([1,2,3], assoc(1, 0)), [1, 0, 3]);
@@ -65,10 +70,14 @@ QUnit.test("Lookup", function(assert){
 });
 
 QUnit.test("Sequences", function(assert){
+  assert.deepEqual(chain([1,2,3], butlast, toArray), [1,2]);
   assert.deepEqual(chain(interpose("-", ["A","B","C"]), toArray), ["A", "-", "B", "-", "C"]);
   assert.deepEqual(into([], interpose("-"), ["A","B","C"]), ["A", "-", "B", "-", "C"]);
   assert.deepEqual(chain(take(5, repeat(1)), toArray), [1,1,1,1,1]);
   assert.deepEqual(chain(take(5, repeat(1)), conj(0), toArray), [0,1,1,1,1,1]);
+  assert.deepEqual(toArray(take(5, range(10))), [0, 1, 2, 3, 4]);
+  assert.deepEqual(toArray(range(-5, 5)), [-5, -4, -3, -2, -1, 0, 1, 2, 3, 4]);
+  assert.deepEqual(toArray(range(-20, 100, 10)), [-20, -10, 0, 10, 20, 30, 40, 50, 60, 70, 80, 90])
   assert.equal(some(gt(5), range(10)), 6);
   assert.notOk(isEvery(gt(5), range(10)));
 });
@@ -104,7 +113,7 @@ QUnit.test("Into", function(assert){
   assert.deepEqual(into([], take(7), cycle([1, 2, 3])), [1, 2, 3, 1, 2, 3, 1]);
   assert.deepEqual(into([], dedupe(), [1, 2, 3, 3, 4, 4, 4, 5, 6, 6, 7]), [1, 2, 3, 4, 5, 6, 7]);
   assert.deepEqual(toArray(distinct([1, 2, 3, 1, 4, 3, 4, 3, 2, 2])), [1, 2, 3, 4]);
-  //assert.deepEqual(transduce(distinct, conj, [1, 2, 3, 1, 4, 3, 4, 3, 2, 2]), [1, 2, 3, 4]);
+  //assert.deepEqual(into([], distinct(), [1, 2, 3, 1, 4, 3, 4, 3, 2, 2]), [1, 2, 3, 4]);
   assert.deepEqual(into([], takeNth(2), range(10)), [0, 2, 4, 6, 8]);
   assert.deepEqual(into([], repeatedly(0, constantly(1))), []);
   assert.deepEqual(into([], repeatedly(10, constantly(2))), [2, 2, 2, 2, 2, 2, 2, 2, 2, 2]);
