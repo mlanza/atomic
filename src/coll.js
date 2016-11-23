@@ -1,4 +1,4 @@
-import {complement, identity, isSome, overload, constantly, partial, add, is, slice, pipe, arity, unspread} from './core';
+import {complement, identity, isSome, overload, constantly, partial, add, is, slice, pipe, arity, unspread, key} from './core';
 import {satisfies} from './protocol';
 import Seqable from './protocols/seqable';
 import Seq from './protocols/seq';
@@ -155,7 +155,7 @@ export function take(n, xs){
 
 export function takeWhile(pred, xs){
   if (!Seqable.seq(xs)) return EMPTY;
-  var item = Seq.first(xs);
+  const item = Seq.first(xs);
   return pred(item) ? new LazyList(item, function(){
     return takeWhile(pred, Seq.rest(xs));
   }) : EMPTY;
@@ -179,9 +179,37 @@ export function dropWhile(pred, xs){
 }
 
 export function some(pred, xs){
-  if (!Seqable.seq(xs)) return null;
-  var fst = Seq.first(xs);
-  return pred(fst) ? fst : some(pred, Seq.rest(xs));
+  const coll = Seqable.seq(xs);
+  if (!coll) return null;
+  const fst = Seq.first(coll);
+  return pred(fst) ? fst : some(pred, Seq.rest(coll));
+}
+
+export function someFn(){
+  const fs = arguments;
+  return function(){
+    return arguments.length ? !!some(function(x){
+      return some(function(f){
+        return f(x);
+      }, fs) ? x : null;
+    }, arguments) : null;
+  }
+}
+
+export function everyPred(){
+  const preds = arguments;
+  return function(){
+    return arguments.length ? isEvery(function(x){
+      return isEvery(function(pred){
+        return pred(x);
+      }, preds);
+    }, arguments) : true;
+  }
+}
+
+export function keys(xs){
+  const coll = Seqable.seq(xs);
+  return coll ? map(key, coll) : EMPTY;
 }
 
 export function scan(pred, xs){
