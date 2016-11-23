@@ -69,13 +69,6 @@ function arities(lkp, fallback){
   }, lkp);
 }
 
-export function multiarity(){
-  return arities(reduce(arguments, function(memo, f){
-    memo[f.length] = f;
-    return memo;
-  }, {}));
-}
-
 export function overload(){
   return arities(arguments, arguments[arguments.length - 1]);
 }
@@ -197,6 +190,18 @@ export function isNeg(x){
 export function tap(f, x){
   f(x);
   return x;
+}
+
+export function rem(n, div){
+  return n % div;
+}
+
+export function key(pair){
+  return pair[0] || null;
+}
+
+export function val(pair){
+  return pair[1] || null;
 }
 
 export function isOdd(n){

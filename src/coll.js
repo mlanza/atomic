@@ -1,4 +1,4 @@
-import {complement, identity, isSome, multiarity, overload, constantly, partial, add, is, slice, pipe, arity, unspread} from './core';
+import {complement, identity, isSome, overload, constantly, partial, add, is, slice, pipe, arity, unspread} from './core';
 import {satisfies} from './protocol';
 import Seqable from './protocols/seqable';
 import Seq from './protocols/seq';
@@ -29,11 +29,48 @@ export function getIn(obj, path){
   }, obj);
 }
 
+export const second = pipe(Seq.rest, Seq.first);
+
 export function last(xs){
   return Reduce.reduce(xs, function(memo, x){
     return x;
   }, null);
 }
+
+export function dotimes(n, f){
+  for(var i = 0; i < n; i++) {
+    f(i);
+  }
+}
+
+export const doall = overload(null, function(xs){
+  var coll = xs;
+  while(coll = Seqable.seq(coll)){
+    Seq.first(coll);
+    coll = Seq.rest(coll);
+  }
+}, function(n, xs){
+  var coll = xs;
+  while((coll = Seqable.seq(coll)) && n > 0) {
+    Seq.first(coll);
+    coll = Seq.rest(coll);
+    n--;
+  }
+});
+
+export const str = overload(constantly(""), function(obj){
+  return obj == null ? "" : obj.toString();
+}, function(){
+  return into("", map(str, arguments));
+});
+
+export function butlast(xs){
+  return dropLast(1, xs);
+}
+
+export const dropLast = overload(null, butlast, function(n, xs){
+  return map(identity, xs, drop(n, xs));
+});
 
 export function interpose(sep, xs){
   const coll = Seqable.seq(xs),
@@ -80,13 +117,20 @@ export function each(f, xs){
   }
 }
 
-export function map(f, xs){
+function _map(f, xs){
   var coll = Seqable.seq(xs);
-  if (!coll) return EMPTY;
-  return new LazyList(f(Seq.first(coll)), function(){
-    return map(f, Seq.rest(coll));
-  });
+  return coll ? new LazyList(f(Seq.first(coll)), function(){
+    return _map(f, Seq.rest(coll));
+  }) : EMPTY;
 }
+
+function _mapN(f, ...colls){
+  return isEvery(Seqable.seq, colls) ? new LazyList(f.apply(this, toArray(_map(Seq.first, colls))), function(){
+    return map.apply(this, [f].concat(toArray(_map(Seq.rest, colls))));
+  }) : EMPTY;
+}
+
+export const map = overload(null, null, _map, _mapN);
 
 export function mapIndexed(f, xs){
   var idx = -1;
@@ -296,7 +340,7 @@ export function iterate(generate, seed){
   });
 }
 
-export const repeatedly = multiarity(function(f){
+export const repeatedly = overload(null, function(f){
   return iterate(f, f());
 }, function(n, f){
   return n > 0 ? new LazyList(f(), function(){
@@ -335,7 +379,7 @@ export function distinct(xs){
   return coll ? toArray(new Set(coll)) : EMPTY;
 }
 
-export const range = multiarity(function(){ //TODO number range, date range, string range, etc.
+export const range = overload(function(){ //TODO number range, date range, string range, etc.
   return iterate(inc, 0);
 }, function(end){
   return range(0, end);
@@ -351,14 +395,14 @@ export function seeding(f, init){
   return overload(init, identity, f);
 }
 
-export const transduce = multiarity(function(xform, f, coll){
+export const transduce = overload(null, null, null, function(xform, f, coll){
   var xf = xform(f);
   return xf(Reduce.reduce(coll, xf, f()));
 }, function(xform, f, seed, coll){
   return transduce(xform, seeding(f, constantly(seed)), coll);
 });
 
-export const into = multiarity(function(to, from){
+export const into = overload(null, null, function(to, from){
   return Reduce.reduce(from, Collection.conj, to);
 }, function(to, xform, from){
   return transduce(xform, Collection.conj, to, from);

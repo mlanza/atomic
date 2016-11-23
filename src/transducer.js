@@ -1,6 +1,7 @@
 import Seqable from './protocols/seqable';
 import Reduced from './types/reduced';
 import {overload, complement, comp, isSome} from './core';
+import {into} from './coll';
 
 export function map(f){
   return function(xf){
