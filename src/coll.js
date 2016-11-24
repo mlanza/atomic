@@ -8,6 +8,8 @@ import Next from './protocols/next';
 import Lookup from './protocols/lookup';
 import {count} from './protocols/counted';
 import Associative from './protocols/associative';
+import Comparable from './protocols/comparable';
+import Reversible from './protocols/reversible';
 import {reduce} from './protocols/reduce';
 import Reduced from './types/reduced';
 import {List, cons} from './types/list';
@@ -87,8 +89,6 @@ export function groupBy(f, coll){
   }, new Map());
 }
 
-
-
 export function update(obj, key, f, ...args){
   const value = Lookup.get(obj, key);
   return Associative.assoc(obj, key, f.apply(this, [value].concat(args)));
@@ -167,6 +167,36 @@ export function takeLast(n, xs){
 
 export const splitAt = juxt(take, drop);
 export const splitWith = juxt(takeWhile, dropWhile);
+
+export function compare(x, y){
+  if (x === y)   return 0;
+  if (x == null) return -1;
+  if (y == null) return -1;
+  return Comparable.compare(x, y);
+}
+
+function _sortWith(compare, xs){
+  var arr = is(Array, xs) ? slice(xs) : toArray(xs);
+  arr.sort(compare);
+  return arr;
+}
+
+function _sort(xs){
+  return _sortWith(compare, xs);
+}
+
+function _sortBy(f, xs){
+  return _sortByWith(f, compare, xs);
+}
+
+function _sortByWith(f, compare, xs){
+  return _sortWith(function(x, y){
+    return compare(f(x), f(y));
+  }, xs);
+}
+
+export const sort = overload(null, _sort, _sortWith);
+export const sortBy = overload(null, null, _sortBy, _sortByWith);
 
 export function interpose(sep, xs){
   const coll = seq(xs),
@@ -409,6 +439,10 @@ export function flatten(xs){
   return satisfies(Seqable, fst) ? flatten(concat(fst, rst)) : new LazyList(fst, function(){
     return flatten(rst);
   });
+}
+
+export function reverse(xs){
+  return is(Reversible, xs) ? rseq(xs) : reduce(xs, Collection.conj, EMPTY);
 }
 
 export function cat(xs){

@@ -3,7 +3,6 @@
 * keep-indexed
 * fnil
 * rseq
-* sort
 * distinct -- test
 * merge
 * merge-with
@@ -14,7 +13,6 @@
 * replace
 * sequence
 * sequential?
-* sort-by
 * memoize
 * time
 * shuffle

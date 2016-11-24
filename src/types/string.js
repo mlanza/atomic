@@ -13,8 +13,8 @@ import Associative from '../protocols/associative';
 import Collection from '../protocols/collection';
 import Append from '../protocols/append';
 import Prepend from '../protocols/prepend';
+import Comparable from '../protocols/comparable';
 import Reduced from '../types/reduced';
-
 export const trim        = unbind(String.prototype.trim);
 export const toLowerCase = unbind(String.prototype.toLowerCase);
 export const toUpperCase = unbind(String.prototype.toUpperCase);
@@ -76,7 +76,15 @@ function assoc(self, key, value){
   return arr;
 }
 
-export default extend(String, Lookup, {
+export function compare(x, y){
+  if (x > y) return +1;
+  if (x < y) return -1;
+  return 0;
+}
+
+export default extend(String, Comparable, {
+  compare: compare
+}, Lookup, {
   get: nth
 }, Append, {
   append: add
