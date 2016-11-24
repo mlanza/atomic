@@ -62,6 +62,12 @@ function assoc(self, key, value){
   return obj;
 }
 
+function dissoc(self, key){
+  var obj = Object.assign({}, self);
+  delete obj[key];
+  return obj;
+}
+
 function append(self, pair){
   return assoc(self, pair[0], pair[1]);
 }
@@ -86,4 +92,5 @@ export default extend(Object, Collection, {
 }, Associative, {
   hasKey: hasKey,
   assoc: assoc,
+  dissoc: dissoc
 });

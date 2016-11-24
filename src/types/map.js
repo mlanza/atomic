@@ -48,6 +48,12 @@ function assoc(self, key, value){
   return map;
 }
 
+function dissoc(self, key){
+  var map = new Map(self);
+  map.delete(key);
+  return map;
+}
+
 function append(self, pair){
   return assoc(self, pair[0], pair[1]);
 }
@@ -72,4 +78,5 @@ export default extend(Map, Collection, {
 }, Associative, {
   hasKey: hasKey,
   assoc: assoc,
+  dissoc: dissoc
 });

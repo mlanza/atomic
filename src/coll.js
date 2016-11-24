@@ -1,14 +1,14 @@
 import {complement, identity, isSome, overload, constantly, partial, add, is, slice, pipe, arity, unspread, key} from './core';
 import {satisfies} from './protocol';
-import Seqable from './protocols/seqable';
-import Seq from './protocols/seq';
+import {seq} from './protocols/seqable';
+import {first, rest} from './protocols/seq';
 import Collection from './protocols/collection';
 import Emptyable from './protocols/emptyable';
 import Next from './protocols/next';
 import Lookup from './protocols/lookup';
-import Counted from './protocols/counted';
+import {count} from './protocols/counted';
 import Associative from './protocols/associative';
-import Reduce from './protocols/reduce';
+import {reduce} from './protocols/reduce';
 import Reduced from './types/reduced';
 import {List, cons} from './types/list';
 import LazyList from './types/lazy-list';
@@ -19,17 +19,17 @@ function _partition(n, xs){
 }
 
 function _partitionStep(n, step, xs){
-  const coll = Seqable.seq(xs);
+  const coll = seq(xs);
   if (!coll) return EMPTY;
   const part = take(n, coll);
-  return n === Counted.count(part) ? cons(part, _partitionStep(n, step, drop(step, coll))) : EMPTY;
+  return n === count(part) ? cons(part, _partitionStep(n, step, drop(step, coll))) : EMPTY;
 }
 
 function _partitionStepPad(n, step, pad, xs){
-  const coll = Seqable.seq(xs);
+  const coll = seq(xs);
   if (!coll) return EMPTY;
   const part = take(n, coll);
-  return n === Counted.count(part) ? cons(part, _partitionStepPad(n, step, pad, drop(step, coll))) : new List(take(n, concat(part, pad)));
+  return n === count(part) ? cons(part, _partitionStepPad(n, step, pad, drop(step, coll))) : new List(take(n, concat(part, pad)));
 }
 
 function _partitionAll(n, xs){
@@ -37,20 +37,20 @@ function _partitionAll(n, xs){
 }
 
 function _partitionAllStep(n, step, xs){
-  const coll = Seqable.seq(xs);
+  const coll = seq(xs);
   if (!coll) return EMPTY;
   return cons(take(n, coll), _partitionStep(n, step, drop(step, coll)));
 }
 
 function _partitionBy(f, xs){
-  const coll = Seqable.seq(xs);
+  const coll = seq(xs);
   if (!coll) return EMPTY;
-  const fst = Seq.first(coll),
+  const fst = first(coll),
         val = f(fst),
         run = cons(fst, takeWhile(function(x){
           return val === f(x);
         }, Next.next(coll)));
-  return cons(run, _partitionBy(f, Seqable.seq(drop(Counted.count(run), coll))));
+  return cons(run, _partitionBy(f, seq(drop(count(run), coll))));
 }
 
 export const partition = overload(null, null, _partition, _partitionStep, _partitionStepPad);
@@ -58,12 +58,36 @@ export const partitionBy = overload(null, null, _partitionBy); //TODO transducer
 export const partitionAll = overload(null, null, _partitionAll, _partitionAllStep); //TODO transducer
 
 function _assoc(obj, ...kvs){
-  return Reduce.reduce(partition(2, kvs), function(memo, pair){
+  return reduce(partition(2, kvs), function(memo, pair){
     return Associative.assoc(memo, pair[0], pair[1]);
   }, obj);
 }
 
 export const assoc = overload(null, null, null, Associative.assoc, _assoc);
+
+function _dissoc(obj, ...keys){
+  return reduce(keys, function(memo, key){
+    return Associative.dissoc(memo, key);
+  }, obj);
+}
+
+export const dissoc = overload(null, null, Associative.dissoc, _assoc);
+
+export function groupBy(f, coll){
+  return reduce(coll, function(memo, value){
+    var key = f(value), group = null;
+    if (memo.has(key)) {
+      group = memo.get(key);
+    } else {
+      group = [];
+      memo.set(key, group);
+    }
+    group.push(value);
+    return memo;
+  }, new Map());
+}
+
+
 
 export function update(obj, key, f, ...args){
   const value = Lookup.get(obj, key);
@@ -75,20 +99,20 @@ export function updateIn(obj, path, f, ...args){
 }
 
 export function getIn(obj, path){
-  return Reduce.reduce(path, function(memo, key){
+  return reduce(path, function(memo, key){
     const found = Lookup.get(memo, key);
     return found == null ? new Reduced(null) : found;
   }, obj);
 }
 
-export const second = pipe(Seq.rest, Seq.first);
+export const second = pipe(rest, first);
 
 export function coll(value){
   return value == null ? [] : satisfies(Seqable, value) ? value : [value];
 }
 
 export function last(xs){
-  return Reduce.reduce(xs, function(memo, x){
+  return reduce(xs, function(memo, x){
     return x;
   }, null);
 }
@@ -101,15 +125,15 @@ export function dotimes(n, f){
 
 export const doall = overload(null, function(xs){
   var coll = xs;
-  while(coll = Seqable.seq(coll)){
-    Seq.first(coll);
-    coll = Seq.rest(coll);
+  while(coll = seq(coll)){
+    first(coll);
+    coll = rest(coll);
   }
 }, function(n, xs){
   var coll = xs;
-  while((coll = Seqable.seq(coll)) && n > 0) {
-    Seq.first(coll);
-    coll = Seq.rest(coll);
+  while((coll = seq(coll)) && n > 0) {
+    first(coll);
+    coll = rest(coll);
     n--;
   }
 });
@@ -129,8 +153,8 @@ export const dropLast = overload(null, butlast, function(n, xs){
 });
 
 export function interpose(sep, xs){
-  const coll = Seqable.seq(xs),
-        fst  = Seq.first(coll);
+  const coll = seq(xs),
+        fst  = first(coll);
   if (!coll) return EMPTY;
   const nxt = Next.next(coll);
   return nxt ? new LazyList(fst, function(){
@@ -142,8 +166,8 @@ export function interpose(sep, xs){
 
 function _interleave(){
   if (arguments.length < 2) return EMPTY;
-  const coll   = map(Seqable.seq, arguments),
-        firsts = map(Seq.first, coll),
+  const coll   = map(seq, arguments),
+        firsts = map(first, coll),
         nexts  = map(Next.next, coll);
   return isEvery(isSome, firsts) ? nexts ? new LazyList(firsts, function(){
     return _interleave.apply(this, toArray(nexts));
@@ -155,10 +179,10 @@ export function interleave(){
 }
 
 export function iterator(xs){
-  var coll = Seqable.seq(xs);
+  var coll = seq(xs);
   return {
     next: function(){
-      var resp = {value: Seq.first(coll), done: !coll};
+      var resp = {value: first(coll), done: !coll};
       coll = Next.next(coll);
       return resp;
     }
@@ -167,22 +191,22 @@ export function iterator(xs){
 
 export function each(f, xs){
   var coll = xs;
-  while(coll = Seqable.seq(coll)){
-    f(Seq.first(coll));
-    coll = Seq.rest(coll);
+  while(coll = seq(coll)){
+    f(first(coll));
+    coll = rest(coll);
   }
 }
 
 function _map(f, xs){
-  var coll = Seqable.seq(xs);
-  return coll ? new LazyList(f(Seq.first(coll)), function(){
-    return _map(f, Seq.rest(coll));
+  var coll = seq(xs);
+  return coll ? new LazyList(f(first(coll)), function(){
+    return _map(f, rest(coll));
   }) : EMPTY;
 }
 
 function _mapN(f, ...colls){
-  return isEvery(Seqable.seq, colls) ? new LazyList(f.apply(this, toArray(_map(Seq.first, colls))), function(){
-    return map.apply(this, [f].concat(toArray(_map(Seq.rest, colls))));
+  return isEvery(seq, colls) ? new LazyList(f.apply(this, toArray(_map(first, colls))), function(){
+    return map.apply(this, [f].concat(toArray(_map(rest, colls))));
   }) : EMPTY;
 }
 
@@ -200,21 +224,21 @@ export function keep(f, xs){
 }
 
 export function take(n, xs){
-  return n > 0 && Seqable.seq(xs) ? new LazyList(Seq.first(xs), function(){
-    return take(n - 1, Seq.rest(xs));
+  return n > 0 && seq(xs) ? new LazyList(first(xs), function(){
+    return take(n - 1, rest(xs));
   }) : EMPTY;
 }
 
 export function takeWhile(pred, xs){
-  if (!Seqable.seq(xs)) return EMPTY;
-  const item = Seq.first(xs);
+  if (!seq(xs)) return EMPTY;
+  const item = first(xs);
   return pred(item) ? new LazyList(item, function(){
-    return takeWhile(pred, Seq.rest(xs));
+    return takeWhile(pred, rest(xs));
   }) : EMPTY;
 }
 
 export function takeNth(n, xs){
-  return Seqable.seq(xs) ? new LazyList(Seq.first(xs), function(){
+  return seq(xs) ? new LazyList(first(xs), function(){
     return takeNth(n, drop(n, xs));
   }) : EMPTY;
 }
@@ -227,14 +251,14 @@ export function drop(n, xs){
 }
 
 export function dropWhile(pred, xs){
-  return Seqable.seq(xs) ? pred(Seq.first(xs)) ? dropWhile(pred, Seq.rest(xs)) : xs : EMPTY;
+  return seq(xs) ? pred(first(xs)) ? dropWhile(pred, rest(xs)) : xs : EMPTY;
 }
 
 export function some(pred, xs){
-  const coll = Seqable.seq(xs);
+  const coll = seq(xs);
   if (!coll) return null;
-  const fst = Seq.first(coll);
-  return pred(fst) ? fst : some(pred, Seq.rest(coll));
+  const fst = first(coll);
+  return pred(fst) ? fst : some(pred, rest(coll));
 }
 
 export function someFn(){
@@ -260,16 +284,16 @@ export function everyPred(){
 }
 
 export function keys(xs){
-  const coll = Seqable.seq(xs);
+  const coll = seq(xs);
   return coll ? map(key, coll) : EMPTY;
 }
 
 export function scan(pred, xs){
-  if (!Seqable.seq(xs)) return true;
-  const fst  = Seq.first(xs),
-        rst  = Seq.rest(xs),
-        coll = Seqable.seq(rst);
-  return coll ? pred(fst, Seq.first(coll)) && scan(pred, rst) : true;
+  if (!seq(xs)) return true;
+  const fst  = first(xs),
+        rst  = rest(xs),
+        coll = seq(rst);
+  return coll ? pred(fst, first(coll)) && scan(pred, rst) : true;
 }
 
 export const eq = overload(constantly(true), constantly(true), function(...xs){
@@ -321,8 +345,8 @@ export const or  = overload(constantly(null), identity, coalesce);
 export const and = overload(constantly(true), identity, indescriminate);
 
 export function isEvery(pred, xs){
-  if (!Seqable.seq(xs)) return true;
-  return pred(Seq.first(xs)) && isEvery(pred, Seq.rest(xs));
+  if (!seq(xs)) return true;
+  return pred(first(xs)) && isEvery(pred, rest(xs));
 }
 
 export function isNotEvery(pred, xs){
@@ -338,16 +362,16 @@ export function isNotAny(pred, xs){
 }
 
 export function fold(f, init, xs){
-  return init instanceof Reduced ? init.valueOf() : Seqable.seq(xs) ? fold(f, f(init, Seq.first(xs)), Seq.rest(xs)) : init instanceof Reduced ? init.valueOf() : init;
+  return init instanceof Reduced ? init.valueOf() : seq(xs) ? fold(f, f(init, first(xs)), rest(xs)) : init instanceof Reduced ? init.valueOf() : init;
 }
 
 export function filter(pred, xs){
-  var coll = Seqable.seq(xs);
+  var coll = seq(xs);
   if (!coll) return EMPTY;
-  var fst = Seq.first(coll);
+  var fst = first(coll);
   return pred(fst) ? new LazyList(fst, function(){
-    return filter(pred, Seq.rest(coll));
-  }) : filter(pred, Seq.rest(coll));
+    return filter(pred, rest(coll));
+  }) : filter(pred, rest(coll));
 }
 
 export function remove(pred, xs){
@@ -359,26 +383,26 @@ export function compact(xs){
 }
 
 export function find(pred, xs){
-  return Seq.first(filter(pred, xs));
+  return first(filter(pred, xs));
 }
 
 export function flatten(xs){
-  if (!Seqable.seq(xs)) return EMPTY;
-  var fst = Seq.first(xs),
-      rst = Seq.rest(xs);
+  if (!seq(xs)) return EMPTY;
+  var fst = first(xs),
+      rst = rest(xs);
   return satisfies(Seqable, fst) ? flatten(concat(fst, rst)) : new LazyList(fst, function(){
     return flatten(rst);
   });
 }
 
 export function cat(xs){
-  const ys = Seqable.seq(xs);
-  const coll = Seqable.seq(compact(map(Seqable.seq, ys)));
+  const ys = seq(xs);
+  const coll = seq(compact(map(seq, ys)));
   if (!coll) return EMPTY;
-  const fst = Seq.first(coll);
-  return new LazyList(Seq.first(fst), function(){
-    const rst = Seq.rest(coll);
-    return Seqable.seq(fst) ? cat([Seq.rest(fst)].concat(toArray(rst))) : cat(rst);
+  const fst = first(coll);
+  return new LazyList(first(fst), function(){
+    const rst = rest(coll);
+    return seq(fst) ? cat([rest(fst)].concat(toArray(rst))) : cat(rst);
   });
 }
 
@@ -391,10 +415,10 @@ export function mapcat(f, xs){
 }
 
 export function best(pred, xs){
-  const coll = Seqable.seq(xs);
-  return coll ? Reduce.reduce(Seq.rest(coll), function(a, b){
+  const coll = seq(xs);
+  return coll ? reduce(rest(coll), function(a, b){
     return pred(a, b) ? a : b;
-  }, Seq.first(coll)) : null;
+  }, first(coll)) : null;
 }
 
 export function max(){
@@ -407,15 +431,15 @@ export function min(){
 
 export function toArray(xs){
   if (xs instanceof Array) return xs;
-  return Seqable.seq(xs) ? into([], xs) : [];
+  return seq(xs) ? into([], xs) : [];
 }
 
 export function toObject(obj){
   if (obj == null) return {};
   if (obj.constructor === Object) return obj;
-  var coll = Seqable.seq(obj);
+  var coll = seq(obj);
   if (!coll) return {};
-  return Reduce.reduce(coll, Collection.conj, {});
+  return reduce(coll, Collection.conj, {});
 }
 
 export function iterate(generate, seed){
@@ -440,26 +464,26 @@ export const repeat = overload(null, function(value){
 
 function _cycle(xs, ys){
   if (arguments.length === 1) return _cycle(xs, xs);
-  var coll = Seqable.seq(xs) || Seqable.seq(ys);
-  return coll ? new LazyList(Seq.first(coll), function(){
-    return _cycle(Seq.rest(coll), ys);
+  var coll = seq(xs) || seq(ys);
+  return coll ? new LazyList(first(coll), function(){
+    return _cycle(rest(coll), ys);
   }) : EMPTY;
 }
 
 export const cycle = arity(1, _cycle);
 
 function _dedupe(xs, x){
-  const coll = Seqable.seq(xs),
-        fst  = Seq.first(coll);
-  return coll ? fst === x ?  _dedupe(Seq.rest(coll), fst) : new LazyList(fst, function(){
-    return _dedupe(Seq.rest(coll), fst);
+  const coll = seq(xs),
+        fst  = first(coll);
+  return coll ? fst === x ?  _dedupe(rest(coll), fst) : new LazyList(fst, function(){
+    return _dedupe(rest(coll), fst);
   }) : EMPTY;
 }
 
 export const dedupe = arity(1, _dedupe);
 
 export function distinct(xs){
-  var coll = Seqable.seq(xs);
+  var coll = seq(xs);
   return coll ? toArray(new Set(coll)) : EMPTY;
 }
 
@@ -481,13 +505,13 @@ export function seeding(f, init){
 
 export const transduce = overload(null, null, null, function(xform, f, coll){
   var xf = xform(f);
-  return xf(Reduce.reduce(coll, xf, f()));
+  return xf(reduce(coll, xf, f()));
 }, function(xform, f, seed, coll){
   return transduce(xform, seeding(f, constantly(seed)), coll);
 });
 
 export const into = overload(null, null, function(to, from){
-  return Reduce.reduce(from, Collection.conj, to);
+  return reduce(from, Collection.conj, to);
 }, function(to, xform, from){
   return transduce(xform, Collection.conj, to, from);
 });
