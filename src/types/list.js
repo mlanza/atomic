@@ -20,10 +20,6 @@ List.prototype[Symbol.iterator] = function(){
   return iterator(this);
 }
 
-export function cons(head, tail){
-  return new List(head, tail);
-}
-
 const empty = constantly(EMPTY);
 
 function first(self){
