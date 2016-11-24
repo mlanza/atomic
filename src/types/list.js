@@ -1,15 +1,16 @@
-import {identity, constantly} from '../core';
+import {identity, constantly, isIdentical} from '../core';
 import {extend, def} from '../protocol';
-import Seq from '../protocols/seq';
+import {Seq} from '../protocols/seq';
 import Emptyable from '../protocols/emptyable';
-import Seqable from '../protocols/seqable';
+import {seq, Seqable} from '../protocols/seqable';
 import Reduce from '../protocols/reduce';
 import Collection from '../protocols/collection';
 import Prepend from '../protocols/prepend';
 import Counted from '../protocols/counted';
+import Equiv from '../protocols/equiv';
 import {Reduced, reduced} from '../types/reduced';
 import {EMPTY} from '../types/empty';
-import {iterator} from '../coll';
+import {iterator, equivSeq} from '../coll';
 
 export function List(head, tail){
   this.head = head;
@@ -50,7 +51,9 @@ export function count(self){
 
 def(Collection, {conj: prepend})
 
-export default extend(List, Collection, {
+export default extend(List, Equiv, {
+  equiv: equivSeq
+}, Collection, {
   conj: prepend
 }, Prepend, {
   prepend: prepend

@@ -10,11 +10,13 @@ import Reduce from '../protocols/reduce';
 import ReduceKV from '../protocols/reduce-kv';
 import Emptyable from '../protocols/emptyable';
 import Lookup from '../protocols/lookup';
+import Equiv from '../protocols/equiv';
 import Associative from '../protocols/associative';
 import Collection from '../protocols/collection';
 import Append from '../protocols/append';
 import Prepend from '../protocols/prepend';
 import {EMPTY} from '../types/empty';
+import {equivSeq} from '../coll';
 
 export const join = unbind(Array.prototype.join);
 
@@ -62,7 +64,9 @@ function prepend(self, value){
   return [value].concat(self);
 }
 
-export default extend(Array, Append, {
+export default extend(Array, Equiv, {
+  equiv: equivSeq
+}, Append, {
   append: append
 }, Prepend, {
   prepend: prepend

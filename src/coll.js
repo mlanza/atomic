@@ -1,7 +1,8 @@
-import {complement, identity, isSome, overload, constantly, partial, add, is, slice, pipe, arity, unspread, juxt, key} from './core';
+import {complement, identity, isSome, overload, constantly, partial, add, is, slice, pipe, arity, unspread, juxt, key, reducing, isIdentical} from './core';
 import {satisfies} from './protocol';
 import {seq} from './protocols/seqable';
 import {first, rest} from './protocols/seq';
+import {equiv} from './protocols/equiv';
 import Collection from './protocols/collection';
 import Emptyable from './protocols/emptyable';
 import Next from './protocols/next';
@@ -357,16 +358,24 @@ export function scan(pred, xs){
   return coll ? pred(fst, first(coll)) && scan(pred, rst) : true;
 }
 
-export const eq = overload(constantly(true), constantly(true), function(...xs){
-  return scan(function(x, y){
-    return x == y;
-  }, xs);
+export function equivSeq(as, bs){
+  const xs = seq(as),
+        ys = seq(bs);
+  return xs == ys || (equiv(first(xs), first(ys)) && equiv(rest(xs), rest(ys)));
+}
+
+function _eq(a, b){
+  return a == null ? b == null : isIdentical(a, b) || equiv(a, b);
+}
+
+const _ne = complement(_eq);
+
+export const eq = overload(constantly(true), constantly(true), _eq, function(...xs){
+  return scan(_eq, xs);
 });
 
-export const ne = overload(constantly(false), constantly(false), function(...xs){
-  return scan(function(x, y){
-    return x != y;
-  }, xs);
+export const ne = overload(constantly(false), constantly(false), _ne, function(...xs){
+  return scan(_ne, xs);
 });
 
 export const gt = overload(constantly(false), constantly(true), function(...xs){
@@ -419,11 +428,7 @@ export function isAny(pred, xs){
 }
 
 export function isNotAny(pred, xs){
-  return isAny(complement(pred), xs);
-}
-
-export function fold(f, init, xs){
-  return init instanceof Reduced ? init.valueOf() : seq(xs) ? fold(f, f(init, first(xs)), rest(xs)) : init instanceof Reduced ? init.valueOf() : init;
+  return !isAny(pred, xs);
 }
 
 export function filter(pred, xs){

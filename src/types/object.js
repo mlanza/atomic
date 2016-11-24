@@ -9,10 +9,11 @@ import Lookup from '../protocols/lookup';
 import Emptyable from '../protocols/emptyable';
 import Collection from '../protocols/collection';
 import Append from '../protocols/append';
+import Equiv from '../protocols/equiv';
 import {EMPTY} from '../types/empty';
 import LazyList from '../types/lazy-list';
 import IndexedSeq from '../types/indexed-seq';
-import {iterator} from '../coll';
+import {iterator, equivSeq} from '../coll';
 
 Object.prototype[Symbol.iterator] = function(){
   return iterator(this);
@@ -72,7 +73,9 @@ function append(self, pair){
   return assoc(self, pair[0], pair[1]);
 }
 
-export default extend(Object, Collection, {
+export default extend(Object, Equiv, {
+  equiv: equivSeq
+}, Collection, {
   conj: append
 }, Append, {
   append: append
