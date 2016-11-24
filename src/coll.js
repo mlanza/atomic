@@ -12,9 +12,23 @@ import Comparable from './protocols/comparable';
 import Reversible from './protocols/reversible';
 import {reduce} from './protocols/reduce';
 import Reduced from './types/reduced';
-import {List, cons} from './types/list';
+import List from './types/list';
 import LazyList from './types/lazy-list';
 import {EMPTY} from './types/empty';
+
+function _cons(head, tail){
+  return new List(head, tail);
+}
+
+function _consN(){
+  var tail = arguments[arguments.length - 1],
+      item = arguments[arguments.length - 2],
+      init = slice(arguments, 0, arguments.length - 2),
+      memo = _cons(item, tail);
+  return  cons.apply(this, init.concat([memo]));
+}
+
+export const cons = overload(null, null, _cons, _consN);
 
 function _partition(n, xs){
   return partitionStep(n, n, xs);
