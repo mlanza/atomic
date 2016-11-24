@@ -1,4 +1,4 @@
-import {complement, identity, isSome, overload, constantly, partial, add, is, slice, pipe, arity, unspread, key} from './core';
+import {complement, identity, isSome, overload, constantly, partial, add, is, slice, pipe, arity, unspread, juxt, key} from './core';
 import {satisfies} from './protocol';
 import {seq} from './protocols/seqable';
 import {first, rest} from './protocols/seq';
@@ -151,6 +151,22 @@ export function butlast(xs){
 export const dropLast = overload(null, butlast, function(n, xs){
   return map(identity, xs, drop(n, xs));
 });
+
+export function takeLast(n, xs){
+  var coll = seq(xs),
+      lead = seq(drop(n, xs));
+  while (true){
+    if (lead){
+      coll = next(coll);
+      lead = next(lead);
+    } else {
+      return coll;
+    }
+  }
+}
+
+export const splitAt = juxt(take, drop);
+export const splitWith = juxt(takeWhile, dropWhile);
 
 export function interpose(sep, xs){
   const coll = seq(xs),

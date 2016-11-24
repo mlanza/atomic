@@ -1,9 +1,6 @@
-* disj
-* dissoc
 * =
 * not= - ne
 * keep-indexed
-* take-last
 * fnil
 * rseq
 * sort
@@ -18,11 +15,8 @@
 * sequence
 * sequential?
 * sort-by
-* split-at
-* split-with
 * memoize
 * time
-* tree-seq
 * shuffle
 * make-hierarchy (and related fns)
 * map-entry?
@@ -41,3 +35,4 @@
 MAYBE SOMEDAY
 * doseq
 * printf
+* tree-seq
