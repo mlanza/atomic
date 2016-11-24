@@ -7,10 +7,11 @@ import Reduce from '../protocols/reduce';
 import Collection from '../protocols/collection';
 import Prepend from '../protocols/prepend';
 import Counted from '../protocols/counted';
+import Equiv from '../protocols/equiv';
 import Reduced from '../types/reduced';
 import {prepend, count} from '../types/list';
 import {EMPTY} from '../types/empty';
-import {iterator} from '../coll';
+import {iterator, equivSeq} from '../coll';
 
 export function LazyList(head, tail){
   this.head = head;
@@ -35,7 +36,9 @@ function reduce(self, f, init){
   return init instanceof Reduced ? init.valueOf() : Reduce.reduce(self.tail(), f, f(init, self.head));
 }
 
-export default extend(LazyList, Collection, {
+export default extend(LazyList, Equiv, {
+  equiv: equivSeq
+}, Collection, {
   conj: prepend
 }, Prepend, {
   prepend: prepend

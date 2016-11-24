@@ -1,8 +1,19 @@
-import {log, reverse, cons, partition, partitionBy, partitionAll, keys, plus, minus, mult, div, isEven, isOdd, someFn, everyPred, str, doall, butlast, dropLast, takeLast, splitAt, splitWith, rand, scan, best, getIn, update, updateIn, interpose, interleave, min, max, and, or, dedupe, distinct, cat, cycle, overload, toUpperCase, expansive, observable, publisher, reify, swap, reset, subscribe, publish, deref, eq, into, transduce, text, hide, show, tag, tap, detach, parent, addClass, append, prepend, inc, gt, lt, some, isEvery, mapIndexed, range, constantly, conj, take, takeNth, repeat, repeatedly, chain, comp, pipe, add, juxt, query, fetch, get, assoc, hasKey, first, second, third, rest, nth, next, count, reduce, each, map, filter, remove, takeWhile, dropWhile, find, satisfies, concat, flatten, toArray, toObject} from './composable';
-export {log, reverse, cons, partition, partitionBy, partitionAll, keys, plus, minus, mult, div, isEven, isOdd, someFn, everyPred, str, doall, butlast, dropLast, takeLast, splitAt, splitWith, rand, scan, best, getIn, update, updateIn, interpose, interleave, min, max, and, or, dedupe, distinct, cat, cycle, overload, toUpperCase, expansive, observable, publisher, reify, swap, reset, subscribe, publish, deref, eq, into, transduce, text, hide, show, tag, tap, detach, parent, addClass, append, prepend, inc, gt, lt, some, isEvery, mapIndexed, range, constantly, conj, take, takeNth, repeat, repeatedly, chain, comp, pipe, add, juxt, query, fetch, get, assoc, hasKey, first, second, third, rest, nth, next, count, reduce, each, map, filter, remove, takeWhile, dropWhile, find, satisfies, concat, flatten, toArray, toObject} from './composable';
+import {log, reverse, cons, partition, partitionBy, partitionAll, keys, plus, minus, mult, div, isEven, isOdd, someFn, everyPred, str, doall, butlast, dropLast, takeLast, splitAt, splitWith, rand, scan, best, getIn, update, updateIn, interpose, interleave, min, max, and, or, dedupe, distinct, cat, cycle, overload, toUpperCase, expansive, observable, publisher, reify, swap, reset, subscribe, publish, deref, eq, ne, into, transduce, text, hide, show, tag, tap, detach, parent, addClass, append, prepend, inc, gt, lt, some, isEvery, mapIndexed, range, constantly, conj, take, takeNth, repeat, repeatedly, chain, comp, pipe, add, juxt, query, fetch, get, assoc, hasKey, first, second, third, rest, nth, next, count, reduce, each, map, filter, remove, takeWhile, dropWhile, find, satisfies, concat, flatten, toArray, toObject} from './composable';
+export {log, reverse, cons, partition, partitionBy, partitionAll, keys, plus, minus, mult, div, isEven, isOdd, someFn, everyPred, str, doall, butlast, dropLast, takeLast, splitAt, splitWith, rand, scan, best, getIn, update, updateIn, interpose, interleave, min, max, and, or, dedupe, distinct, cat, cycle, overload, toUpperCase, expansive, observable, publisher, reify, swap, reset, subscribe, publish, deref, eq, ne, into, transduce, text, hide, show, tag, tap, detach, parent, addClass, append, prepend, inc, gt, lt, some, isEvery, mapIndexed, range, constantly, conj, take, takeNth, repeat, repeatedly, chain, comp, pipe, add, juxt, query, fetch, get, assoc, hasKey, first, second, third, rest, nth, next, count, reduce, each, map, filter, remove, takeWhile, dropWhile, find, satisfies, concat, flatten, toArray, toObject} from './composable';
 import Reduce from './protocols/reduce';
 import Lookup from './protocols/lookup';
 import IndexedSeq from './types/indexed-seq';
+
+QUnit.test("Equality", function(assert){
+  assert.ok(eq("Curly", "Curly"), "Equal strings");
+  assert.notOk(eq("Curly", "Curlers"), "Unequal strings");
+  assert.ok(eq(45, 45), "Equal numbers");
+  assert.ok(eq([1, 2, 3], [1, 2, 3]), "Equal arrays");
+  assert.notOk(eq([1, 2, 3], [2, 3]), "Unequal arrays");
+  assert.notOk(eq([1, 2, 3], [3, 2, 1]), "Unequal arrays");
+  assert.ok(eq({fname: "Moe", lname: "Howard"}, {fname: "Moe", lname: "Howard"}), "Equal objects");
+  assert.notOk(eq({fname: "Moe", middle: "Harry", lname: "Howard"}, {fname: "Moe", lname: "Howard"}), "Unequal objects");
+});
 
 QUnit.test("Predicates", function(assert){
   assert.equal(chain(3, or(1)), 3);

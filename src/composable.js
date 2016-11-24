@@ -121,7 +121,6 @@ export const some      = curry(coll.some);
 export const isEvery   = curry(coll.isEvery);
 export const isAny     = curry(coll.isAny);
 export const isNotAny  = curry(coll.isNotAny);
-export const fold      = curry(coll.fold);
 export const iterate   = curry(coll.iterate);
 export const tag       = curry(el.tag, 2);
 export const attr      = subj(el.attr);
