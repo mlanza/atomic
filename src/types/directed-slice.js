@@ -1,4 +1,4 @@
-import {constantly} from '../core';
+import {constantly, identity, slice as _slice} from '../core';
 import {extend} from '../protocol';
 import Seq from '../protocols/seq';
 import Counted from '../protocols/counted';
@@ -16,21 +16,26 @@ import Reversible from '../protocols/reversible';
 import {EMPTY} from '../types/empty';
 import Reduced from '../types/reduced';
 import List from '../types/list';
-import DirectedSlice from '../types/directed-slice';
-import {iterator, toArray} from '../coll';
+import {iterator, concat, into} from '../coll';
 
-export function IndexedSeq(indexed, begin){
+export function DirectedSlice(indexed, begin, end){
   this.indexed = indexed;
-  this.begin = begin < 0 ? 0 : begin || 0;
-  this.length = this.indexed.length - this.begin;
+  this.begin = begin || 0;
+  this.end = end || indexed.length - 1;
+  this.length = Math.abs(this.end - this.begin) + 1;
+  this.step = this.begin < this.end ? 1 : -1;
 }
 
-IndexedSeq.prototype[Symbol.iterator] = function(){
+DirectedSlice.prototype[Symbol.iterator] = function(){
   return iterator(this);
 }
 
-export function rseq(self){
-  return new DirectedSlice(this.indexed, this.indexed.length - 1, this.begin);
+function rseq(self){
+  return self.end === self.begin ? self : new DirectedSlice(self.indexed, self.end, self.begin);
+}
+
+export function slice(indexed, begin, end){
+  return begin < end ? new DirectedSlice(indexed, begin, end) : EMPTY;
 }
 
 const empty = constantly([]);
@@ -40,7 +45,7 @@ function first(self){
 }
 
 function rest(self){
-  return self.length > 1 ? new IndexedSeq(self.indexed, self.begin + 1) : EMPTY;
+  return self.length > 1 ? new DirectedSlice(self.indexed, self.begin + self.step, self.end) : EMPTY;
 }
 
 function count(self){
@@ -48,63 +53,58 @@ function count(self){
 }
 
 function nth(self, n){
-  var i = self.begin + n;
-  return i < self.indexed.length ? self.indexed[i] : null;
+  return n < self.length ? self.indexed[self.begin + (n * self.step)] : null;
 }
 
 const get = nth;
 
 function reduce(self, f, init) {
-  var memo = init, len = self.length, indexed = self.indexed, begin = self.begin;
+  var memo = init, len = self.length, indexed = self.indexed, begin = self.begin, step = self.step;
   for(var i = 0; i < len; i++) {
     if (memo instanceof Reduced)
       break;
-    memo = f(memo, indexed[i + begin]);
+    memo = f(memo, indexed[begin + (i * step)]);
   }
   return memo instanceof Reduced ? memo.valueOf() : memo;
 }
 
 function reduceKV(self, f, init) {
-  var memo = init, len = self.length, indexed = self.indexed, begin = self.begin;
+  var memo = init, len = self.length, indexed = self.indexed, begin = self.begin, step = self.step;
   for(var i = 0; i < len; i++) {
     if (memo instanceof Reduced)
       break;
-    memo = f(memo, i, indexed[i + begin]);
+    memo = f(memo, i, indexed[begin + (i * step)]);
   }
   return memo instanceof Reduced ? memo.valueOf() : memo;
 }
 
-function seq(self){
-  return self.length ? self : null;
-}
-
 function hasKey(self, key){
-  return key > -1 && key < self.indexed.length - self.begin;
+  return key > -1 && key < self.length;
 }
 
 function assoc(self, key, value){
-  var arr = slice(self.indexed, self.begin);
-  arr.splice(key, 1, value);
-  return arr;
+  // return into([], concat(take(key, self), [value], drop(key + 1, self))); //TODO take/drop protocol?
+  var indexed = into([], self);
+  indexed.splice(key, 1, value);
+  return indexed;
 }
 
-function dissoc(self, key, value){
-  var arr = slice(self.indexed, self.begin);
-  arr.splice(key, 1);
-  return arr;
+function dissoc(self, key){
+  //return into([], concat(take(key, self), drop(key + 1, self)));
+  var indexed = into([], self);
+  indexed.splice(key, 1);
+  return indexed;
 }
 
 function append(self, value){
-  return Append.append(toArray(self), value);
+  return into([], self).concat([value]);
 }
 
 function prepend(self, value){
-  return Seqable.seq(self) ? new List(value, self) : new List(value);
+  return [value].concat(into([], self));
 }
 
-export default extend(IndexedSeq, Reversible, {
-  rseq: rseq
-}, Append, {
+export default extend(DirectedSlice, Append, {
   append: append
 }, Prepend, {
   prepend: prepend
@@ -113,7 +113,7 @@ export default extend(IndexedSeq, Reversible, {
 }, Emptyable, {
   empty: empty
 }, Seqable, {
-  seq: seq
+  seq: identity
 }, Seq, {
   first: first,
   rest: rest
