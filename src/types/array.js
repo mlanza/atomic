@@ -48,6 +48,12 @@ function assoc(self, key, value){
   return arr;
 }
 
+function dissoc(self, key){
+  var arr = slice(self);
+  arr.splice(key, 1);
+  return arr;
+}
+
 function append(self, value){
   return self.concat([value]);
 }
@@ -66,6 +72,7 @@ export default extend(Array, Append, {
   get: nth
 }, Associative, {
   assoc: assoc,
+  dissoc: dissoc,
   hasKey: hasKey
 }, Emptyable, {
   empty: constantly([])

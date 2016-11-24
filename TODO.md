@@ -2,10 +2,8 @@
 * dissoc
 * =
 * not= - ne
-* group-by
 * keep-indexed
 * take-last
-* when -- lazy (e.g. guard)
 * fnil
 * rseq
 * sort
