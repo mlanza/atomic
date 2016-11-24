@@ -11,6 +11,7 @@ import Associative from './protocols/associative';
 import Comparable from './protocols/comparable';
 import Reversible from './protocols/reversible';
 import {reduce} from './protocols/reduce';
+import DirectedSlice from './types/directed-slice';
 import Reduced from './types/reduced';
 import List from './types/list';
 import LazyList from './types/lazy-list';
@@ -21,11 +22,11 @@ function _cons(head, tail){
 }
 
 function _consN(){
-  var tail = arguments[arguments.length - 1],
-      item = arguments[arguments.length - 2],
-      init = slice(arguments, 0, arguments.length - 2),
-      memo = _cons(item, tail);
-  return  cons.apply(this, init.concat([memo]));
+  var coll = arguments[arguments.length - 1],
+      adds = new DirectedSlice(arguments, arguments.length - 2, 0);
+  return reduce(adds, function(memo, value){
+    return new List(value, memo);
+  }, coll);
 }
 
 export const cons = overload(null, null, _cons, _consN);
