@@ -51,6 +51,12 @@ export function set(coll){
   return new Set(coll);
 }
 
+export function disj(self){
+  var set = new Set(self);
+  set.delete(key);
+  return set;
+}
+
 export default extend(Set, Collection, {
   conj: conj
 }, Lookup, {
