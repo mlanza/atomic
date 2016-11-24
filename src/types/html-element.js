@@ -25,57 +25,55 @@ export function text(el){
   return el.textContent;
 }
 
-export function attr(obj, el){
+export function attr(el, obj){
   each(function(pair){
     assoc(el, pair[0], pair[1]);
   }, obj);
   return el
 }
 
-export function css(obj, el){
+export function css(el, obj){
   each(function(pair){
     el.style[pair[0]] = pair[1];
   }, obj);
   return el;
 }
 
-export function hasClass(str, el){
+export function hasClass(el, str){
   return el.classList.contains(str);
 }
 
-export function addClass(str, el){
+export function addClass(el, str){
   el.classList.add(str);
   return el;
 }
 
-export function removeClass(str, el){
+export function removeClass(el, str){
   el.classList.remove(str);
   return el;
 }
 
-export function toggleClass(str, el){
-  return setClass(!hasClass(str, el), str, el)
-}
-
-export function setClass(on, str, el){
+export function toggleClass(el, str, toggle){
+  var on = arguments.length > 2 ? toggle : !hasClass(el, str);
   el.classList[on ? 'add' : 'remove'](str);
-  return f(str, el);
+  return el;
 }
 
 export function tag(name, ...params){
   var el = document.createElement(name);
   each(function(item){
-    is(Object, item) ? attr(item, el) : append(el, item);
+    var f = is(Object, item) ? attr : append;
+    f(el, item);
   }, params);
   return el;
 }
 
-function fetch(self, selector){
-  return self.querySelector(selector) || null;
+function fetch(el, selector){
+  return el.querySelector(selector) || null;
 }
 
-function query(self, selector, top){
-  const xs = top === 1 ? coll(self.querySelector(selector)) : new IndexedSeq(self.querySelectorAll(selector));
+function query(el, selector, top){
+  const xs = top === 1 ? coll(el.querySelector(selector)) : new IndexedSeq(el.querySelectorAll(selector));
   return arguments.length === 2 ? xs : take(top, xs);
 }
 
