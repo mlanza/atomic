@@ -20,8 +20,8 @@ import {iterator, concat, into} from '../coll';
 
 export function DirectedSlice(indexed, begin, end){
   this.indexed = indexed;
-  this.begin = begin || 0;
-  this.end = end || indexed.length - 1;
+  this.begin = begin == null ? 0 : begin;
+  this.end = end == null ? indexed.length - 1 : end;
   this.length = Math.abs(this.end - this.begin) + 1;
   this.step = this.begin < this.end ? 1 : -1;
 }
