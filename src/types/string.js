@@ -28,10 +28,6 @@ export function concat(){
   return reduce(arguments, conj, "");
 }
 
-export function replace(str, pattern, replacement){
-  return str.replace(pattern, replacement);
-}
-
 function empty(){
   return "";
 }

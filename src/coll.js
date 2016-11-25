@@ -1,4 +1,4 @@
-import {complement, identity, isSome, overload, constantly, partial, add, is, slice, pipe, arity, unspread, juxt, key, reducing, isIdentical} from './core';
+import {complement, identity, isSome, overload, constantly, partial, add, is, slice, pipe, arity, unspread, juxt, key, val, reducing, isIdentical} from './core';
 import {satisfies} from './protocol';
 import {seq} from './protocols/seqable';
 import {first, rest} from './protocols/seq';
@@ -281,8 +281,65 @@ export function mapIndexed(f, xs){
   }, xs);
 }
 
+export function keepIndexed(f, xs){
+  var idx = -1;
+  return filter(isSome, map(function(x){
+    return f(++idx, x);
+  }, xs));
+}
+
 export function keep(f, xs){
   return filter(isSome, map(f, xs));
+}
+
+export function merge(){
+  return reduce(arguments, function(memo, xs){
+    return reduce(xs || {}, function(memo, pair){
+      memo[pair[0]] = pair[1];
+      return memo;
+    }, memo);
+  }, {});
+}
+
+export function mergeWith(f, ...objs){
+  return reduce(arguments, function(memo, xs){
+    return reduce(xs || {}, function(memo, pair){
+      if (memo.hasOwnProperty(pair[0])) {
+        memo[pair[0]] = pair[1];
+      } else {
+        memo[pair[0]] = f(memo[pair[0]], pair[1]);
+      }
+      return memo;
+    }, memo);
+  }, {});
+}
+
+export function condp(value, pred, ...conds){
+  return first(map(function(pair){
+    return pair[1];
+  }, filter(function(pair){
+    return pred(value, pair[0]);
+  }, partition(2, conds)))) || (isOdd(conds.length) ? conds[conds.length - 1] : null);
+}
+
+export function fnil(f, ...defaults){
+  return function(){
+    const defaulted = mapIndexed(function(idx, value){
+      return value == null ? defaults[idx] : value;
+    }, arguments);
+    return f.apply(this, defaulted);
+  }
+}
+
+export const selectKeys = Set ? function(keys, obj){
+  var set = new Set(keys);
+  return toObject(filter(function(pair){
+    return set.has(pair[0]);
+  }, obj));
+} : function(keys, obj){
+  return toObject(filter(function(pair){
+    return some(partial(eq, pair[0]), keys);
+  }, obj));
 }
 
 export function take(n, xs){
@@ -348,6 +405,11 @@ export function everyPred(){
 export function keys(xs){
   const coll = seq(xs);
   return coll ? map(key, coll) : EMPTY;
+}
+
+export function vals(xs){
+  const coll = seq(xs);
+  return coll ? map(val, coll) : EMPTY;
 }
 
 export function scan(pred, xs){

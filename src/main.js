@@ -1,5 +1,5 @@
-import {log, reverse, cons, partition, partitionBy, partitionAll, keys, plus, minus, mult, div, isEven, isOdd, someFn, everyPred, str, doall, butlast, dropLast, takeLast, splitAt, splitWith, rand, scan, best, getIn, update, updateIn, interpose, interleave, min, max, and, or, dedupe, distinct, cat, cycle, overload, toUpperCase, expansive, observable, publisher, reify, swap, reset, subscribe, publish, deref, eq, ne, into, transduce, text, hide, show, tag, tap, detach, parent, addClass, append, prepend, inc, gt, lt, some, isEvery, mapIndexed, range, constantly, conj, take, takeNth, repeat, repeatedly, chain, comp, pipe, opt, maybe, add, juxt, query, fetch, get, assoc, hasKey, first, second, third, rest, nth, next, count, reduce, each, map, filter, remove, takeWhile, dropWhile, find, satisfies, concat, flatten, toArray, toObject} from './composable';
-export {log, reverse, cons, partition, partitionBy, partitionAll, keys, plus, minus, mult, div, isEven, isOdd, someFn, everyPred, str, doall, butlast, dropLast, takeLast, splitAt, splitWith, rand, scan, best, getIn, update, updateIn, interpose, interleave, min, max, and, or, dedupe, distinct, cat, cycle, overload, toUpperCase, expansive, observable, publisher, reify, swap, reset, subscribe, publish, deref, eq, ne, into, transduce, text, hide, show, tag, tap, detach, parent, addClass, append, prepend, inc, gt, lt, some, isEvery, mapIndexed, range, constantly, conj, take, takeNth, repeat, repeatedly, chain, comp, pipe, opt, maybe, add, juxt, query, fetch, get, assoc, hasKey, first, second, third, rest, nth, next, count, reduce, each, map, filter, remove, takeWhile, dropWhile, find, satisfies, concat, flatten, toArray, toObject} from './composable';
+import {log, merge, fnil, selectKeys, keep, keepIndexed, reverse, cons, partition, partitionBy, partitionAll, keys, plus, minus, mult, div, isEven, isOdd, someFn, everyPred, str, doall, butlast, dropLast, takeLast, splitAt, splitWith, rand, scan, best, getIn, update, updateIn, interpose, interleave, min, max, and, or, dedupe, distinct, cat, cycle, overload, toUpperCase, expansive, observable, publisher, reify, swap, reset, subscribe, publish, deref, eq, ne, into, transduce, text, hide, show, tag, tap, detach, parent, addClass, append, prepend, inc, gt, lt, some, isEvery, mapIndexed, range, constantly, conj, take, takeNth, repeat, repeatedly, chain, comp, pipe, opt, maybe, add, juxt, query, fetch, get, assoc, hasKey, first, second, third, rest, nth, next, count, reduce, each, map, filter, remove, takeWhile, dropWhile, find, satisfies, concat, flatten, toArray, toObject} from './composable';
+export {log, merge, fnil, selectKeys, keep, keepIndexed, reverse, cons, partition, partitionBy, partitionAll, keys, plus, minus, mult, div, isEven, isOdd, someFn, everyPred, str, doall, butlast, dropLast, takeLast, splitAt, splitWith, rand, scan, best, getIn, update, updateIn, interpose, interleave, min, max, and, or, dedupe, distinct, cat, cycle, overload, toUpperCase, expansive, observable, publisher, reify, swap, reset, subscribe, publish, deref, eq, ne, into, transduce, text, hide, show, tag, tap, detach, parent, addClass, append, prepend, inc, gt, lt, some, isEvery, mapIndexed, range, constantly, conj, take, takeNth, repeat, repeatedly, chain, comp, pipe, opt, maybe, add, juxt, query, fetch, get, assoc, hasKey, first, second, third, rest, nth, next, count, reduce, each, map, filter, remove, takeWhile, dropWhile, find, satisfies, concat, flatten, toArray, toObject} from './composable';
 import Reduce from './protocols/reduce';
 import Lookup from './protocols/lookup';
 import IndexedSeq from './types/indexed-seq';
@@ -85,6 +85,9 @@ QUnit.test("Lookup", function(assert){
 });
 
 QUnit.test("Sequences", function(assert){
+  assert.deepEqual(into([], keepIndexed(function(idx, value){
+    if (isOdd(idx)) return value;
+  }), ["a", "b", "c", "d", "e"]), ["b", "d"]);
   assert.deepEqual(chain([1,2,3], butlast, toArray), [1,2]);
   assert.deepEqual(chain(interpose("-", ["A","B","C"]), toArray), ["A", "-", "B", "-", "C"]);
   assert.deepEqual(into([], interpose("-"), ["A","B","C"]), ["A", "-", "B", "-", "C"]);
@@ -95,6 +98,7 @@ QUnit.test("Sequences", function(assert){
   assert.deepEqual(toArray(range(-20, 100, 10)), [-20, -10, 0, 10, 20, 30, 40, 50, 60, 70, 80, 90])
   assert.equal(some(gt(5), range(10)), 6);
   assert.notOk(isEvery(gt(5), range(10)));
+  assert.deepEqual(selectKeys(["ace", "king"], {ace: 1, king: 2, queen: 3}), {ace: 1, king: 2});
 });
 
 QUnit.test("IndexedSeq", function(assert){

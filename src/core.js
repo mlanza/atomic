@@ -244,15 +244,26 @@ export function is(constructor, value) {
   return value != null && value.constructor === constructor;
 }
 
-/*
-export function unshift(xs){
-  const len = arguments.length;
-  return len === 1 ? xs : len ? slice(arguments, 0, len - 1).concat(slice(arguments[len - 1])) : [];
+export function branch(value, pred, f){
+  return pred ? pred(value) ? f(value) : branch.apply(this, [value].concat(slice(arguments, 3))) : null;
 }
-*/
 
-export function branch(value, pred, get){
-  return pred ? pred(value) ? get(value) : branch.apply(this, [value].concat(slice(arguments, 3))) : null;
+export const cond = subj(branch);
+
+export const memoize = overload(null, function(f){
+  return memoize(f, identity);
+}, function(f, hash){
+  const cache = {};
+  return function(){
+    var key = hash.apply(this, arguments);
+    if (cache.hasOwnProperty(key))
+      return cache[key];
+    return cache[key] = f.apply(this, arguments);
+  }
+});
+
+export function delay(f){ //a.k.a. once
+  return memoize(f, constantly(""));
 }
 
 export function juxt(){
