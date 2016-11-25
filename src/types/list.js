@@ -1,8 +1,8 @@
 import {identity, constantly, isIdentical} from '../core';
-import {extend, def} from '../protocol';
+import {extend, extendProtocol} from '../protocol';
 import {Seq} from '../protocols/seq';
 import Emptyable from '../protocols/emptyable';
-import {seq, Seqable} from '../protocols/seqable';
+import {Seqable, seq} from '../protocols/seqable';
 import Reduce from '../protocols/reduce';
 import Collection from '../protocols/collection';
 import Prepend from '../protocols/prepend';
@@ -32,8 +32,7 @@ function rest(self){
 }
 
 function reduce(self, f, init){
-  if (init instanceof Reduced) return init.valueOf();
-  return Reduce.reduce(self.tail, f, f(init, self.head));
+  return init instanceof Reduced ? init.valueOf() : Reduce.reduce(self.tail, f, f(init, self.head));
 }
 
 export function prepend(self, value){
@@ -42,14 +41,14 @@ export function prepend(self, value){
 
 export function count(self){
   var i = 0, coll = self;
-  while(coll = Seqable.seq(coll)){
+  while(coll = seq(coll)){
     i++;
     coll = Seq.rest(coll);
   }
   return i;
 }
 
-def(Collection, {conj: prepend})
+extendProtocol(Collection, {conj: prepend})
 
 export default extend(List, Equiv, {
   equiv: equivSeq

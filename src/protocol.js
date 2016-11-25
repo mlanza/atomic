@@ -6,10 +6,10 @@ let _template = Symbol('template'),
 
 export default function Protocol(template){
   this[_map] = new Map();
-  def(this, template);
+  extendProtocol(this, template);
 }
 
-export function def(self, template){
+export function extendProtocol(self, template){
   self[_template] = Object.assign(self[_template] || {}, template);
   for(var key in template){
     if (!self.hasOwnProperty(key))

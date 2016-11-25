@@ -1,17 +1,16 @@
 # TODO
 
+* rewrite comparison operators (gt, lt, etc.) to be more like plus, minus
+* refine api/tests to mirror clojure's; create chainable api as secondary
 * atom (observable?) -- all its protocols
 * trampoline
-* List
 * assoc-in
 * distinct -- test transducer
-* subs / substring
 * util.js and / use expansive?
 * util.js or / use expansive?
 * Object protocol -- toString, equiv, indexOf, lastIndexOf
-* rename protocol def method
-* refine api/tests to mirror clojure's; create chainable api as secondary
-* rewrite comparison operators (gt, lt, etc.) to be more like plus, minus
+
+
 
 
 # SOMEDAY

@@ -464,17 +464,32 @@ export const lte = overload(constantly(true), constantly(true), function(...xs){
   }, xs);
 });
 
-export function indescriminate(x, ...xs){
+export function expanding(f){
+  return function(){
+    const fxs = juxt.apply(this, arguments);
+    return function(value){
+      return f.apply(this, fxs(value))
+    }
+  }
+}
+
+function _lastly(x, ...xs){
   if (!xs.length) return x;
-  return x ? indescriminate.apply(this, xs) : x;
+  return x ? _lastly.apply(this, xs) : x;
 }
 
-export function coalesce(x, ...xs){
-  return x ? x : coalesce.apply(this, xs);
+function _firstly(x, ...xs){
+  if (!xs.length) return x;
+  return x ? x : _firstly.apply(this, xs);
 }
 
-export const or  = overload(constantly(null), identity, coalesce);
-export const and = overload(constantly(true), identity, indescriminate);
+export const firstly = overload(constantly(null), _firstly);
+export const lastly = overload(constantly(null), _lastly);
+export const or  = overload(constantly(null), identity, _firstly);
+export const and = overload(constantly(true), identity, _lastly);
+export const any = expanding(or);
+export const all = expanding(and);
+export const coalesce = firstly;
 
 export function isEvery(pred, xs){
   if (!seq(xs)) return true;

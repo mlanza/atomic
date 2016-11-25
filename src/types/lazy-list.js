@@ -1,5 +1,5 @@
 import {identity, constantly} from '../core';
-import {extend, def} from '../protocol';
+import {extend} from '../protocol';
 import Seq from '../protocols/seq';
 import Emptyable from '../protocols/emptyable';
 import Seqable from '../protocols/seqable';
