@@ -1,5 +1,5 @@
-import unbind from '../unbind.js';
-import {flip, identity, add, slice} from '../core.js';
+import unbind from '../unbind';
+import {flip, identity, add, slice} from '../core';
 import {extend} from '../protocol';
 import Next from '../protocols/next';
 import Seq from '../protocols/seq';

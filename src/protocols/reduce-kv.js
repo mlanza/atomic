@@ -1,4 +1,4 @@
 import {protocol} from '../protocol';
-export const ReduceKV = protocol({reduceKV: null});
-export const reduceKV = ReduceKV.reduceKV;
-export default ReduceKV;
+export const ReduceKv = protocol({reduceKv: null});
+export const reduceKv = ReduceKv.reduceKv;
+export default ReduceKv;
