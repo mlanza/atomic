@@ -47,7 +47,7 @@ import * as coll from './coll';
 import * as transducer from './transducer';
 export {cons, merge, fnil, someFn, partition, partitionBy, partitionAll, everyPred, cycle, doall, cat, interleave, butlast, dropLast, takeLast, splitAt, splitWith, str, transduce, into, transform, concat, flatten, toObject, toArray, repeatedly, repeat, range, keys, reverse, selectKeys, any, all} from './coll'; //TODO concat for string different from concat for sequence
 import {curry, flip, subj, overload, branch} from './core';
-export {branch, plus, minus, mult, div, log, rand, curry, pipe, juxt, flip, partial, chain, identity, complement, overload, comp, opt, maybe, multimethod, constantly, noop, isIdentical, isOdd, isEven, doto, invokeWith, isSome, isNil} from './core';
+export {branch, plus, minus, mult, div, log, rand, curry, pipe, juxt, flip, partial, chain, identity, complement, overload, comp, opt, maybe, multimethod, constantly, noop, isIdentical, isOdd, isEven, doto, invokeWith, isSome, isNil, see} from './core';
 export const deref     = Deref.deref;
 export const swap      = flip(Swap.swap, 2);
 export const reset     = flip(Reset.reset, 2);

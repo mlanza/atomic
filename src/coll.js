@@ -432,37 +432,34 @@ function _eq(a, b){
 
 const _ne = complement(_eq);
 
-export const eq = overload(constantly(true), constantly(true), _eq, function(...xs){
-  return scan(_eq, xs);
-});
+function _gt(x, y){
+  return x > y;
+}
 
-export const ne = overload(constantly(false), constantly(false), _ne, function(...xs){
-  return scan(_ne, xs);
-});
+function _gte(x, y){
+  return x >= y;
+}
 
-export const gt = overload(constantly(false), constantly(true), function(...xs){
-  return scan(function(x, y){
-    return x > y;
-  }, xs);
-});
+function _lt(x, y){
+  return x < y;
+}
 
-export const gte = overload(constantly(true), constantly(true), function(...xs){
-  return scan(function(x, y){
-    return x >= y;
-  }, xs);
-});
+function _lte(x, y){
+  return x <= y;
+}
 
-export const lt = overload(constantly(false), constantly(true), function(...xs){
-  return scan(function(x, y){
-    return x < y;
-  }, xs);
-});
+export function scanning(f){
+  return function(...xs){
+    return scan(f, xs);
+  }
+}
 
-export const lte = overload(constantly(true), constantly(true), function(...xs){
-  return scan(function(x, y){
-    return x <= y;
-  }, xs);
-});
+export const eq  = overload(constantly(true) , constantly(true) , _eq , scanning(_eq));
+export const ne  = overload(constantly(false), constantly(false), _ne , scanning(_ne));
+export const gt  = overload(constantly(false), constantly(true) , _gt , scanning(_gt));
+export const gte = overload(constantly(true) , constantly(true) , _gte, scanning(_gte));
+export const lt  = overload(constantly(false), constantly(true) , _lt , scanning(_lt));
+export const lte = overload(constantly(true) , constantly(true) , _lte, scanning(_lte));
 
 export function expanding(f){
   return function(){
