@@ -472,8 +472,8 @@ export const lte = overload(constantly(true) , constantly(true) , _lte, scanning
 export function expanding(f){
   return function(){
     const fxs = juxt.apply(this, arguments);
-    return function(value){
-      return f.apply(this, fxs(value))
+    return function(){
+      return f.apply(this, fxs.apply(this, arguments));
     }
   }
 }
@@ -492,9 +492,28 @@ export const firstly = overload(constantly(null), _firstly);
 export const lastly = overload(constantly(null), _lastly);
 export const or  = overload(constantly(null), identity, _firstly);
 export const and = overload(constantly(true), identity, _lastly);
-export const any = expanding(or);
-export const all = expanding(and);
+export const any = overload(constantly(null), expanding(or));
+export const all = overload(constantly(true), expanding(and));
 export const coalesce = firstly;
+
+export function pre(f, ...conds){
+  var check = all.apply(this, conds);
+  return function(){
+    if (!check.apply(this, arguments))
+      throw new TypeError("Failed pre-condition");
+    return f.apply(this, arguments);
+  }
+}
+
+export function post(f, ...conds){
+  var check = all.apply(this, conds);
+  return function(){
+    var result = f.apply(this, arguments);
+    if (!check(result))
+      throw new TypeError("Failed post-condition.");
+    return result;
+  }
+}
 
 export function isEvery(pred, xs){
   if (!seq(xs)) return true;
@@ -573,13 +592,8 @@ export function best(pred, xs){
   }, first(coll)) : null;
 }
 
-export function max(){
-  return best(gt, arguments);
-}
-
-export function min(){
-  return best(lt, arguments);
-}
+export const max = partial(best, gt);
+export const min = partial(best, lt);
 
 export function toArray(xs){
   if (xs instanceof Array) return xs;

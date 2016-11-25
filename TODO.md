@@ -2,10 +2,10 @@
 
 * refine api/tests to mirror clojure's; create chainable api as secondary
 * atom (observable?) -- all its protocols
-* defmulti
 
 # SOMEDAY
 
+* defmulti
 * Object protocol -- toString, equiv, indexOf, lastIndexOf
 * ISerialize (with an edn like approach to deserialization)
   * different from toString
