@@ -4,7 +4,7 @@ import Seq from '../protocols/seq';
 import Counted from '../protocols/counted';
 import Indexed from '../protocols/indexed';
 import Reduce from '../protocols/reduce';
-import ReduceKV from '../protocols/reduce-kv';
+import ReduceKv from '../protocols/reduce-kv';
 import Seqable from '../protocols/seqable';
 import Emptyable from '../protocols/emptyable';
 import Lookup from '../protocols/lookup';
@@ -68,7 +68,7 @@ function reduce(self, f, init) {
   return memo instanceof Reduced ? memo.valueOf() : memo;
 }
 
-function reduceKV(self, f, init) {
+function reduceKv(self, f, init) {
   var memo = init, len = self.length, indexed = self.indexed, begin = self.begin, step = self.step;
   for(var i = 0; i < len; i++) {
     if (memo instanceof Reduced)
@@ -129,6 +129,6 @@ export default extend(DirectedSlice, Append, {
   hasKey: hasKey
 }, Reduce, {
   reduce: reduce
-}, ReduceKV, {
-  reduceKV: reduceKV
+}, ReduceKv, {
+  reduceKv: reduceKv
 });

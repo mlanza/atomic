@@ -4,7 +4,7 @@ import Seq from '../protocols/seq';
 import Seqable from '../protocols/seqable';
 import Associative from '../protocols/associative';
 import Reduce from '../protocols/reduce';
-import ReduceKV from '../protocols/reduce-kv';
+import ReduceKv from '../protocols/reduce-kv';
 import Lookup from '../protocols/lookup';
 import Emptyable from '../protocols/emptyable';
 import Collection from '../protocols/collection';
@@ -13,6 +13,7 @@ import Equiv from '../protocols/equiv';
 import {EMPTY} from '../types/empty';
 import LazyList from '../types/lazy-list';
 import IndexedSeq from '../types/indexed-seq';
+import Reduced from '../types/reduced';
 import {iterator, equivSeq} from '../coll';
 
 Object.prototype[Symbol.iterator] = function(){
@@ -31,9 +32,9 @@ function reduce(self, f, init){
   return Reduce.reduce(seq(self), f, init);
 }
 
-function reduceKV(self, f, init){
-  var keys = Object.keys(self), memo = init;
-  for(var key in keys){
+function reduceKv(self, f, init){
+  var memo = init;
+  for(var key in self){
     if (memo instanceof Reduced)
       break;
     memo = f(memo, key, self[key]);
@@ -81,8 +82,8 @@ export default extend(Object, Equiv, {
   append: append
 }, Reduce, {
   reduce: reduce
-}, ReduceKV, {
-  reduceKV: reduceKV
+}, ReduceKv, {
+  reduceKv: reduceKv
 }, Emptyable, {
   empty: constantly({})
 }, Seq, {

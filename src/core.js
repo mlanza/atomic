@@ -19,7 +19,7 @@ export function reduce(xs, xf, init, from){
   return memo instanceof Reduced ? memo.valueOf() : memo;
 }
 
-export function reduceKV(xs, xf, init, from){
+export function reduceKv(xs, xf, init, from){
   var memo = init, len = xs.length;
   for(var i = from || 0; i < len; i++){
     if (memo instanceof Reduced)
