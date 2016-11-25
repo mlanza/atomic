@@ -6,7 +6,7 @@ import {equiv} from './protocols/equiv';
 import Collection from './protocols/collection';
 import Emptyable from './protocols/emptyable';
 import Next from './protocols/next';
-import Lookup from './protocols/lookup';
+import {get} from './protocols/lookup';
 import {count} from './protocols/counted';
 import Associative from './protocols/associative';
 import Comparable from './protocols/comparable';
@@ -106,7 +106,7 @@ export function groupBy(f, coll){
 }
 
 export function update(obj, key, f, ...args){
-  const value = Lookup.get(obj, key);
+  const value = get(obj, key);
   return Associative.assoc(obj, key, f.apply(this, [value].concat(args)));
 }
 
@@ -116,7 +116,7 @@ export function updateIn(obj, path, f, ...args){
 
 export function getIn(obj, path){
   return reduce(path, function(memo, key){
-    const found = Lookup.get(memo, key);
+    const found = get(memo, key);
     return found == null ? new Reduced(null) : found;
   }, obj);
 }

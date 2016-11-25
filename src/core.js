@@ -126,16 +126,15 @@ export function chain(init){
   }, init, 1);
 }
 
-export function schain(init){
+export function maybe(init){
   return reduce(arguments, function(value, f){
     return value == null ? new Reduced(null) : f(value);
   }, init, 1);
 }
 
-export const pipe  = subj(chain);
-export const spipe = subj(schain);
-export const comp  = reversed(pipe);
-export const scomp = reversed(spipe);
+export const pipe = subj(chain);
+export const opt  = subj(maybe);
+export const comp = reversed(pipe);
 
 export function multimethod(dispatch){
   return function(){
