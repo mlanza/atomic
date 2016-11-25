@@ -1,6 +1,6 @@
 import Seqable from './protocols/seqable';
 import Reduced from './types/reduced';
-import {overload, complement, comp, isSome} from './core';
+import {overload, complement, comp, isSome, partial} from './core';
 import {into} from './coll';
 
 export function map(f){
@@ -43,10 +43,10 @@ export function distinct(){
   return function(xf){
     return overload(function(){
       return new Set();
-    }, function(xs){
-      var coll = Seqable.seq(xs);
-      return coll ? into([], coll) : EMPTY;
-    }, xf);
+    }, partial(into, []), function(memo, value){
+      memo.add(value);
+      return memo;
+    });
   }
 }
 

@@ -114,6 +114,14 @@ export function updateIn(obj, path, f, ...args){
   return path.length > 1 ? update.apply(this, [obj, path[0], updateIn, slice(path, 1), f].concat(args)) : update.apply(this, [obj, path[0], f].concat(args));
 }
 
+export function assocIn(obj, path, value){
+  const init = slice(path, 0, path.length - 1),
+        key  = path[path.length - 1];
+  return updateIn(obj, init, function(x){
+    return Associative.assoc(x, key, value);
+  }, value);
+}
+
 export function getIn(obj, path){
   return reduce(path, function(memo, key){
     const found = get(memo, key);
@@ -649,7 +657,7 @@ export function seeding(f, init){
 
 export const transduce = overload(null, null, null, function(xform, f, coll){
   var xf = xform(f);
-  return xf(reduce(coll, xf, f()));
+  return xf(reduce(coll, xf, xf()));
 }, function(xform, f, seed, coll){
   return transduce(xform, seeding(f, constantly(seed)), coll);
 });
