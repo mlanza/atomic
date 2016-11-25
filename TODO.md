@@ -2,8 +2,6 @@
 
 * refine api/tests to mirror clojure's; create chainable api as secondary
 * atom (observable?) -- all its protocols
-* assoc-in
-* distinct -- test transducer
 * defmulti
 
 # SOMEDAY

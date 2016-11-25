@@ -84,6 +84,7 @@ export const nullary   = arity(0);
 export const unary     = arity(1);
 export const update    = subj(coll.update);
 export const updateIn  = subj(coll.updateIn);
+export const assocIn   = subj(coll.assocIn);
 export const scan      = curry(coll.scan);
 export const best      = curry(coll.best)
 export const min       = curry(coll.min, 2);
