@@ -1,31 +1,40 @@
-* keep-indexed
-* fnil
+# TODO
+
+* atom (observable?) -- all its protocols
+* trampoline
+* List
+* assoc-in
 * distinct -- test transducer
-* merge
-* merge-with
-* select-keys
-* cond
-* condp
-* get-method
-* sequence
-* sequential?
-* memoize
-* util.js and
-* util.js or
+* subs / substring
+* util.js and / use expansive?
+* util.js or / use expansive?
+* Object protocol -- toString, equiv, indexOf, lastIndexOf
+* rename protocol def method
+* refine api/tests to mirror clojure's; create chainable api as secondary
+* rewrite comparison operators (gt, lt, etc.) to be more like plus, minus
 
-*refine api/tests to mirror clojure's; create chainable api as secondary
-*rewrite comparison operators (gt, lt, etc.) to be more like plus, minus
-*atom (observable?)
-*thread-first, thread-last
-*channels? -- reuse existing lib, but wrap api?
 
-SOMEDAY
+# SOMEDAY
+
 * map-entry?
 * time
 * shuffle
 * doseq
 * printf
 * tree-seq
-* make-hierarchy (and related fns)
-* eliminate recursion inefficiencies using reduce or loop or laziness
+* sequence
+* eduction / LazyTransformer / Stepper
+* make-hierarchy, et al...
+* eliminate recursion inefficiencies using reduce or loop or laziness or trampoline
 * pipe that sends intermediary values passing through to log or other effect
+* immutablejs adapter
+* channels? -- reuse existing lib, but wrap api?
+* implement IHash, ISorted, IIterable, ISequential, IFn.invoke, IRecord
+* add count property to List (not LazyList)
+* zipmap
+* random-sample
+* clojure.string
+* diff
+
+
+
