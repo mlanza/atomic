@@ -222,6 +222,8 @@ export function tap(f, x){
   return x;
 }
 
+export const see = partial(tap, log); //use with chain, pipe, comp to observe intermediaries
+
 export function rem(n, div){
   return n % div;
 }
