@@ -1,6 +1,6 @@
 import unbind from '../unbind';
-import {slice, reverse, reduce, reduceKv, identity, constantly} from '../core';
-export {slice, reverse, reduce, reduceKv};
+import {slice, reduce, reduceKv, identity, constantly} from '../core';
+export {slice, reduce, reduceKv};
 import {extend} from '../protocol';
 import Seq from '../protocols/seq';
 import Seqable from '../protocols/seqable';
@@ -9,6 +9,7 @@ import Indexed from '../protocols/indexed';
 import Reduce from '../protocols/reduce';
 import ReduceKv from '../protocols/reduce-kv';
 import Emptyable from '../protocols/emptyable';
+import Reversible from '../protocols/reversible';
 import Lookup from '../protocols/lookup';
 import Equiv from '../protocols/equiv';
 import Associative from '../protocols/associative';
@@ -16,9 +17,14 @@ import Collection from '../protocols/collection';
 import Append from '../protocols/append';
 import Prepend from '../protocols/prepend';
 import {EMPTY} from '../types/empty';
+import DirectedSlice from '../types/directed-slice';
 import {equivSeq} from '../coll';
 
 export const join = unbind(Array.prototype.join);
+
+export function rseq(self){
+  return self.length ? new DirectedSlice(self, self.length - 1, 0) : self;
+}
 
 function first(self){
   return self[0];
@@ -64,7 +70,9 @@ function prepend(self, value){
   return [value].concat(self);
 }
 
-export default extend(Array, Equiv, {
+export default extend(Array, Reversible, {
+  rseq: rseq
+}, Equiv, {
   equiv: equivSeq
 }, Append, {
   append: append

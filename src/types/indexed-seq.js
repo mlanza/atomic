@@ -30,7 +30,7 @@ IndexedSeq.prototype[Symbol.iterator] = function(){
 }
 
 export function rseq(self){
-  return new DirectedSlice(this.indexed, this.indexed.length - 1, this.begin);
+  return self.indexed.length ? new DirectedSlice(self.indexed, self.indexed.length - 1, self.begin) : self;
 }
 
 const empty = constantly([]);

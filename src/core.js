@@ -3,11 +3,7 @@ import Reduced from './types/reduced';
 
 export const log = console.log.bind(console);
 export const slice = unbind(Array.prototype.slice);
-export const assign  = Object.assign;
-
-export function reverse(xs){
-  return slice(xs).reverse();
-}
+export const assign = Object.assign;
 
 export function reduce(xs, xf, init, from){
   var memo = init, len = xs.length;
@@ -108,7 +104,7 @@ export function subj(f){
 
 export function reversed(f){
   return function(){
-    return f.apply(this, reverse(slice(arguments)));
+    return f.apply(this, slice(arguments).reverse());
   }
 }
 
