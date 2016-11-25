@@ -42,9 +42,13 @@ function get(self, value){
   return self.has(value) ? value : null;
 }
 
-function reduce(self, f, init){ //TODO optimize?
-  if (init instanceof Reduced) return init.valueOf();
-  return seq(self) ? reduce(Seq.rest(self), f, f(init, Seq.first(self))) : init;
+function reduce(self, f, init){ //TODO make default if for..of well supported
+  var memo = init;
+  for(var value of self){
+    if (memo instanceof Reduced) break;
+    memo = f(memo, value);
+  }
+  return memo instanceof Reduced ? memo.valueOf() : memo;
 }
 
 export function set(coll){
