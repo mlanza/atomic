@@ -4,11 +4,14 @@
 * atom (observable?) -- all its protocols
 * assoc-in
 * distinct -- test transducer
-* Object protocol -- toString, equiv, indexOf, lastIndexOf
 * defmulti
 
 # SOMEDAY
 
+* Object protocol -- toString, equiv, indexOf, lastIndexOf
+* ISerialize (with an edn like approach to deserialization)
+  * different from toString
+  * what about infinite recursion existing with cyclical references?
 * trampoline
 * map-entry?
 * time
