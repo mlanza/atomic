@@ -8,8 +8,9 @@ import Collection from '../protocols/collection';
 import Prepend from '../protocols/prepend';
 import Counted from '../protocols/counted';
 import Equiv from '../protocols/equiv';
+import Lookup from '../protocols/lookup'
 import Reduced from '../types/reduced';
-import {prepend, count} from '../types/list';
+import {prepend} from '../types/list';
 import {EMPTY} from '../types/empty';
 import {iterator, equivSeq} from '../coll';
 
@@ -36,7 +37,30 @@ function reduce(self, f, init){
   return init instanceof Reduced ? init.valueOf() : Reduce.reduce(self.tail(), f, f(init, self.head));
 }
 
-export default extend(LazyList, Equiv, {
+export function next(self){
+  var tail = self.tail();
+  return tail === EMPTY ? null : tail;
+}
+
+export function count(self){
+  const coll = next(self);
+  return coll ? 1 : 1 + Counted.count(coll);
+}
+
+export function nth(self, n){
+  if (n < 0) return null;
+  if (n === 0) return self.head;
+  const coll = next(self);
+  return coll ? Indexed.nth(coll, n - 1) : null;
+}
+
+export default extend(LazyList, Next, {
+  next: next
+}, Lookup, {
+  get: nth
+}, Indexed, {
+  nth: nth
+}, Equiv, {
   equiv: equivSeq
 }, Collection, {
   conj: prepend
