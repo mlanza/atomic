@@ -8,6 +8,8 @@ import Collection from '../protocols/collection';
 import Prepend from '../protocols/prepend';
 import Counted from '../protocols/counted';
 import Equiv from '../protocols/equiv';
+import Indexed from '../protocols/indexed';
+import Next from '../protocols/next';
 import {Reduced, reduced} from '../types/reduced';
 import {EMPTY} from '../types/empty';
 import {iterator, equivSeq} from '../coll';
@@ -39,13 +41,19 @@ export function prepend(self, value){
   return new List(value, self);
 }
 
+export function next(self){
+  return self.tail === EMPTY ? null : self.tail;
+}
+
 export function count(self){
-  var i = 0, coll = self;
-  while(coll = seq(coll)){
-    i++;
-    coll = Seq.rest(coll);
-  }
-  return i;
+  const coll = next(self);
+  return coll ? 1 : 1 + Counted.count(coll);
+}
+
+export function nth(self, n){
+  if (n === 0) return self.head;
+  const coll = next(self);
+  return coll ? Indexed.nth(coll, n - 1) : null;
 }
 
 extendProtocol(Collection, {conj: prepend})
@@ -58,6 +66,10 @@ export default extend(List, Equiv, {
   prepend: prepend
 }, Counted, {
   count: count
+}, Indexed, {
+  nth: nth
+}, Next, {
+  next: next
 }, Emptyable, {
   empty: empty
 }, Reduce, {
