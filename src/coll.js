@@ -1,3 +1,4 @@
+import * as c from  './core';
 import {complement, identity, isSome, overload, constantly, partial, add, is, slice, pipe, arity, unspread, juxt, key, val, reducing, isIdentical} from './core';
 import {satisfies} from './protocol';
 import {seq} from './protocols/seqable';
@@ -17,6 +18,14 @@ import Reduced from './types/reduced';
 import List from './types/list';
 import LazyList from './types/lazy-list';
 import {EMPTY} from './types/empty';
+
+export function join(xs){
+  return into("", map(str, xs));
+}
+
+export function joinWith(sep, xs){
+  return join(interpose(sep, xs));
+}
 
 export function cons(head, tail){
   return new List(head, tail || EMPTY);
@@ -265,7 +274,7 @@ export function map(f, xs){
 
 export function mapN(f, ...colls){
   return isEvery(seq, colls) ? new LazyList(f.apply(this, toArray(map(first, colls))), function(){
-    var args = [f].concat(toArray(_map(rest, colls))),
+    var args = [f].concat(toArray(map(rest, colls))),
         m    = args.length > 2 ? mapN : map;
     return m.apply(this, args);
   }) : EMPTY;
@@ -373,8 +382,9 @@ export function dropWhile(pred, xs){
 export function some(pred, xs){
   const coll = seq(xs);
   if (!coll) return null;
-  const fst = first(coll);
-  return pred(fst) ? fst : some(pred, rest(coll));
+  const fst    = first(coll),
+        result = pred(fst);
+  return result ? result : some(pred, rest(coll));
 }
 
 export function someFn(){
@@ -460,24 +470,6 @@ export function expanding(f){
   }
 }
 
-function _lastly(x, ...xs){
-  if (!xs.length) return x;
-  return x ? _lastly.apply(this, xs) : x;
-}
-
-function _firstly(x, ...xs){
-  if (!xs.length) return x;
-  return x ? x : _firstly.apply(this, xs);
-}
-
-export const firstly = overload(constantly(null), _firstly);
-export const lastly = overload(constantly(null), _lastly);
-export const or  = overload(constantly(null), identity, _firstly);
-export const and = overload(constantly(true), identity, _lastly);
-export const any = overload(constantly(null), expanding(or));
-export const all = overload(constantly(true), expanding(and));
-export const coalesce = firstly;
-
 export function pre(f, ...conds){
   var check = all.apply(this, conds);
   return function(){
@@ -531,7 +523,7 @@ export function compact(xs){
   return filter(identity, xs);
 }
 
-export function find(pred, xs){
+export function detect(pred, xs){
   return first(filter(pred, xs));
 }
 

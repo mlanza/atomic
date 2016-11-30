@@ -39,6 +39,14 @@ export function css(el, obj){
   return el;
 }
 
+export function show(el){
+  return css(el, {display: "inherit"});
+}
+
+export function hide(el){
+  return css(el, {display: "none"});
+}
+
 export function hasClass(el, str){
   return el.classList.contains(str);
 }

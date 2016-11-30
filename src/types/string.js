@@ -18,11 +18,31 @@ import Reduced from '../types/reduced';
 export const trim        = unbind(String.prototype.trim);
 export const toLowerCase = unbind(String.prototype.toLowerCase);
 export const toUpperCase = unbind(String.prototype.toUpperCase);
-export const split       = unbind(String.prototype.split);
 export const replace     = unbind(String.prototype.replace);
 export const substring   = unbind(String.prototype.substring);
 export const startsWith  = unbind(String.prototype.startsWith);
 export const endsWith    = unbind(String.prototype.endsWith);
+
+export function split(str, pattern, n){
+  var parts = [];
+  while(str && n !== 0){
+    var found = str.match(pattern);
+    if (!found || n < 2) {
+      parts.push(str);
+      break;
+    }
+    var pos  = str.indexOf(found),
+        part = str.substring(0, pos);
+    parts.push(part);
+    str = str.substring(pos + found.length);
+    n = n ? n - 1 : n;
+  }
+  return parts;
+}
+
+export function isBlank(str){
+  return str == null || str.trim().length === 0;
+}
 
 export function concat(){
   return reduce(arguments, conj, "");

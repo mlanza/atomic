@@ -58,7 +58,7 @@ export function filter(pred){
   }
 }
 
-export function find(pred){
+export function detect(pred){
   return function(xf){
     return overload(xf, xf, function(memo, value){
       return pred(value) ? new Reduced(value) : null;
