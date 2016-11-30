@@ -8,7 +8,9 @@ import Collection from '../protocols/collection';
 import Prepend from '../protocols/prepend';
 import Counted from '../protocols/counted';
 import Equiv from '../protocols/equiv';
-import Lookup from '../protocols/lookup'
+import Next from '../protocols/next';
+import Indexed from '../protocols/indexed';
+import Lookup from '../protocols/lookup';
 import Reduced from '../types/reduced';
 import {prepend} from '../types/list';
 import {EMPTY} from '../types/empty';
