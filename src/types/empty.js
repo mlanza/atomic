@@ -1,4 +1,4 @@
-import {identity, constantly, noop} from '../core';
+import {identity, constantly, noop, NIL, ZERO} from '../core';
 import {extend} from '../protocol';
 import Next from '../protocols/next';
 import Seq from '../protocols/seq';
@@ -17,7 +17,7 @@ export function Empty(){
 }
 
 export const EMPTY = new Empty();
-export const count = constantly(0);
+export const count = ZERO;
 
 function equiv(self, xs){
   return Counted.count(xs) === 0;
@@ -40,10 +40,10 @@ export default extend(Empty, Equiv, {
 }, Reduce, {
   reduce: reduce
 }, Seqable, {
-  seq: constantly(null)
+  seq: NIL
 }, Next, {
-  next: constantly(null)
+  next: NIL
 }, Seq, {
-  first: constantly(null),
+  first: NIL,
   rest: identity
 });

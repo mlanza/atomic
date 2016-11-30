@@ -1,4 +1,4 @@
-import {identity, constantly} from '../core';
+import {identity, constantly, NIL, FALSE} from '../core';
 import {extend} from '../protocol';
 import Emptyable from '../protocols/emptyable';
 import Seqable from '../protocols/seqable';
@@ -11,6 +11,7 @@ import Associative from '../protocols/associative';
 import Lookup from '../protocols/lookup';
 import List from '../types/list';
 import {EMPTY} from '../types/empty';
+export {NIL} from '../core';
 
 function reduce(){
   return arguments[2];
@@ -31,10 +32,10 @@ export default extend(null, Collection, {
 }, Prepend, {
   prepend: prepend
 }, Lookup, {
-  get: constantly(null)
+  get: NIL
 }, Associative, {
   assoc: assoc,
-  hasKey: constantly(false)
+  hasKey: FALSE
 }, Emptyable, {
   seq: identity
 }, Seqable, {
@@ -42,8 +43,8 @@ export default extend(null, Collection, {
 }, Reduce, {
   reduce: reduce
 }, Seq, {
-  first: constantly(null),
+  first: NIL,
   rest:  constantly(EMPTY)
 }, Next, {
-  next: constantly(null)
+  next: NIL
 });

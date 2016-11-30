@@ -243,9 +243,11 @@ export function branch(value, pred, f){
 
 export const cond = subj(branch);
 
-export const memoize = overload(null, function(f){
-  return memoize(f, identity);
-}, function(f, hash){
+export function memoize(f){
+  return memoizeWith(f, identity);
+}
+
+export function memoizeWith(f, hash){
   const cache = {};
   return function(){
     var key = hash.apply(this, arguments);
@@ -253,10 +255,10 @@ export const memoize = overload(null, function(f){
       return cache[key];
     return cache[key] = f.apply(this, arguments);
   }
-});
+}
 
 export function delay(f){ //a.k.a. once
-  return memoize(f, constantly(""));
+  return memoizeWith(f, BLANK);
 }
 
 export function juxt(){
@@ -313,3 +315,20 @@ function s4() {
 export function guid() {
   return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
 }
+
+export function lastly(x, ...xs){
+  if (!xs.length) return x;
+  return x ? lastly.apply(this, xs) : x;
+}
+
+export function firstly(x, ...xs){
+  if (!xs.length) return x;
+  return x ? x : firstly.apply(this, xs);
+}
+
+export const BLANK = constantly("");
+export const NIL   = constantly(null);
+export const TRUE  = constantly(true);
+export const FALSE = constantly(false);
+export const ZERO  = constantly(0);
+export const ONE   = constantly(1);
