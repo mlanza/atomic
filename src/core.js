@@ -49,7 +49,7 @@ export function curry(f, len, applied){
     } else {
       return curry(f, len, args);
     }
-  } : curry(f, f.length);
+  } : curry(f, f.length || 2);
 }
 
 export function complement(f){
