@@ -102,6 +102,16 @@ export function subj(f){
   }
 }
 
+export function prep(f){
+  return function(){
+    const applied = slice(arguments);
+    return function(obj){
+      const args = slice(arguments);
+      return f.apply(this, applied.concat(args));
+    }
+  }
+}
+
 export function reversed(f){
   return function(){
     return f.apply(this, slice(arguments).reverse());
