@@ -182,11 +182,6 @@ export function divide(a, b){
   return a / b;
 }
 
-export const plus  = overload(constantly(0), identity, add, reducing(add));
-export const minus = overload(constantly(0), partial(multiply, -1), subtract, reducing(subtract));
-export const mult  = overload(constantly(1), identity, multiply, reducing(multiply));
-export const div   = overload(constantly(NaN), partial(divide, 1), divide, reducing(divide));
-
 export function isIdentical(a, b){
   return a === b;
 }
