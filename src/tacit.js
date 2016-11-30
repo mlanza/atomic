@@ -1,4 +1,4 @@
-import {overload, curry, partial, flip, subj, constantly, identity, NIL, TRUE, FALSE, ZERO, ONE} from './core';
+import {overload, curry, partial, flip, subj, prep, constantly, identity, NIL, TRUE, FALSE, ZERO, ONE} from './core';
 import * as _ from './core';
 import * as c from './coll';
 import * as t from './transducer';
@@ -50,7 +50,7 @@ export const dec          = add(-1);
 export const memoize      = overload(null, _.memoize, _.memoizeWith);
 export const join         = curry(c.joinWith);
 export const repeat       = curry(c.repeat);
-export const into         = overload(null, null, c.into, c.intoX);
+export const into         = prep(overload(null, null, c.into, c.intoX));
 export const transduce    = overload(null, null, null, c.transduce3, c.transduce4);
 export const cons         = flip(c.cons, 2);
 export const conj         = flip(_conj, 2);

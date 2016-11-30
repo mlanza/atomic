@@ -1,2 +1,2 @@
-export * from './clo';
-import * as clo from '../test/clo';
+export * from './tacit';
+import * as clo from '../test/tacit';
