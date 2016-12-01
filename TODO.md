@@ -1,13 +1,12 @@
 # TODO
 
-* refine api/tests to mirror clojure's; create chainable api as secondary
-* atom (observable?) -- all its protocols
 * matches (e.g. underscorejs)
 
 # SOMEDAY
 
 * defmulti
 * Object protocol -- toString, equiv, indexOf, lastIndexOf
+* improve structure to aid in tree shaking
 * ISerialize (with an edn like approach to deserialization)
   * different from toString
   * what about infinite recursion existing with cyclical references?
