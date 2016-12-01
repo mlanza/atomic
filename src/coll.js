@@ -20,7 +20,7 @@ import LazyList from './types/lazy-list';
 import {EMPTY} from './types/empty';
 
 export function join(xs){
-  return into("", map(str, xs));
+  return _into("", map(str, xs));
 }
 
 export function joinWith(sep, xs){
@@ -168,7 +168,7 @@ export function str(obj){
 }
 
 export function strN(){
-  return into("", map(str, arguments));
+  return _into("", map(str, arguments));
 }
 
 export function dropLast(n, xs){
@@ -574,7 +574,7 @@ export const max = partial(best, gt);
 export const min = partial(best, lt);
 
 export function toArray(xs){
-  return xs instanceof Array ? xs : into([], xs);
+  return xs instanceof Array ? xs : _into([], xs);
 }
 
 export function toObject(obj){
@@ -650,22 +650,26 @@ export function seeding(f, init){
   return overload(init, identity, f);
 }
 
-export function transduce3(xform, f, coll){
+function _into(to, from){
+  return from ? reduce(from, Collection.conj, to) : to;
+}
+
+function _intoX(to, xform, from){
+  return transduce4(xform, Collection.conj, to, from);
+}
+
+export const into = overload(constantly([]), identity, _into, _intoX);
+
+function _transduce3(xform, f, coll){
   var xf = xform(f);
   return xf(reduce(coll, xf, xf()));
 }
 
-export function transduce4(xform, f, seed, coll){
-  return transduce3(xform, seeding(f, constantly(seed)), coll);
+function _transduce4(xform, f, seed, coll){
+  return _transduce3(xform, seeding(f, constantly(seed)), coll);
 }
 
-export function into(to, from){
-  return from ? reduce(from, Collection.conj, to) : to;
-}
-
-export function intoX(to, xform, from){
-  return transduce4(xform, Collection.conj, to, from);
-}
+export const transduce = overload(null, null, null, _transduce3, _transduce4);
 
 export function expansive(f){
   var isFn = partial(is, Function);

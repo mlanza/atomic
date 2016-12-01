@@ -1,4 +1,4 @@
-import {join, split, constantly, expansive, get, subs, map, inc, into, range, comp, cat, concat, mapIndexed, filter, remove, dedupe, distinct, partial, cycle, take, takeNth, takeWhile, repeatedly, drop, dropWhile, min, max, str, assoc, butlast, conj, interpose, repeat, keepIndexed, isEvery, selectKeys, some, detect, isOdd, isEven, gt, lt, eq, lte, gte, append, prepend, detach, query, fetch, closest, parent, addClass, hasClass, toggleClass, tag, text, show, hide} from '../src/clo';
+import {join, split, constantly, expansive, get, subs, map, inc, into, range, comp, cat, concat, mapIndexed, filter, remove, dedupe, distinct, partial, cycle, take, takeNth, takeWhile, repeatedly, drop, dropWhile, min, max, str, assoc, butlast, conj, interpose, repeat, keepIndexed, isEvery, selectKeys, some, detect, isOdd, isEven, gt, lt, eq, lte, gte, append, prepend, detach, query, fetch, closest, parent, addClass, hasClass, toggleClass, tag, text, show, hide} from '../src/clojure';
 
 QUnit.test("Traverse and manipulate the dom", function(assert){
   const ul = partial(tag, 'ul'), li = partial(tag, 'li'), div = expansive(partial(tag, 'div')), span = partial(tag, 'span');
