@@ -1,13 +1,65 @@
-import {log, merge, fnil, selectKeys, keep, keepIndexed, reverse, cons, partition, partitionBy, partitionAll, keys, isEven, isOdd, someFn, everyPred, str, doall, butlast, dropLast, takeLast, scan, best, getIn, update, updateIn, assocIn, interpose, interleave, min, max, dedupe, distinct, cat, cycle, overload, toUpperCase, expansive, observable, publisher, reify, swap, reset, subscribe, publish, deref, eq, ne, into, transduce, text, hide, show, tag, tap, detach, parent, addClass, append, prepend, inc, gt, lt, some, isEvery, mapIndexed, range, constantly, conj, drop, take, takeNth, repeat, repeatedly, chain, comp, pipe, opt, maybe, add, juxt, query, fetch, get, assoc, hasKey, first, second, third, rest, nth, next, count, reduce, reduceKV, each, map, filter, remove, takeWhile, dropWhile, detect, satisfies, concat, flatten, toArray, toObject, or, and, partial, see} from '../src/tacit';
+import {log, join, subs, split, EMPTY, empty, merge, fnil, selectKeys, keep, keepIndexed, reverse, cons, partition, partitionBy, partitionAll, keys, isEven, isOdd, someFn, everyPred, str, doall, butlast, dropLast, takeLast, scan, best, getIn, update, updateIn, assocIn, interpose, interleave, min, max, dedupe, distinct, cat, cycle, overload, toUpperCase, expansive, observable, publisher, reify, swap, reset, subscribe, publish, deref, eq, ne, into, transduce, text, hide, show, tag, tap, detach, parent, addClass, append, prepend, inc, gt, lt, some, isEvery, mapIndexed, range, constantly, conj, drop, take, takeNth, repeat, repeatedly, chain, comp, pipe, opt, maybe, add, juxt, query, fetch, get, assoc, hasKey, first, second, third, rest, nth, next, count, reduce, reduceKV, each, map, filter, remove, takeWhile, dropWhile, detect, satisfies, concat, flatten, toArray, toObject, or, and, partial, see} from '../src/tacit';
 import Reduce from '../src/protocols/reduce';
 import Lookup from '../src/protocols/lookup';
 import IndexedSeq from '../src/types/indexed-seq';
 
-QUnit.test("Predicates", function(assert){
+QUnit.test("Traverse and manipulate the dom", function(assert){
+  const ul = tag('ul'), li = tag('li'), div = expansive(tag('div')), span = tag('span');
+  const stooges = ul(li({id: 'moe'}, "Moe Howard"), li({id: 'curly'}, "Curly Howard"), li({id: 'larry'}, "Larry Fine"));
+  const body = fetch("body", document);
+  const who = div(get("givenName"), " ", get("sn"));
+  const moe = who(assoc("givenName", "Moe"));
+  assert.ok(body instanceof HTMLBodyElement, "Found by tag");
+  assert.equal(chain({givenName: "Curly", sn: "Howard"}, moe, text), "Moe Howard");
+  assert.equal(chain({givenName: "Curly", sn: "Howard"}, who, text), "Curly Howard");
+  assert.equal(chain(body, addClass("main"), assoc("data-tagged", "tests"), get("data-tagged")), "tests");
+  chain(body, append(div({id: 'branding'}, span("Greetings!"))));
+  assert.ok(chain(body, fetch("#branding")) instanceof HTMLDivElement, "Found by id");
+  assert.equal(chain(body, fetch("#branding span"), text), "Greetings!", "Read text content");
+  const greeting = fetch("#branding span", document);
+  hide(greeting);
+  assert.equal(chain(greeting, get("style")), "display: none;", "Hidden");
+  show(greeting);
+  assert.equal(chain(greeting, get("style")), "display: inherit;", "Shown");
+  const branding = fetch("#branding", body);
+  detach(branding);
+  assert.equal(parent(branding), null, "Removed");
+});
+
+QUnit.test("predicates", function(assert){
   assert.equal(chain(3, or(1)), 3);
   assert.equal(chain(null, or(1)), 1);
   assert.equal(chain(3, and(1)), 1);
   assert.equal(chain(null, and(1)), null);
+});
+
+QUnit.test("min/max", function(assert){
+  assert.equal(chain(-9, min(9, 0)), -9);
+  assert.equal(chain(-9, max(9, 0)),  9);
+});
+
+QUnit.test("assoc", function(assert){
+  assert.deepEqual(chain({sn: "Howard"}, assoc("givenName", "Moe")), {givenName: "Moe", sn: "Howard"});
+  assert.deepEqual(chain([1, 2, 3], assoc(1, 0)), [1, 0, 3]);
+});
+
+QUnit.test("append/prepend", function(assert){
+  assert.deepEqual(chain(["Moe"], append("Howard")), ["Moe", "Howard"]);
+  assert.deepEqual(chain({sn: "Howard"}, append(['givenName', "Moe"])), {givenName: "Moe", sn: "Howard"});
+  assert.deepEqual(chain([1, 2], append(3)), [1, 2, 3]);
+  assert.deepEqual(chain([1, 2], prepend(0)), [0, 1, 2]);
+});
+
+QUnit.test("strings", function(assert){
+  assert.deepEqual(chain("I like peanutbutter", split(" ")), ["I", "like", "peanutbutter"]);
+  assert.deepEqual(chain("q1w2e3r4t5y6u7i8o9p", split(/\d/)), ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p"]);
+  assert.deepEqual(chain("q1w2e3r4t5y6u7i8o9p", split(/\d/, 4)), ["q", "w", "e", "r4t5y6u7i8o9p"]);
+  assert.equal(chain("reading", subs(3)), "ding");
+  assert.equal(chain("reading", subs(0, 4)), "read");
+  assert.equal(chain(["spam", null, "eggs", "", "spam"], join(", ")), "spam, , eggs, , spam");
+  assert.equal(chain([1, 2, 3], join(", ")), "1, 2, 3");
+  assert.equal(chain(["ace", "king", "queen"], join("-")), "ace-king-queen");
+  assert.equal(chain(["hello", " ", "world"], join("")), "hello world");
 });
 
 QUnit.test("Lookup", function(assert){
@@ -58,64 +110,63 @@ QUnit.test("coersion", function(assert){
   assert.deepEqual(chain({Moe: "Howard", Curly: "Howard"}, toArray), [["Moe", "Howard"], ["Curly", "Howard"]]);
 });
 
-QUnit.test("Reify", function(assert){
-  assert.equal(chain(reify(Lookup, {get: constantly("O")}), get(50)), "O");
+QUnit.test("sequences", function(assert){
+  assert.deepEqual(chain([1, 2, 3], empty), []);
+  assert.deepEqual(chain(null, into([])), []);
+  assert.deepEqual(chain(EMPTY, into([])), []);
+  assert.deepEqual(chain(repeat(1), take(2), toArray), [1, 1]);
+  assert.deepEqual(chain([1, 2, 3], butlast, toArray), [1, 2]);
+  assert.deepEqual(chain(["A","B","C"], interpose("-"), toArray), ["A", "-", "B", "-", "C"]);
+  assert.deepEqual(chain(repeat(1), take(5), toArray), [1,1,1,1,1]);
+  assert.deepEqual(chain(repeat(1), take(5), conj(0), conj(-1), toArray), [-1, 0, 1, 1, 1, 1, 1]);
+  assert.deepEqual(chain(range(10), take(5), toArray), [0, 1, 2, 3, 4]);
+  assert.deepEqual(chain(range(-5, 5), toArray), [-5, -4, -3, -2, -1, 0, 1, 2, 3, 4]);
+  assert.deepEqual(chain(range(-20, 100, 10), toArray), [-20, -10, 0, 10, 20, 30, 40, 50, 60, 70, 80, 90]);
+  assert.deepEqual(chain(range(10), drop(3), take(3), toArray), [3, 4, 5]);
+  assert.deepEqual(chain([1, 2, 3], map(inc), toArray), [2, 3, 4]);
+  assert.equal(chain([1, 2, 3, 4], some(isEven)), true);
+  assert.equal(chain([1, 2, 3, 4], detect(isEven)), 2);
+  assert.equal(chain(range(10), some(x => x > 5)), true);
+  assert.equal(chain(range(10), detect(x => x > 5)), 6);
+  assert.notOk(chain(range(10), isEvery(x => x > 5)));
+  assert.deepEqual(chain({ace: 1, king: 2, queen: 3}, selectKeys(["ace", "king"])), {ace: 1, king: 2});
+  assert.equal(chain("Polo", into("Marco ")), "Marco Polo");
+  assert.deepEqual(chain([5, 6, 7, 8, 9], filter(x => x > 6), into("")), "789");
+  assert.deepEqual(chain("Polo", toArray), ["P", "o", "l", "o"]);
+  assert.deepEqual(chain([1, 2, 3], cycle, take(7), toArray), [1, 2, 3, 1, 2, 3, 1]);
+  assert.deepEqual(chain([1, 2, 3, 3, 4, 4, 4, 5, 6, 6, 7], dedupe, toArray), [1, 2, 3, 4, 5, 6, 7]);
+  assert.deepEqual(chain([1, 2, 3, 1, 4, 3, 4, 3, 2, 2], distinct, toArray), [1, 2, 3, 4]);
+  assert.deepEqual(chain(range(10), takeNth(2), toArray), [0, 2, 4, 6, 8]);
+  assert.deepEqual(chain(1, constantly, repeatedly, take(0), toArray), []);
+  assert.deepEqual(chain(2, constantly, repeatedly, take(10), toArray), [2, 2, 2, 2, 2, 2, 2, 2, 2, 2]);
+  assert.deepEqual(chain(range(10), take(5), toArray), [0, 1, 2, 3, 4]);
+  assert.deepEqual(chain(range(10), filter(x => x > 5), toArray), [6, 7, 8, 9]);
+  assert.deepEqual(chain(range(10), remove(x => x > 5), toArray), [0, 1, 2, 3, 4, 5]);
+  assert.deepEqual(chain(range(10), takeWhile(x => x < 5), toArray), [0, 1, 2, 3, 4]);
+  assert.deepEqual(chain(range(10), dropWhile(x => x > 5), toArray), [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
+  assert.deepEqual(chain(range(1, 5), map(inc), toArray), [2, 3, 4, 5]);
+  assert.deepEqual(chain([10, 11, 12], map(inc), toArray), [11, 12, 13]);
+  assert.deepEqual(chain([5, 6, 7, 8, 9], filter(x => x > 6), map(inc), take(2), toArray), [8, 9]);
+  assert.deepEqual(chain(range(7, 15), take(10), toArray), [7, 8, 9, 10, 11, 12, 13, 14]);
+  assert.deepEqual(chain(range(5), toArray), [0, 1, 2, 3, 4]);
+  assert.deepEqual(chain("X", repeat, take(5), toArray), ["X", "X", "X", "X", "X"]);
+  assert.deepEqual(chain([1, 2], concat([3, 4], [5, 6]), toArray), [1, 2, 3, 4, 5, 6]);
+  assert.deepEqual(chain(["a", "b", "c", "d", "e"], keepIndexed(function(idx, value){
+    if (isOdd(idx)) return value;
+  }), toArray), ["b", "d"]);
+  assert.deepEqual(chain([10, 11, 12], mapIndexed(function(idx, value){
+    return [idx, inc(value)];
+  }), toArray), [[0, 11], [1, 12], [2, 13]]);
 });
 
-QUnit.test("sequences", function(assert){
-  assert.deepEqual(chain([1, 2, 3], butlast, into([])), [1, 2]);
-  assert.deepEqual(chain(["A","B","C"], interpose("-"), into([])), ["A", "-", "B", "-", "C"]);
-  assert.deepEqual(chain(repeat(1), take(5), into([])), [1,1,1,1,1]);
-  assert.deepEqual(chain(repeat(1), take(5), conj(0), conj(-1), into([])), [-1, 0, 1, 1, 1, 1, 1]);
-  assert.deepEqual(chain(range(10), take(5), into([])), [0, 1, 2, 3, 4]);
-  assert.deepEqual(chain(range(-5, 5), into([])), [-5, -4, -3, -2, -1, 0, 1, 2, 3, 4]);
-  assert.deepEqual(chain(range(-20, 100, 10), into([])), [-20, -10, 0, 10, 20, 30, 40, 50, 60, 70, 80, 90]);
-  assert.deepEqual(chain(range(10), drop(3), take(3), into([])), [3, 4, 5]);
-  /*
-  assert.deepEqual(into([], take(3, drop(3, range(10)))), [3, 4, 5]);
-  assert.deepEqual(into([], map(inc, [1, 2, 3])), [2, 3, 4]);
-  assert.deepEqual(into([], map(inc), [1, 2, 3]), [2, 3, 4]);
-  assert.deepEqual(into([], keepIndexed(function(idx, value){
-    if (isOdd(idx)) return value;
-  }), ["a", "b", "c", "d", "e"]), ["b", "d"]);
-  assert.equal(some(isEven, [1, 2, 3, 4]), true);
-  assert.equal(detect(isEven, [1, 2, 3, 4]), 2);
-  assert.equal(some(x => x > 5, range(10)), true);
-  assert.equal(detect(x => x > 5, range(10)), 6);
-  assert.notOk(isEvery(x => x > 5, range(10)));
-  assert.deepEqual(selectKeys(["ace", "king"], {ace: 1, king: 2, queen: 3}), {ace: 1, king: 2});
-  assert.equal(into("Marco ", "Polo"), "Marco Polo");
-  assert.deepEqual(into("", filter(x => x > 6), [5, 6, 7, 8, 9]), "789");
-  assert.deepEqual(into([], "Polo"), ["P", "o", "l", "o"]);
-  assert.deepEqual(into([], take(7), cycle([1, 2, 3])), [1, 2, 3, 1, 2, 3, 1]);
-  assert.deepEqual(into([], dedupe([1, 2, 3, 3, 4, 4, 4, 5, 6, 6, 7])), [1, 2, 3, 4, 5, 6, 7]);
-  assert.deepEqual(into([], dedupe(), [1, 2, 3, 3, 4, 4, 4, 5, 6, 6, 7]), [1, 2, 3, 4, 5, 6, 7]);
-  assert.deepEqual(into([], distinct([1, 2, 3, 1, 4, 3, 4, 3, 2, 2])), [1, 2, 3, 4]);
-  assert.deepEqual(into([], distinct(), [1, 2, 3, 1, 4, 3, 4, 3, 2, 2]), [1, 2, 3, 4]);
-  assert.deepEqual(into([], takeNth(2, range(10))), [0, 2, 4, 6, 8]);
-  assert.deepEqual(into([], takeNth(2), range(10)), [0, 2, 4, 6, 8]);
-  assert.deepEqual(into([], repeatedly(0, constantly(1))), []);
-  assert.deepEqual(into([], repeatedly(10, constantly(2))), [2, 2, 2, 2, 2, 2, 2, 2, 2, 2]);
-  assert.deepEqual(into([], take(5, range(10))), [0, 1, 2, 3, 4]);
-  assert.deepEqual(into([], filter(x => x > 5), range(10)), [6, 7, 8, 9]);
-  assert.deepEqual(into([], filter(x => x > 5, range(10))), [6, 7, 8, 9]);
-  assert.deepEqual(into([], remove(x => x > 5), range(10)), [0, 1, 2, 3, 4, 5]);
-  assert.deepEqual(into([], remove(x => x > 5, range(10))), [0, 1, 2, 3, 4, 5]);
-  assert.deepEqual(into([], takeWhile(x => x < 5), range(10)), [0, 1, 2, 3, 4]);
-  assert.deepEqual(into([], takeWhile(x => x < 5, range(10))), [0, 1, 2, 3, 4]);
-  assert.deepEqual(into([], dropWhile(x => x > 5), range(10)), [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
-  assert.deepEqual(into([], dropWhile(x => x > 5, range(10))), [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
-  assert.deepEqual(into([], map(inc), range(1, 5)), [2, 3, 4, 5]);
-  assert.deepEqual(into([], map(inc, range(1, 5))), [2, 3, 4, 5]);
-  assert.deepEqual(into([], map(inc), [10, 11, 12]), [11, 12, 13]);
-  assert.deepEqual(into([], comp(filter(x => x > 6), map(inc), take(2)), [5, 6, 7, 8, 9]), [8, 9]);
-  assert.deepEqual(into([], take(2, map(inc, filter(x => x > 6, [5, 6, 7, 8, 9])))), [8, 9]);
-  assert.deepEqual(into([], take(10), range(7, 15)), [7, 8, 9, 10, 11, 12, 13, 14]);
-  assert.deepEqual(into([], range(5)), [0, 1, 2, 3, 4]);
-  assert.deepEqual(into([], repeat(5, "X")), ["X", "X", "X", "X", "X"]);
-  assert.deepEqual(into([], cat([[1, 2, 3], [4, 5, 6]])), [1, 2, 3, 4, 5, 6]);
-  assert.deepEqual(into([], concat([1, 2], [3, 4], [5, 6])), [1, 2, 3, 4, 5, 6]);
-  assert.deepEqual(into([], mapIndexed(function(idx, value){
-    return [idx, inc(value)];
-  }, [10, 11, 12])), [[0, 11], [1, 12], [2, 13]]); */
+QUnit.test("equality", function(assert){
+  assert.ok(chain("Curly", eq("Curly")), "Equal strings");
+  assert.notOk(chain("Curlers", eq("Curly")), "Unequal strings");
+  assert.ok(chain("Curlers", ne("Curly")), "Unequal strings");
+  assert.ok(chain(45, eq(45)), "Equal numbers");
+  assert.ok(chain([1, 2, 3], eq([1, 2, 3])), "Equal arrays");
+  assert.notOk(chain([1, 2, 3], eq([2, 3])), "Unequal arrays");
+  assert.notOk(chain([1, 2, 3], eq([3, 2, 1])), "Unequal arrays");
+  assert.ok(chain({fname: "Moe", lname: "Howard"}, eq({fname: "Moe", lname: "Howard"})), "Equal objects");
+  assert.notOk(chain({fname: "Moe", middle: "Harry", lname: "Howard"}, eq({fname: "Moe", lname: "Howard"})), "Unequal objects");
 });

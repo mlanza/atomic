@@ -2,6 +2,7 @@
 
 * refine api/tests to mirror clojure's; create chainable api as secondary
 * atom (observable?) -- all its protocols
+* matches (e.g. underscorejs)
 
 # SOMEDAY
 
