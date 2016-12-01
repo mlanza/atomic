@@ -13,11 +13,18 @@ import Associative from './protocols/associative';
 import Comparable from './protocols/comparable';
 import Reversible from './protocols/reversible';
 import {reduce} from './protocols/reduce';
+import {reduceKv} from './protocols/reduce-kv';
 import DirectedSlice from './types/directed-slice';
 import Reduced from './types/reduced';
 import List from './types/list';
 import LazyList from './types/lazy-list';
 import {EMPTY} from './types/empty';
+
+export function matches(template, obj){
+  return reduceKv(template, function(memo, key, value){
+    return memo ? obj[key] == value : new Reduced(memo);
+  }, true);
+}
 
 export function join(xs){
   return _into("", map(str, xs));

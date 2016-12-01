@@ -83,6 +83,7 @@ export const gt           = flip(c.gt);
 export const gte          = flip(c.gte);
 export const lt           = flip(c.lt);
 export const lte          = flip(c.lte);
+export const matches      = curry(c.matches);
 export const str          = curry(c.strN, 2);
 export const assoc        = flip(_assoc, 3);
 export const dissoc       = flip(_dissoc, 2);

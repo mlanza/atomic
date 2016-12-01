@@ -1,6 +1,6 @@
 # TODO
 
-* matches (e.g. underscorejs)
+* examine other apis: ramda, underscore, sugar
 
 # SOMEDAY
 
@@ -10,6 +10,7 @@
 * ISerialize (with an edn like approach to deserialization)
   * different from toString
   * what about infinite recursion existing with cyclical references?
+    * use a reference type that acts as a pointer?
 * trampoline
 * map-entry?
 * time

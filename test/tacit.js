@@ -1,4 +1,4 @@
-import {log, join, subs, split, EMPTY, empty, merge, fnil, selectKeys, keep, keepIndexed, reverse, cons, partition, partitionBy, partitionAll, keys, isEven, isOdd, someFn, everyPred, str, doall, butlast, dropLast, takeLast, scan, best, getIn, update, updateIn, assocIn, interpose, interleave, min, max, dedupe, distinct, cat, cycle, overload, toUpperCase, expansive, observable, publisher, reify, swap, reset, subscribe, publish, deref, eq, ne, into, transduce, text, hide, show, tag, tap, detach, parent, addClass, append, prepend, inc, gt, lt, some, isEvery, mapIndexed, range, constantly, conj, drop, take, takeNth, repeat, repeatedly, chain, comp, pipe, opt, maybe, add, juxt, query, fetch, get, assoc, hasKey, first, second, third, rest, nth, next, count, reduce, reduceKV, each, map, filter, remove, takeWhile, dropWhile, detect, satisfies, concat, flatten, toArray, toObject, or, and, partial, see} from '../src/tacit';
+import {log, matches, join, subs, split, EMPTY, empty, merge, fnil, selectKeys, keep, keepIndexed, reverse, cons, partition, partitionBy, partitionAll, keys, isEven, isOdd, someFn, everyPred, str, doall, butlast, dropLast, takeLast, scan, best, getIn, update, updateIn, assocIn, interpose, interleave, min, max, dedupe, distinct, cat, cycle, overload, toUpperCase, expansive, observable, publisher, reify, swap, reset, subscribe, publish, deref, eq, ne, into, transduce, text, hide, show, tag, tap, detach, parent, addClass, append, prepend, inc, gt, lt, some, isEvery, mapIndexed, range, constantly, conj, drop, take, takeNth, repeat, repeatedly, chain, comp, pipe, opt, maybe, add, juxt, query, fetch, get, assoc, hasKey, first, second, third, rest, nth, next, count, reduce, reduceKV, each, map, filter, remove, takeWhile, dropWhile, detect, satisfies, concat, flatten, toArray, toObject, or, and, partial, see} from '../src/tacit';
 import Reduce from '../src/protocols/reduce';
 import Lookup from '../src/protocols/lookup';
 import IndexedSeq from '../src/types/indexed-seq';
@@ -15,8 +15,8 @@ QUnit.test("observable", function(assert){
     chain(bucket, swap(conj("soda")));
   });
   chain(bucket, swap(assoc(1, "wine")));
-  assert.deepEqual(chain(bucket, deref), ["ice", "wine"]);
-  assert.deepEqual(chain(states, deref), [[], ["ice"], ["ice", "champagne"], ["ice", "wine"]]);
+  assert.deepEqual(deref(bucket), ["ice", "wine"]);
+  assert.deepEqual(deref(states), [[], ["ice"], ["ice", "champagne"], ["ice", "wine"]]);
 });
 
 QUnit.test("Traverse and manipulate the dom", function(assert){
@@ -43,6 +43,7 @@ QUnit.test("Traverse and manipulate the dom", function(assert){
 });
 
 QUnit.test("predicates", function(assert){
+  assert.ok(chain({ace: 1, king: 2, queen: 3}, matches({ace: 1, king: 2})));
   assert.equal(chain(3, or(1)), 3);
   assert.equal(chain(null, or(1)), 1);
   assert.equal(chain(3, and(1)), 1);
