@@ -95,13 +95,9 @@ export function subj(f){
   }
 }
 
-export function partly(f){
+export function partially(f){
   return function(){
-    const applied = slice(arguments);
-    return function(){
-      const args = slice(arguments);
-      return f.apply(this, applied.concat(args));
-    }
+    return partial.apply(this, [f].concat(slice(arguments)));
   }
 }
 

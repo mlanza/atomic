@@ -12,9 +12,9 @@ export function Publisher(subs){
   this[_count] = 0;
 }
 
-function subscribe(f){
-  var self = this,
-      id   = this[_count]++,
+function subscribe(self, f){
+  var self = self,
+      id   = self[_count]++,
       subs = self[_subscriptions];
   subs[id] = f;
   return function unsubscribe(){
@@ -22,13 +22,12 @@ function subscribe(f){
   }
 }
 
-function publish(message){
+function publish(self, ...message){
   each(function(pair){
-    pair[1](message);
-  }, this[_subscriptions]);
+    var callback = pair[1];
+    callback.apply(this, message);
+  }, self[_subscriptions]);
 }
-
-Object.assign(Publisher.prototype, {subscribe, publish});
 
 export function publisher(subs){
   return new Publisher(subs);

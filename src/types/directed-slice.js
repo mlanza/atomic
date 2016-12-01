@@ -56,7 +56,10 @@ function nth(self, n){
   return n < self.length ? self.indexed[self.begin + (n * self.step)] : null;
 }
 
-const get = nth;
+
+function get(self, key){
+  return self.indexed[key];
+}
 
 function reduce(self, f, init) {
   var memo = init, len = self.length, indexed = self.indexed, begin = self.begin, step = self.step;

@@ -46,6 +46,10 @@ function nth(self, n){
   return n < self.length ? self[n] : null;
 }
 
+function get(self, key){
+  return self[key];
+}
+
 function hasKey(self, key){
   return key > -1 && key < self.length;
 }
@@ -81,7 +85,7 @@ export default extend(Array, Reversible, {
 }, Collection, {
   conj: append
 }, Lookup, {
-  get: nth
+  get: get
 }, Associative, {
   assoc: assoc,
   dissoc: dissoc,

@@ -3,6 +3,22 @@ import Reduce from '../src/protocols/reduce';
 import Lookup from '../src/protocols/lookup';
 import IndexedSeq from '../src/types/indexed-seq';
 
+QUnit.test("observable", function(assert){
+  const bucket = observable([], pipe(get('length'), lt(3))),
+        states = observable([]);
+  subscribe(function(state){
+    swap(conj(state), states);
+  }, bucket);
+  chain(bucket, swap(conj("ice")));
+  chain(bucket, swap(conj("champagne")));
+  assert.throws(function(){
+    chain(bucket, swap(conj("soda")));
+  });
+  chain(bucket, swap(assoc(1, "wine")));
+  assert.deepEqual(chain(bucket, deref), ["ice", "wine"]);
+  assert.deepEqual(chain(states, deref), [[], ["ice"], ["ice", "champagne"], ["ice", "wine"]]);
+});
+
 QUnit.test("Traverse and manipulate the dom", function(assert){
   const ul = tag('ul'), li = tag('li'), div = expansive(tag('div')), span = tag('span');
   const stooges = ul(li({id: 'moe'}, "Moe Howard"), li({id: 'curly'}, "Curly Howard"), li({id: 'larry'}, "Larry Fine"));
