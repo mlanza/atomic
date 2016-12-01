@@ -200,6 +200,10 @@ export function compare(x, y){
   return Comparable.compare(x, y);
 }
 
+export function isEmpty(xs){
+  return xs == null || !seq(xs);
+}
+
 export function sortWith(compare, xs){
   var arr = is(Array, xs) ? slice(xs) : toArray(xs);
   arr.sort(compare);
@@ -570,8 +574,7 @@ export const max = partial(best, gt);
 export const min = partial(best, lt);
 
 export function toArray(xs){
-  if (xs instanceof Array) return xs;
-  return seq(xs) ? into([], xs) : [];
+  return xs instanceof Array ? xs : into([], xs);
 }
 
 export function toObject(obj){
@@ -657,7 +660,7 @@ export function transduce4(xform, f, seed, coll){
 }
 
 export function into(to, from){
-  return reduce(from, Collection.conj, to);
+  return from ? reduce(from, Collection.conj, to) : to;
 }
 
 export function intoX(to, xform, from){
