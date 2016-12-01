@@ -86,13 +86,6 @@ export function flip(f, len){
   }), l);
 }
 
-export function ult(f){ //ultimately
-  var applied = slice(arguments, 1);
-  return function(){
-    return f.apply(this, slice(arguments).concat(applied));
-  }
-}
-
 export function subj(f){
   return function(){
     const params = slice(arguments);
@@ -102,10 +95,10 @@ export function subj(f){
   }
 }
 
-export function prep(f){
+export function partly(f){
   return function(){
     const applied = slice(arguments);
-    return function(obj){
+    return function(){
       const args = slice(arguments);
       return f.apply(this, applied.concat(args));
     }
@@ -254,10 +247,10 @@ export function branch(value, pred, f){
 export const cond = subj(branch);
 
 export function memoize(f){
-  return memoizeWith(f, identity);
+  return memoizeWith(identity, f);
 }
 
-export function memoizeWith(f, hash){
+export function memoizeWith(hash, f){
   const cache = {};
   return function(){
     var key = hash.apply(this, arguments);
