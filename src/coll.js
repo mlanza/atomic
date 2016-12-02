@@ -1,5 +1,5 @@
 import * as c from  './core';
-import {complement, identity, isSome, overload, constantly, partial, add, is, slice, pipe, arity, unspread, juxt, key, val, reducing, isIdentical} from './core';
+import {complement, identity, isSome, supply, overload, constantly, partial, add, is, slice, pipe, arity, unspread, juxt, key, val, reducing, isIdentical} from './core';
 import {satisfies} from './protocol';
 import {seq} from './protocols/seqable';
 import {first, rest} from './protocols/seq';
@@ -391,20 +391,16 @@ export function dropWhile(pred, xs){
 }
 
 export function some(pred, xs){
-  const coll = seq(xs);
-  if (!coll) return null;
-  const fst    = first(coll),
-        result = pred(fst);
-  return result ? result : some(pred, rest(coll));
+  return reduce(xs, function(memo, value){
+    return memo ? new Reduced(memo) : pred(value);
+  }, null) || null;
 }
 
 export function someFn(){
   const fs = arguments;
   return function(){
     return arguments.length ? !!some(function(x){
-      return some(function(f){
-        return f(x);
-      }, fs) ? x : null;
+      return some(supply(x), fs) ? x : null;
     }, arguments) : null;
   }
 }
