@@ -6,6 +6,7 @@ import Seq from '../protocols/seq';
 import Counted from '../protocols/counted';
 import Indexed from '../protocols/indexed';
 import Reduce from '../protocols/reduce';
+import ReduceKv from '../protocols/reduce-kv';
 import Seqable from '../protocols/seqable';
 import Emptyable from '../protocols/emptyable';
 import Lookup from '../protocols/lookup';
@@ -38,6 +39,18 @@ export function split(str, pattern, n){
     n = n ? n - 1 : n;
   }
   return parts;
+}
+
+export function say(template, obj){
+  return Reduce.reduce(obj, function(str, value, key){
+    return replace(str, new RegExp("\\{" + key + "\\}", 'ig'), value);
+  }, template);
+}
+
+export function format(template, ...args){
+  return say(template, ReduceKv.reduce(args, function(memo, idx, value){
+    return Associative.assoc(memo, idx, value);
+  }, {}));
 }
 
 export function isBlank(str){

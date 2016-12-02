@@ -489,9 +489,38 @@ export function post(f, ...conds){
   }
 }
 
+//e.g. counter: step(iterate(inc, 0));
+export function step(xs){
+  var coll = seq(xs);
+  return function(){
+    if (!coll) return null;
+    var x = first(coll);
+    coll = rest(coll);
+    return x;
+  }
+}
+
+export const step = overload(function(){
+  return step(1);
+}, function(init){
+  return step(init, partial(add, 1));
+}, function(init, f){
+  var state = init;
+  return function(){
+    var current = state;
+    state = f(state);
+    return current;
+  }
+});
+
+
 export function isEvery(pred, xs){
   if (!seq(xs)) return true;
   return pred(first(xs)) && isEvery(pred, rest(xs));
+}
+
+export function not(value){
+  return !value;
 }
 
 export function isNotEvery(pred, xs){
