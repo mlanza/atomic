@@ -237,6 +237,12 @@ export function supply(){
   }
 }
 
+export function invoke(method, ...args){
+  return function(obj){
+    return obj[method].apply(this, args);
+  }
+}
+
 export const isEven  = complement(isOdd);
 export const isTrue  = partial(isIdentical, true);
 export const isFalse = partial(isIdentical, false);

@@ -88,5 +88,5 @@ export const plus         = overload(ZERO, identity, _.add, _.reducing(_.add));
 export const minus        = overload(ZERO, partial(_.multiply, -1), _.subtract, _.reducing(_.subtract));
 export const mult         = overload(ONE, identity, _.multiply, _.reducing(_.multiply));
 export const div          = overload(constantly(NaN), partial(_.divide, 1), _.divide, _.reducing(_.divide));
-export const max          = overload(null, identity, _.unspread(c.max));
-export const min          = overload(null, identity, _.unspread(c.min));
+export const max          = overload(null, identity, c.max);
+export const min          = overload(null, identity, c.min);

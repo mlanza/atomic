@@ -9,6 +9,7 @@ import Emptyable from './protocols/emptyable';
 import Next from './protocols/next';
 import {get} from './protocols/lookup';
 import {count} from './protocols/counted';
+import {assoc, hasKey} from './protocols/associative';
 import Associative from './protocols/associative';
 import Comparable from './protocols/comparable';
 import Reversible from './protocols/reversible';
@@ -87,7 +88,7 @@ export function partitionBy(f, xs){
 
 export function assocN(obj, ...kvs){
   return reduce(partition(2, kvs), function(memo, pair){
-    return Associative.assoc(memo, pair[0], pair[1]);
+    return assoc(memo, pair[0], pair[1]);
   }, obj);
 }
 
@@ -97,23 +98,25 @@ export function dissocN(obj, ...keys){
   }, obj);
 }
 
-export function groupBy(f, coll){
-  return reduce(coll, function(memo, value){
-    var key = f(value), group = null;
-    if (memo.has(key)) {
-      group = memo.get(key);
+export function group(seed, v, k, xs){
+  return reduce(xs, function(memo, x){
+    var key = k(x), value = v(x);
+    if (hasKey(memo, key)) {
+      get(memo, key).push(value);
     } else {
-      group = [];
-      memo.set(key, group);
+      assoc(memo, key, [value]);
     }
-    group.push(value);
     return memo;
-  }, new Map());
+  }, seed());
 }
+
+export const groupBy = partial(group, function(){
+  return new Map();
+}, identity);
 
 export function update(obj, key, f, ...args){
   const value = get(obj, key);
-  return Associative.assoc(obj, key, f.apply(this, [value].concat(args)));
+  return assoc(obj, key, f.apply(this, [value].concat(args)));
 }
 
 export function updateIn(obj, path, f, ...args){
@@ -124,7 +127,7 @@ export function assocIn(obj, path, value){
   const init = slice(path, 0, path.length - 1),
         key  = path[path.length - 1];
   return updateIn(obj, init, function(x){
-    return Associative.assoc(x, key, value);
+    return assoc(x, key, value);
   }, value);
 }
 
@@ -573,8 +576,10 @@ export function best(pred, xs){
   }, first(coll)) : null;
 }
 
-export const max = partial(best, gt);
-export const min = partial(best, lt);
+export const most  = partial(best, gt);
+export const least = partial(best, lt);
+export const max   = unspread(most);
+export const min   = unspread(least);
 
 export function toArray(xs){
   return xs instanceof Array ? xs : _into([], xs);
