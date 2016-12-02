@@ -4,7 +4,7 @@ import {satisfies} from './protocol';
 import {seq} from './protocols/seqable';
 import {first, rest} from './protocols/seq';
 import {equiv} from './protocols/equiv';
-import Collection from './protocols/collection';
+import {conj} from './protocols/collection';
 import Emptyable from './protocols/emptyable';
 import Next from './protocols/next';
 import {get} from './protocols/lookup';
@@ -98,21 +98,17 @@ export function dissocN(obj, ...keys){
   }, obj);
 }
 
-export function group(seed, v, k, xs){
+export function group(seed, fold, target, v, k, xs){ //seed: new Object(), new Map()
   return reduce(xs, function(memo, x){
-    var key = k(x), value = v(x);
-    if (hasKey(memo, key)) {
-      get(memo, key).push(value);
-    } else {
-      assoc(memo, key, [value]);
-    }
-    return memo;
-  }, seed());
+    const key = k(x), value = v(x);
+    return assoc(memo, key, fold(get(memo, key) || seed, value));
+  }, target);
 }
 
-export const groupBy = partial(group, function(){
-  return new Map();
-}, identity);
+export const index   = partial(group, [], conj, {});
+export const groupBy = partial(index, identity);
+export const indexBy = partial(group, null, (x, y) => y, {}, identity);
+export const countBy = partial(group, 0, add, {}, identity);
 
 export function update(obj, key, f, ...args){
   const value = get(obj, key);
@@ -314,22 +310,16 @@ export function keep(f, xs){
 
 export function merge(){
   return reduce(arguments, function(memo, xs){
-    return reduce(xs || {}, function(memo, pair){
-      memo[pair[0]] = pair[1];
-      return memo;
+    return reduceKv(xs || {}, function(memo, key, value){
+      return assoc(memo, key, value);
     }, memo);
   }, {});
 }
 
 export function mergeWith(f, ...objs){
   return reduce(arguments, function(memo, xs){
-    return reduce(xs || {}, function(memo, pair){
-      if (memo.hasOwnProperty(pair[0])) {
-        memo[pair[0]] = pair[1];
-      } else {
-        memo[pair[0]] = f(memo[pair[0]], pair[1]);
-      }
-      return memo;
+    return reduceKv(xs || {}, function(memo, key, value){
+      return assoc(memo, key, hasKey(memo, key) ? f(get(memo, key), value) : value);
     }, memo);
   }, {});
 }
@@ -529,8 +519,10 @@ export function remove(pred, xs){
   return filter(complement(pred), xs);
 }
 
-export function compact(xs){
-  return filter(identity, xs);
+export const compact = partial(filter, identity);
+
+export function union(...colls){
+  return chain(colls, cat, distinct);
 }
 
 export function detect(pred, xs){
@@ -547,7 +539,7 @@ export function flatten(xs){
 }
 
 export function reverse(xs){
-  return is(Reversible, xs) ? rseq(xs) : reduce(xs, Collection.conj, EMPTY);
+  return is(Reversible, xs) ? rseq(xs) : reduce(xs, conj, EMPTY);
 }
 
 export function cat(xs){
@@ -590,7 +582,7 @@ export function toObject(obj){
   if (obj.constructor === Object) return obj;
   var coll = seq(obj);
   if (!coll) return {};
-  return reduce(coll, Collection.conj, {});
+  return reduce(coll, conj, {});
 }
 
 export function iterate(generate, seed){
@@ -659,11 +651,11 @@ export function seeding(f, init){
 }
 
 function _into(to, from){
-  return from ? reduce(from, Collection.conj, to) : to;
+  return from ? reduce(from, conj, to) : to;
 }
 
 function _intoX(to, xform, from){
-  return transduce4(xform, Collection.conj, to, from);
+  return transduce4(xform, conj, to, from);
 }
 
 export const into = overload(constantly([]), identity, _into, _intoX);
