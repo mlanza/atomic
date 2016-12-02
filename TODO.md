@@ -5,6 +5,7 @@
 # SOMEDAY
 
 * defmulti
+* inflection: 1 thief, 2 thieves
 * Object protocol -- toString, equiv, indexOf, lastIndexOf
 * improve structure to aid in tree shaking
 * ISerialize (with an edn like approach to deserialization)
