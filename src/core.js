@@ -230,7 +230,16 @@ export function isOdd(n){
   return n % 2;
 }
 
-export const isEven = complement(isOdd);
+export function supply(){
+  const args = arguments;
+  return function(f){
+    return f.apply(this, args);
+  }
+}
+
+export const isEven  = complement(isOdd);
+export const isTrue  = partial(isIdentical, true);
+export const isFalse = partial(isIdentical, false);
 
 export function is(constructor, value) {
   return value != null && value.constructor === constructor;

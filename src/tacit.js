@@ -6,7 +6,7 @@ import * as string from './types/string';
 import * as types from './types';
 import {conj as _conj} from './protocols/collection';
 import {EMPTY} from './types/empty';
-export {log, juxt, see, rand, overload, constantly, comp, pipe, chain, maybe, opt, partial, isOdd, isEven, memoize, doto, firstly as coalesce} from './core';
+export {log, juxt, isTrue, isFalse, see, rand, overload, constantly, comp, pipe, chain, maybe, opt, partial, isOdd, isEven, memoize, doto, firstly as coalesce} from './core';
 export {extend} from './protocol';
 import {satisfies as _satisfies} from './protocol';
 export {sort, dedupe, distinct, doall, repeatedly, expanding, fnil, keys, flatten, reverse, cat, someFn, everyPred, cycle, range, butlast, expansive, groupBy, toObject, toArray} from './coll';
