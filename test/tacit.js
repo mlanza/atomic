@@ -1,4 +1,4 @@
-import {log, matches, join, subs, split, EMPTY, empty, merge, fnil, selectKeys, keep, keepIndexed, reverse, cons, partition, partitionBy, partitionAll, keys, isEven, isOdd, someFn, everyPred, str, doall, butlast, dropLast, takeLast, scan, best, getIn, update, updateIn, assocIn, interpose, interleave, min, max, dedupe, distinct, cat, cycle, overload, toUpperCase, expansive, observable, publisher, reify, swap, reset, subscribe, publish, deref, eq, ne, into, transduce, text, hide, show, tag, tap, detach, parent, addClass, append, prepend, inc, gt, lt, some, isEvery, mapIndexed, range, constantly, conj, drop, take, takeNth, repeat, repeatedly, chain, comp, pipe, opt, maybe, add, juxt, query, fetch, get, assoc, hasKey, first, second, third, rest, nth, next, count, reduce, reduceKV, each, map, filter, remove, takeWhile, dropWhile, detect, satisfies, concat, flatten, toArray, toObject, or, and, partial, see} from '../src/tacit';
+import {log, doto, isIdentical, matches, join, subs, split, EMPTY, empty, merge, fnil, selectKeys, keep, keepIndexed, reverse, cons, partition, partitionBy, partitionAll, keys, isEven, isOdd, someFn, everyPred, str, doall, butlast, dropLast, takeLast, scan, best, getIn, update, updateIn, assocIn, interpose, interleave, min, max, dedupe, distinct, cat, cycle, overload, toUpperCase, expansive, observable, publisher, reify, swap, reset, subscribe, publish, deref, eq, ne, into, transduce, text, hide, show, tag, tap, detach, parent, addClass, append, prepend, inc, gt, lt, some, isEvery, mapIndexed, range, constantly, conj, drop, take, takeNth, repeat, repeatedly, chain, comp, pipe, opt, maybe, add, juxt, query, fetch, get, assoc, hasKey, first, second, third, rest, nth, next, count, reduce, reduceKV, each, map, filter, remove, takeWhile, dropWhile, detect, satisfies, concat, flatten, toArray, toObject, or, and, partial, see} from '../src/tacit';
 import Reduce from '../src/protocols/reduce';
 import Lookup from '../src/protocols/lookup';
 import IndexedSeq from '../src/types/indexed-seq';
@@ -19,7 +19,32 @@ QUnit.test("observable", function(assert){
   assert.deepEqual(deref(states), [[], ["ice"], ["ice", "champagne"], ["ice", "wine"]]);
 });
 
-QUnit.test("Traverse and manipulate the dom", function(assert){
+QUnit.test("immutable updates", function(assert){
+  const duos = observable([["Hall", "Oates"], ["Laurel", "Hardy"]]),
+        get0 = pipe(deref, nth(0)),
+        get1 = pipe(deref, nth(1)),
+        get2 = pipe(deref, nth(2)),
+        d0 = get0(duos),
+        d1 = get1(duos),
+        d2 = get2(duos),
+        states = observable([]),
+        txn = pipe(
+          conj(["Andrew Ridgeley", "George Michaels"]),
+          assocIn([0, 0], "Daryl"),
+          assocIn([0, 1], "John"));
+  subscribe(function(state){
+    swap(conj(state), states);
+  }, duos);
+  chain(duos, swap(txn));
+  assert.equal(chain(states, deref, count), 2, "original + transaction");
+  assert.deepEqual(deref(duos), [["Daryl", "John"], ["Laurel", "Hardy"], ["Andrew Ridgeley", "George Michaels"]]);
+  assert.notOk(isIdentical(get0(duos), d0), "new container for");
+  assert.ok(isIdentical(get1(duos), d1), "original container untouched");
+  assert.notOk(d2, "non-existent");
+  assert.notOk(isIdentical(get2(duos), d2), "created from nothing");
+});
+
+QUnit.test("traverse and manipulate the dom", function(assert){
   const ul = tag('ul'), li = tag('li'), div = expansive(tag('div')), span = tag('span');
   const stooges = ul(li({id: 'moe'}, "Moe Howard"), li({id: 'curly'}, "Curly Howard"), li({id: 'larry'}, "Larry Fine"));
   const body = fetch("body", document);
@@ -79,7 +104,7 @@ QUnit.test("strings", function(assert){
   assert.equal(chain(["hello", " ", "world"], join("")), "hello world");
 });
 
-QUnit.test("Lookup", function(assert){
+QUnit.test("lookup", function(assert){
   var boris = {givenName: "Boris", sn: "Lasky", address: {
     lines: ["401 Mayor Ave.", "Suite 401"],
     city: "Mechanicsburg", state: "PA", zip: "17055"
@@ -110,7 +135,7 @@ QUnit.test("Lookup", function(assert){
   assert.equal(chain(["ace", "king", "queen"], get(2)), "queen");
 });
 
-QUnit.test("IndexedSeq", function(assert){
+QUnit.test("indexed-seq", function(assert){
   const nums = new IndexedSeq([11,12,13,14], 1);
   const letters = new IndexedSeq("grace");
   assert.equal(chain(letters, first), "g");
