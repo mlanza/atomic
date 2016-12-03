@@ -2,7 +2,6 @@
 
 * examine other apis: ramda, underscore, sugar
 * set fns: intersection, superset, difference, union, disj
-* fix `flip` which usually swaps first 2 args, give alternate name
 * ramda `unless`, `unnest` (same as `cat`)
 
 # SOMEDAY

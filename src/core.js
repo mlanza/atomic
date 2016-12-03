@@ -394,15 +394,21 @@ export function guid() {
   return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
 }
 
-export function lastly(x, ...xs){
-  if (!xs.length) return x;
-  return x ? lastly.apply(this, xs) : x;
+export function either(a, b){
+  return a || b;
 }
 
-export function firstly(x, ...xs){
-  if (!xs.length) return x;
-  return x ? x : firstly.apply(this, xs);
+export function both(a, b){
+  return a && b;
 }
+
+export const and        = reducing(both);
+export const or         = reducing(either);
+export const isFunction = partial(is, Function);
+export const isString   = partial(is, String);
+export const isRegExp   = partial(is, RegExp);
+export const isDate     = partial(is, Date);
+export const isNumber   = partial(is, Number);
 
 export const BLANK = constantly("");
 export const NIL   = constantly(null);
