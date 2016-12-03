@@ -103,7 +103,7 @@ export function arity(len, f){
   return ([nullary, unary, binary, ternary][len] || partial(_arity, len))(f);
 }
 
-export function flip(f, len){
+export function flop(f, len){
   var l = len || f.length;
   return curry(arity(l, function(){
     var size = arguments.length,
