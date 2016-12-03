@@ -71,25 +71,25 @@ export function overload(){
 
 export function nullary(f){
   return function(){
-    return f();
+    return f.call(this);
   }
 }
 
 export function unary(f){
-  return function(one){
-    return f(one);
+  return function(a){
+    return f.call(this, a);
   }
 }
 
 export function binary(f){
-  return function(one, two){
-    return f(one, two);
+  return function(a, b){
+    return f.call(this, a, b);
   }
 }
 
 export function ternary(f){
-  return function(one, two, three){
-    return f(one, two, three);
+  return function(a, b, c){
+    return f.call(this, a, b, c);
   }
 }
 
@@ -123,10 +123,10 @@ function flop4(f){
 
 function flopN(f, len){
   return arity(len || f.length, function(){
-    var size = arguments.length,
-        last = arguments[size - 1],
-        tail = slice(arguments, 0, size - 1),
-        args = [last].concat(tail);
+    const size = arguments.length,
+          last = arguments[size - 1],
+          tail = slice(arguments, 0, size - 1),
+          args = [last].concat(tail);
     return f.apply(this, args);
   });
 }
