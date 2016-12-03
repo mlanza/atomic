@@ -748,20 +748,19 @@ export function reassign(pred, f, xs){
 }
 
 export function expansive(f){
-  var isFn = partial(is, Function);
   function expand(args, value){
-    if (isFn(value)){
+    if (c.isFunction(value)){
       return pipe(value, partial(expand, args));
     }
-    while(some(isFn, args)){
+    while(some(c.isFunction, args)){
       args = map(function(arg){
-        return isFn(arg) ? arg(value) : arg;
+        return c.isFunction(arg) ? arg(value) : arg;
       }, args)
     }
     return f.apply(this, toArray(args));
   }
   return function(){
     var args = slice(arguments);
-    return some(isFn, args) ? partial(expand, args) : f.apply(this, args);
+    return some(c.isFunction, args) ? partial(expand, args) : f.apply(this, args);
   }
 }
