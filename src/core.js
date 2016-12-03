@@ -319,6 +319,10 @@ export function branch(value, pred, f){
   return pred ? pred(value) ? f(value) : branch.apply(this, [value].concat(slice(arguments, 3))) : null;
 }
 
+export function unless(pred, f, value){
+  return pred(value) ? value : f(value);
+}
+
 export const cond = subj(branch);
 
 export function memoize(f){

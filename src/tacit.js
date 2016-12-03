@@ -42,6 +42,7 @@ export const interpret    = curry(c.interpret);
 export const inject       = curry(c.inject);
 export const arity        = curry(_.arity);
 export const add          = curry(_.add);
+export const unless       = curry(_.unless);
 export const subtract     = curry(flop(_.subtract, 2));
 export const multiply     = curry(_.multiply);
 export const divide       = curry(flop(_.divide, 2));

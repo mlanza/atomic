@@ -1,12 +1,12 @@
 # TODO
 
-* examine other apis: ramda, underscore, sugar
 * set fns: intersection, superset, difference, union, disj
-* ramda `unless`
+* organize functions by the type they target (e.g. String, Function, etc.)
 
 # SOMEDAY
 
 * ramda for many functions shows impractical examples of each fn in the docs.  i would rather share interesting use cases in the documentation to illustrate the useful of the fn.
+* how much `this` context passing is necessary to keep bindings intact?
 * break each function into its own file?
 * ramda has too many permutations (e.g. map, mapAccum, mapAccumRight, max, maxBy, etc.)
   * rather than include permutations, provide recipes to illustrate the use of idioms without additional functions -- remember the guideline is a function's leverage should be strong for inclusion in the library, it is otherwise an idiom.
