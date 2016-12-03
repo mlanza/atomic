@@ -1,6 +1,6 @@
 # TODO
 
-* set fns: intersection, superset, difference, union, disj
+* disj
 * organize functions by the type they target (e.g. String, Function, etc.)
 
 # SOMEDAY
