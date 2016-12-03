@@ -114,6 +114,12 @@ export function flop(f, len){
   }), l);
 }
 
+export function flip(f){
+  return function(two, one){
+    return arguments.length === 2 ? f.call(this, one, two) : f.apply(this, [one, two].concat(slice(arguments, 2)));
+  }
+}
+
 export function subj(f){
   return function(){
     const params = slice(arguments);
