@@ -733,18 +733,39 @@ function _transduce4(xform, f, seed, coll){
 
 export const transduce = overload(null, null, null, _transduce3, _transduce4);
 
-export function iterating(f, progress){
+function _of(f, progress){
   var iter = progress || f(),
       head = iter.next();
   return head.done ? EMPTY : new LazyList(head.value, delay(function(){
-    return iterating(f, iter);
+    return _of(f, iter);
   }));
 }
+
+export const of = arity(1, _of);
 
 export function reassign(pred, f, xs){
   return into(empty(xs), mapKv(function(key, value){
     return [key, pred(key, value) ? f(value) : value];
   }, xs));
+}
+
+export function splice(xs, idx, n, ys){
+  const parts = splitAt(idx, xs);
+  return concat.call(this, first(parts), ys, drop(n, second(parts)));
+}
+
+export function insert(idx, ys, xs){
+  return splice.call(this, xs, idx, 0, ys);
+}
+
+export function interpret(translate, f){ //provides a mechanism of interpreting/rewriting arguments
+  return function(){
+    return f.apply(this, toArray(translate(arguments)));
+  }
+}
+
+export function inject(idx, xs, f){
+  return interpret.call(this, partial(insert, idx, xs), f);
 }
 
 export function expansive(f){

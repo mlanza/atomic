@@ -93,6 +93,12 @@ export function ternary(f){
   }
 }
 
+export function quaternary(f){
+  return function(a, b, c, d){
+    return f.call(this, a, b, c, d);
+  }
+}
+
 function _arity(len, f){ //f.length not discernible
   return function(){
     return f.apply(this, slice(arguments, 0, len));
@@ -100,7 +106,7 @@ function _arity(len, f){ //f.length not discernible
 }
 
 export function arity(len, f){
-  return ([nullary, unary, binary, ternary][len] || partial(_arity, len))(f);
+  return ([nullary, unary, binary, ternary, quaternary][len] || partial(_arity, len))(f);
 }
 
 function flop2(f){

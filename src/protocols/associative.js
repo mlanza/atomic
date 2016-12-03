@@ -1,12 +1,12 @@
 import {protocol} from '../protocol';
-import {iterating} from '../coll';
+import {of} from '../coll';
 
 function _vals(self){
-  return iterating(self.values.bind(self));
+  return of(self.values.bind(self));
 }
 
 function _keys(self){
-  return iterating(self.keys.bind(self));
+  return of(self.keys.bind(self));
 }
 
 export const Associative = protocol({
