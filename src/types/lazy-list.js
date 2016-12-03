@@ -12,7 +12,7 @@ import Next from '../protocols/next';
 import Indexed from '../protocols/indexed';
 import Lookup from '../protocols/lookup';
 import Reduced from '../types/reduced';
-import {prepend} from '../types/list';
+import {prepend, count} from '../types/list';
 import {EMPTY} from '../types/empty';
 import {iterator, equivSeq} from '../coll';
 
@@ -42,11 +42,6 @@ function reduce(self, f, init){
 export function next(self){
   var tail = self.tail();
   return tail === EMPTY ? null : tail;
-}
-
-export function count(self){
-  const coll = next(self);
-  return coll ? 1 : 1 + Counted.count(coll);
 }
 
 export function nth(self, n){

@@ -1,4 +1,3 @@
-import {invokeWith} from '../core';
 import {each} from '../coll';
 import {extend} from '../protocol';
 import Publish from '../protocols/publish';

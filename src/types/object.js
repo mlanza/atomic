@@ -20,8 +20,12 @@ Object.prototype[Symbol.iterator] = function(){
   return iterator(this);
 }
 
+function isIndexed(obj){ //arguments object or something similar
+  return obj && obj.hasOwnProperty("length");
+}
+
 function seq(obj, ks, at){
-  if (obj && obj.hasOwnProperty("length")) return obj.length ? new IndexedSeq(obj) : null; //arguments object or something similar
+  if (isIndexed(obj)) return Seqable.seq(new IndexedSeq(obj));
   var pos = at || 0, keys = ks || Object.keys(obj), key = keys[pos];
   return pos < keys.length ? new LazyList([key, obj[key]], function(){
     return seq(obj, keys, pos + 1) || EMPTY;
