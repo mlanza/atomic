@@ -10,9 +10,9 @@ QUnit.test("amplify", function(assert){
 });
 
 QUnit.test("unless", function(assert){
-  const roundToOdd = unless(isOdd, inc);
-  assert.equal(roundToOdd(1), 1);
-  assert.equal(roundToOdd(2), 3);
+  const oddity = unless(isOdd, inc);
+  assert.equal(oddity(1), 1);
+  assert.equal(oddity(2), 3);
 });
 
 QUnit.test("inject", function(assert){
