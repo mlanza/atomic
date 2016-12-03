@@ -103,28 +103,50 @@ export function arity(len, f){
   return ([nullary, unary, binary, ternary][len] || partial(_arity, len))(f);
 }
 
-export function flop(f, len){
-  var l = len || f.length;
-  return curry(arity(l, function(){
+function flop2(f){
+  return function(a, b){
+    return f.call(this, b, a);
+  }
+}
+
+function flop3(f){
+  return function(b, c, a){
+    return f.call(this, a, b, c);
+  }
+}
+
+function flop4(f){
+  return function(b, c, d, a){
+    return f.call(this, a, b, c, d);
+  }
+}
+
+function flopN(f, len){
+  return arity(len || f.length, function(){
     var size = arguments.length,
         last = arguments[size - 1],
         tail = slice(arguments, 0, size - 1),
         args = [last].concat(tail);
     return f.apply(this, args);
-  }), l);
+  });
+}
+
+export function flop(f, len){
+  var l = len || f.length || 2, fl = [null, null, flop2, flop3, flop4][l] || flopN;
+  return fl.call(this, f, l);
 }
 
 export function flip(f){
-  return function(two, one){
-    return arguments.length === 2 ? f.call(this, one, two) : f.apply(this, [one, two].concat(slice(arguments, 2)));
+  return function(b, a){
+    return f.apply(this, [a, b].concat(slice(arguments, 2)));
   }
 }
 
 export function subj(f){
   return function(){
-    const params = slice(arguments);
+    const args = slice(arguments);
     return function(obj){
-      return f.apply(this, [obj].concat(params));
+      return f.apply(this, [obj].concat(args));
     }
   }
 }
