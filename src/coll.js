@@ -1,5 +1,5 @@
 import * as c from  './core';
-import {complement, identity, isSome, supply, overload, constantly, partial, add, is, slice, pipe, arity, unspread, juxt, key, val, reducing, isIdentical} from './core';
+import {chain, complement, identity, isSome, supply, overload, constantly, partial, add, is, slice, pipe, arity, unspread, juxt, key, val, reducing, isIdentical} from './core';
 import {satisfies} from './protocol';
 import {seq} from './protocols/seqable';
 import {first, rest} from './protocols/seq';
@@ -581,6 +581,18 @@ export const compact = partial(filter, identity);
 
 export function union(...colls){
   return chain(colls, cat, distinct);
+}
+
+export function intersection(ys, xs){
+  return filter(x => has(ys, x), xs);
+}
+
+export function difference(ys, xs){
+  return remove(x => has(ys, x), xs);
+}
+
+export function isSuperset(ys, xs){
+  return isEvery(y => has(xs, y), ys);
 }
 
 export function detect(pred, xs){

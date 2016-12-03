@@ -1,5 +1,6 @@
 import unbind from '../unbind';
-import {slice, reduce, reduceKv, identity, constantly} from '../core';
+import {slice, partial, reduce, reduceKv, identity, constantly} from '../core';
+import {detect, eq} from '../coll';
 export {slice, reduce, reduceKv};
 import {extend} from '../protocol';
 import Seq from '../protocols/seq';
@@ -74,6 +75,10 @@ function prepend(self, value){
   return [value].concat(self);
 }
 
+function has(self, value){
+  return detect(partial(eq, value), self);
+}
+
 export default extend(Array, Reversible, {
   rseq: rseq
 }, Equiv, {
@@ -83,7 +88,8 @@ export default extend(Array, Reversible, {
 }, Prepend, {
   prepend: prepend
 }, Collection, {
-  conj: append
+  conj: append,
+  has: has
 }, Lookup, {
   get: get
 }, Associative, {

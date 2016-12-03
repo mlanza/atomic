@@ -1,7 +1,14 @@
-import {log, slice, unless, has, inject, amplify, fst, snd, reassign, doto, isTrue, isFalse, isIdentical, matches, join, subs, split, EMPTY, empty, merge, fnil, selectKeys, keep, keepIndexed, reverse, cons, partition, partitionBy, partitionAll, keys, isEven, isOdd, someFn, everyPred, str, doall, butlast, dropLast, takeLast, scan, best, getIn, update, updateIn, assocIn, interpose, interleave, min, max, dedupe, distinct, cat, cycle, overload, toUpperCase, expansive, observable, publisher, reify, swap, reset, subscribe, publish, deref, eq, ne, into, transduce, text, hide, show, tag, tap, detach, parent, addClass, append, prepend, inc, gt, lt, some, isEvery, mapIndexed, range, constantly, conj, drop, take, takeNth, repeat, repeatedly, chain, comp, pipe, opt, maybe, add, juxt, query, fetch, get, assoc, hasKey, first, second, third, rest, nth, next, count, reduce, reduceKV, each, map, filter, remove, takeWhile, dropWhile, detect, satisfies, concat, flatten, toArray, toObject, or, and, partial, see} from '../src/tacit';
+import {log, sort, intersection, isSuperset, union, difference, slice, unless, has, inject, amplify, fst, snd, reassign, doto, isTrue, isFalse, isIdentical, matches, join, subs, split, EMPTY, empty, merge, fnil, selectKeys, keep, keepIndexed, reverse, cons, partition, partitionBy, partitionAll, keys, isEven, isOdd, someFn, everyPred, str, doall, butlast, dropLast, takeLast, scan, best, getIn, update, updateIn, assocIn, interpose, interleave, min, max, dedupe, distinct, cat, cycle, overload, toUpperCase, expansive, observable, publisher, reify, swap, reset, subscribe, publish, deref, eq, ne, into, transduce, text, hide, show, tag, tap, detach, parent, addClass, append, prepend, inc, gt, lt, some, isEvery, mapIndexed, range, constantly, conj, drop, take, takeNth, repeat, repeatedly, chain, comp, pipe, opt, maybe, add, juxt, query, fetch, get, assoc, hasKey, first, second, third, rest, nth, next, count, reduce, reduceKV, each, map, filter, remove, takeWhile, dropWhile, detect, satisfies, concat, flatten, toArray, toObject, or, and, partial, see} from '../src/tacit';
 import Reduce from '../src/protocols/reduce';
 import Lookup from '../src/protocols/lookup';
 import IndexedSeq from '../src/types/indexed-seq';
+
+QUnit.test("set-like operations", function(assert){
+  assert.deepEqual(chain([1, 2, 3], union([2, 3, 4]), toArray, sort), [1, 2, 3, 4]);
+  assert.deepEqual(chain([1, 2, 3, 4, 5], difference([5, 2, 10]), toArray, sort), [1, 3, 4]);
+  assert.ok(chain([1, 2, 3], isSuperset([2, 3])));
+  assert.notOk(chain([1, 2, 3], isSuperset([2, 4])));
+});
 
 QUnit.test("amplify", function(assert){
   const inp = [[[[1, 2, 3], [4, 5, 6]], [[7, 8, 9]]]];
