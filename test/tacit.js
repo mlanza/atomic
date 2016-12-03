@@ -1,7 +1,14 @@
-import {log, doto, isTrue, isFalse, isIdentical, matches, join, subs, split, EMPTY, empty, merge, fnil, selectKeys, keep, keepIndexed, reverse, cons, partition, partitionBy, partitionAll, keys, isEven, isOdd, someFn, everyPred, str, doall, butlast, dropLast, takeLast, scan, best, getIn, update, updateIn, assocIn, interpose, interleave, min, max, dedupe, distinct, cat, cycle, overload, toUpperCase, expansive, observable, publisher, reify, swap, reset, subscribe, publish, deref, eq, ne, into, transduce, text, hide, show, tag, tap, detach, parent, addClass, append, prepend, inc, gt, lt, some, isEvery, mapIndexed, range, constantly, conj, drop, take, takeNth, repeat, repeatedly, chain, comp, pipe, opt, maybe, add, juxt, query, fetch, get, assoc, hasKey, first, second, third, rest, nth, next, count, reduce, reduceKV, each, map, filter, remove, takeWhile, dropWhile, detect, satisfies, concat, flatten, toArray, toObject, or, and, partial, see} from '../src/tacit';
+import {log, reassign, doto, isTrue, isFalse, isIdentical, matches, join, subs, split, EMPTY, empty, merge, fnil, selectKeys, keep, keepIndexed, reverse, cons, partition, partitionBy, partitionAll, keys, isEven, isOdd, someFn, everyPred, str, doall, butlast, dropLast, takeLast, scan, best, getIn, update, updateIn, assocIn, interpose, interleave, min, max, dedupe, distinct, cat, cycle, overload, toUpperCase, expansive, observable, publisher, reify, swap, reset, subscribe, publish, deref, eq, ne, into, transduce, text, hide, show, tag, tap, detach, parent, addClass, append, prepend, inc, gt, lt, some, isEvery, mapIndexed, range, constantly, conj, drop, take, takeNth, repeat, repeatedly, chain, comp, pipe, opt, maybe, add, juxt, query, fetch, get, assoc, hasKey, first, second, third, rest, nth, next, count, reduce, reduceKV, each, map, filter, remove, takeWhile, dropWhile, detect, satisfies, concat, flatten, toArray, toObject, or, and, partial, see} from '../src/tacit';
 import Reduce from '../src/protocols/reduce';
 import Lookup from '../src/protocols/lookup';
 import IndexedSeq from '../src/types/indexed-seq';
+
+QUnit.test("reassign", function(assert){
+  const heal = reassign(function(value, key){
+    return key === 'hitpoints' ? value + 10 : value;
+  });
+  assert.deepEqual(heal({name: "Charlie", iq: 120, hitpoints: 30}), {name: "Charlie", iq: 120, hitpoints: 40})
+});
 
 QUnit.test("observable", function(assert){
   const bucket = observable([], pipe(get('length'), lt(3))),

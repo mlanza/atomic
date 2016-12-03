@@ -38,6 +38,10 @@ function conj(self, value){
   return set;
 }
 
+function has(self, value){
+  return self.has(value);
+}
+
 function get(self, value){
   return self.has(value) ? value : null;
 }
@@ -62,7 +66,8 @@ export function disj(self){
 }
 
 export default extend(Set, Collection, {
-  conj: conj
+  conj: conj,
+  has: has
 }, Lookup, {
   get: nth
 }, Emptyable, {

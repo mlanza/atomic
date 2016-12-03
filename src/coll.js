@@ -4,8 +4,8 @@ import {satisfies} from './protocol';
 import {seq} from './protocols/seqable';
 import {first, rest} from './protocols/seq';
 import {equiv} from './protocols/equiv';
-import {conj} from './protocols/collection';
-import Emptyable from './protocols/emptyable';
+import {conj, has} from './protocols/collection';
+import {empty} from './protocols/emptyable';
 import Next from './protocols/next';
 import {get} from './protocols/lookup';
 import {count} from './protocols/counted';
@@ -282,6 +282,12 @@ export function map(f, xs){
   }) : EMPTY;
 }
 
+export function mapKv(f, xs){
+  return map(function(pair){
+    return f(pair[0], pair[1]);
+  }, xs);
+}
+
 export function mapN(f, ...colls){
   return isEvery(seq, colls) ? new LazyList(f.apply(this, toArray(map(first, colls))), function(){
     var args = [f].concat(toArray(map(rest, colls))),
@@ -344,7 +350,7 @@ export function fnil(f, ...defaults){
 export const selectKeys = Set ? function(keys, obj){
   var set = new Set(keys);
   return toObject(filter(function(pair){
-    return set.has(pair[0]);
+    return has(set, pair[0]);
   }, obj));
 } : function(keys, obj){
   return toObject(filter(function(pair){
@@ -489,8 +495,7 @@ export function post(f, ...conds){
   }
 }
 
-//e.g. counter: step(iterate(inc, 0));
-export function step(xs){
+export function step(xs){ //e.g. counter: step(iterate(inc, 0));
   var coll = seq(xs);
   return function(){
     if (!coll) return null;
@@ -499,20 +504,6 @@ export function step(xs){
     return x;
   }
 }
-
-export const step = overload(function(){
-  return step(1);
-}, function(init){
-  return step(init, partial(add, 1));
-}, function(init, f){
-  var state = init;
-  return function(){
-    var current = state;
-    state = f(state);
-    return current;
-  }
-});
-
 
 export function isEvery(pred, xs){
   if (!seq(xs)) return true;
@@ -699,6 +690,20 @@ function _transduce4(xform, f, seed, coll){
 }
 
 export const transduce = overload(null, null, null, _transduce3, _transduce4);
+
+export function iterating(f, progress){
+  var iter = progress || f(),
+      head = iter.next();
+  return head.done ? EMPTY : new LazyList(head.value, delay(function(){
+    return iterating(f, iter);
+  }));
+}
+
+export function reassign(f, xs){
+  return into(empty(xs), mapKv(function(key, value){
+    return [key, f(value, key)];
+  }, xs));
+}
 
 export function expansive(f){
   var isFn = partial(is, Function);

@@ -74,10 +74,15 @@ function append(self, pair){
   return assoc(self, pair[0], pair[1]);
 }
 
+function has(self, pair){
+  return self[pair[0]] === pair[1];
+}
+
 export default extend(Object, Equiv, {
   equiv: equivSeq
 }, Collection, {
-  conj: append
+  conj: append,
+  has: has
 }, Append, {
   append: append
 }, Reduce, {
