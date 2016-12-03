@@ -169,6 +169,14 @@ export function reversed(f){
   }
 }
 
+export function mapArg(pos, map, f){
+  return function(){
+    const args = slice(argments);
+    args[pos] = map(args[pos]);
+    return f.apply(this, args);
+  }
+}
+
 export function int(x){
   return x == null ? 0 : parseInt(x);
 }
