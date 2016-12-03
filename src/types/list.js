@@ -46,7 +46,6 @@ export function next(self){
 }
 
 export function count(self){
-  if (!seq(self)) return 0;
   const coll = next(self);
   return coll ? 1 : 1 + Counted.count(coll);
 }

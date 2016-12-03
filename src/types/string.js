@@ -1,5 +1,5 @@
 import unbind from '../unbind';
-import {flop, identity, add, slice} from '../core';
+import {flip, identity, add, slice} from '../core';
 import {extend} from '../protocol';
 import Next from '../protocols/next';
 import Seq from '../protocols/seq';
@@ -122,7 +122,7 @@ export default extend(String, Comparable, {
 }, Append, {
   append: add
 }, Prepend, {
-  prepend: flop(add)
+  prepend: flip(add)
 }, Collection, {
   conj: add
 }, Associative, {
