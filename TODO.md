@@ -1,6 +1,7 @@
 # TODO
 
 * examine other apis: ramda, underscore, sugar
+* set fns: intersection, superset, difference, union, disj
 
 # SOMEDAY
 
