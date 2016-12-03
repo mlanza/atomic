@@ -2,9 +2,17 @@
 
 * examine other apis: ramda, underscore, sugar
 * set fns: intersection, superset, difference, union, disj
+* fix `flip` which usually swaps first 2 args, give alternate name
+* ramda `unless`, `unnest` (same as `cat`)
 
 # SOMEDAY
 
+* implement `count` on list
+* break each function into its own file?
+* ramda has too many permutations (e.g. map, mapAccum, mapAccumRight, max, maxBy, etc.)
+  * rather than include permutations, provide recipes to illustrate the use of idioms without additional functions -- remember the guideline is a function's leverage should be strong for inclusion in the library, it is otherwise an idiom.
+* create `maybe`/`opt` like functions that deal in promises (e.g. `then`) and returns any value as a promise.
+* consider whether every fn taking unlimited args ought have a fn taking 2 args on which it's based. (e.g. and/both, or/either)
 * defmulti
 * inflection: 1 thief, 2 thieves
 * Object protocol -- toString, equiv, indexOf, lastIndexOf

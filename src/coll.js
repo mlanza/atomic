@@ -78,9 +78,9 @@ export function partitionAllStep(n, step, xs){
 export function partitionBy(f, xs){
   const coll = seq(xs);
   if (!coll) return EMPTY;
-  const fst = first(coll),
-        val = f(fst),
-        run = cons(fst, takeWhile(function(x){
+  const head = first(coll),
+        val  = f(head),
+        run  = cons(head, takeWhile(function(x){
           return val === f(x);
         }, Next.next(coll)));
   return cons(run, partitionBy(f, seq(drop(count(run), coll))));
@@ -124,7 +124,15 @@ export function assocIn(obj, path, value){
         key  = path[path.length - 1];
   return updateIn(obj, init, function(x){
     return assoc(x, key, value);
-  }, value);
+  });
+}
+
+export function dissocIn(obj, path){
+  const init = slice(path, 0, path.length - 1),
+        key  = path[path.length - 1];
+  return updateIn(obj, init, function(x){
+    return dissoc(x, key);
+  });
 }
 
 export function getIn(obj, path){
@@ -140,10 +148,19 @@ export function coll(value){
   return value == null ? [] : satisfies(Seqable, value) ? value : [value];
 }
 
-export function last(xs){
+export function last(xs){ //TODO optimize -- use index where possible?
   return reduce(xs, function(memo, x){
     return x;
   }, null);
+}
+
+export function initial(xs){
+  const coll = seq(xs),
+        head = first(coll),
+        tail = next(coll);
+  return coll && tail ? new LazyList(head, function(){
+    return initial(tail);
+  }) : EMPTY;
 }
 
 export function dotimes(n, f){
@@ -232,14 +249,14 @@ export function sortByWith(f, compare, xs){
 
 export function interpose(sep, xs){
   const coll = seq(xs),
-        fst  = first(coll);
+        head = first(coll);
   if (!coll) return EMPTY;
   const nxt = Next.next(coll);
-  return nxt ? new LazyList(fst, function(){
+  return nxt ? new LazyList(head, function(){
     return nxt ? new LazyList(sep, function(){
       return interpose(sep, nxt);
     }) : EMPTY;
-  }) : new List(fst);
+  }) : new List(head);
 }
 
 function _interleave(){
@@ -296,22 +313,26 @@ export function mapN(f, ...colls){
   }) : EMPTY;
 }
 
-export function mapIndexed(f, xs){
-  var idx = -1;
-  return map(function(x){
-    return f(++idx, x);
-  }, xs);
-}
-
-export function keepIndexed(f, xs){
-  var idx = -1;
-  return filter(isSome, map(function(x){
-    return f(++idx, x);
-  }, xs));
-}
-
 export function keep(f, xs){
   return filter(isSome, map(f, xs));
+}
+
+export function indexed(iter){
+  return function(f, xs){
+    var idx = -1;
+    return iter(function(x){
+      return f(++idx, x);
+    }, xs);
+  }
+}
+
+export const mapIndexed  = indexed(map);
+export const keepIndexed = indexed(keep);
+
+export function zip(...colls){
+  return isEvery(seq, colls) ? new LazyList(map(first, colls), function(){
+    return zip.apply(this, toArray(map(rest, colls)));
+  }) : EMPTY;
 }
 
 export function merge(){
@@ -415,6 +436,7 @@ export function everyPred(){
   }
 }
 
+/*
 export function keys(xs){
   const coll = seq(xs);
   return coll ? map(key, coll) : EMPTY;
@@ -424,13 +446,29 @@ export function vals(xs){
   const coll = seq(xs);
   return coll ? map(val, coll) : EMPTY;
 }
+*/
+
+export function aperture(n, xs){
+  const head = take(n, xs);
+  return count(head) === n ? new LazyList(head, function(){
+    return aperture(n, rest(coll));
+  }) : EMPTY;
+}
+
+/*
+export function scan(pred, xs){
+  return reduce(aperture(2, xs), function(memo, ys){
+    return memo && pred.apply(this, toArray(ys)) || new Reduced(false);
+  }, true);
+}
+*/
 
 export function scan(pred, xs){
   if (!seq(xs)) return true;
-  const fst  = first(xs),
-        rst  = rest(xs),
-        coll = seq(rst);
-  return coll ? pred(fst, first(coll)) && scan(pred, rst) : true;
+  const head = first(xs),
+        tail = rest(xs),
+        coll = seq(tail);
+  return coll ? pred(head, first(coll)) && scan(pred, tail) : true;
 }
 
 export function equivSeq(as, bs){
@@ -529,8 +567,8 @@ export function isNotAny(pred, xs){
 export function filter(pred, xs){
   var coll = seq(xs);
   if (!coll) return EMPTY;
-  var fst = first(coll);
-  return pred(fst) ? new LazyList(fst, function(){
+  var head = first(coll);
+  return pred(head) ? new LazyList(head, function(){
     return filter(pred, rest(coll));
   }) : filter(pred, rest(coll));
 }
@@ -551,10 +589,10 @@ export function detect(pred, xs){
 
 export function flatten(xs){
   if (!seq(xs)) return EMPTY;
-  var fst = first(xs),
-      rst = rest(xs);
-  return satisfies(Seqable, fst) ? flatten(concat(fst, rst)) : new LazyList(fst, function(){
-    return flatten(rst);
+  var head = first(xs),
+      tail = rest(xs);
+  return satisfies(Seqable, head) ? flatten(concat(head, tail)) : new LazyList(head, function(){
+    return flatten(tail);
   });
 }
 
@@ -566,10 +604,10 @@ export function cat(xs){
   const ys = seq(xs);
   const coll = seq(compact(map(seq, ys)));
   if (!coll) return EMPTY;
-  const fst = first(coll);
-  return new LazyList(first(fst), function(){
-    const rst = rest(coll);
-    return seq(fst) ? cat([rest(fst)].concat(toArray(rst))) : cat(rst);
+  const head = first(coll);
+  return new LazyList(first(head), function(){
+    const tail = rest(coll);
+    return seq(head) ? cat([rest(head)].concat(toArray(tail))) : cat(tail);
   });
 }
 
@@ -629,6 +667,10 @@ export function repeatN(n, value){
   return repeatedlyN(n, constantly(value))
 }
 
+export function amplify(n, f){
+  return pipe.apply(this, toArray(repeatN(n, f)));
+}
+
 function _cycle(xs, ys){
   if (arguments.length === 1) return _cycle(xs, xs);
   var coll = seq(xs) || seq(ys);
@@ -641,9 +683,9 @@ export const cycle = arity(1, _cycle);
 
 function _dedupe(xs, x){
   const coll = seq(xs),
-        fst  = first(coll);
-  return coll ? fst === x ?  _dedupe(rest(coll), fst) : new LazyList(fst, function(){
-    return _dedupe(rest(coll), fst);
+        head = first(coll);
+  return coll ? head === x ?  _dedupe(rest(coll), head) : new LazyList(head, function(){
+    return _dedupe(rest(coll), head);
   }) : EMPTY;
 }
 
@@ -699,9 +741,9 @@ export function iterating(f, progress){
   }));
 }
 
-export function reassign(f, xs){
+export function reassign(pred, f, xs){
   return into(empty(xs), mapKv(function(key, value){
-    return [key, f(value, key)];
+    return [key, pred(key, value) ? f(value) : value];
   }, xs));
 }
 

@@ -69,10 +69,38 @@ export function overload(){
   return arities(arguments, arguments[arguments.length - 1]);
 }
 
-export function arity(len, f){
+export function nullary(f){
+  return function(){
+    return f();
+  }
+}
+
+export function unary(f){
+  return function(one){
+    return f(one);
+  }
+}
+
+export function binary(f){
+  return function(one, two){
+    return f(one, two);
+  }
+}
+
+export function ternary(f){
+  return function(one, two, three){
+    return f(one, two, three);
+  }
+}
+
+function _arity(len, f){ //f.length not discernible
   return function(){
     return f.apply(this, slice(arguments, 0, len));
   }
+}
+
+export function arity(len, f){
+  return ([nullary, unary, binary, ternary][len] || partial(_arity, len))(f);
 }
 
 export function flip(f, len){
@@ -186,6 +214,12 @@ export function isIdentical(a, b){
 }
 
 export const rand = Math.random;
+export const inc  = partial(add, +1);
+export const dec  = partial(add, -1);
+
+export function clamp(min, max, n){
+  return n < min ? min : n > max ? max : n;
+}
 
 export function isSome(x){
   return x != null;
@@ -226,21 +260,17 @@ export function val(pair){
   return pair[1] || null;
 }
 
+export function posn(n, f){
+  return function(){
+    return f(arguments[n]);
+  }
+}
+
+export const fst = partial(posn, 0);
+export const snd = partial(posn, 1);
+
 export function isOdd(n){
   return n % 2;
-}
-
-export function supply(){
-  const args = arguments;
-  return function(f){
-    return f.apply(this, args);
-  }
-}
-
-export function invoke(method, ...args){
-  return function(obj){
-    return obj[method].apply(this, args);
-  }
 }
 
 export const isEven  = complement(isOdd);
@@ -293,10 +323,16 @@ export function doto(){
   }
 }
 
-export function invokeWith(){
-  var args = arguments;
-  return function(self){
-    return self.apply(this, args);
+export function supply(){
+  const args = arguments;
+  return function(f){
+    return f.apply(this, args);
+  }
+}
+
+export function invoke(method, ...args){
+  return function(obj){
+    return obj[method].apply(this, args);
   }
 }
 
