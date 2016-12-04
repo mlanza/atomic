@@ -8,6 +8,7 @@ import Reduce from '../protocols/reduce';
 import Emptyable from '../protocols/emptyable';
 import Lookup from '../protocols/lookup';
 import Collection from '../protocols/collection';
+import Disj from '../protocols/disj';
 import Reduced from '../types/reduced';
 
 function first(self){
@@ -59,15 +60,17 @@ export function set(coll){
   return new Set(coll);
 }
 
-export function disj(self){
+function disj(self, value){
   var set = new Set(self);
-  set.delete(key);
+  set.delete(value);
   return set;
 }
 
 export default extend(Set, Collection, {
   conj: conj,
   has: has
+}, Disj, {
+  disj: disj
 }, Lookup, {
   get: nth
 }, Emptyable, {

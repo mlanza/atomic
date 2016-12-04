@@ -1,7 +1,8 @@
-import {identity, constantly, isIdentical} from '../core';
+import {identity, constantly, overload, reducing, flip, isIdentical} from '../core';
 import {extend, extendProtocol} from '../protocol';
 import {Seq} from '../protocols/seq';
 import Emptyable from '../protocols/emptyable';
+import Reversible from '../protocols/reversible';
 import {Seqable, seq} from '../protocols/seqable';
 import Reduce from '../protocols/reduce';
 import Collection from '../protocols/collection';
@@ -23,7 +24,14 @@ List.prototype[Symbol.iterator] = function(){
   return iterator(this);
 }
 
+function _list(head, tail){
+  return new List(head, tail);
+}
+
 const empty = constantly(EMPTY);
+export const list = overload(empty, _list, _list, function(...args){
+  return Reduce.reduce(Reversible.rseq(args), prepend, EMPTY);
+});
 
 function first(self){
   return self.head;

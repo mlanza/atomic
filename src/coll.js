@@ -7,6 +7,7 @@ import {equiv} from './protocols/equiv';
 import {conj, has} from './protocols/collection';
 import {empty} from './protocols/emptyable';
 import Next from './protocols/next';
+import {Disj, disj} from './protocols/disj';
 import {get} from './protocols/lookup';
 import {count} from './protocols/counted';
 import {assoc, hasKey} from './protocols/associative';
@@ -335,6 +336,14 @@ export function zip(...colls){
   }) : EMPTY;
 }
 
+export function then(){
+  var args = arguments;
+  return function(x){
+    const p = Promise.resolve(x);
+    return p.then.apply(p, args);
+  }
+}
+
 export function merge(){
   return reduce(arguments, function(memo, xs){
     return reduceKv(xs || {}, function(memo, key, value){
@@ -584,15 +593,15 @@ export function union(...colls){
 }
 
 export function intersection(ys, xs){
-  return filter(x => has(ys, x), xs);
+  return filter(partial(has, ys), xs);
 }
 
 export function difference(ys, xs){
-  return remove(x => has(ys, x), xs);
+  return satisfies(Disj, xs) ? reduce(ys, disj, xs) : remove(partial(has, ys), xs);
 }
 
 export function isSuperset(ys, xs){
-  return isEvery(y => has(xs, y), ys);
+  return isEvery(partial(has, xs), ys);
 }
 
 export function detect(pred, xs){
