@@ -1,6 +1,8 @@
 # TODO
 
-* Signal type (based on Observable but as a reaction, no exposed input channel); research scheduler
+* Signal type (based on Observable but as a reaction, no exposed input channel)
+  * research scheduler
+  * use transducer with signal?  would rather create signals from transducers than to have to create `map` signal, `filter` signal, etc.
 * Component type (fractal, see redux/elm) -- avoid mutating side effects
 * Virtual DOM
 * organize functions by the type they target (e.g. String, Function, etc.)
@@ -15,6 +17,7 @@
 
 # SOMEDAY
 
+* transducers use reducers in an attempt to avoid having to redesign apis for sequences of different types.  the problem is a reducer considers the accumulator (memo) and the potential new addition (filter = potential).  I wonder if there is a simpler concept at play: "the potential value".  A stream is potentially infinite.  the question is how do we use transducers with signals?
 * how much `this` context passing (e.g. f.call(this, a, b, c)) is necessary to keep bindings intact?
 * break each function into its own file?
 * defmulti
