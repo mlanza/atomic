@@ -35,6 +35,7 @@ export {reify} from './types/reified';
 export {EMPTY} from './types/empty';
 export {observable} from './types/observable';
 export {publisher} from './types/publisher';
+export * as lst from './types/list';
 export const arity        = curry(_.arity);
 export const memoize      = overload(null, _.memoize, _.memoizeWith);
 export const or           = overload(NIL, identity, _.either, _.or);

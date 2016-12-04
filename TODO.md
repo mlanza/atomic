@@ -1,6 +1,5 @@
 # TODO
 
-* disj
 * organize functions by the type they target (e.g. String, Function, etc.)
 
 # SOMEDAY
@@ -22,6 +21,7 @@
     * use a reference type that acts as a pointer?
 * trampoline
 * map-entry?
+* create Reducer type for use with `transducer` instead of `overload` fn?  Benefits worthwhile?
 * time
 * shuffle
 * doseq
