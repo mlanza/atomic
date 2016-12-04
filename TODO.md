@@ -1,26 +1,27 @@
 # TODO
 
+* Signal type (based on Observable but as a reaction, no exposed input channel); research scheduler
+* Component type (fractal, see redux/elm) -- avoid mutating side effects
+* Virtual DOM
 * organize functions by the type they target (e.g. String, Function, etc.)
-
-# SOMEDAY
-
-* ramda for many functions shows impractical examples of each fn in the docs.  i would rather share interesting use cases in the documentation to illustrate the usefulness of the fn.
-* how much `this` context passing (e.g. f.call(this, a, b, c)) is necessary to keep bindings intact?
-* break each function into its own file?
-* ramda has too many permutations (e.g. map, mapAccum, mapAccumRight, max, maxBy, etc.)
-  * rather than include permutations, provide recipes to illustrate the use of idioms without additional functions -- remember the guideline is a function's leverage should be strong for inclusion in the library, it is otherwise an idiom.
-* create `maybe`/`opt` like functions that deal in promises (e.g. `then`) and returns any value as a promise.
-* consider using accum functions (e.g. both, either) in order to create reducing versions (and, or) of unlimited arity.
-* defmulti
-* inflection: 1 thief, 2 thieves
-* Object protocol -- toString, equiv, indexOf, lastIndexOf
-* improve structure to aid in tree shaking
+* review ideas in utiljs.
+* consider data types -- native types vs immutable types (in immutable.js)
+  * protocols surrounding Map and Set are terribly inefficient and should probably be dropped altogether unless these are treated as transients; however, I don't want to support transients out of the box.  Both can be used internally but should not be exposed.
 * ISerialize (with an edn like approach to deserialization)
   * different from toString
   * what about infinite recursion existing with cyclical references?
     * use a reference type that acts as a pointer?
+  * use with memoize
+
+# SOMEDAY
+
+* how much `this` context passing (e.g. f.call(this, a, b, c)) is necessary to keep bindings intact?
+* break each function into its own file?
+* defmulti
+* inflection: 1 thief, 2 thieves
+* Object protocol -- toString, equiv, indexOf, lastIndexOf
+* improve structure to aid in tree shaking
 * trampoline
-* map-entry?
 * create Reducer type for use with `transducer` instead of `overload` fn?  Benefits worthwhile?
 * time
 * shuffle
@@ -32,10 +33,8 @@
 * make-hierarchy, et al...
 * eliminate recursion inefficiencies using reduce or loop or laziness or trampoline
 * immutablejs adapter
-* channels? -- reuse existing lib, but wrap api?
+* Promise type protocols that suit it
+* channels? -- reuse existing lib, but wrap api? alternately: Signals.
 * implement IHash, ISorted, IIterable, ISequential, IFn.invoke, IRecord
 * add count property as optimization to List (not LazyList)
-* zipmap
-* random-sample
 * clojure.string
-* diff
