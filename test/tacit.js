@@ -16,7 +16,7 @@ QUnit.test("list", function(assert){
   assert.deepEqual(chain(list(0, 1, 2), toArray), [0, 1, 2]);
 });
 
-QUnit.test("resolving", function(assert){
+QUnit.test("then", function(assert){
   assert.ok(chain(3, then(inc)).constructor === Promise);
 });
 
