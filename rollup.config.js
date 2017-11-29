@@ -5,6 +5,6 @@ export default {
   entry: 'src/main.js',
   format: 'iife',
   moduleName: '_',
-  plugins: [ json(), babel() ],
-  dest: 'dist/bundle.js'
-};
+  dest: 'dist/bundle.js',
+  plugins: [json(), babel()]
+}
