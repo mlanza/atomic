@@ -6,6 +6,7 @@ import ISeq from '../../protocols/iseq';
 import ISeqable from '../../protocols/iseqable';
 import IIndexed from '../../protocols/iindexed';
 import IShow from '../../protocols/ishow';
+import ICounted from '../../protocols/icounted';
 import {show} from '../../protocols/ishow';
 import {first, rest, toArray} from '../../protocols/iseq';
 import {seq} from '../../protocols/iseqable';
@@ -31,6 +32,10 @@ extendType(ObjectSelection, ISeq, {
     return lazySeq([key, self.obj[key]], function(){
       return objectSelection(self.obj, rest(self.keys));
     });
+  }
+}, ICounted, {
+  count: function(self){
+    return self.keys.length;
   }
 }, IShow, {
   show: function(self){

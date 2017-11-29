@@ -1,8 +1,2 @@
-export function Nil(){
-}
-
-export function nil(){
-  return null;
-}
-
-export {Nil as default};
+export * from "./nil/construct";
+import "./nil/impl";

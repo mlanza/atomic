@@ -1,5 +1,4 @@
-import protocol from "../protocol";
-import {satisfies} from "../protocol";
+import {protocol, satisfies} from "../protocol";
 import {partial} from "../core";
 
 export const ISeq = protocol({
@@ -12,4 +11,4 @@ export const first = ISeq.first;
 export const rest  = ISeq.rest;
 export const toArray = ISeq.toArray;
 export const isSeq = partial(satisfies, ISeq);
-export {ISeq as default};
+export default ISeq;

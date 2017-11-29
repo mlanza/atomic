@@ -1,10 +1,2 @@
-export function LazySeq(head, tail){
-  this.head = head;
-  this.tail = tail;
-}
-
-export function lazySeq(head, tail){
-  return new LazySeq(head, tail);
-}
-
-export {LazySeq as default};
+export * from "./lazyseq/construct";
+import "./lazyseq/impl";

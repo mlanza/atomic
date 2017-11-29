@@ -6,12 +6,19 @@ import IndexedSeq from '../../types/indexedseq';
 import ICollection from '../../protocols/icollection';
 import INext from '../../protocols/inext';
 import ISeq from '../../protocols/iseq';
+import ICounted from '../../protocols/icounted';
+import IReduce from '../../protocols/ireduce';
+import Reduced from '../../types/reduced';
 import {first, rest, toArray} from '../../protocols/iseq';
 import ISeqable from '../../protocols/iseqable';
 import IIndexed from '../../protocols/iindexed';
 import IShow from '../../protocols/ishow';
 
-extendType(IndexedSeq, ICollection,{
+extendType(IndexedSeq, IReduce, {
+  reduce: function(self, xf, init){
+    return reduce(self.arr, xf, init, self.start);
+  }
+}, ICollection,{
   conj: function(self, x){
     return toArray(self).concat([x]);
   }
@@ -32,6 +39,10 @@ extendType(IndexedSeq, ICollection,{
   }
 }, ISeqable, {
   seq: identity
+}, ICounted, {
+  count: function(self){
+    return self.length - self.start;
+  }
 }, IShow, {
   show: showSeq
 });
