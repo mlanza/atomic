@@ -1,53 +1,61 @@
-import {multimethod, curry} from './core';
-import Reified from './types/reified';
+import Nil from './types/nil';
 
-let _template = Symbol('template'),
-    _map      = Symbol('map');
+const REGISTRY = Symbol("Registry");
 
-export default function Protocol(template){
-  this[_map] = new Map();
-  extendProtocol(this, template);
+export function ProtocolLookupError(registry, subject, named, args) {
+  this.registry = registry;
+  this.subject = subject;
+  this.named = named;
+  this.args = args;
 }
 
-export function extendProtocol(self, template){
-  self[_template] = Object.assign(self[_template] || {}, template);
-  for(var key in template){
-    if (!self.hasOwnProperty(key))
-      self[key] = method(self, key);
+ProtocolLookupError.prototype = new Error();
+ProtocolLookupError.prototype.toString = function(){
+  return "Protocol lookup for " + this.named + " failed.";
+}
+
+function constructs(self){
+  return self == null ? Nil : self.constructor;
+}
+
+function Protocol(template){
+  this[REGISTRY] = new WeakMap();
+  extend(this, template);
+}
+
+function create(registry, named){
+  return function(self) {
+    var f = (registry.get(self) || {})[named] || (registry.get(constructs(self)) || {})[named];
+    if (!f) throw new ProtocolLookupError(registry, self, named, arguments);
+    return f.apply(this, arguments);
   }
+}
+
+export function extend(self, template){
+  for (var key in template){
+    self[key] = create(self[REGISTRY], key).bind(self);
+  }
+}
+
+export function implement(self, type, impl){
+  self[REGISTRY].set(type, impl);
 }
 
 export function protocol(template){
   return new Protocol(template);
 }
 
-export function satisfies(self, value){
-  return value instanceof Reified ? value.map.get(self) : self[_map].get(value == null ? null : value.constructor);
+export function extendType(type, protocol, impl){
+  var rest = Array.prototype.slice.call(arguments, 3);
+  implement(protocol, type, impl);
+  if (rest.length){
+    var args = [type].concat(rest);
+    extendType.apply(null, args);
+  }
 }
 
-function method(protocol, key){
-  function dispatch(value){
-    var f = (satisfies(protocol, value) || {})[key];
-    return f ? f : value != null && value.__proto__.constructor !== Object ? dispatch(value.__proto__) : protocol[_template][key];
-  }
-  return multimethod(dispatch);
+export function satisfies(protocol, constructor){
+  return protocol[REGISTRY].has(constructor);
 }
 
-export function extend(self, protocol, template){
-  var tail = Array.prototype.slice.call(arguments, 3);
-  if (self instanceof Reified) {
-    var curr = self.map.get(protocol);
-    if (!curr){
-      curr = {};
-      self.map.set(protocol, curr);
-    }
-  } else {
-    var curr = protocol[_map].get(self || null);
-    if (!curr){
-      curr = {};
-      protocol[_map].set(self, curr);
-    }
-  }
-  Object.assign(curr, template);
-  return tail.length ? extend.apply(this, [self].concat(tail)) : self;
-}
+export {protocol as default};
