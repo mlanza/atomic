@@ -1,4 +1,4 @@
-import Nil from './types/nil';
+import Nil from './types/nil/construct';
 
 const REGISTRY = Symbol("Registry");
 
@@ -18,7 +18,7 @@ function constructs(self){
   return self == null ? Nil : self.constructor;
 }
 
-function Protocol(template){
+export function Protocol(template){
   this[REGISTRY] = new WeakMap();
   extend(this, template);
 }
@@ -58,4 +58,4 @@ export function satisfies(protocol, constructor){
   return protocol[REGISTRY].has(constructor);
 }
 
-export {protocol as default};
+export {Protocol as default};

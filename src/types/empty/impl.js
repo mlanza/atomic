@@ -13,9 +13,7 @@ import {first, rest, toArray} from '../../protocols/iseq';
 extendType(Empty, ISeq, {
   first: constantly(null),
   rest: empty,
-  toArray: function(){
-    return [];
-  }
+  toArray: constantly(Object.freeze([]))
 }, INext, {
   next: constantly(null)
 }, ISeqable, {

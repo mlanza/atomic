@@ -1,5 +1,4 @@
-import protocol from "../protocol";
-import {satisfies} from "../protocol";
+import {protocol, satisfies} from "../protocol";
 import {partial} from "../core";
 
 export const IShow = protocol({
@@ -8,4 +7,4 @@ export const IShow = protocol({
 
 export const show = IShow.show;
 export const isShow = partial(satisfies, IShow);
-export {IShow as default};
+export default IShow;
