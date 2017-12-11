@@ -1,6 +1,7 @@
 import {first, rest, toArray} from "./protocols/iseq";
 import {seq} from "./protocols/iseqable";
 import {show} from "./protocols/ishow";
+import {next} from "./protocols/inext";
 
 export function nextSeq(self){
   return seq(rest(self));
@@ -37,4 +38,14 @@ function toArray2(xs, zs){
 
 export function toArraySeq(xs){
   return toArray2(xs)
+}
+
+export function reduceSeq(xs, xf, init, from){
+  var memo = init,
+      ys = seq(xs);
+  while(ys && !(memo instanceof Reduced)){
+    memo = xf(memo, first(ys));
+    ys = next(ys);
+  }
+  return memo instanceof Reduced ? memo.valueOf() : memo;
 }

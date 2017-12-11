@@ -26,5 +26,7 @@ extendType(LazySeq, ISeq, {
 }, INext, {
   next: nextSeq
 }, IShow, {
-  show: showSeq
+  show: function(self){
+    return "#lazy-seq " + showSeq(self);
+  }
 });

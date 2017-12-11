@@ -1,4 +1,4 @@
-import {constantly, overload, reducing} from "../../core";
+import {slice, constantly, overload, reducing} from "../../core";
 import {EMPTY} from '../../types/empty';
 
 export function List(head, tail){
@@ -10,6 +10,12 @@ function cons2(head, tail){
   return new List(head, tail || EMPTY);
 }
 
-export const cons = overload(constantly(EMPTY), cons2, cons2, reducing(cons2));
+const _consN = reducing(cons2);
+
+function consN(){
+  return _consN.apply(this, slice(arguments).concat([EMPTY]));
+}
+
+export const cons = overload(constantly(EMPTY), cons2, cons2, consN);
 
 export default List;

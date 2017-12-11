@@ -1,7 +1,10 @@
 import Reduced from './types/reduced';
 
-export const unbind = Function.call.bind(Function.bind, Function.call);
-export const slice = unbind(Array.prototype.slice);
+export const unbind    = Function.call.bind(Function.bind, Function.call);
+export const slice     = unbind(Array.prototype.slice);
+export const lowerCase = unbind(String.prototype.toLowerCase);
+export const upperCase = unbind(String.prototype.toUpperCase);
+export const trim      = unbind(String.prototype.trim);
 
 export function reduce(xs, xf, init, from){
   var memo = init, len = xs.length;

@@ -25,5 +25,7 @@ extendType(List, INext, {
 }, ISeqable, {
   seq: identity
 }, IShow, {
-  show: showSeq
+  show: function(self){
+    return "#list " + showSeq(self);
+  }
 });
