@@ -1,15 +1,20 @@
 import "./types";
 import {EMPTY} from "./types/empty";
+import {concat as concatN} from "./types/concatenated";
 import {cons} from "./types/list";
-import {slice, constantly, overload, identity, partial, reducing, complement, comp} from "./core";
+import {slice, constantly, overload, identity, partial, reducing, complement, comp, upperCase} from "./core";
 import {next} from "./protocols/inext";
 import {first, rest, toArray} from "./protocols/iseq";
 import {lazySeq} from "./types/lazyseq";
 import {reduced} from "./types/reduced";
+import {transduced} from "./types/transduced";
+import {concatenated} from "./types/concatenated";
+import Reduced from "./types/reduced";
 import {seq} from "./protocols/iseqable";
 import {count} from "./protocols/icounted";
 import {show} from "./protocols/ishow";
 import {reduce} from "./protocols/ireduce";
+import {reduce as reduceIndexed} from "./core";
 
 export * from "./core";
 export * from "./protocols";
@@ -54,13 +59,6 @@ export function notEmpty(coll){
   return isEmpty(coll) ? null : coll;
 }
 
-function concatN(xs, ...tail){
-  return lazySeq(first(xs), function(){
-    const ys = rest(xs);
-    return concat.apply(this, (ys === EMPTY ? [] : [ys]).concat(tail));
-  });
-}
-
 export const concat = overload(constantly(EMPTY), seq, concatN);
 
 export function each(f, xs){
@@ -69,6 +67,12 @@ export function each(f, xs){
     f(first(ys));
     ys = seq(rest(ys));
   }
+}
+
+function cat(xf){
+  return overload(xf, xf, function(memo, value){
+    return reduce(value, xf, memo);
+  });
 }
 
 function map1(f){
@@ -218,19 +222,14 @@ function interleave2(xs, ys){
 }
 
 function interleaveN(){
+  return concatenated(interleaved.apply(null, slice(arguments)));
+}
+
+function interleaved(){
   const args = slice(arguments);
-  const xs = toArray(map2(first, args));
-  if (xs.length === 0 || xs.indexOf(null) > -1) {
-    return EMPTY;
-  }
-  const remain = toArray(map2(rest, args));
-  var s = lazySeq(xs.pop(), function(){
-    return interleaveN.apply(this, remain);
-  })
-  while (xs.length) {
-    s = cons(xs.pop(), s);
-  }
-  return s;
+  return toArray(filter2(seq, args)).length === args.length ? lazySeq(toArray(map2(first, args)), function(){
+    return interleaved.apply(null, toArray(map2(rest, args)));
+  }) : EMPTY;
 }
 
 export const interleave = overload(null, null, interleave2, interleaveN);
@@ -450,17 +449,39 @@ function dropWhile2(pred, xs){
 
 export const dropWhile = overload(null, dropWhile1, dropWhile2);
 
+function splay(f){
+  return function(xf){
+    return overload(xf, xf, function(memo, value){
+      return xf(memo, f.apply(null, value));
+    });
+  }
+}
+
+const sequence2 = transduced;
+
+function sequenceN(xf){
+  return sequence2(comp(splay, xf), interleave.apply(null, toArray(partition2(arguments.length - 1, rest(slice(arguments))))));
+}
+
+export const sequence = overload(null, null, sequence2, sequenceN);
+
 const stooges = ["Larry", "Curly", "Moe"];
-const larry = first(stooges);
-const bros = rest(stooges);
+log(show(take(5, integers())));
+log(show(interleave(["A","B","C","D","E"], repeat("="), integers())));
+log(show(interleave([1,2,3],[10,11,12])));
+log(show(interleaved([1,2,3], ["A","B","C"])));
+const loud = sequence(comp(filter(function(x){
+  return x.length > 3;
+}), map(upperCase)), stooges);
+log(show(cons(1,2,3)));
+log(show(loud));
+log(show(sequence(cat,[[1,2,3], [4,5,6]])))
 log(show(stooges));
 log(show(take(11, cycle(["A","B","C"]))));
 log(show(rest(["A","B","C"])));
 log(show(repeatedly(11, constantly(4))));
-log(show(interleave(["A","B","C","D","E"], repeat("="), integers())));
 log(show(concat(stooges, ["Shemp", "Corey"])));
 log(show(range(4)));
 log(show({ace: 1, king: 2}));
 log(show(seq({ace: 1, king: 2})));
 log(show(second(stooges)));
-each(log, stooges);

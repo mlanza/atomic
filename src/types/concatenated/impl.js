@@ -1,8 +1,8 @@
 import {identity} from '../../core';
 import {extendType} from '../../protocol';
-import {showSeq} from '../../common';
-import {indexedSeq} from '../../types/indexedseq';
-import IndexedSeq from '../../types/indexedseq';
+import {toArraySeq, showSeq, reduceSeq} from '../../common';
+import Concatenated from '../../types/concatenated';
+import {concat} from '../../types/concatenated';
 import ICollection from '../../protocols/icollection';
 import INext from '../../protocols/inext';
 import ISeq from '../../protocols/iseq';
@@ -14,37 +14,33 @@ import ISeqable from '../../protocols/iseqable';
 import IIndexed from '../../protocols/iindexed';
 import IShow from '../../protocols/ishow';
 
-extendType(IndexedSeq, IReduce, {
-  reduce: function(self, xf, init){
-    return reduce(self.arr, xf, init, self.start);
-  }
+extendType(Concatenated, IReduce, {
+  reduce: reduceSeq
 }, ICollection,{
   conj: function(self, x){
-    return toArray(self).concat([x]);
+    return concat(self.colls.concat([x]));
   }
 }, INext, {
   next: function(self){
-    var pos = self.start + 1;
-    return pos < self.arr.length ? indexedSeq(self.arr, pos) : null;
+    var tail = rest(self);
+    return tail === EMPTY ? null : tail;
   }
 }, ISeq, {
   first: function(self){
-    return self.arr[self.start];
+    return first(first(self.colls));
   },
   rest: function(self){
-    return indexedSeq(self.arr, self.start + 1);
+    return concat.apply(null, [rest(first(self.colls))].concat(toArray(rest(self.colls))));
   },
-  toArray: function(self){
-    return self.arr.slice(self.start);
-  }
+  toArray: toArraySeq
 }, ISeqable, {
   seq: identity
 }, ICounted, {
   count: function(self){
-    return self.length - self.start;
+    return toArray(self).length;
   }
 }, IShow, {
   show: function(self){
-    return "#indexed-seq " + showSeq(self);
+    return "#concat " + showSeq(self);
   }
 });

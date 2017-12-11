@@ -9,3 +9,4 @@ import "./types/lazyseq";
 import "./types/nil";
 import "./types/list";
 import "./types/objectselection";
+import "./types/concatenated";

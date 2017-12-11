@@ -40,8 +40,8 @@ extendType(ObjectSelection, ISeq, {
 }, IShow, {
   show: function(self){
     var pairs = toArray(seq(self));
-    return "[" + pairs.map(function(pair){
-      return "[" + show(pair[0]) + ", " + show(pair[1]) + "]";
-    }).join(", ") + "]";
+    return "#object-selection {" + pairs.map(function(pair){
+      return show(pair[0]) + ": " + show(pair[1]);
+    }).join(", ") + "}";
   }
 });
