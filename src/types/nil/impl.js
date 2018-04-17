@@ -1,5 +1,5 @@
-import Nil from '../../types/nil';
-import IndexedSeq from '../../types/indexedseq';
+import Nil from '../../types/nil/construct';
+import IndexedSeq from '../../types/indexedseq/construct';
 import ICollection from '../../protocols/icollection';
 import INext from '../../protocols/inext';
 import ISeq from '../../protocols/iseq';

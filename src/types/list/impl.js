@@ -1,9 +1,8 @@
 import {identity, constantly} from '../../core';
 import {extendType} from '../../protocol';
 import {showSeq, nextSeq, toArraySeq} from '../../common';
-import {indexedSeq} from '../../types/indexedseq';
-import List from '../../types/list';
-import IndexedSeq from '../../types/indexedseq';
+import IndexedSeq, {indexedSeq} from '../../types/indexedseq/construct';
+import List from '../../types/list/construct';
 import ICollection from '../../protocols/icollection';
 import INext from '../../protocols/inext';
 import ISeq from '../../protocols/iseq';
