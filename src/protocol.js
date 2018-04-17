@@ -1,6 +1,6 @@
 import Nil from './types/nil/construct';
 
-const REGISTRY = Symbol("Registry");
+const REGISTRY = window.Symbol ? Symbol("Registry") : "Registry";
 
 export function ProtocolLookupError(registry, subject, named, args) {
   this.registry = registry;

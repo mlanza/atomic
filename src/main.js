@@ -1,19 +1,17 @@
 import "./types";
-import {EMPTY} from "./types/empty";
-import {concat as concatN} from "./types/concatenated";
-import {cons} from "./types/list";
+import Empty, {EMPTY} from "./types/empty";
+import List, {cons} from "./types/list";
 import {slice, constantly, overload, identity, partial, reducing, complement, comp, upperCase} from "./core";
-import {next} from "./protocols/inext";
-import {first, rest, toArray} from "./protocols/iseq";
-import {lazySeq} from "./types/lazyseq";
-import {reduced} from "./types/reduced";
-import {transduced} from "./types/transduced";
-import {concatenated} from "./types/concatenated";
-import Reduced from "./types/reduced";
-import {seq} from "./protocols/iseqable";
-import {count} from "./protocols/icounted";
-import {show} from "./protocols/ishow";
-import {reduce} from "./protocols/ireduce";
+import LazySeq, {lazySeq} from "./types/lazyseq";
+import Reduced, {reduced} from "./types/reduced";
+import Transduced, {transduced} from "./types/transduced";
+import Concatenated, {concatenated, concat as concatN} from "./types/concatenated";
+import INext, {next} from "./protocols/inext";
+import ISeq, {first, rest, toArray} from "./protocols/iseq";
+import ISeqable, {seq} from "./protocols/iseqable";
+import ICounted, {count} from "./protocols/icounted";
+import IShow, {show} from "./protocols/ishow";
+import IReduce, {reduce} from "./protocols/ireduce";
 import {reduce as reduceIndexed} from "./core";
 
 export * from "./core";
@@ -456,32 +454,3 @@ function splay(f){
     });
   }
 }
-
-const sequence2 = transduced;
-
-function sequenceN(xf){
-  return sequence2(comp(splay, xf), interleave.apply(null, toArray(partition2(arguments.length - 1, rest(slice(arguments))))));
-}
-
-export const sequence = overload(null, null, sequence2, sequenceN);
-
-const stooges = ["Larry", "Curly", "Moe"];
-log(show(take(5, integers())));
-log(show(interleave(["A","B","C","D","E"], repeat("="), integers())));
-log(show(interleave([1,2,3],[10,11,12])));
-log(show(interleaved([1,2,3], ["A","B","C"])));
-const loud = sequence(comp(filter(function(x){
-  return x.length > 3;
-}), map(upperCase)), stooges);
-log(show(cons(1,2,3)));
-log(show(loud));
-log(show(sequence(cat,[[1,2,3], [4,5,6]])))
-log(show(stooges));
-log(show(take(11, cycle(["A","B","C"]))));
-log(show(rest(["A","B","C"])));
-log(show(repeatedly(11, constantly(4))));
-log(show(concat(stooges, ["Shemp", "Corey"])));
-log(show(range(4)));
-log(show({ace: 1, king: 2}));
-log(show(seq({ace: 1, king: 2})));
-log(show(second(stooges)));
