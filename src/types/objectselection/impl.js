@@ -1,5 +1,5 @@
-import ObjectSelection from '../../types/objectselection';
-import IndexedSeq from '../../types/indexedseq';
+import ObjectSelection, {objectSelection} from '../../types/objectselection/construct';
+import IndexedSeq, {indexedSeq} from '../../types/indexedseq/construct';
 import ICollection from '../../protocols/icollection';
 import INext from '../../protocols/inext';
 import ISeq from '../../protocols/iseq';
@@ -10,10 +10,8 @@ import ICounted from '../../protocols/icounted';
 import {show} from '../../protocols/ishow';
 import {first, rest, toArray} from '../../protocols/iseq';
 import {seq} from '../../protocols/iseqable';
-import {objectSelection} from '../../types/objectselection';
 import {identity, constantly} from '../../core';
-import {indexedSeq} from '../../types/indexedseq';
-import {lazySeq} from '../../types/lazyseq';
+import {lazySeq} from '../../types/lazyseq/construct';
 import {toArraySeq} from "../../common";
 import {extendType} from '../../protocol';
 

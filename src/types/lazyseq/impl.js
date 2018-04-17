@@ -1,5 +1,5 @@
 import {extendType} from '../../protocol';
-import LazySeq from '../../types/lazyseq';
+import LazySeq from '../../types/lazyseq/construct';
 import IndexedSeq from '../../types/indexedseq';
 import ICollection from '../../protocols/icollection';
 import INext from '../../protocols/inext';

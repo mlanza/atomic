@@ -1,8 +1,7 @@
 import {identity} from '../../core';
 import {extendType} from '../../protocol';
 import {toArraySeq, showSeq, reduceSeq} from '../../common';
-import Concatenated from '../../types/concatenated';
-import {concat} from '../../types/concatenated';
+import Concatenated, {concat} from '../../types/concatenated/construct';
 import ICollection from '../../protocols/icollection';
 import INext from '../../protocols/inext';
 import ISeq from '../../protocols/iseq';
