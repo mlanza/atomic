@@ -10,8 +10,12 @@ import IShow from '../../protocols/ishow';
 import {first, rest, toArray} from '../../protocols/iseq';
 import ISeqable from '../../protocols/iseqable';
 import IIndexed from '../../protocols/iindexed';
+import IEmptyableCollection from '../../protocols/iemptyablecollection';
+import {EMPTY} from '../../types/empty';
 
-extendType(List, INext, {
+extendType(List, IEmptyableCollection, {
+  empty: EMPTY
+}, INext, {
   next: nextSeq
 }, ISeq, {
   first: function(self){

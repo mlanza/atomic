@@ -6,6 +6,10 @@ export const lowerCase = unbind(String.prototype.toLowerCase);
 export const upperCase = unbind(String.prototype.toUpperCase);
 export const trim      = unbind(String.prototype.trim);
 
+export const EMPTY_ARRAY  = Object.freeze([]);
+export const EMPTY_OBJECT = Object.freeze({});
+export const EMPTY_STRING = "";
+
 export function reduce(xs, xf, init, from){
   var memo = init, len = xs.length;
   for(var i = from || 0; i < len; i++){

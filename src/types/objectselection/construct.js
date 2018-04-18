@@ -7,7 +7,7 @@ export function ObjectSelection(obj, keys){
 }
 
 export function objectSelection(obj, keys){
-  return seq(keys) ? new ObjectSelection(obj, keys) : EMPTY;
+  return new ObjectSelection(obj, seq(keys) ? keys : EMPTY);
 }
 
 export default ObjectSelection;

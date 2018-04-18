@@ -4,10 +4,11 @@ import IndexedSeq from '../../types/indexedseq';
 import ICollection from '../../protocols/icollection';
 import INext from '../../protocols/inext';
 import ISeq from '../../protocols/iseq';
+import IReduce from '../../protocols/ireduce';
 import ISeqable from '../../protocols/iseqable';
 import IIndexed from '../../protocols/iindexed';
 import IShow from '../../protocols/ishow';
-import {showSeq, nextSeq, toArraySeq} from '../../common';
+import {showSeq, nextSeq, toArraySeq, reduceSeq} from '../../common';
 import {seq} from '../../protocols/iseqable';
 import {identity, constantly} from '../../core';
 import {indexedSeq} from '../../types/indexedseq';
@@ -21,6 +22,8 @@ extendType(LazySeq, ISeq, {
     return self.tail();
   },
   toArray: toArraySeq
+}, IReduce, {
+  reduce: reduceSeq
 }, ISeqable, {
   seq: identity
 }, INext, {

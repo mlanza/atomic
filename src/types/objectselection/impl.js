@@ -7,10 +7,12 @@ import ISeqable from '../../protocols/iseqable';
 import IIndexed from '../../protocols/iindexed';
 import IShow from '../../protocols/ishow';
 import ICounted from '../../protocols/icounted';
+import ILookup from '../../protocols/ilookup';
+import IEmptyableCollection from '../../protocols/iemptyablecollection';
 import {show} from '../../protocols/ishow';
 import {first, rest, toArray} from '../../protocols/iseq';
 import {seq} from '../../protocols/iseqable';
-import {identity, constantly} from '../../core';
+import {identity, constantly, EMPTY_OBJECT} from '../../core';
 import {lazySeq} from '../../types/lazyseq/construct';
 import {toArraySeq} from "../../common";
 import {extendType} from '../../protocol';
@@ -24,6 +26,12 @@ extendType(ObjectSelection, ISeq, {
     return objectSelection(self.obj, rest(self.keys));
   },
   toArray: toArraySeq
+}, IEmptyableCollection, {
+  empty: constantly(EMPTY_OBJECT)
+}, ILookup, {
+  lookup: function(self, key){
+    return self.keys.indexOf(key) > -1 ? self.obj[key] : null;
+  }
 }, ISeqable, {
   seq: function(self){
     var key = first(self.keys);

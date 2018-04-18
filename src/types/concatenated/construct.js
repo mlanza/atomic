@@ -1,17 +1,16 @@
 import {EMPTY} from '../empty/construct';
+import {seq} from '../../protocols/iseqable';
 
 export function Concatenated(colls){
   this.colls = colls;
 }
 
 export function concat(){
-  return concatenated(Array.prototype.slice.call(arguments).filter(function(coll){
-    return coll !== EMPTY;
-  }));
+  return concatenated(Array.prototype.slice.call(arguments));
 }
 
 export function concatenated(colls){
-  return colls.length ? new Concatenated(colls) : EMPTY;
+  return seq(colls) ? new Concatenated(colls) : EMPTY;
 }
 
 export default Concatenated;

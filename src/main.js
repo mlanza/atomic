@@ -4,20 +4,205 @@ import List, {cons} from "./types/list";
 import {slice, constantly, overload, identity, partial, reducing, complement, comp, upperCase} from "./core";
 import LazySeq, {lazySeq} from "./types/lazyseq";
 import Reduced, {reduced} from "./types/reduced";
-import Transduced, {transduced} from "./types/transduced";
 import Concatenated, {concatenated, concat as concatN} from "./types/concatenated";
 import INext, {next} from "./protocols/inext";
 import ISeq, {first, rest, toArray} from "./protocols/iseq";
 import ISeqable, {seq} from "./protocols/iseqable";
 import ICounted, {count} from "./protocols/icounted";
 import IShow, {show} from "./protocols/ishow";
+import ILookup, {lookup} from "./protocols/ilookup";
+import IAssociative, {assoc, containsKey} from "./protocols/iassociative";
 import IReduce, {reduce} from "./protocols/ireduce";
 import {reduce as reduceIndexed} from "./core";
 
 export * from "./core";
 export * from "./protocols";
+export * from "./protocols/iassociative";
 
 export const log = console.log.bind(console);
+export const int = parseInt;
+export const float = parseFloat;
+export const num = Number;
+export const boolean = Boolean;
+
+function everyPair(pred, xs){
+  var every = xs.length > 0;
+  while(every && xs.length > 1){
+    every = pred(xs[0], xs[1]);
+    xs = slice(xs, 1);
+  }
+  return every;
+}
+
+export function not(x){
+  return !x;
+}
+
+function lt2(a, b){
+  return a < b;
+}
+
+function ltN(){
+  return everyPair(lt2, slice(arguments));
+}
+
+export const lt = overload(constantly(false), constantly(true), lt2, ltN);
+
+function lte2(a, b){
+  return a <= b;
+}
+
+function lteN(){
+  return everyPair(lte2, slice(arguments));
+}
+
+export const lte = overload(constantly(false), constantly(true), lte2, lteN);
+
+
+function gt2(a, b){
+  return a > b;
+}
+
+function gtN(){
+  return everyPair(gt2, slice(arguments));
+}
+
+export const gt = overload(constantly(false), constantly(true), gt2, gtN);
+
+function gte2(a, b){
+  return a >= b;
+}
+
+function gteN(){
+  return everyPair(gte2, slice(arguments));
+}
+
+export const gte = overload(constantly(false), constantly(true), gte2, gteN);
+
+function eq2(a, b){
+  return a === b;
+}
+
+function eqN(){
+  return everyPair(eq2, slice(arguments));
+}
+
+export const eq = overload(constantly(true), constantly(true), eq2, eqN);
+
+function notEq2(a, b){
+  return a !== b;
+}
+
+function notEqN(){
+  return !everyPair(eq2, slice(arguments));
+}
+
+export const notEq = overload(constantly(true), constantly(true), notEq2, notEqN);
+
+function equal2(a, b){
+  return a == b;
+}
+
+function equalN(){
+  return everyPair(equal2, slice(arguments));
+}
+
+export const equal = overload(constantly(true), constantly(true), equal2, equalN);
+
+export function mod(num, div){
+  return num % div;
+}
+
+export function isBoolean(b){
+  return Boolean(b) === b;
+}
+
+export function isNumber(n){
+  return Number(n) === n;
+}
+
+export function isInteger(n){
+  return Number(n) === n && n % 1 === 0;
+}
+
+export const isInt = isInteger;
+
+export function isFloat(n){
+  return Number(n) === n && n % 1 !== 0;
+}
+
+export function get(self, key, notFound){
+  return lookup(self, key) || notFound;
+}
+
+export function getIn(self, keys, notFound){
+  return reduceIndexed(keys, get, self) || notFound;
+}
+
+export function assocIn(self, keys, value){
+  var key = keys[0];
+  switch (keys.length) {
+    case 0:
+      return self;
+    case 1:
+      return assoc(self, key, value);
+    default:
+      return assoc(self, key, assocIn(get(self, key), toArray(rest(keys)), value));
+  }
+}
+
+function update0(self, key, f){
+  return assoc(self, key, f(get(self, key)));
+}
+
+function update1(self, key, f, a){
+  return assoc(self, key, f(get(self, key), a));
+}
+
+function update2(self, key, f, a, b){
+  return assoc(self, key, f(get(self, key), a, b));
+}
+
+function update3(self, key, f, a, b, c){
+  return assoc(self, key, f(get(self, key), a, b, c));
+}
+
+function updateN(self, key, f){
+  var tgt  = get(self, key),
+      args = [tgt].concat(slice(arguments, 3));
+  return assoc(self, key, f.apply(this, args));
+}
+
+export const update = overload(null, null, null, update0, update1, update2, update3, updateN);
+
+function updateIn0(self, keys, f){
+  var k = keys[0], ks = toArray(rest(keys));
+  return ks.length ? assoc(self, k, updateIn0(get(self, k), ks, f)) : update0(self, k, f);
+}
+
+function updateIn1(self, keys, f, a){
+  var k = keys[0], ks = toArray(rest(keys));
+  return ks.length ? assoc(self, k, updateIn1(get(self, k), ks, f, a)) : update1(self, k, f, a);
+}
+
+function updateIn2(self, keys, f, a, b){
+  var k = keys[0], ks = toArray(rest(keys));
+  return ks.length ? assoc(self, k, updateIn2(get(self, k), ks, f, a, b)) : update2(self, k, f, a, b);
+}
+
+function updateIn3(self, key, f, a, b, c){
+  var k = keys[0], ks = toArray(rest(keys));
+  return ks.length ? assoc(self, k, updateIn3(get(self, k), ks, f, a, b, c)) : update3(self, k, f, a, b, c);
+}
+
+function updateInN(self, keys, f) {
+  return updateIn0(self, keys, function(obj){
+    var args = toArray(rest(slice(arguments)));
+    return f.apply(null, [obj].concat(args));
+  });
+}
+
+export const updateIn = overload(null, null, null, updateIn0, updateIn1, updateIn2, updateIn3, updateInN);
 
 export function isSome(x){
   return x != null;
@@ -220,13 +405,12 @@ function interleave2(xs, ys){
 }
 
 function interleaveN(){
-  return concatenated(interleaved.apply(null, slice(arguments)));
+  return concatenated(interleaved(slice(arguments)));
 }
 
-function interleaved(){
-  const args = slice(arguments);
-  return toArray(filter2(seq, args)).length === args.length ? lazySeq(toArray(map2(first, args)), function(){
-    return interleaved.apply(null, toArray(map2(rest, args)));
+function interleaved(colls){
+  return filter2(isNil, colls) === EMPTY ? lazySeq(map2(first, colls), function(){
+    return interleaved(map2(next, colls));
   }) : EMPTY;
 }
 
