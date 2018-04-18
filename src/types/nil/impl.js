@@ -24,7 +24,7 @@ extendType(Nil, IEmptyableCollection, {
     obj[key] = value;
     return obj;
   },
-  containsKey: constantly(false)
+  contains: constantly(false)
 }, INext, {
   next: identity
 }, ISeq, {

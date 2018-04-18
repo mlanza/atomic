@@ -17,52 +17,36 @@
 
 # API
 
-* atom
-* compare
-* cons
-* constantly
-* contains?
-* count
-* counted?
+* IComparable + compare
+* IHash + hash
+* IEquiv
+* IMap + dissoc
+* IMapEntry + MapEntry type, key, val, key, vals
+* ISet + disjoin/disj, set, set?, difference, intersection, join, select, subset?, superset?, union
+* ICloneable
+* IFind + find
+* IStack + peek + pop
+* IKVReduce
+* IReversible + reversible
+* ISorted
+* IWatchable
+* IReset, ISwap, atom, swap!, reset!
+* IIterable
+* Signal type like traffic
 * dedupe
-* deref
-* derive
-* descendants
-* disj
-* dissoc
 * distinct
 * distinct?
-* doto
 * drop-last
-* empty
 * every-pred
 * every?
-* filterv
-* find
-* first
 * flatten
-* fn?
-* fnil
 * format
 * group-by
-* hash
 * identical?
-* identity
 * indexed?
 * instance?
-* into
-* into-array
-* isa?
-* juxt
-* key
-* keys
-* last
-* lazy-seq
-* long
-* make-hierarchy
+* hierarchy: isa?, make-hierarchy, derive, underive, descendants, parents
 * map?
-* mapcat
-* mapv
 * max-key
 * memoize
 * merge
@@ -70,25 +54,12 @@
 * min-key
 * not-any?
 * not-every?
-* parents
-* partial
-* pop
-* peek
 * rand
-* reduce
 * reduce-kv
-* reductions
-* reify
-* replace
 * reverse
-* reversible?
 * rseq
 * select-keys
-* seq?
-* seqable?
 * sequential?
-* set
-* set?
 * some
 * some->
 * some->>
@@ -97,20 +68,9 @@
 * sort-by
 * split-at
 * split-with
-* string?
 * subs
-* subvec
-* swap!
+* subarr (like subvec)
 * take-last
-* transduce
-* to-array
-* val
-* vals
-* vec
-* vector
-* vector?
-* set operations: difference, intersection, join, select, subset?, superset?, union
-
 
 # SOMEDAY
 

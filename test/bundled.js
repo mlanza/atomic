@@ -42,3 +42,7 @@ QUnit.test("comparisons", function(assert){
   assert.equal(_.notEq(1, 1, 2, 2, 3, 3), true);
   assert.equal(_.notEq(3, 3, 3), false);
 });
+
+QUnit.test("transduce", function(assert){
+  assert.deepEqual(_.into([], _.comp(_.take(4), _.map(_.inc)), _.cycle([1,2,3])), [2,3,4,2]);
+});

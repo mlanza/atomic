@@ -8,6 +8,7 @@ import IIndexed from '../../protocols/iindexed';
 import IShow from '../../protocols/ishow';
 import ICounted from '../../protocols/icounted';
 import ILookup from '../../protocols/ilookup';
+import IFn from '../../protocols/ifn';
 import IEmptyableCollection from '../../protocols/iemptyablecollection';
 import {show} from '../../protocols/ishow';
 import {first, rest, toArray} from '../../protocols/iseq';
@@ -16,6 +17,10 @@ import {identity, constantly, EMPTY_OBJECT} from '../../core';
 import {lazySeq} from '../../types/lazyseq/construct';
 import {toArraySeq} from "../../common";
 import {extendType} from '../../protocol';
+
+function lookup(self, key){
+  return self.keys.indexOf(key) > -1 ? self.obj[key] : null;
+}
 
 extendType(ObjectSelection, ISeq, {
   first: function(self){
@@ -28,10 +33,10 @@ extendType(ObjectSelection, ISeq, {
   toArray: toArraySeq
 }, IEmptyableCollection, {
   empty: constantly(EMPTY_OBJECT)
+}, IFn, {
+  invoke: lookup
 }, ILookup, {
-  lookup: function(self, key){
-    return self.keys.indexOf(key) > -1 ? self.obj[key] : null;
-  }
+  lookup: lookup
 }, ISeqable, {
   seq: function(self){
     var key = first(self.keys);

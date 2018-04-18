@@ -1,29 +1,49 @@
 import "./types";
 import Empty, {EMPTY} from "./types/empty";
 import List, {cons} from "./types/list";
-import {slice, constantly, overload, identity, partial, reducing, complement, comp, upperCase} from "./core";
+import {slice, constantly, overload, identity, partial, reducing, complement, comp, upperCase, EMPTY_ARRAY} from "./core";
 import LazySeq, {lazySeq} from "./types/lazyseq";
 import Reduced, {reduced} from "./types/reduced";
 import Concatenated, {concatenated, concat as concatN} from "./types/concatenated";
 import INext, {next} from "./protocols/inext";
 import ISeq, {first, rest, toArray} from "./protocols/iseq";
 import ISeqable, {seq} from "./protocols/iseqable";
+import ICollection, {conj} from "./protocols/icollection";
 import ICounted, {count} from "./protocols/icounted";
 import IShow, {show} from "./protocols/ishow";
 import ILookup, {lookup} from "./protocols/ilookup";
-import IAssociative, {assoc, containsKey} from "./protocols/iassociative";
+import IAssociative, {assoc, contains} from "./protocols/iassociative";
 import IReduce, {reduce} from "./protocols/ireduce";
 import {reduce as reduceIndexed} from "./core";
 
-export * from "./core";
+export {log, unbind, slice, isArray, lowerCase, upperCase, trim, overload, identity, constantly, partial, complement, comp, multimethod} from "./core";
+export * from './protocol';
 export * from "./protocols";
-export * from "./protocols/iassociative";
 
-export const log = console.log.bind(console);
 export const int = parseInt;
 export const float = parseFloat;
 export const num = Number;
 export const boolean = Boolean;
+
+function transduce3(xform, f, coll){
+  return transduce4(xform, f, f(), coll);
+}
+
+function transduce4(xform, f, init, coll){
+  return reduce(xform(f), init, coll);
+}
+
+export const transduce = overload(null, null, null, transduce3, transduce4);
+
+function into2(to, from){
+  return reduce(conj, to, from);
+}
+
+function into3(to, xform, from){
+  return transduce(xform, conj, to, from);
+}
+
+export const into = overload(constantly(EMPTY_ARRAY), identity, into2, into3);
 
 function everyPair(pred, xs){
   var every = xs.length > 0;
@@ -254,7 +274,7 @@ export function each(f, xs){
 
 function cat(xf){
   return overload(xf, xf, function(memo, value){
-    return reduce(value, xf, memo);
+    return reduce(memo, xf, value);
   });
 }
 
@@ -638,3 +658,82 @@ function splay(f){
     });
   }
 }
+
+export function filtera(pred, coll){
+  return toArray(filter(pred, coll));
+}
+
+export function mapa(f, coll){
+  return toArray(map(f, coll));
+}
+
+export function juxt(){
+  var fs = slice(arguments);
+  return function(){
+    var args = arguments;
+    return mapa(function(f){
+      return f.apply(this, args);
+    }, fs);
+  }
+}
+
+function mapcat1(f){
+  return comp(map(f), cat);
+}
+
+function mapcat2(f, colls){
+  return concatenated(map(f, colls));
+}
+
+export const mapcat = overload(null, mapcat1, mapcat2);
+
+export function replace(s, match, replacement){
+  return s.replace(match, replacement);
+}
+
+function doto(obj){
+  each(function(effect){
+    effect(obj);
+  }, slice(arguments, 1));
+  return obj;
+}
+
+function fnil1(f, A){
+  return function(a){
+    var args = slice(arguments);
+    if (isNil(a)) { args[0] = A };
+    return f.apply(null, args);
+  }
+}
+
+function fnil2(f, A, B){
+  return function(a, b){
+    var args = slice(arguments);
+    if (isNil(a)) { args[0] = A };
+    if (isNil(b)) { args[1] = B };
+    return f.apply(null, args);
+  }
+}
+
+function fnil3(f, A, B, C){
+  return function(a, b, c){
+    var args = slice(arguments);
+    if (isNil(a)) { args[0] = A };
+    if (isNil(b)) { args[1] = B };
+    if (isNil(c)) { args[2] = C };
+    return f.apply(null, args);
+  }
+}
+
+function fnilN(f){
+  var ARGS = slice(arguments, 1);
+  return function(){
+    var args = slice(arguments);
+    for(var x = 0; x < args.length; x++){
+      if (isNil(args[x])) { args[x] = ARGS[x] };
+    }
+    return f.apply(null, args);
+  }
+}
+
+export const fnil = overload(null, null, fnil1, fnil2, fnil3, fnilN);

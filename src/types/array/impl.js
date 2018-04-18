@@ -10,27 +10,32 @@ import IIndexed from '../../protocols/iindexed';
 import IAssociative from '../../protocols/iassociative';
 import IEmptyableCollection from '../../protocols/iemptyablecollection';
 import IShow from '../../protocols/ishow';
+import IFn from '../../protocols/ifn';
 import ICounted from '../../protocols/icounted';
 import ILookup from '../../protocols/ilookup';
 import Reduced from '../../types/reduced';
 import {indexedSeq} from '../../types/indexedseq';
 import {first, rest} from '../../protocols/iseq';
 
-extendType(Array, IEmptyableCollection, {
+function lookup(self, key){
+  return self[key];
+}
+
+extendType(Array, IFn, {
+  invoke: lookup
+}, IEmptyableCollection, {
   empty: constantly(EMPTY_ARRAY)
 }, IReduce, {
-  reduce: reduce
+  _reduce: reduce
 }, ILookup, {
-  lookup: function(self, key){
-    return self[key];
-  }
+  lookup: lookup
 }, IAssociative, {
   assoc: function(self, key, value){
     var arr = slice(self);
     arr.splice(key, 1, value);
     return arr;
   },
-  containsKey: function(self, key){
+  contains: function(self, key){
     return key > -1 && key < self.length;
   }
 }, IIndexed, {
