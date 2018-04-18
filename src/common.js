@@ -2,6 +2,7 @@ import {first, rest, toArray} from "./protocols/iseq";
 import {seq} from "./protocols/iseqable";
 import {show} from "./protocols/ishow";
 import {next} from "./protocols/inext";
+import Reduced from "./types/reduced/construct";
 
 export function nextSeq(self){
   return seq(rest(self));

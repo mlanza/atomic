@@ -1,4 +1,4 @@
-import {identity, reduce} from '../../core';
+import {identity, constantly, reduce, slice, EMPTY_ARRAY} from '../../core';
 import {extendType} from '../../protocol';
 import {showSeq, nthIndexed} from '../../common';
 import IReduce from '../../protocols/ireduce';
@@ -7,14 +7,32 @@ import INext from '../../protocols/inext';
 import ISeq from '../../protocols/iseq';
 import ISeqable from '../../protocols/iseqable';
 import IIndexed from '../../protocols/iindexed';
+import IAssociative from '../../protocols/iassociative';
+import IEmptyableCollection from '../../protocols/iemptyablecollection';
 import IShow from '../../protocols/ishow';
 import ICounted from '../../protocols/icounted';
+import ILookup from '../../protocols/ilookup';
 import Reduced from '../../types/reduced';
 import {indexedSeq} from '../../types/indexedseq';
 import {first, rest} from '../../protocols/iseq';
 
-extendType(Array, IReduce, {
+extendType(Array, IEmptyableCollection, {
+  empty: constantly(EMPTY_ARRAY)
+}, IReduce, {
   reduce: reduce
+}, ILookup, {
+  lookup: function(self, key){
+    return self[key];
+  }
+}, IAssociative, {
+  assoc: function(self, key, value){
+    var arr = slice(self);
+    arr.splice(key, 1, value);
+    return arr;
+  },
+  containsKey: function(self, key){
+    return key > -1 && key < self.length;
+  }
 }, IIndexed, {
   nth: nthIndexed
 }, ISeqable, {
