@@ -1,29 +1,34 @@
-import {identity, constantly, EMPTY_ARRAY} from '../../core';
+import {identity, constantly, reduce, EMPTY_ARRAY} from '../../core';
 import {extendType} from '../../protocol';
 import {showSeq} from '../../common';
 import IndexedSeq, {indexedSeq} from '../../types/indexedseq/construct';
 import ICollection from '../../protocols/icollection';
 import INext from '../../protocols/inext';
 import ICounted from '../../protocols/icounted';
-import IReduce, {reduce} from '../../protocols/ireduce';
+import IReduce from '../../protocols/ireduce';
 import Reduced from '../../types/reduced';
 import ISeq, {first, rest, toArray} from '../../protocols/iseq';
 import ISeqable from '../../protocols/iseqable';
 import IIndexed from '../../protocols/iindexed';
 import IShow from '../../protocols/ishow';
 import ILookup from '../../protocols/ilookup';
+import IFn from '../../protocols/ifn';
 import IEmptyableCollection from '../../protocols/iemptyablecollection';
+
+function lookup(self, key){
+  return self.arr[self.start + key];
+}
 
 extendType(IndexedSeq, IEmptyableCollection, {
   empty: constantly(EMPTY_ARRAY)
 }, IReduce, {
-  reduce: function(self, xf, init){
+  _reduce: function(self, xf, init){
     return reduce(self.arr, xf, init, self.start);
   }
+}, IFn, {
+  invoke: lookup
 }, ILookup, {
-  lookup: function(self, key){
-    return self.arr[self.start + key];
-  }
+  lookup: lookup
 }, ICollection,{
   conj: function(self, x){
     return toArray(self).concat([x]);

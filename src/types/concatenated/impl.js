@@ -37,12 +37,12 @@ extendType(Concatenated, IReduce, {
     return concatenated(colls);
   },
   toArray: function(self){
-    return reduce(self.colls, function(memo, xs){
-      return reduce(xs, function(memo, x){
+    return reduce(function(memo, xs){
+      return reduce(function(memo, x){
         memo.push(x);
         return memo;
-      }, memo);
-    }, []);
+      }, memo, xs);
+    }, [], self.colls);
   }
 }, ISeqable, {
   seq: identity

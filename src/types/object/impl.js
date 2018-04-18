@@ -7,12 +7,17 @@ import ICounted, {count} from '../../protocols/icounted';
 import IAssociative from '../../protocols/iassociative';
 import IEmptyableCollection from '../../protocols/iemptyablecollection';
 import ILookup from '../../protocols/ilookup';
+import IFn from '../../protocols/ifn';
 import {first, rest, toArray} from "../../protocols/iseq";
 
-extendType(Object, ILookup, {
-  lookup: function(self, key){
-    return self[key];
-  }
+function lookup(self, key){
+  return self[key];
+}
+
+extendType(Object, IFn, {
+  invoke: lookup
+}, ILookup, {
+  lookup: lookup
 }, IEmptyableCollection, {
   empty: constantly(EMPTY_OBJECT)
 }, IAssociative, {
@@ -21,7 +26,7 @@ extendType(Object, ILookup, {
     obj[key] = value;
     return obj;
   },
-  containsKey: function(self, key){
+  contains: function(self, key){
     return self.hasOwnProperty(key);
   }
 }, ISeqable, {

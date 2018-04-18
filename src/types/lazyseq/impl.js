@@ -23,7 +23,7 @@ extendType(LazySeq, ISeq, {
   },
   toArray: toArraySeq
 }, IReduce, {
-  reduce: reduceSeq
+  _reduce: reduceSeq
 }, ISeqable, {
   seq: identity
 }, INext, {

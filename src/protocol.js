@@ -26,7 +26,9 @@ export function Protocol(template){
 function create(registry, named){
   return function(self) {
     var f = (registry.get(self) || {})[named] || (registry.get(constructs(self)) || {})[named];
-    if (!f) throw new ProtocolLookupError(registry, self, named, arguments);
+    if (!f) {
+      throw new ProtocolLookupError(registry, self, named, arguments);
+    }
     return f.apply(this, arguments);
   }
 }
@@ -52,6 +54,12 @@ export function extendType(type, protocol, impl){
     var args = [type].concat(rest);
     extendType.apply(null, args);
   }
+}
+
+export function reify(){
+  var obj = {};
+  extendType.apply(null, [obj].concat(Array.prototype.slice.call(arguments)));
+  return obj;
 }
 
 export function satisfies(protocol, constructor){
