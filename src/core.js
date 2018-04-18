@@ -73,7 +73,7 @@ export function subj(f){
   }
 }
 
-export function reversed(f){
+function reversed(f){
   return function(){
     return f.apply(this, slice(arguments).reverse());
   }
@@ -85,6 +85,24 @@ export function chain(init){
   }, init, 1);
 }
 
+function pipe2(a, b){
+  return function(){
+    return b(a.apply(this, arguments));
+  }
+}
+
+function pipe3(a, b, c){
+  return function(){
+    return c(b(a.apply(this, arguments)));
+  }
+}
+
+function pipe4(a, b, c, d){
+  return function(){
+    return d(c(b(a.apply(this, arguments))));
+  }
+}
+
 function pipeN(f){
   var fs = slice(arguments, 1);
   return function(){
@@ -94,7 +112,7 @@ function pipeN(f){
   }
 }
 
-export const pipe = overload(null, identity, pipeN);
+export const pipe = overload(null, identity, pipe2, pipe3, pipe4, pipeN);
 export const comp = reversed(pipe);
 
 export function multimethod(dispatch){

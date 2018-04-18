@@ -687,10 +687,6 @@ function mapcat2(f, colls){
 
 export const mapcat = overload(null, mapcat1, mapcat2);
 
-export function replace(s, match, replacement){
-  return s.replace(match, replacement);
-}
-
 function doto(obj){
   each(function(effect){
     effect(obj);
@@ -737,3 +733,27 @@ function fnilN(f){
 }
 
 export const fnil = overload(null, null, fnil1, fnil2, fnil3, fnilN);
+
+export function last(coll){
+  var tail = coll;
+  while (tail = next(tail)){
+    if (!next(tail)) {
+      break;
+    }
+  }
+  return first(tail);
+}
+
+export function takeLast(n, coll){
+  return n ? drop(count(coll) - n, coll) : EMPTY;
+}
+
+function dropLast2(n, coll){
+  return map(function(x, _){
+    return x;
+  }, coll, drop(n, coll));
+}
+
+const dropLast1 = partial(dropLast2, 1);
+
+export const dropLast = overload(null, dropLast1, dropLast2);

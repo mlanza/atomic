@@ -13,6 +13,10 @@ function lookup(self, key){
   return self[key];
 }
 
+export function replace(s, match, replacement){
+  return s.replace(match, replacement);
+}
+
 extendType(String, IIndexed, {
   nth: nthIndexed
 }, IEmptyableCollection, {
