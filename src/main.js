@@ -66,8 +66,8 @@ function lt2(a, b){
   return a < b;
 }
 
-function ltN(){
-  return everyPair(lt2, slice(arguments));
+function ltN(...args){
+  return everyPair(lt2, args);
 }
 
 export const lt = overload(constantly(false), constantly(true), lt2, ltN);
@@ -76,8 +76,8 @@ function lte2(a, b){
   return a <= b;
 }
 
-function lteN(){
-  return everyPair(lte2, slice(arguments));
+function lteN(...args){
+  return everyPair(lte2, args);
 }
 
 export const lte = overload(constantly(false), constantly(true), lte2, lteN);
@@ -87,8 +87,8 @@ function gt2(a, b){
   return a > b;
 }
 
-function gtN(){
-  return everyPair(gt2, slice(arguments));
+function gtN(...args){
+  return everyPair(gt2, args);
 }
 
 export const gt = overload(constantly(false), constantly(true), gt2, gtN);
@@ -97,8 +97,8 @@ function gte2(a, b){
   return a >= b;
 }
 
-function gteN(){
-  return everyPair(gte2, slice(arguments));
+function gteN(...args){
+  return everyPair(gte2, args);
 }
 
 export const gte = overload(constantly(false), constantly(true), gte2, gteN);
@@ -107,8 +107,8 @@ function eq2(a, b){
   return a === b;
 }
 
-function eqN(){
-  return everyPair(eq2, slice(arguments));
+function eqN(...args){
+  return everyPair(eq2, args);
 }
 
 export const eq = overload(constantly(true), constantly(true), eq2, eqN);
@@ -117,8 +117,8 @@ function notEq2(a, b){
   return a !== b;
 }
 
-function notEqN(){
-  return !everyPair(eq2, slice(arguments));
+function notEqN(...args){
+  return !everyPair(eq2, args);
 }
 
 export const notEq = overload(constantly(true), constantly(true), notEq2, notEqN);
@@ -127,8 +127,8 @@ function equal2(a, b){
   return a == b;
 }
 
-function equalN(){
-  return everyPair(equal2, slice(arguments));
+function equalN(...args){
+  return everyPair(equal2, args);
 }
 
 export const equal = overload(constantly(true), constantly(true), equal2, equalN);
@@ -357,6 +357,30 @@ function mapN(f, ...tail){
 }
 
 export const map = overload(null, map1, map2, map3, mapN);
+
+function dedupe0(){
+  return function(xf){
+    var last;
+    return overload(xf, xf, function(memo, value){
+      const result = value === last ? memo : xf(memo, value);
+      last = value;
+      return result;
+    });
+  }
+}
+
+function dedupe1(coll){
+  var xs = seq(coll);
+  const last = first(xs);
+  return xs ? lazySeq(last, function(){
+    while(next(xs) && first(next(xs)) === last) {
+      xs = next(xs);
+    }
+    return dedupe1(next(xs));
+  }) : EMPTY;
+}
+
+export const dedupe = overload(dedupe0, dedupe1);
 
 function take1(n){
   return function(xf){
@@ -892,3 +916,68 @@ function sortBy3(keyFn, compare, coll){
 }
 
 export const sortBy = overload(null, null, sortBy2, sortBy3);
+
+function isDistinct2(x, y){
+  return x !== y;
+}
+
+function isDistinctN(...xs){
+  const s = new Set(xs);
+  return s.size === xs.length;
+}
+
+export const isDistinct = overload(null, constantly(true), isDistinct, isDistinctN);
+
+function distinct0(){
+  return function(xf){
+    const seen = new Set();
+    return overload(xf, xf, function(memo, value){
+      if (seen.has(value)) {
+        return memo;
+      }
+      seens.add(value);
+      return xf(memo, value);
+    });
+  }
+}
+
+function distinct1(coll){
+  return Array.from(new Set(coll));
+}
+
+export const distinct = overload(distinct0, distinct1);
+export const splitAt = juxt(take2, drop2);
+export const splitWith = juxt(takeWhile2, dropWhile2);
+
+function groupInto(seed, f, coll){
+  return reduce(function(memo, value){
+    return update(memo, f(value), function(group){
+      return conj(group || [], value);
+    });
+  }, seed, coll);
+}
+
+export function groupBy(f, coll){
+  return groupInto({}, f, coll);
+}
+
+export function merge(...maps){
+  return some(identity, maps) ? reduce(function(memo, map){
+    return reduce(function(memo, pair){
+      const key = pair[0], value = pair[1];
+      memo[key] = value;
+      return memo;
+    }, memo, seq(map));
+  }, {}, maps) : null;
+}
+
+export function mergeWith(f, ...maps){
+  return some(identity, maps) ? reduce(function(memo, map){
+    return reduce(function(memo, pair){
+      const key = pair[0], value = pair[1];
+      return contains(memo, key) ? update(memo, key, function(prior){
+        return f(prior, value);
+      }) : assoc(memo, key, value);
+    }, memo, seq(map));
+  }, {}, maps) : null;
+}

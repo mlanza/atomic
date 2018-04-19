@@ -1,5 +1,7 @@
 import {EMPTY_OBJECT, constantly} from '../../core';
 import {objectSelection} from '../../types/objectselection';
+import {lazySeq} from '../../types/lazyseq';
+import {EMPTY} from '../../types/empty/construct';
 import {extendType} from '../../protocol';
 import ISeqable, {seq} from '../../protocols/iseqable';
 import IShow, {show} from '../../protocols/ishow';
@@ -13,6 +15,13 @@ import {first, rest, toArray} from "../../protocols/iseq";
 
 function lookup(self, key){
   return self[key];
+}
+
+function seqObject(self, keys){
+  var key = first(keys);
+  return seq(keys) ? lazySeq([key, self[key]], function(){
+    return seqObject(self, rest(keys));
+  }) : EMPTY;
 }
 
 extendType(Object, IMap, {
@@ -38,7 +47,7 @@ extendType(Object, IMap, {
   }
 }, ISeqable, {
   seq: function(self){
-    return objectSelection(self, Object.keys(self));
+    return seqObject(self, Object.keys(self));
   }
 }, ICounted, {
   count: function(self){

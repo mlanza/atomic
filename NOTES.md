@@ -2,6 +2,7 @@ grep -R "some" --exclude-dir="*node*" .
 
 # PRINCIPLES
 
+* No virtual dom.  Use diff/patch strategy.
 * The first argument of a protocol functions is the type.
 * Don't export protocol methods from types to ensure we deal with abstractions and not concrete types.
 * The Law of Abstractions: Invoking a function against one concrete type can result in a different concrete type so long as the new type abides the same protocols.  In this manner, we use protocols and types to achieve a poor man's discriminated union.

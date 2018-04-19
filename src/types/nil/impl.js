@@ -9,6 +9,7 @@ import ISeqable from '../../protocols/iseqable';
 import IIndexed from '../../protocols/iindexed';
 import ICounted from '../../protocols/icounted';
 import ILookup from '../../protocols/ilookup';
+import IReduce from '../../protocols/ireduce';
 import IEmptyableCollection from '../../protocols/iemptyablecollection';
 import {empty} from '../../types/empty';
 import {identity, constantly} from '../../core';
@@ -35,6 +36,10 @@ extendType(Nil, IEmptyableCollection, {
   seq: identity
 }, ICounted, {
   count: constantly(0)
+}, IReduce, {
+  _reduce: function(self, xf, init){
+    return init;
+  }
 }, IShow, {
   show: constantly("null")
 });
