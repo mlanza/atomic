@@ -12,3 +12,4 @@ grep -R "some" --exclude-dir="*node*" .
 * The api documentation should offer practical examples showcasing the usefulness of a function.  I found that some popular libraries seem to include arbitrary examples that were of no help.
 * It is possible to use mutation and have a pure function so long as the mutation does not leak.
 * One should avoid using the library api to act on Map and Set types.  In it's attempt to avoid mutation, it is grossly inefficient.  It exists only to allow interoperability.
+* Avoids passing `this` context on function application.
