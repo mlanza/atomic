@@ -17,6 +17,10 @@ export function replace(s, match, replacement){
   return s.replace(match, replacement);
 }
 
+export function subs(s, start, end){
+  return s.substring(start, end);
+}
+
 extendType(String, IIndexed, {
   nth: nthIndexed
 }, IEmptyableCollection, {

@@ -62,8 +62,8 @@ export function reify(){
   return obj;
 }
 
-export function satisfies(protocol, constructor){
-  return protocol[REGISTRY].has(constructor);
+export function satisfies(protocol, obj){
+  return protocol[REGISTRY].has(obj.constructor);
 }
 
 export {Protocol as default};

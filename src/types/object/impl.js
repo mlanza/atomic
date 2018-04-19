@@ -8,13 +8,20 @@ import IAssociative from '../../protocols/iassociative';
 import IEmptyableCollection from '../../protocols/iemptyablecollection';
 import ILookup from '../../protocols/ilookup';
 import IFn from '../../protocols/ifn';
+import IMap from '../../protocols/imap';
 import {first, rest, toArray} from "../../protocols/iseq";
 
 function lookup(self, key){
   return self[key];
 }
 
-extendType(Object, IFn, {
+extendType(Object, IMap, {
+  _dissoc: function(obj, key){
+    var result = Object.assign({}, obj);
+    delete result[key];
+    return result;
+  }
+}, IFn, {
   invoke: lookup
 }, ILookup, {
   lookup: lookup

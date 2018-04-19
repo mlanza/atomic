@@ -9,6 +9,7 @@ import IShow from '../../protocols/ishow';
 import ICounted from '../../protocols/icounted';
 import ILookup from '../../protocols/ilookup';
 import IFn from '../../protocols/ifn';
+import IMap from '../../protocols/imap';
 import IEmptyableCollection from '../../protocols/iemptyablecollection';
 import {show} from '../../protocols/ishow';
 import {first, rest, toArray} from '../../protocols/iseq';
@@ -22,7 +23,14 @@ function lookup(self, key){
   return self.keys.indexOf(key) > -1 ? self.obj[key] : null;
 }
 
-extendType(ObjectSelection, ISeq, {
+extendType(ObjectSelection, IMap, {
+  _dissoc: function(self, key){
+    var keys = toArray(self.keys).filter(function(k){
+      return k !== key;
+    });
+    return objectSelection(self,  keys);
+  }
+}, ISeq, {
   first: function(self){
     var key = first(self.keys);
     return [key, self.obj[key]];

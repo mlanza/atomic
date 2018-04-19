@@ -1,20 +1,24 @@
 import "./types";
 import Empty, {EMPTY} from "./types/empty";
 import List, {cons} from "./types/list";
-import {slice, constantly, overload, identity, partial, reducing, complement, comp, upperCase, EMPTY_ARRAY} from "./core";
+import {slice, constantly, overload, identity, partial, reducing, complement, comp, upperCase, isArray, EMPTY_ARRAY} from "./core";
 import LazySeq, {lazySeq} from "./types/lazyseq";
 import Reduced, {reduced} from "./types/reduced";
 import Concatenated, {concatenated, concat as concatN} from "./types/concatenated";
-import INext, {next} from "./protocols/inext";
-import ISeq, {first, rest, toArray} from "./protocols/iseq";
-import ISeqable, {seq} from "./protocols/iseqable";
-import ICollection, {conj} from "./protocols/icollection";
-import ICounted, {count} from "./protocols/icounted";
-import IShow, {show} from "./protocols/ishow";
-import ILookup, {lookup} from "./protocols/ilookup";
-import IAssociative, {assoc, contains} from "./protocols/iassociative";
-import IReduce, {reduce} from "./protocols/ireduce";
-import {reduce as reduceIndexed} from "./core";
+import {next} from "./protocols/inext";
+import {dissoc, isMap} from "./protocols/imap";
+import {first, rest, toArray, isSeq} from "./protocols/iseq";
+import {seq, isSeqable} from "./protocols/iseqable";
+import {isSequential} from "./protocols/isequential";
+import {conj} from "./protocols/icollection";
+import {count} from "./protocols/icounted";
+import {nth, isIndexed} from "./protocols/iindexed";
+import {show} from "./protocols/ishow";
+import {lookup} from "./protocols/ilookup";
+import {assoc, contains} from "./protocols/iassociative";
+import {reduce} from "./protocols/ireduce";
+import {compare} from "./protocols/icomparable";
+import {reduce as reduceIndexed, isNil} from "./core";
 
 export {log, unbind, slice, isArray, lowerCase, upperCase, trim, overload, identity, constantly, partial, complement, comp, multimethod} from "./core";
 export * from './protocol';
@@ -228,10 +232,6 @@ export function isSome(x){
   return x != null;
 }
 
-export function isNil(x){
-  return x == null;
-}
-
 export function isZero(x){
   return x === 0;
 }
@@ -272,11 +272,57 @@ export function each(f, xs){
   }
 }
 
-function cat(xf){
+export function cat(xf){
   return overload(xf, xf, function(memo, value){
     return reduce(memo, xf, value);
   });
 }
+
+function apply2(f, args){
+  return f.apply(null, toArray(args));
+}
+
+function apply3(f, a, args){
+  return f.apply(null, [a].concat(toArray(args)));
+}
+
+function apply4(f, a, b, args){
+  return f.apply(null, [a, b].concat(toArray(args)));
+}
+
+function apply5(f, a, b, c, args){
+  return f.apply(null, [a, b, c].concat(toArray(args)));
+}
+
+function applyN(f, a, b, c, d, args){
+  return f.apply(null, [a, b, c, d].concat(toArray(args)));
+}
+
+export const apply = overload(null, null, apply2, apply3, apply4, apply5, applyN);
+
+export function some(pred, coll){
+  var xs = seq(coll);
+  while(xs && !pred(first(xs))){
+    xs = next(xs);
+  }
+  return !!xs;
+}
+
+export const notSome = comp(not, some);
+export const notAny = notSome;
+
+export function every(pred, coll){
+  var xs = seq(coll);
+  while(xs){
+    if (!pred(first(xs))){
+      return false;
+    }
+    xs = next(xs);
+  }
+  return true;
+}
+
+export const notEvery = comp(not, every);
 
 function map1(f){
   return function(xf){
@@ -287,16 +333,30 @@ function map1(f){
 }
 
 function map2(f, xs){
-  return seq(xs) === null ? EMPTY : lazySeq(f(first(xs)), function(){
+  return seq(xs) ? lazySeq(f(first(xs)), function(){
     return map2(f, rest(xs));
-  });
+  }) : EMPTY;
+}
+
+function map3(f, c1, c2){
+  var s1 = seq(c1),
+      s2 = seq(c2);
+  return s1 && s2 ? cons(f(first(s1), first(s2)), map3(f, rest(s1), rest(s2))) : EMPTY;
+}
+
+function map4(f, c1, c2, c3){
+  var s1 = seq(c1),
+      s2 = seq(c2),
+      s3 = seq(c3);
+  return s1 && s2 && s3 ? cons(f(first(s1), first(s2), first(s3)), map4(f, rest(s1), rest(s2), rest(s3))) : EMPTY;
 }
 
 function mapN(f, ...tail){
-  return map2(f, concat.apply(null, tail));
+  var seqs = mapa(seq, tail);
+  return notAny(isNil, seqs) ? cons(apply(f, mapa(first, seqs)), apply(mapN, f, mapa(rest, seqs))) : EMPTY;
 }
 
-export const map = overload(null, map1, map2, mapN);
+export const map = overload(null, map1, map2, map3, mapN);
 
 function take1(n){
   return function(xf){
@@ -757,3 +817,78 @@ function dropLast2(n, coll){
 const dropLast1 = partial(dropLast2, 1);
 
 export const dropLast = overload(null, dropLast1, dropLast2);
+
+export function selectKeys(obj, keys){
+  return reduce(function(memo, key){
+    memo[key] = get(obj, key);
+    return memo;
+  }, {}, keys);
+}
+
+export function scanKey(better){
+  function scanKey2(k, x){
+    return x;
+  }
+
+  function scanKey3(k, x, y){
+    return better(k(x), k(y)) ? x : y;
+  }
+
+  function scanKeyN(k, x){
+    return apply(reduce, scanKey2, x, slice(arguments, 2));
+  }
+
+  return overload(null, null, scanKey2, scanKey3, scanKeyN);
+}
+
+export const maxKey = scanKey(gt);
+export const minKey = scanKey(lt);
+
+export function everyPred(){
+  var preds = slice(arguments);
+  return function(){
+    return reduce(function(memo, arg){
+      return reduce(function(memo, pred){
+        var result = memo && pred(arg);
+        return result ? result : reduced(result);
+      }, memo, preds);
+    }, true, slice(arguments))
+  }
+}
+
+export function treeSeq(branch, children, root){
+  function walk(node){
+    return cons(node, branch(node) ? mapcat(walk, children(node)) : EMPTY);
+  }
+  return walk(root);
+}
+
+export function flatten(x){
+  return filter(complement(isSequential), rest(treeSeq(isSequential, seq, x)));
+}
+
+export function isInstance(constructor, x){
+  return x instanceof constructor;
+}
+
+function sort1(coll){
+  return into([], coll).sort();
+}
+
+function sort2(compare, coll){
+  return into([], coll).sort(compare);
+}
+
+export const sort = overload(null, sort1, sort2);
+
+function sortBy2(keyFn, coll){
+  return sortBy3(keyFn, compare, coll);
+}
+
+function sortBy3(keyFn, compare, coll){
+  return sort(function(x, y){
+    return compare(keyFn(x), keyFn(y));
+  }, coll);
+}
+
+export const sortBy = overload(null, null, sortBy2, sortBy3);

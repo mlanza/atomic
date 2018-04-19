@@ -1,6 +1,6 @@
 import {identity, constantly} from '../../core';
 import {extendType} from '../../protocol';
-import {showSeq, nextSeq, toArraySeq} from '../../common';
+import {showSeq, nextSeq, toArraySeq, reduceSeq} from '../../common';
 import IndexedSeq, {indexedSeq} from '../../types/indexedseq/construct';
 import List from '../../types/list/construct';
 import ICollection from '../../protocols/icollection';
@@ -10,10 +10,14 @@ import IShow from '../../protocols/ishow';
 import {first, rest, toArray} from '../../protocols/iseq';
 import ISeqable from '../../protocols/iseqable';
 import IIndexed from '../../protocols/iindexed';
+import IReduce from '../../protocols/ireduce';
+import ISequential from '../../protocols/isequential';
 import IEmptyableCollection from '../../protocols/iemptyablecollection';
 import {EMPTY} from '../../types/empty';
 
-extendType(List, IEmptyableCollection, {
+extendType(List, ISequential, {}, IReduce, {
+  _reduce: reduceSeq
+}, IEmptyableCollection, {
   empty: EMPTY
 }, INext, {
   next: nextSeq

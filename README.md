@@ -1,8 +1,2 @@
-#Cloe
-
-A functional programming inspired by Clojure but using native JavaScript data structures (e.g. Array, Object).
-
-No mutations.
-Uses protocols.
-Curried functions.
-Transducers.
+# Cloe
+An immutable, protocol-based functional programming library inspired by ClojureScript but that uses native JavaScript reference types like arrays and objects.  Transducers included.
