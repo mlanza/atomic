@@ -17,10 +17,9 @@
 
 # API
 
-* IComparable + compare
+* Signal type like traffic
 * IHash + hash
 * IEquiv
-* IMap + dissoc
 * IMapEntry + MapEntry type, key, val, key, vals
 * ISet + disjoin/disj, set, set?, difference, intersection, join, select, subset?, superset?, union
 * ICloneable
@@ -28,49 +27,29 @@
 * IStack + peek + pop
 * IKVReduce
 * IReversible + reversible
-* ISorted
 * IWatchable
 * IReset, ISwap, atom, swap!, reset!
 * IIterable
-* Signal type like traffic
 * dedupe
 * distinct
 * distinct?
-* drop-last
-* every-pred
-* every?
-* flatten
 * format
 * group-by
 * identical?
-* indexed?
-* instance?
 * hierarchy: isa?, make-hierarchy, derive, underive, descendants, parents
-* map?
-* max-key
 * memoize
 * merge
 * merge-with
-* min-key
-* not-any?
-* not-every?
 * rand
 * reduce-kv
 * reverse
 * rseq
-* select-keys
-* sequential?
-* some
 * some->
 * some->>
 * some-fn
-* sort
-* sort-by
 * split-at
 * split-with
-* subs
 * subarr (like subvec)
-* take-last
 
 # SOMEDAY
 

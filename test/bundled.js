@@ -13,6 +13,19 @@ QUnit.test("sequences", function(assert){
   assert.deepEqual(_.toArray(_.concat(stooges, ["Shemp","Corey"])), ["Larry","Curly","Moe","Shemp","Corey"]);
   assert.equal(_.second(stooges), "Curly");
   assert.deepEqual(_.toArray(_.range(4)), [0,1,2,3]);
+  assert.equal(_.some(_.isEven, [1,2,3]), true);
+  assert.equal(_.notAny(_.isEven, [1,2,3]), false);
+  assert.equal(_.every(_.isEven, [2,4,6]), true);
+  assert.equal(_.maxKey(function(obj){
+    return obj["king"];
+  }, pieces, court), pieces);
+  assert.deepEqual(_.toArray(_.dropLast(3, [9,8,7,6,5,4,3])), [9,8,7,6]);
+  assert.deepEqual(_.selectKeys(pieces, ["pawn", "knight"]), {pawn: 1, knight: 3});
+  assert.deepEqual(_.everyPred(_.isEven, function(x){
+    return x > 10;
+  })(12,14,16), true);
+  assert.deepEqual(_.toArray(_.flatten(["A","B",["C","D"],["E", ["F", "G"]]])), ["A","B","C","D","E","F","G"]);
+  assert.deepEqual(_.sort(stooges), ["Curly","Larry","Moe"]);
 });
 
 QUnit.test("ilookup", function(assert){

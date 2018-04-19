@@ -2,7 +2,7 @@ import Reduced from './types/reduced';
 
 export const unbind    = Function.call.bind(Function.bind, Function.call);
 export const slice     = unbind(Array.prototype.slice);
-export const isArray   = unbind(Array.prototype.isArray);
+export const isArray   = Array.isArray.bind(Array);
 export const lowerCase = unbind(String.prototype.toLowerCase);
 export const upperCase = unbind(String.prototype.toUpperCase);
 export const trim      = unbind(String.prototype.trim);
@@ -13,8 +13,16 @@ export const EMPTY_ARRAY  = Object.freeze([]);
 export const EMPTY_OBJECT = Object.freeze({});
 export const EMPTY_STRING = "";
 
+export function isNil(x){
+  return x == null;
+}
+
 export function isString(s){
   return s && typeof s === "string";
+}
+
+export function type(self){
+  return self == null ? null : self.constructor;
 }
 
 export function reduce(xs, xf, init, from){

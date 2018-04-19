@@ -9,6 +9,7 @@ import IReduce from '../../protocols/ireduce';
 import Reduced from '../../types/reduced';
 import ISeq, {first, rest, toArray} from '../../protocols/iseq';
 import ISeqable from '../../protocols/iseqable';
+import ISequential from '../../protocols/isequential';
 import IIndexed from '../../protocols/iindexed';
 import IShow from '../../protocols/ishow';
 import ILookup from '../../protocols/ilookup';
@@ -19,7 +20,7 @@ function lookup(self, key){
   return self.arr[self.start + key];
 }
 
-extendType(IndexedSeq, IEmptyableCollection, {
+extendType(IndexedSeq, ISequential, {}, IEmptyableCollection, {
   empty: constantly(EMPTY_ARRAY)
 }, IReduce, {
   _reduce: function(self, xf, init){

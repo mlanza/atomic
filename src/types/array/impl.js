@@ -8,6 +8,7 @@ import ISeq from '../../protocols/iseq';
 import ISeqable from '../../protocols/iseqable';
 import IIndexed from '../../protocols/iindexed';
 import IAssociative from '../../protocols/iassociative';
+import ISequential from '../../protocols/isequential';
 import IEmptyableCollection from '../../protocols/iemptyablecollection';
 import IShow from '../../protocols/ishow';
 import IFn from '../../protocols/ifn';
@@ -21,7 +22,7 @@ function lookup(self, key){
   return self[key];
 }
 
-extendType(Array, IFn, {
+extendType(Array, ISequential, {}, IFn, {
   invoke: lookup
 }, IEmptyableCollection, {
   empty: constantly(EMPTY_ARRAY)
