@@ -771,10 +771,10 @@ function mapcat2(f, colls){
 
 export const mapcat = overload(null, mapcat1, mapcat2);
 
-function doto(obj){
+function doto(obj, ...effects){
   each(function(effect){
     effect(obj);
-  }, slice(arguments, 1));
+  }, effects);
   return obj;
 }
 

@@ -47,18 +47,17 @@ export function protocol(template){
   return new Protocol(template);
 }
 
-export function extendType(type, protocol, impl){
-  var rest = Array.prototype.slice.call(arguments, 3);
+export function extendType(type, protocol, impl, ...implementations){
   implement(protocol, type, impl);
-  if (rest.length){
-    var args = [type].concat(rest);
+  if (implementations.length){
+    var args = [type].concat(implementations);
     extendType.apply(null, args);
   }
 }
 
-export function reify(){
+export function reify(...args){
   var obj = {};
-  extendType.apply(null, [obj].concat(Array.prototype.slice.call(arguments)));
+  extendType.apply(null, [obj].concat(args));
   return obj;
 }
 
