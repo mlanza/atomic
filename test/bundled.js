@@ -59,3 +59,14 @@ QUnit.test("comparisons", function(assert){
 QUnit.test("transduce", function(assert){
   assert.deepEqual(_.into([], _.comp(_.take(4), _.map(_.inc)), _.cycle([1,2,3])), [2,3,4,2]);
 });
+
+QUnit.test("record", function(assert){
+  const Person = _.record("name", "surname", "dob");
+  const sean   = new Person("Sean", "Penn", new Date(1960, 7, 17));
+  const robin  = Person.create("Robin", "Wright", new Date(1966, 3, 8));
+  const dylan  = Person.from({name: "Dylan", surname: "Penn", dob: new Date(1991, 3, 13)});
+  assert.equal(_.get(robin, "surname"), "Wright");
+  assert.equal(_.get(_.assoc(robin, "surname", "Penn"), "surname"), "Penn");
+  assert.equal(_.get(sean, "surname"), "Penn");
+  assert.equal(_.count(robin), 3);
+});
