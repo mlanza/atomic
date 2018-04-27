@@ -1,5 +1,5 @@
-import {identity, constantly} from '../../core';
-import {extendType} from '../../protocol';
+import {identity, constantly, doto} from '../../core';
+import {implement} from '../../protocol';
 import {showSeq, nextSeq, toArraySeq, reduceSeq} from '../../common';
 import IndexedSeq, {indexedSeq} from '../../types/indexedseq/construct';
 import List from '../../types/list/construct';
@@ -7,7 +7,6 @@ import ICollection from '../../protocols/icollection';
 import INext from '../../protocols/inext';
 import ISeq from '../../protocols/iseq';
 import IShow from '../../protocols/ishow';
-import {first, rest, toArray} from '../../protocols/iseq';
 import ISeqable from '../../protocols/iseqable';
 import IIndexed from '../../protocols/iindexed';
 import IReduce from '../../protocols/ireduce';
@@ -15,24 +14,23 @@ import ISequential from '../../protocols/isequential';
 import IEmptyableCollection from '../../protocols/iemptyablecollection';
 import {EMPTY} from '../../types/empty';
 
-extendType(List, ISequential, {}, IReduce, {
-  _reduce: reduceSeq
-}, IEmptyableCollection, {
-  empty: EMPTY
-}, INext, {
-  next: nextSeq
-}, ISeq, {
-  first: function(self){
-    return self.head;
-  },
-  rest: function(self){
-    return self.tail;
-  },
-  toArray: toArraySeq
-}, ISeqable, {
-  seq: identity
-}, IShow, {
-  show: function(self){
-    return "#list " + showSeq(self);
-  }
-});
+function first(self){
+  return self.head;
+}
+
+function rest(self){
+  return self.tail;
+}
+
+function show(self){
+  return "#list " + showSeq(self);
+}
+
+doto(List,
+  implement(ISequential),
+  implement(IReduce, {_reduce: reduceSeq}),
+  implement(IEmptyableCollection, {empty: EMPTY}),
+  implement(INext, {next: nextSeq}),
+  implement(ISeq, {first: first, rest: rest, toArray: toArraySeq}),
+  implement(ISeqable, {seq: identity}),
+  implement(IShow, {show: show}));

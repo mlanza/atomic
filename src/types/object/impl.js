@@ -1,63 +1,66 @@
-import {EMPTY_OBJECT, constantly} from '../../core';
+import {implement} from '../../protocol';
+import {EMPTY_OBJECT, constantly, doto} from '../../core';
 import {objectSelection} from '../../types/objectselection';
 import {lazySeq} from '../../types/lazyseq';
 import {EMPTY} from '../../types/empty/construct';
-import {extendType} from '../../protocol';
-import ISeqable, {seq} from '../../protocols/iseqable';
-import IShow, {show} from '../../protocols/ishow';
-import ICounted, {count} from '../../protocols/icounted';
+import ISeqable from '../../protocols/iseqable';
+import IShow from '../../protocols/ishow';
+import ICounted from '../../protocols/icounted';
 import IAssociative from '../../protocols/iassociative';
 import IEmptyableCollection from '../../protocols/iemptyablecollection';
 import ILookup from '../../protocols/ilookup';
 import IFn from '../../protocols/ifn';
 import IMap from '../../protocols/imap';
-import {first, rest, toArray} from "../../protocols/iseq";
+import ISeq from "../../protocols/iseq";
 
 function lookup(self, key){
   return self[key];
 }
 
 function seqObject(self, keys){
-  var key = first(keys);
-  return seq(keys) ? lazySeq([key, self[key]], function(){
-    return seqObject(self, rest(keys));
+  var key = ISeq.first(keys);
+  return ISeqable.seq(keys) ? lazySeq([key, self[key]], function(){
+    return seqObject(self, ISeq.rest(keys));
   }) : EMPTY;
 }
 
-extendType(Object, IMap, {
-  _dissoc: function(obj, key){
-    var result = Object.assign({}, obj);
-    delete result[key];
-    return result;
-  }
-}, IFn, {
-  invoke: lookup
-}, ILookup, {
-  lookup: lookup
-}, IEmptyableCollection, {
-  empty: constantly(EMPTY_OBJECT)
-}, IAssociative, {
-  assoc: function(self, key, value){
-    var obj = Object.assign({}, self);
-    obj[key] = value;
-    return obj;
-  },
-  contains: function(self, key){
-    return self.hasOwnProperty(key);
-  }
-}, ISeqable, {
-  seq: function(self){
-    return seqObject(self, Object.keys(self));
-  }
-}, ICounted, {
-  count: function(self){
-    return count(Object.keys(self));
-  }
-}, IShow, {
-  show: function(self){
-    var xs = toArray(seq(self));
-    return "{" + xs.map(function(pair){
-      return show(pair[0]) + ": " + show(pair[1]);
-    }).join(", ") + "}";
-  }
-});
+function _dissoc(obj, key){
+  const result = Object.assign({}, obj);
+  delete result[key];
+  return result;
+}
+
+function assoc(self, key, value){
+  const obj = Object.assign({}, self);
+  obj[key] = value;
+  return obj;
+}
+
+function contains(self, key){
+  return self.hasOwnProperty(key);
+}
+
+function seq(self){
+  return seqObject(self, Object.keys(self));
+}
+
+function count(self){
+  return ICounted.count(Object.keys(self));
+}
+
+function show(self){
+  const xs = ISeq.toArray(seq(self));
+  return "{" + xs.map(function(pair){
+    return show(pair[0]) + ": " + show(pair[1]);
+  }).join(", ") + "}";
+}
+
+doto(Object,
+  implement(IMap, {_dissoc: _dissoc}),
+  implement(IFn, {invoke: lookup}),
+  implement(ILookup, {lookup: lookup}),
+  implement(IEmptyableCollection, {empty: constantly(EMPTY_OBJECT)}),
+  implement(IAssociative, {assoc: assoc, contains: contains}),
+  implement(ISeqable, {seq: seq}),
+  implement(ICounted, {count: count}),
+  implement(IShow, {show: show}));

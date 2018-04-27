@@ -1,7 +1,7 @@
 import "./types";
 import Empty, {EMPTY} from "./types/empty";
 import List, {cons} from "./types/list";
-import {slice, constantly, overload, identity, partial, reducing, complement, comp, upperCase, isArray, EMPTY_ARRAY} from "./core";
+import {slice, constantly, overload, identity, partial, reducing, complement, comp, upperCase, lowerCase, isArray, EMPTY_ARRAY} from "./core";
 import LazySeq, {lazySeq} from "./types/lazyseq";
 import Reduced, {reduced} from "./types/reduced";
 import Concatenated, {concatenated, concat as concatN} from "./types/concatenated";
@@ -770,13 +770,6 @@ function mapcat2(f, colls){
 }
 
 export const mapcat = overload(null, mapcat1, mapcat2);
-
-function doto(obj, ...effects){
-  each(function(effect){
-    effect(obj);
-  }, effects);
-  return obj;
-}
 
 function fnil1(f, A){
   return function(a){
