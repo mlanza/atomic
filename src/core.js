@@ -140,3 +140,9 @@ export function multimethod(dispatch){
     return f.apply(this, arguments);
   }
 }
+
+export function constructs(Type) {
+  return function(...args){
+    return new (Function.prototype.bind.apply(Type, [null].concat(args)));
+  }
+}

@@ -23,6 +23,8 @@ import {reduce as reduceIndexed, isNil} from "./core";
 export {log, unbind, slice, isArray, lowerCase, upperCase, trim, overload, identity, constantly, partial, complement, comp, multimethod} from "./core";
 export * from './protocol';
 export * from "./protocols";
+import Record, {record} from "./types/record";
+export {Record, record};
 
 export const int = parseInt;
 export const float = parseFloat;
