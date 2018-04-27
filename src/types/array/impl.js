@@ -1,5 +1,5 @@
-import {identity, constantly, reduce, slice, EMPTY_ARRAY} from '../../core';
-import {extendType} from '../../protocol';
+import {identity, constantly, reduce, slice, doto, length, EMPTY_ARRAY} from '../../core';
+import {implement} from '../../protocol';
 import {showSeq, nthIndexed} from '../../common';
 import IReduce from '../../protocols/ireduce';
 import ICollection from '../../protocols/icollection';
@@ -16,55 +16,52 @@ import ICounted from '../../protocols/icounted';
 import ILookup from '../../protocols/ilookup';
 import Reduced from '../../types/reduced';
 import {indexedSeq} from '../../types/indexedseq';
-import {first, rest} from '../../protocols/iseq';
 
 function lookup(self, key){
   return self[key];
 }
 
-extendType(Array, ISequential, {}, IFn, {
-  invoke: lookup
-}, IEmptyableCollection, {
-  empty: constantly(EMPTY_ARRAY)
-}, IReduce, {
-  _reduce: reduce
-}, ILookup, {
-  lookup: lookup
-}, IAssociative, {
-  assoc: function(self, key, value){
-    var arr = slice(self);
-    arr.splice(key, 1, value);
-    return arr;
-  },
-  contains: function(self, key){
-    return key > -1 && key < self.length;
-  }
-}, IIndexed, {
-  nth: nthIndexed
-}, ISeqable, {
-  seq: function(self){
-    return self.length ? self : null;
-  }
-}, ICollection, {
-  conj: function(self, x){
-    return self.concat([x]);
-  }
-}, INext, {
-  next: function(self){
-    return self.length > 1 ? rest(self) : null;
-  }
-}, ISeq, {
-  first: function(self){
-    return self[0] || null;
-  },
-  rest: function(self){
-    return indexedSeq(self, 1);
-  },
-  toArray: identity
-}, ICounted, {
-  count: function(self){
-    return self.length;
-  }
-}, IShow, {
-  show: showSeq
-});
+function assoc(self, key, value){
+  var arr = slice(self);
+  arr.splice(key, 1, value);
+  return arr;
+}
+
+function contains(self, key){
+  return key > -1 && key < self.length;
+}
+
+function seq(self){
+  return self.length ? self : null;
+}
+
+function conj(self, x){
+  return self.concat([x]);
+}
+
+function next(self){
+  return self.length > 1 ? ISeq.rest(self) : null;
+}
+
+function first(self){
+  return self[0] || null;
+}
+
+function rest(self){
+  return indexedSeq(self, 1);
+}
+
+doto(Array,
+  implement(ISequential),
+  implement(IFn, {invoke: lookup}),
+  implement(IEmptyableCollection, {empty: constantly(EMPTY_ARRAY)}),
+  implement(IReduce, {_reduce: reduce}),
+  implement(ILookup, {lookup: lookup}),
+  implement(IAssociative, {assoc: assoc,contains: contains}),
+  implement(IIndexed, {nth: nthIndexed}),
+  implement(ISeqable, {seq: seq}),
+  implement(ICollection, {conj: conj}),
+  implement(INext, {next: next}),
+  implement(ISeq, {first: first, rest: rest, toArray: identity}),
+  implement(ICounted, {count: length}),
+  implement(IShow, {show: showSeq}));

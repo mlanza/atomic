@@ -1,8 +1,10 @@
+import {doto} from '../../core';
+import {implement} from '../../protocol';
 import IShow from '../../protocols/ishow';
-import {extendType} from '../../protocol';
 
-extendType(Date, IShow, {
-  show: function(self){
-    return "\"" + self.toISOString() + "\"";
-  }
-});
+function show(self){
+  return "\"" + self.toISOString() + "\"";
+}
+
+doto(Date,
+  implement(IShow, {show: show}));

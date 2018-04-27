@@ -1,4 +1,4 @@
-import Reduced from './types/reduced';
+import Reduced from './types/reduced/construct';
 
 export const unbind    = Function.call.bind(Function.bind, Function.call);
 export const slice     = unbind(Array.prototype.slice);
@@ -122,6 +122,17 @@ function pipeN(f){
 
 export const pipe = overload(null, identity, pipe2, pipe3, pipe4, pipeN);
 export const comp = reversed(pipe);
+
+export function doto(obj, ...effects){
+  effects.forEach(function(effect){
+    effect(obj);
+  }, effects);
+  return obj;
+}
+
+export function length(self){
+  return self.length;
+}
 
 export function multimethod(dispatch){
   return function(){

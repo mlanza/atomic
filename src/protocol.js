@@ -1,4 +1,5 @@
 import Nil from './types/nil/construct';
+import {overload} from './core';
 
 const REGISTRY = window.Symbol ? Symbol("Registry") : "Registry";
 
@@ -18,14 +19,14 @@ function constructs(self){
   return self == null ? Nil : self.constructor;
 }
 
-export function Protocol(template){
+export default function Protocol(template){
   this[REGISTRY] = new WeakMap();
   extend(this, template);
 }
 
 function create(registry, named){
   return function(self) {
-    var f = (registry.get(self) || {})[named] || (registry.get(constructs(self)) || {})[named];
+    const f = (registry.get(self) || {})[named] || (registry.get(constructs(self)) || {})[named];
     if (!f) {
       throw new ProtocolLookupError(registry, self, named, arguments);
     }
@@ -39,30 +40,29 @@ export function extend(self, template){
   }
 }
 
-export function implement(self, type, impl){
-  self[REGISTRY].set(type, impl);
+export function mark(protocol){
+  return function(type){
+    implement3(protocol, type, {}); //marker interface
+  }
 }
+
+function implement2(protocol, impl){
+  return function(type){
+    implement3(protocol, type, impl);
+  }
+}
+
+function implement3(protocol, type, impl){
+  protocol[REGISTRY].set(type, impl);
+}
+
+export const implement = overload(null, mark, implement2, implement3);
 
 export function protocol(template){
   return new Protocol(template);
 }
 
-export function extendType(type, protocol, impl, ...implementations){
-  implement(protocol, type, impl);
-  if (implementations.length){
-    var args = [type].concat(implementations);
-    extendType.apply(null, args);
-  }
-}
-
-export function reify(...args){
-  var obj = {};
-  extendType.apply(null, [obj].concat(args));
-  return obj;
-}
-
 export function satisfies(protocol, obj){
-  return protocol[REGISTRY].has(obj.constructor);
+  const reg = protocol[REGISTRY];
+  return reg.has(constructs(obj)) || reg.has(obj);
 }
-
-export {Protocol as default};

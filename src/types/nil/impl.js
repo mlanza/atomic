@@ -12,34 +12,27 @@ import ILookup from '../../protocols/ilookup';
 import IReduce from '../../protocols/ireduce';
 import IEmptyableCollection from '../../protocols/iemptyablecollection';
 import {empty} from '../../types/empty';
-import {identity, constantly} from '../../core';
-import {extendType} from '../../protocol';
+import {identity, constantly, doto} from '../../core';
+import {implement} from '../../protocol';
 
-extendType(Nil, IEmptyableCollection, {
-  empty: identity
-}, ILookup, {
-  lookup: constantly(null)
-}, IAssociative, {
-  assoc: function(self, key, value){
-    var obj = {};
-    obj[key] = value;
-    return obj;
-  },
-  contains: constantly(false)
-}, INext, {
-  next: identity
-}, ISeq, {
-  first: identity,
-  rest: empty,
-  toArray: constantly(Object.freeze([]))
-}, ISeqable, {
-  seq: identity
-}, ICounted, {
-  count: constantly(0)
-}, IReduce, {
-  _reduce: function(self, xf, init){
-    return init;
-  }
-}, IShow, {
-  show: constantly("null")
-});
+function assoc(self, key, value){
+  let obj = {};
+  obj[key] = value;
+  return obj;
+}
+
+function _reduce(self, xf, init){
+  return init;
+}
+
+doto(Nil,
+  implement(IEmptyableCollection, {empty: identity}),
+  implement(ILookup, {lookup: constantly(null)}),
+  implement(IAssociative, {assoc: assoc, contains: constantly(false)}),
+  implement(INext, {next: identity}),
+  implement(ISeq, {first: identity, rest: empty, toArray: constantly(Object.freeze([]))}),
+  implement(ISeqable, {seq: identity}),
+  implement(IIndexed, {nth: identity}),
+  implement(ICounted, {count: constantly(0)}),
+  implement(IReduce, {_reduce: _reduce}),
+  implement(IShow, {show: constantly("null")}));

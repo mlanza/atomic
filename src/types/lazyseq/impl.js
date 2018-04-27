@@ -1,4 +1,4 @@
-import {extendType} from '../../protocol';
+import {implement} from '../../protocol';
 import LazySeq from '../../types/lazyseq/construct';
 import IndexedSeq from '../../types/indexedseq';
 import ICollection from '../../protocols/icollection';
@@ -10,27 +10,24 @@ import ISequential from '../../protocols/isequential';
 import IIndexed from '../../protocols/iindexed';
 import IShow from '../../protocols/ishow';
 import {showSeq, nextSeq, toArraySeq, reduceSeq} from '../../common';
-import {seq} from '../../protocols/iseqable';
-import {identity, constantly} from '../../core';
-import {indexedSeq} from '../../types/indexedseq';
-import {first, rest, toArray} from '../../protocols/iseq';
+import {identity, constantly, doto} from '../../core';
 
-extendType(LazySeq, ISequential, {}, ISeq, {
-  first: function(self){
-    return self.head;
-  },
-  rest: function(self){
-    return self.tail();
-  },
-  toArray: toArraySeq
-}, IReduce, {
-  _reduce: reduceSeq
-}, ISeqable, {
-  seq: identity
-}, INext, {
-  next: nextSeq
-}, IShow, {
-  show: function(self){
-    return "#lazy-seq " + showSeq(self);
-  }
-});
+function first(self){
+  return self.head;
+}
+
+function rest(self){
+  return self.tail();
+}
+
+function show(self){
+  return "#lazy-seq " + showSeq(self);
+}
+
+doto(LazySeq,
+  implement(ISequential),
+  implement(ISeq, {first: first, rest: rest, toArray: toArraySeq}),
+  implement(IReduce, {_reduce: reduceSeq}),
+  implement(ISeqable, {seq: identity}),
+  implement(INext, {next: nextSeq}),
+  implement(IShow, {show: show}));

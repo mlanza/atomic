@@ -1,8 +1,10 @@
+import {doto} from '../../core';
+import {implement} from '../../protocol';
 import IShow from '../../protocols/ishow';
-import {extendType} from '../../protocol';
 
-extendType(Number, IShow, {
-  show: function(self){
-    return self.toString();
-  }
-});
+function show(self){
+  return self.toString();
+}
+
+doto(Number,
+  implement(IShow, {show: show}));
