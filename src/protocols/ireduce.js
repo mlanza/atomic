@@ -1,6 +1,8 @@
 import {protocol} from '../protocol';
 import {overload} from "../core";
-export const IReduce = protocol({_reduce: null});
+export const IReduce = protocol({
+  _reduce: null
+});
 
 function reduce2(xf, coll){
   return IReduce._reduce(coll, xf, xf());

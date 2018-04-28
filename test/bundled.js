@@ -70,3 +70,10 @@ QUnit.test("record", function(assert){
   assert.equal(_.get(sean, "surname"), "Penn");
   assert.equal(_.count(robin), 3);
 });
+
+QUnit.test("observable", function(assert){
+  const counter = _.observable(0);
+  _.swap(counter, _.inc);
+  const num = _.deref(counter);
+  assert.equal(num, 1);
+});

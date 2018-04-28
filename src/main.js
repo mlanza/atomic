@@ -4,6 +4,7 @@ import List, {cons} from "./types/list";
 import {slice, constantly, overload, identity, partial, reducing, complement, comp, upperCase, lowerCase, isArray, EMPTY_ARRAY} from "./core";
 import LazySeq, {lazySeq} from "./types/lazyseq";
 import Reduced, {reduced} from "./types/reduced";
+import Observable, {observable} from "./types/observable";
 import Concatenated, {concatenated, concat as concatN} from "./types/concatenated";
 import {next} from "./protocols/inext";
 import {dissoc, isMap} from "./protocols/imap";
@@ -20,6 +21,8 @@ import {reduce} from "./protocols/ireduce";
 import {compare} from "./protocols/icomparable";
 import {reduce as reduceIndexed, isNil} from "./core";
 
+
+export {observable};
 export {log, unbind, slice, isArray, lowerCase, upperCase, trim, overload, identity, constantly, partial, complement, comp, multimethod} from "./core";
 export * from './protocol';
 export * from "./protocols";

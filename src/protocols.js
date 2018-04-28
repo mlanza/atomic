@@ -14,3 +14,7 @@ export * from "./protocols/ireduce";
 export * from "./protocols/imap";
 export * from "./protocols/isequential";
 export * from "./protocols/icomparable";
+export * from "./protocols/ipublish";
+export * from "./protocols/isubscribe";
+export * from "./protocols/ireset";
+export * from "./protocols/iswap";
