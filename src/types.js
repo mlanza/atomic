@@ -10,3 +10,7 @@ import "./types/nil";
 import "./types/list";
 import "./types/objectselection";
 import "./types/concatenated";
+import "./types/duration";
+import "./types/record";
+import "./types/observable";
+import "./types/publisher";
