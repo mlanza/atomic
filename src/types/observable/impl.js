@@ -16,10 +16,11 @@ function reset(self, value){
     self.state = value;
     IPublish.pub(self.publisher, value);
   }
+  return value;
 }
 
 function _swap(self, f){
-  reset(self, f(self.state));
+  return reset(self, f(self.state));
 }
 
 function sub(self, callback){
