@@ -1,5 +1,5 @@
 import Nil from './types/nil/construct';
-import {overload, partial} from './core';
+import {overload} from './core';
 
 const REGISTRY = window.Symbol ? Symbol("Registry") : "Registry";
 

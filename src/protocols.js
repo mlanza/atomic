@@ -18,3 +18,4 @@ export * from "./protocols/ipublish";
 export * from "./protocols/isubscribe";
 export * from "./protocols/ireset";
 export * from "./protocols/iswap";
+export * from "./protocols/ioffset";

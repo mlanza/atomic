@@ -20,12 +20,13 @@ import {assoc, contains} from "./protocols/iassociative";
 import {reduce} from "./protocols/ireduce";
 import {compare} from "./protocols/icomparable";
 import {reduce as reduceIndexed, isNil} from "./core";
-
+import {inc, dec} from "./protocols/ioffset";
 
 export {observable};
 export {log, unbind, slice, isArray, lowerCase, upperCase, trim, overload, identity, constantly, partial, complement, comp, multimethod} from "./core";
-export * from './protocol';
+export * from "./protocol";
 export * from "./protocols";
+export {milliseconds, seconds, hours, days, weeks, months, years} from "./types/duration"
 import Record, {record} from "./types/record";
 export {Record, record};
 
@@ -478,8 +479,8 @@ export const add = overload(constantly(0), identity, add2, reducing(add2));
 export const subtract = overload(constantly(0), subtract1, subtract2, reducing(subtract2));
 export const multiply = overload(constantly(1), identity, multiply2, reducing(multiply2));
 export const divide = overload(null, divide1, divide2, reducing(divide2));
-export const inc = partial(add2, +1);
-export const dec = partial(add2, -1);
+//export const inc = partial(add2, +1);
+//export const dec = partial(add2, -1);
 
 function range0(){
   return iterate(inc, 0);
