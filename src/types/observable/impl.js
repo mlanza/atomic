@@ -16,7 +16,7 @@ function reset(self, value){
     self.state = value;
     IPublish.pub(self.publisher, value);
   }
-  return value;
+  return self.state;
 }
 
 function _swap(self, f){
