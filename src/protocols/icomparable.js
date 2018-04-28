@@ -1,5 +1,5 @@
 import {protocol, satisfies} from "../protocol";
-import {partial, isNil, type} from "../core";
+import {isNil, type} from "../core";
 
 function isIdentical(x, y){ //TODO via protocol
   return x === y;
@@ -23,5 +23,5 @@ export function compare(x, y){
   }
 }
 
-export const isComparable = partial(satisfies, IComparable);
+export const isComparable = satisfies(IComparable);
 export default IComparable;

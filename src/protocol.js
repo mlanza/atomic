@@ -1,5 +1,5 @@
 import Nil from './types/nil/construct';
-import {overload} from './core';
+import {overload, partial} from './core';
 
 const REGISTRY = window.Symbol ? Symbol("Registry") : "Registry";
 
@@ -62,7 +62,15 @@ export function protocol(template){
   return new Protocol(template);
 }
 
-export function satisfies(protocol, obj){
+function satisfies1(protocol){
+  return function(obj){
+    return satisfies2(protocol, obj);
+  }
+}
+
+function satisfies2(protocol, obj){
   const reg = protocol[REGISTRY];
   return reg.has(constructs(obj)) || reg.has(obj);
 }
+
+export const satisfies = overload(null, satisfies1, satisfies2);
