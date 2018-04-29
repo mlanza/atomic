@@ -12,6 +12,7 @@ import ILookup from '../../protocols/ilookup';
 import IFn from '../../protocols/ifn';
 import IMap from '../../protocols/imap';
 import ISeq from "../../protocols/iseq";
+import ICloneable from "../../protocols/icloneable";
 
 function lookup(self, key){
   return self[key];
@@ -48,6 +49,10 @@ function count(self){
   return ICounted.count(Object.keys(self));
 }
 
+function clone(self){
+  return Object.assign({}, self);
+}
+
 function show(self){
   const xs = ISeq.toArray(seq(self));
   return "{" + xs.map(function(pair){
@@ -56,6 +61,7 @@ function show(self){
 }
 
 doto(Object,
+  implement(ICloneable, {clone: clone}),
   implement(IMap, {_dissoc: _dissoc}),
   implement(IFn, {invoke: lookup}),
   implement(ILookup, {lookup: lookup}),

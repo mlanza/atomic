@@ -9,7 +9,7 @@ import ISeqable from '../../protocols/iseqable';
 import ISequential from '../../protocols/isequential';
 import IIndexed from '../../protocols/iindexed';
 import IShow from '../../protocols/ishow';
-import {showSeq, nextSeq, toArraySeq, reduceSeq} from '../../common';
+import {showSeq, nextSeq, toArraySeq, reduceSeq, iterable} from '../../common';
 import {identity, constantly, doto} from '../../core';
 
 function first(self){
@@ -25,6 +25,7 @@ function show(self){
 }
 
 doto(LazySeq,
+  iterable,
   implement(ISequential),
   implement(ISeq, {first: first, rest: rest, toArray: toArraySeq}),
   implement(IReduce, {_reduce: reduceSeq}),

@@ -1,5 +1,5 @@
 import {implement} from '../../protocol';
-import {identity, constantly, doto, EMPTY_OBJECT} from '../../core';
+import {identity, constantly, doto, reduce, EMPTY_OBJECT} from '../../core';
 import ObjectSelection, {objectSelection} from '../../types/objectselection/construct';
 import ICollection from '../../protocols/icollection';
 import INext from '../../protocols/inext';
@@ -11,6 +11,7 @@ import ICounted from '../../protocols/icounted';
 import ILookup from '../../protocols/ilookup';
 import IFn from '../../protocols/ifn';
 import IMap from '../../protocols/imap';
+import ICloneable from '../../protocols/icloneable';
 import IEmptyableCollection from '../../protocols/iemptyablecollection';
 import {lazySeq} from '../../types/lazyseq/construct';
 import {toArraySeq} from "../../common";
@@ -46,6 +47,13 @@ function count(self){
   return self.keys.length;
 }
 
+function clone(self){
+  return reduce(ISeq.toArray(seq(self)), function(memo, pair){
+    memo[pair[0]] = pair[1];
+    return memo;
+  }, {});
+}
+
 function show(self){
   const pairs = ISeq.toArray(seq(self));
   return "#object-selection {" + pairs.map(function(pair){
@@ -55,6 +63,7 @@ function show(self){
 
 doto(ObjectSelection,
   implement(IMap, {_dissoc: _dissoc}),
+  implement(ICloneable, {clone: clone}),
   implement(ISeq, {first: first, rest: rest, toArray: toArraySeq}),
   implement(IEmptyableCollection, {empty: constantly(EMPTY_OBJECT)}),
   implement(IFn, {invoke: lookup}),

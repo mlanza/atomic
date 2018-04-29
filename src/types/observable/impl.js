@@ -6,6 +6,7 @@ import ISubscribe from '../../protocols/isubscribe';
 import IReset from '../../protocols/ireset';
 import ISwap from '../../protocols/iswap';
 import IDeref from '../../protocols/ideref';
+import IDisposable from '../../protocols/idisposable';
 
 function deref(self){
   return self.state;
