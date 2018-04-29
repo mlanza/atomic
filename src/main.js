@@ -16,6 +16,8 @@ import {count} from "./protocols/icounted";
 import {nth, isIndexed} from "./protocols/iindexed";
 import {show} from "./protocols/ishow";
 import {lookup} from "./protocols/ilookup";
+import {sub} from "./protocols/isubscribe";
+import {pub} from "./protocols/ipublish";
 import {assoc, contains} from "./protocols/iassociative";
 import {reduce} from "./protocols/ireduce";
 import {compare} from "./protocols/icomparable";
@@ -980,3 +982,24 @@ export function mergeWith(f, ...maps){
     }, memo, seq(map));
   }, {}, maps) : null;
 }
+
+export function duct(dest, xf, source){
+  const unsub = sub(source, partial(xf(pub), dest));
+  return dest;
+}
+
+function signal3(xf, init, source){
+  return duct(observable(init), xf, source);
+}
+
+function signal2(xf, source){
+  return signal3(xf, null, source);
+}
+
+function signal1(xf){
+  return function(source){
+    return duct(observable(), xf, source);
+  }
+}
+
+export const signal = overload(null, signal1, signal2, signal3);

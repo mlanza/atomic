@@ -7,6 +7,7 @@ import ILookup from '../../protocols/ilookup';
 import ICounted from '../../protocols/icounted';
 import IMap from '../../protocols/imap';
 import ISeq from '../../protocols/iseq';
+import IRecord from '../../protocols/irecord';
 
 function contains(self, key){
   return self.attrs.hasOwnProperty(key);
@@ -43,6 +44,7 @@ function extend(Type){
   }
 
   doto(Type,
+    implement(IRecord),
     implement(IAssociative, {assoc: assoc, contains: contains}),
     implement(ILookup, {lookup: lookup}),
     implement(IMap, {_dissoc: _dissoc}),
