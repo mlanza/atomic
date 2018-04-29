@@ -186,19 +186,19 @@ export function assocIn(self, keys, value){
   }
 }
 
-function update0(self, key, f){
+function update3(self, key, f){
   return assoc(self, key, f(get(self, key)));
 }
 
-function update1(self, key, f, a){
+function update4(self, key, f, a){
   return assoc(self, key, f(get(self, key), a));
 }
 
-function update2(self, key, f, a, b){
+function update5(self, key, f, a, b){
   return assoc(self, key, f(get(self, key), a, b));
 }
 
-function update3(self, key, f, a, b, c){
+function update6(self, key, f, a, b, c){
   return assoc(self, key, f(get(self, key), a, b, c));
 }
 
@@ -208,36 +208,36 @@ function updateN(self, key, f){
   return assoc(self, key, f.apply(this, args));
 }
 
-export const update = overload(null, null, null, update0, update1, update2, update3, updateN);
+export const update = overload(null, null, null, update3, update4, update5, update6, updateN);
 
-function updateIn0(self, keys, f){
+function updateIn3(self, keys, f){
   var k = keys[0], ks = toArray(rest(keys));
-  return ks.length ? assoc(self, k, updateIn0(get(self, k), ks, f)) : update0(self, k, f);
+  return ks.length ? assoc(self, k, updateIn3(get(self, k), ks, f)) : update3(self, k, f);
 }
 
-function updateIn1(self, keys, f, a){
+function updateIn4(self, keys, f, a){
   var k = keys[0], ks = toArray(rest(keys));
-  return ks.length ? assoc(self, k, updateIn1(get(self, k), ks, f, a)) : update1(self, k, f, a);
+  return ks.length ? assoc(self, k, updateIn4(get(self, k), ks, f, a)) : update4(self, k, f, a);
 }
 
-function updateIn2(self, keys, f, a, b){
+function updateIn5(self, keys, f, a, b){
   var k = keys[0], ks = toArray(rest(keys));
-  return ks.length ? assoc(self, k, updateIn2(get(self, k), ks, f, a, b)) : update2(self, k, f, a, b);
+  return ks.length ? assoc(self, k, updateIn5(get(self, k), ks, f, a, b)) : update5(self, k, f, a, b);
 }
 
-function updateIn3(self, key, f, a, b, c){
+function updateIn6(self, key, f, a, b, c){
   var k = keys[0], ks = toArray(rest(keys));
-  return ks.length ? assoc(self, k, updateIn3(get(self, k), ks, f, a, b, c)) : update3(self, k, f, a, b, c);
+  return ks.length ? assoc(self, k, updateIn6(get(self, k), ks, f, a, b, c)) : update6(self, k, f, a, b, c);
 }
 
 function updateInN(self, keys, f) {
-  return updateIn0(self, keys, function(obj){
+  return updateIn3(self, keys, function(obj){
     var args = toArray(rest(slice(arguments)));
     return f.apply(null, [obj].concat(args));
   });
 }
 
-export const updateIn = overload(null, null, null, updateIn0, updateIn1, updateIn2, updateIn3, updateInN);
+export const updateIn = overload(null, null, null, updateIn3, updateIn4, updateIn5, updateIn6, updateInN);
 
 export function isSome(x){
   return x != null;
