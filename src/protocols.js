@@ -11,6 +11,7 @@ export * from "./protocols/ifn";
 export * from "./protocols/ideref";
 export * from "./protocols/icounted";
 export * from "./protocols/ireduce";
+export * from "./protocols/ikvreduce";
 export * from "./protocols/imap";
 export * from "./protocols/isequential";
 export * from "./protocols/icomparable";
