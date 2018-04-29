@@ -156,3 +156,25 @@ export function constructs(Type) {
     return new (Function.prototype.bind.apply(Type, [null].concat(args)));
   }
 }
+
+export function isSome(x){
+  return x != null;
+}
+
+export function isZero(x){
+  return x === 0;
+}
+
+export function isPos(x){
+  return x > 0;
+}
+
+export function isNeg(x){
+  return x < 0;
+}
+
+export function isOdd(n){
+  return n % 2;
+}
+
+export const isEven  = complement(isOdd);
