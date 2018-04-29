@@ -72,8 +72,12 @@ QUnit.test("record", function(assert){
 });
 
 QUnit.test("observable", function(assert){
-  const counter = _.observable(0);
-  _.swap(counter, _.inc);
-  const num = _.deref(counter);
-  assert.equal(num, 1);
+  const src = _.observable(0);
+  const dest = _.signal(_.map(_.inc), src);
+  _.swap(src, _.inc);
+  const snum = _.deref(src);
+  const dnum = _.deref(dest);
+  assert.equal(snum, 1);
+  assert.equal(dnum, 2);
 });
+

@@ -1,4 +1,5 @@
 import "./types";
+import {implement} from "./protocol";
 import Empty, {EMPTY} from "./types/empty";
 import List, {cons} from "./types/list";
 import {slice, constantly, overload, identity, partial, reducing, complement, comp, upperCase, lowerCase, isArray, EMPTY_ARRAY} from "./core";
@@ -14,6 +15,7 @@ import {isSequential} from "./protocols/isequential";
 import {conj} from "./protocols/icollection";
 import {count} from "./protocols/icounted";
 import {nth, isIndexed} from "./protocols/iindexed";
+import IDisposable from "./protocols/idisposable";
 import {show} from "./protocols/ishow";
 import {lookup} from "./protocols/ilookup";
 import {sub} from "./protocols/isubscribe";
@@ -21,16 +23,16 @@ import {pub} from "./protocols/ipublish";
 import {assoc, contains} from "./protocols/iassociative";
 import {reduce} from "./protocols/ireduce";
 import {compare} from "./protocols/icomparable";
-import {reduce as reduceIndexed, isNil} from "./core";
+import {reduce as reduceIndexed, isNil, doto} from "./core";
 import {inc, dec} from "./protocols/ioffset";
 
 export {observable};
-export {log, unbind, slice, isArray, lowerCase, upperCase, trim, overload, identity, constantly, partial, complement, comp, multimethod} from "./core";
+export {log, unbind, slice, isArray, lowerCase, upperCase, trim, overload, identity, constantly, partial, complement, comp, multimethod, doto} from "./core";
 export * from "./protocol";
 export * from "./protocols";
 export {milliseconds, seconds, hours, days, weeks, months, years} from "./types/duration"
-import Record, {record} from "./types/record";
-export {Record, record};
+import {record} from "./types/record";
+export {record};
 
 export const int = parseInt;
 export const float = parseFloat;
@@ -983,23 +985,24 @@ export function mergeWith(f, ...maps){
   }, {}, maps) : null;
 }
 
-export function duct(dest, xf, source){
+function duct(dest, xf, source){
   const unsub = sub(source, partial(xf(pub), dest));
-  return dest;
-}
-
-function signal3(xf, init, source){
-  return duct(observable(init), xf, source);
-}
-
-function signal2(xf, source){
-  return signal3(xf, null, source);
+  return doto(dest,
+    implement(IDisposable, {dispose: unsub}));
 }
 
 function signal1(xf){
   return function(source){
     return duct(observable(), xf, source);
   }
+}
+
+function signal2(xf, source){
+  return signal3(xf, null, source);
+}
+
+function signal3(xf, init, source){
+  return duct(observable(init), xf, source);
 }
 
 export const signal = overload(null, signal1, signal2, signal3);

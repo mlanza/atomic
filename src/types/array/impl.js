@@ -14,6 +14,7 @@ import IShow from '../../protocols/ishow';
 import IFn from '../../protocols/ifn';
 import ICounted from '../../protocols/icounted';
 import ILookup from '../../protocols/ilookup';
+import ICloneable from '../../protocols/icloneable';
 import Reduced from '../../types/reduced';
 import {indexedSeq} from '../../types/indexedseq';
 
@@ -53,6 +54,7 @@ function rest(self){
 
 doto(Array,
   implement(ISequential),
+  implement(ICloneable, {clone: slice}),
   implement(IFn, {invoke: lookup}),
   implement(IEmptyableCollection, {empty: constantly(EMPTY_ARRAY)}),
   implement(IReduce, {_reduce: reduce}),

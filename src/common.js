@@ -4,6 +4,25 @@ import {show} from "./protocols/ishow";
 import {next} from "./protocols/inext";
 import Reduced from "./types/reduced/construct";
 
+function iterate(self){
+  let state = self;
+  return {
+    next: function(){
+      let result = seq(state) ? {value: first(state), done: false} : {done: true};
+      state = next(state);
+      return result;
+    }
+  };
+}
+
+function iterator(){
+  return iterate(this);
+}
+
+export function iterable(Type){
+  Type.prototype[Symbol.iterator] = iterator;
+}
+
 export function nextSeq(self){
   return seq(rest(self));
 }
