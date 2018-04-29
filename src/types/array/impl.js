@@ -1,7 +1,8 @@
-import {identity, constantly, reduce, slice, doto, length, EMPTY_ARRAY} from '../../core';
+import {identity, constantly, reduce, reducekv, slice, doto, length, EMPTY_ARRAY} from '../../core';
 import {implement} from '../../protocol';
 import {showSeq, nthIndexed} from '../../common';
 import IReduce from '../../protocols/ireduce';
+import IKVReduce from '../../protocols/ikvreduce';
 import ICollection from '../../protocols/icollection';
 import INext from '../../protocols/inext';
 import ISeq from '../../protocols/iseq';
@@ -54,10 +55,11 @@ function rest(self){
 
 doto(Array,
   implement(ISequential),
-  implement(ICloneable, {clone: slice}),
+  implement(ICloneable, {clone: Array.from}),
   implement(IFn, {invoke: lookup}),
   implement(IEmptyableCollection, {empty: constantly(EMPTY_ARRAY)}),
   implement(IReduce, {_reduce: reduce}),
+  implement(IKVReduce, {_reducekv: reducekv}),
   implement(ILookup, {lookup: lookup}),
   implement(IAssociative, {assoc: assoc,contains: contains}),
   implement(IIndexed, {nth: nthIndexed}),

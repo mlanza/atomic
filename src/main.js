@@ -22,6 +22,7 @@ import {sub} from "./protocols/isubscribe";
 import {pub} from "./protocols/ipublish";
 import {assoc, contains} from "./protocols/iassociative";
 import {reduce} from "./protocols/ireduce";
+import {reducekv} from "./protocols/ikvreduce";
 import {compare} from "./protocols/icomparable";
 import {reduce as reduceIndexed, isNil, doto} from "./core";
 import {inc, dec} from "./protocols/ioffset";
@@ -30,7 +31,7 @@ export {observable};
 export {log, unbind, slice, isArray, lowerCase, upperCase, trim, overload, identity, constantly, partial, complement, comp, multimethod, doto} from "./core";
 export * from "./protocol";
 export * from "./protocols";
-export {milliseconds, seconds, hours, days, weeks, months, years} from "./types/duration"
+export {time, milliseconds, seconds, hours, days, weeks, months, years} from "./types/duration"
 import {record} from "./types/record";
 export {record};
 
@@ -1006,3 +1007,94 @@ function signal3(xf, init, source){
 }
 
 export const signal = overload(null, signal1, signal2, signal3);
+
+function someFn1(a){
+  return function(){
+    return apply(a, arguments);
+  }
+}
+
+function someFn2(a, b){
+  return function(){
+    return apply(a, arguments) || apply(b, arguments);
+  }
+}
+
+function someFn3(a, b, c){
+  return function(){
+    return apply(a, arguments) || apply(b, arguments) || apply(c, arguments);
+  }
+}
+
+function someFnN(...preds){
+  return function(...args){
+    return reduce(function(result, pred){
+      let r = apply(pred, args);
+      return r ? Reduced(r) : result;
+    }, false, preds);
+  }
+}
+
+export const someFn = overload(null, someFn1, someFn2, someFn3, someFnN);
+
+function rand0(){
+  return Math.random();
+}
+
+function rand1(n){
+  return Math.random() * n;
+}
+
+export const rand = overload(rand0, rand1);
+
+export function randInt(n){
+  return Math.floor(rand(n));
+}
+
+export function randNth(coll){
+  return nth(coll, randInt(count(coll)));
+}
+
+export function shuffle(coll) {
+  let a = Array.from(coll);
+  let j, x, i;
+  for (i = a.length - 1; i > 0; i--) {
+    j = Math.floor(Math.random() * (i + 1));
+    x = a[i];
+    a[i] = a[j];
+    a[j] = x;
+  }
+  return a;
+}
+
+function doseq3(f, xs, ys){
+  each(function(x){
+    each(function(y){
+      f(x, y);
+    }, ys);
+  }, xs);
+}
+
+function doseq4(f, xs, ys, zs){
+  each(function(x){
+    each(function(y){
+      each(function(z){
+        f(x, y, z);
+      }, zs);
+    }, ys);
+  }, xs);
+}
+
+export function doseqN(f, xs, ...colls){
+  each(function(x){
+    if (seq(colls)) {
+      apply(doseq, function(...args){
+        apply(f, x, args);
+      }, colls);
+    } else {
+      f(x);
+    }
+  }, xs || []);
+}
+
+export const doseq = overload(null, null, each, doseq3, doseq4, doseqN);

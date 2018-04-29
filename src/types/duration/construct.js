@@ -57,3 +57,11 @@ function op(setter, getter, label){
 
 export const months = op("setMonth"   , "getMonth"   , "months");
 export const years  = op("setFullYear", "getFullYear", "years");
+
+export function time(f){
+  const start = Date.now();
+  return Promise.resolve(f()).then(function(){
+    const end = Date.now();
+    return milliseconds(end - start);
+  });
+}

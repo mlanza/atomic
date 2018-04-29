@@ -60,11 +60,22 @@ export function toArraySeq(xs){
   return toArray2(xs)
 }
 
-export function reduceSeq(xs, xf, init, from){
+export function reduceSeq(xs, xf, init){
   var memo = init,
       ys = seq(xs);
   while(ys && !(memo instanceof Reduced)){
     memo = xf(memo, first(ys));
+    ys = next(ys);
+  }
+  return memo instanceof Reduced ? memo.valueOf() : memo;
+}
+
+export function reducekvSeq(xs, xf, init){
+  var memo = init,
+      ys = seq(xs);
+  while(ys && !(memo instanceof Reduced)){
+    let pair = first(ys);
+    memo = xf(memo, pair[0], pair[1]);
     ys = next(ys);
   }
   return memo instanceof Reduced ? memo.valueOf() : memo;

@@ -5,11 +5,12 @@ import ICollection from '../../protocols/icollection';
 import INext from '../../protocols/inext';
 import ISeq from '../../protocols/iseq';
 import IReduce from '../../protocols/ireduce';
+import IKVReduce from '../../protocols/ikvreduce';
 import ISeqable from '../../protocols/iseqable';
 import ISequential from '../../protocols/isequential';
 import IIndexed from '../../protocols/iindexed';
 import IShow from '../../protocols/ishow';
-import {showSeq, nextSeq, toArraySeq, reduceSeq, iterable} from '../../common';
+import {showSeq, nextSeq, toArraySeq, reduceSeq, reducekvSeq, iterable} from '../../common';
 import {identity, constantly, doto} from '../../core';
 
 function first(self){
@@ -29,6 +30,7 @@ doto(LazySeq,
   implement(ISequential),
   implement(ISeq, {first: first, rest: rest, toArray: toArraySeq}),
   implement(IReduce, {_reduce: reduceSeq}),
+  implement(IKVReduce, {_reducekv: reducekvSeq}),
   implement(ISeqable, {seq: identity}),
   implement(INext, {next: nextSeq}),
   implement(IShow, {show: show}));

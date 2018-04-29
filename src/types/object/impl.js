@@ -3,6 +3,8 @@ import {EMPTY_OBJECT, constantly, doto} from '../../core';
 import {objectSelection} from '../../types/objectselection';
 import {lazySeq} from '../../types/lazyseq';
 import {EMPTY} from '../../types/empty/construct';
+import IReduce from '../../protocols/ireduce';
+import IKVReduce from '../../protocols/ikvreduce';
 import ISeqable from '../../protocols/iseqable';
 import IShow from '../../protocols/ishow';
 import ICounted from '../../protocols/icounted';
@@ -53,6 +55,22 @@ function clone(self){
   return Object.assign({}, self);
 }
 
+function _reduce(self, xf, init){
+  let memo = init;
+  Object.keys(self).forEach(function(key){
+    memo = xf(memo, [key, self[key]]);
+  });
+  return memo;
+}
+
+function _reducekv(self, xf, init){
+  let memo = init;
+  Object.keys(self).forEach(function(key){
+    memo = xf(memo, key, self[key]);
+  });
+  return memo;
+}
+
 function show(self){
   const xs = ISeq.toArray(seq(self));
   return "{" + xs.map(function(pair){
@@ -62,6 +80,8 @@ function show(self){
 
 doto(Object,
   implement(ICloneable, {clone: clone}),
+  implement(IReduce, {_reduce: _reduce}),
+  implement(IKVReduce, {_reducekv: _reducekv}),
   implement(IMap, {_dissoc: _dissoc}),
   implement(IFn, {invoke: lookup}),
   implement(ILookup, {lookup: lookup}),

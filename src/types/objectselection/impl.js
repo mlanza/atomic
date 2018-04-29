@@ -2,6 +2,8 @@ import {implement} from '../../protocol';
 import {identity, constantly, doto, reduce, EMPTY_OBJECT} from '../../core';
 import ObjectSelection, {objectSelection} from '../../types/objectselection/construct';
 import ICollection from '../../protocols/icollection';
+import IReduce from '../../protocols/ireduce';
+import IKVReduce from '../../protocols/ikvreduce';
 import INext from '../../protocols/inext';
 import ISeq from '../../protocols/iseq';
 import ISeqable from '../../protocols/iseqable';
@@ -54,6 +56,22 @@ function clone(self){
   }, {});
 }
 
+function _reduce(self, xf, init){
+  let memo = init;
+  Object.keys(obj).forEach(function(key){
+    memo = xf(memo, [key, self.obj[key]]);
+  });
+  return memo;
+}
+
+function _reducekv(self, xf, init){
+  let memo = init;
+  self.keys.forEach(function(key){
+    memo = xf(memo, key, self.obj[key]);
+  });
+  return memo;
+}
+
 function show(self){
   const pairs = ISeq.toArray(seq(self));
   return "#object-selection {" + pairs.map(function(pair){
@@ -63,6 +81,8 @@ function show(self){
 
 doto(ObjectSelection,
   implement(IMap, {_dissoc: _dissoc}),
+  implement(IReduce, {_reduce: _reduce}),
+  implement(IKVReduce, {_reducekv: _reducekv}),
   implement(ICloneable, {clone: clone}),
   implement(ISeq, {first: first, rest: rest, toArray: toArraySeq}),
   implement(IEmptyableCollection, {empty: constantly(EMPTY_OBJECT)}),
