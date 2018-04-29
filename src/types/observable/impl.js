@@ -24,12 +24,13 @@ function _swap(self, f){
 }
 
 function sub(self, callback){
-  callback(this.state);
+  callback(self.state);
   return ISubscribe.sub(self.publisher, callback);
 }
 
 doto(Observable,
   implement(IDeref, {deref: deref}),
   implement(ISubscribe, {sub: sub}),
+  implement(IPublish, {pub: reset}),
   implement(IReset, {reset: reset}),
   implement(ISwap, {_swap: _swap}));
