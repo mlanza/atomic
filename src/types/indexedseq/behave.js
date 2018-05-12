@@ -47,10 +47,6 @@ function count(self){
   return self.length - self.start;
 }
 
-function seq(self){
-  return self.start >= self.length ? self : null;
-}
-
 function show(self){
   return "#indexed-seq " + showSeq(self);
 }
@@ -76,6 +72,6 @@ export default juxt(
   implement(INext, {next: next}),
   implement(IArr, {toArray: toArray}),
   implement(ISeq, {first: first, rest: rest}),
-  implement(ISeqable, {seq: identity}), //TODO seq
+  implement(ISeqable, {seq: identity}),
   implement(ICounted, {count: count}),
   implement(IShow, {show: show}));
