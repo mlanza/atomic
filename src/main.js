@@ -9,7 +9,8 @@ import Observable, {observable} from "./types/observable";
 import Concatenated, {concatenated, concat as concatN} from "./types/concatenated";
 import {next} from "./protocols/inext";
 import {dissoc, isMap} from "./protocols/imap";
-import {first, rest, toArray, isSeq} from "./protocols/iseq";
+import {first, rest, isSeq} from "./protocols/iseq";
+import {toArray} from "./protocols/iarr";
 import {seq, isSeqable} from "./protocols/iseqable";
 import {isSequential} from "./protocols/isequential";
 import {conj} from "./protocols/icollection";
@@ -464,11 +465,11 @@ function interleave2(xs, ys){
   })) : EMPTY;
 }
 
-function interleaveN(){
-  return concatenated(interleaved(slice(arguments)));
+function interleaveN(...colls){
+  return concatenated(interleaved(colls));
 }
 
-function interleaved(colls){
+export function interleaved(colls){
   return filter2(isNil, colls) === EMPTY ? lazySeq(map2(first, colls), function(){
     return interleaved(map2(next, colls));
   }) : EMPTY;

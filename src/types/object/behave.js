@@ -14,6 +14,7 @@ import ILookup from '../../protocols/ilookup';
 import IFn from '../../protocols/ifn';
 import IMap from '../../protocols/imap';
 import ISeq from "../../protocols/iseq";
+import IArr from "../../protocols/iarr";
 import ICloneable from "../../protocols/icloneable";
 
 function lookup(self, key){
@@ -72,7 +73,7 @@ function _reducekv(self, xf, init){
 }
 
 function show(self){
-  const xs = ISeq.toArray(seq(self));
+  const xs = IArr.toArray(seq(self));
   return "{" + xs.map(function(pair){
     return show(pair[0]) + ": " + show(pair[1]);
   }).join(", ") + "}";

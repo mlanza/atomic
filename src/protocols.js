@@ -1,3 +1,4 @@
+export * from "./protocols/iarr";
 export * from "./protocols/iseq";
 export * from "./protocols/iseqable";
 export * from "./protocols/icollection";

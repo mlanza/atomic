@@ -1,4 +1,4 @@
-import {identity, constantly, reduce, reducekv, juxt, EMPTY_ARRAY} from '../../core';
+import {constantly, identity, reduce, reducekv, juxt, EMPTY_ARRAY} from '../../core';
 import {implement} from '../../protocol';
 import {showSeq} from '../../common';
 import {indexedSeq} from '../../types/indexedseq/construct';
@@ -8,6 +8,7 @@ import ICounted from '../../protocols/icounted';
 import IReduce from '../../protocols/ireduce';
 import IKVReduce from '../../protocols/ikvreduce';
 import Reduced from '../../types/reduced';
+import IArr from '../../protocols/iarr';
 import ISeq from '../../protocols/iseq';
 import ISeqable from '../../protocols/iseqable';
 import ISequential from '../../protocols/isequential';
@@ -46,6 +47,10 @@ function count(self){
   return self.length - self.start;
 }
 
+function seq(self){
+  return self.start >= self.length ? self : null;
+}
+
 function show(self){
   return "#indexed-seq " + showSeq(self);
 }
@@ -69,7 +74,8 @@ export default juxt(
   implement(ILookup, {lookup: lookup}),
   implement(ICollection, {conj: conj}),
   implement(INext, {next: next}),
-  implement(ISeq, {first: first, rest: rest, toArray: toArray}),
-  implement(ISeqable, {seq: identity}),
+  implement(IArr, {toArray: toArray}),
+  implement(ISeq, {first: first, rest: rest}),
+  implement(ISeqable, {seq: identity}), //TODO seq
   implement(ICounted, {count: count}),
   implement(IShow, {show: show}));

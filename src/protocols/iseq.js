@@ -3,12 +3,10 @@ import {partial} from "../core";
 
 export const ISeq = protocol({
   first: null,
-  rest: null,
-  toArray: null
+  rest: null
 });
 
 export const first = ISeq.first;
 export const rest  = ISeq.rest;
-export const toArray = ISeq.toArray;
 export const isSeq = partial(satisfies, ISeq);
 export default ISeq;

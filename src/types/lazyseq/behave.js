@@ -2,6 +2,7 @@ import {implement} from '../../protocol';
 import IndexedSeq from '../../types/indexedseq';
 import ICollection from '../../protocols/icollection';
 import INext from '../../protocols/inext';
+import IArr from '../../protocols/iarr';
 import ISeq from '../../protocols/iseq';
 import IReduce from '../../protocols/ireduce';
 import IKVReduce from '../../protocols/ikvreduce';
@@ -27,7 +28,8 @@ function show(self){
 export default juxt(
   iterable,
   implement(ISequential),
-  implement(ISeq, {first: first, rest: rest, toArray: toArraySeq}),
+  implement(IArr, {toArray: toArraySeq}),
+  implement(ISeq, {first: first, rest: rest}),
   implement(IReduce, {_reduce: reduceSeq}),
   implement(IKVReduce, {_reducekv: reducekvSeq}),
   implement(ISeqable, {seq: identity}),
