@@ -140,6 +140,14 @@ export function doto(obj, ...effects){
   return obj;
 }
 
+export function juxt(...fs){
+  return function(...args){
+    return reduce(fs, function(memo, f){
+      return memo.concat([f.apply(this, args)]);
+    }, []);
+  }
+}
+
 export function length(self){
   return self.length;
 }

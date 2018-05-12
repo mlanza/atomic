@@ -1,5 +1,5 @@
 import {implement} from '../../protocol';
-import {EMPTY_OBJECT, constantly, doto} from '../../core';
+import {EMPTY_OBJECT, constantly, juxt} from '../../core';
 import {objectSelection} from '../../types/objectselection';
 import {lazySeq} from '../../types/lazyseq';
 import {EMPTY} from '../../types/empty/construct';
@@ -78,7 +78,7 @@ function show(self){
   }).join(", ") + "}";
 }
 
-doto(Object,
+export default juxt(
   implement(ICloneable, {clone: clone}),
   implement(IReduce, {_reduce: _reduce}),
   implement(IKVReduce, {_reducekv: _reducekv}),

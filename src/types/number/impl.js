@@ -1,4 +1,4 @@
-import {doto, overload} from '../../core';
+import {juxt, overload} from '../../core';
 import {implement} from '../../protocol';
 import IShow from '../../protocols/ishow';
 import IOffset from '../../protocols/ioffset';
@@ -26,6 +26,6 @@ function show(n){
 const inc = overload(null, inc1, inc2);
 const dec = overload(null, dec1, dec2);
 
-doto(Number,
+export default juxt(
   implement(IOffset, {inc: inc, dec: dec}),
   implement(IShow, {show: show}));

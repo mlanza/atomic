@@ -1,6 +1,5 @@
 import {implement} from '../../protocol';
-import {doto} from '../../core';
-import Duration from '../../types/duration/construct';
+import {juxt} from '../../core';
 import IOffset from '../../protocols/ioffset';
 
 function increment(self, dt){
@@ -11,5 +10,5 @@ function decrement(self, dt){
   return new Date(dt.valueOf() - self.milliseconds);
 }
 
-doto(Duration,
+export default juxt(
   implement(IOffset, {increment: increment, decrement: decrement}));

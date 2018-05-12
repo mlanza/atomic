@@ -1,7 +1,7 @@
-import {identity, doto} from '../../core';
+import {identity, juxt} from '../../core';
 import {implement} from '../../protocol';
 import {toArraySeq, showSeq, reduceSeq} from '../../common';
-import Concatenated, {concatenated} from '../../types/concatenated/construct';
+import {concatenated} from '../../types/concatenated/construct';
 import ICollection from '../../protocols/icollection';
 import INext from '../../protocols/inext';
 import ISeq from '../../protocols/iseq';
@@ -52,7 +52,7 @@ function show(self){
   return "#concat " + showSeq(self);
 }
 
-doto(Concatenated,
+export default juxt(
   implement(IReduce, {reduce: reduceSeq}),
   implement(ICollection, {conj: conj}),
   implement(INext, {next: next}),

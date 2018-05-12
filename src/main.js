@@ -2,7 +2,7 @@ import "./types";
 import {implement} from "./protocol";
 import Empty, {EMPTY} from "./types/empty";
 import List, {cons} from "./types/list";
-import {slice, constantly, overload, identity, partial, reducing, complement, comp, upperCase, lowerCase, isArray, EMPTY_ARRAY} from "./core";
+import {juxt, slice, constantly, overload, identity, partial, reducing, complement, comp, upperCase, lowerCase, isArray, EMPTY_ARRAY} from "./core";
 import LazySeq, {lazySeq} from "./types/lazyseq";
 import Reduced, {reduced} from "./types/reduced";
 import Observable, {observable} from "./types/observable";
@@ -29,7 +29,7 @@ import {inc, dec} from "./protocols/ioffset";
 import * as t from "./transducers";
 
 export {observable};
-export {log, unbind, slice, isArray, lowerCase, upperCase, trim, overload, identity, constantly, partial, complement, comp, multimethod, doto} from "./core";
+export {isEven, log, unbind, slice, isArray, lowerCase, upperCase, trim, overload, identity, constantly, partial, complement, comp, multimethod, doto} from "./core";
 export * from "./protocol";
 export * from "./protocols";
 export {time, milliseconds, seconds, hours, days, weeks, months, years} from "./types/duration"
@@ -624,16 +624,6 @@ export function filtera(pred, coll){
 
 export function mapa(f, coll){
   return toArray(map(f, coll));
-}
-
-export function juxt(){
-  var fs = slice(arguments);
-  return function(){
-    var args = arguments;
-    return mapa(function(f){
-      return f.apply(this, args);
-    }, fs);
-  }
 }
 
 function mapcat1(f){

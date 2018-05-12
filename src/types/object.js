@@ -1,2 +1,4 @@
 export * from "./object/construct";
-import "./object/impl";
+import Object from "./object/construct";
+import behave from "./object/impl";
+behave(Object);

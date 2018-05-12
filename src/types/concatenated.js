@@ -1,4 +1,5 @@
 export * from "./concatenated/construct";
 import Concatenated from "./concatenated/construct";
 export default Concatenated;
-import "./concatenated/impl";
+import behave from "./concatenated/impl";
+behave(Concatenated);

@@ -1,4 +1,5 @@
 export * from "./number/construct";
 import Number from "./number/construct";
 export default Number;
-import "./number/impl"
+import behave from "./number/impl";
+behave(Number);

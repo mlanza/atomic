@@ -1,10 +1,10 @@
 # TODO
 
+* IEquiv, identical?
 * review ideas in utiljs, esp. tag
 * clojure.string
 * identify long-term module strategy; organize functions by the type they target (e.g. String, Function, etc.)
 * improve structure to aid in tree shaking
-* IEquiv, identical?
 
 # BACKLOG
 

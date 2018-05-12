@@ -1,8 +1,7 @@
-import {identity, constantly, doto} from '../../core';
+import {identity, constantly, juxt} from '../../core';
 import {implement} from '../../protocol';
 import {showSeq, nextSeq, toArraySeq, reduceSeq} from '../../common';
 import IndexedSeq, {indexedSeq} from '../../types/indexedseq/construct';
-import List from '../../types/list/construct';
 import ICollection from '../../protocols/icollection';
 import INext from '../../protocols/inext';
 import ISeq from '../../protocols/iseq';
@@ -26,7 +25,7 @@ function show(self){
   return "#list " + showSeq(self);
 }
 
-doto(List,
+export default juxt(
   implement(ISequential),
   implement(IReduce, {_reduce: reduceSeq}),
   implement(IEmptyableCollection, {empty: EMPTY}),
