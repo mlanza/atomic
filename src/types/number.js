@@ -1,4 +1,4 @@
-import {overload, identity, constantly, reducing} from "../core";
+import {overload, identity, constantly, complement, reducing} from "../core";
 export * from "./number/construct";
 import Number from "./number/construct";
 export default Number;
@@ -57,3 +57,21 @@ export const add      = overload(constantly(0), identity, add2, reducing(add2));
 export const subtract = overload(constantly(0), subtract1, subtract2, reducing(subtract2));
 export const multiply = overload(constantly(1), identity, multiply2, reducing(multiply2));
 export const divide   = overload(null, divide1, divide2, reducing(divide2));
+
+export function isZero(x){
+  return x === 0;
+}
+
+export function isPos(x){
+  return x > 0;
+}
+
+export function isNeg(x){
+  return x < 0;
+}
+
+export function isOdd(n){
+  return n % 2;
+}
+
+export const isEven  = complement(isOdd);

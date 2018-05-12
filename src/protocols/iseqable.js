@@ -1,10 +1,17 @@
 import {protocol, satisfies} from "../protocol";
-import {partial} from "../core";
 
 export const ISeqable = protocol({
   seq: null
 });
 
 export const seq = ISeqable.seq;
-export const isSeqable = partial(satisfies, ISeqable);
+export const isSeqable = satisfies(ISeqable);
 export default ISeqable;
+
+export function isEmpty(coll){
+  return !seq(coll);
+}
+
+export function notEmpty(coll){
+  return isEmpty(coll) ? null : coll;
+}

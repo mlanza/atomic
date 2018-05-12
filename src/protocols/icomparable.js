@@ -1,5 +1,6 @@
 import {protocol, satisfies} from "../protocol";
-import {isNil, type} from "../core";
+import {type} from "../core";
+import {isNil} from "../types/nil";
 
 function isIdentical(x, y){ //TODO via protocol
   return x === y;

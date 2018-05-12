@@ -1,4 +1,5 @@
-import {partial, reduce, overload, reversed, identity} from "./core";
+import {reduce, overload, reversed, identity} from "./core";
+import {partial} from "./types/function";
 
 function piping1(reducer){
   return partial(pipingN, reducer);

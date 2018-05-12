@@ -1,6 +1,6 @@
 import {protocol, satisfies} from "../protocol";
 import {reduce} from "../protocols/ireduce";
-import {partial, overload, identity, slice} from "../core";
+import {overload, identity, slice} from "../core";
 
 export const IMap = protocol({
   _dissoc: null

@@ -11,7 +11,7 @@ import ICounted from '../../protocols/icounted';
 import ILookup from '../../protocols/ilookup';
 import IReduce from '../../protocols/ireduce';
 import IEmptyableCollection from '../../protocols/iemptyablecollection';
-import {empty} from '../../types/empty';
+import {EMPTY} from '../../types/empty';
 import {identity, constantly, juxt} from '../../core';
 import {implement} from '../../protocol';
 import {EMPTY_ARRAY} from '../../types/array/construct';
@@ -32,7 +32,7 @@ export default juxt(
   implement(IAssociative, {assoc: assoc, contains: constantly(false)}),
   implement(INext, {next: identity}),
   implement(IArr, {toArray: constantly(EMPTY_ARRAY)}),
-  implement(ISeq, {first: identity, rest: empty}),
+  implement(ISeq, {first: identity, rest: constantly(EMPTY)}),
   implement(ISeqable, {seq: identity}),
   implement(IIndexed, {nth: identity}),
   implement(ICounted, {count: constantly(0)}),
