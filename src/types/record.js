@@ -1,3 +1,2 @@
-export {record} from "./record/impl";
+export {record} from "./record/construct";
 export default record;
-import "./record/impl";
