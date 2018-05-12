@@ -1,2 +1,4 @@
 export * from "./array/construct";
-import "./array/impl";
+import Array from "./array/construct";
+import behave from "./array/impl";
+behave(Array);

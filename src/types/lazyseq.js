@@ -1,4 +1,5 @@
 export * from "./lazyseq/construct";
 import LazySeq from "./lazyseq/construct";
 export default LazySeq;
-import "./lazyseq/impl";
+import behave from "./lazyseq/impl";
+behave(LazySeq);

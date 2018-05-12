@@ -1,6 +1,6 @@
 import {implement} from '../../protocol';
-import {identity, constantly, doto, reduce, EMPTY_OBJECT} from '../../core';
-import ObjectSelection, {objectSelection} from '../../types/objectselection/construct';
+import {identity, constantly, juxt, reduce, EMPTY_OBJECT} from '../../core';
+import {objectSelection} from '../../types/objectselection/construct';
 import ICollection from '../../protocols/icollection';
 import IReduce from '../../protocols/ireduce';
 import IKVReduce from '../../protocols/ikvreduce';
@@ -79,7 +79,7 @@ function show(self){
   }).join(", ") + "}";
 }
 
-doto(ObjectSelection,
+export default juxt(
   implement(IMap, {_dissoc: _dissoc}),
   implement(IReduce, {_reduce: _reduce}),
   implement(IKVReduce, {_reducekv: _reducekv}),

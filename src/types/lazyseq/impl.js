@@ -1,5 +1,4 @@
 import {implement} from '../../protocol';
-import LazySeq from '../../types/lazyseq/construct';
 import IndexedSeq from '../../types/indexedseq';
 import ICollection from '../../protocols/icollection';
 import INext from '../../protocols/inext';
@@ -11,7 +10,7 @@ import ISequential from '../../protocols/isequential';
 import IIndexed from '../../protocols/iindexed';
 import IShow from '../../protocols/ishow';
 import {showSeq, nextSeq, toArraySeq, reduceSeq, reducekvSeq, iterable} from '../../common';
-import {identity, constantly, doto} from '../../core';
+import {identity, constantly, juxt} from '../../core';
 
 function first(self){
   return self.head;
@@ -25,7 +24,7 @@ function show(self){
   return "#lazy-seq " + showSeq(self);
 }
 
-doto(LazySeq,
+export default juxt(
   iterable,
   implement(ISequential),
   implement(ISeq, {first: first, rest: rest, toArray: toArraySeq}),

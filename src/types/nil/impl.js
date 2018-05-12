@@ -1,4 +1,3 @@
-import Nil from '../../types/nil/construct';
 import IndexedSeq from '../../types/indexedseq/construct';
 import IAssociative from '../../protocols/iassociative';
 import ICollection from '../../protocols/icollection';
@@ -12,7 +11,7 @@ import ILookup from '../../protocols/ilookup';
 import IReduce from '../../protocols/ireduce';
 import IEmptyableCollection from '../../protocols/iemptyablecollection';
 import {empty} from '../../types/empty';
-import {identity, constantly, doto} from '../../core';
+import {identity, constantly, juxt} from '../../core';
 import {implement} from '../../protocol';
 
 function assoc(self, key, value){
@@ -25,7 +24,7 @@ function _reduce(self, xf, init){
   return init;
 }
 
-doto(Nil,
+export default juxt(
   implement(IEmptyableCollection, {empty: identity}),
   implement(ILookup, {lookup: constantly(null)}),
   implement(IAssociative, {assoc: assoc, contains: constantly(false)}),

@@ -1,4 +1,4 @@
-import {doto, overload} from '../../core';
+import {juxt, overload} from '../../core';
 import {implement} from '../../protocol';
 import IShow from '../../protocols/ishow';
 import IOffset from '../../protocols/ioffset';
@@ -93,7 +93,7 @@ function show(self){
   return "\"" + self.toISOString() + "\"";
 }
 
-doto(Date,
+export default juxt(
   implement(IAssociative, {assoc: assoc, contains: contains}),
   implement(ILookup, {lookup: lookup}),
   implement(ICloneable, {clone: clone}),

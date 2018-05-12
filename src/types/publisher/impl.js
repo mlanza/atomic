@@ -1,6 +1,5 @@
 import {implement} from '../../protocol';
-import {doto} from '../../core';
-import Publisher from '../../types/publisher/construct';
+import {juxt} from '../../core';
 import IPublish from '../../protocols/ipublish';
 import ISubscribe from '../../protocols/isubscribe';
 
@@ -19,6 +18,6 @@ function pub(self, message){
   });
 }
 
-doto(Publisher,
+export default juxt(
   implement(ISubscribe, {sub: sub}),
   implement(IPublish, {pub: pub}));

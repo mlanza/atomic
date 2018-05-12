@@ -1,7 +1,7 @@
-import {identity, constantly, reduce, reducekv, doto, EMPTY_ARRAY} from '../../core';
+import {identity, constantly, reduce, reducekv, juxt, EMPTY_ARRAY} from '../../core';
 import {implement} from '../../protocol';
 import {showSeq} from '../../common';
-import IndexedSeq, {indexedSeq} from '../../types/indexedseq/construct';
+import {indexedSeq} from '../../types/indexedseq/construct';
 import ICollection from '../../protocols/icollection';
 import INext from '../../protocols/inext';
 import ICounted from '../../protocols/icounted';
@@ -60,7 +60,7 @@ function _reducekv(self, xf, init){
   }, init, self.start);
 }
 
-doto(IndexedSeq,
+export default juxt(
   implement(ISequential),
   implement(IEmptyableCollection, {empty: constantly(EMPTY_ARRAY)}),
   implement(IReduce, {reduce: _reduce}),

@@ -1,4 +1,4 @@
-import {identity, constantly, reduce, reducekv, slice, doto, length, EMPTY_ARRAY} from '../../core';
+import {juxt, identity, constantly, reduce, reducekv, slice, length, EMPTY_ARRAY} from '../../core';
 import {implement} from '../../protocol';
 import {showSeq, nthIndexed} from '../../common';
 import IReduce from '../../protocols/ireduce';
@@ -53,7 +53,7 @@ function rest(self){
   return indexedSeq(self, 1);
 }
 
-doto(Array,
+export default juxt(
   implement(ISequential),
   implement(ICloneable, {clone: Array.from}),
   implement(IFn, {invoke: lookup}),
