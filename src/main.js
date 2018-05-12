@@ -1,47 +1,12 @@
-import "./types";
-export {add} from "./types/number";
+import {comp, not, partial, concat, concatenated, observable, isNil, cons, EMPTY, EMPTY_ARRAY, lazySeq} from "./types";
+export * from "./types";
 import {implement} from "./protocol";
-import {EMPTY_ARRAY} from "./types/array";
-import {isBlank, EMPTY_STRING} from "./types/string";
-import {apply} from "./types/function";
-import Empty, {EMPTY} from "./types/empty";
-import List, {cons} from "./types/list";
-import {slice, juxt, constantly, overload, identity, partial, reducing, complement} from "./core";
-import {comp} from "./compositional";
-import LazySeq, {lazySeq} from "./types/lazyseq";
-import Reduced, {reduced} from "./types/reduced";
-import Observable, {observable} from "./types/observable";
-import Concatenated, {concatenated, concat as concatN} from "./types/concatenated";
-import {next} from "./protocols/inext";
-import {dissoc, isMap} from "./protocols/imap";
-import {first, rest, isSeq} from "./protocols/iseq";
-import {toArray} from "./protocols/iarr";
-import {seq, isSeqable} from "./protocols/iseqable";
-import {isSequential} from "./protocols/isequential";
-import {conj} from "./protocols/icollection";
-import {count} from "./protocols/icounted";
-import {nth, isIndexed} from "./protocols/iindexed";
-import IDisposable from "./protocols/idisposable";
-import {show} from "./protocols/ishow";
-import {lookup} from "./protocols/ilookup";
-import {sub} from "./protocols/isubscribe";
-import {pub} from "./protocols/ipublish";
-import {assoc, contains} from "./protocols/iassociative";
-import {reduce} from "./protocols/ireduce";
-import {reducekv} from "./protocols/ikvreduce";
-import {compare} from "./protocols/icomparable";
-import {reduce as reduceIndexed, isNil, doto} from "./core";
-import {inc, dec} from "./protocols/ioffset";
-import * as t from "./transducers";
-
-export {observable};
-export {isEven, log, unbind, slice, overload, identity, constantly, partial, complement, multimethod, doto} from "./core";
 export * from "./protocol";
+import {first, rest, next, seq, inc, dec, reduce, conj, sub, pub, lookup, assoc, contains, toArray, reducekv, isSequential, IDisposable} from "./protocols";
 export * from "./protocols";
-export {time, milliseconds, seconds, hours, days, weeks, months, years} from "./types/duration";
-export {selectKeys} from "./types/object";
-import {record} from "./types/record";
-export {record, comp};
+import {reduce as reduceIndexed, complement, doto, overload, constantly, identity, reducing, juxt, slice} from "./core";
+export * from "./core";
+import * as t from "./transducers";
 
 function transduce3(xform, f, coll){
   return transduce4(xform, f, f(), coll);
@@ -70,10 +35,6 @@ function everyPair(pred, xs){
     xs = slice(xs, 1);
   }
   return every;
-}
-
-export function not(x){
-  return !x;
 }
 
 function lt2(a, b){
@@ -218,20 +179,7 @@ function updateInN(self, keys, f) {
 }
 
 export const updateIn = overload(null, null, null, updateIn3, updateIn4, updateIn5, updateIn6, updateInN);
-
-export function second(xs){
-  return first(next(xs));
-}
-
-export function isEmpty(coll){
-  return !seq(coll);
-}
-
-export function notEmpty(coll){
-  return isEmpty(coll) ? null : coll;
-}
-
-export const concat = overload(constantly(EMPTY), seq, concatN);
+export const second   = comp(first, next);
 
 export function each(f, xs){
   var ys = seq(xs);
@@ -250,7 +198,7 @@ export function some(pred, coll){
 }
 
 export const notSome = comp(not, some);
-export const notAny = notSome;
+export const notAny  = notSome;
 
 export function every(pred, coll){
   var xs = seq(coll);
@@ -348,14 +296,6 @@ export function iterate(f, x){
 }
 
 
-function str1(x){
-  return x == null ? "" : x.toString();
-}
-
-function str2(x, y){
-  return str1(x) + str1(y);
-}
-
 function min2(x, y){
   return x < y ? x : y;
 }
@@ -366,7 +306,7 @@ function max2(x, y){
 
 export const min = overload(null, identity, min2, reducing(min2));
 export const max = overload(null, identity, max2, reducing(max2));
-export const str = overload(constantly(""), str1, str2, reducing(str2));
+
 //export const inc = partial(add2, +1);
 //export const dec = partial(add2, -1);
 
@@ -547,7 +487,6 @@ function takeNth2(n, xs){
 
 export const takeNth = overload(null, t.takeNth, takeNth2);
 
-
 function dropWhile2(pred, xs){
   return seq(xs) ? pred(first(xs)) ? dropWhile2(pred, rest(xs)) : xs : EMPTY;
 }
@@ -572,45 +511,6 @@ function mapcat2(f, colls){
 
 export const mapcat = overload(null, mapcat1, mapcat2);
 
-function fnil1(f, A){
-  return function(a){
-    var args = slice(arguments);
-    if (isNil(a)) { args[0] = A };
-    return f.apply(null, args);
-  }
-}
-
-function fnil2(f, A, B){
-  return function(a, b){
-    var args = slice(arguments);
-    if (isNil(a)) { args[0] = A };
-    if (isNil(b)) { args[1] = B };
-    return f.apply(null, args);
-  }
-}
-
-function fnil3(f, A, B, C){
-  return function(a, b, c){
-    var args = slice(arguments);
-    if (isNil(a)) { args[0] = A };
-    if (isNil(b)) { args[1] = B };
-    if (isNil(c)) { args[2] = C };
-    return f.apply(null, args);
-  }
-}
-
-function fnilN(f){
-  var ARGS = slice(arguments, 1);
-  return function(){
-    var args = slice(arguments);
-    for(var x = 0; x < args.length; x++){
-      if (isNil(args[x])) { args[x] = ARGS[x] };
-    }
-    return f.apply(null, args);
-  }
-}
-
-export const fnil = overload(null, null, fnil1, fnil2, fnil3, fnilN);
 
 export function last(coll){
   var tail = coll;
@@ -678,10 +578,6 @@ export function flatten(x){
   return filter(complement(isSequential), rest(treeSeq(isSequential, seq, x)));
 }
 
-export function isInstance(constructor, x){
-  return x instanceof constructor;
-}
-
 function sort1(coll){
   return into([], coll).sort();
 }
@@ -704,16 +600,12 @@ function sortBy3(keyFn, compare, coll){
 
 export const sortBy = overload(null, null, sortBy2, sortBy3);
 
-function isDistinct2(x, y){
-  return x !== y;
-}
-
 function isDistinctN(...xs){
   const s = new Set(xs);
   return s.size === xs.length;
 }
 
-export const isDistinct = overload(null, constantly(true), isDistinct, isDistinctN);
+export const isDistinct = overload(null, constantly(true), notEq, isDistinctN);
 
 function distinct1(coll){
   return Array.from(new Set(coll));
@@ -756,54 +648,6 @@ export function mergeWith(f, ...maps){
   }, {}, maps) : null;
 }
 
-function duct(source, xf, sink){
-  const unsub = sub(source, partial(xf(pub), sink));
-  return doto(sink,
-    implement(IDisposable, {dispose: unsub}));
-}
-
-function signal1(source){
-  return duct(source, map(identity), observable());
-}
-
-function signal2(source, xf){
-  return signal3(source, xf, null);
-}
-
-function signal3(source, xf, init){
-  return duct(source, xf, observable(init));
-}
-
-export const signal = overload(null, signal1, signal2, signal3);
-
-function someFn1(a){
-  return function(){
-    return apply(a, arguments);
-  }
-}
-
-function someFn2(a, b){
-  return function(){
-    return apply(a, arguments) || apply(b, arguments);
-  }
-}
-
-function someFn3(a, b, c){
-  return function(){
-    return apply(a, arguments) || apply(b, arguments) || apply(c, arguments);
-  }
-}
-
-function someFnN(...preds){
-  return function(...args){
-    return reduce(function(result, pred){
-      let r = apply(pred, args);
-      return r ? Reduced(r) : result;
-    }, false, preds);
-  }
-}
-
-export const someFn = overload(null, someFn1, someFn2, someFn3, someFnN);
 
 function rand0(){
   return Math.random();
@@ -882,3 +726,23 @@ export function coalesce(xs){
 }
 
 export const detect = comp(first, filter);
+
+function duct(source, xf, sink){
+  const unsub = sub(source, partial(xf(pub), sink));
+  return doto(sink,
+    implement(IDisposable, {dispose: unsub}));
+}
+
+function signal1(source){
+  return duct(source, map(identity), observable());
+}
+
+function signal2(source, xf){
+  return signal3(source, xf, null);
+}
+
+function signal3(source, xf, init){
+  return duct(source, xf, observable(init));
+}
+
+export const signal = overload(null, signal1, signal2, signal3);

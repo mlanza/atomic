@@ -1,7 +1,8 @@
-import {slice, reduce, constantly, overload, identity, partial, reducing, complement, isSome} from "./core";
-import {comp} from "./compositional";
+import {slice, reduce, constantly, overload, identity, reducing, complement} from "./core";
 import {reduced} from "./types/reduced";
+import {isSome} from "./types/nil";
 import {seq} from "./protocols/iseqable";
+import {comp, partial} from "./types/function";
 
 export function map(f){
   return function(xf){

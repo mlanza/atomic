@@ -1,5 +1,4 @@
 import {protocol, satisfies} from "../protocol";
-import {partial} from "../core";
 
 export const ISeq = protocol({
   first: null,
@@ -8,5 +7,5 @@ export const ISeq = protocol({
 
 export const first = ISeq.first;
 export const rest  = ISeq.rest;
-export const isSeq = partial(satisfies, ISeq);
+export const isSeq = satisfies(ISeq);
 export default ISeq;

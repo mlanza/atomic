@@ -5,10 +5,6 @@ export const test   = unbind(RegExp.prototype.test);
 export const log    = console.log.bind(console);
 export const slice  = unbind(Array.prototype.slice);
 
-export function isNil(x){
-  return x == null;
-}
-
 export function type(self){
   return self == null ? null : self.constructor;
 }
@@ -110,13 +106,6 @@ export function constantly(x){
   }
 }
 
-export function partial(f){
-  var applied = slice(arguments, 1);
-  return function(){
-    return f.apply(this, applied.concat(slice(arguments)));
-  }
-}
-
 export function reducing(rf){
   return function r(x, ...tail){
     return tail.length ? rf(x, r.apply(null, tail)) : x;
@@ -126,21 +115,6 @@ export function reducing(rf){
 export function complement(f){
   return function(){
     return !f.apply(this, arguments);
-  }
-}
-
-export function subj(f){
-  return function(){
-    const args = slice(arguments);
-    return function(obj){
-      return f.apply(this, [obj].concat(args));
-    }
-  }
-}
-
-export function reversed(f){
-  return function(){
-    return f.apply(this, slice(arguments).reverse());
   }
 }
 
@@ -176,31 +150,6 @@ export function constructs(Type) {
   }
 }
 
-export function isSome(x){
-  return x != null;
-}
-
-export function isZero(x){
-  return x === 0;
-}
-
-export function isPos(x){
-  return x > 0;
-}
-
-export function isNeg(x){
-  return x < 0;
-}
-
-export function isOdd(n){
-  return n % 2;
-}
-
-export const isEven  = complement(isOdd);
-
-export function tap(f){
-  return function(value){
-    f(value);
-    return value;
-  }
+export function isInstance(constructor, x){
+  return x instanceof constructor;
 }

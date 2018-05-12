@@ -6,3 +6,7 @@ import Boolean from "./boolean/construct";
 export function isBoolean(self){
   return Boolean(self) === self;
 }
+
+export function not(x){
+  return !x;
+}
