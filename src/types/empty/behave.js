@@ -1,4 +1,4 @@
-import {identity, constantly, juxt, EMPTY_ARRAY} from '../../core';
+import {identity, constantly, juxt} from '../../core';
 import {implement} from '../../protocol';
 import {empty} from '../../types/empty/construct';
 import ICollection from '../../protocols/icollection';
@@ -9,6 +9,7 @@ import ISeqable from '../../protocols/iseqable';
 import IIndexed from '../../protocols/iindexed';
 import IShow from '../../protocols/ishow';
 import IEmptyableCollection from '../../protocols/iemptyablecollection';
+import {EMPTY_ARRAY} from '../../types/array/construct';
 
 export default juxt(
   implement(IEmptyableCollection, {empty: identity}),

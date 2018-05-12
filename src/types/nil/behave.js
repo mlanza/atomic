@@ -12,8 +12,9 @@ import ILookup from '../../protocols/ilookup';
 import IReduce from '../../protocols/ireduce';
 import IEmptyableCollection from '../../protocols/iemptyablecollection';
 import {empty} from '../../types/empty';
-import {identity, constantly, juxt, EMPTY_ARRAY} from '../../core';
+import {identity, constantly, juxt} from '../../core';
 import {implement} from '../../protocol';
+import {EMPTY_ARRAY} from '../../types/array/construct';
 
 function assoc(self, key, value){
   let obj = {};

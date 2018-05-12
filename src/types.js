@@ -1,3 +1,5 @@
+import "./types/boolean";
+import "./types/function";
 import "./types/array";
 import "./types/object";
 import "./types/string";

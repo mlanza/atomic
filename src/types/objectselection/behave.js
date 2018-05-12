@@ -1,5 +1,5 @@
 import {implement} from '../../protocol';
-import {identity, constantly, juxt, reduce, EMPTY_OBJECT} from '../../core';
+import {identity, constantly, juxt, reduce} from '../../core';
 import {objectSelection} from '../../types/objectselection/construct';
 import ICollection from '../../protocols/icollection';
 import IReduce from '../../protocols/ireduce';
@@ -17,6 +17,7 @@ import IMap from '../../protocols/imap';
 import ICloneable from '../../protocols/icloneable';
 import IEmptyableCollection from '../../protocols/iemptyablecollection';
 import {lazySeq} from '../../types/lazyseq/construct';
+import {EMPTY_OBJECT} from '../../types/object/construct';
 
 function lookup(self, key){
   return self.keys.indexOf(key) > -1 ? self.obj[key] : null;

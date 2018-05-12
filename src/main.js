@@ -1,8 +1,13 @@
 import "./types";
+export {add} from "./types/number";
 import {implement} from "./protocol";
+import {EMPTY_ARRAY} from "./types/array";
+import {isBlank, EMPTY_STRING} from "./types/string";
+import {apply} from "./types/function";
 import Empty, {EMPTY} from "./types/empty";
 import List, {cons} from "./types/list";
-import {juxt, slice, constantly, overload, identity, partial, reducing, complement, comp, upperCase, lowerCase, isArray, EMPTY_ARRAY} from "./core";
+import {slice, juxt, constantly, overload, identity, partial, reducing, complement} from "./core";
+import {comp} from "./compositional";
 import LazySeq, {lazySeq} from "./types/lazyseq";
 import Reduced, {reduced} from "./types/reduced";
 import Observable, {observable} from "./types/observable";
@@ -30,17 +35,13 @@ import {inc, dec} from "./protocols/ioffset";
 import * as t from "./transducers";
 
 export {observable};
-export {isEven, log, unbind, slice, isArray, lowerCase, upperCase, trim, overload, identity, constantly, partial, complement, comp, multimethod, doto} from "./core";
+export {isEven, log, unbind, slice, overload, identity, constantly, partial, complement, multimethod, doto} from "./core";
 export * from "./protocol";
 export * from "./protocols";
-export {time, milliseconds, seconds, hours, days, weeks, months, years} from "./types/duration"
+export {time, milliseconds, seconds, hours, days, weeks, months, years} from "./types/duration";
+export {selectKeys} from "./types/object";
 import {record} from "./types/record";
-export {record};
-
-export const int = parseInt;
-export const float = parseFloat;
-export const num = Number;
-export const boolean = Boolean;
+export {record, comp};
 
 function transduce3(xform, f, coll){
   return transduce4(xform, f, f(), coll);
@@ -95,7 +96,6 @@ function lteN(...args){
 
 export const lte = overload(constantly(false), constantly(true), lte2, lteN);
 
-
 function gt2(a, b){
   return a > b;
 }
@@ -145,28 +145,6 @@ function equalN(...args){
 }
 
 export const equal = overload(constantly(true), constantly(true), equal2, equalN);
-
-export function mod(num, div){
-  return num % div;
-}
-
-export function isBoolean(b){
-  return Boolean(b) === b;
-}
-
-export function isNumber(n){
-  return Number(n) === n;
-}
-
-export function isInteger(n){
-  return Number(n) === n && n % 1 === 0;
-}
-
-export const isInt = isInteger;
-
-export function isFloat(n){
-  return Number(n) === n && n % 1 !== 0;
-}
 
 export function get(self, key, notFound){
   return lookup(self, key) || notFound;
@@ -263,28 +241,6 @@ export function each(f, xs){
   }
 }
 
-function apply2(f, args){
-  return f.apply(null, toArray(args));
-}
-
-function apply3(f, a, args){
-  return f.apply(null, [a].concat(toArray(args)));
-}
-
-function apply4(f, a, b, args){
-  return f.apply(null, [a, b].concat(toArray(args)));
-}
-
-function apply5(f, a, b, c, args){
-  return f.apply(null, [a, b, c].concat(toArray(args)));
-}
-
-function applyN(f, a, b, c, d, args){
-  return f.apply(null, [a, b, c, d].concat(toArray(args)));
-}
-
-export const apply = overload(null, null, apply2, apply3, apply4, apply5, applyN);
-
 export function some(pred, coll){
   var xs = seq(coll);
   while(xs && !pred(first(xs))){
@@ -308,6 +264,14 @@ export function every(pred, coll){
 }
 
 export const notEvery = comp(not, every);
+
+export function juxts(f, ...fs){
+  return arguments.length ? function(x){
+    return lazySeq(f(x), function(){
+      return apply(juxts, fs)(x);
+    });
+  } : constantly(EMPTY);
+}
 
 function map2(f, xs){
   return seq(xs) ? lazySeq(f(first(xs)), function(){
@@ -380,32 +344,9 @@ export const repeat = overload(null, repeat1, repeat2);
 export function iterate(f, x){
   return lazySeq(x, function(){
     return iterate(f, f(x));
-  })
+  });
 }
 
-function add2(x, y){
-  return x + y;
-}
-
-function subtract2(x, y){
-  return x - y;
-}
-
-function multiply2(x, y){
-  return x * y;
-}
-
-function divide2(x, y){
-  return x / y;
-}
-
-function subtract1(x){
-  return subtract2(0, x);
-}
-
-function divide1(x){
-  return divide2(1, x);
-}
 
 function str1(x){
   return x == null ? "" : x.toString();
@@ -426,10 +367,6 @@ function max2(x, y){
 export const min = overload(null, identity, min2, reducing(min2));
 export const max = overload(null, identity, max2, reducing(max2));
 export const str = overload(constantly(""), str1, str2, reducing(str2));
-export const add = overload(constantly(0), identity, add2, reducing(add2));
-export const subtract = overload(constantly(0), subtract1, subtract2, reducing(subtract2));
-export const multiply = overload(constantly(1), identity, multiply2, reducing(multiply2));
-export const divide = overload(null, divide1, divide2, reducing(divide2));
 //export const inc = partial(add2, +1);
 //export const dec = partial(add2, -1);
 
@@ -529,7 +466,6 @@ export function indexed(iter){
   }
 }
 
-
 const mapIndexed2  = indexed(map2);
 
 export const mapIndexed  = overload(null, t.mapIndexed, mapIndexed2);
@@ -618,7 +554,6 @@ function dropWhile2(pred, xs){
 
 export const dropWhile = overload(null, t.dropWhile, dropWhile2);
 
-
 export function filtera(pred, coll){
   return toArray(filter(pred, coll));
 }
@@ -700,13 +635,6 @@ function dropLast2(n, coll){
 const dropLast1 = partial(dropLast2, 1);
 
 export const dropLast = overload(null, dropLast1, dropLast2);
-
-export function selectKeys(obj, keys){
-  return reduce(function(memo, key){
-    memo[key] = get(obj, key);
-    return memo;
-  }, {}, keys);
-}
 
 export function scanKey(better){
   function scanKey2(k, x){
@@ -938,3 +866,19 @@ export function doseqN(f, xs, ...colls){
 }
 
 export const doseq = overload(null, null, each, doseq3, doseq4, doseqN);
+
+export function branch(pred, yes, no){
+  return function(value){
+    return pred(value) ? yes(value) : no(value);
+  }
+}
+
+export function guard(pred, yes){
+  return branch(pred, yes, constantly(null));
+}
+
+export function coalesce(xs){
+  return detect(identity, xs);
+}
+
+export const detect = comp(first, filter);

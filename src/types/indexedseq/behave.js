@@ -1,7 +1,10 @@
-import {constantly, identity, reduce, reducekv, juxt, EMPTY_ARRAY} from '../../core';
+import {constantly, identity, reduce, reducekv, juxt} from '../../core';
 import {implement} from '../../protocol';
 import {showSeq} from '../../common';
 import {indexedSeq} from '../../types/indexedseq/construct';
+import IInclusive from '../../protocols/iinclusive';
+import IAppendable from '../../protocols/iappendable';
+import IPrependable from '../../protocols/iprependable';
 import ICollection from '../../protocols/icollection';
 import INext from '../../protocols/inext';
 import ICounted from '../../protocols/icounted';
@@ -17,13 +20,18 @@ import IShow from '../../protocols/ishow';
 import ILookup from '../../protocols/ilookup';
 import IFn from '../../protocols/ifn';
 import IEmptyableCollection from '../../protocols/iemptyablecollection';
+import {EMPTY_ARRAY} from '../../types/array/construct';
 
 function lookup(self, key){
   return self.arr[self.start + key];
 }
 
-function conj(self, x){
+function append(self, x){
   return toArray(self).concat([x]);
+}
+
+function prepend(self, x){
+  return [x].concat(toArray(self));
 }
 
 function next(self){
@@ -61,14 +69,21 @@ function _reducekv(self, xf, init){
   }, init, self.start);
 }
 
+function includes(self, x){
+  return self.arr.indexOf(x, self.start) > -1;
+}
+
 export default juxt(
   implement(ISequential),
+  implement(IInclusive, {includes: includes}),
+  implement(IAppendable, {append: append}),
+  implement(IPrependable, {prepend: prepend}),
   implement(IEmptyableCollection, {empty: constantly(EMPTY_ARRAY)}),
   implement(IReduce, {reduce: _reduce}),
   implement(IKVReduce, {_reducekv: _reducekv}),
   implement(IFn, {invoke: lookup}),
   implement(ILookup, {lookup: lookup}),
-  implement(ICollection, {conj: conj}),
+  implement(ICollection, {conj: append}),
   implement(INext, {next: next}),
   implement(IArr, {toArray: toArray}),
   implement(ISeq, {first: first, rest: rest}),
