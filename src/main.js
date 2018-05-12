@@ -827,24 +827,22 @@ export function mergeWith(f, ...maps){
   }, {}, maps) : null;
 }
 
-function duct(dest, xf, source){
-  const unsub = sub(source, partial(xf(pub), dest));
-  return doto(dest,
+function duct(source, xf, sink){
+  const unsub = sub(source, partial(xf(pub), sink));
+  return doto(sink,
     implement(IDisposable, {dispose: unsub}));
 }
 
-function signal1(xf){
-  return function(source){
-    return duct(observable(), xf, source);
-  }
+function signal1(source){
+  return duct(source, map(identity), observable());
 }
 
-function signal2(xf, source){
-  return signal3(xf, null, source);
+function signal2(source, xf){
+  return signal3(source, xf, null);
 }
 
-function signal3(xf, init, source){
-  return duct(observable(init), xf, source);
+function signal3(source, xf, init){
+  return duct(source, xf, observable(init));
 }
 
 export const signal = overload(null, signal1, signal2, signal3);

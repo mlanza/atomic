@@ -46,14 +46,18 @@ export function mark(protocol){
   }
 }
 
-function implement2(protocol, impl){
+function implement2(protocol, behavior){
   return function(type){
-    implement3(protocol, type, impl);
+    implement3(protocol, type, behavior);
   }
 }
 
-function implement3(protocol, type, impl){
-  protocol[REGISTRY].set(type, impl);
+function implement3(protocol, type, behavior){
+  protocol[REGISTRY].set(type, behavior);
+}
+
+export function cease(protocol, type){
+  protocol[REGISTRY].delete(type);
 }
 
 export const implement = overload(null, mark, implement2, implement3);
