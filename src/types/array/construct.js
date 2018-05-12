@@ -1,2 +1,5 @@
 export default Array;
-export const array = Array;
+export function array(...xs){
+  return Array(...xs);
+}
+export const EMPTY_ARRAY  = Object.freeze([]);

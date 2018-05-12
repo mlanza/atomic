@@ -1,4 +1,5 @@
-import {slice, reduce, constantly, overload, identity, partial, reducing, complement, comp, isSome} from "./core";
+import {slice, reduce, constantly, overload, identity, partial, reducing, complement, isSome} from "./core";
+import {comp} from "./compositional";
 import {reduced} from "./types/reduced";
 import {seq} from "./protocols/iseqable";
 

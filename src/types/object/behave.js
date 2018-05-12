@@ -1,10 +1,10 @@
 import {implement} from '../../protocol';
-import {EMPTY_OBJECT, constantly, juxt} from '../../core';
+import {constantly, juxt} from '../../core';
 import {objectSelection} from '../../types/objectselection';
 import {lazySeq} from '../../types/lazyseq';
 import {EMPTY} from '../../types/empty/construct';
 import IReduce from '../../protocols/ireduce';
-import IKVReduce from '../../protocols/ikvreduce';
+import IKVReduce, {reducekv} from '../../protocols/ikvreduce';
 import ISeqable from '../../protocols/iseqable';
 import IShow from '../../protocols/ishow';
 import ICounted from '../../protocols/icounted';
@@ -16,6 +16,14 @@ import IMap from '../../protocols/imap';
 import ISeq from "../../protocols/iseq";
 import IArr from "../../protocols/iarr";
 import ICloneable from "../../protocols/icloneable";
+import IInclusive from "../../protocols/iinclusive";
+import {EMPTY_OBJECT} from '../../types/object/construct';
+
+function includes(superset, subset){
+  return reducekv(function(memo, key, value){
+    return memo ? get(superset, key) === value : new Reduced(memo);
+  }, true, seq(subset));
+}
 
 function lookup(self, key){
   return self[key];
@@ -80,6 +88,7 @@ function show(self){
 }
 
 export default juxt(
+  implement(IInclusive, {includes: includes}),
   implement(ICloneable, {clone: clone}),
   implement(IReduce, {_reduce: _reduce}),
   implement(IKVReduce, {_reducekv: _reducekv}),

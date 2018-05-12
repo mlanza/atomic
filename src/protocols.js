@@ -1,4 +1,7 @@
 export * from "./protocols/iarr";
+export * from "./protocols/iappendable";
+export * from "./protocols/iprependable";
+export * from "./protocols/iinclusive";
 export * from "./protocols/iseq";
 export * from "./protocols/iseqable";
 export * from "./protocols/icollection";

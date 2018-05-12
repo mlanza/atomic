@@ -1,8 +1,11 @@
-import {juxt, identity, constantly, reduce, reducekv, slice, length, EMPTY_ARRAY} from '../../core';
+import {juxt, identity, constantly, reduce, reducekv, slice, length} from '../../core';
 import {implement} from '../../protocol';
 import {showSeq, nthIndexed} from '../../common';
 import IReduce from '../../protocols/ireduce';
 import IKVReduce from '../../protocols/ikvreduce';
+import IAppendable from '../../protocols/iappendable';
+import IPrependable from '../../protocols/iprependable';
+import IInclusive from '../../protocols/iinclusive';
 import ICollection from '../../protocols/icollection';
 import INext from '../../protocols/inext';
 import ISeq from '../../protocols/iseq';
@@ -18,6 +21,7 @@ import ICounted from '../../protocols/icounted';
 import ILookup from '../../protocols/ilookup';
 import ICloneable from '../../protocols/icloneable';
 import Reduced from '../../types/reduced';
+import {EMPTY_ARRAY} from '../../types/array/construct';
 import {indexedSeq} from '../../types/indexedseq';
 
 function lookup(self, key){
@@ -38,8 +42,12 @@ function seq(self){
   return self.length ? self : null;
 }
 
-function conj(self, x){
+function append(self, x){
   return self.concat([x]);
+}
+
+function prepend(self, x){
+  return [x].concat(self);
 }
 
 function next(self){
@@ -54,8 +62,15 @@ function rest(self){
   return indexedSeq(self, 1);
 }
 
+function includes(self, x){
+  return self.indexOf(x) > -1;
+}
+
 export default juxt(
   implement(ISequential),
+  implement(IInclusive, {includes: includes}),
+  implement(IAppendable, {append: append}),
+  implement(IPrependable, {prepend: prepend}),
   implement(ICloneable, {clone: Array.from}),
   implement(IFn, {invoke: lookup}),
   implement(IEmptyableCollection, {empty: constantly(EMPTY_ARRAY)}),
@@ -65,7 +80,7 @@ export default juxt(
   implement(IAssociative, {assoc: assoc,contains: contains}),
   implement(IIndexed, {nth: nthIndexed}),
   implement(ISeqable, {seq: seq}),
-  implement(ICollection, {conj: conj}),
+  implement(ICollection, {conj: append}),
   implement(INext, {next: next}),
   implement(IArr, {toArray: identity}),
   implement(ISeq, {first: first, rest: rest}),
