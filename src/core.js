@@ -46,11 +46,67 @@ export function reducekv(xs, xf, init, from){
 }
 
 export function overload(){
-  var fs = arguments;
+  var fs = arguments, fallback = fs[fs.length - 1];
   return function(){
-    var f = fs[arguments.length] || fs[fs.length - 1];
+    var f = fs[arguments.length] || fallback;
     return f.apply(this, arguments);
   }
+}
+
+function curry1(f){
+  return curry2(f, f.length);
+}
+
+function curry2(f, minimum){
+  return function(){
+    var applied = slice(arguments);
+    if (applied.length >= minimum) {
+      return f.apply(this, applied);
+    } else {
+      return curry2(function(){
+        return f.apply(this, applied.concat(slice(arguments)));
+      }, minimum - applied.length);
+    }
+  }
+}
+
+export const curry = overload(null, curry1, curry2);
+
+export function nullary(f){
+  return function(){
+    return f.call(this);
+  }
+}
+
+export function unary(f){
+  return function(a){
+    return f.call(this, a);
+  }
+}
+
+export function binary(f){
+  return function(a, b){
+    return f.call(this, a, b);
+  }
+}
+
+export function ternary(f){
+  return function(a, b, c){
+    return f.call(this, a, b, c);
+  }
+}
+
+export function quaternary(f){
+  return function(a, b, c, d){
+    return f.call(this, a, b, c, d);
+  }
+}
+
+export function arity(f, length){
+  var g = [nullary, unary, binary, ternary, quaternary][length];
+  return g ? g(f) :  function(){
+    return f.apply(this, slice(arguments, 0, length));
+  };
 }
 
 export function identity(x){
@@ -97,11 +153,68 @@ function reversed(f){
   }
 }
 
-export function chain(init){
-  return reduce(arguments, function(value, f){
-    return f(value);
-  }, init, 1);
+
+function piping1(reducer){
+  return partial(pipingN, reducer);
 }
+
+function pipingN(reducer, f, ...fs){
+  return function(init, ...args){
+    return reduce(fs, reducer, reducer(init, function(memo){
+      return f.apply(this, [memo].concat(args));
+    }));
+  }
+}
+
+export const piping = overload(null, piping1, pipingN);
+
+function chaining1(reducer){
+  return partial(chainingN, reducer);
+}
+
+function chainingN(reducer, init, ...fs){
+  return reduce(fs, reducer, init);
+}
+
+export const chaining = overload(null, chaining1, chainingN);
+
+function identityReducer(memo, f){
+  return f(memo);
+}
+
+function someReducer(memo, f){
+  return isNil(memo) ? new Reduced(null) : f(memo);
+}
+
+function errorReducer(memo, f){
+  if (memo instanceof Error) {
+    return new Reduced(memo);
+  }
+  try {
+    return f(memo);
+  } catch (ex) {
+    return ex;
+  }
+}
+
+function composeReducer2(r1, r2){
+  return function(memo, f){
+    return r2(memo, function(memo){
+      return r1(memo, f);
+    });
+  }
+}
+
+function composeReducerN(r1, r2, ...rs){
+  const r = composeReducer2(r1, r2);
+  return rs.length ? composeReducerN.apply(this, [r].concat(rs)) : r;
+}
+
+export const composeReducer = overload(null, identity, composeReducer2, composeReducerN);
+
+export const chain   = chaining(identityReducer);
+export const maybe   = chaining(someReducer);
+export const handles = chaining(errorReducer);
 
 function pipe2(a, b){
   return function(){
@@ -121,16 +234,8 @@ function pipe4(a, b, c, d){
   }
 }
 
-function pipeN(f){
-  var fs = slice(arguments, 1);
-  return function(){
-    return reduce(fs, function(memo, rf){
-      return rf(memo);
-    }, f.apply(this, arguments))
-  }
-}
-
-export const pipe = overload(null, identity, pipe2, pipe3, pipe4, pipeN);
+export const pipe = overload(null, identity, pipe2, pipe3, pipe4, piping(identityReducer));
+export const opt  = piping(someReducer);
 export const comp = reversed(pipe);
 
 export function doto(obj, ...effects){
