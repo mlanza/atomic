@@ -1,9 +1,9 @@
 import {identity, constantly, juxt} from '../../core';
 import {implement} from '../../protocol';
 import {showSeq, nextSeq, toArraySeq, reduceSeq} from '../../common';
-import IndexedSeq, {indexedSeq} from '../../types/indexedseq/construct';
 import ICollection from '../../protocols/icollection';
 import INext from '../../protocols/inext';
+import IArr from '../../protocols/iarr';
 import ISeq from '../../protocols/iseq';
 import IShow from '../../protocols/ishow';
 import ISeqable from '../../protocols/iseqable';
@@ -30,6 +30,7 @@ export default juxt(
   implement(IReduce, {_reduce: reduceSeq}),
   implement(IEmptyableCollection, {empty: EMPTY}),
   implement(INext, {next: nextSeq}),
-  implement(ISeq, {first: first, rest: rest, toArray: toArraySeq}),
+  implement(IArr, {toArray: toArraySeq}),
+  implement(ISeq, {first: first, rest: rest}),
   implement(ISeqable, {seq: identity}),
   implement(IShow, {show: show}));

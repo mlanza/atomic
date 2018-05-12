@@ -5,6 +5,7 @@ import ICollection from '../../protocols/icollection';
 import IReduce from '../../protocols/ireduce';
 import IKVReduce from '../../protocols/ikvreduce';
 import INext from '../../protocols/inext';
+import IArr from '../../protocols/iarr';
 import ISeq from '../../protocols/iseq';
 import ISeqable from '../../protocols/iseqable';
 import IIndexed from '../../protocols/iindexed';
@@ -16,7 +17,6 @@ import IMap from '../../protocols/imap';
 import ICloneable from '../../protocols/icloneable';
 import IEmptyableCollection from '../../protocols/iemptyablecollection';
 import {lazySeq} from '../../types/lazyseq/construct';
-import {toArraySeq} from "../../common";
 
 function lookup(self, key){
   return self.keys.indexOf(key) > -1 ? self.obj[key] : null;
@@ -27,15 +27,6 @@ function _dissoc(self, key){
     return k !== key;
   });
   return objectSelection(self,  keys);
-}
-
-function first(self){
-  const key = ISeq.first(self.keys);
-  return [key, self.obj[key]];
-}
-
-function rest(self){
-  return objectSelection(self.obj, ISeq.rest(self.keys));
 }
 
 function seq(self){
@@ -50,7 +41,7 @@ function count(self){
 }
 
 function clone(self){
-  return reduce(ISeq.toArray(seq(self)), function(memo, pair){
+  return reduce(IArr.toArray(seq(self)), function(memo, pair){
     memo[pair[0]] = pair[1];
     return memo;
   }, {});
@@ -73,7 +64,7 @@ function _reducekv(self, xf, init){
 }
 
 function show(self){
-  const pairs = ISeq.toArray(seq(self));
+  const pairs = IArr.toArray(seq(self));
   return "#object-selection {" + pairs.map(function(pair){
     return show(pair[0]) + ": " + show(pair[1]);
   }).join(", ") + "}";
@@ -84,7 +75,6 @@ export default juxt(
   implement(IReduce, {_reduce: _reduce}),
   implement(IKVReduce, {_reducekv: _reducekv}),
   implement(ICloneable, {clone: clone}),
-  implement(ISeq, {first: first, rest: rest, toArray: toArraySeq}),
   implement(IEmptyableCollection, {empty: constantly(EMPTY_OBJECT)}),
   implement(IFn, {invoke: lookup}),
   implement(ILookup, {lookup: lookup}),

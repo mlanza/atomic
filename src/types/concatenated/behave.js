@@ -5,6 +5,7 @@ import {concatenated} from '../../types/concatenated/construct';
 import ICollection from '../../protocols/icollection';
 import INext from '../../protocols/inext';
 import ISeq from '../../protocols/iseq';
+import IArr from '../../protocols/iarr';
 import ICounted from '../../protocols/icounted';
 import IReduce, {reduce} from '../../protocols/ireduce';
 import Reduced from '../../types/reduced';
@@ -28,7 +29,7 @@ function first(self){
 
 function rest(self){
   const tail  = INext.next(ISeq.first(self.colls));
-  let colls = ISeq.toArray(ISeq.rest(self.colls));
+  let colls = IArr.toArray(ISeq.rest(self.colls));
   if (tail) {
     colls = [tail].concat(colls);
   }
@@ -56,7 +57,8 @@ export default juxt(
   implement(IReduce, {reduce: reduceSeq}),
   implement(ICollection, {conj: conj}),
   implement(INext, {next: next}),
-  implement(ISeq, {first: first, rest: rest, toArray: toArray}),
+  implement(ISeq, {first: first, rest: rest}),
+  implement(IArr, {toArray: toArray}),
   implement(ISeqable, {seq: identity}),
   implement(ICounted, {count: count}),
   implement(IShow, {show: show}));

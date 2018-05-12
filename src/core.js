@@ -102,11 +102,14 @@ export function quaternary(f){
   }
 }
 
-export function arity(f, length){
-  var g = [nullary, unary, binary, ternary, quaternary][length];
-  return g ? g(f) :  function(){
+export function nary(f, length){
+  return function(){
     return f.apply(this, slice(arguments, 0, length));
-  };
+  }
+}
+
+export function arity(f, length){
+  return ([nullary, unary, binary, ternary, quaternary][length] || nary)(f, length);
 }
 
 export function identity(x){

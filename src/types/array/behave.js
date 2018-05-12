@@ -6,6 +6,7 @@ import IKVReduce from '../../protocols/ikvreduce';
 import ICollection from '../../protocols/icollection';
 import INext from '../../protocols/inext';
 import ISeq from '../../protocols/iseq';
+import IArr from '../../protocols/iarr';
 import ISeqable from '../../protocols/iseqable';
 import IIndexed from '../../protocols/iindexed';
 import IAssociative from '../../protocols/iassociative';
@@ -66,6 +67,7 @@ export default juxt(
   implement(ISeqable, {seq: seq}),
   implement(ICollection, {conj: conj}),
   implement(INext, {next: next}),
-  implement(ISeq, {first: first, rest: rest, toArray: identity}),
+  implement(IArr, {toArray: identity}),
+  implement(ISeq, {first: first, rest: rest}),
   implement(ICounted, {count: length}),
   implement(IShow, {show: showSeq}));

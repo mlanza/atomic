@@ -1,4 +1,5 @@
-import {first, rest, toArray} from "./protocols/iseq";
+import {first, rest} from "./protocols/iseq";
+import {toArray} from "./protocols/iarr";
 import {seq} from "./protocols/iseqable";
 import {show} from "./protocols/ishow";
 import {next} from "./protocols/inext";
@@ -29,9 +30,7 @@ export function nextSeq(self){
 
 export function showSeq(self){
   var xs = toArray(seq(self));
-  return "[" + xs.map(function(x){
-    return show(x);
-  }).join(", ") + "]";
+  return "[" + xs.map(show).join(", ") + "]";
 }
 
 export function nthSeq(coll, idx, notFound){
