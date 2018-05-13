@@ -14,4 +14,14 @@ function reduce3(xf, init, coll){
 
 export const reduce = overload(null, null, reduce2, reduce3);
 
+function transduce3(xform, f, coll){
+  return transduce4(xform, f, f(), coll);
+}
+
+function transduce4(xform, f, init, coll){
+  return reduce(xform(f), init, coll);
+}
+
+export const transduce = overload(null, null, null, transduce3, transduce4);
+
 export default IReduce;

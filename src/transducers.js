@@ -1,5 +1,5 @@
 import {constantly, overload, identity} from "./core";
-import {reduced, reduce, reducing, comp, partial, complement, isSome} from "./types";
+import {comp, reduced, reduce, reducing, partial, complement, isSome} from "./types";
 import {seq} from "./protocols";
 
 export function map(f){
@@ -121,7 +121,7 @@ export function distinct(){
       if (seen.has(value)) {
         return memo;
       }
-      seens.add(value);
+      seen.add(value);
       return xf(memo, value);
     });
   }
