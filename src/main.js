@@ -780,7 +780,9 @@ function chainedN(how, init, ...fs){
   return transduce(map(how), step, init, fs);
 }
 
-export const chained = overload(null, function(how){
+export const chained = overload(function(){
+  return chained(identity);
+}, function(how){
   return partial(chainedN, how);
 }, chainedN);
 
@@ -790,7 +792,9 @@ function pipedN(how, f, ...fs){
   }
 }
 
-export const piped = overload(null, function(how){
+export const piped = overload(function(){
+  return piped(identity);
+}, function(how){
   return partial(pipedN, how);
 }, pipedN);
 
