@@ -1,15 +1,5 @@
 import {implement} from '../../protocol';
-import IndexedSeq from '../../types/indexedseq';
-import ICollection from '../../protocols/icollection';
-import INext from '../../protocols/inext';
-import IArr from '../../protocols/iarr';
-import ISeq from '../../protocols/iseq';
-import IReduce from '../../protocols/ireduce';
-import IKVReduce from '../../protocols/ikvreduce';
-import ISeqable from '../../protocols/iseqable';
-import ISequential from '../../protocols/isequential';
-import IIndexed from '../../protocols/iindexed';
-import IShow from '../../protocols/ishow';
+import {ICollection, INext, IArr, ISeq, IReduce, IKVReduce, ISeqable, ISequential, IIndexed, IShow} from '../../protocols';
 import {showSeq, nextSeq, toArraySeq, reduceSeq, reducekvSeq, iterable} from '../../common';
 import {identity, constantly, effect} from '../../core';
 

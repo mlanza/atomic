@@ -1,11 +1,6 @@
 import {implement} from '../../protocol';
 import {effect} from '../../core';
-import IPublish from '../../protocols/ipublish';
-import ISubscribe from '../../protocols/isubscribe';
-import IReset from '../../protocols/ireset';
-import ISwap from '../../protocols/iswap';
-import IDeref from '../../protocols/ideref';
-import IDisposable from '../../protocols/idisposable';
+import {IPublish, ISubscribe, IReset, ISwap, IDeref, IDisposable} from '../../protocols';
 
 function deref(self){
   return self.state;

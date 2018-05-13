@@ -1,6 +1,6 @@
 import {implement} from '../../protocol';
 import {effect} from '../../core';
-import IDeref from '../../protocols/ideref';
+import {IDeref} from '../../protocols';
 
 function deref(self){
   return self.valueOf();

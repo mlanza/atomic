@@ -2,16 +2,9 @@ import {identity, effect} from '../../core';
 import {implement} from '../../protocol';
 import {toArraySeq, showSeq, reduceSeq} from '../../common';
 import {concatenated} from '../../types/concatenated/construct';
-import ICollection from '../../protocols/icollection';
-import INext from '../../protocols/inext';
-import ISeq from '../../protocols/iseq';
-import IArr from '../../protocols/iarr';
-import ICounted from '../../protocols/icounted';
-import IReduce, {reduce} from '../../protocols/ireduce';
+import {ICollection, INext, ISeq, IArr, ICounted, IReduce, ISeqable, IIndexed, IShow} from '../../protocols';
+import {reduce} from '../../protocols/ireduce';
 import Reduced from '../../types/reduced';
-import ISeqable from '../../protocols/iseqable';
-import IIndexed from '../../protocols/iindexed';
-import IShow from '../../protocols/ishow';
 import {EMPTY} from "../empty";
 
 function conj(self, x){

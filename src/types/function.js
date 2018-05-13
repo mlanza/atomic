@@ -1,8 +1,14 @@
-import {overload, reduce, identity, unbind, constantly} from "../core";
+import {overload, identity, unbind, constantly} from "../core";
 import {toArray}  from "../protocols/iarr";
 import {isNil}  from "../types/nil";
 import {slice}  from "../types/array";
-import {Reduced}  from "../types/reduced/construct";
+import {Reduced, reduce}  from "../types/reduced";
+
+export function constructs(Type) {
+  return function(...args){
+    return new (Function.prototype.bind.apply(Type, [null].concat(args)));
+  }
+}
 
 function curry1(f){
   return curry2(f, f.length);

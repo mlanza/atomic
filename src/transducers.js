@@ -1,5 +1,5 @@
-import {reduce, constantly, overload, identity} from "./core";
-import {reduced} from "./types/reduced";
+import {constantly, overload, identity} from "./core";
+import {reduced, reduce} from "./types/reduced";
 import {isSome} from "./types/nil";
 import {seq} from "./protocols/iseqable";
 import {comp, partial, reducing, complement} from "./types/function";
