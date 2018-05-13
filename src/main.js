@@ -1,8 +1,8 @@
-import {comp, not, partial, concat, concatenated, observable, isNil, cons, EMPTY, EMPTY_ARRAY, lazySeq, reducing, complement, slice, juxt} from "./types";
+import {comp, not, partial, concat, apply, concatenated, observable, isNil, cons, EMPTY, EMPTY_ARRAY, lazySeq, reduced, reducing, complement, slice, juxt, step, isBlank} from "./types";
 export * from "./types";
 import {implement} from "./protocol";
 export * from "./protocol";
-import {first, rest, next, seq, inc, dec, reduce, conj, sub, pub, lookup, assoc, contains, toArray, reducekv, isSequential, IDisposable} from "./protocols";
+import {first, rest, next, seq, inc, dec, reduce, transduce, conj, sub, pub, lookup, assoc, contains, toArray, reducekv, isSequential, IDisposable} from "./protocols";
 export * from "./protocols";
 import {doto, overload, constantly, identity} from "./core";
 import * as r from "./types/reduced";
@@ -32,16 +32,6 @@ export function isEmpty(coll){
 export function notEmpty(coll){
   return isEmpty(coll) ? null : coll;
 }
-
-function transduce3(xform, f, coll){
-  return transduce4(xform, f, f(), coll);
-}
-
-function transduce4(xform, f, init, coll){
-  return reduce(xform(f), init, coll);
-}
-
-export const transduce = overload(null, null, null, transduce3, transduce4);
 
 function into2(to, from){
   return reduce(conj, to, from);
@@ -761,3 +751,52 @@ function signal3(source, xf, init){
 }
 
 export const signal = overload(null, signal1, signal2, signal3);
+
+export function either(f){
+  return function(...args){
+    try {
+    return f(...args);
+    } catch (ex) {
+    return reduced(ex);
+    }
+  }
+}
+
+export function option(f){
+  return function(x, ...args){
+    return isNil(x) || isBlank(x) ? reduced(null) : apply(f, x, args);
+  }
+}
+
+export function future(f){
+  return overload(null, function(x){
+    return Promise.resolve(x).then(f);
+  }, function(...args){
+    return Promise.resolve(f(...args));
+  });
+}
+
+function chainedN(how, init, ...fs){
+  return transduce(map(how), step, init, fs);
+}
+
+export const chained = overload(null, function(how){
+  return partial(chainedN, how);
+}, chainedN);
+
+function pipedN(how, f, ...fs){
+  return function(...args){
+    return chainedN(how, f(...args), ...fs);
+  }
+}
+
+export const piped = overload(null, function(how){
+  return partial(pipedN, how);
+}, pipedN);
+
+export const chain  = chained();
+export const maybe  = chained(option);
+export const pipe   = piped();
+export const opt    = piped(option);
+export const prom   = piped(future);
+export const handle = piped(either);

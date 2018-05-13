@@ -1,13 +1,23 @@
-import {overload, identity, unbind, constantly} from "../core";
-import {toArray}  from "../protocols";
+import {overload, identity, constantly} from "../core";
+import {toArray, transduce}  from "../protocols";
 import {isNil}  from "../types/nil";
 import {slice}  from "../types/array";
-import {isBlank}  from "../types/string";
-import {Reduced, reduce}  from "../types/reduced";
+import {reduce, reduced}  from "../types/reduced";
 
 export function constructs(Type) {
   return function(...args){
     return new (Function.prototype.bind.apply(Type, [null].concat(args)));
+  }
+}
+
+export function step(memo, f){
+  return f(memo);
+}
+
+export function comp(...fs){
+  var last = fs.length - 1;
+  return function(...args){
+    return reduce(fs, step, apply(fs[last], args), last - 1, 0);
   }
 }
 
@@ -121,12 +131,12 @@ export function unspread(f){
   }
 }
 
-function fnil(f, ...ARGS){
+function fnil(f, ...substitutes){
   return function(...args){
     for(var x = 0; x < args.length; x++){
-      if (isNil(args[x])) { args[x] = ARGS[x] };
+      if (isNil(args[x])) { args[x] = substitutes[x] };
     }
-    return f.apply(null, args);
+    return f(...args);
   }
 }
 
@@ -152,137 +162,46 @@ function someFnN(...preds){
   return function(...args){
     return reduce(preds, function(result, pred){
       let r = apply(pred, args);
-      return r ? new Reduced(r) : result;
+      return r ? reduced(r) : result;
     }, false);
   }
 }
 
 export const someFn = overload(null, someFn1, someFn2, someFn3, someFnN);
 
-function piping1(reducer){
-  return function(f, ...fs){
-    return function(init, ...args){
-      return reduce(fs, reducer, reducer(init, function(memo){
-        return f.apply(this, [memo].concat(args));
-      }));
-    }
-  }
-}
-
-function pipingN(...reducers){
-  return piping1(composeReducer(...reducers));
-}
-
-export const piping = overload(constantly(piping1(identityReducer)), piping1, pipingN);
-
-function chaining1(reducer){
-  return function(init, ...fs){
-    return reduce(fs, reducer, init);
-  }
-}
-
-function chainingN(...reducers){
-  return chaining1(composeReducer(...reducers));
-}
-
-export const chaining = overload(constantly(chaining1(identityReducer)), chaining1, chainingN);
-
-function composeReducer2(r1, r2){
-  return function(memo, f){
-    return r2(memo, function(memo){
-      return r1(memo, f);
-    });
-  }
-}
-
-function composeReducerN(r1, r2, ...rs){
-  const r = composeReducer2(r1, r2);
-  return rs.length ? composeReducerN.apply(this, [r].concat(rs)) : r;
-}
-
-export const composeReducer = overload(null, identity, composeReducer2, composeReducerN);
-
-export function identityReducer(memo, f){
-  return f(memo);
-}
-
-export function someReducer(memo, f){
-  return isNil(memo) || isBlank(memo) ? new Reduced(null) : f(memo);
-}
-
-export function promiseReducer(memo, f){
-  return Promise.resolve(memo).then(f);
-}
-
-export function errorReducer(memo, f){
-  if (memo instanceof Error) {
-    return new Reduced(memo);
-  }
-  try {
-    return f(memo);
-  } catch (ex) {
-    return ex;
-  }
-}
-
-function pipe2(a, b){
-  return function(){
-    return b(a.apply(this, arguments));
-  }
-}
-
-function pipe3(a, b, c){
-  return function(){
-    return c(b(a.apply(this, arguments)));
-  }
-}
-
-function pipe4(a, b, c, d){
-  return function(){
-    return d(c(b(a.apply(this, arguments))));
-  }
-}
-
-export const pipe   = overload(null, identity, pipe2, pipe3, pipe4, piping());
-export const opt    = piping(someReducer);
-export const prom   = piping(promiseReducer);
-export const handle = piping(errorReducer);
-export const comp   = reversed(pipe);
-export const chain  = chaining();
-
 export function nullary(f){
   return function(){
-    return f.call(this);
+    return f();
   }
 }
 
 export function unary(f){
   return function(a){
-    return f.call(this, a);
+    return f(a);
   }
 }
 
 export function binary(f){
   return function(a, b){
-    return f.call(this, a, b);
+    return f(a, b);
   }
 }
 
 export function ternary(f){
   return function(a, b, c){
-    return f.call(this, a, b, c);
+    return f(a, b, c);
   }
 }
 
 export function quaternary(f){
   return function(a, b, c, d){
-    return f.call(this, a, b, c, d);
+    return f(a, b, c, d);
   }
 }
 
 export function nary(f, length){
   return function(){
-    return f.apply(this, slice(arguments, 0, length));
+    return f(...slice(arguments, 0, length));
   }
 }
 
