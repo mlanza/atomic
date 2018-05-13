@@ -1,4 +1,4 @@
-import {juxt, overload} from '../../core';
+import {effect, overload} from '../../core';
 import {implement} from '../../protocol';
 import IShow from '../../protocols/ishow';
 import IOffset from '../../protocols/ioffset';
@@ -93,7 +93,7 @@ function show(self){
   return "\"" + self.toISOString() + "\"";
 }
 
-export default juxt(
+export default effect(
   implement(IAssociative, {assoc: assoc, contains: contains}),
   implement(ILookup, {lookup: lookup}),
   implement(ICloneable, {clone: clone}),

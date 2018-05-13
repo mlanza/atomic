@@ -1,10 +1,10 @@
-import {comp, not, partial, concat, concatenated, observable, isNil, cons, EMPTY, EMPTY_ARRAY, lazySeq} from "./types";
+import {comp, not, partial, concat, concatenated, observable, isNil, cons, EMPTY, EMPTY_ARRAY, lazySeq, reducing, complement, slice, juxt} from "./types";
 export * from "./types";
 import {implement} from "./protocol";
 export * from "./protocol";
 import {first, rest, next, seq, inc, dec, reduce, conj, sub, pub, lookup, assoc, contains, toArray, reducekv, isSequential, IDisposable} from "./protocols";
 export * from "./protocols";
-import {reduce as reduceIndexed, complement, doto, overload, constantly, identity, reducing, juxt, slice} from "./core";
+import {reduce as reduceIndexed, doto, overload, constantly, identity} from "./core";
 export * from "./core";
 import * as t from "./transducers";
 
@@ -710,16 +710,6 @@ export function doseqN(f, xs, ...colls){
 }
 
 export const doseq = overload(null, null, each, doseq3, doseq4, doseqN);
-
-export function branch(pred, yes, no){
-  return function(value){
-    return pred(value) ? yes(value) : no(value);
-  }
-}
-
-export function guard(pred, yes){
-  return branch(pred, yes, constantly(null));
-}
 
 export function coalesce(xs){
   return detect(identity, xs);

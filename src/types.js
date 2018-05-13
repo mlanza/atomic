@@ -1,4 +1,5 @@
 export * from "./types/boolean";
+export * from "./types/regexp";
 export * from "./types/function";
 export * from "./types/array";
 export * from "./types/object";

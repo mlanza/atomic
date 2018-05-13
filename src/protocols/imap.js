@@ -1,6 +1,6 @@
 import {protocol, satisfies} from "../protocol";
 import {reduce} from "../protocols/ireduce";
-import {overload, identity, slice} from "../core";
+import {overload, identity} from "../core";
 
 export const IMap = protocol({
   _dissoc: null
@@ -8,8 +8,8 @@ export const IMap = protocol({
 
 const dissoc2 = IMap._dissoc;
 
-function dissocN(obj){
-  return reduce(dissoc2, obj, slice(arguments));
+function dissocN(obj, ...keys){
+  return reduce(dissoc2, obj, keys);
 }
 
 export const dissoc = overload(null, identity, dissoc2, dissocN);

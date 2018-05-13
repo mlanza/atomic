@@ -1,5 +1,5 @@
 import {implement} from '../../protocol';
-import {juxt} from '../../core';
+import {effect} from '../../core';
 import IPublish from '../../protocols/ipublish';
 import ISubscribe from '../../protocols/isubscribe';
 import IReset from '../../protocols/ireset';
@@ -28,7 +28,7 @@ function sub(self, callback){
   return ISubscribe.sub(self.publisher, callback);
 }
 
-export default juxt(
+export default effect(
   implement(IDeref, {deref: deref}),
   implement(ISubscribe, {sub: sub}),
   implement(IPublish, {pub: reset}),

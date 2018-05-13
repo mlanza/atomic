@@ -10,7 +10,7 @@ import ICounted from '../../protocols/icounted';
 import ILookup from '../../protocols/ilookup';
 import IFn from '../../protocols/ilookup';
 import IEmptyableCollection from '../../protocols/iemptyablecollection';
-import {constantly, juxt, length} from "../../core";
+import {constantly, effect, length} from "../../core";
 import {nthIndexed} from "../../common";
 import {implement} from '../../protocol';
 import {EMPTY_STRING} from '../../types/string/construct';
@@ -59,7 +59,7 @@ function includes(self, str){
   return self.indexOf(str) > -1;
 }
 
-export default juxt(
+export default effect(
   implement(IIndexed, {nth: nthIndexed}),
   implement(IInclusive, {includes: includes}),
   implement(IAppendable, {append: append}),

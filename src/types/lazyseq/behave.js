@@ -11,7 +11,7 @@ import ISequential from '../../protocols/isequential';
 import IIndexed from '../../protocols/iindexed';
 import IShow from '../../protocols/ishow';
 import {showSeq, nextSeq, toArraySeq, reduceSeq, reducekvSeq, iterable} from '../../common';
-import {identity, constantly, juxt} from '../../core';
+import {identity, constantly, effect} from '../../core';
 
 function first(self){
   return self.head;
@@ -25,7 +25,7 @@ function show(self){
   return "#lazy-seq " + showSeq(self);
 }
 
-export default juxt(
+export default effect(
   iterable,
   implement(ISequential),
   implement(IArr, {toArray: toArraySeq}),

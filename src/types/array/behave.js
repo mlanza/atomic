@@ -1,4 +1,4 @@
-import {juxt, identity, constantly, reduce, reducekv, slice, length} from '../../core';
+import {effect, identity, constantly, reduce, reducekv, length} from '../../core';
 import {implement} from '../../protocol';
 import {showSeq, nthIndexed} from '../../common';
 import IReduce from '../../protocols/ireduce';
@@ -29,7 +29,7 @@ function lookup(self, key){
 }
 
 function assoc(self, key, value){
-  var arr = slice(self);
+  var arr = Array.from(self);
   arr.splice(key, 1, value);
   return arr;
 }
@@ -66,7 +66,7 @@ function includes(self, x){
   return self.indexOf(x) > -1;
 }
 
-export default juxt(
+export default effect(
   implement(ISequential),
   implement(IInclusive, {includes: includes}),
   implement(IAppendable, {append: append}),

@@ -1,5 +1,5 @@
 import {implement} from '../../protocol';
-import {juxt} from '../../core';
+import {effect} from '../../core';
 import IPublish from '../../protocols/ipublish';
 import ISubscribe from '../../protocols/isubscribe';
 
@@ -18,6 +18,6 @@ function pub(self, message){
   });
 }
 
-export default juxt(
+export default effect(
   implement(ISubscribe, {sub: sub}),
   implement(IPublish, {pub: pub}));

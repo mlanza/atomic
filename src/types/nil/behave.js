@@ -12,7 +12,7 @@ import ILookup from '../../protocols/ilookup';
 import IReduce from '../../protocols/ireduce';
 import IEmptyableCollection from '../../protocols/iemptyablecollection';
 import {EMPTY} from '../../types/empty';
-import {identity, constantly, juxt} from '../../core';
+import {identity, constantly, effect} from '../../core';
 import {implement} from '../../protocol';
 import {EMPTY_ARRAY} from '../../types/array/construct';
 
@@ -26,7 +26,7 @@ function _reduce(self, xf, init){
   return init;
 }
 
-export default juxt(
+export default effect(
   implement(IEmptyableCollection, {empty: identity}),
   implement(ILookup, {lookup: constantly(null)}),
   implement(IAssociative, {assoc: assoc, contains: constantly(false)}),

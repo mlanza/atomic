@@ -1,8 +1,10 @@
-import {unbind, overload, constantly, reducing} from "../core";
+import {overload, constantly, unbind} from "../core";
 export * from "./string/construct";
 import String, {EMPTY_STRING} from "./string/construct";
 export default String;
 import behave from "./string/behave";
+import {reducing} from "./function";
+
 behave(String);
 
 export function isString(s){

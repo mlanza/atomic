@@ -1,5 +1,5 @@
 import {implement} from '../../protocol';
-import {identity, constantly, juxt, reduce} from '../../core';
+import {identity, constantly, effect, reduce} from '../../core';
 import {objectSelection} from '../../types/objectselection/construct';
 import ICollection from '../../protocols/icollection';
 import IReduce from '../../protocols/ireduce';
@@ -71,7 +71,7 @@ function show(self){
   }).join(", ") + "}";
 }
 
-export default juxt(
+export default effect(
   implement(IMap, {_dissoc: _dissoc}),
   implement(IReduce, {_reduce: _reduce}),
   implement(IKVReduce, {_reducekv: _reducekv}),

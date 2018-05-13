@@ -1,4 +1,4 @@
-import {identity, juxt} from '../../core';
+import {identity, effect} from '../../core';
 import {implement} from '../../protocol';
 import {toArraySeq, showSeq, reduceSeq} from '../../common';
 import {concatenated} from '../../types/concatenated/construct';
@@ -53,7 +53,7 @@ function show(self){
   return "#concat " + showSeq(self);
 }
 
-export default juxt(
+export default effect(
   implement(IReduce, {reduce: reduceSeq}),
   implement(ICollection, {conj: conj}),
   implement(INext, {next: next}),

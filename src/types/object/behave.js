@@ -1,5 +1,5 @@
 import {implement} from '../../protocol';
-import {constantly, juxt} from '../../core';
+import {constantly, effect} from '../../core';
 import {objectSelection} from '../../types/objectselection';
 import {lazySeq} from '../../types/lazyseq';
 import {EMPTY} from '../../types/empty/construct';
@@ -87,7 +87,7 @@ function show(self){
   }).join(", ") + "}";
 }
 
-export default juxt(
+export default effect(
   implement(IInclusive, {includes: includes}),
   implement(ICloneable, {clone: clone}),
   implement(IReduce, {_reduce: _reduce}),
