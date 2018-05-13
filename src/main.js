@@ -4,9 +4,34 @@ import {implement} from "./protocol";
 export * from "./protocol";
 import {first, rest, next, seq, inc, dec, reduce, conj, sub, pub, lookup, assoc, contains, toArray, reducekv, isSequential, IDisposable} from "./protocols";
 export * from "./protocols";
-import {reduce as reduceIndexed, doto, overload, constantly, identity} from "./core";
+import {doto, overload, constantly, identity} from "./core";
+import {reduce as reduceIndexed} from "./types/reduced";
 export * from "./core";
 import * as t from "./transducers";
+
+function isIdentical(x, y){ //TODO via protocol
+  return x === y;
+}
+
+export function compare(x, y){
+  if (isIdentical(x, y)) {
+    return 0
+  } else if (isNil(x)) {
+    return -1;
+  } else if (isNil(y)) {
+    return 1;
+  } else if (type(x) === type(y)) {
+    return IComparable._compare(x, y);
+  }
+}
+
+export function isEmpty(coll){
+  return !seq(coll);
+}
+
+export function notEmpty(coll){
+  return isEmpty(coll) ? null : coll;
+}
 
 function transduce3(xform, f, coll){
   return transduce4(xform, f, f(), coll);

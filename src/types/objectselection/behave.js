@@ -1,23 +1,10 @@
 import {implement} from '../../protocol';
-import {identity, constantly, effect, reduce} from '../../core';
+import {identity, constantly, effect} from '../../core';
 import {objectSelection} from '../../types/objectselection/construct';
-import ICollection from '../../protocols/icollection';
-import IReduce from '../../protocols/ireduce';
-import IKVReduce from '../../protocols/ikvreduce';
-import INext from '../../protocols/inext';
-import IArr from '../../protocols/iarr';
-import ISeq from '../../protocols/iseq';
-import ISeqable from '../../protocols/iseqable';
-import IIndexed from '../../protocols/iindexed';
-import IShow from '../../protocols/ishow';
-import ICounted from '../../protocols/icounted';
-import ILookup from '../../protocols/ilookup';
-import IFn from '../../protocols/ifn';
-import IMap from '../../protocols/imap';
-import ICloneable from '../../protocols/icloneable';
-import IEmptyableCollection from '../../protocols/iemptyablecollection';
+import {ICollection, IReduce, IKVReduce, INext, IArr, ISeq, ISeqable, IIndexed, IShow, ICounted, ILookup, IFn, IMap, ICloneable, IEmptyableCollection} from '../../protocols';
 import {lazySeq} from '../../types/lazyseq/construct';
 import {EMPTY_OBJECT} from '../../types/object/construct';
+import {reduce} from '../../types/reduced';
 
 function lookup(self, key){
   return self.keys.indexOf(key) > -1 ? self.obj[key] : null;

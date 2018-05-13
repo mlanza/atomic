@@ -1,6 +1,6 @@
 import {implement} from '../../protocol';
 import {effect} from '../../core';
-import IOffset from '../../protocols/ioffset';
+import {IOffset} from '../../protocols';
 
 function increment(self, dt){
   return new Date(dt.valueOf() + self.milliseconds);

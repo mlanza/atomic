@@ -79,3 +79,7 @@ export function reducekvSeq(xs, xf, init){
   }
   return memo instanceof Reduced ? memo.valueOf() : memo;
 }
+
+export function length(self){
+  return self.length;
+}

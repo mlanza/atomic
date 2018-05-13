@@ -1,7 +1,6 @@
 import {implement} from '../../protocol';
 import {effect} from '../../core';
-import IPublish from '../../protocols/ipublish';
-import ISubscribe from '../../protocols/isubscribe';
+import {IPublish, ISubscribe} from '../../protocols';
 
 function sub(self, callback){
   const id = self.seed;

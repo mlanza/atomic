@@ -1,17 +1,6 @@
-import IIndexed from '../../protocols/iindexed';
-import ISeqable from '../../protocols/iseqable';
-import ISeq from '../../protocols/iseq';
-import IArr from '../../protocols/iarr';
-import IInclusive from '../../protocols/iinclusive';
-import IAppendable from '../../protocols/iappendable';
-import IPrependable from '../../protocols/iprependable';
-import IShow from '../../protocols/ishow';
-import ICounted from '../../protocols/icounted';
-import ILookup from '../../protocols/ilookup';
-import IFn from '../../protocols/ilookup';
-import IEmptyableCollection from '../../protocols/iemptyablecollection';
-import {constantly, effect, length} from "../../core";
-import {nthIndexed} from "../../common";
+import {IIndexed, ISeqable, ISeq, IArr, IInclusive, IAppendable, IPrependable, IShow, ICounted, ILookup, IFn, IEmptyableCollection} from '../../protocols';
+import {constantly, effect} from "../../core";
+import {nthIndexed, length} from "../../common";
 import {implement} from '../../protocol';
 import {EMPTY_STRING} from '../../types/string/construct';
 

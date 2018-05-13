@@ -1,11 +1,6 @@
 import {effect, overload} from '../../core';
 import {implement} from '../../protocol';
-import IShow from '../../protocols/ishow';
-import IOffset from '../../protocols/ioffset';
-import ICloneable from '../../protocols/icloneable';
-import IDeref from '../../protocols/ideref';
-import ILookup from '../../protocols/ilookup';
-import IAssociative from '../../protocols/iassociative';
+import {IShow, IOffset, ICloneable, IDeref, ILookup, IAssociative} from '../../protocols';
 import {days} from '../../types/duration';
 
 function lookup(self, key){

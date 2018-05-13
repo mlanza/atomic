@@ -1,7 +1,6 @@
 import {effect, overload} from '../../core';
 import {implement} from '../../protocol';
-import IShow from '../../protocols/ishow';
-import IOffset from '../../protocols/ioffset';
+import {IOffset, IShow} from '../../protocols';
 
 function inc1(self){
   return self + 1;

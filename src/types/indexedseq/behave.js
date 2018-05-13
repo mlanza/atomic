@@ -1,25 +1,9 @@
-import {constantly, identity, reduce, reducekv, effect} from '../../core';
+import {constantly, identity, effect} from '../../core';
 import {implement} from '../../protocol';
 import {showSeq} from '../../common';
 import {indexedSeq} from '../../types/indexedseq/construct';
-import IInclusive from '../../protocols/iinclusive';
-import IAppendable from '../../protocols/iappendable';
-import IPrependable from '../../protocols/iprependable';
-import ICollection from '../../protocols/icollection';
-import INext from '../../protocols/inext';
-import ICounted from '../../protocols/icounted';
-import IReduce from '../../protocols/ireduce';
-import IKVReduce from '../../protocols/ikvreduce';
-import Reduced from '../../types/reduced';
-import IArr from '../../protocols/iarr';
-import ISeq from '../../protocols/iseq';
-import ISeqable from '../../protocols/iseqable';
-import ISequential from '../../protocols/isequential';
-import IIndexed from '../../protocols/iindexed';
-import IShow from '../../protocols/ishow';
-import ILookup from '../../protocols/ilookup';
-import IFn from '../../protocols/ifn';
-import IEmptyableCollection from '../../protocols/iemptyablecollection';
+import {IInclusive, IAppendable, IPrependable, ICollection, INext, ICounted, IReduce, IKVReduce, IArr, ISeq, ISeqable, ISequential, IIndexed, IShow, ILookup, IFn, IEmptyableCollection} from '../../protocols';
+import Reduced, {reduce, reducekv} from '../../types/reduced';
 import {EMPTY_ARRAY} from '../../types/array/construct';
 
 function lookup(self, key){

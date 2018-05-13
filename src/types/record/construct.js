@@ -1,12 +1,7 @@
+import {doto, overload} from '../../core';
+import {constructs} from '../../types/function';
 import {implement} from '../../protocol';
-import {doto, overload, constructs} from '../../core';
-import IAssociative from '../../protocols/iassociative';
-import ISeqable from '../../protocols/iseqable';
-import ILookup from '../../protocols/ilookup';
-import ICounted from '../../protocols/icounted';
-import IMap from '../../protocols/imap';
-import ISeq from '../../protocols/iseq';
-import IRecord from '../../protocols/irecord';
+import {IAssociative, ISeqable, ILookup, ICounted, IMap, ISeq, IRecord} from '../../protocols';
 
 function contains(self, key){
   return self.attrs.hasOwnProperty(key);

@@ -3,20 +3,8 @@ import {constantly, effect} from '../../core';
 import {objectSelection} from '../../types/objectselection';
 import {lazySeq} from '../../types/lazyseq';
 import {EMPTY} from '../../types/empty/construct';
-import IReduce from '../../protocols/ireduce';
-import IKVReduce, {reducekv} from '../../protocols/ikvreduce';
-import ISeqable from '../../protocols/iseqable';
-import IShow from '../../protocols/ishow';
-import ICounted from '../../protocols/icounted';
-import IAssociative from '../../protocols/iassociative';
-import IEmptyableCollection from '../../protocols/iemptyablecollection';
-import ILookup from '../../protocols/ilookup';
-import IFn from '../../protocols/ifn';
-import IMap from '../../protocols/imap';
-import ISeq from "../../protocols/iseq";
-import IArr from "../../protocols/iarr";
-import ICloneable from "../../protocols/icloneable";
-import IInclusive from "../../protocols/iinclusive";
+import {IReduce, IKVReduce, ISeqable, IShow, ICounted, IAssociative, IEmptyableCollection, ILookup, IFn, IMap, ISeq, IArr, ICloneable, IInclusive} from '../../protocols';
+import {reducekv} from '../../protocols/ikvreduce';
 import {EMPTY_OBJECT} from '../../types/object/construct';
 
 function includes(superset, subset){

@@ -1,16 +1,7 @@
 import {identity, constantly, effect} from '../../core';
 import {implement} from '../../protocol';
 import {showSeq, nextSeq, toArraySeq, reduceSeq} from '../../common';
-import ICollection from '../../protocols/icollection';
-import INext from '../../protocols/inext';
-import IArr from '../../protocols/iarr';
-import ISeq from '../../protocols/iseq';
-import IShow from '../../protocols/ishow';
-import ISeqable from '../../protocols/iseqable';
-import IIndexed from '../../protocols/iindexed';
-import IReduce from '../../protocols/ireduce';
-import ISequential from '../../protocols/isequential';
-import IEmptyableCollection from '../../protocols/iemptyablecollection';
+import {ICollection, INext, IArr, ISeq, IShow, ISeqable, IIndexed, IReduce, ISequential, IEmptyableCollection} from '../../protocols';
 import {EMPTY} from '../../types/empty';
 
 function first(self){
