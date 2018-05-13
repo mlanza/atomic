@@ -1,10 +1,10 @@
 import {implement} from '../../protocol';
-import {juxt} from '../../core';
+import {effect} from '../../core';
 import IDeref from '../../protocols/ideref';
 
 function deref(self){
   return self.valueOf();
 }
 
-export default juxt(
+export default effect(
   implement(IDeref, {deref: deref}));

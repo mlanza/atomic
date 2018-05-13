@@ -1,5 +1,5 @@
 import {implement} from '../../protocol';
-import {juxt} from '../../core';
+import {effect} from '../../core';
 import IOffset from '../../protocols/ioffset';
 
 function increment(self, dt){
@@ -10,5 +10,5 @@ function decrement(self, dt){
   return new Date(dt.valueOf() - self.milliseconds);
 }
 
-export default juxt(
+export default effect(
   implement(IOffset, {increment: increment, decrement: decrement}));

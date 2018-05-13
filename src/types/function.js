@@ -1,7 +1,63 @@
-import {overload, slice, reduce, identity} from "../core";
+import {overload, reduce, identity, unbind, constantly} from "../core";
 import {toArray}  from "../protocols/iarr";
 import {isNil}  from "../types/nil";
+import {slice}  from "../types/array";
 import {Reduced}  from "../types/reduced/construct";
+
+function curry1(f){
+  return curry2(f, f.length);
+}
+
+function curry2(f, minimum){
+  return function(...applied){
+    if (applied.length >= minimum) {
+      return f.apply(this, applied);
+    } else {
+      return curry2(function(...args){
+        return f.apply(this, applied.concat(args));
+      }, minimum - applied.length);
+    }
+  }
+}
+
+export const curry = overload(null, curry1, curry2);
+
+export function branch(pred, yes, no){
+  return function(value){
+    return pred(value) ? yes(value) : no(value);
+  }
+}
+
+export function guard(pred, yes){
+  return branch(pred, yes, constantly(null));
+}
+
+export function juxt(...fs){
+  return function(...args){
+    return reduce(fs, function(memo, f){
+      return memo.concat([f.apply(this, args)]);
+    }, []);
+  }
+}
+
+export function multimethod(dispatch){
+  return function(...args){
+    const f = apply(dispatch, args);
+    return apply(f, args);
+  }
+}
+
+export function reducing(rf){
+  return function r(x, ...tail){
+    return tail.length ? rf(x, r.apply(null, tail)) : x;
+  }
+}
+
+export function complement(f){
+  return function(){
+    return !f.apply(this, arguments);
+  }
+}
 
 export function tap(f){
   return function(value){
@@ -64,6 +120,7 @@ export function unspread(f){
   }
 }
 
+/*
 function fnil1(f, A){
   return function(a){
     var args = slice(arguments);
@@ -103,7 +160,7 @@ function fnilN(f){
 }
 
 export const fnil = overload(null, null, fnil1, fnil2, fnil3, fnilN);
-
+*/
 function someFn1(a){
   return function(){
     return apply(a, arguments);
@@ -215,3 +272,43 @@ export const comp   = reversed(pipe);
 export const chain  = chaining(identityReducer);
 export const maybe  = chaining(someReducer);
 export const handle = chaining(errorReducer);
+
+export function nullary(f){
+  return function(){
+    return f.call(this);
+  }
+}
+
+export function unary(f){
+  return function(a){
+    return f.call(this, a);
+  }
+}
+
+export function binary(f){
+  return function(a, b){
+    return f.call(this, a, b);
+  }
+}
+
+export function ternary(f){
+  return function(a, b, c){
+    return f.call(this, a, b, c);
+  }
+}
+
+export function quaternary(f){
+  return function(a, b, c, d){
+    return f.call(this, a, b, c, d);
+  }
+}
+
+export function nary(f, length){
+  return function(){
+    return f.apply(this, slice(arguments, 0, length));
+  }
+}
+
+export function arity(f, length){
+  return ([nullary, unary, binary, ternary, quaternary][length] || nary)(f, length);
+}

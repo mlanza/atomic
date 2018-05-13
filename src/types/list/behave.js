@@ -1,4 +1,4 @@
-import {identity, constantly, juxt} from '../../core';
+import {identity, constantly, effect} from '../../core';
 import {implement} from '../../protocol';
 import {showSeq, nextSeq, toArraySeq, reduceSeq} from '../../common';
 import ICollection from '../../protocols/icollection';
@@ -25,7 +25,7 @@ function show(self){
   return "#list " + showSeq(self);
 }
 
-export default juxt(
+export default effect(
   implement(ISequential),
   implement(IReduce, {_reduce: reduceSeq}),
   implement(IEmptyableCollection, {empty: EMPTY}),

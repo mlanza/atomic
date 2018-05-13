@@ -1,4 +1,4 @@
-import {constantly, identity, reduce, reducekv, juxt} from '../../core';
+import {constantly, identity, reduce, reducekv, effect} from '../../core';
 import {implement} from '../../protocol';
 import {showSeq} from '../../common';
 import {indexedSeq} from '../../types/indexedseq/construct';
@@ -73,7 +73,7 @@ function includes(self, x){
   return self.arr.indexOf(x, self.start) > -1;
 }
 
-export default juxt(
+export default effect(
   implement(ISequential),
   implement(IInclusive, {includes: includes}),
   implement(IAppendable, {append: append}),

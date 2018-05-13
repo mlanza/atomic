@@ -1,4 +1,4 @@
-import {identity, constantly, juxt} from '../../core';
+import {identity, constantly, effect} from '../../core';
 import {implement} from '../../protocol';
 import {EMPTY} from '../../types/empty/construct';
 import ICollection from '../../protocols/icollection';
@@ -11,7 +11,7 @@ import IShow from '../../protocols/ishow';
 import IEmptyableCollection from '../../protocols/iemptyablecollection';
 import {EMPTY_ARRAY} from '../../types/array/construct';
 
-export default juxt(
+export default effect(
   implement(IEmptyableCollection, {empty: identity}),
   implement(IArr, {toArray: constantly(EMPTY_ARRAY)}),
   implement(ISeq, {first: constantly(null), rest: constantly(EMPTY)}),
