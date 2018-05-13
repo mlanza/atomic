@@ -17,3 +17,4 @@ export * from "./types/duration";
 export * from "./types/record";
 export * from "./types/observable";
 export * from "./types/publisher";
+export * from "./types/reduced";
