@@ -5,7 +5,7 @@ export * from "./protocol";
 import {first, rest, next, seq, inc, dec, reduce, conj, sub, pub, lookup, assoc, contains, toArray, reducekv, isSequential, IDisposable} from "./protocols";
 export * from "./protocols";
 import {doto, overload, constantly, identity} from "./core";
-import {reduce as reduceIndexed} from "./types/reduced";
+import * as r from "./types/reduced";
 export * from "./core";
 import * as t from "./transducers";
 
@@ -137,7 +137,7 @@ export function get(self, key, notFound){
 }
 
 export function getIn(self, keys, notFound){
-  return reduceIndexed(keys, get, self) || notFound;
+  return r.reduce(keys, get, self) || notFound;
 }
 
 export function assocIn(self, keys, value){
