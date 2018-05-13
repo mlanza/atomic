@@ -1,5 +1,6 @@
 import {overload, identity, constantly} from "../core";
-import {reducing, complement} from "./function";
+import {complement} from "./function";
+import {reducing} from "./reduced";
 export * from "./number/construct";
 import Number from "./number/construct";
 export default Number;

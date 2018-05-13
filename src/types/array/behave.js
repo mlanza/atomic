@@ -1,7 +1,6 @@
 import {effect, identity, constantly} from '../../core';
-import {length} from '../../common';
 import {implement} from '../../protocol';
-import {showSeq, nthIndexed} from '../../common';
+import {showSeq, nthIndexed, length} from '../../common';
 import {IReduce, IKVReduce, IAppendable, IPrependable, IInclusive, ICollection, INext, ISeq, IArr, ISeqable, IIndexed, IAssociative, ISequential, IEmptyableCollection, IFn, IShow, ICounted, ILookup, ICloneable} from '../../protocols';
 import Reduced, {reduce, reducekv} from '../../types/reduced';
 import {EMPTY_ARRAY} from '../../types/array/construct';

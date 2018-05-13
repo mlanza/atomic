@@ -1,5 +1,5 @@
 import {constantly, overload} from "../../core";
-import {reducing} from "../../types/function";
+import {reducing} from "../../types/reduced";
 import {EMPTY} from '../../types/empty';
 
 export function List(head, tail){

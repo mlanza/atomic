@@ -3,7 +3,7 @@ export * from "./string/construct";
 import String, {EMPTY_STRING} from "./string/construct";
 export default String;
 import behave from "./string/behave";
-import {reducing} from "./function";
+import {reducing} from "./reduced";
 
 behave(String);
 

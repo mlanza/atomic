@@ -1,7 +1,8 @@
 import {overload, identity, unbind, constantly} from "../core";
-import {toArray}  from "../protocols/iarr";
+import {toArray}  from "../protocols";
 import {isNil}  from "../types/nil";
 import {slice}  from "../types/array";
+import {isBlank}  from "../types/string";
 import {Reduced, reduce}  from "../types/reduced";
 
 export function constructs(Type) {
@@ -50,12 +51,6 @@ export function multimethod(dispatch){
   return function(...args){
     const f = apply(dispatch, args);
     return apply(f, args);
-  }
-}
-
-export function reducing(rf){
-  return function r(x, ...tail){
-    return tail.length ? rf(x, r.apply(null, tail)) : x;
   }
 }
 
@@ -126,38 +121,8 @@ export function unspread(f){
   }
 }
 
-/*
-function fnil1(f, A){
-  return function(a){
-    var args = slice(arguments);
-    if (isNil(a)) { args[0] = A };
-    return f.apply(null, args);
-  }
-}
-
-function fnil2(f, A, B){
-  return function(a, b){
-    var args = slice(arguments);
-    if (isNil(a)) { args[0] = A };
-    if (isNil(b)) { args[1] = B };
-    return f.apply(null, args);
-  }
-}
-
-function fnil3(f, A, B, C){
-  return function(a, b, c){
-    var args = slice(arguments);
-    if (isNil(a)) { args[0] = A };
-    if (isNil(b)) { args[1] = B };
-    if (isNil(c)) { args[2] = C };
-    return f.apply(null, args);
-  }
-}
-
-function fnilN(f){
-  var ARGS = slice(arguments, 1);
-  return function(){
-    var args = slice(arguments);
+function fnil(f, ...ARGS){
+  return function(...args){
     for(var x = 0; x < args.length; x++){
       if (isNil(args[x])) { args[x] = ARGS[x] };
     }
@@ -165,8 +130,6 @@ function fnilN(f){
   }
 }
 
-export const fnil = overload(null, null, fnil1, fnil2, fnil3, fnilN);
-*/
 function someFn1(a){
   return function(){
     return apply(a, arguments);
@@ -197,28 +160,32 @@ function someFnN(...preds){
 export const someFn = overload(null, someFn1, someFn2, someFn3, someFnN);
 
 function piping1(reducer){
-  return partial(pipingN, reducer);
-}
-
-function pipingN(reducer, f, ...fs){
-  return function(init, ...args){
-    return reduce(fs, reducer, reducer(init, function(memo){
-      return f.apply(this, [memo].concat(args));
-    }));
+  return function(f, ...fs){
+    return function(init, ...args){
+      return reduce(fs, reducer, reducer(init, function(memo){
+        return f.apply(this, [memo].concat(args));
+      }));
+    }
   }
 }
 
-export const piping = overload(null, piping1, pipingN);
+function pipingN(...reducers){
+  return piping1(composeReducer(...reducers));
+}
+
+export const piping = overload(constantly(piping1(identityReducer)), piping1, pipingN);
 
 function chaining1(reducer){
-  return partial(chainingN, reducer);
+  return function(init, ...fs){
+    return reduce(fs, reducer, init);
+  }
 }
 
-function chainingN(reducer, init, ...fs){
-  return reduce(fs, reducer, init);
+function chainingN(...reducers){
+  return chaining1(composeReducer(...reducers));
 }
 
-export const chaining = overload(null, chaining1, chainingN);
+export const chaining = overload(constantly(chaining1(identityReducer)), chaining1, chainingN);
 
 function composeReducer2(r1, r2){
   return function(memo, f){
@@ -235,15 +202,19 @@ function composeReducerN(r1, r2, ...rs){
 
 export const composeReducer = overload(null, identity, composeReducer2, composeReducerN);
 
-function identityReducer(memo, f){
+export function identityReducer(memo, f){
   return f(memo);
 }
 
-function someReducer(memo, f){
+export function someReducer(memo, f){
   return isNil(memo) || isBlank(memo) ? new Reduced(null) : f(memo);
 }
 
-function errorReducer(memo, f){
+export function promiseReducer(memo, f){
+  return Promise.resolve(memo).then(f);
+}
+
+export function errorReducer(memo, f){
   if (memo instanceof Error) {
     return new Reduced(memo);
   }
@@ -272,12 +243,12 @@ function pipe4(a, b, c, d){
   }
 }
 
-export const pipe   = overload(null, identity, pipe2, pipe3, pipe4, piping(identityReducer));
+export const pipe   = overload(null, identity, pipe2, pipe3, pipe4, piping());
 export const opt    = piping(someReducer);
+export const prom   = piping(promiseReducer);
+export const handle = piping(errorReducer);
 export const comp   = reversed(pipe);
-export const chain  = chaining(identityReducer);
-export const maybe  = chaining(someReducer);
-export const handle = chaining(errorReducer);
+export const chain  = chaining();
 
 export function nullary(f){
   return function(){

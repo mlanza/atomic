@@ -23,3 +23,9 @@ export function reducekv(xs, xf, init, from){
   }
   return memo instanceof Reduced ? memo.valueOf() : memo;
 }
+
+export function reducing(rf){
+  return function r(x, ...tail){
+    return tail.length ? rf(x, r.apply(null, tail)) : x;
+  }
+}
