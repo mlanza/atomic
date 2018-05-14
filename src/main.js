@@ -8,6 +8,7 @@ import {doto, overload, constantly, identity} from "./core";
 import * as r from "./types/reduced";
 export * from "./core";
 import * as t from "./transducers";
+import {log} from "./core";
 
 function isIdentical(x, y){ //TODO via protocol
   return x === y;
@@ -774,6 +775,20 @@ export function future(f){
   }, function(...args){
     return Promise.resolve(f(...args));
   });
+}
+
+function Invocation(f, args, result){
+  this.f = f;
+  this.args = args;
+  this.result = result;
+}
+
+export function logged(f){
+  return function(...args){
+    var result = f(...args);
+    log(new Invocation(f, args, result));
+    return result;
+  }
 }
 
 function chainedN(how, init, ...fs){
