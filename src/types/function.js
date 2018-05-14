@@ -1,23 +1,19 @@
-import {overload, identity, constantly} from "../core";
-import {toArray, transduce}  from "../protocols";
+import {log, overload, identity, constantly} from "../core";
+import {toArray}  from "../protocols";
 import {isNil}  from "../types/nil";
 import {slice}  from "../types/array";
-import {reduce, reduced}  from "../types/reduced";
-
-export function constructs(Type) {
-  return function(...args){
-    return new (Function.prototype.bind.apply(Type, [null].concat(args)));
-  }
-}
-
-export function step(memo, f){
-  return f(memo);
-}
+import {reduce}  from "../types/reduced";
 
 export function comp(...fs){
   var last = fs.length - 1;
   return function(...args){
     return reduce(fs, step, apply(fs[last], args), last - 1, 0);
+  }
+}
+
+export function partial(f, ...applied){
+  return function(...args){
+    return f.apply(this, applied.concat(args));
   }
 }
 
@@ -77,15 +73,13 @@ export function tap(f){
   }
 }
 
+export function see(about){
+  return tap(partial(log, about));
+}
+
 export function reversed(f){
   return function(...args){
     return f.apply(this, args.reverse());
-  }
-}
-
-export function partial(f, ...applied){
-  return function(...args){
-    return f.apply(this, applied.concat(args));
   }
 }
 
@@ -140,35 +134,6 @@ function fnil(f, ...substitutes){
   }
 }
 
-function someFn1(a){
-  return function(){
-    return apply(a, arguments);
-  }
-}
-
-function someFn2(a, b){
-  return function(){
-    return apply(a, arguments) || apply(b, arguments);
-  }
-}
-
-function someFn3(a, b, c){
-  return function(){
-    return apply(a, arguments) || apply(b, arguments) || apply(c, arguments);
-  }
-}
-
-function someFnN(...preds){
-  return function(...args){
-    return reduce(preds, function(result, pred){
-      let r = apply(pred, args);
-      return r ? reduced(r) : result;
-    }, false);
-  }
-}
-
-export const someFn = overload(null, someFn1, someFn2, someFn3, someFnN);
-
 export function nullary(f){
   return function(){
     return f();
@@ -207,4 +172,13 @@ export function nary(f, length){
 
 export function arity(f, length){
   return ([nullary, unary, binary, ternary, quaternary][length] || nary)(f, length);
+}
+export function constructs(Type) {
+  return function(...args){
+    return new (Function.prototype.bind.apply(Type, [null].concat(args)));
+  }
+}
+
+export function step(memo, f){
+  return f(memo);
 }

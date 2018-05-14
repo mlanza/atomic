@@ -27,3 +27,4 @@ export * from "./protocols/ioffset";
 export * from "./protocols/irecord";
 export * from "./protocols/idisposable";
 export * from "./protocols/icloneable";
+export * from "./protocols/ifind";

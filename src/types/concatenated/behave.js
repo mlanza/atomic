@@ -1,11 +1,11 @@
 import {identity, effect} from '../../core';
 import {implement} from '../../protocol';
-import {toArraySeq, showSeq, reduceSeq} from '../../common';
 import {concatenated} from '../../types/concatenated/construct';
 import {ICollection, INext, ISeq, IArr, ICounted, IReduce, ISeqable, IIndexed, IShow} from '../../protocols';
 import {reduce} from '../../protocols/ireduce';
 import Reduced from '../../types/reduced';
 import {EMPTY} from "../empty";
+import {reduceable, showable, iterable} from '../lazyseq/behave';
 
 function conj(self, x){
   return concatenated(ICollection.conj(self.colls, [x]));
@@ -39,19 +39,16 @@ function toArray(self){
 }
 
 function count(self){
-  return toArray(self).length;
-}
-
-function show(self){
-  return "#concat " + showSeq(self);
+  return IArr.toArray(self).length;
 }
 
 export default effect(
-  implement(IReduce, {reduce: reduceSeq}),
+  iterable,
+  reduceable,
+  showable,
   implement(ICollection, {conj: conj}),
   implement(INext, {next: next}),
   implement(ISeq, {first: first, rest: rest}),
   implement(IArr, {toArray: toArray}),
   implement(ISeqable, {seq: identity}),
-  implement(ICounted, {count: count}),
-  implement(IShow, {show: show}));
+  implement(ICounted, {count: count}));

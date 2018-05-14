@@ -77,3 +77,17 @@ export function isOdd(n){
 }
 
 export const isEven  = complement(isOdd);
+
+function rand0(){
+  return Math.random();
+}
+
+function rand1(n){
+  return Math.random() * n;
+}
+
+export const rand = overload(rand0, rand1);
+
+export function randInt(n){
+  return Math.floor(rand(n));
+}

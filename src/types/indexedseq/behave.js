@@ -1,10 +1,18 @@
 import {constantly, identity, effect} from '../../core';
 import {implement} from '../../protocol';
-import {showSeq} from '../../common';
 import {indexedSeq} from '../../types/indexedseq/construct';
-import {IInclusive, IAppendable, IPrependable, ICollection, INext, ICounted, IReduce, IKVReduce, IArr, ISeq, ISeqable, ISequential, IIndexed, IShow, ILookup, IFn, IEmptyableCollection} from '../../protocols';
-import Reduced, {reduce, reducekv} from '../../types/reduced';
+import {IFind, IInclusive, IAssociative, IAppendable, IPrependable, ICollection, INext, ICounted, IReduce, IKVReduce, IArr, ISeq, ISeqable, ISequential, IIndexed, IShow, ILookup, IFn, IEmptyableCollection} from '../../protocols';
+import {reduce, reducekv} from '../../types/reduced';
 import {EMPTY_ARRAY} from '../../types/array/construct';
+import {showable, iterable} from '../lazyseq/behave';
+
+function find(self, key){
+  return IAssociative.contains(self, key) ? [key, ILookup.lookup(self, key)] : null;
+}
+
+function contains(self, idx){
+  return idx < self.arr.length - self.start;
+}
 
 function lookup(self, key){
   return self.arr[self.start + key];
@@ -39,10 +47,6 @@ function count(self){
   return self.length - self.start;
 }
 
-function show(self){
-  return "#indexed-seq " + showSeq(self);
-}
-
 function _reduce(self, xf, init){
   return reduce(self.arr, xf, init, self.start);
 }
@@ -58,8 +62,12 @@ function includes(self, x){
 }
 
 export default effect(
+  showable,
+  iterable,
   implement(ISequential),
   implement(IInclusive, {includes: includes}),
+  implement(IFind, {find: find}),
+  implement(IAssociative, {contains: contains}),
   implement(IAppendable, {append: append}),
   implement(IPrependable, {prepend: prepend}),
   implement(IEmptyableCollection, {empty: constantly(EMPTY_ARRAY)}),
@@ -72,5 +80,4 @@ export default effect(
   implement(IArr, {toArray: toArray}),
   implement(ISeq, {first: first, rest: rest}),
   implement(ISeqable, {seq: identity}),
-  implement(ICounted, {count: count}),
-  implement(IShow, {show: show}));
+  implement(ICounted, {count: count}));

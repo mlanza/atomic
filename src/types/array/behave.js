@@ -1,10 +1,14 @@
 import {effect, identity, constantly} from '../../core';
 import {implement} from '../../protocol';
-import {showSeq, nthIndexed, length} from '../../common';
-import {IReduce, IKVReduce, IAppendable, IPrependable, IInclusive, ICollection, INext, ISeq, IArr, ISeqable, IIndexed, IAssociative, ISequential, IEmptyableCollection, IFn, IShow, ICounted, ILookup, ICloneable} from '../../protocols';
-import Reduced, {reduce, reducekv} from '../../types/reduced';
-import {EMPTY_ARRAY} from '../../types/array/construct';
-import {indexedSeq} from '../../types/indexedseq';
+import {IReduce, IKVReduce, IAppendable, IPrependable, IInclusive, ICollection, INext, ISeq, IFind, IArr, ISeqable, IIndexed, IAssociative, ISequential, IEmptyableCollection, IFn, IShow, ICounted, ILookup, ICloneable} from '../../protocols';
+import {reduce, reducekv} from '../../types/reduced';
+import {EMPTY_ARRAY} from './construct';
+import {indexedSeq} from '../indexedseq';
+import {showable} from '../lazyseq/behave';
+
+function find(self, key){
+  return IAssociative.contains(self, key) ? [key, ILookup.lookup(self, key)] : null;
+}
 
 function lookup(self, key){
   return self[key];
@@ -48,8 +52,23 @@ function includes(self, x){
   return self.indexOf(x) > -1;
 }
 
+function length(self){
+  return self.length;
+}
+
+function nth(coll, idx, notFound){
+  return coll[idx] || notFound || null;
+}
+
+export const indexed = effect(
+  implement(IIndexed, {nth: nth}),
+  implement(ICounted, {count: length}));
+
 export default effect(
+  showable,
+  indexed,
   implement(ISequential),
+  implement(IFind, {find: find}),
   implement(IInclusive, {includes: includes}),
   implement(IAppendable, {append: append}),
   implement(IPrependable, {prepend: prepend}),
@@ -60,11 +79,8 @@ export default effect(
   implement(IKVReduce, {_reducekv: reducekv}),
   implement(ILookup, {lookup: lookup}),
   implement(IAssociative, {assoc: assoc,contains: contains}),
-  implement(IIndexed, {nth: nthIndexed}),
   implement(ISeqable, {seq: seq}),
   implement(ICollection, {conj: append}),
   implement(INext, {next: next}),
   implement(IArr, {toArray: identity}),
-  implement(ISeq, {first: first, rest: rest}),
-  implement(ICounted, {count: length}),
-  implement(IShow, {show: showSeq}));
+  implement(ISeq, {first: first, rest: rest}));
