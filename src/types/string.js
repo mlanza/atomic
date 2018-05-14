@@ -1,4 +1,5 @@
 import {overload, constantly, unbind} from "../core";
+import {subj} from "../types/function";
 export * from "./string/construct";
 import String, {EMPTY_STRING} from "./string/construct";
 export default String;
@@ -27,3 +28,7 @@ export const str       = overload(constantly(EMPTY_STRING), str1, str2, reducing
 export const lowerCase = unbind(String.prototype.toLowerCase);
 export const upperCase = unbind(String.prototype.toUpperCase);
 export const trim      = unbind(String.prototype.trim);
+
+const replace3 = unbind(String.prototype.replace);
+
+export const replace   = overload(null, null, subj(replace3), replace3);
