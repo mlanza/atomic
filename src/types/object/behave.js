@@ -3,9 +3,13 @@ import {constantly, effect} from '../../core';
 import {objectSelection} from '../../types/objectselection';
 import {lazySeq} from '../../types/lazyseq';
 import {EMPTY} from '../../types/empty/construct';
-import {IReduce, IKVReduce, ISeqable, IShow, ICounted, IAssociative, IEmptyableCollection, ILookup, IFn, IMap, ISeq, IArr, ICloneable, IInclusive} from '../../protocols';
+import {IReduce, IKVReduce, ISeqable, IShow, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, IFn, IMap, ISeq, IArr, ICloneable, IInclusive} from '../../protocols';
 import {reducekv} from '../../protocols/ikvreduce';
 import {EMPTY_OBJECT} from '../../types/object/construct';
+
+function find(self, key){
+  return IAssociative.contains(self, key) ? [key, ILookup.lookup(self, key)] : null;
+}
 
 function includes(superset, subset){
   return reducekv(function(memo, key, value){
@@ -76,6 +80,7 @@ function show(self){
 }
 
 export default effect(
+  implement(IFind, {find: find}),
   implement(IInclusive, {includes: includes}),
   implement(ICloneable, {clone: clone}),
   implement(IReduce, {_reduce: _reduce}),

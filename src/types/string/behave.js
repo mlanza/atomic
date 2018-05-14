@@ -1,8 +1,8 @@
 import {IIndexed, ISeqable, ISeq, IArr, IInclusive, IAppendable, IPrependable, IShow, ICounted, ILookup, IFn, IEmptyableCollection} from '../../protocols';
 import {constantly, effect} from "../../core";
-import {nthIndexed, length} from "../../common";
 import {implement} from '../../protocol';
-import {EMPTY_STRING} from '../../types/string/construct';
+import {EMPTY_STRING} from './construct';
+import {indexed} from '../array/behave';
 
 function seq(self){
   return self.length ? self : null;
@@ -49,7 +49,7 @@ function includes(self, str){
 }
 
 export default effect(
-  implement(IIndexed, {nth: nthIndexed}),
+  indexed,
   implement(IInclusive, {includes: includes}),
   implement(IAppendable, {append: append}),
   implement(IPrependable, {prepend: prepend}),
@@ -59,5 +59,4 @@ export default effect(
   implement(IArr, {toArray: toArray}),
   implement(ISeqable, {seq: seq}),
   implement(ISeq, {first: first, rest: rest}),
-  implement(ICounted, {count: length}),
   implement(IShow, {show: show}));
