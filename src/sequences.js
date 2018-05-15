@@ -1,6 +1,6 @@
 import {doto, overload, constantly, identity} from "./core";
-import {count, nth, first, rest, next, seq, inc, reduce, conj, toArray, isSequential} from "./protocols";
-import {comp, not, partial, curry, concat, apply, concatenated, observable, isNil, cons, EMPTY, EMPTY_ARRAY, lazySeq, reduced, reducing, complement, slice, juxt, step, isBlank, isSome, randInt} from "./types";
+import {count, nth, first, rest, next, seq, reduce, conj, step, converse, unit, toArray, isSequential} from "./protocols";
+import {inc, comp, not, partial, curry, concat, apply, concatenated, observable, isNil, cons, EMPTY, EMPTY_ARRAY, lazySeq, reduced, reducing, complement, slice, juxt, isBlank, isSome, randInt} from "./types";
 import {notEq} from "./predicates";
 
 function transduce3(xform, f, coll){
@@ -65,6 +65,26 @@ function dotimes2(n, f){
 }
 
 export const dotimes = overload(null, curry(dotimes2, 2), dotimes2);
+
+export function proceed1(self){
+  return step(unit(self), self);
+}
+
+export function proceed2(self, amount){
+  return step(unit(self, amount), self);
+}
+
+export const proceed = overload(null, proceed1, proceed2);
+
+export function recede1(self){
+  return step(converse(unit(self)), self);
+}
+
+export function recede2(self, amount){
+  return step(converse(unit(self, amount)), self);
+}
+
+export const recede = overload(null, recede1, recede2);
 
 export function isEmpty(coll){
   return !seq(coll);

@@ -1,5 +1,5 @@
 import {comp} from "./types";
-import {first, next} from "./protocols";
+import {first, next, ISteppable} from "./protocols";
 import {overload} from "./core";
 import * as t from "./transducers";
 import * as s from "./sequences";
@@ -29,6 +29,3 @@ export const compact     = overload(t.compact, s.compact);
 export const dedupe      = overload(t.dedupe, s.dedupe);
 export const distinct    = overload(t.distinct, s.distinct);
 export const second      = comp(first, next);
-
-//export const inc = partial(add2, +1);
-//export const dec = partial(add2, -1);

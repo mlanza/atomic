@@ -1,5 +1,5 @@
 import {log, overload, identity} from "./core";
-import {isNil, isBlank, reduced, partial, step} from "./types";
+import {isNil, isBlank, reduced, partial, stepped} from "./types";
 import {transduce} from "./sequences";
 import {map} from "./transducers";
 
@@ -36,7 +36,7 @@ export function logged(f){
 }
 
 function chainedN(how, init, ...fs){
-  return transduce(map(how), step, init, fs);
+  return transduce(map(how), stepped, init, fs);
 }
 
 export const chained = overload(null, function(how){
