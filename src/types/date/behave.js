@@ -1,6 +1,7 @@
-import {effect, overload} from '../../core';
+import {effect, overload, constantly} from '../../core';
 import {implement} from '../../protocol';
-import {IShow, IOffset, ICloneable, IDeref, ILookup, IAssociative} from '../../protocols';
+import {IUnit, IShow, ICloneable, IDeref, ILookup, IAssociative} from '../../protocols';
+import {isNumber} from '../../types/number';
 import {days} from '../../types/duration';
 
 function lookup(self, key){
@@ -31,6 +32,7 @@ function contains(self, key){
   return ["year", "month", "day", "hour", "minute", "second", "millisecond"].indexOf(key) > -1;
 }
 
+//the benefit of exposing internal state as a map is assocIn and updateIn
 function assoc(self, key, value){
   var dt = new Date(self.valueOf());
   switch(key){
@@ -61,25 +63,6 @@ function assoc(self, key, value){
   return dt;
 }
 
-function inc1(self){
-  return IOffset.increment(days(1), self);
-}
-
-function inc2(self, offset){
-  return IOffset.increment(offset, self);
-}
-
-function dec1(self){
-  return IOffset.decrement(days(1), self);
-}
-
-function dec2(self, offset){
-  return IOffset.decrement(offset, self);
-}
-
-const inc = overload(null, inc1, inc2);
-const dec = overload(null, dec1, dec2);
-
 function clone(self){
   return new Date(self.valueOf());
 }
@@ -88,9 +71,13 @@ function show(self){
   return "\"" + self.toISOString() + "\"";
 }
 
+function unit2(self, amount){
+  return isNumber(amount) ? days(amount) : amount;
+}
+
 export default effect(
+  implement(IUnit, {unit: overload(null, constantly(days(1)), unit2)}),
   implement(IAssociative, {assoc: assoc, contains: contains}),
   implement(ILookup, {lookup: lookup}),
   implement(ICloneable, {clone: clone}),
-  implement(IOffset, {inc: inc, dec: dec}),
   implement(IShow, {show: show}));

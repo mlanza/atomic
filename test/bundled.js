@@ -60,6 +60,16 @@ QUnit.test("transduce", function(assert){
   assert.deepEqual(_.into([], _.comp(_.take(4), _.map(_.inc)), _.cycle([1,2,3])), [2,3,4,2]);
 });
 
+QUnit.test("step, proceed, recede", function(assert){
+  assert.equal(_.proceed(new Date(2017, 11, 25), _.days(1)).valueOf(), _.proceed(new Date(2017, 11, 25), 1).valueOf());
+  assert.equal(_.proceed(new Date(2017, 11, 25), _.days(1)).valueOf(), _.step(_.days(1), new Date(2017, 11, 25)).valueOf());
+  assert.equal(_.proceed(new Date(2017, 11, 25), _.days(1)).valueOf(), 1514264400000);
+  assert.equal(_.proceed(new Date(2017, 11, 25), _.weeks(1)).valueOf(), 1514782800000);
+  assert.equal(_.proceed(new Date(2017, 11, 25), _.months(1)).valueOf(), 1516856400000);
+  assert.equal(_.proceed(new Date(2017, 11, 25), _.years(1)).valueOf(), 1545714000000);
+  assert.equal(_.recede(new Date(2017, 11, 25), _.years(1)).valueOf(), 1482642000000);
+});
+
 QUnit.test("record", function(assert){
   const Person = _.record("name", "surname", "dob");
   const sean   = new Person("Sean", "Penn", new Date(1960, 7, 17));
@@ -73,7 +83,7 @@ QUnit.test("record", function(assert){
 
 QUnit.test("observable", function(assert){
   const source = _.observable(0);
-  const sink   = _.signal(source, _.map(_.inc));
+  const sink   = _.signal(_.map(_.inc), null, source);
   _.swap(source, _.inc);
   assert.equal(_.deref(source), 1);
   assert.equal(_.deref(sink)  , 2);

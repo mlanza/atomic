@@ -7,7 +7,7 @@ import {reduce}  from "../types/reduced";
 export function comp(...fs){
   var last = fs.length - 1;
   return function(...args){
-    return reduce(fs, step, apply(fs[last], args), last - 1, 0);
+    return reduce(fs, stepped, apply(fs[last], args), last - 1, 0);
   }
 }
 
@@ -35,15 +35,15 @@ function curry2(f, minimum){
 
 export const curry = overload(null, curry1, curry2);
 
-export function branch(pred, yes, no){
-  return function(value){
-    return pred(value) ? yes(value) : no(value);
-  }
+export function branch3(obj, pred, yes){
+  return branch4(obj, pred, yes, constantly(null));
 }
 
-export function guard(pred, yes){
-  return branch(pred, yes, constantly(null));
+export function branch4(obj, pred, yes, no){
+  return pred(obj) ? yes(obj) : no(obj);
 }
+
+export const branch = overload(null, null, null, branch3, branch4);
 
 export function juxt(...fs){
   return function(...args){
@@ -179,6 +179,6 @@ export function constructs(Type) {
   }
 }
 
-export function step(memo, f){
+export function stepped(memo, f){
   return f(memo);
 }

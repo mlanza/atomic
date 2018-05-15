@@ -1,5 +1,5 @@
 import {overload, identity, constantly} from "../core";
-import {complement} from "./function";
+import {complement, partial} from "./function";
 import {reducing} from "./reduced";
 export * from "./number/construct";
 import Number from "./number/construct";
@@ -59,6 +59,8 @@ export const add      = overload(constantly(0), identity, add2, reducing(add2));
 export const subtract = overload(constantly(0), subtract1, subtract2, reducing(subtract2));
 export const multiply = overload(constantly(1), identity, multiply2, reducing(multiply2));
 export const divide   = overload(null, divide1, divide2, reducing(divide2));
+export const inc      = partial(add2, +1);
+export const dec      = partial(add2, -1);
 
 export function isZero(x){
   return x === 0;

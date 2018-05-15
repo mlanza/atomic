@@ -1,14 +1,15 @@
+import {duration} from './construct';
 import {implement} from '../../protocol';
 import {effect} from '../../core';
-import {IOffset} from '../../protocols';
+import {ISteppable} from '../../protocols';
 
-function increment(self, dt){
+function step(self, dt){
   return new Date(dt.valueOf() + self.milliseconds);
 }
 
-function decrement(self, dt){
-  return new Date(dt.valueOf() - self.milliseconds);
+function converse(self){
+  return duration(self.milliseconds * -1);
 }
 
 export default effect(
-  implement(IOffset, {increment: increment, decrement: decrement}));
+  implement(ISteppable, {step: step, converse: converse}));

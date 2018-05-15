@@ -14,3 +14,5 @@ grep -R "some" --exclude-dir="*node*" .
 * It is possible to use mutation and have a pure function so long as the mutation does not leak.
 * One should avoid using the library api to act on Map and Set types.  In it's attempt to avoid mutation, it is grossly inefficient.  It exists only to allow interoperability.
 * Avoids passing `this` context on function application.
+* Signals allow error handling to be handled as a separate (composable) concern rather than an integrated one.
+* Signals are transducer friendly.

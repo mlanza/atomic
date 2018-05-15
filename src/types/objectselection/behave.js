@@ -1,10 +1,14 @@
 import {implement} from '../../protocol';
 import {identity, constantly, effect} from '../../core';
 import {objectSelection} from '../../types/objectselection/construct';
-import {ICollection, IReduce, IKVReduce, INext, IArr, ISeq, ISeqable, IIndexed, IShow, ICounted, ILookup, IFn, IMap, ICloneable, IEmptyableCollection} from '../../protocols';
+import {IFind, ICollection, IReduce, IKVReduce, INext, IArr, ISeq, ISeqable, IIndexed, IShow, ICounted, ILookup, IFn, IMap, ICloneable, IEmptyableCollection} from '../../protocols';
 import {lazySeq} from '../../types/lazyseq/construct';
 import {EMPTY_OBJECT} from '../../types/object/construct';
 import {reduce} from '../../types/reduced';
+
+function find(self, key){
+  return self.keys.indexOf(key) > -1 ? [key, self.obj[key]] : null;
+}
 
 function lookup(self, key){
   return self.keys.indexOf(key) > -1 ? self.obj[key] : null;
@@ -59,6 +63,7 @@ function show(self){
 }
 
 export default effect(
+  implement(IFind, {find: find}),
   implement(IMap, {_dissoc: _dissoc}),
   implement(IReduce, {_reduce: _reduce}),
   implement(IKVReduce, {_reducekv: _reducekv}),

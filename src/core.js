@@ -1,6 +1,16 @@
 export const unbind = Function.call.bind(Function.bind, Function.call);
 export const log    = console.log.bind(console);
 
+export function noop(){
+}
+
+export function counter(init){
+  let memo = init || 0;
+  return function(){
+    return memo++;
+  }
+}
+
 export function type(self){
   return self == null ? null : self.constructor;
 }
