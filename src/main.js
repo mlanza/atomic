@@ -1,5 +1,5 @@
 import {comp} from "./types";
-import {first, next, ISteppable} from "./protocols";
+import {first, next} from "./protocols";
 import {overload} from "./core";
 import * as t from "./transducers";
 import * as s from "./sequences";
@@ -12,6 +12,7 @@ export * from "./sequences";
 export * from "./associatives";
 export * from "./pipelines";
 export * from "./signals";
+export * from "./dom";
 
 export const map         = overload(null, t.map, s.map);
 export const take        = overload(null, t.take, s.take);

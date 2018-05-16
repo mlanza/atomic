@@ -2,17 +2,18 @@ grep -R "some" --exclude-dir="*node*" .
 
 # PRINCIPLES
 
-* No virtual dom.  Use diff/patch strategy.
-* Avoid recursion for potentially large stack operations.
-* The first argument of a protocol functions is the type.
-* Don't export protocol methods from types to ensure we deal with abstractions and not concrete types.
-* The Law of Abstractions: Invoking a function against one concrete type can result in a different concrete type so long as the new type abides the same protocols.  In this manner, we use protocols and types to achieve a poor man's discriminated union.
-* When possible replace macros with functions, otherwise omit.
+* Avoid virtual doms.  Use a model diff/patch strategy.
+* Avoid creating types where primitives will do.  A type should be introduced to vary protocol implementations.
+* Avoid monads as they necessitate commitment.  Use monadic pipelines instead.
+* Avoid recursion for potentially large stacks.
+* Avoid writing functions that care about `this` bindings, rather pass `self` as the first argument when required.
+* Avoid thinking in concrete types.  Prefer thinking in abstract types that provide behaviors.
+* The Law of Abstractions: When a invoking a function against an object that returns a different representation of it, the type may vary (e.g. an Array becoming an IndexedSeq).  The new representation should abide the same protocols to maintain the integrity of the abstract type.  Apart from this, one must think in concrete types.
+* A sum type is nothing but the set of types that implement a protocol.  With protocols ADTs are not necessary.
+* The first argument of a protocol function is the type.
+* In a `behave` module only behaviors (encapsulated effects) should be exported, not functions themselves.
 * Don't offer too many permutations as seen in ramda (e.g. map, mapAccum, mapAccumRight, max, maxBy, etc.).  Rather illustrate how to use simple idioms (compositions of up to 3 functions) in place of having occasionally used functions.  The library should include only bread and butter functions (ones used more frequently).
 * Consider using binary accum functions (e.g. both, either) from which to create reducing versions (and, or) of unlimited arity.
 * The api documentation should offer practical examples showcasing the usefulness of a function.  I found that some popular libraries seem to include arbitrary examples that were of no help.
-* It is possible to use mutation and have a pure function so long as the mutation does not leak.
+* Prefer pure functions
 * One should avoid using the library api to act on Map and Set types.  In it's attempt to avoid mutation, it is grossly inefficient.  It exists only to allow interoperability.
-* Avoids passing `this` context on function application.
-* Signals allow error handling to be handled as a separate (composable) concern rather than an integrated one.
-* Signals are transducer friendly.

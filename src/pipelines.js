@@ -1,5 +1,9 @@
+/*
+* Monads, like promises, once introduced force themselves everywhere.  Pipelines allow one to dip into monadic operations without commiting to them.
+*/
+
 import {log, overload, identity} from "./core";
-import {isNil, isBlank, reduced, partial, stepped} from "./types";
+import {isNil, isBlank, reduced, partial} from "./types";
 import {transduce} from "./sequences";
 import {map} from "./transducers";
 
@@ -36,7 +40,9 @@ export function logged(f){
 }
 
 function chainedN(how, init, ...fs){
-  return transduce(map(how), stepped, init, fs);
+  return transduce(map(how), function(memo, f){
+    return f(memo);
+  }, init, fs);
 }
 
 export const chained = overload(null, function(how){

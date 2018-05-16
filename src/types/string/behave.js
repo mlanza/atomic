@@ -1,8 +1,12 @@
-import {IIndexed, ISeqable, ISeq, IArr, IInclusive, IAppendable, IPrependable, IShow, ICounted, ILookup, IFn, IEmptyableCollection} from '../../protocols';
+import {IElementContent, IIndexed, ISeqable, ISeq, IArr, IInclusive, IAppendable, IPrependable, IShow, ICounted, ILookup, IFn, IEmptyableCollection} from '../../protocols';
 import {constantly, effect} from "../../core";
 import {implement} from '../../protocol';
 import {EMPTY_STRING} from './construct';
 import {indexed} from '../array/behave';
+
+function appendTo(self, parent){
+  parent.appendChild(document.createTextNode(self));
+}
 
 function seq(self){
   return self.length ? self : null;
@@ -50,13 +54,14 @@ function includes(self, str){
 
 export default effect(
   indexed,
-  implement(IInclusive, {includes: includes}),
-  implement(IAppendable, {append: append}),
-  implement(IPrependable, {prepend: prepend}),
+  implement(IElementContent, {appendTo}),
+  implement(IInclusive, {includes}),
+  implement(IAppendable, {append}),
+  implement(IPrependable, {prepend}),
   implement(IEmptyableCollection, {empty: constantly(EMPTY_STRING)}),
   implement(IFn, {invoke: lookup}),
   implement(ILookup, {lookup: lookup}),
-  implement(IArr, {toArray: toArray}),
-  implement(ISeqable, {seq: seq}),
-  implement(ISeq, {first: first, rest: rest}),
-  implement(IShow, {show: show}));
+  implement(IArr, {toArray}),
+  implement(ISeqable, {seq}),
+  implement(ISeq, {first, rest}),
+  implement(IShow, {show}));

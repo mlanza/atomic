@@ -1,7 +1,8 @@
 import Nil from './types/nil/construct';
 import {overload} from './core';
 
-const REGISTRY = window.Symbol ? Symbol("Registry") : "Registry";
+const REGISTRY = window.Symbol ? Symbol("Registry") : "_registry";
+const TEMPLATE = window.Symbol ? Symbol("Template") : "_template";
 
 export function ProtocolLookupError(registry, subject, named, args) {
   this.registry = registry;
@@ -21,12 +22,13 @@ function constructs(self){
 
 export default function Protocol(template){
   this[REGISTRY] = new WeakMap();
+  this[TEMPLATE] = template;
   extend(this, template);
 }
 
-function create(registry, named){
+function create(registry, template, named){
   return function(self) {
-    const f = (registry.get(self) || {})[named] || (registry.get(constructs(self)) || {})[named];
+    const f = (registry.get(self) || {})[named] || (registry.get(constructs(self)) || {})[named] || template[named];
     if (!f) {
       throw new ProtocolLookupError(registry, self, named, arguments);
     }
@@ -36,7 +38,7 @@ function create(registry, named){
 
 export function extend(self, template){
   for (var key in template){
-    self[key] = create(self[REGISTRY], key).bind(self);
+    self[key] = create(self[REGISTRY], self[TEMPLATE], key).bind(self);
   }
 }
 

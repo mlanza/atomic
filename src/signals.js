@@ -1,3 +1,9 @@
+/*
+* Signals allow error handling to be handled as a separate (composable) concern rather than an integrated one.
+* Signals are transducer friendly.
+* When building an application from a signal graph there is a tendency to think that events are no longer relevant, that everything must be a signal, but this is inappropriate.  Both can be appropriate.  Use events when there is no reason for an initial value.
+*/
+
 import {partial, observable, publisher, subscriptionMonitor, slice} from "./types";
 import {implement} from "./protocol";
 import {map} from "./transducers";
@@ -19,8 +25,6 @@ function signal3(xf, init, source){
 }
 
 export const signal = overload(null, null, signal2, signal3);
-
-//TODO actively manage whether or not the observable listens for events based on subscriptions being present
 
 export function listen(el, key, callback){
   el.addEventListener(key, callback);
