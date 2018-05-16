@@ -18,6 +18,7 @@ function _swap(self, f){
   return reset(self, f(self.state));
 }
 
+//The callback is called immediately to prime the subscriber state.
 function sub(self, callback){
   callback(self.state);
   return ISubscribe.sub(self.publisher, callback);

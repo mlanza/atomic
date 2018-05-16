@@ -29,6 +29,14 @@ export function filter(pred){
 
 export const remove = comp(filter, complement);
 
+export function detect(pred){
+  return function(xf){
+    return overload(xf, xf, function(memo, value){
+      return pred(value) ? reduced(value) : null;
+    });
+  }
+}
+
 export function compact(){
   return filter(identity);
 }

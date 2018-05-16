@@ -191,7 +191,7 @@ function keep2(f, xs){
 }
 
 export const keep    = overload(null, curry(keep2, 2), keep2);
-export const compact = filter2(identity);
+export const compact = partial(filter2, identity);
 
 function drop2(n, coll){
   var i = n,

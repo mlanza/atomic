@@ -3,17 +3,29 @@ import {toArray}  from "../protocols";
 import {isNil}  from "../types/nil";
 import {slice}  from "../types/array";
 import {reduce}  from "../types/reduced";
+export * from "./function/construct";
+import Function from "./function/construct";
+import behave from "./function/behave";
+behave(Function);
 
 export function comp(...fs){
   var last = fs.length - 1;
   return function(...args){
-    return reduce(fs, stepped, apply(fs[last], args), last - 1, 0);
+    return reduce(fs, function(memo, f){
+      return f(memo);
+    }, apply(fs[last], args), last - 1, 0);
   }
 }
 
 export function partial(f, ...applied){
   return function(...args){
     return f.apply(this, applied.concat(args));
+  }
+}
+
+export function partially(f){
+  return function(...args){
+    return apply(partial, f, args);
   }
 }
 
@@ -34,16 +46,6 @@ function curry2(f, minimum){
 }
 
 export const curry = overload(null, curry1, curry2);
-
-export function branch3(obj, pred, yes){
-  return branch4(obj, pred, yes, constantly(null));
-}
-
-export function branch4(obj, pred, yes, no){
-  return pred(obj) ? yes(obj) : no(obj);
-}
-
-export const branch = overload(null, null, null, branch3, branch4);
 
 export function juxt(...fs){
   return function(...args){
@@ -173,12 +175,9 @@ export function nary(f, length){
 export function arity(f, length){
   return ([nullary, unary, binary, ternary, quaternary][length] || nary)(f, length);
 }
+
 export function constructs(Type) {
   return function(...args){
     return new (Function.prototype.bind.apply(Type, [null].concat(args)));
   }
-}
-
-export function stepped(memo, f){
-  return f(memo);
 }

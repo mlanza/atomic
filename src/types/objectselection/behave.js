@@ -1,10 +1,25 @@
 import {implement} from '../../protocol';
 import {identity, constantly, effect} from '../../core';
 import {objectSelection} from '../../types/objectselection/construct';
-import {IFind, ICollection, IReduce, IKVReduce, INext, IArr, ISeq, ISeqable, IIndexed, IShow, ICounted, ILookup, IFn, IMap, ICloneable, IEmptyableCollection} from '../../protocols';
+import {IObj, IElementContent, IFind, ICollection, IReduce, IKVReduce, INext, IArr, ISeq, ISeqable, IIndexed, IShow, ICounted, ILookup, IFn, IMap, ICloneable, IEmptyableCollection} from '../../protocols';
 import {lazySeq} from '../../types/lazyseq/construct';
 import {EMPTY_OBJECT} from '../../types/object/construct';
 import {reduce} from '../../types/reduced';
+
+function appendTo(self, parent){
+  IKVReduce._reducekv(self, function(memo, key, value){
+    const f = typeof value === "function" ? memo.addEventListener : memo.setAttribute;
+    f.call(parent, key, value);
+    return memo;
+  }, parent, self);
+}
+
+function toObject(self){
+  return reduce(self.keys, function(memo, key){
+    memo[key] = lookup(self, key);
+    return memo;
+  }, {});
+}
 
 function find(self, key){
   return self.keys.indexOf(key) > -1 ? [key, self.obj[key]] : null;
@@ -63,14 +78,16 @@ function show(self){
 }
 
 export default effect(
-  implement(IFind, {find: find}),
-  implement(IMap, {_dissoc: _dissoc}),
-  implement(IReduce, {_reduce: _reduce}),
-  implement(IKVReduce, {_reducekv: _reducekv}),
-  implement(ICloneable, {clone: clone}),
+  implement(IElementContent, {appendTo}),
+  implement(IObj, {toObject}),
+  implement(IFind, {find}),
+  implement(IMap, {_dissoc}),
+  implement(IReduce, {_reduce}),
+  implement(IKVReduce, {_reducekv}),
+  implement(ICloneable, {clone}),
   implement(IEmptyableCollection, {empty: constantly(EMPTY_OBJECT)}),
   implement(IFn, {invoke: lookup}),
-  implement(ILookup, {lookup: lookup}),
-  implement(ISeqable, {seq: seq}),
-  implement(ICounted, {count: count}),
-  implement(IShow, {show: show}));
+  implement(ILookup, {lookup}),
+  implement(ISeqable, {seq}),
+  implement(ICounted, {count}),
+  implement(IShow, {show}));

@@ -1,11 +1,19 @@
 import {implement} from '../../protocol';
-import {constantly, effect} from '../../core';
+import {constantly, effect, identity} from '../../core';
 import {objectSelection} from '../../types/objectselection';
 import {lazySeq} from '../../types/lazyseq';
 import {EMPTY} from '../../types/empty/construct';
-import {IReduce, IKVReduce, ISeqable, IShow, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, IFn, IMap, ISeq, IArr, ICloneable, IInclusive} from '../../protocols';
+import {IElementContent, IReduce, IKVReduce, ISeqable, IShow, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, IFn, IMap, ISeq, IArr, IObj, ICloneable, IInclusive} from '../../protocols';
 import {reducekv} from '../../protocols/ikvreduce';
 import {EMPTY_OBJECT} from '../../types/object/construct';
+
+function appendTo(self, parent){
+  IKVReduce._reducekv(self, function(memo, key, value){
+    const f = typeof value === "function" ? memo.addEventListener : memo.setAttribute;
+    f.call(parent, key, value);
+    return memo;
+  }, parent, self);
+}
 
 function find(self, key){
   return IAssociative.contains(self, key) ? [key, ILookup.lookup(self, key)] : null;
@@ -80,16 +88,18 @@ function show(self){
 }
 
 export default effect(
-  implement(IFind, {find: find}),
-  implement(IInclusive, {includes: includes}),
-  implement(ICloneable, {clone: clone}),
-  implement(IReduce, {_reduce: _reduce}),
-  implement(IKVReduce, {_reducekv: _reducekv}),
-  implement(IMap, {_dissoc: _dissoc}),
+  implement(IElementContent, {appendTo}),
+  implement(IObj, {toObject: identity}),
+  implement(IFind, {find}),
+  implement(IInclusive, {includes}),
+  implement(ICloneable, {clone}),
+  implement(IReduce, {_reduce}),
+  implement(IKVReduce, {_reducekv}),
+  implement(IMap, {_dissoc}),
   implement(IFn, {invoke: lookup}),
   implement(ILookup, {lookup: lookup}),
   implement(IEmptyableCollection, {empty: constantly(EMPTY_OBJECT)}),
-  implement(IAssociative, {assoc: assoc, contains: contains}),
-  implement(ISeqable, {seq: seq}),
-  implement(ICounted, {count: count}),
-  implement(IShow, {show: show}));
+  implement(IAssociative, {assoc, contains}),
+  implement(ISeqable, {seq}),
+  implement(ICounted, {count}),
+  implement(IShow, {show}));

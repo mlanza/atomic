@@ -1,7 +1,11 @@
 import {doto, overload} from '../../core';
 import {constructs} from '../../types/function';
 import {implement} from '../../protocol';
-import {IAssociative, ISeqable, ILookup, ICounted, IMap, ISeq, IRecord} from '../../protocols';
+import {IObj, IAssociative, ISeqable, ILookup, ICounted, IMap, ISeq, IRecord} from '../../protocols';
+
+function toObject(self){
+  return self.attrs;
+}
 
 function contains(self, key){
   return self.attrs.hasOwnProperty(key);
@@ -39,6 +43,7 @@ function extend(Type){
 
   doto(Type,
     implement(IRecord),
+    implement(IObj, {toObject: toObject}),
     implement(IAssociative, {assoc: assoc, contains: contains}),
     implement(ILookup, {lookup: lookup}),
     implement(IMap, {_dissoc: _dissoc}),
