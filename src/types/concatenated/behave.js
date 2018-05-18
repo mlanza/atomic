@@ -46,9 +46,9 @@ export default effect(
   iterable,
   reduceable,
   showable,
-  implement(ICollection, {conj: conj}),
-  implement(INext, {next: next}),
-  implement(ISeq, {first: first, rest: rest}),
-  implement(IArr, {toArray: toArray}),
+  implement(ICollection, {conj}),
+  implement(INext, {next}),
+  implement(ISeq, {first, rest}),
+  implement(IArr, {toArray}),
   implement(ISeqable, {seq: identity}),
-  implement(ICounted, {count: count}));
+  implement(ICounted, {count}));

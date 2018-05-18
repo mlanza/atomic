@@ -1,8 +1,3 @@
-import {implement} from '../../protocol';
-import {doto} from '../../core';
-import ICloneable from '../../protocols/icloneable';
-import IShow from '../../protocols/ishow';
-
 export default function Duration(milliseconds){
   this.milliseconds = milliseconds;
 }

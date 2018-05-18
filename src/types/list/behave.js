@@ -13,4 +13,4 @@ function rest(self){
 
 export default effect(
   behave,
-  implement(ISeq, {first: first, rest: rest}));
+  implement(ISeq, {first, rest}));

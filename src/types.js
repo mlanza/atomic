@@ -21,3 +21,5 @@ export * from "./types/observable";
 export * from "./types/publisher";
 export * from "./types/subscriptionmonitor";
 export * from "./types/reduced";
+export * from "./types/pipeline";
+export * from "./types/aspectable";

@@ -2,10 +2,13 @@
 * Monads, like promises, once introduced force themselves everywhere.  Pipelines allow one to dip into monadic operations without commiting to them.
 */
 
-import {log, overload, identity} from "./core";
-import {isNil, isBlank, reduced, partial} from "./types";
+import {log, overload, identity, doto} from "./core";
+import {isNil, isBlank, reduced, partial, pipeline, compile} from "./types";
 import {transduce} from "./sequences";
 import {map} from "./transducers";
+import {providePipeline} from "./types/pipeline";
+import {provideAspectable} from "./types/aspectable";
+
 
 export function either(f){
   return function(...args){
@@ -51,7 +54,7 @@ export const chained = overload(null, function(how){
 
 function pipedN(how, f, ...fs){
   return function(...args){
-    return chainedN(how, f(...args), ...fs);
+    return f ? chainedN(how, f(...args), ...fs) : args[0];
   }
 }
 
@@ -65,3 +68,11 @@ export const pipe   = piped(identity);
 export const opt    = piped(option);
 export const prom   = piped(future);
 export const handle = piped(either);
+
+providePipeline(piped);
+
+export const aspectable = provideAspectable(pipeline, compile);
+
+export const request = aspectable(future, function(config){
+  return fetch(config.url, config);
+});

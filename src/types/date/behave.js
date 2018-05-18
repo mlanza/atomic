@@ -77,7 +77,7 @@ function unit2(self, amount){
 
 export default effect(
   implement(IUnit, {unit: overload(null, constantly(days(1)), unit2)}),
-  implement(IAssociative, {assoc: assoc, contains: contains}),
-  implement(ILookup, {lookup: lookup}),
-  implement(ICloneable, {clone: clone}),
-  implement(IShow, {show: show}));
+  implement(IAssociative, {assoc, contains}),
+  implement(ILookup, {lookup}),
+  implement(ICloneable, {clone}),
+  implement(IShow, {show}));

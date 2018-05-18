@@ -7,4 +7,4 @@ function invoke(self, ...args){
 }
 
 export default effect(
-  implement(IFn, {invoke: invoke}));
+  implement(IFn, {invoke}));

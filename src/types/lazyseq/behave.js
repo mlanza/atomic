@@ -90,10 +90,10 @@ export default effect(
   iterable,
   showable,
   reduceable,
-  implement(IFind, {find: find}),
+  implement(IFind, {find}),
   implement(ISequential),
   implement(IEmptyableCollection, {empty: EMPTY}),
-  implement(IArr, {toArray: toArray}),
-  implement(ISeq, {first: first, rest: rest}),
+  implement(IArr, {toArray}),
+  implement(ISeq, {first, rest}),
   implement(ISeqable, {seq: identity}),
-  implement(INext, {next: next}));
+  implement(INext, {next}));

@@ -19,6 +19,6 @@ function unit2(self, amount){
 }
 
 export default effect(
-  implement(ISteppable, {step: step, converse: converse}),
+  implement(ISteppable, {step, converse}),
   implement(IUnit, {unit: overload(null, constantly(1), unit2)}),
-  implement(IShow, {show: show}));
+  implement(IShow, {show}));

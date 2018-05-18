@@ -14,4 +14,4 @@ function converse(self){
 }
 
 export default effect(
-  implement(ISteppable, {step: step, converse: converse}));
+  implement(ISteppable, {step, converse}));

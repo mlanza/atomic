@@ -1,32 +1,29 @@
-import {comp} from "./types";
-import {first, next} from "./protocols";
-import {overload} from "./core";
-import * as t from "./transducers";
-import * as s from "./sequences";
-export * from "./core";
-export * from "./protocol";
-export * from "./protocols";
-export * from "./types";
-export * from "./predicates";
-export * from "./sequences";
-export * from "./associatives";
-export * from "./pipelines";
-export * from "./signals";
-export * from "./dom";
+export * from "./clojure";
 
-export const map         = overload(null, t.map, s.map);
-export const take        = overload(null, t.take, s.take);
-export const drop        = overload(null, t.drop, s.drop);
-export const interpose   = overload(null, t.interpose, s.interpose);
-export const filter      = overload(null, t.filter, s.filter);
-export const keep        = overload(null, t.keep, s.keep);
-export const mapIndexed  = overload(null, t.mapIndexed, s.mapIndexed);
-export const keepIndexed = overload(null, t.keepIndexed, s.keepIndexed);
-export const remove      = overload(null, t.remove, s.remove);
-export const takeWhile   = overload(null, t.takeWhile, s.takeWhile);
-export const takeNth     = overload(null, t.takeNth, s.takeNth);
-export const dropWhile   = overload(null, t.dropWhile, s.dropWhile);
-export const compact     = overload(t.compact, s.compact);
-export const dedupe      = overload(t.dedupe, s.dedupe);
-export const distinct    = overload(t.distinct, s.distinct);
-export const second      = comp(first, next);
+/*
+export * from "./pointfree";
+import * as _ from "./pointfree";
+
+function checkStatus(resp){
+  return resp.ok ? Promise.resolve(resp) : Promise.reject(resp);
+}
+
+export const request = _.chain(_.request,
+  _.update("pre", _.prepend(function(params){
+    return Object.assign({
+      credentials: "same-origin",
+      method: "GET",
+      headers: {
+        "Accept": "application/json;odata=verbose",
+        "Content-Type": "application/json;odata=verbose"
+      }
+    }, params);
+  })),
+  _.update("post",
+    _.pipe(
+      _.append(checkStatus),
+      _.append(function(resp){
+        return resp.json();
+      }),
+      _.append(_.getIn(["d", "results"])))));
+*/
