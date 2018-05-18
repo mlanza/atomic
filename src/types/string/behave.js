@@ -60,7 +60,7 @@ export default effect(
   implement(IPrependable, {prepend}),
   implement(IEmptyableCollection, {empty: constantly(EMPTY_STRING)}),
   implement(IFn, {invoke: lookup}),
-  implement(ILookup, {lookup: lookup}),
+  implement(ILookup, {lookup}),
   implement(IArr, {toArray}),
   implement(ISeqable, {seq}),
   implement(ISeq, {first, rest}),

@@ -3,10 +3,11 @@ import Object from "./object/construct";
 export default Object;
 import behave from "./object/behave";
 behave(Object);
+import {invoke} from "../protocols/ifn";
 import {reduce} from "../protocols/ireduce";
 import {lookup} from "../protocols/ilookup";
 import {reducing} from "../types/reduced";
-import {curry} from "../types/function";
+import {curry, apply} from "../types/function";
 import {overload, constantly} from "../core";
 
 export function selectKeys(self, keys){
@@ -31,3 +32,9 @@ export function branch4(obj, pred, yes, no){
 }
 
 export const branch = overload(null, null, null, branch3, branch4);
+
+export function compile(self){
+  return function(...args){
+    return apply(invoke, self, args);
+  }
+}

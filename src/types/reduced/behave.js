@@ -7,4 +7,4 @@ function deref(self){
 }
 
 export default effect(
-  implement(IDeref, {deref: deref}));
+  implement(IDeref, {deref}));

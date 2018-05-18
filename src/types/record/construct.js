@@ -43,13 +43,13 @@ function extend(Type){
 
   doto(Type,
     implement(IRecord),
-    implement(IObj, {toObject: toObject}),
-    implement(IAssociative, {assoc: assoc, contains: contains}),
-    implement(ILookup, {lookup: lookup}),
+    implement(IObj, {toObject}),
+    implement(IAssociative, {assoc, contains}),
+    implement(ILookup, {lookup}),
     implement(IMap, {_dissoc: _dissoc}),
-    implement(ISeq, {first: first, rest: rest}),
-    implement(ICounted, {count: count}),
-    implement(ISeqable, {seq: seq}));
+    implement(ISeq, {first, rest}),
+    implement(ICounted, {count}),
+    implement(ISeqable, {seq}));
 
   Type.create = constructs(Type);
   Type.from = function(attrs){

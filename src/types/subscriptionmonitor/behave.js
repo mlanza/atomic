@@ -23,5 +23,5 @@ function pub(self, message){
 }
 
 export default effect(
-  implement(ISubscribe, {sub: sub}),
-  implement(IPublish, {pub: pub}));
+  implement(ISubscribe, {sub}),
+  implement(IPublish, {pub}));
