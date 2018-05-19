@@ -1867,11 +1867,11 @@
     provideBehavior(piped)(Pipeline);
   }
 
-  function Aspectable(how, exec, pre, post) {
+  function Aspectable(how, exec, before, after) {
     this.how = how;
     this.exec = exec;
-    this.pre = pre;
-    this.post = post;
+    this.before = before;
+    this.after = after;
   }
 
   function provideConstructor(pipeline) {
@@ -1881,41 +1881,53 @@
     };
   }
 
-  function provideBehavior$1(pipeline, compile) {
+  function provideBehavior$1(pipeline, compile, update) {
 
     function invoke$$1(self) {
       for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
         args[_key - 1] = arguments[_key];
       }
 
-      return compile(pipeline(self.how, [compile(self.pre), self.exec, compile(self.post)])).apply(undefined, args);
+      return compile(pipeline(self.how, [compile(self.before), self.exec, compile(self.after)])).apply(undefined, args);
     }
 
     function lookup$$1(self, key) {
       switch (key) {
-        case "pre":
-          return self.pre;
-        case "post":
-          return self.post;
+        case "before":
+          return self.before;
+        case "after":
+          return self.after;
       }
     }
 
     function assoc$$1(self, key, value) {
       switch (key) {
-        case "pre":
-          return new Aspectable(self.how, self.exec, value, self.post);
-        case "post":
-          return new Aspectable(self.how, self.exec, self.pre, value);
+        case "before":
+          return new Aspectable(self.how, self.exec, value, self.after);
+        case "after":
+          return new Aspectable(self.how, self.exec, self.before, value);
         default:
           return self;
       }
     }
 
-    return effect(implement(ILookup, { lookup: lookup$$1 }), implement(IAssociative, { assoc: assoc$$1 }), implement(IFn, { invoke: invoke$$1 }));
+    function prepend$$1(self, advice) {
+      return update(self, "before", function (pipeline) {
+        return IPrependable.prend(pipeline, advice);
+      });
+    }
+
+    function append$$1(self, advice) {
+      return update(self, "after", function (pipeline) {
+        return IAppendable.append(pipeline, advice);
+      });
+    }
+
+    return effect(implement(ILookup, { lookup: lookup$$1 }), implement(IAssociative, { assoc: assoc$$1 }), implement(IPrependable, { prepend: prepend$$1 }), implement(IAppendable, { append: append$$1 }), implement(IFn, { invoke: invoke$$1 }));
   }
 
-  function provideAspectable(pipeline, compile) {
-    provideBehavior$1(pipeline, compile)(Aspectable);
+  function provideAspectable(pipeline, compile, update) {
+    provideBehavior$1(pipeline, compile, update)(Aspectable);
     return provideConstructor(pipeline);
   }
 
@@ -2768,93 +2780,6 @@
     };
   }
 
-  /*
-  * Monads, like promises, once introduced force themselves everywhere.  Pipelines allow one to dip into monadic operations without commiting to them.
-  */
-
-  function either(f) {
-    return function () {
-      try {
-        return f.apply(undefined, arguments);
-      } catch (ex) {
-        return reduced(ex);
-      }
-    };
-  }
-
-  function option(f) {
-    return function (x) {
-      for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-        args[_key - 1] = arguments[_key];
-      }
-
-      return isNil(x) || isBlank(x) ? reduced(null) : apply(f, x, args);
-    };
-  }
-
-  function future(f) {
-    return overload(null, function (x) {
-      return Promise.resolve(x).then(f);
-    }, function () {
-      return Promise.resolve(f.apply(undefined, arguments));
-    });
-  }
-
-  function logged(f) {
-    return function () {
-      for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-        args[_key2] = arguments[_key2];
-      }
-
-      var result = f.apply(undefined, args);
-      log({ f: f, args: args, result: result });
-      return result;
-    };
-  }
-
-  function chainedN(how, init) {
-    for (var _len3 = arguments.length, fs = Array(_len3 > 2 ? _len3 - 2 : 0), _key3 = 2; _key3 < _len3; _key3++) {
-      fs[_key3 - 2] = arguments[_key3];
-    }
-
-    return transduce(map$1(how), function (memo, f) {
-      return f(memo);
-    }, init, fs);
-  }
-
-  var chained = overload(null, function (how) {
-    return partial(chainedN, how);
-  }, chainedN);
-
-  function pipedN(how, f) {
-    for (var _len4 = arguments.length, fs = Array(_len4 > 2 ? _len4 - 2 : 0), _key4 = 2; _key4 < _len4; _key4++) {
-      fs[_key4 - 2] = arguments[_key4];
-    }
-
-    return function () {
-      return f ? chainedN.apply(undefined, [how, f.apply(undefined, arguments)].concat(fs)) : arguments.length <= 0 ? undefined : arguments[0];
-    };
-  }
-
-  var piped = overload(null, function (how) {
-    return partial(pipedN, how);
-  }, pipedN);
-
-  var chain = chained(identity$1);
-  var maybe = chained(option);
-  var pipe = piped(identity$1);
-  var opt = piped(option);
-  var prom = piped(future);
-  var handle = piped(either);
-
-  providePipeline(piped);
-
-  var aspectable = provideAspectable(pipeline, compile);
-
-  var request = aspectable(future, function (config) {
-    return fetch(config.url, config);
-  });
-
   function get$2(self, key, notFound) {
     return lookup(self, key) || notFound;
   }
@@ -2984,6 +2909,93 @@
 
   var maxKey = scanKey(gt);
   var minKey = scanKey(lt);
+
+  /*
+  * Monads, like promises, once introduced force themselves everywhere.  Pipelines allow one to dip into monadic operations without commiting to them.
+  */
+
+  function either(f) {
+    return function () {
+      try {
+        return f.apply(undefined, arguments);
+      } catch (ex) {
+        return reduced(ex);
+      }
+    };
+  }
+
+  function option(f) {
+    return function (x) {
+      for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+        args[_key - 1] = arguments[_key];
+      }
+
+      return isNil(x) || isBlank(x) ? reduced(null) : apply(f, x, args);
+    };
+  }
+
+  function future(f) {
+    return overload(null, function (x) {
+      return Promise.resolve(x).then(f);
+    }, function () {
+      return Promise.resolve(f.apply(undefined, arguments));
+    });
+  }
+
+  function logged(f) {
+    return function () {
+      for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+        args[_key2] = arguments[_key2];
+      }
+
+      var result = f.apply(undefined, args);
+      log({ f: f, args: args, result: result });
+      return result;
+    };
+  }
+
+  function chainedN(how, init) {
+    for (var _len3 = arguments.length, fs = Array(_len3 > 2 ? _len3 - 2 : 0), _key3 = 2; _key3 < _len3; _key3++) {
+      fs[_key3 - 2] = arguments[_key3];
+    }
+
+    return transduce(map$1(how), function (memo, f) {
+      return f(memo);
+    }, init, fs);
+  }
+
+  var chained = overload(null, function (how) {
+    return partial(chainedN, how);
+  }, chainedN);
+
+  function pipedN(how, f) {
+    for (var _len4 = arguments.length, fs = Array(_len4 > 2 ? _len4 - 2 : 0), _key4 = 2; _key4 < _len4; _key4++) {
+      fs[_key4 - 2] = arguments[_key4];
+    }
+
+    return function () {
+      return f ? chainedN.apply(undefined, [how, f.apply(undefined, arguments)].concat(fs)) : arguments.length <= 0 ? undefined : arguments[0];
+    };
+  }
+
+  var piped = overload(null, function (how) {
+    return partial(pipedN, how);
+  }, pipedN);
+
+  var chain = chained(identity$1);
+  var maybe = chained(option);
+  var pipe = piped(identity$1);
+  var opt = piped(option);
+  var prom = piped(future);
+  var handle = piped(either);
+
+  providePipeline(piped);
+
+  var aspectable = provideAspectable(pipeline, compile, update$1);
+
+  var request = aspectable(future, function (config) {
+    return fetch(config.url, config);
+  });
 
   /*
   * Signals allow error handling to be handled as a separate (composable) concern rather than an integrated one.
@@ -3221,7 +3233,7 @@
   }
 
   export const request = _.chain(_.request,
-    _.update("pre", _.prepend(function(params){
+    _.update("before", _.prepend(function(params){
       return Object.assign({
         credentials: "same-origin",
         method: "GET",
@@ -3231,7 +3243,7 @@
         }
       }, params);
     })),
-    _.update("post",
+    _.update("after",
       _.pipe(
         _.append(checkStatus),
         _.append(function(resp){
