@@ -1,8 +1,14 @@
 import {implement} from '../../protocol';
-import {IFind, ICollection, INext, IArr, ISeq, IReduce, IKVReduce, ISeqable, ISequential, IIndexed, IEmptyableCollection, IShow} from '../../protocols';
+import {IFind, IEquiv, ICollection, INext, IArr, ISeq, IReduce, IKVReduce, ISeqable, ISequential, IIndexed, IEmptyableCollection, IShow} from '../../protocols';
 import {overload, identity, constantly, effect} from '../../core';
 import Reduced, {reduced} from "../reduced/construct";
 import {EMPTY} from '../empty';
+
+function equiv(as, bs){
+  const xs = seq(as),
+        ys = seq(bs);
+  return xs === ys || (IEquiv.equiv(first(xs), first(ys)) && IEquiv.equiv(rest(xs), rest(ys)));
+}
 
 function iterate(self){
   let state = self;
@@ -90,6 +96,7 @@ export default effect(
   iterable,
   showable,
   reduceable,
+  implement(IEquiv, {equiv}),
   implement(IFind, {find}),
   implement(ISequential),
   implement(IEmptyableCollection, {empty: EMPTY}),

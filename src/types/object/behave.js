@@ -1,6 +1,6 @@
 import {constantly, effect, identity} from '../../core';
 import {implement} from '../../protocol';
-import {ISet, IMapEntry, IElementContent, IReduce, IKVReduce, ISeqable, IShow, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, IFn, IMap, ISeq, IArr, IObj, ICloneable, IInclusive} from '../../protocols';
+import {ISet, IEquiv, IMapEntry, IElementContent, IReduce, IKVReduce, ISeqable, IShow, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, IFn, IMap, ISeq, IArr, IObj, ICloneable, IInclusive} from '../../protocols';
 import {objectSelection} from '../objectselection';
 import {reduced} from '../reduced';
 import {lazySeq} from '../lazyseq';
@@ -20,16 +20,16 @@ function find(self, key){
   return IAssociative.contains(self, key) ? [key, ILookup.lookup(self, key)] : null;
 }
 
-function superset(self, subset){
-  return IKVReduce.reducekv(seq(subset), function(memo, key, value){
-    return memo ? get(self, key) === value : reduced(memo);
-  }, true);
-}
-
 function includes(self, mapentry){
   let key = IMapEntry.key(mapentry),
       val = IMapEntry.val(mapentry);
   return self[key] === val;
+}
+
+function superset(self, subset){
+  return IKVReduce.reducekv(subset, function(memo, key, value){
+    return memo ? IEquiv.equiv(get(self, key), value) : reduced(memo);
+  }, true);
 }
 
 function lookup(self, key){
