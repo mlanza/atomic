@@ -3,7 +3,7 @@ import Aspectable, {provideConstructor} from "./aspectable/construct";
 export default Aspectable;
 import provideBehavior from "./aspectable/behave";
 
-export function provideAspectable(pipeline, compile){
-  provideBehavior(pipeline, compile)(Aspectable);
+export function provideAspectable(pipeline, compile, update){
+  provideBehavior(pipeline, compile, update)(Aspectable);
   return provideConstructor(pipeline);
 }
