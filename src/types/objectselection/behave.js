@@ -37,6 +37,17 @@ function dissoc(self, key){
   return objectSelection(self,  keys);
 }
 
+function keys(self){
+  return self.keys;
+}
+
+function vals(self){
+  const key = ISeq.first(self.keys);
+  return lazySeq(self.obj[key], function(){
+    return vals(objectSelection(self.obj, ISeq.rest(self.keys)));
+  });
+}
+
 function seq(self){
   const key = ISeq.first(self.keys);
   return lazySeq([key, self.obj[key]], function(){
@@ -79,7 +90,7 @@ export default effect(
   implement(IElementContent, {appendTo}),
   implement(IObj, {toObject}),
   implement(IFind, {find}),
-  implement(IMap, {dissoc}),
+  implement(IMap, {dissoc, keys, vals}),
   implement(IReduce, {reduce}),
   implement(IKVReduce, {reducekv}),
   implement(ICloneable, {clone}),
