@@ -10,7 +10,7 @@ function assoc(self, key, value){
   return obj;
 }
 
-function _reduce(self, xf, init){
+function reduce(self, xf, init){
   return init;
 }
 
@@ -24,5 +24,5 @@ export default effect(
   implement(ISeqable, {seq: identity}),
   implement(IIndexed, {nth: identity}),
   implement(ICounted, {count: constantly(0)}),
-  implement(IReduce, {_reduce: _reduce}),
+  implement(IReduce, {reduce}),
   implement(IShow, {show: constantly("null")}));

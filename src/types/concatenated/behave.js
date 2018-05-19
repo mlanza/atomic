@@ -30,12 +30,12 @@ function rest(self){
 }
 
 function toArray(self){
-  return reduce(function(memo, xs){
-    return reduce(function(memo, x){
+  return reduce(self.colls, function(memo, xs){
+    return reduce(xs, function(memo, x){
       memo.push(x);
       return memo;
-    }, memo, xs);
-  }, [], self.colls);
+    }, memo);
+  }, []);
 }
 
 function count(self){

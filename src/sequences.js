@@ -9,13 +9,13 @@ function transduce3(xform, f, coll){
 }
 
 function transduce4(xform, f, init, coll){
-  return reduce(xform(f), init, coll);
+  return reduce(coll, xform(f), init);
 }
 
 export const transduce = overload(null, null, null, transduce3, transduce4);
 
 function into2(to, from){
-  return reduce(conj, to, from);
+  return reduce(from, conj, to);
 }
 
 function into3(to, xform, from){
@@ -381,11 +381,11 @@ function sortBy3(keyFn, compare, coll){
 export const sortBy = overload(null, null, sortBy2, sortBy3);
 
 function groupInto(seed, f, coll){
-  return reduce(function(memo, value){
+  return reduce(coll, function(memo, value){
     return update(memo, f(value), function(group){
       return conj(group || [], value);
     });
-  }, seed, coll);
+  }, seed);
 }
 
 export function groupBy(f, coll){

@@ -1,6 +1,6 @@
 import {constantly, effect, identity} from '../../core';
 import {implement} from '../../protocol';
-import {reducekv, IElementContent, IReduce, IKVReduce, ISeqable, IShow, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, IFn, IMap, ISeq, IArr, IObj, ICloneable, IInclusive} from '../../protocols';
+import {IElementContent, IReduce, IKVReduce, ISeqable, IShow, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, IFn, IMap, ISeq, IArr, IObj, ICloneable, IInclusive} from '../../protocols';
 import {objectSelection} from '../objectselection';
 import {Reduced} from '../reduced';
 import {lazySeq} from '../lazyseq';
@@ -9,7 +9,7 @@ import {EMPTY_OBJECT} from '../object/construct';
 import {EMPTY} from '../empty/construct';
 
 function appendTo(self, parent){
-  IKVReduce._reducekv(self, function(memo, key, value){
+  IKVReduce.reducekv(self, function(memo, key, value){
     const f = typeof value === "function" ? memo.addEventListener : memo.setAttribute;
     f.call(parent, key, value);
     return memo;
@@ -21,9 +21,9 @@ function find(self, key){
 }
 
 function includes(superset, subset){
-  return reducekv(function(memo, key, value){
+  return IKVReduce.reducekv(seq(subset), function(memo, key, value){
     return memo ? get(superset, key) === value : new Reduced(memo);
-  }, true, seq(subset));
+  }, true);
 }
 
 function lookup(self, key){
@@ -37,7 +37,7 @@ function seqObject(self, keys){
   }) : EMPTY;
 }
 
-function _dissoc(obj, key){
+function dissoc(obj, key){
   const result = Object.assign({}, obj);
   delete result[key];
   return result;
@@ -65,17 +65,14 @@ function clone(self){
   return Object.assign({}, self);
 }
 
-function _reduce(self, xf, init){
-  let memo = init;
-  Object.keys(self).forEach(function(key){
-    memo = xf(memo, [key, self[key]]);
-
-  });
-  return memo;
+function reduce(self, xf, init){
+  return IReduce.reduce(Object.keys(self), function(memo, key){
+    return xf(memo, [key, self[key]]);
+  }, init);
 }
 
-function _reducekv(self, xf, init){
-  return IReduce._reduce(Object.keys(self), function(memo, key){
+function reducekv(self, xf, init){
+  return IReduce.reduce(Object.keys(self), function(memo, key){
     return xf(memo, key, self[key]);
   }, init);
 }
@@ -94,9 +91,9 @@ export default effect(
   implement(IFind, {find}),
   implement(IInclusive, {includes}),
   implement(ICloneable, {clone}),
-  implement(IReduce, {_reduce}),
-  implement(IKVReduce, {_reducekv}),
-  implement(IMap, {_dissoc}),
+  implement(IReduce, {reduce}),
+  implement(IKVReduce, {reducekv}),
+  implement(IMap, {dissoc}),
   implement(IFn, {invoke: lookup}),
   implement(ILookup, {lookup: lookup}),
   implement(IEmptyableCollection, {empty: constantly(EMPTY_OBJECT)}),

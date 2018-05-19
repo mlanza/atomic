@@ -2,7 +2,7 @@ import {constantly, identity, effect} from '../../core';
 import {implement} from '../../protocol';
 import {indexedSeq} from '../../types/indexedseq/construct';
 import {IMapEntry, IFind, IInclusive, IAssociative, IAppendable, IPrependable, ICollection, INext, ICounted, IReduce, IKVReduce, IArr, ISeq, ISeqable, ISequential, IIndexed, IShow, ILookup, IFn, IEmptyableCollection} from '../../protocols';
-import {reduce, reducekv} from '../../types/reduced';
+import * as r from '../../types/reduced';
 import {EMPTY_ARRAY} from '../../types/array/construct';
 import {showable, iterable} from '../lazyseq/behave';
 
@@ -55,12 +55,12 @@ function count(self){
   return self.length - self.start;
 }
 
-function _reduce(self, xf, init){
-  return reduce(self.arr, xf, init, self.start);
+function reduce(self, xf, init){
+  return r.reduce(self.arr, xf, init, self.start);
 }
 
-function _reducekv(self, xf, init){
-  return reducekv(self.arr, function(memo, k, v){
+function reducekv(self, xf, init){
+  return r.reducekv(self.arr, function(memo, k, v){
     return xf(memo, k - self.start, v);
   }, init, self.start);
 }
@@ -80,8 +80,8 @@ export default effect(
   implement(IAppendable, {append}),
   implement(IPrependable, {prepend}),
   implement(IEmptyableCollection, {empty: constantly(EMPTY_ARRAY)}),
-  implement(IReduce, {reduce: _reduce}),
-  implement(IKVReduce, {_reducekv: _reducekv}),
+  implement(IReduce, {reduce}),
+  implement(IKVReduce, {reducekv}),
   implement(IFn, {invoke: lookup}),
   implement(ILookup, {lookup}),
   implement(ICollection, {conj: append}),

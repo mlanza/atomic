@@ -14,7 +14,7 @@ function reset(self, value){
   return self.state;
 }
 
-function _swap(self, f){
+function swap(self, f){
   return reset(self, f(self.state));
 }
 
@@ -25,8 +25,8 @@ function sub(self, callback){
 }
 
 export default effect(
-  implement(IDeref, {deref: deref}),
-  implement(ISubscribe, {sub: sub}),
+  implement(IDeref, {deref}),
+  implement(ISubscribe, {sub}),
   implement(IPublish, {pub: reset}),
-  implement(IReset, {reset: reset}),
-  implement(ISwap, {_swap: _swap}));
+  implement(IReset, {reset}),
+  implement(ISwap, {swap}));

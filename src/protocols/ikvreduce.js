@@ -1,8 +1,6 @@
 import {protocol} from '../protocol';
 export const IKVReduce = protocol({
-  _reducekv: null
+  reducekv: null
 });
-export function reducekv(xf, init, coll){
-  return IKVReduce._reducekv(coll, xf, init);
-}
+export const reducekv = IKVReduce.reducekv;
 export default IKVReduce;

@@ -9,7 +9,7 @@ export function get(self, key, notFound){
 }
 
 export function getIn(self, keys, notFound){
-  return reduce(get, self, keys) || notFound;
+  return reduce(keys, get, self) || notFound;
 }
 
 export function assocIn(self, keys, value){
@@ -77,24 +77,24 @@ function updateInN(self, keys, f) {
 export const updateIn = overload(null, null, null, updateIn3, updateIn4, updateIn5, updateIn6, updateInN);
 
 export function merge(...maps){
-  return some(identity, maps) ? reduce(function(memo, map){
-    return reduce(function(memo, pair){
+  return some(identity, maps) ? reduce(maps, function(memo, map){
+    return reduce(seq(map), function(memo, pair){
       const key = pair[0], value = pair[1];
       memo[key] = value;
       return memo;
-    }, memo, seq(map));
-  }, {}, maps) : null;
+    }, memo);
+  }, {}) : null;
 }
 
 export function mergeWith(f, ...maps){
-  return some(identity, maps) ? reduce(function(memo, map){
-    return reduce(function(memo, pair){
+  return some(identity, maps) ? reduce(maps, function(memo, map){
+    return reduce(seq(map), function(memo, pair){
       const key = pair[0], value = pair[1];
       return contains(memo, key) ? update(memo, key, function(prior){
         return f(prior, value);
       }) : assoc(memo, key, value);
-    }, memo, seq(map));
-  }, {}, maps) : null;
+    }, memo);
+  }, {}) : null;
 }
 
 export function scanKey(better){
@@ -107,7 +107,7 @@ export function scanKey(better){
   }
 
   function scanKeyN(k, x){
-    return apply(reduce, scanKey2, x, slice(arguments, 2));
+    return apply(reduce, slice(arguments, 2), scanKey2, x);
   }
 
   return overload(null, null, scanKey2, scanKey3, scanKeyN);

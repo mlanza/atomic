@@ -13,15 +13,15 @@ export function cond(obj, pred, f, ...args){
 }
 
 export function and(obj, ...fs){
-  return reduce(function(memo, f){
+  return reduce(fs, function(memo, f){
     return memo ? f(obj) : reduced(memo);
-  }, true, fs);
+  }, true);
 }
 
 export function or(obj, ...fs){
-  return reduce(function(memo, f){
+  return reduce(fs, function(memo, f){
     return memo ? reduced(memo) : f(obj);
-  }, false, fs);
+  }, false);
 }
 
 export function branch3(obj, pred, yes){
@@ -65,10 +65,10 @@ function someFn3(a, b, c){
 
 function someFnN(...preds){
   return function(...args){
-    return reduce(function(result, pred){
+    return reduce(preds, function(result, pred){
       let r = apply(pred, args);
       return r ? reduced(r) : result;
-    }, false, preds);
+    }, false);
   }
 }
 
@@ -173,11 +173,11 @@ export const max = overload(null, identity, max2, reducing(max2));
 
 export function everyPred(...preds){
   return function(){
-    return reduce(function(memo, arg){
-      return reduce(function(memo, pred){
+    return reduce(slice(arguments), function(memo, arg){
+      return reduce(preds, function(memo, pred){
         var result = memo && pred(arg);
         return result ? result : reduced(result);
-      }, memo, preds);
-    }, true, slice(arguments))
+      }, memo);
+    }, true)
   }
 }
