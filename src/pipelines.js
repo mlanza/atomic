@@ -8,7 +8,6 @@ import {transduce} from "./sequences";
 import {map} from "./transducers";
 import {update} from "./associatives";
 import {providePipeline} from "./types/pipeline";
-import {provideAspectable} from "./types/aspectable";
 
 export function either(f){
   return function(...args){
@@ -71,8 +70,6 @@ export const handle = piped(either);
 
 providePipeline(piped);
 
-export const aspectable = provideAspectable(pipeline, compile, update);
-
-export const request = aspectable(future, function(config){
+export const request = pipeline(future, [function(config){
   return fetch(config.url, config);
-});
+}]);

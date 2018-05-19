@@ -9,7 +9,7 @@ function checkStatus(resp){
 }
 
 export const request = _.chain(_.request,
-  _.update("before", _.prepend(function(params){
+  _.prepend(function(params){
     return Object.assign({
       credentials: "same-origin",
       method: "GET",
@@ -18,12 +18,10 @@ export const request = _.chain(_.request,
         "Content-Type": "application/json;odata=verbose"
       }
     }, params);
-  })),
-  _.update("after",
-    _.pipe(
-      _.append(checkStatus),
-      _.append(function(resp){
-        return resp.json();
-      }),
-      _.append(_.getIn(["d", "results"])))));
+  }),
+  _.append(checkStatus),
+  _.append(function(resp){
+    return resp.json();
+  }),
+  _.append(_.getIn(["d", "results"])));
 */
