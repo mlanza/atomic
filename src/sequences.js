@@ -1,7 +1,7 @@
 import {doto, overload, constantly, identity} from "./core";
 import {compare, count, nth, first, rest, next, seq, reduce, conj, step, converse, unit, toArray, isSequential} from "./protocols";
-import {inc, comp, not, partial, concat, apply, concatenated, observable, isNil, cons, EMPTY, EMPTY_ARRAY, lazySeq, reduced, reducing, complement, slice, juxt, isBlank, isSome, randInt} from "./types";
-import {notEq} from "./predicates";
+import {inc, comp, not, partial, concat, apply, concatenated, observable, isNil, cons, EMPTY, EMPTY_ARRAY, lazySeq, reduced, complement, slice, juxt, isBlank, isSome, randInt} from "./types";
+import * as pred from "./predicates";
 import * as t from "./transducers";
 
 function transduce3(xform, f, coll){
@@ -321,6 +321,7 @@ export function partitionBy(f, xs){
 }
 
 export const butlast = partial(dropLast, 1);
+export const initial = butlast;
 
 export function last(coll){
   let xs = coll, ys = null;
@@ -504,7 +505,7 @@ function isDistinctN(...xs){
   return s.size === xs.length;
 }
 
-export const isDistinct = overload(null, constantly(true), notEq, isDistinctN);
+export const isDistinct = overload(null, constantly(true), pred.notEq, isDistinctN);
 
 export function randNth(coll){
   return nth(coll, randInt(count(coll)));
@@ -520,4 +521,19 @@ export function shuffle(coll) {
     a[j] = x;
   }
   return a;
+}
+
+export function zip(...colls){
+  return mapcat(identity, map(Array, ...colls));
+}
+
+//e.g. counter: generate(iterate(inc, 0)) or partial(generate, iterate(inc, 0))) for a counter factory;
+export function generate(xs){
+  var coll = seq(xs);
+  return function(){
+    if (!coll) return null;
+    var x = first(coll);
+    coll = rest(coll);
+    return x;
+  }
 }

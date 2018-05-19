@@ -1,5 +1,5 @@
-import {comp} from "./types";
-import {overload, identity} from "./core";
+import {comp, str, reducing, EMPTY} from "./types";
+import {overload, identity, constantly} from "./core";
 import * as pl from "./pipelines";
 import * as p  from "./protocols";
 import * as a from "./associatives";
@@ -59,3 +59,21 @@ export const reduce = overload(null, null, reduce2, reduce3);
 export const reducekv = overload(null, null, reducekv2, reducekv3);
 export const dissoc = overload(null, identity, p.dissoc, dissocN);
 export const second = comp(p.first, p.next);
+
+function join1(xs){
+  return s.into("", s.map(str, xs));
+}
+
+function join2(sep, xs){
+  return join1(s.interpose(sep, xs));
+}
+
+export const join = overload(null, join1, join2);
+export const union = overload(function(){
+  return new Set();
+}, identity, p.union, reducing(p.union));
+export const intersection = overload(null, null, p.intersection, reducing(p.intersection));
+export const difference = overload(null, null, p.difference, reducing(p.difference));
+export function subset(subset, superset){
+  return p.superset(superset, subset);
+}

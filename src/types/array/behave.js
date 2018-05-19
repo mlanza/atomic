@@ -1,10 +1,34 @@
 import {effect, identity, constantly} from '../../core';
 import {implement} from '../../protocol';
-import {toArray, IMapEntry, IEquiv, IReduce, IKVReduce, IAppendable, IPrependable, IInclusive, ICollection, INext, ISeq, IFind, IArr, ISeqable, IIndexed, IAssociative, ISequential, IEmptyableCollection, IFn, IShow, ICounted, ILookup, ICloneable} from '../../protocols';
+import {toArray, ISet, IMapEntry, IEquiv, IReduce, IKVReduce, IAppendable, IPrependable, IInclusive, ICollection, INext, ISeq, IFind, IArr, ISeqable, IIndexed, IAssociative, ISequential, IEmptyableCollection, IFn, IShow, ICounted, ILookup, ICloneable} from '../../protocols';
 import {reduce, reducekv, reduced} from '../../types/reduced';
 import {EMPTY_ARRAY} from './construct';
 import {indexedSeq} from '../indexedseq';
 import {showable} from '../lazyseq/behave';
+
+function union(xs, ys){
+  return new Set([...xs, ...ys]);
+}
+
+function intersection(xs, ys){
+  ys = new Set(Array.from(ys));
+  return xs.filter(function(x){
+    return ys.has(x);
+  });
+}
+
+function difference(xs, ys){
+  ys = new Set(Array.from(ys));
+  return xs.filter(function(x){
+    return !ys.has(x);
+  });
+}
+
+function superset(self, subset){
+  return IReduce.reduce(subset, function(memo, value){
+    return memo ? IInclusive.includes(self, value) : reduced(memo);
+  }, true);
+}
 
 function key(self){
   return self[0];
@@ -84,6 +108,7 @@ export default effect(
   showable,
   indexed,
   equivalence,
+  implement(ISet, {union, intersection, difference, superset}),
   implement(ISequential),
   implement(IFind, {find}),
   implement(IMapEntry, {key, val}),
