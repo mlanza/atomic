@@ -4,5 +4,6 @@ export const IComparable = protocol({
     return x > y ? 1 : x < y ? -1 : 0;
   }
 });
+export const compare = IComparable.compare;
 export const isComparable = satisfies(IComparable);
 export default IComparable;
