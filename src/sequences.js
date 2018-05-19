@@ -537,3 +537,25 @@ export function generate(xs){
     return x;
   }
 }
+
+export function best(pred, xs){
+  const coll = seq(xs);
+  return coll ? reduce(rest(coll), function(a, b){
+    return pred(a, b) ? a : b;
+  }, first(coll)) : null;
+}
+
+export function scan(pred, xs){
+  if (!seq(xs)) return true;
+  const head = first(xs),
+        coll = next(xs);
+  while (coll){
+    if (pred(head, first(coll))){
+      head = first(coll);
+      coll = next(coll);
+    } else {
+      return false;
+    }
+  }
+  return true;
+}

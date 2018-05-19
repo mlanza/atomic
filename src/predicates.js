@@ -187,12 +187,6 @@ export function everyPred(...preds){
   }
 }
 
-export function matches(obj, template){
-  return p.reducekv(template, function(memo, key, value){
-    return memo ? p.equiv(obj[key], value) : reduced(memo);
-  }, true);
-}
-
 export function pre(f, ...preds){
   let check = and(...preds);
   return function(){

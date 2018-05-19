@@ -30,6 +30,12 @@ function superset(self, subset){
   }, true);
 }
 
+function disj(self, value){
+  return self.filter(function(x){
+    return value !== value;
+  });
+}
+
 function key(self){
   return self[0];
 }
@@ -108,7 +114,7 @@ export default effect(
   showable,
   indexed,
   equivalence,
-  implement(ISet, {union, intersection, difference, superset}),
+  implement(ISet, {union, intersection, difference, disj, superset}),
   implement(ISequential),
   implement(IFind, {find}),
   implement(IMapEntry, {key, val}),
