@@ -1,8 +1,8 @@
-export function Aspectable(how, exec, pre, post){
+export function Aspectable(how, exec, before, after){
   this.how  = how;
   this.exec = exec;
-  this.pre  = pre;
-  this.post = post;
+  this.before = before;
+  this.after = after;
 }
 
 export function provideConstructor(pipeline){
