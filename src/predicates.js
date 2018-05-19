@@ -12,6 +12,18 @@ export function cond(obj, pred, f, ...args){
   }
 }
 
+export function and(obj, ...fs){
+  return reduce(function(memo, f){
+    return memo ? f(obj) : reduced(memo);
+  }, true, fs);
+}
+
+export function or(obj, ...fs){
+  return reduce(function(memo, f){
+    return memo ? reduced(memo) : f(obj);
+  }, false, fs);
+}
+
 export function branch3(obj, pred, yes){
   return branch4(obj, pred, yes, constantly(null));
 }
