@@ -11,10 +11,10 @@ import {curry, apply} from "../types/function";
 import {overload, constantly} from "../core";
 
 export function selectKeys(self, keys){
-  return reduce(function(memo, key){
+  return reduce(keys, function(memo, key){
     memo[key] = lookup(self, key);
     return memo;
-  }, {}, keys);
+  }, {});
 }
 
 function defaults2(self, defaults){

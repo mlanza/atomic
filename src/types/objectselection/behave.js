@@ -4,7 +4,7 @@ import {objectSelection} from '../../types/objectselection/construct';
 import {IObj, IElementContent, IFind, ICollection, IReduce, IKVReduce, INext, IArr, ISeq, ISeqable, IIndexed, IShow, ICounted, ILookup, IFn, IMap, ICloneable, IEmptyableCollection} from '../../protocols';
 import {lazySeq} from '../../types/lazyseq/construct';
 import {EMPTY_OBJECT} from '../../types/object/construct';
-import {reduce} from '../../types/reduced';
+import * as t from '../../types/reduced';
 import {equivalence} from '../../types/array/behave';
 
 function appendTo(self, parent){
@@ -16,7 +16,7 @@ function appendTo(self, parent){
 }
 
 function toObject(self){
-  return reduce(self.keys, function(memo, key){
+  return t.reduce(self.keys, function(memo, key){
     memo[key] = lookup(self, key);
     return memo;
   }, {});
@@ -30,7 +30,7 @@ function lookup(self, key){
   return self.keys.indexOf(key) > -1 ? self.obj[key] : null;
 }
 
-function _dissoc(self, key){
+function dissoc(self, key){
   const keys = toArray(self.keys).filter(function(k){
     return k !== key;
   });
@@ -49,26 +49,22 @@ function count(self){
 }
 
 function clone(self){
-  return reduce(IArr.toArray(seq(self)), function(memo, pair){
+  return t.reduce(IArr.toArray(seq(self)), function(memo, pair){
     memo[pair[0]] = pair[1];
     return memo;
   }, {});
 }
 
-function _reduce(self, xf, init){
-  let memo = init;
-  Object.keys(obj).forEach(function(key){
-    memo = xf(memo, [key, self.obj[key]]);
-  });
-  return memo;
+function reduce(self, xf, init){
+  return t.reduce(Object.keys(obj), function(memo, key){
+    return xf(memo, [key, self.obj[key]]);
+  }, init);
 }
 
-function _reducekv(self, xf, init){
-  let memo = init;
-  self.keys.forEach(function(key){
-    memo = xf(memo, key, self.obj[key]);
-  });
-  return memo;
+function reducekv(self, xf, init){
+  return t.reduce(self.keys, function(memo, key){
+    return xf(memo, key, self.obj[key]);
+  }, init);
 }
 
 function show(self){
@@ -83,9 +79,9 @@ export default effect(
   implement(IElementContent, {appendTo}),
   implement(IObj, {toObject}),
   implement(IFind, {find}),
-  implement(IMap, {_dissoc}),
-  implement(IReduce, {_reduce}),
-  implement(IKVReduce, {_reducekv}),
+  implement(IMap, {dissoc}),
+  implement(IReduce, {reduce}),
+  implement(IKVReduce, {reducekv}),
   implement(ICloneable, {clone}),
   implement(IEmptyableCollection, {empty: constantly(EMPTY_OBJECT)}),
   implement(IFn, {invoke: lookup}),

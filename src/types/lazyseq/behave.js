@@ -83,8 +83,8 @@ const toArray = overload(null, toArray1, toArray2);
 
 export const showable = implement(IShow, {show: show});
 export const reduceable = effect(
-  implement(IReduce, {_reduce: reduce}),
-  implement(IKVReduce, {_reducekv: reducekv}));
+  implement(IReduce, {reduce}),
+  implement(IKVReduce, {reducekv}));
 
 export default effect(
   iterable,

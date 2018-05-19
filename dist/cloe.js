@@ -285,11 +285,9 @@
   var isIndexed = satisfies(IIndexed);
 
   var IKVReduce = protocol({
-    _reducekv: null
+    reducekv: null
   });
-  function reducekv(xf, init, coll) {
-    return IKVReduce._reducekv(coll, xf, init);
-  }
+  var reducekv = IKVReduce.reducekv;
 
   var ILookup = protocol({
     lookup: null
@@ -297,35 +295,23 @@
   var lookup = ILookup.lookup;
 
   var IReduce = protocol({
-    _reduce: null
+    reduce: null
   });
-
-  function reduce2(xf, coll) {
-    return IReduce._reduce(coll, xf, xf());
-  }
-
-  function reduce3(xf, init, coll) {
-    return IReduce._reduce(coll, xf, init);
-  }
-
-  var reduce = overload(null, null, reduce2, reduce3);
+  var reduce = IReduce.reduce;
 
   var IMap = protocol({
-    _dissoc: null
+    dissoc: null
   });
-
-  var dissoc2 = IMap._dissoc;
-
-  function dissocN(obj) {
-    for (var _len = arguments.length, keys = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-      keys[_key - 1] = arguments[_key];
-    }
-
-    return reduce(dissoc2, obj, keys);
-  }
-
-  var dissoc = overload(null, identity$1, dissoc2, dissocN);
+  var dissoc = IMap.dissoc;
   var isMap = satisfies(IMap);
+
+  var IMapEntry = protocol({
+    key: null,
+    val: null
+  });
+  var key = IMapEntry.key;
+  var val = IMapEntry.val;
+  var isMapEntry = satisfies(IMapEntry);
 
   var INext = protocol({
     next: null
@@ -397,28 +383,9 @@
   var isSubscribe = satisfies(ISubscribe);
 
   var ISwap = protocol({
-    _swap: null
+    swap: null
   });
-
-  function swap3(self, f, a) {
-    return ISwap._swap(null, function (state) {
-      return f(state, a);
-    });
-  }
-
-  function swap4(self, f, a, b) {
-    return ISwap._swap(null, function (state) {
-      return f(state, a, b);
-    });
-  }
-
-  function swapN(self, f, a, b, cs) {
-    return ISwap._swap(null, function (state) {
-      return f.apply(null, [state, a, b].concat(cs));
-    });
-  }
-
-  var swap = overload(null, null, ISwap._swap, swap3, swap4, swapN);
+  var swap = ISwap.swap;
   var isSwap = satisfies(ISwap);
 
   var IUnit = protocol({
@@ -455,7 +422,7 @@
     return self instanceof Reduced ? self.valueOf() : self;
   }
 
-  function reduce3$1(xs, xf, init) {
+  function reduce3(xs, xf, init) {
     var memo = init,
         to = xs.length - 1;
     for (var i = 0; i <= to; i++) {
@@ -485,7 +452,7 @@
     return unreduced(memo);
   }
 
-  var reduce$1 = overload(null, null, null, reduce3$1, reduce4, reduce5);
+  var reduce$1 = overload(null, null, null, reduce3, reduce4, reduce5);
 
   function reducekv$1(xs, xf, init, from) {
     var memo = init,
@@ -543,9 +510,9 @@
     Type.prototype[Symbol.iterator] = iterator;
   }
 
-  function find$1(coll, key) {
+  function find$1(coll, key$$1) {
     return reducekv$2(coll, function (memo, k, v) {
-      return key === k ? reduced([k, v]) : memo;
+      return key$$1 === k ? reduced([k, v]) : memo;
     }, null);
   }
 
@@ -602,20 +569,28 @@
   var toArray$2 = overload(null, toArray1, toArray2);
 
   var showable = implement(IShow, { show: show$1 });
-  var reduceable = effect(implement(IReduce, { _reduce: reduce$2 }), implement(IKVReduce, { _reducekv: reducekv$2 }));
+  var reduceable = effect(implement(IReduce, { reduce: reduce$2 }), implement(IKVReduce, { reducekv: reducekv$2 }));
 
   var behave$2 = effect(iterable, showable, reduceable, implement(IFind, { find: find$1 }), implement(ISequential), implement(IEmptyableCollection, { empty: EMPTY }), implement(IArr, { toArray: toArray$2 }), implement(ISeq, { first: first$1, rest: rest$1 }), implement(ISeqable, { seq: identity$1 }), implement(INext, { next: next$1 }));
 
-  function find$2(self, key) {
-    return IAssociative.contains(self, key) ? [key, ILookup.lookup(self, key)] : null;
+  function key$1(self) {
+    return lookup$1(self, 0);
+  }
+
+  function val$1(self) {
+    return lookup$1(self, 1);
+  }
+
+  function find$2(self, key$$1) {
+    return IAssociative.contains(self, key$$1) ? [key$$1, ILookup.lookup(self, key$$1)] : null;
   }
 
   function contains$1(self, idx) {
     return idx < self.arr.length - self.start;
   }
 
-  function lookup$1(self, key) {
-    return self.arr[self.start + key];
+  function lookup$1(self, key$$1) {
+    return self.arr[self.start + key$$1];
   }
 
   function append$1(self, x) {
@@ -647,11 +622,11 @@
     return self.length - self.start;
   }
 
-  function _reduce(self, xf, init) {
+  function reduce$3(self, xf, init) {
     return reduce$1(self.arr, xf, init, self.start);
   }
 
-  function _reducekv(self, xf, init) {
+  function reducekv$3(self, xf, init) {
     return reducekv$1(self.arr, function (memo, k, v) {
       return xf(memo, k - self.start, v);
     }, init, self.start);
@@ -661,32 +636,40 @@
     return self.arr.indexOf(x, self.start) > -1;
   }
 
-  var behave$3 = effect(showable, iterable, implement(ISequential), implement(IInclusive, { includes: includes$1 }), implement(IFind, { find: find$2 }), implement(IAssociative, { contains: contains$1 }), implement(IAppendable, { append: append$1 }), implement(IPrependable, { prepend: prepend$1 }), implement(IEmptyableCollection, { empty: constantly(EMPTY_ARRAY) }), implement(IReduce, { reduce: _reduce }), implement(IKVReduce, { _reducekv: _reducekv }), implement(IFn, { invoke: lookup$1 }), implement(ILookup, { lookup: lookup$1 }), implement(ICollection, { conj: append$1 }), implement(INext, { next: next$2 }), implement(IArr, { toArray: toArray$3 }), implement(ISeq, { first: first$2, rest: rest$2 }), implement(ISeqable, { seq: identity$1 }), implement(ICounted, { count: count$1 }));
+  var behave$3 = effect(showable, iterable, implement(ISequential), implement(IMapEntry, { key: key$1, val: val$1 }), implement(IInclusive, { includes: includes$1 }), implement(IFind, { find: find$2 }), implement(IAssociative, { contains: contains$1 }), implement(IAppendable, { append: append$1 }), implement(IPrependable, { prepend: prepend$1 }), implement(IEmptyableCollection, { empty: constantly(EMPTY_ARRAY) }), implement(IReduce, { reduce: reduce$3 }), implement(IKVReduce, { reducekv: reducekv$3 }), implement(IFn, { invoke: lookup$1 }), implement(ILookup, { lookup: lookup$1 }), implement(ICollection, { conj: append$1 }), implement(INext, { next: next$2 }), implement(IArr, { toArray: toArray$3 }), implement(ISeq, { first: first$2, rest: rest$2 }), implement(ISeqable, { seq: identity$1 }), implement(ICounted, { count: count$1 }));
 
   behave$3(IndexedSeq);
 
+  function key$2(self) {
+    return self[0];
+  }
+
+  function val$2(self) {
+    return self[1];
+  }
+
   function equiv$1(self, other) {
-    return self === other ? true : IKVReduce._reducekv(self, function (memo, key, value) {
-      return memo ? IEquiv.equiv(value, ILookup.lookup(other, key)) : reduced(memo);
+    return self === other ? true : IKVReduce._reducekv(self, function (memo, key$$1, value) {
+      return memo ? IEquiv.equiv(value, ILookup.lookup(other, key$$1)) : reduced(memo);
     }, ICounted.count(self) === ICounted.count(other));
   }
 
-  function find$3(self, key) {
-    return IAssociative.contains(self, key) ? [key, ILookup.lookup(self, key)] : null;
+  function find$3(self, key$$1) {
+    return IAssociative.contains(self, key$$1) ? [key$$1, ILookup.lookup(self, key$$1)] : null;
   }
 
-  function lookup$2(self, key) {
-    return self[key];
+  function lookup$2(self, key$$1) {
+    return self[key$$1];
   }
 
-  function assoc$1(self, key, value) {
+  function assoc$1(self, key$$1, value) {
     var arr = Array.from(self);
-    arr.splice(key, 1, value);
+    arr.splice(key$$1, 1, value);
     return arr;
   }
 
-  function contains$2(self, key) {
-    return key > -1 && key < self.length;
+  function contains$2(self, key$$1) {
+    return key$$1 > -1 && key$$1 < self.length;
   }
 
   function seq$1(self) {
@@ -729,7 +712,7 @@
 
   var equivalence = implement(IEquiv, { equiv: equiv$1 });
 
-  var behave$4 = effect(showable, indexed, equivalence, implement(ISequential), implement(IFind, { find: find$3 }), implement(IInclusive, { includes: includes$2 }), implement(IAppendable, { append: append$2 }), implement(IPrependable, { prepend: prepend$2 }), implement(ICloneable, { clone: Array.from }), implement(IFn, { invoke: lookup$2 }), implement(IEmptyableCollection, { empty: constantly(EMPTY_ARRAY) }), implement(IReduce, { _reduce: reduce$1 }), implement(IKVReduce, { _reducekv: reducekv$1 }), implement(ILookup, { lookup: lookup$2 }), implement(IAssociative, { assoc: assoc$1, contains: contains$2 }), implement(ISeqable, { seq: seq$1 }), implement(ICollection, { conj: append$2 }), implement(INext, { next: next$3 }), implement(IArr, { toArray: identity$1 }), implement(ISeq, { first: first$3, rest: rest$3 }));
+  var behave$4 = effect(showable, indexed, equivalence, implement(ISequential), implement(IFind, { find: find$3 }), implement(IMapEntry, { key: key$2, val: val$2 }), implement(IInclusive, { includes: includes$2 }), implement(IAppendable, { append: append$2 }), implement(IPrependable, { prepend: prepend$2 }), implement(ICloneable, { clone: Array.from }), implement(IFn, { invoke: lookup$2 }), implement(IEmptyableCollection, { empty: constantly(EMPTY_ARRAY) }), implement(IReduce, { reduce: reduce$1 }), implement(IKVReduce, { reducekv: reducekv$1 }), implement(ILookup, { lookup: lookup$2 }), implement(IAssociative, { assoc: assoc$1, contains: contains$2 }), implement(ISeqable, { seq: seq$1 }), implement(ICollection, { conj: append$2 }), implement(INext, { next: next$3 }), implement(IArr, { toArray: identity$1 }), implement(ISeq, { first: first$3, rest: rest$3 }));
 
   behave$4(Array);
 
@@ -760,17 +743,17 @@
     return self === false;
   }
 
-  function assoc$2(self, key, value) {
+  function assoc$2(self, key$$1, value) {
     var obj = {};
-    obj[key] = value;
+    obj[key$$1] = value;
     return obj;
   }
 
-  function _reduce$1(self, xf, init) {
+  function reduce$4(self, xf, init) {
     return init;
   }
 
-  var behave$5 = effect(implement(IEmptyableCollection, { empty: identity$1 }), implement(ILookup, { lookup: constantly(null) }), implement(IAssociative, { assoc: assoc$2, contains: constantly(false) }), implement(INext, { next: identity$1 }), implement(IArr, { toArray: constantly(EMPTY_ARRAY) }), implement(ISeq, { first: identity$1, rest: constantly(EMPTY) }), implement(ISeqable, { seq: identity$1 }), implement(IIndexed, { nth: identity$1 }), implement(ICounted, { count: constantly(0) }), implement(IReduce, { _reduce: _reduce$1 }), implement(IShow, { show: constantly("null") }));
+  var behave$5 = effect(implement(IEmptyableCollection, { empty: identity$1 }), implement(ILookup, { lookup: constantly(null) }), implement(IAssociative, { assoc: assoc$2, contains: constantly(false) }), implement(INext, { next: identity$1 }), implement(IArr, { toArray: constantly(EMPTY_ARRAY) }), implement(ISeq, { first: identity$1, rest: constantly(EMPTY) }), implement(ISeqable, { seq: identity$1 }), implement(IIndexed, { nth: identity$1 }), implement(ICounted, { count: constantly(0) }), implement(IReduce, { reduce: reduce$4 }), implement(IShow, { show: constantly("null") }));
 
   behave$5(Nil);
 
@@ -1046,12 +1029,12 @@
   }
 
   function toArray$5(self) {
-    return reduce(function (memo, xs) {
-      return reduce(function (memo, x) {
+    return reduce(self.colls, function (memo, xs) {
+      return reduce(xs, function (memo, x) {
         memo.push(x);
         return memo;
-      }, memo, xs);
-    }, [], self.colls);
+      }, memo);
+    }, []);
   }
 
   function count$2(self) {
@@ -1225,8 +1208,8 @@
 
   behave$9(Duration);
 
-  function lookup$3(self, key) {
-    switch (key) {
+  function lookup$3(self, key$$1) {
+    switch (key$$1) {
       case "year":
         return self.getFullYear();
       case "month":
@@ -1244,19 +1227,19 @@
     }
   }
 
-  function InvalidKeyError(key, target) {
-    this.key = key;
+  function InvalidKeyError(key$$1, target) {
+    this.key = key$$1;
     this.target = target;
   }
 
-  function contains$3(self, key) {
-    return ["year", "month", "day", "hour", "minute", "second", "millisecond"].indexOf(key) > -1;
+  function contains$3(self, key$$1) {
+    return ["year", "month", "day", "hour", "minute", "second", "millisecond"].indexOf(key$$1) > -1;
   }
 
   //the benefit of exposing internal state as a map is assocIn and updateIn
-  function assoc$3(self, key, value) {
+  function assoc$3(self, key$$1, value) {
     var dt = new Date(self.valueOf());
-    switch (key) {
+    switch (key$$1) {
       case "year":
         dt.setFullYear(value);
         break;
@@ -1279,7 +1262,7 @@
         dt.setMilliseconds(value);
         break;
       default:
-        throw new InvalidKeyError(key, self);
+        throw new InvalidKeyError(key$$1, self);
     }
     return dt;
   }
@@ -1390,38 +1373,38 @@
   }
 
   function appendTo$1(self, parent) {
-    IKVReduce._reducekv(self, function (memo, key, value) {
+    IKVReduce._reducekv(self, function (memo, key$$1, value) {
       var f = typeof value === "function" ? memo.addEventListener : memo.setAttribute;
-      f.call(parent, key, value);
+      f.call(parent, key$$1, value);
       return memo;
     }, parent, self);
   }
 
   function toObject$1(self) {
-    return reduce$1(self.keys, function (memo, key) {
-      memo[key] = lookup$4(self, key);
+    return reduce$1(self.keys, function (memo, key$$1) {
+      memo[key$$1] = lookup$4(self, key$$1);
       return memo;
     }, {});
   }
 
-  function find$4(self, key) {
-    return self.keys.indexOf(key) > -1 ? [key, self.obj[key]] : null;
+  function find$4(self, key$$1) {
+    return self.keys.indexOf(key$$1) > -1 ? [key$$1, self.obj[key$$1]] : null;
   }
 
-  function lookup$4(self, key) {
-    return self.keys.indexOf(key) > -1 ? self.obj[key] : null;
+  function lookup$4(self, key$$1) {
+    return self.keys.indexOf(key$$1) > -1 ? self.obj[key$$1] : null;
   }
 
-  function _dissoc(self, key) {
+  function dissoc$1(self, key$$1) {
     var keys = toArray(self.keys).filter(function (k) {
-      return k !== key;
+      return k !== key$$1;
     });
     return objectSelection(self, keys);
   }
 
   function seq$2(self) {
-    var key = ISeq.first(self.keys);
-    return lazySeq([key, self.obj[key]], function () {
+    var key$$1 = ISeq.first(self.keys);
+    return lazySeq([key$$1, self.obj[key$$1]], function () {
       return objectSelection(self.obj, ISeq.rest(self.keys));
     });
   }
@@ -1437,20 +1420,16 @@
     }, {});
   }
 
-  function _reduce$2(self, xf, init) {
-    var memo = init;
-    Object.keys(obj).forEach(function (key) {
-      memo = xf(memo, [key, self.obj[key]]);
-    });
-    return memo;
+  function reduce$5(self, xf, init) {
+    return reduce$1(Object.keys(obj), function (memo, key$$1) {
+      return xf(memo, [key$$1, self.obj[key$$1]]);
+    }, init);
   }
 
-  function _reducekv$1(self, xf, init) {
-    var memo = init;
-    self.keys.forEach(function (key) {
-      memo = xf(memo, key, self.obj[key]);
-    });
-    return memo;
+  function reducekv$4(self, xf, init) {
+    return reduce$1(self.keys, function (memo, key$$1) {
+      return xf(memo, key$$1, self.obj[key$$1]);
+    }, init);
   }
 
   function show$4(self) {
@@ -1460,53 +1439,53 @@
     }).join(", ") + "}";
   }
 
-  var behave$13 = effect(equivalence, implement(IElementContent, { appendTo: appendTo$1 }), implement(IObj, { toObject: toObject$1 }), implement(IFind, { find: find$4 }), implement(IMap, { _dissoc: _dissoc }), implement(IReduce, { _reduce: _reduce$2 }), implement(IKVReduce, { _reducekv: _reducekv$1 }), implement(ICloneable, { clone: clone$2 }), implement(IEmptyableCollection, { empty: constantly(EMPTY_OBJECT) }), implement(IFn, { invoke: lookup$4 }), implement(ILookup, { lookup: lookup$4 }), implement(ISeqable, { seq: seq$2 }), implement(ICounted, { count: count$3 }), implement(IShow, { show: show$4 }));
+  var behave$13 = effect(equivalence, implement(IElementContent, { appendTo: appendTo$1 }), implement(IObj, { toObject: toObject$1 }), implement(IFind, { find: find$4 }), implement(IMap, { dissoc: dissoc$1 }), implement(IReduce, { reduce: reduce$5 }), implement(IKVReduce, { reducekv: reducekv$4 }), implement(ICloneable, { clone: clone$2 }), implement(IEmptyableCollection, { empty: constantly(EMPTY_OBJECT) }), implement(IFn, { invoke: lookup$4 }), implement(ILookup, { lookup: lookup$4 }), implement(ISeqable, { seq: seq$2 }), implement(ICounted, { count: count$3 }), implement(IShow, { show: show$4 }));
 
   behave$13(ObjectSelection);
 
   function appendTo$2(self, parent) {
-    IKVReduce._reducekv(self, function (memo, key, value) {
+    IKVReduce.reducekv(self, function (memo, key$$1, value) {
       var f = typeof value === "function" ? memo.addEventListener : memo.setAttribute;
-      f.call(parent, key, value);
+      f.call(parent, key$$1, value);
       return memo;
     }, parent, self);
   }
 
-  function find$5(self, key) {
-    return IAssociative.contains(self, key) ? [key, ILookup.lookup(self, key)] : null;
+  function find$5(self, key$$1) {
+    return IAssociative.contains(self, key$$1) ? [key$$1, ILookup.lookup(self, key$$1)] : null;
   }
 
   function includes$3(superset, subset) {
-    return reducekv(function (memo, key, value) {
-      return memo ? get(superset, key) === value : new Reduced(memo);
-    }, true, seq$3(subset));
+    return IKVReduce.reducekv(seq$3(subset), function (memo, key$$1, value) {
+      return memo ? get(superset, key$$1) === value : new Reduced(memo);
+    }, true);
   }
 
-  function lookup$5(self, key) {
-    return self[key];
+  function lookup$5(self, key$$1) {
+    return self[key$$1];
   }
 
   function seqObject(self, keys) {
-    var key = ISeq.first(keys);
-    return ISeqable.seq(keys) ? lazySeq([key, self[key]], function () {
+    var key$$1 = ISeq.first(keys);
+    return ISeqable.seq(keys) ? lazySeq([key$$1, self[key$$1]], function () {
       return seqObject(self, ISeq.rest(keys));
     }) : EMPTY;
   }
 
-  function _dissoc$1(obj, key) {
+  function dissoc$2(obj, key$$1) {
     var result = Object.assign({}, obj);
-    delete result[key];
+    delete result[key$$1];
     return result;
   }
 
-  function assoc$4(self, key, value) {
+  function assoc$4(self, key$$1, value) {
     var obj = Object.assign({}, self);
-    obj[key] = value;
+    obj[key$$1] = value;
     return obj;
   }
 
-  function contains$4(self, key) {
-    return self.hasOwnProperty(key);
+  function contains$4(self, key$$1) {
+    return self.hasOwnProperty(key$$1);
   }
 
   function seq$3(self) {
@@ -1521,17 +1500,15 @@
     return Object.assign({}, self);
   }
 
-  function _reduce$3(self, xf, init) {
-    var memo = init;
-    Object.keys(self).forEach(function (key) {
-      memo = xf(memo, [key, self[key]]);
-    });
-    return memo;
+  function reduce$6(self, xf, init) {
+    return IReduce.reduce(Object.keys(self), function (memo, key$$1) {
+      return xf(memo, [key$$1, self[key$$1]]);
+    }, init);
   }
 
-  function _reducekv$2(self, xf, init) {
-    return IReduce._reduce(Object.keys(self), function (memo, key) {
-      return xf(memo, key, self[key]);
+  function reducekv$5(self, xf, init) {
+    return IReduce.reduce(Object.keys(self), function (memo, key$$1) {
+      return xf(memo, key$$1, self[key$$1]);
     }, init);
   }
 
@@ -1542,15 +1519,15 @@
     }).join(", ") + "}";
   }
 
-  var behave$14 = effect(equivalence, implement(IElementContent, { appendTo: appendTo$2 }), implement(IObj, { toObject: identity$1 }), implement(IFind, { find: find$5 }), implement(IInclusive, { includes: includes$3 }), implement(ICloneable, { clone: clone$3 }), implement(IReduce, { _reduce: _reduce$3 }), implement(IKVReduce, { _reducekv: _reducekv$2 }), implement(IMap, { _dissoc: _dissoc$1 }), implement(IFn, { invoke: lookup$5 }), implement(ILookup, { lookup: lookup$5 }), implement(IEmptyableCollection, { empty: constantly(EMPTY_OBJECT) }), implement(IAssociative, { assoc: assoc$4, contains: contains$4 }), implement(ISeqable, { seq: seq$3 }), implement(ICounted, { count: count$4 }), implement(IShow, { show: show$5 }));
+  var behave$14 = effect(equivalence, implement(IElementContent, { appendTo: appendTo$2 }), implement(IObj, { toObject: identity$1 }), implement(IFind, { find: find$5 }), implement(IInclusive, { includes: includes$3 }), implement(ICloneable, { clone: clone$3 }), implement(IReduce, { reduce: reduce$6 }), implement(IKVReduce, { reducekv: reducekv$5 }), implement(IMap, { dissoc: dissoc$2 }), implement(IFn, { invoke: lookup$5 }), implement(ILookup, { lookup: lookup$5 }), implement(IEmptyableCollection, { empty: constantly(EMPTY_OBJECT) }), implement(IAssociative, { assoc: assoc$4, contains: contains$4 }), implement(ISeqable, { seq: seq$3 }), implement(ICounted, { count: count$4 }), implement(IShow, { show: show$5 }));
 
   behave$14(Object);
 
   function selectKeys(self, keys) {
-    return reduce(function (memo, key) {
+    return reduce(keys, function (memo, key) {
       memo[key] = lookup(self, key);
       return memo;
-    }, {}, keys);
+    }, {});
   }
 
   function defaults2(self, defaults) {
@@ -1617,7 +1594,7 @@
     return self.state;
   }
 
-  function _swap(self, f) {
+  function swap$1(self, f) {
     return reset$1(self, f(self.state));
   }
 
@@ -1627,7 +1604,7 @@
     return ISubscribe.sub(self.publisher, callback);
   }
 
-  var behave$16 = effect(implement(IDeref, { deref: deref$2 }), implement(ISubscribe, { sub: sub$2 }), implement(IPublish, { pub: reset$1 }), implement(IReset, { reset: reset$1 }), implement(ISwap, { _swap: _swap }));
+  var behave$16 = effect(implement(IDeref, { deref: deref$2 }), implement(ISubscribe, { sub: sub$2 }), implement(IPublish, { pub: reset$1 }), implement(IReset, { reset: reset$1 }), implement(ISwap, { swap: swap$1 }));
 
   behave$16(Observable);
 
@@ -1669,12 +1646,12 @@
     return self.attrs;
   }
 
-  function contains$5(self, key) {
-    return self.attrs.hasOwnProperty(key);
+  function contains$5(self, key$$1) {
+    return self.attrs.hasOwnProperty(key$$1);
   }
 
-  function lookup$6(self, key) {
-    return self.attrs[key];
+  function lookup$6(self, key$$1) {
+    return self.attrs[key$$1];
   }
 
   function seq$4(self) {
@@ -1695,12 +1672,12 @@
 
   function extend$1(Type) {
 
-    function assoc$$1(self, key, value) {
-      return Type.from(IAssociative.assoc(self.attrs, key, value));
+    function assoc$$1(self, key$$1, value) {
+      return Type.from(IAssociative.assoc(self.attrs, key$$1, value));
     }
 
-    function _dissoc(self, key) {
-      return Type.from(IMap.dissoc(self.attrs, key));
+    function _dissoc(self, key$$1) {
+      return Type.from(IMap.dissoc(self.attrs, key$$1));
     }
 
     doto(Type, implement(IRecord), implement(IObj, { toObject: toObject$2 }), implement(IAssociative, { assoc: assoc$$1, contains: contains$5 }), implement(ILookup, { lookup: lookup$6 }), implement(IMap, { _dissoc: _dissoc }), implement(ISeq, { first: first$6, rest: rest$6 }), implement(ICounted, { count: count$5 }), implement(ISeqable, { seq: seq$4 }));
@@ -1712,8 +1689,8 @@
   }
 
   function body(keys) {
-    return "this.attrs = {" + keys.map(function (key) {
-      return "'" + key + "': " + key;
+    return "this.attrs = {" + keys.map(function (key$$1) {
+      return "'" + key$$1 + "': " + key$$1;
     }).join(", ") + "};";
   }
 
@@ -1759,8 +1736,8 @@
     return self.length ? self : null;
   }
 
-  function lookup$7(self, key) {
-    return self[key];
+  function lookup$7(self, key$$1) {
+    return self[key$$1];
   }
 
   function first$7(self) {
@@ -1812,8 +1789,8 @@
   }
 
   function template(template, obj) {
-    return reducekv(function (text, key, value) {
-      return replace$1(text, new RegExp("\\{" + key + "\\}", 'ig'), value);
+    return reducekv(function (text, key$$1, value) {
+      return replace$1(text, new RegExp("\\{" + key$$1 + "\\}", 'ig'), value);
     }, template, obj);
   }
 
@@ -1905,6 +1882,26 @@
     }
   }
 
+  function and(obj) {
+    for (var _len2 = arguments.length, fs = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
+      fs[_key2 - 1] = arguments[_key2];
+    }
+
+    return reduce(fs, function (memo, f) {
+      return memo ? f(obj) : reduced(memo);
+    }, true);
+  }
+
+  function or(obj) {
+    for (var _len3 = arguments.length, fs = Array(_len3 > 1 ? _len3 - 1 : 0), _key3 = 1; _key3 < _len3; _key3++) {
+      fs[_key3 - 1] = arguments[_key3];
+    }
+
+    return reduce(fs, function (memo, f) {
+      return memo ? reduced(memo) : f(obj);
+    }, false);
+  }
+
   function branch3(obj, pred, yes) {
     return branch4(obj, pred, yes, constantly(null));
   }
@@ -1945,19 +1942,19 @@
   }
 
   function someFnN() {
-    for (var _len2 = arguments.length, preds = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-      preds[_key2] = arguments[_key2];
+    for (var _len4 = arguments.length, preds = Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
+      preds[_key4] = arguments[_key4];
     }
 
     return function () {
-      for (var _len3 = arguments.length, args = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
-        args[_key3] = arguments[_key3];
+      for (var _len5 = arguments.length, args = Array(_len5), _key5 = 0; _key5 < _len5; _key5++) {
+        args[_key5] = arguments[_key5];
       }
 
-      return reduce(function (result, pred) {
+      return reduce(preds, function (result, pred) {
         var r = apply$1(pred, args);
         return r ? reduced(r) : result;
-      }, false, preds);
+      }, false);
     };
   }
 
@@ -1973,8 +1970,8 @@
   }
 
   function ltN() {
-    for (var _len4 = arguments.length, args = Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
-      args[_key4] = arguments[_key4];
+    for (var _len6 = arguments.length, args = Array(_len6), _key6 = 0; _key6 < _len6; _key6++) {
+      args[_key6] = arguments[_key6];
     }
 
     return everyPair(lt2, args);
@@ -1987,8 +1984,8 @@
   }
 
   function lteN() {
-    for (var _len5 = arguments.length, args = Array(_len5), _key5 = 0; _key5 < _len5; _key5++) {
-      args[_key5] = arguments[_key5];
+    for (var _len7 = arguments.length, args = Array(_len7), _key7 = 0; _key7 < _len7; _key7++) {
+      args[_key7] = arguments[_key7];
     }
 
     return everyPair(lte2, args);
@@ -2001,8 +1998,8 @@
   }
 
   function gtN() {
-    for (var _len6 = arguments.length, args = Array(_len6), _key6 = 0; _key6 < _len6; _key6++) {
-      args[_key6] = arguments[_key6];
+    for (var _len8 = arguments.length, args = Array(_len8), _key8 = 0; _key8 < _len8; _key8++) {
+      args[_key8] = arguments[_key8];
     }
 
     return everyPair(gt2, args);
@@ -2015,8 +2012,8 @@
   }
 
   function gteN() {
-    for (var _len7 = arguments.length, args = Array(_len7), _key7 = 0; _key7 < _len7; _key7++) {
-      args[_key7] = arguments[_key7];
+    for (var _len9 = arguments.length, args = Array(_len9), _key9 = 0; _key9 < _len9; _key9++) {
+      args[_key9] = arguments[_key9];
     }
 
     return everyPair(gte2, args);
@@ -2029,8 +2026,8 @@
   }
 
   function eqN() {
-    for (var _len8 = arguments.length, args = Array(_len8), _key8 = 0; _key8 < _len8; _key8++) {
-      args[_key8] = arguments[_key8];
+    for (var _len10 = arguments.length, args = Array(_len10), _key10 = 0; _key10 < _len10; _key10++) {
+      args[_key10] = arguments[_key10];
     }
 
     return everyPair(eq2, args);
@@ -2043,8 +2040,8 @@
   }
 
   function notEqN() {
-    for (var _len9 = arguments.length, args = Array(_len9), _key9 = 0; _key9 < _len9; _key9++) {
-      args[_key9] = arguments[_key9];
+    for (var _len11 = arguments.length, args = Array(_len11), _key11 = 0; _key11 < _len11; _key11++) {
+      args[_key11] = arguments[_key11];
     }
 
     return !everyPair(eq2, args);
@@ -2057,8 +2054,8 @@
   }
 
   function equalN() {
-    for (var _len10 = arguments.length, args = Array(_len10), _key10 = 0; _key10 < _len10; _key10++) {
-      args[_key10] = arguments[_key10];
+    for (var _len12 = arguments.length, args = Array(_len12), _key12 = 0; _key12 < _len12; _key12++) {
+      args[_key12] = arguments[_key12];
     }
 
     return everyPair(equal2, args);
@@ -2078,17 +2075,17 @@
   var max = overload(null, identity$1, max2, reducing(max2));
 
   function everyPred() {
-    for (var _len11 = arguments.length, preds = Array(_len11), _key11 = 0; _key11 < _len11; _key11++) {
-      preds[_key11] = arguments[_key11];
+    for (var _len13 = arguments.length, preds = Array(_len13), _key13 = 0; _key13 < _len13; _key13++) {
+      preds[_key13] = arguments[_key13];
     }
 
     return function () {
-      return reduce(function (memo, arg) {
-        return reduce(function (memo, pred) {
+      return reduce(slice(arguments), function (memo, arg) {
+        return reduce(preds, function (memo, pred) {
           var result = memo && pred(arg);
           return result ? result : reduced(result);
-        }, memo, preds);
-      }, true, slice(arguments));
+        }, memo);
+      }, true);
     };
   }
 
@@ -2192,13 +2189,13 @@
   }
 
   function transduce4(xform, f, init, coll) {
-    return reduce(xform(f), init, coll);
+    return reduce(coll, xform(f), init);
   }
 
   var transduce = overload(null, null, null, transduce3, transduce4);
 
   function into2(to, from) {
-    return reduce(conj, to, from);
+    return reduce(from, conj, to);
   }
 
   function into3(to, xform, from) {
@@ -2497,9 +2494,9 @@
     var coll = seq(xs);
     if (!coll) return EMPTY;
     var head = first(coll),
-        val = f(head),
+        val$$1 = f(head),
         run = cons(head, takeWhile2(function (x) {
-      return val === f(x);
+      return val$$1 === f(x);
     }, next(coll)));
     return cons(run, partitionBy(f, seq(drop$1(count(run), coll))));
   }
@@ -2566,11 +2563,11 @@
   var sortBy = overload(null, null, sortBy2, sortBy3);
 
   function groupInto(seed, f, coll) {
-    return reduce(function (memo, value) {
+    return reduce(coll, function (memo, value) {
       return update(memo, f(value), function (group) {
         return conj(group || [], value);
       });
-    }, seed, coll);
+    }, seed);
   }
 
   function groupBy(f, coll) {
@@ -2721,46 +2718,46 @@
     return a;
   }
 
-  function get$2(self, key, notFound) {
-    return lookup(self, key) || notFound;
+  function get$2(self, key$$1, notFound) {
+    return lookup(self, key$$1) || notFound;
   }
 
   function getIn(self, keys, notFound) {
-    return reduce(get$2, self, keys) || notFound;
+    return reduce(keys, get$2, self) || notFound;
   }
 
   function assocIn(self, keys, value) {
-    var key = keys[0];
+    var key$$1 = keys[0];
     switch (keys.length) {
       case 0:
         return self;
       case 1:
-        return assoc(self, key, value);
+        return assoc(self, key$$1, value);
       default:
-        return assoc(self, key, assocIn(get$2(self, key), toArray$1(rest(keys)), value));
+        return assoc(self, key$$1, assocIn(get$2(self, key$$1), toArray$1(rest(keys)), value));
     }
   }
 
-  function update3(self, key, f) {
-    return assoc(self, key, f(get$2(self, key)));
+  function update3(self, key$$1, f) {
+    return assoc(self, key$$1, f(get$2(self, key$$1)));
   }
 
-  function update4(self, key, f, a) {
-    return assoc(self, key, f(get$2(self, key), a));
+  function update4(self, key$$1, f, a) {
+    return assoc(self, key$$1, f(get$2(self, key$$1), a));
   }
 
-  function update5(self, key, f, a, b) {
-    return assoc(self, key, f(get$2(self, key), a, b));
+  function update5(self, key$$1, f, a, b) {
+    return assoc(self, key$$1, f(get$2(self, key$$1), a, b));
   }
 
-  function update6(self, key, f, a, b, c) {
-    return assoc(self, key, f(get$2(self, key), a, b, c));
+  function update6(self, key$$1, f, a, b, c) {
+    return assoc(self, key$$1, f(get$2(self, key$$1), a, b, c));
   }
 
-  function updateN(self, key, f) {
-    var tgt = get$2(self, key),
+  function updateN(self, key$$1, f) {
+    var tgt = get$2(self, key$$1),
         args = [tgt].concat(slice(arguments, 3));
-    return assoc(self, key, f.apply(this, args));
+    return assoc(self, key$$1, f.apply(this, args));
   }
 
   var update$1 = overload(null, null, null, update3, update4, update5, update6, updateN);
@@ -2783,7 +2780,7 @@
     return ks.length ? assoc(self, k, updateIn5(get$2(self, k), ks, f, a, b)) : update5(self, k, f, a, b);
   }
 
-  function updateIn6(self, key, f, a, b, c) {
+  function updateIn6(self, key$$1, f, a, b, c) {
     var k = keys[0],
         ks = toArray$1(rest(keys));
     return ks.length ? assoc(self, k, updateIn6(get$2(self, k), ks, f, a, b, c)) : update6(self, k, f, a, b, c);
@@ -2806,14 +2803,14 @@
       maps[_key2] = arguments[_key2];
     }
 
-    return some(identity, maps) ? reduce(function (memo, map) {
-      return reduce(function (memo, pair) {
-        var key = pair[0],
+    return some(identity, maps) ? reduce(maps, function (memo, map) {
+      return reduce(seq(map), function (memo, pair) {
+        var key$$1 = pair[0],
             value = pair[1];
-        memo[key] = value;
+        memo[key$$1] = value;
         return memo;
-      }, memo, seq(map));
-    }, {}, maps) : null;
+      }, memo);
+    }, {}) : null;
   }
 
   function mergeWith(f) {
@@ -2821,15 +2818,15 @@
       maps[_key3 - 1] = arguments[_key3];
     }
 
-    return some(identity, maps) ? reduce(function (memo, map) {
-      return reduce(function (memo, pair) {
-        var key = pair[0],
+    return some(identity, maps) ? reduce(maps, function (memo, map) {
+      return reduce(seq(map), function (memo, pair) {
+        var key$$1 = pair[0],
             value = pair[1];
-        return contains(memo, key) ? update$1(memo, key, function (prior) {
+        return contains(memo, key$$1) ? update$1(memo, key$$1, function (prior) {
           return f(prior, value);
-        }) : assoc(memo, key, value);
-      }, memo, seq(map));
-    }, {}, maps) : null;
+        }) : assoc(memo, key$$1, value);
+      }, memo);
+    }, {}) : null;
   }
 
   function scanKey(better) {
@@ -2842,7 +2839,7 @@
     }
 
     function scanKeyN(k, x) {
-      return apply$1(reduce, scanKey2, x, slice(arguments, 2));
+      return apply$1(reduce, slice(arguments, 2), scanKey2, x);
     }
 
     return overload(null, null, scanKey2, scanKey3, scanKeyN);
@@ -2957,22 +2954,22 @@
 
   var signal = overload(null, null, signal2, signal3);
 
-  function listen(el, key, callback) {
-    el.addEventListener(key, callback);
+  function listen(el, key$$1, callback) {
+    el.addEventListener(key$$1, callback);
     return function () {
-      unlisten(el, key, callback);
+      unlisten(el, key$$1, callback);
     };
   }
 
-  function unlisten(el, key, callback) {
-    el.removeEventListener(key, callback);
+  function unlisten(el, key$$1, callback) {
+    el.removeEventListener(key$$1, callback);
   }
 
-  function event3(el, key, init) {
-    return event4(el, key, init, identity$1);
+  function event3(el, key$$1, init) {
+    return event4(el, key$$1, init, identity$1);
   }
 
-  function event4(el, key, init, transform) {
+  function event4(el, key$$1, init, transform) {
     var unsub = null;
     function dispose$$1() {
       unsub && unsub();
@@ -2980,7 +2977,7 @@
     }
     var publ = subscriptionMonitor(publisher(), function (active) {
       dispose$$1();
-      unsub = active ? listen(el, key, function (e) {
+      unsub = active ? listen(el, key$$1, function (e) {
         pub(sink, transform(e));
       }) : null;
     });
@@ -3146,6 +3143,52 @@
     return reduce(appendChild, document.createDocumentFragment(), contents);
   });
 
+  function reduce2(xf, coll) {
+    return reduce(coll, xf, xf());
+  }
+
+  function reduce3$1(xf, init, coll) {
+    return reduce(coll, xf, init);
+  }
+
+  function dissocN(obj) {
+    for (var _len = arguments.length, keys = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+      keys[_key - 1] = arguments[_key];
+    }
+
+    return reduce(keys, dissoc, obj);
+  }
+
+  function reducekv2(xf, coll) {
+    return reducekv(coll, xf, xf());
+  }
+
+  function reducekv3(xf, init, coll) {
+    return reducekv(coll, xf, init);
+  }
+
+  function swap3(self, f, a) {
+    return swap(self, function (state) {
+      return f(state, a);
+    });
+  }
+
+  function swap4(self, f, a, b) {
+    return swap(self, function (state) {
+      return f(state, a, b);
+    });
+  }
+
+  function swapN(self, f, a, b, cs) {
+    return swap(self, function (state) {
+      return f.apply(null, [state, a, b].concat(cs));
+    });
+  }
+
+  var swap$2 = overload(null, null, swap, swap3, swap4, swapN);
+  var reduce$7 = overload(null, null, reduce2, reduce3$1);
+  var reducekv$6 = overload(null, null, reducekv2, reducekv3);
+  var dissoc$3 = overload(null, identity$1, dissoc, dissocN);
   var second = comp(first, next);
 
   /*
@@ -3174,6 +3217,12 @@
     _.append(_.getIn(["d", "results"])));
   */
 
+  exports.reducekv2 = reducekv2;
+  exports.reducekv3 = reducekv3;
+  exports.swap = swap$2;
+  exports.reduce = reduce$7;
+  exports.reducekv = reducekv$6;
+  exports.dissoc = dissoc$3;
   exports.second = second;
   exports.unbind = unbind;
   exports.log = log;
@@ -3244,12 +3293,14 @@
   exports.nth = nth;
   exports.isIndexed = isIndexed;
   exports.IKVReduce = IKVReduce;
-  exports.reducekv = reducekv;
   exports.ILookup = ILookup;
   exports.lookup = lookup;
   exports.IMap = IMap;
-  exports.dissoc = dissoc;
   exports.isMap = isMap;
+  exports.IMapEntry = IMapEntry;
+  exports.key = key;
+  exports.val = val;
+  exports.isMapEntry = isMapEntry;
   exports.INext = INext;
   exports.next = next;
   exports.IObj = IObj;
@@ -3264,7 +3315,6 @@
   exports.IRecord = IRecord;
   exports.isRecord = isRecord;
   exports.IReduce = IReduce;
-  exports.reduce = reduce;
   exports.IReset = IReset;
   exports.reset = reset;
   exports.isReset = isReset;
@@ -3288,7 +3338,6 @@
   exports.sub = sub;
   exports.isSubscribe = isSubscribe;
   exports.ISwap = ISwap;
-  exports.swap = swap;
   exports.isSwap = isSwap;
   exports.IUnit = IUnit;
   exports.unit = unit;
@@ -3405,6 +3454,8 @@
   exports.subscriptionMonitor = subscriptionMonitor;
   exports.years = years;
   exports.cond = cond;
+  exports.and = and;
+  exports.or = or;
   exports.branch3 = branch3;
   exports.branch4 = branch4;
   exports.branch = branch;
