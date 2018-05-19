@@ -1,10 +1,18 @@
 import {constantly, identity, effect} from '../../core';
 import {implement} from '../../protocol';
 import {indexedSeq} from '../../types/indexedseq/construct';
-import {IFind, IInclusive, IAssociative, IAppendable, IPrependable, ICollection, INext, ICounted, IReduce, IKVReduce, IArr, ISeq, ISeqable, ISequential, IIndexed, IShow, ILookup, IFn, IEmptyableCollection} from '../../protocols';
+import {IMapEntry, IFind, IInclusive, IAssociative, IAppendable, IPrependable, ICollection, INext, ICounted, IReduce, IKVReduce, IArr, ISeq, ISeqable, ISequential, IIndexed, IShow, ILookup, IFn, IEmptyableCollection} from '../../protocols';
 import {reduce, reducekv} from '../../types/reduced';
 import {EMPTY_ARRAY} from '../../types/array/construct';
 import {showable, iterable} from '../lazyseq/behave';
+
+function key(self){
+  return lookup(self, 0);
+}
+
+function val(self){
+  return lookup(self, 1);
+}
 
 function find(self, key){
   return IAssociative.contains(self, key) ? [key, ILookup.lookup(self, key)] : null;
@@ -65,6 +73,7 @@ export default effect(
   showable,
   iterable,
   implement(ISequential),
+  implement(IMapEntry, {key, val}),
   implement(IInclusive, {includes}),
   implement(IFind, {find}),
   implement(IAssociative, {contains}),

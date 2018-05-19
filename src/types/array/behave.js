@@ -1,10 +1,18 @@
 import {effect, identity, constantly} from '../../core';
 import {implement} from '../../protocol';
-import {toArray, IEquiv, IReduce, IKVReduce, IAppendable, IPrependable, IInclusive, ICollection, INext, ISeq, IFind, IArr, ISeqable, IIndexed, IAssociative, ISequential, IEmptyableCollection, IFn, IShow, ICounted, ILookup, ICloneable} from '../../protocols';
+import {toArray, IMapEntry, IEquiv, IReduce, IKVReduce, IAppendable, IPrependable, IInclusive, ICollection, INext, ISeq, IFind, IArr, ISeqable, IIndexed, IAssociative, ISequential, IEmptyableCollection, IFn, IShow, ICounted, ILookup, ICloneable} from '../../protocols';
 import {reduce, reducekv, reduced} from '../../types/reduced';
 import {EMPTY_ARRAY} from './construct';
 import {indexedSeq} from '../indexedseq';
 import {showable} from '../lazyseq/behave';
+
+function key(self){
+  return self[0];
+}
+
+function val(self){
+  return self[1];
+}
 
 function equiv(self, other){
   return self === other ? true : IKVReduce._reducekv(self, function(memo, key, value){
@@ -78,6 +86,7 @@ export default effect(
   equivalence,
   implement(ISequential),
   implement(IFind, {find}),
+  implement(IMapEntry, {key, val}),
   implement(IInclusive, {includes}),
   implement(IAppendable, {append}),
   implement(IPrependable, {prepend}),

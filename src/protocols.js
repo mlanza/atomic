@@ -17,6 +17,7 @@ export * from "./protocols/iindexed";
 export * from "./protocols/ikvreduce";
 export * from "./protocols/ilookup";
 export * from "./protocols/imap";
+export * from "./protocols/imapentry";
 export * from "./protocols/inext";
 export * from "./protocols/iobj";
 export * from "./protocols/iprependable";
