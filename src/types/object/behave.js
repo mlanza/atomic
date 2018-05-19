@@ -93,7 +93,7 @@ export default effect(
   implement(ICloneable, {clone}),
   implement(IReduce, {reduce}),
   implement(IKVReduce, {reducekv}),
-  implement(IMap, {dissoc}),
+  implement(IMap, {dissoc, keys: Object.keys, vals: Object.values}),
   implement(IFn, {invoke: lookup}),
   implement(ILookup, {lookup: lookup}),
   implement(IEmptyableCollection, {empty: constantly(EMPTY_OBJECT)}),

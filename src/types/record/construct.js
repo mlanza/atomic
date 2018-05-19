@@ -31,13 +31,21 @@ function rest(self){
   return ISeq.rest(seq(self));
 }
 
+function keys(self){
+  return IMap.keys(self.attrs);
+}
+
+function vals(self){
+  return IMap.vals(self.attrs);
+}
+
 function extend(Type){
 
   function assoc(self, key, value){
     return Type.from(IAssociative.assoc(self.attrs, key, value));
   }
 
-  function _dissoc(self, key){
+  function dissoc(self, key){
     return Type.from(IMap.dissoc(self.attrs, key));
   }
 
@@ -46,7 +54,7 @@ function extend(Type){
     implement(IObj, {toObject}),
     implement(IAssociative, {assoc, contains}),
     implement(ILookup, {lookup}),
-    implement(IMap, {_dissoc: _dissoc}),
+    implement(IMap, {dissoc, keys, vals}),
     implement(ISeq, {first, rest}),
     implement(ICounted, {count}),
     implement(ISeqable, {seq}));
