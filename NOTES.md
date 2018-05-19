@@ -17,3 +17,4 @@ grep -R "some" --exclude-dir="*node*" .
 * The api documentation should offer practical examples showcasing the usefulness of a function.  I found that some popular libraries seem to include arbitrary examples that were of no help.
 * Prefer pure functions
 * One should avoid using the library api to act on Map and Set types.  In it's attempt to avoid mutation, it is grossly inefficient.  It exists only to allow interoperability.
+* Some protocols are meant to be superseded by a public implementation of the api (like ICompare and IReduce).  Such protocols should not export the private function in order to lead the user to the public api defined elsewhere.
