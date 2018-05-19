@@ -9,7 +9,7 @@ function checkStatus(resp){
 }
 
 export const request = _.chain(_.request,
-  _.update("pre", _.prepend(function(params){
+  _.update("before", _.prepend(function(params){
     return Object.assign({
       credentials: "same-origin",
       method: "GET",
@@ -19,7 +19,7 @@ export const request = _.chain(_.request,
       }
     }, params);
   })),
-  _.update("post",
+  _.update("after",
     _.pipe(
       _.append(checkStatus),
       _.append(function(resp){
