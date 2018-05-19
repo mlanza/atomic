@@ -23,16 +23,6 @@ function defaults2(self, defaults){
 
 export const defaults = overload(null, curry(defaults2, 2), defaults2, reducing(defaults2));
 
-export function branch3(obj, pred, yes){
-  return branch4(obj, pred, yes, constantly(null));
-}
-
-export function branch4(obj, pred, yes, no){
-  return pred(obj) ? yes(obj) : no(obj);
-}
-
-export const branch = overload(null, null, null, branch3, branch4);
-
 export function compile(self){
   return function(...args){
     return apply(invoke, self, args);

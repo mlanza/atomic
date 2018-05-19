@@ -5,6 +5,10 @@ export default Reduced;
 import behave from "./reduced/behave";
 behave(Reduced);
 
+export function unreduced(self){
+  return self instanceof Reduced ? self.valueOf() : self;
+}
+
 function reduce3(xs, xf, init){
   var memo = init, to = xs.length - 1;
   for(var i = 0; i <= to; i++){
@@ -12,7 +16,7 @@ function reduce3(xs, xf, init){
       break;
     memo = xf(memo, xs[i]);
   }
-  return memo instanceof Reduced ? memo.valueOf() : memo;
+  return unreduced(memo);
 }
 
 function reduce4(xs, xf, init, from){
@@ -34,7 +38,7 @@ function reduce5(xs, xf, init, from, to){
       memo = xf(memo, xs[i]);
     }
   }
-  return memo instanceof Reduced ? memo.valueOf() : memo;
+  return unreduced(memo);
 }
 
 export const reduce = overload(null, null, null, reduce3, reduce4, reduce5);
@@ -46,11 +50,11 @@ export function reducekv(xs, xf, init, from){
       break;
     memo = xf(memo, i, xs[i]);
   }
-  return memo instanceof Reduced ? memo.valueOf() : memo;
+  return unreduced(memo);
 }
 
 export function reducing(rf){
   return function r(x, ...tail){
-    return tail.length ? rf(x, r.apply(null, tail)) : x;
+    return tail.length ? rf(x, r(...tail)) : x;
   }
 }

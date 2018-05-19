@@ -2,6 +2,26 @@ import {comp, isNil, slice, partial, apply, reducing, reduced, curry} from "./ty
 import {reduce, isSequential, IComparable} from "./protocols";
 import {overload, constantly, identity} from "./core";
 
+export function cond(obj, pred, f, ...args){
+  if (pred(obj)) {
+    return f(obj);
+  } else if (args.length) {
+    return cond.apply(null, [obj, pred, f].concat(args))
+  } else {
+    return null;
+  }
+}
+
+export function branch3(obj, pred, yes){
+  return branch4(obj, pred, yes, constantly(null));
+}
+
+export function branch4(obj, pred, yes, no){
+  return pred(obj) ? yes(obj) : no(obj);
+}
+
+export const branch = overload(null, null, null, branch3, branch4);
+
 function everyPair2(pred, xs){
   var every = xs.length > 0;
   while(every && xs.length > 1){

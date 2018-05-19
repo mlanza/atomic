@@ -18,3 +18,4 @@ grep -R "some" --exclude-dir="*node*" .
 * Prefer pure functions
 * One should avoid using the library api to act on Map and Set types.  In it's attempt to avoid mutation, it is grossly inefficient.  It exists only to allow interoperability.
 * Some protocols are meant to be superseded by a public implementation of the api (like ICompare and IReduce).  Such protocols should not export the private function in order to lead the user to the public api defined elsewhere.
+* There is no function for `reify` or `speficy` those both are easily possible.  Simply export a behavior and in the case of `reify` apply it to a blank object and in the case of `speficy` apply it to an existing object.
