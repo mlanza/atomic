@@ -1,6 +1,7 @@
 import {comp, isNil, slice, partial, apply, reducing, reduced, curry} from "./types";
 import {reduce, isSequential, IComparable} from "./protocols";
-import {overload, constantly, identity} from "./core";
+import * as p from "./protocols";
+import {overload, constantly, identity, subj} from "./core";
 
 export function cond(obj, pred, f, ...args){
   if (pred(obj)) {
@@ -12,16 +13,20 @@ export function cond(obj, pred, f, ...args){
   }
 }
 
-export function and(obj, ...fs){
-  return reduce(fs, function(memo, f){
-    return memo ? f(obj) : reduced(memo);
-  }, true);
+export function and(...fs){
+  return function(...args){
+    return reduce(fs, function(memo, f){
+      return memo ? f(...args) : reduced(memo);
+    }, true);
+  }
 }
 
-export function or(obj, ...fs){
-  return reduce(fs, function(memo, f){
-    return memo ? reduced(memo) : f(obj);
-  }, false);
+export function or(...fs){
+  return function(...args){
+    return reduce(fs, function(memo, f){
+      return memo ? reduced(memo) : f(...args);
+    }, false);
+  }
 }
 
 export function branch3(obj, pred, yes){
@@ -179,5 +184,32 @@ export function everyPred(...preds){
         return result ? result : reduced(result);
       }, memo);
     }, true)
+  }
+}
+
+export function matches(obj, template){
+  return p.reducekv(template, function(memo, key, value){
+    return memo ? p.equiv(obj[key], value) : reduced(memo);
+  }, true);
+}
+
+export function pre(f, ...preds){
+  let check = and(...preds);
+  return function(){
+    if (!check.apply(this, arguments)) {
+      throw new TypeError("Failed pre-condition.");
+    }
+    return f.apply(this, arguments);
+  }
+}
+
+export function post(f, ...preds){
+  var check = or(...preds);
+  return function(){
+    var result = f.apply(this, arguments);
+    if (!check(result)) {
+      throw new TypeError("Failed post-condition.");
+    }
+    return result;
   }
 }

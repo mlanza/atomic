@@ -1,8 +1,8 @@
 import {constantly, effect, identity} from '../../core';
 import {implement} from '../../protocol';
-import {IElementContent, IReduce, IKVReduce, ISeqable, IShow, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, IFn, IMap, ISeq, IArr, IObj, ICloneable, IInclusive} from '../../protocols';
+import {ISet, IMapEntry, IElementContent, IReduce, IKVReduce, ISeqable, IShow, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, IFn, IMap, ISeq, IArr, IObj, ICloneable, IInclusive} from '../../protocols';
 import {objectSelection} from '../objectselection';
-import {Reduced} from '../reduced';
+import {reduced} from '../reduced';
 import {lazySeq} from '../lazyseq';
 import {equivalence} from '../array/behave';
 import {EMPTY_OBJECT} from '../object/construct';
@@ -20,10 +20,16 @@ function find(self, key){
   return IAssociative.contains(self, key) ? [key, ILookup.lookup(self, key)] : null;
 }
 
-function includes(superset, subset){
+function superset(self, subset){
   return IKVReduce.reducekv(seq(subset), function(memo, key, value){
-    return memo ? get(superset, key) === value : new Reduced(memo);
+    return memo ? get(self, key) === value : reduced(memo);
   }, true);
+}
+
+function includes(self, mapentry){
+  let key = IMapEntry.key(mapentry),
+      val = IMapEntry.val(mapentry);
+  return self[key] === val;
 }
 
 function lookup(self, key){
@@ -89,6 +95,7 @@ export default effect(
   implement(IElementContent, {appendTo}),
   implement(IObj, {toObject: identity}),
   implement(IFind, {find}),
+  implement(ISet, {superset}),
   implement(IInclusive, {includes}),
   implement(ICloneable, {clone}),
   implement(IReduce, {reduce}),
