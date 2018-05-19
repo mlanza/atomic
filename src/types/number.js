@@ -1,5 +1,5 @@
 import {overload, identity, constantly} from "../core";
-import {complement, partial} from "./function";
+import {complement, partial, unary} from "./function";
 import {reducing} from "./reduced";
 export * from "./number/construct";
 import Number from "./number/construct";
@@ -7,11 +7,13 @@ export default Number;
 import behave from "./number/behave";
 behave(Number);
 
-export const int   = parseInt;
-export const float = parseFloat;
 export function number(...args){
   return Number(...args);
 }
+
+export const num   = unary(number);
+export const int   = parseInt;
+export const float = parseFloat;
 
 export function isNumber(n){
   return Number(n) === n;

@@ -16,8 +16,16 @@
     return Boolean(self) === self;
   }
 
-  function not(x) {
-    return !x;
+  function not(self) {
+    return !self;
+  }
+
+  function isTrue(self) {
+    return self === true;
+  }
+
+  function isFalse(self) {
+    return self === false;
   }
 
   var unbind = Function.call.bind(Function.bind, Function.call);
@@ -490,6 +498,10 @@
 
   behave$2(Reduced$1);
 
+  function unreduced(self) {
+    return self instanceof Reduced$1 ? self.valueOf() : self;
+  }
+
   function reduce3$1(xs, xf, init) {
     var memo = init,
         to = xs.length - 1;
@@ -497,7 +509,7 @@
       if (memo instanceof Reduced$1) break;
       memo = xf(memo, xs[i]);
     }
-    return memo instanceof Reduced$1 ? memo.valueOf() : memo;
+    return unreduced(memo);
   }
 
   function reduce4(xs, xf, init, from) {
@@ -517,7 +529,7 @@
         memo = xf(memo, xs[i]);
       }
     }
-    return memo instanceof Reduced$1 ? memo.valueOf() : memo;
+    return unreduced(memo);
   }
 
   var reduce$1 = overload(null, null, null, reduce3$1, reduce4, reduce5);
@@ -529,7 +541,7 @@
       if (memo instanceof Reduced$1) break;
       memo = xf(memo, i, xs[i]);
     }
-    return memo instanceof Reduced$1 ? memo.valueOf() : memo;
+    return unreduced(memo);
   }
 
   function reducing(rf) {
@@ -538,7 +550,7 @@
         tail[_key - 1] = arguments[_key];
       }
 
-      return tail.length ? rf(x, r.apply(null, tail)) : x;
+      return tail.length ? rf(x, r.apply(undefined, tail)) : x;
     };
   }
 
@@ -1192,16 +1204,6 @@
 
   var defaults$1 = overload(null, curry(defaults2, 2), defaults2, reducing(defaults2));
 
-  function branch3(obj, pred, yes) {
-    return branch4(obj, pred, yes, constantly(null));
-  }
-
-  function branch4(obj, pred, yes, no) {
-    return pred(obj) ? yes(obj) : no(obj);
-  }
-
-  var branch = overload(null, null, null, branch3, branch4);
-
   function compile(self) {
     return function () {
       for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
@@ -1317,11 +1319,13 @@
 
   behave$10(Number);
 
-  var int = parseInt;
-  var float = parseFloat;
   function number() {
     return Number.apply(undefined, arguments);
   }
+
+  var num = unary(number);
+  var int = parseInt;
+  var float = parseFloat;
 
   function isNumber(n) {
     return Number(n) === n;
@@ -1872,6 +1876,30 @@
     provideBehavior(piped)(Pipeline);
   }
 
+  function cond(obj, pred, f) {
+    for (var _len = arguments.length, args = Array(_len > 3 ? _len - 3 : 0), _key = 3; _key < _len; _key++) {
+      args[_key - 3] = arguments[_key];
+    }
+
+    if (pred(obj)) {
+      return f(obj);
+    } else if (args.length) {
+      return cond.apply(null, [obj, pred, f].concat(args));
+    } else {
+      return null;
+    }
+  }
+
+  function branch3(obj, pred, yes) {
+    return branch4(obj, pred, yes, constantly(null));
+  }
+
+  function branch4(obj, pred, yes, no) {
+    return pred(obj) ? yes(obj) : no(obj);
+  }
+
+  var branch = overload(null, null, null, branch3, branch4);
+
   function everyPair2(pred, xs) {
     var every = xs.length > 0;
     while (every && xs.length > 1) {
@@ -1902,13 +1930,13 @@
   }
 
   function someFnN() {
-    for (var _len = arguments.length, preds = Array(_len), _key = 0; _key < _len; _key++) {
-      preds[_key] = arguments[_key];
+    for (var _len2 = arguments.length, preds = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+      preds[_key2] = arguments[_key2];
     }
 
     return function () {
-      for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-        args[_key2] = arguments[_key2];
+      for (var _len3 = arguments.length, args = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
+        args[_key3] = arguments[_key3];
       }
 
       return reduce(function (result, pred) {
@@ -1942,8 +1970,8 @@
   }
 
   function ltN() {
-    for (var _len3 = arguments.length, args = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
-      args[_key3] = arguments[_key3];
+    for (var _len4 = arguments.length, args = Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
+      args[_key4] = arguments[_key4];
     }
 
     return everyPair(lt2, args);
@@ -1956,8 +1984,8 @@
   }
 
   function lteN() {
-    for (var _len4 = arguments.length, args = Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
-      args[_key4] = arguments[_key4];
+    for (var _len5 = arguments.length, args = Array(_len5), _key5 = 0; _key5 < _len5; _key5++) {
+      args[_key5] = arguments[_key5];
     }
 
     return everyPair(lte2, args);
@@ -1970,8 +1998,8 @@
   }
 
   function gtN() {
-    for (var _len5 = arguments.length, args = Array(_len5), _key5 = 0; _key5 < _len5; _key5++) {
-      args[_key5] = arguments[_key5];
+    for (var _len6 = arguments.length, args = Array(_len6), _key6 = 0; _key6 < _len6; _key6++) {
+      args[_key6] = arguments[_key6];
     }
 
     return everyPair(gt2, args);
@@ -1984,8 +2012,8 @@
   }
 
   function gteN() {
-    for (var _len6 = arguments.length, args = Array(_len6), _key6 = 0; _key6 < _len6; _key6++) {
-      args[_key6] = arguments[_key6];
+    for (var _len7 = arguments.length, args = Array(_len7), _key7 = 0; _key7 < _len7; _key7++) {
+      args[_key7] = arguments[_key7];
     }
 
     return everyPair(gte2, args);
@@ -1998,8 +2026,8 @@
   }
 
   function eqN() {
-    for (var _len7 = arguments.length, args = Array(_len7), _key7 = 0; _key7 < _len7; _key7++) {
-      args[_key7] = arguments[_key7];
+    for (var _len8 = arguments.length, args = Array(_len8), _key8 = 0; _key8 < _len8; _key8++) {
+      args[_key8] = arguments[_key8];
     }
 
     return everyPair(eq2, args);
@@ -2012,8 +2040,8 @@
   }
 
   function notEqN() {
-    for (var _len8 = arguments.length, args = Array(_len8), _key8 = 0; _key8 < _len8; _key8++) {
-      args[_key8] = arguments[_key8];
+    for (var _len9 = arguments.length, args = Array(_len9), _key9 = 0; _key9 < _len9; _key9++) {
+      args[_key9] = arguments[_key9];
     }
 
     return !everyPair(eq2, args);
@@ -2026,8 +2054,8 @@
   }
 
   function equalN() {
-    for (var _len9 = arguments.length, args = Array(_len9), _key9 = 0; _key9 < _len9; _key9++) {
-      args[_key9] = arguments[_key9];
+    for (var _len10 = arguments.length, args = Array(_len10), _key10 = 0; _key10 < _len10; _key10++) {
+      args[_key10] = arguments[_key10];
     }
 
     return everyPair(equal2, args);
@@ -2047,8 +2075,8 @@
   var max = overload(null, identity$1, max2, reducing(max2));
 
   function everyPred() {
-    for (var _len10 = arguments.length, preds = Array(_len10), _key10 = 0; _key10 < _len10; _key10++) {
-      preds[_key10] = arguments[_key10];
+    for (var _len11 = arguments.length, preds = Array(_len11), _key11 = 0; _key11 < _len11; _key11++) {
+      preds[_key11] = arguments[_key11];
     }
 
     return function () {
@@ -3260,6 +3288,8 @@
   exports.isSteppable = isSteppable;
   exports.isBoolean = isBoolean;
   exports.not = not;
+  exports.isTrue = isTrue;
+  exports.isFalse = isFalse;
   exports.boolean = boolean;
   exports.bool = bool;
   exports.test = test;
@@ -3290,9 +3320,6 @@
   exports.EMPTY_ARRAY = EMPTY_ARRAY;
   exports.selectKeys = selectKeys;
   exports.defaults = defaults$1;
-  exports.branch3 = branch3;
-  exports.branch4 = branch4;
-  exports.branch = branch;
   exports.compile = compile;
   exports.EMPTY_OBJECT = EMPTY_OBJECT;
   exports.isString = isString;
@@ -3308,9 +3335,10 @@
   exports.trim = trim;
   exports.str = str;
   exports.EMPTY_STRING = EMPTY_STRING;
+  exports.number = number;
+  exports.num = num;
   exports.int = int;
   exports.float = float;
-  exports.number = number;
   exports.isNumber = isNumber;
   exports.isInteger = isInteger;
   exports.isInt = isInt;
@@ -3361,6 +3389,7 @@
   exports.observable = observable;
   exports.publisher = publisher;
   exports.subscriptionMonitor = subscriptionMonitor;
+  exports.unreduced = unreduced;
   exports.reducing = reducing;
   exports.Reduced = Reduced$1;
   exports.reduced = reduced;
@@ -3368,6 +3397,10 @@
   exports.providePipeline = providePipeline;
   exports.Pipeline = Pipeline;
   exports.pipeline = pipeline;
+  exports.cond = cond;
+  exports.branch3 = branch3;
+  exports.branch4 = branch4;
+  exports.branch = branch;
   exports.someFn = someFn;
   exports.isIdentical = isIdentical;
   exports.compare = compare$1;
