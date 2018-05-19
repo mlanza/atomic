@@ -1,7 +1,8 @@
 import {doto, overload, constantly, identity} from "./core";
 import {count, nth, first, rest, next, seq, reduce, conj, step, converse, unit, toArray, isSequential} from "./protocols";
-import {inc, comp, not, partial, curry, concat, apply, concatenated, observable, isNil, cons, EMPTY, EMPTY_ARRAY, lazySeq, reduced, reducing, complement, slice, juxt, isBlank, isSome, randInt} from "./types";
+import {inc, comp, not, partial, concat, apply, concatenated, observable, isNil, cons, EMPTY, EMPTY_ARRAY, lazySeq, reduced, reducing, complement, slice, juxt, isBlank, isSome, randInt} from "./types";
 import {notEq} from "./predicates";
+import * as t from "./transducers";
 
 function transduce3(xform, f, coll){
   return transduce4(xform, f, f(), coll);
@@ -60,11 +61,9 @@ function doall2(n, coll){
 
 export const doall = overload(null, doall1, doall2);
 
-function dotimes2(n, f){
+export function dotimes(n, f){
   each(f, range(n))
 }
-
-export const dotimes = overload(null, curry(dotimes2, 2), dotimes2);
 
 export function proceed1(self){
   return step(unit(self), self);
@@ -142,11 +141,9 @@ function mapN(f, ...tail){
   return notAny(isNil, seqs) ? cons(apply(f, mapa(first, seqs)), apply(mapN, f, mapa(rest, seqs))) : EMPTY;
 }
 
-export const map = overload(null, curry(map2, 2), map2, map3, mapN);
+export const map = overload(null, t.map, map2, map3, mapN);
 
-const mapa2 = comp(toArray, map);
-
-export const mapa = overload(null, curry(mapa2, 2), mapa2);
+export const mapa = comp(toArray, map);
 
 export function indexed(iter){
   return function(f, xs){
@@ -159,11 +156,11 @@ export function indexed(iter){
 
 const mapIndexed2  = indexed(map2);
 
-export const mapIndexed  = overload(null, curry(mapIndexed2, 2), mapIndexed2);
+export const mapIndexed  = overload(null, t.mapIndexed, mapIndexed2);
 
 const keepIndexed2 = indexed(keep2);
 
-export const keepIndexed = overload(null, curry(keepIndexed2, 2), keepIndexed2);
+export const keepIndexed = overload(null, t.keepIndexed, keepIndexed2);
 
 function filter2(pred, xs){
   const coll = seq(xs);
@@ -174,23 +171,21 @@ function filter2(pred, xs){
   }) : filter2(pred, rest(coll));
 }
 
-export const filter = overload(null, curry(filter2, 2), filter2);
+export const filter = overload(null, t.filter, filter2);
 
-const filtera2 = comp(toArray, filter);
-
-export const filtera = overload(null, curry(filtera2, 2), filtera2);
+export const filtera = comp(toArray, filter);
 
 function remove2(pred, xs){
   return filter2(complement(pred), xs);
 }
 
-export const remove = overload(null, curry(remove2, 2), remove2);
+export const remove = overload(null, t.remove, remove2);
 
 function keep2(f, xs){
   return filter2(isSome, map2(f, xs));
 }
 
-export const keep    = overload(null, curry(keep2, 2), keep2);
+export const keep    = overload(null, t.keep, keep2);
 export const compact = partial(filter2, identity);
 
 function drop2(n, coll){
@@ -203,21 +198,19 @@ function drop2(n, coll){
   return xs;
 }
 
-export const drop = overload(null, curry(drop2, 2), drop2);
+export const drop = overload(null, t.drop, drop2);
 
 function dropWhile2(pred, xs){
   return seq(xs) ? pred(first(xs)) ? dropWhile2(pred, rest(xs)) : xs : EMPTY;
 }
 
-export const dropWhile = overload(null, curry(dropWhile2, 2), dropWhile2);
+export const dropWhile = overload(null, t.dropWhile, dropWhile2);
 
-function dropLast2(n, coll){
+export function dropLast(n, coll){
   return map(function(x, _){
     return x;
   }, coll, drop(n, coll));
 }
-
-export const dropLast = overload(null, curry(dropLast2, 2), dropLast2);
 
 function take2(n, coll){
   const xs = seq(coll);
@@ -226,7 +219,7 @@ function take2(n, coll){
   }) : EMPTY;
 }
 
-export const take = overload(null, curry(take2, 2), take2);
+export const take = overload(null, t.take, take2);
 
 function takeWhile2(pred, xs){
   if (!seq(xs)) return EMPTY;
@@ -236,7 +229,7 @@ function takeWhile2(pred, xs){
   }) : EMPTY;
 }
 
-export const takeWhile = overload(null, curry(takeWhile2, 2), takeWhile2);
+export const takeWhile = overload(null, t.takeWhile, takeWhile2);
 
 function takeNth2(n, xs){
   return seq(xs) ? lazySeq(first(xs), function(){
@@ -244,13 +237,11 @@ function takeNth2(n, xs){
   }) : EMPTY;
 }
 
-export const takeNth = overload(null, curry(takeNth2, 2), takeNth2);
+export const takeNth = overload(null, t.takeNth, takeNth2);
 
-function takeLast2(n, coll){
+export function takeLast(n, coll){
   return n ? drop(count(coll) - n, coll) : EMPTY;
 }
-
-export const takeLast = overload(null, curry(takeLast2, 2), takeLast2);
 
 function interleave2(xs, ys){
   const as = seq(xs),
@@ -270,13 +261,13 @@ export function interleaved(colls){
   }) : EMPTY;
 }
 
-export const interleave = overload(null, curry(interleaveN, 2), interleave2, interleaveN);
+export const interleave = overload(null, null, interleave2, interleaveN);
 
 function interpose2(sep, xs){
   return drop2(1, interleave2(repeat1(sep), xs));
 }
 
-export const interpose = overload(null, curry(interpose2, 2), interpose2);
+export const interpose = overload(null, t.interpose, interpose2);
 
 function partition1(n){
   return partial(partition, n);
@@ -318,7 +309,7 @@ export function partitionAll3(n, step, xs){
 
 export const partitionAll = overload(null, partitionAll1, partitionAll2, partitionAll3);
 
-function partitionBy2(f, xs){
+export function partitionBy(f, xs){
   const coll = seq(xs);
   if (!coll) return EMPTY;
   const head = first(coll),
@@ -326,10 +317,8 @@ function partitionBy2(f, xs){
         run  = cons(head, takeWhile2(function(x){
           return val === f(x);
         }, next(coll)));
-  return cons(run, partitionBy2(f, seq(drop(count(run), coll))));
+  return cons(run, partitionBy(f, seq(drop(count(run), coll))));
 }
-
-export const partitionBy = overload(null, curry(partitionBy2, 2), partitionBy2);
 
 export const butlast = partial(dropLast, 1);
 

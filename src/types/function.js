@@ -85,14 +85,6 @@ export function reversed(f){
   }
 }
 
-export function subj(f){
-  return function(...args){
-    return function(obj){
-      return apply(f, obj, args);
-    }
-  }
-}
-
 function apply2(f, args){
   return f.apply(null, toArray(args));
 }

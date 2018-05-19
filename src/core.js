@@ -23,6 +23,22 @@ export function overload(){
   }
 }
 
+export function subj(f){ //subjective
+  return function(...args){
+    return function(obj){
+      return f.apply(null, [obj].concat(args));
+    }
+  }
+}
+
+export function obj(f){ //objective
+  return function(...args){
+    return function(obj){
+      return f.apply(null, [args].concat(obj));
+    }
+  }
+}
+
 export function identity(x){
   return x;
 }
@@ -33,18 +49,14 @@ export function constantly(x){
   }
 }
 
-export function effect(...effects){
-  return function(obj){
-    effects.forEach(function(effect){
-      effect(obj);
-    }, effects);
-    return obj;
-  }
+export function doto(obj, ...effects){
+  effects.forEach(function(effect){
+    effect(obj);
+  }, effects);
+  return obj;
 }
 
-export function doto(obj, ...effects){
-  return effect(...effects)(obj);
-}
+export const effect = subj(doto);
 
 export function isInstance(x, constructor){
   return x instanceof constructor;

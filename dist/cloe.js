@@ -45,6 +45,32 @@
     };
   }
 
+  function subj(f) {
+    //subjective
+    return function () {
+      for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+        args[_key] = arguments[_key];
+      }
+
+      return function (obj) {
+        return f.apply(null, [obj].concat(args));
+      };
+    };
+  }
+
+  function obj$1(f) {
+    //objective
+    return function () {
+      for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+        args[_key2] = arguments[_key2];
+      }
+
+      return function (obj) {
+        return f.apply(null, [args].concat(obj));
+      };
+    };
+  }
+
   function identity$1(x) {
     return x;
   }
@@ -55,26 +81,18 @@
     };
   }
 
-  function effect() {
-    for (var _len = arguments.length, effects = Array(_len), _key = 0; _key < _len; _key++) {
-      effects[_key] = arguments[_key];
-    }
-
-    return function (obj) {
-      effects.forEach(function (effect) {
-        effect(obj);
-      }, effects);
-      return obj;
-    };
-  }
-
   function doto(obj) {
-    for (var _len2 = arguments.length, effects = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
-      effects[_key2 - 1] = arguments[_key2];
+    for (var _len3 = arguments.length, effects = Array(_len3 > 1 ? _len3 - 1 : 0), _key3 = 1; _key3 < _len3; _key3++) {
+      effects[_key3 - 1] = arguments[_key3];
     }
 
-    return effect.apply(undefined, effects)(obj);
+    effects.forEach(function (effect) {
+      effect(obj);
+    }, effects);
+    return obj;
   }
+
+  var effect = subj(doto);
 
   function isInstance(x, constructor) {
     return x instanceof constructor;
@@ -329,11 +347,10 @@
   var isSequential = satisfies(ISequential);
 
   var IComparable = protocol({
-    _compare: function _compare(x, y) {
+    compare: function compare(x, y) {
       return x > y ? 1 : x < y ? -1 : 0;
     }
   });
-  var _compare = IComparable._compare;
   var isComparable = satisfies(IComparable);
 
   var IPublish = protocol({
@@ -881,18 +898,6 @@
     };
   }
 
-  function subj(f) {
-    return function () {
-      for (var _len12 = arguments.length, args = Array(_len12), _key12 = 0; _key12 < _len12; _key12++) {
-        args[_key12] = arguments[_key12];
-      }
-
-      return function (obj) {
-        return apply$1(f, obj, args);
-      };
-    };
-  }
-
   function apply2(f, args) {
     return f.apply(null, toArray$1(args));
   }
@@ -923,8 +928,8 @@
 
   function unspread(f) {
     return function () {
-      for (var _len13 = arguments.length, args = Array(_len13), _key13 = 0; _key13 < _len13; _key13++) {
-        args[_key13] = arguments[_key13];
+      for (var _len12 = arguments.length, args = Array(_len12), _key12 = 0; _key12 < _len12; _key12++) {
+        args[_key12] = arguments[_key12];
       }
 
       return f(args);
@@ -973,8 +978,8 @@
 
   function constructs$1(Type) {
     return function () {
-      for (var _len16 = arguments.length, args = Array(_len16), _key16 = 0; _key16 < _len16; _key16++) {
-        args[_key16] = arguments[_key16];
+      for (var _len15 = arguments.length, args = Array(_len15), _key15 = 0; _key15 < _len15; _key15++) {
+        args[_key15] = arguments[_key15];
       }
 
       return new (Function.prototype.bind.apply(Type, [null].concat(args)))();
@@ -1867,70 +1872,6 @@
     provideBehavior(piped)(Pipeline);
   }
 
-  function Aspectable(how, exec, before, after) {
-    this.how = how;
-    this.exec = exec;
-    this.before = before;
-    this.after = after;
-  }
-
-  function provideConstructor(pipeline) {
-
-    return function aspectable(how, exec) {
-      return new Aspectable(how, exec, pipeline(how), pipeline(how));
-    };
-  }
-
-  function provideBehavior$1(pipeline, compile, update) {
-
-    function invoke$$1(self) {
-      for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-        args[_key - 1] = arguments[_key];
-      }
-
-      return compile(pipeline(self.how, [compile(self.before), self.exec, compile(self.after)])).apply(undefined, args);
-    }
-
-    function lookup$$1(self, key) {
-      switch (key) {
-        case "before":
-          return self.before;
-        case "after":
-          return self.after;
-      }
-    }
-
-    function assoc$$1(self, key, value) {
-      switch (key) {
-        case "before":
-          return new Aspectable(self.how, self.exec, value, self.after);
-        case "after":
-          return new Aspectable(self.how, self.exec, self.before, value);
-        default:
-          return self;
-      }
-    }
-
-    function prepend$$1(self, advice) {
-      return update(self, "before", function (pipeline) {
-        return IPrependable.prend(pipeline, advice);
-      });
-    }
-
-    function append$$1(self, advice) {
-      return update(self, "after", function (pipeline) {
-        return IAppendable.append(pipeline, advice);
-      });
-    }
-
-    return effect(implement(ILookup, { lookup: lookup$$1 }), implement(IAssociative, { assoc: assoc$$1 }), implement(IPrependable, { prepend: prepend$$1 }), implement(IAppendable, { append: append$$1 }), implement(IFn, { invoke: invoke$$1 }));
-  }
-
-  function provideAspectable(pipeline, compile, update) {
-    provideBehavior$1(pipeline, compile, update)(Aspectable);
-    return provideConstructor(pipeline);
-  }
-
   function everyPair2(pred, xs) {
     var every = xs.length > 0;
     while (every && xs.length > 1) {
@@ -1992,7 +1933,7 @@
     } else if (isNil(y)) {
       return 1;
     } else if (type(x) === type(y)) {
-      return IComparable._compare(x, y);
+      return IComparable.compare(x, y);
     }
   }
 
@@ -2106,7 +2047,10 @@
   var max = overload(null, identity$1, max2, reducing(max2));
 
   function everyPred() {
-    var preds = slice(arguments);
+    for (var _len10 = arguments.length, preds = Array(_len10), _key10 = 0; _key10 < _len10; _key10++) {
+      preds[_key10] = arguments[_key10];
+    }
+
     return function () {
       return reduce(function (memo, arg) {
         return reduce(function (memo, pred) {
@@ -2115,6 +2059,101 @@
         }, memo, preds);
       }, true, slice(arguments));
     };
+  }
+
+  function map(f) {
+    return function (xf) {
+      return overload(xf, xf, function (memo, value) {
+        return xf(memo, f(value));
+      });
+    };
+  }
+
+  function mapIndexed(f) {
+    return function (xf) {
+      var idx = -1;
+      return overload(xf, xf, function (memo, value) {
+        return xf(memo, f(++idx, value));
+      });
+    };
+  }
+
+  function filter(pred) {
+    return function (xf) {
+      return overload(xf, xf, function (memo, value) {
+        return pred(value) ? xf(memo, value) : memo;
+      });
+    };
+  }
+
+  var remove = comp(filter, complement);
+
+  function take(n) {
+    return function (xf) {
+      var taking = n;
+      return overload(xf, xf, function (memo, value) {
+        return taking-- > 0 ? xf(memo, value) : reduced(memo);
+      });
+    };
+  }
+
+  function drop(n) {
+    return function (xf) {
+      var dropping = n;
+      return overload(xf, xf, function (memo, value) {
+        return dropping-- > 0 ? memo : xf(memo, value);
+      });
+    };
+  }
+
+  function interpose(sep) {
+    return function (xf) {
+      return overload(xf, xf, function (memo, value) {
+        return xf(seq(memo) ? xf(memo, sep) : memo, value);
+      });
+    };
+  }
+
+  function dropWhile(pred) {
+    return function (xf) {
+      var dropping = true;
+      return overload(xf, xf, function (memo, value) {
+        !dropping || (dropping = pred(value));
+        return dropping ? memo : xf(memo, value);
+      });
+    };
+  }
+
+  function keep(f) {
+    return comp(map(f), filter(isSome));
+  }
+
+  function keepIndexed(f) {
+    return comp(mapIndexed1(f), filter(isSome));
+  }
+
+  function takeWhile(pred) {
+    return function (xf) {
+      return overload(xf, xf, function (memo, value) {
+        return pred(value) ? xf(memo, value) : reduced(memo);
+      });
+    };
+  }
+
+  function takeNth(n) {
+    return function (xf) {
+      var x = -1;
+      return overload(xf, xf, function (memo, value) {
+        x++;
+        return x === 0 || x % n === 0 ? xf(memo, value) : memo;
+      });
+    };
+  }
+
+  function cat(xf) {
+    return overload(xf, xf, function (memo, value) {
+      return reduce$1(memo, xf, value);
+    });
   }
 
   function transduce3(xform, f, coll) {
@@ -2174,11 +2213,9 @@
 
   var doall = overload(null, doall1, doall2);
 
-  function dotimes2(n, f) {
+  function dotimes(n, f) {
     each(f, range(n));
   }
-
-  var dotimes = overload(null, curry(dotimes2, 2), dotimes2);
 
   function proceed1(self) {
     return step(unit(self), self);
@@ -2253,11 +2290,9 @@
     return notAny(isNil, seqs) ? cons(apply$1(f, mapa(first, seqs)), apply$1(mapN, f, mapa(rest, seqs))) : EMPTY;
   }
 
-  var map = overload(null, curry(map2, 2), map2, map3, mapN);
+  var map$1 = overload(null, map, map2, map3, mapN);
 
-  var mapa2 = comp(toArray$1, map);
-
-  var mapa = overload(null, curry(mapa2, 2), mapa2);
+  var mapa = comp(toArray$1, map$1);
 
   function indexed$1(iter) {
     return function (f, xs) {
@@ -2270,11 +2305,11 @@
 
   var mapIndexed2 = indexed$1(map2);
 
-  var mapIndexed = overload(null, curry(mapIndexed2, 2), mapIndexed2);
+  var mapIndexed$1 = overload(null, mapIndexed, mapIndexed2);
 
   var keepIndexed2 = indexed$1(keep2);
 
-  var keepIndexed = overload(null, curry(keepIndexed2, 2), keepIndexed2);
+  var keepIndexed$1 = overload(null, keepIndexed, keepIndexed2);
 
   function filter2(pred, xs) {
     var coll = seq(xs);
@@ -2285,24 +2320,22 @@
     }) : filter2(pred, rest(coll));
   }
 
-  var filter = overload(null, curry(filter2, 2), filter2);
+  var filter$1 = overload(null, filter, filter2);
 
-  var filtera2 = comp(toArray$1, filter);
-
-  var filtera = overload(null, curry(filtera2, 2), filtera2);
+  var filtera = comp(toArray$1, filter$1);
 
   function remove2(pred, xs) {
     return filter2(complement(pred), xs);
   }
 
-  var remove = overload(null, curry(remove2, 2), remove2);
+  var remove$1 = overload(null, remove, remove2);
 
   function keep2(f, xs) {
     return filter2(isSome, map2(f, xs));
   }
 
-  var keep = overload(null, curry(keep2, 2), keep2);
-  var compact = partial(filter2, identity$1);
+  var keep$1 = overload(null, keep, keep2);
+  var compact$1 = partial(filter2, identity$1);
 
   function drop2(n, coll) {
     var i = n,
@@ -2314,21 +2347,19 @@
     return xs;
   }
 
-  var drop = overload(null, curry(drop2, 2), drop2);
+  var drop$1 = overload(null, drop, drop2);
 
   function dropWhile2(pred, xs) {
     return seq(xs) ? pred(first(xs)) ? dropWhile2(pred, rest(xs)) : xs : EMPTY;
   }
 
-  var dropWhile = overload(null, curry(dropWhile2, 2), dropWhile2);
+  var dropWhile$1 = overload(null, dropWhile, dropWhile2);
 
-  function dropLast2(n, coll) {
-    return map(function (x, _) {
+  function dropLast(n, coll) {
+    return map$1(function (x, _) {
       return x;
-    }, coll, drop(n, coll));
+    }, coll, drop$1(n, coll));
   }
-
-  var dropLast = overload(null, curry(dropLast2, 2), dropLast2);
 
   function take2(n, coll) {
     var xs = seq(coll);
@@ -2337,7 +2368,7 @@
     }) : EMPTY;
   }
 
-  var take = overload(null, curry(take2, 2), take2);
+  var take$1 = overload(null, take, take2);
 
   function takeWhile2(pred, xs) {
     if (!seq(xs)) return EMPTY;
@@ -2347,7 +2378,7 @@
     }) : EMPTY;
   }
 
-  var takeWhile = overload(null, curry(takeWhile2, 2), takeWhile2);
+  var takeWhile$1 = overload(null, takeWhile, takeWhile2);
 
   function takeNth2(n, xs) {
     return seq(xs) ? lazySeq(first(xs), function () {
@@ -2355,13 +2386,11 @@
     }) : EMPTY;
   }
 
-  var takeNth = overload(null, curry(takeNth2, 2), takeNth2);
+  var takeNth$1 = overload(null, takeNth, takeNth2);
 
-  function takeLast2(n, coll) {
-    return n ? drop(count(coll) - n, coll) : EMPTY;
+  function takeLast(n, coll) {
+    return n ? drop$1(count(coll) - n, coll) : EMPTY;
   }
-
-  var takeLast = overload(null, curry(takeLast2, 2), takeLast2);
 
   function interleave2(xs, ys) {
     var as = seq(xs),
@@ -2385,13 +2414,13 @@
     }) : EMPTY;
   }
 
-  var interleave = overload(null, curry(interleaveN, 2), interleave2, interleaveN);
+  var interleave = overload(null, null, interleave2, interleaveN);
 
   function interpose2(sep, xs) {
     return drop2(1, interleave2(repeat1(sep), xs));
   }
 
-  var interpose = overload(null, curry(interpose2, 2), interpose2);
+  var interpose$1 = overload(null, interpose, interpose2);
 
   function partition1(n) {
     return partial(partition, n);
@@ -2404,15 +2433,15 @@
   function partition3(n, step$$1, xs) {
     var coll = seq(xs);
     if (!coll) return EMPTY;
-    var part = take(n, coll);
-    return n === count(part) ? cons(part, partition3(n, step$$1, drop(step$$1, coll))) : EMPTY;
+    var part = take$1(n, coll);
+    return n === count(part) ? cons(part, partition3(n, step$$1, drop$1(step$$1, coll))) : EMPTY;
   }
 
   function partition4(n, step$$1, pad, xs) {
     var coll = seq(xs);
     if (!coll) return EMPTY;
-    var part = take(n, coll);
-    return n === count(part) ? cons(part, partition4(n, step$$1, pad, drop(step$$1, coll))) : cons(take(n, concat(part, pad)));
+    var part = take$1(n, coll);
+    return n === count(part) ? cons(part, partition4(n, step$$1, pad, drop$1(step$$1, coll))) : cons(take$1(n, concat(part, pad)));
   }
 
   var partition = overload(null, partition1, partition2, partition3, partition4);
@@ -2428,12 +2457,12 @@
   function partitionAll3(n, step$$1, xs) {
     var coll = seq(xs);
     if (!coll) return EMPTY;
-    return cons(take(n, coll), partition3(n, step$$1, drop(step$$1, coll)));
+    return cons(take$1(n, coll), partition3(n, step$$1, drop$1(step$$1, coll)));
   }
 
   var partitionAll = overload(null, partitionAll1, partitionAll2, partitionAll3);
 
-  function partitionBy2(f, xs) {
+  function partitionBy(f, xs) {
     var coll = seq(xs);
     if (!coll) return EMPTY;
     var head = first(coll),
@@ -2441,10 +2470,8 @@
         run = cons(head, takeWhile2(function (x) {
       return val === f(x);
     }, next(coll)));
-    return cons(run, partitionBy2(f, seq(drop(count(run), coll))));
+    return cons(run, partitionBy(f, seq(drop$1(count(run), coll))));
   }
-
-  var partitionBy = overload(null, curry(partitionBy2, 2), partitionBy2);
 
   var butlast = partial(dropLast, 1);
 
@@ -2457,18 +2484,18 @@
     return first(xs);
   }
 
-  function dedupe(coll) {
+  function dedupe$1(coll) {
     var xs = seq(coll);
     var last = first(xs);
     return xs ? lazySeq(last, function () {
       while (next(xs) && first(next(xs)) === last) {
         xs = next(xs);
       }
-      return dedupe(next(xs));
+      return dedupe$1(next(xs));
     }) : EMPTY;
   }
 
-  function distinct(coll) {
+  function distinct$1(coll) {
     return Array.from(new Set(coll));
   }
 
@@ -2476,11 +2503,11 @@
   var splitWith = juxt(takeWhile2, dropWhile2);
 
   function mapcat1(f) {
-    return comp(map(f), t.cat);
+    return comp(map$1(f), cat);
   }
 
   function mapcat2(f, colls) {
-    return concatenated(map(f, colls));
+    return concatenated(map$1(f, colls));
   }
 
   var mapcat = overload(null, mapcat1, mapcat2);
@@ -2560,10 +2587,10 @@
   var doseq = overload(null, null, each, doseq3, doseq4, doseqN);
 
   function coalesce(xs) {
-    return detect(identity$1, xs);
+    return detect$1(identity$1, xs);
   }
 
-  var detect = comp(first, filter);
+  var detect$1 = comp(first, filter$1);
 
   function repeatedly1(f) {
     return lazySeq(f(), function () {
@@ -2631,7 +2658,7 @@
   }
 
   function flatten(coll) {
-    return filter(complement(isSequential), rest(treeSeq(isSequential, seq, coll)));
+    return filter$1(complement(isSequential), rest(treeSeq(isSequential, seq, coll)));
   }
 
   function isDistinctN() {
@@ -2661,123 +2688,6 @@
       a[j] = x;
     }
     return a;
-  }
-
-  function map$1(f) {
-    return function (xf) {
-      return overload(xf, xf, function (memo, value) {
-        return xf(memo, f(value));
-      });
-    };
-  }
-
-  function mapIndexed$1(f) {
-    return function (xf) {
-      var idx = -1;
-      return overload(xf, xf, function (memo, value) {
-        return xf(memo, f(++idx, value));
-      });
-    };
-  }
-
-  function filter$1(pred) {
-    return function (xf) {
-      return overload(xf, xf, function (memo, value) {
-        return pred(value) ? xf(memo, value) : memo;
-      });
-    };
-  }
-
-  var remove$1 = comp(filter$1, complement);
-
-  function compact$1() {
-    return filter$1(identity$1);
-  }
-
-  function dedupe$1() {
-    return function (xf) {
-      var last;
-      return overload(xf, xf, function (memo, value) {
-        var result = value === last ? memo : xf(memo, value);
-        last = value;
-        return result;
-      });
-    };
-  }
-
-  function take$1(n) {
-    return function (xf) {
-      var taking = n;
-      return overload(xf, xf, function (memo, value) {
-        return taking-- > 0 ? xf(memo, value) : reduced(memo);
-      });
-    };
-  }
-
-  function drop$1(n) {
-    return function (xf) {
-      var dropping = n;
-      return overload(xf, xf, function (memo, value) {
-        return dropping-- > 0 ? memo : xf(memo, value);
-      });
-    };
-  }
-
-  function interpose$1(sep) {
-    return function (xf) {
-      return overload(xf, xf, function (memo, value) {
-        return xf(seq(memo) ? xf(memo, sep) : memo, value);
-      });
-    };
-  }
-
-  function dropWhile$1(pred) {
-    return function (xf) {
-      var dropping = true;
-      return overload(xf, xf, function (memo, value) {
-        !dropping || (dropping = pred(value));
-        return dropping ? memo : xf(memo, value);
-      });
-    };
-  }
-
-  function keep$1(f) {
-    return comp(map$1(f), filter$1(isSome));
-  }
-
-  function keepIndexed$1(f) {
-    return comp(mapIndexed1(f), filter$1(isSome));
-  }
-
-  function takeWhile$1(pred) {
-    return function (xf) {
-      return overload(xf, xf, function (memo, value) {
-        return pred(value) ? xf(memo, value) : reduced(memo);
-      });
-    };
-  }
-
-  function takeNth$1(n) {
-    return function (xf) {
-      var x = -1;
-      return overload(xf, xf, function (memo, value) {
-        x++;
-        return x === 0 || x % n === 0 ? xf(memo, value) : memo;
-      });
-    };
-  }
-
-  function distinct$1() {
-    return function (xf) {
-      var seen = new Set();
-      return overload(xf, xf, function (memo, value) {
-        if (seen.has(value)) {
-          return memo;
-        }
-        seen.add(value);
-        return xf(memo, value);
-      });
-    };
   }
 
   function get$2(self, key, notFound) {
@@ -2865,13 +2775,13 @@
       maps[_key2] = arguments[_key2];
     }
 
-    return some(identity, maps) ? reduce(function (memo, map$$1) {
+    return some(identity, maps) ? reduce(function (memo, map) {
       return reduce(function (memo, pair) {
         var key = pair[0],
             value = pair[1];
         memo[key] = value;
         return memo;
-      }, memo, seq(map$$1));
+      }, memo, seq(map));
     }, {}, maps) : null;
   }
 
@@ -2880,14 +2790,14 @@
       maps[_key3 - 1] = arguments[_key3];
     }
 
-    return some(identity, maps) ? reduce(function (memo, map$$1) {
+    return some(identity, maps) ? reduce(function (memo, map) {
       return reduce(function (memo, pair) {
         var key = pair[0],
             value = pair[1];
         return contains(memo, key) ? update$1(memo, key, function (prior) {
           return f(prior, value);
         }) : assoc(memo, key, value);
-      }, memo, seq(map$$1));
+      }, memo, seq(map));
     }, {}, maps) : null;
   }
 
@@ -2959,7 +2869,7 @@
       fs[_key3 - 2] = arguments[_key3];
     }
 
-    return transduce(map$1(how), function (memo, f) {
+    return transduce(map(how), function (memo, f) {
       return f(memo);
     }, init, fs);
   }
@@ -2991,11 +2901,9 @@
 
   providePipeline(piped);
 
-  var aspectable = provideAspectable(pipeline, compile, update$1);
-
-  var request = aspectable(future, function (config) {
+  var request = pipeline(future, [function (config) {
     return fetch(config.url, config);
-  });
+  }]);
 
   /*
   * Signals allow error handling to be handled as a separate (composable) concern rather than an integrated one.
@@ -3172,8 +3080,8 @@
         xs[_key] = arguments[_key];
       }
 
-      var contents = toArray$1(compact(flatten(xs)));
-      return detect(function (content) {
+      var contents = toArray$1(compact$1(flatten(xs)));
+      return detect$1(function (content) {
         return typeof content === "function";
       }, contents) ? step$$1(contents) : f.apply(undefined, toConsumableArray(contents));
     }
@@ -3182,7 +3090,7 @@
         var resolve = typeof value === "function" ? partial(comp, value) : function (f) {
           return f(value);
         };
-        return expand.apply(undefined, toConsumableArray(map(function (content) {
+        return expand.apply(undefined, toConsumableArray(map$1(function (content) {
           return typeof content === "function" ? resolve(content) : content;
         }, contents)));
       };
@@ -3207,21 +3115,6 @@
     return reduce(appendChild, document.createDocumentFragment(), contents);
   });
 
-  var map$2 = overload(null, map$1, map);
-  var take$2 = overload(null, take$1, take);
-  var drop$2 = overload(null, drop$1, drop);
-  var interpose$2 = overload(null, interpose$1, interpose);
-  var filter$2 = overload(null, filter$1, filter);
-  var keep$2 = overload(null, keep$1, keep);
-  var mapIndexed$2 = overload(null, mapIndexed$1, mapIndexed);
-  var keepIndexed$2 = overload(null, keepIndexed$1, keepIndexed);
-  var remove$2 = overload(null, remove$1, remove);
-  var takeWhile$2 = overload(null, takeWhile$1, takeWhile);
-  var takeNth$2 = overload(null, takeNth$1, takeNth);
-  var dropWhile$2 = overload(null, dropWhile$1, dropWhile);
-  var compact$2 = overload(compact$1, compact);
-  var dedupe$2 = overload(dedupe$1, dedupe);
-  var distinct$2 = overload(distinct$1, distinct);
   var second = comp(first, next);
 
   /*
@@ -3233,7 +3126,7 @@
   }
 
   export const request = _.chain(_.request,
-    _.update("before", _.prepend(function(params){
+    _.prepend(function(params){
       return Object.assign({
         credentials: "same-origin",
         method: "GET",
@@ -3242,31 +3135,14 @@
           "Content-Type": "application/json;odata=verbose"
         }
       }, params);
-    })),
-    _.update("after",
-      _.pipe(
-        _.append(checkStatus),
-        _.append(function(resp){
-          return resp.json();
-        }),
-        _.append(_.getIn(["d", "results"])))));
+    }),
+    _.append(checkStatus),
+    _.append(function(resp){
+      return resp.json();
+    }),
+    _.append(_.getIn(["d", "results"])));
   */
 
-  exports.map = map$2;
-  exports.take = take$2;
-  exports.drop = drop$2;
-  exports.interpose = interpose$2;
-  exports.filter = filter$2;
-  exports.keep = keep$2;
-  exports.mapIndexed = mapIndexed$2;
-  exports.keepIndexed = keepIndexed$2;
-  exports.remove = remove$2;
-  exports.takeWhile = takeWhile$2;
-  exports.takeNth = takeNth$2;
-  exports.dropWhile = dropWhile$2;
-  exports.compact = compact$2;
-  exports.dedupe = dedupe$2;
-  exports.distinct = distinct$2;
   exports.second = second;
   exports.unbind = unbind;
   exports.log = log;
@@ -3274,10 +3150,12 @@
   exports.counter = counter;
   exports.type = type$1;
   exports.overload = overload;
+  exports.subj = subj;
+  exports.obj = obj$1;
   exports.identity = identity$1;
   exports.constantly = constantly;
-  exports.effect = effect;
   exports.doto = doto;
+  exports.effect = effect;
   exports.isInstance = isInstance;
   exports.ProtocolLookupError = ProtocolLookupError;
   exports.extend = extend;
@@ -3349,7 +3227,6 @@
   exports.ISequential = ISequential;
   exports.isSequential = isSequential;
   exports.IComparable = IComparable;
-  exports._compare = _compare;
   exports.isComparable = isComparable;
   exports.IPublish = IPublish;
   exports.pub = pub;
@@ -3396,7 +3273,6 @@
   exports.tap = tap;
   exports.see = see;
   exports.reversed = reversed;
-  exports.subj = subj;
   exports.apply = apply$1;
   exports.spread = spread;
   exports.unspread = unspread;
@@ -3492,9 +3368,6 @@
   exports.providePipeline = providePipeline;
   exports.Pipeline = Pipeline;
   exports.pipeline = pipeline;
-  exports.provideAspectable = provideAspectable;
-  exports.Aspectable = Aspectable;
-  exports.provideConstructor = provideConstructor;
   exports.someFn = someFn;
   exports.isIdentical = isIdentical;
   exports.compare = compare$1;
@@ -3527,13 +3400,26 @@
   exports.notAny = notAny;
   exports.every = every;
   exports.notEvery = notEvery;
+  exports.map = map$1;
   exports.mapa = mapa;
   exports.indexed = indexed$1;
+  exports.mapIndexed = mapIndexed$1;
+  exports.keepIndexed = keepIndexed$1;
+  exports.filter = filter$1;
   exports.filtera = filtera;
+  exports.remove = remove$1;
+  exports.keep = keep$1;
+  exports.compact = compact$1;
+  exports.drop = drop$1;
+  exports.dropWhile = dropWhile$1;
   exports.dropLast = dropLast;
+  exports.take = take$1;
+  exports.takeWhile = takeWhile$1;
+  exports.takeNth = takeNth$1;
   exports.takeLast = takeLast;
   exports.interleaved = interleaved;
   exports.interleave = interleave;
+  exports.interpose = interpose$1;
   exports.partition = partition;
   exports.partitionAll1 = partitionAll1;
   exports.partitionAll2 = partitionAll2;
@@ -3542,6 +3428,8 @@
   exports.partitionBy = partitionBy;
   exports.butlast = butlast;
   exports.last = last;
+  exports.dedupe = dedupe$1;
+  exports.distinct = distinct$1;
   exports.splitAt = splitAt;
   exports.splitWith = splitWith;
   exports.mapcat = mapcat;
@@ -3551,7 +3439,7 @@
   exports.doseqN = doseqN;
   exports.doseq = doseq;
   exports.coalesce = coalesce;
-  exports.detect = detect;
+  exports.detect = detect$1;
   exports.repeatedly = repeatedly;
   exports.repeat = repeat;
   exports.iterate = iterate$1;
@@ -3585,7 +3473,6 @@
   exports.opt = opt;
   exports.prom = prom;
   exports.handle = handle;
-  exports.aspectable = aspectable;
   exports.request = request;
   exports.signal = signal;
   exports.listen = listen;

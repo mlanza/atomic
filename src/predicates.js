@@ -54,7 +54,7 @@ export function compare(x, y){
   } else if (isNil(y)) {
     return 1;
   } else if (type(x) === type(y)) {
-    return IComparable._compare(x, y);
+    return IComparable.compare(x, y);
   }
 }
 
@@ -139,8 +139,7 @@ function max2(x, y){
 export const min = overload(null, identity, min2, reducing(min2));
 export const max = overload(null, identity, max2, reducing(max2));
 
-export function everyPred(){
-  var preds = slice(arguments);
+export function everyPred(...preds){
   return function(){
     return reduce(function(memo, arg){
       return reduce(function(memo, pred){
