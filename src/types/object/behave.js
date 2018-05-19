@@ -1,11 +1,12 @@
-import {implement} from '../../protocol';
 import {constantly, effect, identity} from '../../core';
-import {objectSelection} from '../../types/objectselection';
-import {lazySeq} from '../../types/lazyseq';
-import {EMPTY} from '../../types/empty/construct';
-import {IElementContent, IReduce, IKVReduce, ISeqable, IShow, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, IFn, IMap, ISeq, IArr, IObj, ICloneable, IInclusive} from '../../protocols';
-import {reducekv} from '../../protocols/ikvreduce';
-import {EMPTY_OBJECT} from '../../types/object/construct';
+import {implement} from '../../protocol';
+import {reducekv, IElementContent, IReduce, IKVReduce, ISeqable, IShow, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, IFn, IMap, ISeq, IArr, IObj, ICloneable, IInclusive} from '../../protocols';
+import {objectSelection} from '../objectselection';
+import {Reduced} from '../reduced';
+import {lazySeq} from '../lazyseq';
+import {equivalence} from '../array/behave';
+import {EMPTY_OBJECT} from '../object/construct';
+import {EMPTY} from '../empty/construct';
 
 function appendTo(self, parent){
   IKVReduce._reducekv(self, function(memo, key, value){
@@ -68,16 +69,15 @@ function _reduce(self, xf, init){
   let memo = init;
   Object.keys(self).forEach(function(key){
     memo = xf(memo, [key, self[key]]);
+
   });
   return memo;
 }
 
 function _reducekv(self, xf, init){
-  let memo = init;
-  Object.keys(self).forEach(function(key){
-    memo = xf(memo, key, self[key]);
-  });
-  return memo;
+  return IReduce._reduce(Object.keys(self), function(memo, key){
+    return xf(memo, key, self[key]);
+  }, init);
 }
 
 function show(self){
@@ -88,6 +88,7 @@ function show(self){
 }
 
 export default effect(
+  equivalence,
   implement(IElementContent, {appendTo}),
   implement(IObj, {toObject: identity}),
   implement(IFind, {find}),

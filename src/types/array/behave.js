@@ -1,10 +1,16 @@
 import {effect, identity, constantly} from '../../core';
 import {implement} from '../../protocol';
-import {IReduce, IKVReduce, IAppendable, IPrependable, IInclusive, ICollection, INext, ISeq, IFind, IArr, ISeqable, IIndexed, IAssociative, ISequential, IEmptyableCollection, IFn, IShow, ICounted, ILookup, ICloneable} from '../../protocols';
-import {reduce, reducekv} from '../../types/reduced';
+import {toArray, IEquiv, IReduce, IKVReduce, IAppendable, IPrependable, IInclusive, ICollection, INext, ISeq, IFind, IArr, ISeqable, IIndexed, IAssociative, ISequential, IEmptyableCollection, IFn, IShow, ICounted, ILookup, ICloneable} from '../../protocols';
+import {reduce, reducekv, reduced} from '../../types/reduced';
 import {EMPTY_ARRAY} from './construct';
 import {indexedSeq} from '../indexedseq';
 import {showable} from '../lazyseq/behave';
+
+function equiv(self, other){
+  return self === other ? true : IKVReduce._reducekv(self, function(memo, key, value){
+    return memo ? IEquiv.equiv(value, ILookup.lookup(other, key)) : reduced(memo);
+  }, ICounted.count(self) === ICounted.count(other));
+}
 
 function find(self, key){
   return IAssociative.contains(self, key) ? [key, ILookup.lookup(self, key)] : null;
@@ -64,9 +70,12 @@ export const indexed = effect(
   implement(IIndexed, {nth: nth}),
   implement(ICounted, {count: length}));
 
+export const equivalence = implement(IEquiv, {equiv});
+
 export default effect(
   showable,
   indexed,
+  equivalence,
   implement(ISequential),
   implement(IFind, {find}),
   implement(IInclusive, {includes}),

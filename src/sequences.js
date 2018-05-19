@@ -1,5 +1,5 @@
 import {doto, overload, constantly, identity} from "./core";
-import {count, nth, first, rest, next, seq, reduce, conj, step, converse, unit, toArray, isSequential} from "./protocols";
+import {compare, count, nth, first, rest, next, seq, reduce, conj, step, converse, unit, toArray, isSequential} from "./protocols";
 import {inc, comp, not, partial, concat, apply, concatenated, observable, isNil, cons, EMPTY, EMPTY_ARRAY, lazySeq, reduced, reducing, complement, slice, juxt, isBlank, isSome, randInt} from "./types";
 import {notEq} from "./predicates";
 import * as t from "./transducers";
@@ -359,7 +359,7 @@ function mapcat2(f, colls){
 export const mapcat = overload(null, mapcat1, mapcat2);
 
 function sort1(coll){
-  return into([], coll).sort();
+  return sort2(compare, coll);
 }
 
 function sort2(compare, coll){

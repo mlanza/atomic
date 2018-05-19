@@ -4,30 +4,6 @@
   (factory((global._ = {})));
 }(this, (function (exports) { 'use strict';
 
-  function boolean() {
-    return Boolean.apply(undefined, arguments);
-  }
-  var bool = boolean;
-
-  //import behave from "./boolean/behave";
-  //behave(Boolean);
-
-  function isBoolean(self) {
-    return Boolean(self) === self;
-  }
-
-  function not(self) {
-    return !self;
-  }
-
-  function isTrue(self) {
-    return self === true;
-  }
-
-  function isFalse(self) {
-    return self === false;
-  }
-
   var unbind = Function.call.bind(Function.bind, Function.call);
   var log = console.log.bind(console);
 
@@ -106,7 +82,10 @@
     return x instanceof constructor;
   }
 
-  var test = unbind(RegExp.prototype.test);
+  function array() {
+    return Array.apply(undefined, arguments);
+  }
+  var EMPTY_ARRAY = Object.freeze([]);
 
   function Nil() {}
 
@@ -194,23 +173,64 @@
 
   var satisfies = overload(null, satisfies1, satisfies2);
 
+  var IAppendable = protocol({
+    append: null
+  });
+  var append = IAppendable.append;
+  var isAppendable = satisfies(IAppendable);
+
   var IArr = protocol({
     toArray: null
   });
   var toArray$1 = IArr.toArray;
   var isArr = satisfies(IArr);
 
-  var IObj = protocol({
-    toObject: null
+  var IAssociative = protocol({
+    assoc: null,
+    contains: null
   });
-  var toObject = IObj.toObject;
-  var isObj = satisfies(IObj);
+  var assoc = IAssociative.assoc;
+  var contains = IAssociative.contains;
+  var isAssociative = satisfies(IAssociative);
 
-  var IAppendable = protocol({
-    append: null
+  var ICloneable = protocol({
+    clone: null
   });
-  var append = IAppendable.append;
-  var isAppendable = satisfies(IAppendable);
+  var clone = ICloneable.clone;
+  var isCloneable = satisfies(ICloneable);
+
+  var ICollection = protocol({
+    conj: null
+  });
+  var conj = ICollection.conj;
+
+  var IComparable = protocol({
+    compare: function compare(x, y) {
+      return x > y ? 1 : x < y ? -1 : 0;
+    }
+  });
+  var compare = IComparable.compare;
+  var isComparable = satisfies(IComparable);
+
+  var ICounted = protocol({
+    count: null
+  });
+  var count = ICounted.count;
+  var isCounted = satisfies(ICounted);
+
+  function _deref(self) {
+    return self == null ? null : self.valueOf();
+  }
+  var IDeref = protocol({
+    deref: _deref
+  });
+  var deref = IDeref.deref;
+
+  var IDisposable = protocol({
+    dispose: null
+  });
+  var dispose = IDisposable.dispose;
+  var isDisposable = satisfies(IDisposable);
 
   function _appendTo(child, parent) {
     parent.appendChild(child);
@@ -226,72 +246,25 @@
     return parent;
   }
 
-  var IPrependable = protocol({
-    prepend: null
-  });
-  var prepend = IPrependable.prepend;
-  var isPrependable = satisfies(IPrependable);
-
-  var IInclusive = protocol({
-    includes: null
-  });
-  var includes = IInclusive.includes;
-  var isInclusive = satisfies(IInclusive);
-
-  var ISeq = protocol({
-    first: null,
-    rest: null
-  });
-  var first = ISeq.first;
-  var rest = ISeq.rest;
-  var isSeq = satisfies(ISeq);
-
-  var ISeqable = protocol({
-    seq: null
-  });
-  var seq = ISeqable.seq;
-  var isSeqable = satisfies(ISeqable);
-
-  var ICollection = protocol({
-    conj: null
-  });
-  var conj = ICollection.conj;
-
   var IEmptyableCollection = protocol({
     empty: null
   });
   var empty = IEmptyableCollection.empty;
   var isEmptyableCollection = satisfies(IEmptyableCollection);
 
-  var ILookup = protocol({
-    lookup: null
+  var IEquiv = protocol({
+    equiv: function equiv(x, y) {
+      return x === y;
+    }
   });
-  var lookup = ILookup.lookup;
+  var equiv = IEquiv.equiv;
+  var isEquiv = satisfies(IEquiv);
 
-  var IAssociative = protocol({
-    assoc: null,
-    contains: null
+  var IFind = protocol({
+    find: null
   });
-  var assoc = IAssociative.assoc;
-  var contains = IAssociative.contains;
-  var isAssociative = satisfies(IAssociative);
-
-  var INext = protocol({
-    next: null
-  });
-  var next = INext.next;
-
-  var IIndexed = protocol({
-    nth: null
-  });
-  var nth = IIndexed.nth;
-  var isIndexed = satisfies(IIndexed);
-
-  var IShow = protocol({
-    show: null
-  });
-  var show = IShow.show;
-  var isShow = satisfies(IShow);
+  var find = IFind.find;
+  var isFindable = satisfies(IFind);
 
   var IFn = protocol({
     invoke: null
@@ -299,19 +272,29 @@
   var invoke = IFn.invoke;
   var isFn = satisfies(IFn);
 
-  function _deref(self) {
-    return self == null ? null : self.valueOf();
-  }
-  var IDeref = protocol({
-    deref: _deref
+  var IInclusive = protocol({
+    includes: null
   });
-  var deref = IDeref.deref;
+  var includes = IInclusive.includes;
+  var isInclusive = satisfies(IInclusive);
 
-  var ICounted = protocol({
-    count: null
+  var IIndexed = protocol({
+    nth: null
   });
-  var count = ICounted.count;
-  var isCounted = satisfies(ICounted);
+  var nth = IIndexed.nth;
+  var isIndexed = satisfies(IIndexed);
+
+  var IKVReduce = protocol({
+    _reducekv: null
+  });
+  function reducekv(xf, init, coll) {
+    return IKVReduce._reducekv(coll, xf, init);
+  }
+
+  var ILookup = protocol({
+    lookup: null
+  });
+  var lookup = ILookup.lookup;
 
   var IReduce = protocol({
     _reduce: null
@@ -326,13 +309,6 @@
   }
 
   var reduce = overload(null, null, reduce2, reduce3);
-
-  var IKVReduce = protocol({
-    _reducekv: null
-  });
-  function reducekv(xf, init, coll) {
-    return IKVReduce._reducekv(coll, xf, init);
-  }
 
   var IMap = protocol({
     _dissoc: null
@@ -351,15 +327,22 @@
   var dissoc = overload(null, identity$1, dissoc2, dissocN);
   var isMap = satisfies(IMap);
 
-  var ISequential = protocol({});
-  var isSequential = satisfies(ISequential);
-
-  var IComparable = protocol({
-    compare: function compare(x, y) {
-      return x > y ? 1 : x < y ? -1 : 0;
-    }
+  var INext = protocol({
+    next: null
   });
-  var isComparable = satisfies(IComparable);
+  var next = INext.next;
+
+  var IObj = protocol({
+    toObject: null
+  });
+  var toObject = IObj.toObject;
+  var isObj = satisfies(IObj);
+
+  var IPrependable = protocol({
+    prepend: null
+  });
+  var prepend = IPrependable.prepend;
+  var isPrependable = satisfies(IPrependable);
 
   var IPublish = protocol({
     pub: null
@@ -367,17 +350,51 @@
   var pub = IPublish.pub;
   var isPublish = satisfies(IPublish);
 
-  var ISubscribe = protocol({
-    sub: null
-  });
-  var sub = ISubscribe.sub;
-  var isSubscribe = satisfies(ISubscribe);
+  var IRecord = protocol({});
+  var isRecord = satisfies(IRecord);
 
   var IReset = protocol({
     reset: null
   });
   var reset = IReset.reset;
   var isReset = satisfies(IReset);
+
+  var ISeq = protocol({
+    first: null,
+    rest: null
+  });
+  var first = ISeq.first;
+  var rest = ISeq.rest;
+  var isSeq = satisfies(ISeq);
+
+  var ISeqable = protocol({
+    seq: null
+  });
+  var seq = ISeqable.seq;
+  var isSeqable = satisfies(ISeqable);
+
+  var ISequential = protocol({});
+  var isSequential = satisfies(ISequential);
+
+  var IShow = protocol({
+    show: null
+  });
+  var show = IShow.show;
+  var isShow = satisfies(IShow);
+
+  var ISteppable = protocol({
+    step: null,
+    converse: null
+  });
+  var step = ISteppable.step;
+  var converse = ISteppable.converse;
+  var isSteppable = satisfies(ISteppable);
+
+  var ISubscribe = protocol({
+    sub: null
+  });
+  var sub = ISubscribe.sub;
+  var isSubscribe = satisfies(ISubscribe);
 
   var ISwap = protocol({
     _swap: null
@@ -404,109 +421,45 @@
   var swap = overload(null, null, ISwap._swap, swap3, swap4, swapN);
   var isSwap = satisfies(ISwap);
 
-  var IRecord = protocol({});
-  var isRecord = satisfies(IRecord);
-
-  var IDisposable = protocol({
-    dispose: null
-  });
-  var dispose = IDisposable.dispose;
-  var isDisposable = satisfies(IDisposable);
-
-  var ICloneable = protocol({
-    clone: null
-  });
-  var clone = ICloneable.clone;
-  var isCloneable = satisfies(ICloneable);
-
-  var IFind = protocol({
-    find: null
-  });
-  var find = IFind.find;
-  var isFindable = satisfies(IFind);
-
   var IUnit = protocol({
     unit: null
   });
   var unit = IUnit.unit;
   var isUnit = satisfies(IUnit);
 
-  var ISteppable = protocol({
-    step: null,
-    converse: null
-  });
-  var step = ISteppable.step;
-  var converse = ISteppable.converse;
-  var isSteppable = satisfies(ISteppable);
-
-  function Empty() {}
-  var EMPTY = Empty.EMPTY = new Empty();
-  //export const empty = constantly(EMPTY);
-
-  function array() {
-    return Array.apply(undefined, arguments);
-  }
-  var EMPTY_ARRAY = Object.freeze([]);
-
-  var behave = effect(implement(IEmptyableCollection, { empty: identity$1 }), implement(IArr, { toArray: constantly(EMPTY_ARRAY) }), implement(ISeq, { first: constantly(null), rest: constantly(EMPTY) }), implement(INext, { next: constantly(null) }), implement(ISeqable, { seq: constantly(null) }), implement(IShow, { show: constantly("[]") }));
-
-  behave(Empty);
-
-  function assoc$1(self, key, value) {
-    var obj = {};
-    obj[key] = value;
-    return obj;
-  }
-
-  function _reduce(self, xf, init) {
-    return init;
-  }
-
-  var behave$1 = effect(implement(IEmptyableCollection, { empty: identity$1 }), implement(ILookup, { lookup: constantly(null) }), implement(IAssociative, { assoc: assoc$1, contains: constantly(false) }), implement(INext, { next: identity$1 }), implement(IArr, { toArray: constantly(EMPTY_ARRAY) }), implement(ISeq, { first: identity$1, rest: constantly(EMPTY) }), implement(ISeqable, { seq: identity$1 }), implement(IIndexed, { nth: identity$1 }), implement(ICounted, { count: constantly(0) }), implement(IReduce, { _reduce: _reduce }), implement(IShow, { show: constantly("null") }));
-
-  behave$1(Nil);
-
-  function isNil(x) {
-    return x == null;
-  }
-
-  function isSome(x) {
-    return x != null;
-  }
-
-  function Reduced$1(value) {
+  function Reduced(value) {
     this.value = value;
   }
 
-  Reduced$1.prototype.valueOf = function () {
+  Reduced.prototype.valueOf = function () {
     return this.value;
   };
 
   function reduced(value) {
-    return new Reduced$1(value);
+    return new Reduced(value);
   }
 
   function isReduced(value) {
-    return value instanceof Reduced$1;
+    return value instanceof Reduced;
   }
 
   function deref$1(self) {
     return self.valueOf();
   }
 
-  var behave$2 = effect(implement(IDeref, { deref: deref$1 }));
+  var behave = effect(implement(IDeref, { deref: deref$1 }));
 
-  behave$2(Reduced$1);
+  behave(Reduced);
 
   function unreduced(self) {
-    return self instanceof Reduced$1 ? self.valueOf() : self;
+    return self instanceof Reduced ? self.valueOf() : self;
   }
 
   function reduce3$1(xs, xf, init) {
     var memo = init,
         to = xs.length - 1;
     for (var i = 0; i <= to; i++) {
-      if (memo instanceof Reduced$1) break;
+      if (memo instanceof Reduced) break;
       memo = xf(memo, xs[i]);
     }
     return unreduced(memo);
@@ -520,12 +473,12 @@
     var memo = init;
     if (from <= to) {
       for (var i = from; i <= to; i++) {
-        if (memo instanceof Reduced$1) break;
+        if (memo instanceof Reduced) break;
         memo = xf(memo, xs[i]);
       }
     } else {
       for (var i = from; i >= to; i--) {
-        if (memo instanceof Reduced$1) break;
+        if (memo instanceof Reduced) break;
         memo = xf(memo, xs[i]);
       }
     }
@@ -538,7 +491,7 @@
     var memo = init,
         len = xs.length;
     for (var i = from || 0; i < len; i++) {
-      if (memo instanceof Reduced$1) break;
+      if (memo instanceof Reduced) break;
       memo = xf(memo, i, xs[i]);
     }
     return unreduced(memo);
@@ -553,6 +506,14 @@
       return tail.length ? rf(x, r.apply(undefined, tail)) : x;
     };
   }
+
+  function Empty() {}
+  var EMPTY = Empty.EMPTY = new Empty();
+  //export const empty = constantly(EMPTY);
+
+  var behave$1 = effect(implement(IEmptyableCollection, { empty: identity$1 }), implement(IArr, { toArray: constantly(EMPTY_ARRAY) }), implement(ISeq, { first: constantly(null), rest: constantly(EMPTY) }), implement(INext, { next: constantly(null) }), implement(ISeqable, { seq: constantly(null) }), implement(IShow, { show: constantly("[]") }));
+
+  behave$1(Empty);
 
   function IndexedSeq(arr, start) {
     this.arr = arr;
@@ -608,22 +569,22 @@
   function reduce$2(xs, xf, init) {
     var memo = init,
         ys = ISeqable.seq(xs);
-    while (ys && !(memo instanceof Reduced$1)) {
+    while (ys && !(memo instanceof Reduced)) {
       memo = xf(memo, ISeq.first(ys));
       ys = next$1(ys);
     }
-    return memo instanceof Reduced$1 ? memo.valueOf() : memo;
+    return memo instanceof Reduced ? memo.valueOf() : memo;
   }
 
   function reducekv$2(xs, xf, init) {
     var memo = init,
         ys = ISeqable.seq(xs);
-    while (ys && !(memo instanceof Reduced$1)) {
+    while (ys && !(memo instanceof Reduced)) {
       var pair = ISeq.first(ys);
       memo = xf(memo, pair[0], pair[1]);
       ys = next$1(ys);
     }
-    return memo instanceof Reduced$1 ? memo.valueOf() : memo;
+    return memo instanceof Reduced ? memo.valueOf() : memo;
   }
 
   function toArray2(xs, ys) {
@@ -643,7 +604,7 @@
   var showable = implement(IShow, { show: show$1 });
   var reduceable = effect(implement(IReduce, { _reduce: reduce$2 }), implement(IKVReduce, { _reducekv: reducekv$2 }));
 
-  var behave$3 = effect(iterable, showable, reduceable, implement(IFind, { find: find$1 }), implement(ISequential), implement(IEmptyableCollection, { empty: EMPTY }), implement(IArr, { toArray: toArray$2 }), implement(ISeq, { first: first$1, rest: rest$1 }), implement(ISeqable, { seq: identity$1 }), implement(INext, { next: next$1 }));
+  var behave$2 = effect(iterable, showable, reduceable, implement(IFind, { find: find$1 }), implement(ISequential), implement(IEmptyableCollection, { empty: EMPTY }), implement(IArr, { toArray: toArray$2 }), implement(ISeq, { first: first$1, rest: rest$1 }), implement(ISeqable, { seq: identity$1 }), implement(INext, { next: next$1 }));
 
   function find$2(self, key) {
     return IAssociative.contains(self, key) ? [key, ILookup.lookup(self, key)] : null;
@@ -686,7 +647,7 @@
     return self.length - self.start;
   }
 
-  function _reduce$1(self, xf, init) {
+  function _reduce(self, xf, init) {
     return reduce$1(self.arr, xf, init, self.start);
   }
 
@@ -700,9 +661,15 @@
     return self.arr.indexOf(x, self.start) > -1;
   }
 
-  var behave$4 = effect(showable, iterable, implement(ISequential), implement(IInclusive, { includes: includes$1 }), implement(IFind, { find: find$2 }), implement(IAssociative, { contains: contains$1 }), implement(IAppendable, { append: append$1 }), implement(IPrependable, { prepend: prepend$1 }), implement(IEmptyableCollection, { empty: constantly(EMPTY_ARRAY) }), implement(IReduce, { reduce: _reduce$1 }), implement(IKVReduce, { _reducekv: _reducekv }), implement(IFn, { invoke: lookup$1 }), implement(ILookup, { lookup: lookup$1 }), implement(ICollection, { conj: append$1 }), implement(INext, { next: next$2 }), implement(IArr, { toArray: toArray$3 }), implement(ISeq, { first: first$2, rest: rest$2 }), implement(ISeqable, { seq: identity$1 }), implement(ICounted, { count: count$1 }));
+  var behave$3 = effect(showable, iterable, implement(ISequential), implement(IInclusive, { includes: includes$1 }), implement(IFind, { find: find$2 }), implement(IAssociative, { contains: contains$1 }), implement(IAppendable, { append: append$1 }), implement(IPrependable, { prepend: prepend$1 }), implement(IEmptyableCollection, { empty: constantly(EMPTY_ARRAY) }), implement(IReduce, { reduce: _reduce }), implement(IKVReduce, { _reducekv: _reducekv }), implement(IFn, { invoke: lookup$1 }), implement(ILookup, { lookup: lookup$1 }), implement(ICollection, { conj: append$1 }), implement(INext, { next: next$2 }), implement(IArr, { toArray: toArray$3 }), implement(ISeq, { first: first$2, rest: rest$2 }), implement(ISeqable, { seq: identity$1 }), implement(ICounted, { count: count$1 }));
 
-  behave$4(IndexedSeq);
+  behave$3(IndexedSeq);
+
+  function equiv$1(self, other) {
+    return self === other ? true : IKVReduce._reducekv(self, function (memo, key, value) {
+      return memo ? IEquiv.equiv(value, ILookup.lookup(other, key)) : reduced(memo);
+    }, ICounted.count(self) === ICounted.count(other));
+  }
 
   function find$3(self, key) {
     return IAssociative.contains(self, key) ? [key, ILookup.lookup(self, key)] : null;
@@ -712,7 +679,7 @@
     return self[key];
   }
 
-  function assoc$2(self, key, value) {
+  function assoc$1(self, key, value) {
     var arr = Array.from(self);
     arr.splice(key, 1, value);
     return arr;
@@ -760,12 +727,60 @@
 
   var indexed = effect(implement(IIndexed, { nth: nth$1 }), implement(ICounted, { count: length }));
 
-  var behave$5 = effect(showable, indexed, implement(ISequential), implement(IFind, { find: find$3 }), implement(IInclusive, { includes: includes$2 }), implement(IAppendable, { append: append$2 }), implement(IPrependable, { prepend: prepend$2 }), implement(ICloneable, { clone: Array.from }), implement(IFn, { invoke: lookup$2 }), implement(IEmptyableCollection, { empty: constantly(EMPTY_ARRAY) }), implement(IReduce, { _reduce: reduce$1 }), implement(IKVReduce, { _reducekv: reducekv$1 }), implement(ILookup, { lookup: lookup$2 }), implement(IAssociative, { assoc: assoc$2, contains: contains$2 }), implement(ISeqable, { seq: seq$1 }), implement(ICollection, { conj: append$2 }), implement(INext, { next: next$3 }), implement(IArr, { toArray: identity$1 }), implement(ISeq, { first: first$3, rest: rest$3 }));
+  var equivalence = implement(IEquiv, { equiv: equiv$1 });
 
-  behave$5(Array);
+  var behave$4 = effect(showable, indexed, equivalence, implement(ISequential), implement(IFind, { find: find$3 }), implement(IInclusive, { includes: includes$2 }), implement(IAppendable, { append: append$2 }), implement(IPrependable, { prepend: prepend$2 }), implement(ICloneable, { clone: Array.from }), implement(IFn, { invoke: lookup$2 }), implement(IEmptyableCollection, { empty: constantly(EMPTY_ARRAY) }), implement(IReduce, { _reduce: reduce$1 }), implement(IKVReduce, { _reducekv: reducekv$1 }), implement(ILookup, { lookup: lookup$2 }), implement(IAssociative, { assoc: assoc$1, contains: contains$2 }), implement(ISeqable, { seq: seq$1 }), implement(ICollection, { conj: append$2 }), implement(INext, { next: next$3 }), implement(IArr, { toArray: identity$1 }), implement(ISeq, { first: first$3, rest: rest$3 }));
+
+  behave$4(Array);
 
   var isArray = Array.isArray.bind(Array);
   var slice = unbind(Array.prototype.slice);
+
+  function boolean() {
+    return Boolean.apply(undefined, arguments);
+  }
+  var bool = boolean;
+
+  //import behave from "./boolean/behave";
+  //behave(Boolean);
+
+  function isBoolean(self) {
+    return Boolean(self) === self;
+  }
+
+  function not(self) {
+    return !self;
+  }
+
+  function isTrue(self) {
+    return self === true;
+  }
+
+  function isFalse(self) {
+    return self === false;
+  }
+
+  function assoc$2(self, key, value) {
+    var obj = {};
+    obj[key] = value;
+    return obj;
+  }
+
+  function _reduce$1(self, xf, init) {
+    return init;
+  }
+
+  var behave$5 = effect(implement(IEmptyableCollection, { empty: identity$1 }), implement(ILookup, { lookup: constantly(null) }), implement(IAssociative, { assoc: assoc$2, contains: constantly(false) }), implement(INext, { next: identity$1 }), implement(IArr, { toArray: constantly(EMPTY_ARRAY) }), implement(ISeq, { first: identity$1, rest: constantly(EMPTY) }), implement(ISeqable, { seq: identity$1 }), implement(IIndexed, { nth: identity$1 }), implement(ICounted, { count: constantly(0) }), implement(IReduce, { _reduce: _reduce$1 }), implement(IShow, { show: constantly("null") }));
+
+  behave$5(Nil);
+
+  function isNil(x) {
+    return x == null;
+  }
+
+  function isSome(x) {
+    return x != null;
+  }
 
   function invoke$1(self) {
     for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
@@ -998,306 +1013,54 @@
     };
   }
 
-  var EMPTY_OBJECT = Object.freeze({});
-
-  function ObjectSelection(obj, keys) {
-    this.obj = obj;
-    this.keys = keys;
+  function Concatenated(colls) {
+    this.colls = colls;
   }
 
-  function objectSelection(obj, keys) {
-    return new ObjectSelection(obj, seq(keys) ? keys : EMPTY);
+  function concatenated(colls) {
+    return seq(colls) ? new Concatenated(colls) : EMPTY;
   }
 
-  function LazySeq(head, tail) {
-    this.head = head;
-    this.tail = tail;
+  var concat = overload(constantly(EMPTY), seq, unspread(concatenated));
+
+  function conj$1(self, x) {
+    return concatenated(ICollection.conj(self.colls, [x]));
   }
 
-  function lazySeq(head, tail) {
-    return new LazySeq(head, tail);
-  }
-
-  function appendTo$1(self, parent) {
-    IKVReduce._reducekv(self, function (memo, key, value) {
-      var f = typeof value === "function" ? memo.addEventListener : memo.setAttribute;
-      f.call(parent, key, value);
-      return memo;
-    }, parent, self);
-  }
-
-  function toObject$1(self) {
-    return reduce$1(self.keys, function (memo, key) {
-      memo[key] = lookup$3(self, key);
-      return memo;
-    }, {});
-  }
-
-  function find$4(self, key) {
-    return self.keys.indexOf(key) > -1 ? [key, self.obj[key]] : null;
-  }
-
-  function lookup$3(self, key) {
-    return self.keys.indexOf(key) > -1 ? self.obj[key] : null;
-  }
-
-  function _dissoc(self, key) {
-    var keys = toArray(self.keys).filter(function (k) {
-      return k !== key;
-    });
-    return objectSelection(self, keys);
-  }
-
-  function seq$2(self) {
-    var key = ISeq.first(self.keys);
-    return lazySeq([key, self.obj[key]], function () {
-      return objectSelection(self.obj, ISeq.rest(self.keys));
-    });
-  }
-
-  function count$2(self) {
-    return self.keys.length;
-  }
-
-  function clone$1(self) {
-    return reduce$1(IArr.toArray(seq$2(self)), function (memo, pair) {
-      memo[pair[0]] = pair[1];
-      return memo;
-    }, {});
-  }
-
-  function _reduce$2(self, xf, init) {
-    var memo = init;
-    Object.keys(obj).forEach(function (key) {
-      memo = xf(memo, [key, self.obj[key]]);
-    });
-    return memo;
-  }
-
-  function _reducekv$1(self, xf, init) {
-    var memo = init;
-    self.keys.forEach(function (key) {
-      memo = xf(memo, key, self.obj[key]);
-    });
-    return memo;
-  }
-
-  function show$2(self) {
-    var pairs = IArr.toArray(seq$2(self));
-    return "#object-selection {" + pairs.map(function (pair) {
-      return show$2(pair[0]) + ": " + show$2(pair[1]);
-    }).join(", ") + "}";
-  }
-
-  var behave$7 = effect(implement(IElementContent, { appendTo: appendTo$1 }), implement(IObj, { toObject: toObject$1 }), implement(IFind, { find: find$4 }), implement(IMap, { _dissoc: _dissoc }), implement(IReduce, { _reduce: _reduce$2 }), implement(IKVReduce, { _reducekv: _reducekv$1 }), implement(ICloneable, { clone: clone$1 }), implement(IEmptyableCollection, { empty: constantly(EMPTY_OBJECT) }), implement(IFn, { invoke: lookup$3 }), implement(ILookup, { lookup: lookup$3 }), implement(ISeqable, { seq: seq$2 }), implement(ICounted, { count: count$2 }), implement(IShow, { show: show$2 }));
-
-  behave$7(ObjectSelection);
-
-  behave$3(LazySeq);
-
-  function juxts(f) {
-    for (var _len = arguments.length, fs = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-      fs[_key - 1] = arguments[_key];
-    }
-
-    return arguments.length ? function (x) {
-      return lazySeq(f(x), function () {
-        return apply$1(juxts, fs)(x);
-      });
-    } : constantly(EMPTY);
-  }
-
-  function appendTo$2(self, parent) {
-    IKVReduce._reducekv(self, function (memo, key, value) {
-      var f = typeof value === "function" ? memo.addEventListener : memo.setAttribute;
-      f.call(parent, key, value);
-      return memo;
-    }, parent, self);
-  }
-
-  function find$5(self, key) {
-    return IAssociative.contains(self, key) ? [key, ILookup.lookup(self, key)] : null;
-  }
-
-  function includes$3(superset, subset) {
-    return reducekv(function (memo, key, value) {
-      return memo ? get(superset, key) === value : new Reduced(memo);
-    }, true, seq$3(subset));
-  }
-
-  function lookup$4(self, key) {
-    return self[key];
-  }
-
-  function seqObject(self, keys) {
-    var key = ISeq.first(keys);
-    return ISeqable.seq(keys) ? lazySeq([key, self[key]], function () {
-      return seqObject(self, ISeq.rest(keys));
-    }) : EMPTY;
-  }
-
-  function _dissoc$1(obj, key) {
-    var result = Object.assign({}, obj);
-    delete result[key];
-    return result;
-  }
-
-  function assoc$3(self, key, value) {
-    var obj = Object.assign({}, self);
-    obj[key] = value;
-    return obj;
-  }
-
-  function contains$3(self, key) {
-    return self.hasOwnProperty(key);
-  }
-
-  function seq$3(self) {
-    return seqObject(self, Object.keys(self));
-  }
-
-  function count$3(self) {
-    return ICounted.count(Object.keys(self));
-  }
-
-  function clone$2(self) {
-    return Object.assign({}, self);
-  }
-
-  function _reduce$3(self, xf, init) {
-    var memo = init;
-    Object.keys(self).forEach(function (key) {
-      memo = xf(memo, [key, self[key]]);
-    });
-    return memo;
-  }
-
-  function _reducekv$2(self, xf, init) {
-    var memo = init;
-    Object.keys(self).forEach(function (key) {
-      memo = xf(memo, key, self[key]);
-    });
-    return memo;
-  }
-
-  function show$3(self) {
-    var xs = IArr.toArray(seq$3(self));
-    return "{" + xs.map(function (pair) {
-      return show$3(pair[0]) + ": " + show$3(pair[1]);
-    }).join(", ") + "}";
-  }
-
-  var behave$8 = effect(implement(IElementContent, { appendTo: appendTo$2 }), implement(IObj, { toObject: identity$1 }), implement(IFind, { find: find$5 }), implement(IInclusive, { includes: includes$3 }), implement(ICloneable, { clone: clone$2 }), implement(IReduce, { _reduce: _reduce$3 }), implement(IKVReduce, { _reducekv: _reducekv$2 }), implement(IMap, { _dissoc: _dissoc$1 }), implement(IFn, { invoke: lookup$4 }), implement(ILookup, { lookup: lookup$4 }), implement(IEmptyableCollection, { empty: constantly(EMPTY_OBJECT) }), implement(IAssociative, { assoc: assoc$3, contains: contains$3 }), implement(ISeqable, { seq: seq$3 }), implement(ICounted, { count: count$3 }), implement(IShow, { show: show$3 }));
-
-  behave$8(Object);
-
-  function selectKeys(self, keys) {
-    return reduce(function (memo, key) {
-      memo[key] = lookup(self, key);
-      return memo;
-    }, {}, keys);
-  }
-
-  function defaults2(self, defaults) {
-    return Object.assign({}, defaults, self);
-  }
-
-  var defaults$1 = overload(null, curry(defaults2, 2), defaults2, reducing(defaults2));
-
-  function compile(self) {
-    return function () {
-      for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-        args[_key] = arguments[_key];
-      }
-
-      return apply$1(invoke, self, args);
-    };
-  }
-
-  var EMPTY_STRING = "";
-
-  function appendTo$3(self, parent) {
-    parent.appendChild(document.createTextNode(self));
-  }
-
-  function seq$4(self) {
-    return self.length ? self : null;
-  }
-
-  function lookup$5(self, key) {
-    return self[key];
+  function next$4(self) {
+    var tail = ISeq.rest(self);
+    return tail === EMPTY ? null : tail;
   }
 
   function first$4(self) {
-    return self[0];
+    return ISeq.first(ISeq.first(self.colls));
   }
 
   function rest$4(self) {
-    return self.substring(1);
+    var tail = INext.next(ISeq.first(self.colls));
+    var colls = IArr.toArray(ISeq.rest(self.colls));
+    if (tail) {
+      colls = [tail].concat(colls);
+    }
+    return concatenated(colls);
   }
 
   function toArray$5(self) {
-    return self.split('');
+    return reduce(function (memo, xs) {
+      return reduce(function (memo, x) {
+        memo.push(x);
+        return memo;
+      }, memo, xs);
+    }, [], self.colls);
   }
 
-  function show$4(self) {
-    return "\"" + self + "\"";
+  function count$2(self) {
+    return IArr.toArray(self).length;
   }
 
-  function append$3(self, tail) {
-    return self + tail;
-  }
+  var behave$7 = effect(iterable, reduceable, showable, implement(ICollection, { conj: conj$1 }), implement(INext, { next: next$4 }), implement(ISeq, { first: first$4, rest: rest$4 }), implement(IArr, { toArray: toArray$5 }), implement(ISeqable, { seq: identity$1 }), implement(ICounted, { count: count$2 }));
 
-  function prepend$3(self, head) {
-    return head + self;
-  }
-
-  function includes$4(self, str) {
-    return self.indexOf(str) > -1;
-  }
-
-  var behave$9 = effect(indexed, implement(IElementContent, { appendTo: appendTo$3 }), implement(IInclusive, { includes: includes$4 }), implement(IAppendable, { append: append$3 }), implement(IPrependable, { prepend: prepend$3 }), implement(IEmptyableCollection, { empty: constantly(EMPTY_STRING) }), implement(IFn, { invoke: lookup$5 }), implement(ILookup, { lookup: lookup$5 }), implement(IArr, { toArray: toArray$5 }), implement(ISeqable, { seq: seq$4 }), implement(ISeq, { first: first$4, rest: rest$4 }), implement(IShow, { show: show$4 }));
-
-  behave$9(String);
-
-  function isString(s) {
-    return typeof s === "string";
-  }
-
-  function isBlank(str) {
-    return str == null || typeof str === "string" && str.trim().length === 0;
-  }
-
-  function str1(x) {
-    return x == null ? "" : x.toString();
-  }
-
-  function str2(x, y) {
-    return str1(x) + str1(y);
-  }
-
-  function template(template, obj) {
-    return reducekv(function (text, key, value) {
-      return replace$1(text, new RegExp("\\{" + key + "\\}", 'ig'), value);
-    }, template, obj);
-  }
-
-  function inject(template) {
-    for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-      args[_key - 1] = arguments[_key];
-    }
-
-    return template(template, args);
-  }
-
-  var startsWith = unbind(String.prototype.startsWith);
-  var endsWith = unbind(String.prototype.endsWith);
-  var replace$1 = unbind(String.prototype.replace);
-  var subs$1 = unbind(String.prototype.substring);
-  var lowerCase = unbind(String.prototype.toLowerCase);
-  var upperCase = unbind(String.prototype.toUpperCase);
-  var trim = unbind(String.prototype.trim);
-  var str = overload(constantly(EMPTY_STRING), str1, str2, reducing(str2));
+  behave$7(Concatenated);
 
   function step$1(amount, target) {
     return target + amount;
@@ -1307,7 +1070,7 @@
     return amount * -1;
   }
 
-  function show$5(n) {
+  function show$2(n) {
     return n.toString();
   }
 
@@ -1315,9 +1078,9 @@
     return amount;
   }
 
-  var behave$10 = effect(implement(ISteppable, { step: step$1, converse: converse$1 }), implement(IUnit, { unit: overload(null, constantly(1), unit2) }), implement(IShow, { show: show$5 }));
+  var behave$8 = effect(implement(ISteppable, { step: step$1, converse: converse$1 }), implement(IUnit, { unit: overload(null, constantly(1), unit2) }), implement(IShow, { show: show$2 }));
 
-  behave$10(Number);
+  behave$8(Number);
 
   function number() {
     return Number.apply(undefined, arguments);
@@ -1458,11 +1221,11 @@
     return new self.constructor(self.milliseconds * -1);
   }
 
-  var behave$11 = effect(implement(ISteppable, { step: step$2, converse: converse$2 }));
+  var behave$9 = effect(implement(ISteppable, { step: step$2, converse: converse$2 }));
 
-  behave$11(Duration);
+  behave$9(Duration);
 
-  function lookup$6(self, key) {
+  function lookup$3(self, key) {
     switch (key) {
       case "year":
         return self.getFullYear();
@@ -1486,12 +1249,12 @@
     this.target = target;
   }
 
-  function contains$4(self, key) {
+  function contains$3(self, key) {
     return ["year", "month", "day", "hour", "minute", "second", "millisecond"].indexOf(key) > -1;
   }
 
   //the benefit of exposing internal state as a map is assocIn and updateIn
-  function assoc$4(self, key, value) {
+  function assoc$3(self, key, value) {
     var dt = new Date(self.valueOf());
     switch (key) {
       case "year":
@@ -1521,11 +1284,11 @@
     return dt;
   }
 
-  function clone$3(self) {
+  function clone$1(self) {
     return new Date(self.valueOf());
   }
 
-  function show$6(self) {
+  function show$3(self) {
     return "\"" + self.toISOString() + "\"";
   }
 
@@ -1533,9 +1296,32 @@
     return isNumber(amount) ? days(amount) : amount;
   }
 
-  var behave$12 = effect(implement(IUnit, { unit: overload(null, constantly(days(1)), unit2$1) }), implement(IAssociative, { assoc: assoc$4, contains: contains$4 }), implement(ILookup, { lookup: lookup$6 }), implement(ICloneable, { clone: clone$3 }), implement(IShow, { show: show$6 }));
+  var behave$10 = effect(implement(IUnit, { unit: overload(null, constantly(days(1)), unit2$1) }), implement(IAssociative, { assoc: assoc$3, contains: contains$3 }), implement(ILookup, { lookup: lookup$3 }), implement(ICloneable, { clone: clone$1 }), implement(IShow, { show: show$3 }));
 
-  behave$12(Date);
+  behave$10(Date);
+
+  function LazySeq(head, tail) {
+    this.head = head;
+    this.tail = tail;
+  }
+
+  function lazySeq(head, tail) {
+    return new LazySeq(head, tail);
+  }
+
+  behave$2(LazySeq);
+
+  function juxts(f) {
+    for (var _len = arguments.length, fs = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+      fs[_key - 1] = arguments[_key];
+    }
+
+    return arguments.length ? function (x) {
+      return lazySeq(f(x), function () {
+        return apply$1(juxts, fs)(x);
+      });
+    } : constantly(EMPTY);
+  }
 
   function List(head, tail) {
     this.head = head;
@@ -1566,58 +1352,9 @@
     return self.tail;
   }
 
-  var behave$13 = effect(behave$3, implement(ISeq, { first: first$5, rest: rest$5 }));
+  var behave$11 = effect(behave$2, implement(ISeq, { first: first$5, rest: rest$5 }));
 
-  behave$13(List);
-
-  function Concatenated(colls) {
-    this.colls = colls;
-  }
-
-  function concatenated(colls) {
-    return seq(colls) ? new Concatenated(colls) : EMPTY;
-  }
-
-  var concat = overload(constantly(EMPTY), seq, unspread(concatenated));
-
-  function conj$1(self, x) {
-    return concatenated(ICollection.conj(self.colls, [x]));
-  }
-
-  function next$4(self) {
-    var tail = ISeq.rest(self);
-    return tail === EMPTY ? null : tail;
-  }
-
-  function first$6(self) {
-    return ISeq.first(ISeq.first(self.colls));
-  }
-
-  function rest$6(self) {
-    var tail = INext.next(ISeq.first(self.colls));
-    var colls = IArr.toArray(ISeq.rest(self.colls));
-    if (tail) {
-      colls = [tail].concat(colls);
-    }
-    return concatenated(colls);
-  }
-
-  function toArray$6(self) {
-    return reduce(function (memo, xs) {
-      return reduce(function (memo, x) {
-        memo.push(x);
-        return memo;
-      }, memo, xs);
-    }, [], self.colls);
-  }
-
-  function count$4(self) {
-    return IArr.toArray(self).length;
-  }
-
-  var behave$14 = effect(iterable, reduceable, showable, implement(ICollection, { conj: conj$1 }), implement(INext, { next: next$4 }), implement(ISeq, { first: first$6, rest: rest$6 }), implement(IArr, { toArray: toArray$6 }), implement(ISeqable, { seq: identity$1 }), implement(ICounted, { count: count$4 }));
-
-  behave$14(Concatenated);
+  behave$11(List);
 
   function Months(n) {
     this.n = n;
@@ -1637,31 +1374,296 @@
     return months(self.n * -1);
   }
 
-  var behave$15 = effect(implement(ISteppable, { step: step$3, converse: converse$3 }));
+  var behave$12 = effect(implement(ISteppable, { step: step$3, converse: converse$3 }));
 
-  behave$15(Months);
+  behave$12(Months);
 
-  function Years(n) {
-    this.n = n;
+  var EMPTY_OBJECT = Object.freeze({});
+
+  function ObjectSelection(obj, keys) {
+    this.obj = obj;
+    this.keys = keys;
   }
 
-  function years(n) {
-    return new Years(n);
+  function objectSelection(obj, keys) {
+    return new ObjectSelection(obj, seq(keys) ? keys : EMPTY);
   }
 
-  function step$4(self, dt) {
-    var d = new Date(dt.valueOf());
-    d.setFullYear(d.getFullYear() + self.n);
-    return d;
+  function appendTo$1(self, parent) {
+    IKVReduce._reducekv(self, function (memo, key, value) {
+      var f = typeof value === "function" ? memo.addEventListener : memo.setAttribute;
+      f.call(parent, key, value);
+      return memo;
+    }, parent, self);
   }
 
-  function converse$4(self) {
-    return years(self.n * -1);
+  function toObject$1(self) {
+    return reduce$1(self.keys, function (memo, key) {
+      memo[key] = lookup$4(self, key);
+      return memo;
+    }, {});
   }
 
-  var behave$16 = effect(implement(ISteppable, { step: step$4, converse: converse$4 }));
+  function find$4(self, key) {
+    return self.keys.indexOf(key) > -1 ? [key, self.obj[key]] : null;
+  }
 
-  behave$16(Years);
+  function lookup$4(self, key) {
+    return self.keys.indexOf(key) > -1 ? self.obj[key] : null;
+  }
+
+  function _dissoc(self, key) {
+    var keys = toArray(self.keys).filter(function (k) {
+      return k !== key;
+    });
+    return objectSelection(self, keys);
+  }
+
+  function seq$2(self) {
+    var key = ISeq.first(self.keys);
+    return lazySeq([key, self.obj[key]], function () {
+      return objectSelection(self.obj, ISeq.rest(self.keys));
+    });
+  }
+
+  function count$3(self) {
+    return self.keys.length;
+  }
+
+  function clone$2(self) {
+    return reduce$1(IArr.toArray(seq$2(self)), function (memo, pair) {
+      memo[pair[0]] = pair[1];
+      return memo;
+    }, {});
+  }
+
+  function _reduce$2(self, xf, init) {
+    var memo = init;
+    Object.keys(obj).forEach(function (key) {
+      memo = xf(memo, [key, self.obj[key]]);
+    });
+    return memo;
+  }
+
+  function _reducekv$1(self, xf, init) {
+    var memo = init;
+    self.keys.forEach(function (key) {
+      memo = xf(memo, key, self.obj[key]);
+    });
+    return memo;
+  }
+
+  function show$4(self) {
+    var pairs = IArr.toArray(seq$2(self));
+    return "#object-selection {" + pairs.map(function (pair) {
+      return show$4(pair[0]) + ": " + show$4(pair[1]);
+    }).join(", ") + "}";
+  }
+
+  var behave$13 = effect(equivalence, implement(IElementContent, { appendTo: appendTo$1 }), implement(IObj, { toObject: toObject$1 }), implement(IFind, { find: find$4 }), implement(IMap, { _dissoc: _dissoc }), implement(IReduce, { _reduce: _reduce$2 }), implement(IKVReduce, { _reducekv: _reducekv$1 }), implement(ICloneable, { clone: clone$2 }), implement(IEmptyableCollection, { empty: constantly(EMPTY_OBJECT) }), implement(IFn, { invoke: lookup$4 }), implement(ILookup, { lookup: lookup$4 }), implement(ISeqable, { seq: seq$2 }), implement(ICounted, { count: count$3 }), implement(IShow, { show: show$4 }));
+
+  behave$13(ObjectSelection);
+
+  function appendTo$2(self, parent) {
+    IKVReduce._reducekv(self, function (memo, key, value) {
+      var f = typeof value === "function" ? memo.addEventListener : memo.setAttribute;
+      f.call(parent, key, value);
+      return memo;
+    }, parent, self);
+  }
+
+  function find$5(self, key) {
+    return IAssociative.contains(self, key) ? [key, ILookup.lookup(self, key)] : null;
+  }
+
+  function includes$3(superset, subset) {
+    return reducekv(function (memo, key, value) {
+      return memo ? get(superset, key) === value : new Reduced(memo);
+    }, true, seq$3(subset));
+  }
+
+  function lookup$5(self, key) {
+    return self[key];
+  }
+
+  function seqObject(self, keys) {
+    var key = ISeq.first(keys);
+    return ISeqable.seq(keys) ? lazySeq([key, self[key]], function () {
+      return seqObject(self, ISeq.rest(keys));
+    }) : EMPTY;
+  }
+
+  function _dissoc$1(obj, key) {
+    var result = Object.assign({}, obj);
+    delete result[key];
+    return result;
+  }
+
+  function assoc$4(self, key, value) {
+    var obj = Object.assign({}, self);
+    obj[key] = value;
+    return obj;
+  }
+
+  function contains$4(self, key) {
+    return self.hasOwnProperty(key);
+  }
+
+  function seq$3(self) {
+    return seqObject(self, Object.keys(self));
+  }
+
+  function count$4(self) {
+    return ICounted.count(Object.keys(self));
+  }
+
+  function clone$3(self) {
+    return Object.assign({}, self);
+  }
+
+  function _reduce$3(self, xf, init) {
+    var memo = init;
+    Object.keys(self).forEach(function (key) {
+      memo = xf(memo, [key, self[key]]);
+    });
+    return memo;
+  }
+
+  function _reducekv$2(self, xf, init) {
+    return IReduce._reduce(Object.keys(self), function (memo, key) {
+      return xf(memo, key, self[key]);
+    }, init);
+  }
+
+  function show$5(self) {
+    var xs = IArr.toArray(seq$3(self));
+    return "{" + xs.map(function (pair) {
+      return show$5(pair[0]) + ": " + show$5(pair[1]);
+    }).join(", ") + "}";
+  }
+
+  var behave$14 = effect(equivalence, implement(IElementContent, { appendTo: appendTo$2 }), implement(IObj, { toObject: identity$1 }), implement(IFind, { find: find$5 }), implement(IInclusive, { includes: includes$3 }), implement(ICloneable, { clone: clone$3 }), implement(IReduce, { _reduce: _reduce$3 }), implement(IKVReduce, { _reducekv: _reducekv$2 }), implement(IMap, { _dissoc: _dissoc$1 }), implement(IFn, { invoke: lookup$5 }), implement(ILookup, { lookup: lookup$5 }), implement(IEmptyableCollection, { empty: constantly(EMPTY_OBJECT) }), implement(IAssociative, { assoc: assoc$4, contains: contains$4 }), implement(ISeqable, { seq: seq$3 }), implement(ICounted, { count: count$4 }), implement(IShow, { show: show$5 }));
+
+  behave$14(Object);
+
+  function selectKeys(self, keys) {
+    return reduce(function (memo, key) {
+      memo[key] = lookup(self, key);
+      return memo;
+    }, {}, keys);
+  }
+
+  function defaults2(self, defaults) {
+    return Object.assign({}, defaults, self);
+  }
+
+  var defaults$1 = overload(null, curry(defaults2, 2), defaults2, reducing(defaults2));
+
+  function compile(self) {
+    return function () {
+      for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+        args[_key] = arguments[_key];
+      }
+
+      return apply$1(invoke, self, args);
+    };
+  }
+
+  function Publisher(subscribers, seed) {
+    this.subscribers = subscribers;
+    this.seed = seed;
+  }
+
+  function publisher() {
+    return new Publisher({}, counter());
+  }
+
+  function sub$1(self, callback) {
+    var id = self.seed();
+    self.subscribers[id] = callback;
+    return function () {
+      delete self.subscribers[id];
+    };
+  }
+
+  function pub$1(self, message) {
+    Object.values(self.subscribers).forEach(function (callback) {
+      callback(message);
+    });
+  }
+
+  var behave$15 = effect(implement(ISubscribe, { sub: sub$1 }), implement(IPublish, { pub: pub$1 }));
+
+  behave$15(Publisher);
+
+  function Observable(state, publisher$$1) {
+    this.state = state;
+    this.publisher = publisher$$1;
+  }
+
+  function observable(init, pub) {
+    return new Observable(init, pub || publisher());
+  }
+
+  function deref$2(self) {
+    return self.state;
+  }
+
+  function reset$1(self, value) {
+    if (value !== self.state) {
+      self.state = value;
+      IPublish.pub(self.publisher, value);
+    }
+    return self.state;
+  }
+
+  function _swap(self, f) {
+    return reset$1(self, f(self.state));
+  }
+
+  //The callback is called immediately to prime the subscriber state.
+  function sub$2(self, callback) {
+    callback(self.state);
+    return ISubscribe.sub(self.publisher, callback);
+  }
+
+  var behave$16 = effect(implement(IDeref, { deref: deref$2 }), implement(ISubscribe, { sub: sub$2 }), implement(IPublish, { pub: reset$1 }), implement(IReset, { reset: reset$1 }), implement(ISwap, { _swap: _swap }));
+
+  behave$16(Observable);
+
+  function Pipeline(how, fs) {
+    this.how = how;
+    this.fs = fs;
+  }
+
+  function pipeline(how, fs) {
+    return new Pipeline(how || identity$1, fs || []);
+  }
+
+  function provideBehavior(piped) {
+
+    function append$$1(self, f) {
+      return pipeline(self.how, IAppendable.append(self.fs, f));
+    }
+
+    function prepend$$1(self, f) {
+      return pipeline(self.how, IPrependable.prepend(self.fs, f));
+    }
+
+    function invoke$$1(self) {
+      for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+        args[_key - 1] = arguments[_key];
+      }
+
+      return piped(self.how).apply(undefined, toConsumableArray(self.fs)).apply(undefined, args);
+    }
+
+    return effect(implement(IFn, { invoke: invoke$$1 }), implement(IAppendable, { append: append$$1 }), implement(IPrependable, { prepend: prepend$$1 }));
+  }
+
+  function providePipeline(piped) {
+    provideBehavior(piped)(Pipeline);
+  }
 
   function toObject$2(self) {
     return self.attrs;
@@ -1671,11 +1673,11 @@
     return self.attrs.hasOwnProperty(key);
   }
 
-  function lookup$7(self, key) {
+  function lookup$6(self, key) {
     return self.attrs[key];
   }
 
-  function seq$5(self) {
+  function seq$4(self) {
     return ISeqable.seq(self.attrs);
   }
 
@@ -1683,12 +1685,12 @@
     return Object.keys(self.attrs).length;
   }
 
-  function first$7(self) {
-    return ISeq.first(seq$5(self));
+  function first$6(self) {
+    return ISeq.first(seq$4(self));
   }
 
-  function rest$7(self) {
-    return ISeq.rest(seq$5(self));
+  function rest$6(self) {
+    return ISeq.rest(seq$4(self));
   }
 
   function extend$1(Type) {
@@ -1701,7 +1703,7 @@
       return Type.from(IMap.dissoc(self.attrs, key));
     }
 
-    doto(Type, implement(IRecord), implement(IObj, { toObject: toObject$2 }), implement(IAssociative, { assoc: assoc$$1, contains: contains$5 }), implement(ILookup, { lookup: lookup$7 }), implement(IMap, { _dissoc: _dissoc }), implement(ISeq, { first: first$7, rest: rest$7 }), implement(ICounted, { count: count$5 }), implement(ISeqable, { seq: seq$5 }));
+    doto(Type, implement(IRecord), implement(IObj, { toObject: toObject$2 }), implement(IAssociative, { assoc: assoc$$1, contains: contains$5 }), implement(ILookup, { lookup: lookup$6 }), implement(IMap, { _dissoc: _dissoc }), implement(ISeq, { first: first$6, rest: rest$6 }), implement(ICounted, { count: count$5 }), implement(ISeqable, { seq: seq$4 }));
 
     Type.create = constructs$1(Type);
     Type.from = function (attrs) {
@@ -1745,67 +1747,92 @@
 
   var record$1 = overload(null, record1, record2, record3, record4, record5, recordN);
 
-  function Publisher(subscribers, seed) {
-    this.subscribers = subscribers;
-    this.seed = seed;
+  var test = unbind(RegExp.prototype.test);
+
+  var EMPTY_STRING = "";
+
+  function appendTo$3(self, parent) {
+    parent.appendChild(document.createTextNode(self));
   }
 
-  function publisher() {
-    return new Publisher({}, counter());
+  function seq$5(self) {
+    return self.length ? self : null;
   }
 
-  function sub$1(self, callback) {
-    var id = self.seed();
-    self.subscribers[id] = callback;
-    return function () {
-      delete self.subscribers[id];
-    };
+  function lookup$7(self, key) {
+    return self[key];
   }
 
-  function pub$1(self, message) {
-    Object.values(self.subscribers).forEach(function (callback) {
-      callback(message);
-    });
+  function first$7(self) {
+    return self[0];
   }
 
-  var behave$17 = effect(implement(ISubscribe, { sub: sub$1 }), implement(IPublish, { pub: pub$1 }));
-
-  behave$17(Publisher);
-
-  function Observable(state, publisher$$1) {
-    this.state = state;
-    this.publisher = publisher$$1;
+  function rest$7(self) {
+    return self.substring(1);
   }
 
-  function observable(init, pub) {
-    return new Observable(init, pub || publisher());
+  function toArray$6(self) {
+    return self.split('');
   }
 
-  function deref$2(self) {
-    return self.state;
+  function show$6(self) {
+    return "\"" + self + "\"";
   }
 
-  function reset$1(self, value) {
-    if (value !== self.state) {
-      self.state = value;
-      IPublish.pub(self.publisher, value);
+  function append$3(self, tail) {
+    return self + tail;
+  }
+
+  function prepend$3(self, head) {
+    return head + self;
+  }
+
+  function includes$4(self, str) {
+    return self.indexOf(str) > -1;
+  }
+
+  var behave$17 = effect(indexed, implement(IElementContent, { appendTo: appendTo$3 }), implement(IInclusive, { includes: includes$4 }), implement(IAppendable, { append: append$3 }), implement(IPrependable, { prepend: prepend$3 }), implement(IEmptyableCollection, { empty: constantly(EMPTY_STRING) }), implement(IFn, { invoke: lookup$7 }), implement(ILookup, { lookup: lookup$7 }), implement(IArr, { toArray: toArray$6 }), implement(ISeqable, { seq: seq$5 }), implement(ISeq, { first: first$7, rest: rest$7 }), implement(IShow, { show: show$6 }));
+
+  behave$17(String);
+
+  function isString(s) {
+    return typeof s === "string";
+  }
+
+  function isBlank(str) {
+    return str == null || typeof str === "string" && str.trim().length === 0;
+  }
+
+  function str1(x) {
+    return x == null ? "" : x.toString();
+  }
+
+  function str2(x, y) {
+    return str1(x) + str1(y);
+  }
+
+  function template(template, obj) {
+    return reducekv(function (text, key, value) {
+      return replace$1(text, new RegExp("\\{" + key + "\\}", 'ig'), value);
+    }, template, obj);
+  }
+
+  function inject(template) {
+    for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+      args[_key - 1] = arguments[_key];
     }
-    return self.state;
+
+    return template(template, args);
   }
 
-  function _swap(self, f) {
-    return reset$1(self, f(self.state));
-  }
-
-  //The callback is called immediately to prime the subscriber state.
-  function sub$2(self, callback) {
-    callback(self.state);
-    return ISubscribe.sub(self.publisher, callback);
-  }
-
-  var behave$18 = effect(implement(IDeref, { deref: deref$2 }), implement(ISubscribe, { sub: sub$2 }), implement(IPublish, { pub: reset$1 }), implement(IReset, { reset: reset$1 }), implement(ISwap, { _swap: _swap }));
-
-  behave$18(Observable);
+  var startsWith = unbind(String.prototype.startsWith);
+  var endsWith = unbind(String.prototype.endsWith);
+  var replace$1 = unbind(String.prototype.replace);
+  var subs$1 = unbind(String.prototype.substring);
+  var lowerCase = unbind(String.prototype.toLowerCase);
+  var upperCase = unbind(String.prototype.toUpperCase);
+  var trim = unbind(String.prototype.trim);
+  var str = overload(constantly(EMPTY_STRING), str1, str2, reducing(str2));
 
   function SubscriptionMonitor(decorated, updated) {
     this.decorated = decorated;
@@ -1838,43 +1865,31 @@
     IPublish.pub(self.decorated, message);
   }
 
-  var behave$19 = effect(implement(ISubscribe, { sub: sub$3 }), implement(IPublish, { pub: pub$2 }));
+  var behave$18 = effect(implement(ISubscribe, { sub: sub$3 }), implement(IPublish, { pub: pub$2 }));
 
-  behave$19(SubscriptionMonitor);
+  behave$18(SubscriptionMonitor);
 
-  function Pipeline(how, fs) {
-    this.how = how;
-    this.fs = fs;
+  function Years(n) {
+    this.n = n;
   }
 
-  function pipeline(how, fs) {
-    return new Pipeline(how || identity$1, fs || []);
+  function years(n) {
+    return new Years(n);
   }
 
-  function provideBehavior(piped) {
-
-    function append$$1(self, f) {
-      return pipeline(self.how, IAppendable.append(self.fs, f));
-    }
-
-    function prepend$$1(self, f) {
-      return pipeline(self.how, IPrependable.prepend(self.fs, f));
-    }
-
-    function invoke$$1(self) {
-      for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-        args[_key - 1] = arguments[_key];
-      }
-
-      return piped(self.how).apply(undefined, toConsumableArray(self.fs)).apply(undefined, args);
-    }
-
-    return effect(implement(IFn, { invoke: invoke$$1 }), implement(IAppendable, { append: append$$1 }), implement(IPrependable, { prepend: prepend$$1 }));
+  function step$4(self, dt) {
+    var d = new Date(dt.valueOf());
+    d.setFullYear(d.getFullYear() + self.n);
+    return d;
   }
 
-  function providePipeline(piped) {
-    provideBehavior(piped)(Pipeline);
+  function converse$4(self) {
+    return years(self.n * -1);
   }
+
+  var behave$19 = effect(implement(ISteppable, { step: step$4, converse: converse$4 }));
+
+  behave$19(Years);
 
   function cond(obj, pred, f) {
     for (var _len = arguments.length, args = Array(_len > 3 ? _len - 3 : 0), _key = 3; _key < _len; _key++) {
@@ -1951,18 +1966,6 @@
   function isIdentical(x, y) {
     //TODO via protocol
     return x === y;
-  }
-
-  function compare$1(x, y) {
-    if (isIdentical(x, y)) {
-      return 0;
-    } else if (isNil(x)) {
-      return -1;
-    } else if (isNil(y)) {
-      return 1;
-    } else if (type(x) === type(y)) {
-      return IComparable.compare(x, y);
-    }
   }
 
   function lt2(a, b) {
@@ -2541,11 +2544,11 @@
   var mapcat = overload(null, mapcat1, mapcat2);
 
   function sort1(coll) {
-    return into([], coll).sort();
+    return sort2(compare, coll);
   }
 
-  function sort2(compare, coll) {
-    return into([], coll).sort(compare);
+  function sort2(compare$$1, coll) {
+    return into([], coll).sort(compare$$1);
   }
 
   var sort = overload(null, sort1, sort2);
@@ -2554,9 +2557,9 @@
     return sortBy3(keyFn, compare, coll);
   }
 
-  function sortBy3(keyFn, compare, coll) {
+  function sortBy3(keyFn, compare$$1, coll) {
     return sort(function (x, y) {
-      return compare(keyFn(x), keyFn(y));
+      return compare$$1(keyFn(x), keyFn(y));
     }, coll);
   }
 
@@ -3192,25 +3195,79 @@
   exports.implement = implement;
   exports.protocol = protocol;
   exports.satisfies = satisfies;
-  exports.IArr = IArr;
-  exports.toArray = toArray$1;
-  exports.isArr = isArr;
-  exports.IObj = IObj;
-  exports.toObject = toObject;
-  exports.isObj = isObj;
   exports.IAppendable = IAppendable;
   exports.append = append;
   exports.isAppendable = isAppendable;
+  exports.IArr = IArr;
+  exports.toArray = toArray$1;
+  exports.isArr = isArr;
+  exports.IAssociative = IAssociative;
+  exports.assoc = assoc;
+  exports.contains = contains;
+  exports.isAssociative = isAssociative;
+  exports.ICloneable = ICloneable;
+  exports.clone = clone;
+  exports.isCloneable = isCloneable;
+  exports.ICollection = ICollection;
+  exports.conj = conj;
+  exports.IComparable = IComparable;
+  exports.compare = compare;
+  exports.isComparable = isComparable;
+  exports.ICounted = ICounted;
+  exports.count = count;
+  exports.isCounted = isCounted;
+  exports.IDeref = IDeref;
+  exports.deref = deref;
+  exports.IDisposable = IDisposable;
+  exports.dispose = dispose;
+  exports.isDisposable = isDisposable;
   exports.IElementContent = IElementContent;
   exports.appendTo = appendTo;
   exports.isElementContent = isElementContent;
   exports.appendChild = appendChild;
-  exports.IPrependable = IPrependable;
-  exports.prepend = prepend;
-  exports.isPrependable = isPrependable;
+  exports.IEmptyableCollection = IEmptyableCollection;
+  exports.empty = empty;
+  exports.isEmptyableCollection = isEmptyableCollection;
+  exports.IEquiv = IEquiv;
+  exports.equiv = equiv;
+  exports.isEquiv = isEquiv;
+  exports.IFind = IFind;
+  exports.find = find;
+  exports.isFindable = isFindable;
+  exports.IFn = IFn;
+  exports.invoke = invoke;
+  exports.isFn = isFn;
   exports.IInclusive = IInclusive;
   exports.includes = includes;
   exports.isInclusive = isInclusive;
+  exports.IIndexed = IIndexed;
+  exports.nth = nth;
+  exports.isIndexed = isIndexed;
+  exports.IKVReduce = IKVReduce;
+  exports.reducekv = reducekv;
+  exports.ILookup = ILookup;
+  exports.lookup = lookup;
+  exports.IMap = IMap;
+  exports.dissoc = dissoc;
+  exports.isMap = isMap;
+  exports.INext = INext;
+  exports.next = next;
+  exports.IObj = IObj;
+  exports.toObject = toObject;
+  exports.isObj = isObj;
+  exports.IPrependable = IPrependable;
+  exports.prepend = prepend;
+  exports.isPrependable = isPrependable;
+  exports.IPublish = IPublish;
+  exports.pub = pub;
+  exports.isPublish = isPublish;
+  exports.IRecord = IRecord;
+  exports.isRecord = isRecord;
+  exports.IReduce = IReduce;
+  exports.reduce = reduce;
+  exports.IReset = IReset;
+  exports.reset = reset;
+  exports.isReset = isReset;
   exports.ISeq = ISeq;
   exports.first = first;
   exports.rest = rest;
@@ -3218,81 +3275,47 @@
   exports.ISeqable = ISeqable;
   exports.seq = seq;
   exports.isSeqable = isSeqable;
-  exports.ICollection = ICollection;
-  exports.conj = conj;
-  exports.IEmptyableCollection = IEmptyableCollection;
-  exports.empty = empty;
-  exports.isEmptyableCollection = isEmptyableCollection;
-  exports.ILookup = ILookup;
-  exports.lookup = lookup;
-  exports.IAssociative = IAssociative;
-  exports.assoc = assoc;
-  exports.contains = contains;
-  exports.isAssociative = isAssociative;
-  exports.INext = INext;
-  exports.next = next;
-  exports.IIndexed = IIndexed;
-  exports.nth = nth;
-  exports.isIndexed = isIndexed;
+  exports.ISequential = ISequential;
+  exports.isSequential = isSequential;
   exports.IShow = IShow;
   exports.show = show;
   exports.isShow = isShow;
-  exports.IFn = IFn;
-  exports.invoke = invoke;
-  exports.isFn = isFn;
-  exports.IDeref = IDeref;
-  exports.deref = deref;
-  exports.ICounted = ICounted;
-  exports.count = count;
-  exports.isCounted = isCounted;
-  exports.IReduce = IReduce;
-  exports.reduce = reduce;
-  exports.IKVReduce = IKVReduce;
-  exports.reducekv = reducekv;
-  exports.IMap = IMap;
-  exports.dissoc = dissoc;
-  exports.isMap = isMap;
-  exports.ISequential = ISequential;
-  exports.isSequential = isSequential;
-  exports.IComparable = IComparable;
-  exports.isComparable = isComparable;
-  exports.IPublish = IPublish;
-  exports.pub = pub;
-  exports.isPublish = isPublish;
-  exports.ISubscribe = ISubscribe;
-  exports.sub = sub;
-  exports.isSubscribe = isSubscribe;
-  exports.IReset = IReset;
-  exports.reset = reset;
-  exports.isReset = isReset;
-  exports.ISwap = ISwap;
-  exports.swap = swap;
-  exports.isSwap = isSwap;
-  exports.IRecord = IRecord;
-  exports.isRecord = isRecord;
-  exports.IDisposable = IDisposable;
-  exports.dispose = dispose;
-  exports.isDisposable = isDisposable;
-  exports.ICloneable = ICloneable;
-  exports.clone = clone;
-  exports.isCloneable = isCloneable;
-  exports.IFind = IFind;
-  exports.find = find;
-  exports.isFindable = isFindable;
-  exports.IUnit = IUnit;
-  exports.unit = unit;
-  exports.isUnit = isUnit;
   exports.ISteppable = ISteppable;
   exports.step = step;
   exports.converse = converse;
   exports.isSteppable = isSteppable;
+  exports.ISubscribe = ISubscribe;
+  exports.sub = sub;
+  exports.isSubscribe = isSubscribe;
+  exports.ISwap = ISwap;
+  exports.swap = swap;
+  exports.isSwap = isSwap;
+  exports.IUnit = IUnit;
+  exports.unit = unit;
+  exports.isUnit = isUnit;
+  exports.isArray = isArray;
+  exports.slice = slice;
+  exports.array = array;
+  exports.EMPTY_ARRAY = EMPTY_ARRAY;
   exports.isBoolean = isBoolean;
   exports.not = not;
   exports.isTrue = isTrue;
   exports.isFalse = isFalse;
   exports.boolean = boolean;
   exports.bool = bool;
-  exports.test = test;
+  exports.Concatenated = Concatenated;
+  exports.concatenated = concatenated;
+  exports.concat = concat;
+  exports.duration = duration;
+  exports.isDuration = isDuration;
+  exports.milliseconds = milliseconds;
+  exports.seconds = seconds;
+  exports.minutes = minutes;
+  exports.hours = hours;
+  exports.days = days;
+  exports.weeks = weeks;
+  exports.time = time;
+  exports.EMPTY = EMPTY;
   exports.comp = comp;
   exports.partial = partial;
   exports.partially = partially;
@@ -3314,27 +3337,18 @@
   exports.nary = nary;
   exports.arity = arity;
   exports.constructs = constructs$1;
-  exports.isArray = isArray;
-  exports.slice = slice;
-  exports.array = array;
-  exports.EMPTY_ARRAY = EMPTY_ARRAY;
-  exports.selectKeys = selectKeys;
-  exports.defaults = defaults$1;
-  exports.compile = compile;
-  exports.EMPTY_OBJECT = EMPTY_OBJECT;
-  exports.isString = isString;
-  exports.isBlank = isBlank;
-  exports.template = template;
-  exports.inject = inject;
-  exports.startsWith = startsWith;
-  exports.endsWith = endsWith;
-  exports.replace = replace$1;
-  exports.subs = subs$1;
-  exports.lowerCase = lowerCase;
-  exports.upperCase = upperCase;
-  exports.trim = trim;
-  exports.str = str;
-  exports.EMPTY_STRING = EMPTY_STRING;
+  exports.IndexedSeq = IndexedSeq;
+  exports.indexedSeq = indexedSeq;
+  exports.juxts = juxts;
+  exports.LazySeq = LazySeq;
+  exports.lazySeq = lazySeq;
+  exports.List = List;
+  exports.cons = cons;
+  exports.months = months;
+  exports.isNil = isNil;
+  exports.isSome = isSome;
+  exports.Nil = Nil;
+  exports.nil = nil;
   exports.number = number;
   exports.num = num;
   exports.int = int;
@@ -3357,53 +3371,45 @@
   exports.isEven = isEven;
   exports.rand = rand;
   exports.randInt = randInt;
-  exports.IndexedSeq = IndexedSeq;
-  exports.indexedSeq = indexedSeq;
-  exports.EMPTY = EMPTY;
-  exports.juxts = juxts;
-  exports.LazySeq = LazySeq;
-  exports.lazySeq = lazySeq;
-  exports.isNil = isNil;
-  exports.isSome = isSome;
-  exports.Nil = Nil;
-  exports.nil = nil;
-  exports.List = List;
-  exports.cons = cons;
+  exports.selectKeys = selectKeys;
+  exports.defaults = defaults$1;
+  exports.compile = compile;
+  exports.EMPTY_OBJECT = EMPTY_OBJECT;
   exports.ObjectSelection = ObjectSelection;
   exports.objectSelection = objectSelection;
-  exports.Concatenated = Concatenated;
-  exports.concatenated = concatenated;
-  exports.concat = concat;
-  exports.duration = duration;
-  exports.isDuration = isDuration;
-  exports.milliseconds = milliseconds;
-  exports.seconds = seconds;
-  exports.minutes = minutes;
-  exports.hours = hours;
-  exports.days = days;
-  exports.weeks = weeks;
-  exports.time = time;
-  exports.months = months;
-  exports.years = years;
-  exports.record = record$1;
   exports.observable = observable;
-  exports.publisher = publisher;
-  exports.subscriptionMonitor = subscriptionMonitor;
-  exports.unreduced = unreduced;
-  exports.reducing = reducing;
-  exports.Reduced = Reduced$1;
-  exports.reduced = reduced;
-  exports.isReduced = isReduced;
   exports.providePipeline = providePipeline;
   exports.Pipeline = Pipeline;
   exports.pipeline = pipeline;
+  exports.publisher = publisher;
+  exports.record = record$1;
+  exports.unreduced = unreduced;
+  exports.reducing = reducing;
+  exports.Reduced = Reduced;
+  exports.reduced = reduced;
+  exports.isReduced = isReduced;
+  exports.test = test;
+  exports.isString = isString;
+  exports.isBlank = isBlank;
+  exports.template = template;
+  exports.inject = inject;
+  exports.startsWith = startsWith;
+  exports.endsWith = endsWith;
+  exports.replace = replace$1;
+  exports.subs = subs$1;
+  exports.lowerCase = lowerCase;
+  exports.upperCase = upperCase;
+  exports.trim = trim;
+  exports.str = str;
+  exports.EMPTY_STRING = EMPTY_STRING;
+  exports.subscriptionMonitor = subscriptionMonitor;
+  exports.years = years;
   exports.cond = cond;
   exports.branch3 = branch3;
   exports.branch4 = branch4;
   exports.branch = branch;
   exports.someFn = someFn;
   exports.isIdentical = isIdentical;
-  exports.compare = compare$1;
   exports.lt = lt;
   exports.lte = lte;
   exports.gt = gt;

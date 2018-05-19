@@ -5,6 +5,7 @@ import {IObj, IElementContent, IFind, ICollection, IReduce, IKVReduce, INext, IA
 import {lazySeq} from '../../types/lazyseq/construct';
 import {EMPTY_OBJECT} from '../../types/object/construct';
 import {reduce} from '../../types/reduced';
+import {equivalence} from '../../types/array/behave';
 
 function appendTo(self, parent){
   IKVReduce._reducekv(self, function(memo, key, value){
@@ -78,6 +79,7 @@ function show(self){
 }
 
 export default effect(
+  equivalence,
   implement(IElementContent, {appendTo}),
   implement(IObj, {toObject}),
   implement(IFind, {find}),
