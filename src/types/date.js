@@ -4,10 +4,14 @@ export default Date;
 import behave from "./date/behave";
 behave(Date);
 
-function ceil(dt){
-  return new Date(dt.getFullYear(), dt.getMonth(), dt.getDate(), 23, 59, 59, 999);
+export function isDate(self){
+  return self.constructor === Date;
+}
+
+function ceil(self){
+  return new Date(self.getFullYear(), self.getMonth(), self.getDate(), 23, 59, 59, 999);
 }
 
 function floor(dt){
-  return new Date(dt.getFullYear(), dt.getMonth(), dt.getDate());
+  return new Date(self.getFullYear(), self.getMonth(), self.getDate());
 }

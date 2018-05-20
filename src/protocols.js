@@ -25,6 +25,7 @@ export * from "./protocols/ipublish";
 export * from "./protocols/irecord";
 export * from "./protocols/ireduce";
 export * from "./protocols/ireset";
+export * from "./protocols/ireversible";
 export * from "./protocols/iseq";
 export * from "./protocols/iseqable";
 export * from "./protocols/isequential";

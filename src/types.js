@@ -19,6 +19,7 @@ export * from "./types/publisher";
 export * from "./types/record";
 export * from "./types/reduced";
 export * from "./types/regexp";
+export * from "./types/revseq";
 export * from "./types/string";
 export * from "./types/subscriptionmonitor";
 export * from "./types/years";

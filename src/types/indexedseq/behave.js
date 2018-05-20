@@ -1,10 +1,16 @@
 import {constantly, identity, effect} from '../../core';
 import {implement} from '../../protocol';
-import {indexedSeq} from '../../types/indexedseq/construct';
-import {IMapEntry, IFind, IInclusive, IAssociative, IAppendable, IPrependable, ICollection, INext, ICounted, IReduce, IKVReduce, IArr, ISeq, ISeqable, ISequential, IIndexed, IShow, ILookup, IFn, IEmptyableCollection} from '../../protocols';
+import {indexedSeq} from './construct';
+import {revSeq} from '../../types/revseq/construct';
+import {IReversible, IMapEntry, IFind, IInclusive, IAssociative, IAppendable, IPrependable, ICollection, INext, ICounted, IReduce, IKVReduce, IArr, ISeq, ISeqable, ISequential, IIndexed, IShow, ILookup, IFn, IEmptyableCollection} from '../../protocols';
 import * as r from '../../types/reduced';
 import {EMPTY_ARRAY} from '../../types/array/construct';
 import {showable, iterable} from '../lazyseq/behave';
+
+function reverse(self){
+  let c = ICounted.count(self);
+  return c > 0 ? revSeq(self, c - 1) : null;
+}
 
 function key(self){
   return lookup(self, 0);
@@ -73,6 +79,7 @@ export default effect(
   showable,
   iterable,
   implement(ISequential),
+  implement(IReversible, {reverse}),
   implement(IMapEntry, {key, val}),
   implement(IInclusive, {includes}),
   implement(IFind, {find}),
