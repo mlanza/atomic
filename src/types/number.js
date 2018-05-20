@@ -82,6 +82,10 @@ export function isOdd(n){
 
 export const isEven  = complement(isOdd);
 
+export function clamp(self, min, max){
+  return self < min ? min : self > max ? max : self;
+}
+
 function rand0(){
   return Math.random();
 }

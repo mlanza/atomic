@@ -5,6 +5,7 @@ import * as p from "./protocols";
 import * as a from "./associatives";
 import * as s from "./sequences";
 import * as pred from "./predicates";
+import * as types from "./types";
 
 export * from "./core";
 export * from "./types";
@@ -94,3 +95,4 @@ export const getIn = subj(a.getIn);
 export const index = obj(a.get);
 export const assocIn = subj(a.assocIn);
 export const update = subj(a.update);
+export const clamp = subj(types.clamp);

@@ -528,13 +528,10 @@ export function zip(...colls){
 }
 
 //e.g. counter: generate(iterate(inc, 0)) or partial(generate, iterate(inc, 0))) for a counter factory;
-export function generate(xs){
-  var coll = seq(xs);
+export function generate(iterable){
+  let iter = iterable[Symbol.iterator]();
   return function(){
-    if (!coll) return null;
-    var x = first(coll);
-    coll = rest(coll);
-    return x;
+    return iter.done ? null : iter.next().value;
   }
 }
 
@@ -547,8 +544,8 @@ export function best(pred, xs){
 
 export function scan(pred, xs){
   if (!seq(xs)) return true;
-  const head = first(xs),
-        coll = next(xs);
+  let head = first(xs),
+      coll = next(xs);
   while (coll){
     if (pred(head, first(coll))){
       head = first(coll);

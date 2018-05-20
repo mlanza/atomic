@@ -1,10 +1,16 @@
 import {effect, identity, constantly} from '../../core';
 import {implement} from '../../protocol';
-import {toArray, ISet, IMapEntry, IEquiv, IReduce, IKVReduce, IAppendable, IPrependable, IInclusive, ICollection, INext, ISeq, IFind, IArr, ISeqable, IIndexed, IAssociative, ISequential, IEmptyableCollection, IFn, IShow, ICounted, ILookup, ICloneable} from '../../protocols';
+import {toArray, IReversible, ISet, IMapEntry, IEquiv, IReduce, IKVReduce, IAppendable, IPrependable, IInclusive, ICollection, INext, ISeq, IFind, IArr, ISeqable, IIndexed, IAssociative, ISequential, IEmptyableCollection, IFn, IShow, ICounted, ILookup, ICloneable} from '../../protocols';
 import {reduce, reducekv, reduced} from '../../types/reduced';
 import {EMPTY_ARRAY} from './construct';
 import {indexedSeq} from '../indexedseq';
+import {revSeq} from '../revseq';
 import {showable} from '../lazyseq/behave';
+
+function reverse(self){
+  let c = ICounted.count(self);
+  return c > 0 ? revSeq(self, c - 1) : null;
+}
 
 function union(xs, ys){
   return new Set([...xs, ...ys]);
@@ -114,6 +120,7 @@ export default effect(
   showable,
   indexed,
   equivalence,
+  implement(IReversible, {reverse}),
   implement(ISet, {union, intersection, difference, disj, superset}),
   implement(ISequential),
   implement(IFind, {find}),

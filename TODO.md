@@ -9,13 +9,12 @@
 # BACKLOG
 
 * note that native Sets are mutable and giving them an immutable interface would be slow -- use immutable set lib.
-* ISet + disjoin/disj, set, set?, difference, intersection, join, select, subset?, superset?, union
+* join, select
 * Fractal components (like redux/elm)
 * immutablejs adapter
 * inflection: 1 thief, 2 thieves -- use data structure similar to make-hierarchy
 * Object protocol -- toString, equiv, indexOf, lastIndexOf
 * IHash, memoize (could be based on ISerialize.  that is, if a datastructure can be represented as a string/json.)
-* IReversible, reversible, reverse, rseq
 * printf, format
 * some->, some->>
 * defmulti + hierarchy: isa?, make-hierarchy, derive, underive, descendants, parents
