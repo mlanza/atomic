@@ -28,11 +28,11 @@ export function filter(pred, xs){
 function distinct2(coll, seen){
   if (p.seq(coll)) {
     let fst = p.first(coll);
-    if (seen.has(fst)) {
+    if (p.includes(seen, fst)) {
       return distinct2(p.rest(coll), seen);
     } else {
       return lazySeq(fst, function(){
-        return distinct2(p.rest(coll), seen.add(fst));
+        return distinct2(p.rest(coll), p.conj(seen, fst));
       });
     }
   } else {
