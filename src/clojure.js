@@ -1,4 +1,4 @@
-import {comp, str, reducing, EMPTY} from "./types";
+import {comp, str, reducing, EMPTY, lazySeq} from "./types";
 import {overload, identity, constantly} from "./core";
 import * as pl from "./pipelines";
 import * as p  from "./protocols";
@@ -76,4 +76,24 @@ export const intersection = overload(null, null, p.intersection, reducing(p.inte
 export const difference = overload(null, null, p.difference, reducing(p.difference));
 export function subset(subset, superset){
   return p.superset(superset, subset);
+}
+
+export function ancestors(self){
+  let parent = p.parent(self)
+  return parent ? lazySeq(parent, function(){
+    return ancestors(parent);
+  }) : EMPTY;
+}
+
+function descendants2(self, kids){
+  const children = kids || p.children(self);
+  const child    = p.first(children);
+  return child ? lazySeq(child, function(){
+    let tail = p.next(children);
+    return tail ? descendants2(self, tail) : s.map(descendants2, p.children(self));
+  }) : EMPTY;
+}
+
+export function descendants(self){
+  return descendants2(self);
 }

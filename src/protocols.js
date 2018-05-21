@@ -12,6 +12,8 @@ export * from "./protocols/iemptyablecollection";
 export * from "./protocols/iequiv";
 export * from "./protocols/ifind";
 export * from "./protocols/ifn";
+export * from "./protocols/ihierarchy";
+export * from "./protocols/ihierarchicalset";
 export * from "./protocols/iinclusive";
 export * from "./protocols/iindexed";
 export * from "./protocols/ikvreduce";
