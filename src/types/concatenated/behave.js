@@ -1,6 +1,6 @@
 import {identity, effect} from '../../core';
 import {implement} from '../../protocol';
-import {concatenated} from '../../types/concatenated/construct';
+import {concatenated, concat} from '../../types/concatenated/construct';
 import {ICollection, INext, ISeq, IArr, ICounted, IReduce, ISeqable, IIndexed, IShow} from '../../protocols';
 import {reduce} from '../../protocols/ireduce';
 import Reduced from '../../types/reduced';
@@ -21,7 +21,11 @@ function first(self){
 }
 
 function rest(self){
-  const tail  = INext.next(ISeq.first(self.colls));
+  return concat(INext.next(ISeq.first(self.colls)), ISeq.rest(self.colls));
+}
+
+function rest(self){ //TODO fix
+  const tail = INext.next(ISeq.first(self.colls));
   let colls = IArr.toArray(ISeq.rest(self.colls));
   if (tail) {
     colls = [tail].concat(colls);
@@ -30,16 +34,17 @@ function rest(self){
 }
 
 function toArray(self){
-  return reduce(self.colls, function(memo, xs){
-    return reduce(xs, function(memo, x){
-      memo.push(x);
-      return memo;
-    }, memo);
-  }, []);
+  const result = [];
+  let remaining = ISeqable.seq(self);
+  while(remaining){
+    result.push(ISeq.first(remaining));
+    remaining = INext.next(remaining);
+  }
+  return result;
 }
 
 function count(self){
-  return IArr.toArray(self).length;
+  return self.length = self.length || IArr.toArray(self).length;
 }
 
 export default effect(

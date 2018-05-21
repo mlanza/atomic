@@ -91,7 +91,7 @@ function next(self){
 }
 
 function first(self){
-  return self[0] || null;
+  return self[0];
 }
 
 function rest(self){

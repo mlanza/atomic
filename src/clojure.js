@@ -1,4 +1,4 @@
-import {comp, str, reducing, EMPTY, lazySeq} from "./types";
+import {comp, cons, str, reducing, EMPTY, lazySeq, nodes, toNodes, toFlatNodes, concat} from "./types";
 import {overload, identity, constantly} from "./core";
 import * as pl from "./pipelines";
 import * as p  from "./protocols";
@@ -15,6 +15,24 @@ export * from "./associatives";
 export * from "./pipelines";
 export * from "./signals";
 export * from "./dom";
+
+export const map = overload(null, t.map, s.map);
+export const mapcat = overload(null, t.mapcat, s.mapcat);
+export const mapIndexed = overload(null, t.mapIndexed, s.mapIndexed);
+export const filter = overload(null, t.filter, s.filter);
+export const remove = overload(null, t.remove, s.remove);
+export const detect = overload(null, t.detect, s.detect);
+export const compact = overload(t.compact, s.compact);
+export const dedupe = overload(t.dedupe, s.dedupe);
+export const take = overload(null, t.take, s.take);
+export const drop = overload(null, t.drop, s.drop);
+export const interpose = overload(null, t.interpose, s.interpose);
+export const dropWhile = overload(null, t.dropWhile, s.dropWhile);
+export const keep = overload(null, t.keep, s.keep);
+export const keepIndexed = overload(null, t.keepIndexed, s.keepIndexed);
+export const takeWhile = overload(null, t.takeWhile, s.takeWhile);
+export const takeNth = overload(null, t.takeNth, s.takeNth);
+export const distinct = overload(t.distinct, s.distinct);
 
 function reduce2(xf, coll){
   return p.reduce(coll, xf, xf());
@@ -79,21 +97,29 @@ export function subset(subset, superset){
 }
 
 export function ancestors(self){
-  let parent = p.parent(self)
-  return parent ? lazySeq(parent, function(){
-    return ancestors(parent);
-  }) : EMPTY;
-}
-
-function descendants2(self, kids){
-  const children = kids || p.children(self);
-  const child    = p.first(children);
-  return child ? lazySeq(child, function(){
-    let tail = p.next(children);
-    return tail ? descendants2(self, tail) : s.map(descendants2, p.children(self));
-  }) : EMPTY;
+  return toFlatNodes(function(el){
+    let parents = p.parent(nodes([el]));
+    return concat(parents, ancestors(parents));
+  }, p.seq(self));
 }
 
 export function descendants(self){
-  return descendants2(self);
+  return toFlatNodes(function(el){
+    let children = p.children(nodes([el]));
+    return concat(children, descendants(children));
+  }, p.seq(self));
+}
+
+export function prevSiblings(self){
+  return toFlatNodes(function(el){
+    let siblings = p.prevSibling(nodes([el]));
+    return concat(siblings, prevSiblings(siblings));
+  }, p.seq(self));
+}
+
+export function nextSiblings(self){
+  return toFlatNodes(function(el){
+    let siblings = p.nextSibling(nodes([el]));
+    return concat(siblings, nextSiblings(siblings));
+  }, p.seq(self));
 }

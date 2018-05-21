@@ -1,8 +1,15 @@
-import {doto, overload, constantly, identity} from "./core";
+import {overload, constantly, identity} from "./core";
 import {compare, count, nth, first, rest, next, seq, reduce, conj, step, converse, unit, toArray, isSequential} from "./protocols";
-import {inc, comp, not, partial, concat, apply, concatenated, observable, isNil, cons, EMPTY, EMPTY_ARRAY, lazySeq, reduced, complement, slice, juxt, isBlank, isSome, randInt} from "./types";
+import {inc, comp, not, partial, concat, apply, concatenated, isNil, cons, EMPTY, EMPTY_ARRAY, lazySeq, complement, slice, juxt, isSome, randInt} from "./types";
 import * as pred from "./predicates";
-import * as t from "./transducers";
+import * as m from "./map";
+export {filter, distinct, compact, mapcat} from "./map";
+
+const map2 = m.map;
+const filter = m.filter;
+const distinct = m.distinct;
+const compact = m.compact;
+const mapcat = m.mapcat;
 
 function transduce3(xform, f, coll){
   return transduce4(xform, f, f(), coll);
@@ -117,12 +124,6 @@ export function every(pred, coll){
 
 export const notEvery = comp(not, every);
 
-function map2(f, xs){
-  return seq(xs) ? lazySeq(f(first(xs)), function(){
-    return map2(f, rest(xs));
-  }) : EMPTY;
-}
-
 function map3(f, c1, c2){
   var s1 = seq(c1),
       s2 = seq(c2);
@@ -141,8 +142,7 @@ function mapN(f, ...tail){
   return notAny(isNil, seqs) ? cons(apply(f, mapa(first, seqs)), apply(mapN, f, mapa(rest, seqs))) : EMPTY;
 }
 
-export const map = overload(null, t.map, map2, map3, mapN);
-
+export const map  = overload(null, null, map2, map3, mapN);
 export const mapa = comp(toArray, map);
 
 export function indexed(iter){
@@ -154,41 +154,20 @@ export function indexed(iter){
   }
 }
 
-const mapIndexed2  = indexed(map2);
-
-export const mapIndexed  = overload(null, t.mapIndexed, mapIndexed2);
-
-const keepIndexed2 = indexed(keep2);
-
-export const keepIndexed = overload(null, t.keepIndexed, keepIndexed2);
-
-function filter2(pred, xs){
-  const coll = seq(xs);
-  if (!coll) return EMPTY;
-  const head = first(coll);
-  return pred(head) ? lazySeq(head, function(){
-    return filter2(pred, rest(coll));
-  }) : filter2(pred, rest(coll));
-}
-
-export const filter = overload(null, t.filter, filter2);
-
 export const filtera = comp(toArray, filter);
 
-function remove2(pred, xs){
-  return filter2(complement(pred), xs);
+export function remove(pred, xs){
+  return filter(complement(pred), xs);
 }
 
-export const remove = overload(null, t.remove, remove2);
-
-function keep2(f, xs){
-  return filter2(isSome, map2(f, xs));
+export function keep(f, xs){
+  return filter(isSome, map2(f, xs));
 }
 
-export const keep    = overload(null, t.keep, keep2);
-export const compact = partial(filter2, identity);
+export const mapIndexed  = indexed(map);
+export const keepIndexed = indexed(keep);
 
-function drop2(n, coll){
+export function drop(n, coll){
   var i = n,
       xs = seq(coll)
   while (i > 0 && xs) {
@@ -198,13 +177,9 @@ function drop2(n, coll){
   return xs;
 }
 
-export const drop = overload(null, t.drop, drop2);
-
-function dropWhile2(pred, xs){
-  return seq(xs) ? pred(first(xs)) ? dropWhile2(pred, rest(xs)) : xs : EMPTY;
+export function dropWhile(pred, xs){
+  return seq(xs) ? pred(first(xs)) ? dropWhile(pred, rest(xs)) : xs : EMPTY;
 }
-
-export const dropWhile = overload(null, t.dropWhile, dropWhile2);
 
 export function dropLast(n, coll){
   return map(function(x, _){
@@ -212,32 +187,26 @@ export function dropLast(n, coll){
   }, coll, drop(n, coll));
 }
 
-function take2(n, coll){
+export function take(n, coll){
   const xs = seq(coll);
   return n > 0 && xs ? lazySeq(first(xs), function(){
-    return take2(n - 1, rest(xs));
+    return take(n - 1, rest(xs));
   }) : EMPTY;
 }
 
-export const take = overload(null, t.take, take2);
-
-function takeWhile2(pred, xs){
+export function takeWhile(pred, xs){
   if (!seq(xs)) return EMPTY;
   const item = first(xs);
   return pred(item) ? lazySeq(item, function(){
-    return takeWhile2(pred, rest(xs));
+    return takeWhile(pred, rest(xs));
   }) : EMPTY;
 }
 
-export const takeWhile = overload(null, t.takeWhile, takeWhile2);
-
-function takeNth2(n, xs){
+export function takeNth(n, xs){
   return seq(xs) ? lazySeq(first(xs), function(){
-    return takeNth2(n, drop2(n, xs));
+    return takeNth(n, drop2(n, xs));
   }) : EMPTY;
 }
-
-export const takeNth = overload(null, t.takeNth, takeNth2);
 
 export function takeLast(n, coll){
   return n ? drop(count(coll) - n, coll) : EMPTY;
@@ -256,18 +225,16 @@ function interleaveN(...colls){
 }
 
 export function interleaved(colls){
-  return filter2(isNil, colls) === EMPTY ? lazySeq(map2(first, colls), function(){
+  return filter(isNil, colls) === EMPTY ? lazySeq(map2(first, colls), function(){
     return interleaved(map2(next, colls));
   }) : EMPTY;
 }
 
 export const interleave = overload(null, null, interleave2, interleaveN);
 
-function interpose2(sep, xs){
-  return drop2(1, interleave2(repeat1(sep), xs));
+export function interpose(sep, xs){
+  return drop(1, interleave2(repeat1(sep), xs));
 }
-
-export const interpose = overload(null, t.interpose, interpose2);
 
 function partition1(n){
   return partial(partition, n);
@@ -342,38 +309,24 @@ export function dedupe(coll){
   }) : EMPTY;
 }
 
-function distinct2(coll, seen){
-  if (seq(coll)) {
-    let fst = first(coll);
-    if (seen.has(fst)) {
-      return distinct2(rest(coll), seen)
-    } else {
-      seen.add(fst);
-      return lazySeq(fst, function(){
-        return distinct2(rest(coll), seen);
-      });
+function isDistinct1(coll){
+  let seen = new Set();
+  return reduce(coll, function(memo, x){
+    if (memo && seen.has(x)) {
+      return reduced(false);
     }
-  } else {
-    return EMPTY;
-  }
+    seen.add(x);
+    return memo;
+  }, true);
 }
 
-export function distinct(coll){
-  return distinct2(coll, new Set());
+function isDistinctN(...xs){
+  return isDistinct1(xs);
 }
 
-export const splitAt   = juxt(take2, drop2);
-export const splitWith = juxt(takeWhile2, dropWhile2);
-
-function mapcat1(f){
-  return comp(map(f), t.cat);
-}
-
-function mapcat2(f, colls){
-  return concatenated(map(f, colls));
-}
-
-export const mapcat = overload(null, mapcat1, mapcat2);
+export const isDistinct = overload(null, constantly(true), pred.notEq, isDistinctN);
+export const splitAt    = juxt(take, drop);
+export const splitWith  = juxt(takeWhile, dropWhile);
 
 function sort1(coll){
   return sort2(compare, coll);
@@ -454,7 +407,7 @@ function repeatedly1(f){
 }
 
 function repeatedly2(n, f){
-  return take2(n, repeatedly1(f));
+  return take(n, repeatedly1(f));
 }
 
 export const repeatedly = overload(null, repeatedly1, repeatedly2);
@@ -515,13 +468,6 @@ export function treeSeq(branch, children, root){
 export function flatten(coll){
   return filter(complement(isSequential), rest(treeSeq(isSequential, seq, coll)));
 }
-
-function isDistinctN(...xs){
-  const s = new Set(xs);
-  return s.size === xs.length;
-}
-
-export const isDistinct = overload(null, constantly(true), pred.notEq, isDistinctN);
 
 export function randNth(coll){
   return nth(coll, randInt(count(coll)));
