@@ -4,8 +4,8 @@
 
 import {log, overload, identity, doto} from "./core";
 import {isNil, isBlank, reduced, partial, pipeline, compile} from "./types";
-import {transduce} from "./sequences";
 import {map} from "./transducers";
+import {transduce} from "./sequences";
 import {update} from "./associatives";
 import {providePipeline} from "./types/pipeline";
 

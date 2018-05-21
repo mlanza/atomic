@@ -1,6 +1,6 @@
 import {constantly, overload, identity} from "./core";
-import {comp, reduced, reduce, reducing, partial, complement, isSome} from "./types";
-import {seq} from "./protocols";
+import {comp, reduced, reducing, partial, complement, isSome, EMPTY_ARRAY} from "./types";
+import {seq, reduce} from "./protocols";
 
 export function map(f){
   return function(xf){
@@ -8,6 +8,10 @@ export function map(f){
       return xf(memo, f(value));
     });
   }
+}
+
+export function mapcat(f){
+  return comp(map(f), cat);
 }
 
 export function mapIndexed(f){

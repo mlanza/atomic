@@ -2,6 +2,7 @@ grep -R "some" --exclude-dir="*node*" .
 
 # PRINCIPLES
 
+* Avoid using type constructors (e.g. the keyword "new") directly.  Use the provided constructor functions.
 * Avoid virtual doms.  Use a model diff/patch strategy.
 * Avoid creating types where primitives will do.  A type should be introduced to vary protocol implementations.
 * Avoid monads as they necessitate commitment.  Use monadic pipelines instead.
