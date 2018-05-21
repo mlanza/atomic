@@ -342,8 +342,24 @@ export function dedupe(coll){
   }) : EMPTY;
 }
 
+function distinct2(coll, seen){
+  if (seq(coll)) {
+    let fst = first(coll);
+    if (seen.has(fst)) {
+      return distinct2(rest(coll), seen)
+    } else {
+      seen.add(fst);
+      return lazySeq(fst, function(){
+        return distinct2(rest(coll), seen);
+      });
+    }
+  } else {
+    return EMPTY;
+  }
+}
+
 export function distinct(coll){
-  return Array.from(new Set(coll));
+  return distinct2(coll, new Set());
 }
 
 export const splitAt   = juxt(take2, drop2);
