@@ -1,8 +1,16 @@
 import {effect, identity, constantly} from '../../core';
 import {implement} from '../../protocol';
-import {set} from './construct';
-import {ISeq, INext, IArr, ICounted, ICollection, IEmptyableCollection, IInclusive, ICloneable} from '../../protocols';
+import {set, Set} from './construct';
+import {ISeq, ISet, INext, IArr, ICounted, ICollection, IEmptyableCollection, IInclusive, ICloneable} from '../../protocols';
 import {EMPTY} from '../../types/empty/construct';
+
+function union(self, other){
+  return Set.union([self, other]);
+}
+
+function intersection(self, other){
+  return Set.intersect([self, other]);
+}
 
 function toArray(self){
   return self.toArray();
@@ -36,6 +44,7 @@ function count(self){
 
 export default effect(
   implement(IArr, {toArray}),
+  implement(ISet, {union, intersection}),
   implement(ICloneable, {clone: identity}),
   implement(IEmptyableCollection, {empty: constantly(set())}),
   implement(ICollection, {conj}),
