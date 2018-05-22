@@ -69,3 +69,15 @@ export const effect = subj(doto);
 export function isInstance(x, constructor){
   return x instanceof constructor;
 }
+
+export function spread(f){
+  return function(args){
+    return f(...args);
+  }
+}
+
+export function unspread(f){
+  return function(...args){
+    return f(args);
+  }
+}

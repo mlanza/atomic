@@ -1,38 +1,38 @@
 import * as p from "./protocols";
 import {identity} from "./core";
-import {partial} from "./types/function";
+import {partial, comp} from "./types/function";
 import {lazySeq} from "./types/lazyseq";
 import {set} from "./types/set";
 import {concatenated} from "./types/concatenated";
 import {EMPTY} from "./types/empty";
 
-export function map(f, xs){
-  return p.seq(xs) ? lazySeq(f(p.first(xs)), function(){
-    return map(f, p.rest(xs));
+function map(f, xs){
+  return ISeqable.seq(xs) ? lazySeq(f(ISeq.first(xs)), function(){
+    return map(f, ISeq.rest(xs));
   }) : EMPTY;
 }
 
-export function mapcat(f, colls){
+function mapcat(f, colls){
   return concatenated(map(f, colls));
 }
 
-export function filter(pred, xs){
-  const coll = p.seq(xs);
+function filter(pred, xs){
+  const coll = ISeqable.seq(xs);
   if (!coll) return EMPTY;
-  const head = p.first(coll);
+  const head = ISeq.first(coll);
   return pred(head) ? lazySeq(head, function(){
-    return filter(pred, p.rest(coll));
-  }) : filter(pred, p.rest(coll));
+    return filter(pred, ISeq.rest(coll));
+  }) : filter(pred, ISeq.rest(coll));
 }
 
 function distinct2(coll, seen){
-  if (p.seq(coll)) {
-    let fst = p.first(coll);
-    if (p.includes(seen, fst)) {
-      return distinct2(p.rest(coll), seen);
+  if (ISeqable.seq(coll)) {
+    let fst = ISeq.first(coll);
+    if (IInclusive.includes(seen, fst)) {
+      return distinct2(ISeq.rest(coll), seen);
     } else {
       return lazySeq(fst, function(){
-        return distinct2(p.rest(coll), p.conj(seen, fst));
+        return distinct2(ISeq.rest(coll), ICollection.conj(seen, fst));
       });
     }
   } else {
@@ -40,8 +40,23 @@ function distinct2(coll, seen){
   }
 }
 
-export function distinct(coll){
+function distinct(coll){
   return distinct2(coll, set());
 }
 
-export const compact = partial(filter, identity);
+function compact(coll){
+  return filter(identity, coll);
+}
+
+function elements(map){
+  return function(f){
+    return function(coll){
+      return distinct(compact(map(f, filter(function(el){
+        return el !== document;
+      }, ISeqable.seq(coll)))));
+    }
+  }
+}
+
+export const mapping    = elements(map);
+export const mapcatting = elements(mapcat);

@@ -1,4 +1,4 @@
-import {comp, cons, str, reducing, EMPTY, lazySeq, nodes, toNodes, toFlatNodes, concat} from "./types";
+import {comp, cons, str, reducing, EMPTY, lazySeq, concat, set} from "./types";
 import {overload, identity, constantly} from "./core";
 import * as pl from "./pipelines";
 import * as p  from "./protocols";
@@ -87,39 +87,9 @@ function join2(sep, xs){
 }
 
 export const join = overload(null, join1, join2);
-export const union = overload(function(){
-  return new Set();
-}, identity, p.union, reducing(p.union));
+export const union = overload(set, identity, p.union, reducing(p.union));
 export const intersection = overload(null, null, p.intersection, reducing(p.intersection));
 export const difference = overload(null, null, p.difference, reducing(p.difference));
 export function subset(subset, superset){
   return p.superset(superset, subset);
-}
-
-export function ancestors(self){
-  return toFlatNodes(function(el){
-    let parents = p.parent(nodes([el]));
-    return concat(parents, ancestors(parents));
-  }, p.seq(self));
-}
-
-export function descendants(self){
-  return toFlatNodes(function(el){
-    let children = p.children(nodes([el]));
-    return concat(children, descendants(children));
-  }, p.seq(self));
-}
-
-export function prevSiblings(self){
-  return toFlatNodes(function(el){
-    let siblings = p.prevSibling(nodes([el]));
-    return concat(siblings, prevSiblings(siblings));
-  }, p.seq(self));
-}
-
-export function nextSiblings(self){
-  return toFlatNodes(function(el){
-    let siblings = p.nextSibling(nodes([el]));
-    return concat(siblings, nextSiblings(siblings));
-  }, p.seq(self));
 }

@@ -65,6 +65,9 @@ function lookup(self, key){
 }
 
 function assoc(self, key, value){
+  if (IEquiv.equiv(lookup(self, key), value)) {
+    return self;
+  }
   var arr = Array.from(self);
   arr.splice(key, 1, value);
   return arr;

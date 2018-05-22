@@ -1,6 +1,5 @@
-import {comp, isNil, slice, partial, apply, reducing, reduced, curry} from "./types";
+import {comp, isNil, slice, partial, apply, reducing, reduced} from "./types";
 import {reduce, isSequential, IComparable} from "./protocols";
-import * as p from "./protocols";
 import {overload, constantly, identity, subj} from "./core";
 
 export function cond(obj, pred, f, ...args){
@@ -29,17 +28,17 @@ export function or(...fs){
   }
 }
 
-export function branch3(obj, pred, yes){
+export function branch3(pred, yes, obj){
   return branch4(obj, pred, yes, constantly(null));
 }
 
-export function branch4(obj, pred, yes, no){
+export function branch4(pred, yes, no, obj){
   return pred(obj) ? yes(obj) : no(obj);
 }
 
 export const branch = overload(null, null, null, branch3, branch4);
 
-function everyPair2(pred, xs){
+export function everyPair(pred, xs){
   var every = xs.length > 0;
   while(every && xs.length > 1){
     every = pred(xs[0], xs[1]);
@@ -47,8 +46,6 @@ function everyPair2(pred, xs){
   }
   return every;
 }
-
-const everyPair = overload(null, curry(everyPair2, 2), everyPair2);
 
 function someFn1(a){
   return function(){
@@ -92,6 +89,8 @@ export function compare(x, y){
     return 1;
   } else if (type(x) === type(y)) {
     return IComparable.compare(x, y);
+  } else {
+    throw new TypeError("Cannot compare different types.");
   }
 }
 

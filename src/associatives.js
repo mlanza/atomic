@@ -1,5 +1,5 @@
 import {slice, apply} from "./types";
-import {lookup, toArray, rest, assoc, contains, reduce, seq} from "./protocols";
+import {lookup, toArray, rest, assoc, contains, reduce, seq, equiv} from "./protocols";
 import {overload} from "./core";
 import {some} from "./sequences";
 import {gt, lt} from "./predicates";
@@ -18,7 +18,7 @@ export function assocIn(self, keys, value){
     case 0:
       return self;
     case 1:
-      return assoc(self, key, value);
+      return equiv(lookup(self, key), value) ? self : assoc(self, key, value); //maintain referential equivalence
     default:
       return assoc(self, key, assocIn(get(self, key), toArray(rest(keys)), value));
   }

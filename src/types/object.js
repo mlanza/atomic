@@ -7,7 +7,7 @@ import {invoke} from "../protocols/ifn";
 import {reduce} from "../protocols/ireduce";
 import {lookup} from "../protocols/ilookup";
 import {reducing} from "../types/reduced";
-import {curry, apply} from "../types/function";
+import {apply} from "../types/function";
 import {overload, constantly} from "../core";
 
 export function selectKeys(self, keys){
@@ -21,7 +21,7 @@ function defaults2(self, defaults){
   return Object.assign({}, defaults, self);
 }
 
-export const defaults = overload(null, curry(defaults2, 2), defaults2, reducing(defaults2));
+export const defaults = overload(null, null, defaults2, reducing(defaults2));
 
 export function compile(self){
   return function(...args){

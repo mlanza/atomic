@@ -107,18 +107,6 @@ function applyN(f, a, b, c, d, args){
 
 export const apply = overload(null, null, apply2, apply3, apply4, apply5, applyN);
 
-export function spread(f){
-  return function(args){
-    return f(...args);
-  }
-}
-
-export function unspread(f){
-  return function(...args){
-    return f(args);
-  }
-}
-
 function fnil(f, ...substitutes){
   return function(...args){
     for(var x = 0; x < args.length; x++){

@@ -2,6 +2,8 @@ grep -R "some" --exclude-dir="*node*" .
 
 # PRINCIPLES
 
+* Avoid dependence on module organization.  The public api should be packaged under a single collective module in order to reduce the impact of reorganizations.  The organization is not yet firm.
+* Avoid `curry` except in the pointfree export where partial application takes center stage.
 * Avoid using type constructors (e.g. the keyword "new") directly.  Use the provided constructor functions.
 * Avoid virtual doms.  Use a model diff/patch strategy.
 * Avoid creating types where primitives will do.  A type should be introduced to vary protocol implementations.
@@ -9,7 +11,9 @@ grep -R "some" --exclude-dir="*node*" .
 * Avoid recursion for potentially large stacks.
 * Avoid writing functions that care about `this` bindings, rather pass `self` as the first argument when required.
 * Avoid thinking in concrete types.  Prefer thinking in abstract types that provide behaviors.
+* In some cases, when dealing with collections (Seqs), we cannont know what concrete types it will contain.  HTMLDivElement and HTMLSpanElement are predictable HTML elements; however, developers can define their own custom elements via Web Components.  Unless the behavior/protocols for those components are defined, the api will break when it encounters these custom elements.  Protocol resolution, for performance, looks directly to the constructor and not the full inheritance chain because protocols are internally implemented using WeakMaps.  Traversing the inheritance chain on every protocol lookup would be too expensive.  That is why the dom traversal api assumes all items within the seq are elements.
 * The Law of Abstractions: When a invoking a function against an object that returns a different representation of it, the type may vary (e.g. an Array becoming an IndexedSeq).  The new representation should abide the same protocols to maintain the integrity of the abstract type.  Apart from this, one must think in concrete types.
+* A protocol is not just a set of named functions, but a contract.  The semantics of the protocol include the messages provided.  For example, it would not make sense to define an IQuery protocol that in the dom takes a CSS selector string and against a repo takes a T-SQL string.  While the shape of the function call is identical, the semantics are not.  These would be two different protocols: ICSSQuery and ISQLQuery even if both offered an identically-named `query` verb.
 * A sum type is nothing but the set of types that implement a protocol.  With protocols ADTs are not necessary.
 * The first argument of a protocol function is the type.
 * In a `behave` module only behaviors (encapsulated effects) should be exported, not functions themselves.
