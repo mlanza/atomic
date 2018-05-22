@@ -1,8 +1,9 @@
 import {implement} from '../../protocol';
-import {IFind, IEquiv, ICollection, INext, IArr, ISeq, IReduce, IKVReduce, ISeqable, ISequential, IIndexed, IEmptyableCollection, IShow} from '../../protocols';
+import {IInclusive, IFind, IEquiv, ICollection, INext, IArr, ISeq, IReduce, IKVReduce, ISeqable, ISequential, IIndexed, IEmptyableCollection, IShow, IHierarchy, IHierarchicalSet} from '../../protocols';
 import {overload, identity, constantly, effect} from '../../core';
 import Reduced, {reduced} from "../reduced/construct";
-import {EMPTY} from '../empty';
+import {EMPTY} from '../empty/construct';
+import {mapping, mapcatting} from './construct';
 
 function equiv(as, bs){
   const xs = seq(as),
@@ -85,8 +86,13 @@ function toArray1(xs){
   return toArray2(xs, []);
 }
 
-const toArray = overload(null, toArray1, toArray2);
+const toArray     = overload(null, toArray1, toArray2);
+const parent      = mapping(IHierarchy.parent);
+const children    = mapcatting(IHierarchy.children);
+const nextSibling = mapping(IHierarchy.nextSibling);
+const prevSibling = mapping(IHierarchy.prevSibling);
 
+export const hierarchical = implement(IHierarchicalSet, {parent, children, nextSibling, prevSibling});
 export const showable = implement(IShow, {show: show});
 export const reduceable = effect(
   implement(IReduce, {reduce}),
@@ -96,6 +102,7 @@ export default effect(
   iterable,
   showable,
   reduceable,
+  hierarchical,
   implement(IEquiv, {equiv}),
   implement(IFind, {find}),
   implement(ISequential),

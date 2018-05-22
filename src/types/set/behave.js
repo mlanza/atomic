@@ -44,6 +44,7 @@ function count(self){
 
 export default effect(
   implement(IArr, {toArray}),
+  implement(IInclusive, {includes}),
   implement(ISet, {union, intersection}),
   implement(ICloneable, {clone: identity}),
   implement(IEmptyableCollection, {empty: constantly(set())}),

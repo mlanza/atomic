@@ -35,6 +35,7 @@ QUnit.test("ilookup", function(assert){
 });
 
 QUnit.test("iassociative", function(assert){
+  assert.equal(_.assoc(stooges, 0, "Larry"), stooges, "maintain referential equivalence");
   assert.deepEqual(_.assoc(stooges, 0, "Shemp"), ["Shemp","Curly","Moe"]);
   assert.deepEqual(_.assoc(court, "ace", 14), {jack: 11, queen: 12, king: 13, ace: 14});
   assert.deepEqual(_.assocIn(worth, ["court","ace"], 1), {pieces: {pawn: 1, knight: 3, bishop: 3, rook: 5, queen: 10, king: Infinity}, court: {ace: 1, jack: 11, queen: 12, king: 13}});

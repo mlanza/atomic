@@ -1,13 +1,12 @@
-import Nil from './types/nil/construct';
 import {overload} from './core';
 
-const REGISTRY = window.Symbol ? Symbol("Registry") : "_registry";
-const TEMPLATE = window.Symbol ? Symbol("Template") : "_template";
+const REGISTRY = window.Symbol ? Symbol("Registry") : "__registry";
+const TEMPLATE = window.Symbol ? Symbol("Template") : "__template";
 
-export function ProtocolLookupError(registry, subject, named, args) {
-  this.registry = registry;
-  this.subject = subject;
+export function ProtocolLookupError(protocol, named, subject, args) {
+  this.protocol = protocol;
   this.named = named;
+  this.subject = subject;
   this.args = args;
 }
 
@@ -16,8 +15,17 @@ ProtocolLookupError.prototype.toString = function(){
   return "Protocol lookup for " + this.named + " failed.";
 }
 
+//Must be shallow to uphold performance.  Obviously, performance degrades on surrogates that appear further down.
+export const surrogates = [];
+
 function constructs(self){
-  return self == null ? Nil : self.constructor;
+  let construct = null, len = surrogates.length;
+  for (let idx = 0; idx < len; idx++){
+    if (construct = surrogates[idx](self)) {
+      break;
+    }
+  }
+  return construct;
 }
 
 export default function Protocol(template){
@@ -26,19 +34,22 @@ export default function Protocol(template){
   extend(this, template);
 }
 
-function create(registry, template, named){
-  return function(self) {
-    const f = (registry.get(self) || {})[named] || (registry.get(constructs(self)) || {})[named] || template[named];
-    if (!f) {
-      throw new ProtocolLookupError(registry, self, named, arguments);
+function dispatcher(protocol){
+  const registry = protocol[REGISTRY], template = protocol[TEMPLATE], blank = {};
+  return function(named){
+    return function(self){
+      const f = (registry.get(self) || blank)[named] || (registry.get(self && self.constructor) || blank)[named] || (registry.get(constructs(self)) || blank)[named] || template[named] || function(){
+        throw new ProtocolLookupError(protocol, named, self, arguments);
+      }
+      return f.apply(this, arguments);
     }
-    return f.apply(this, arguments);
   }
 }
 
-export function extend(self, template){
-  for (var key in template){
-    self[key] = create(self[REGISTRY], self[TEMPLATE], key).bind(self);
+export function extend(self, addition){
+  const dispatch = dispatcher(self);
+  for (var key in addition){
+    self[key] = dispatch(key).bind(self);
   }
 }
 
@@ -76,7 +87,7 @@ function satisfies1(protocol){
 
 function satisfies2(protocol, obj){
   const reg = protocol[REGISTRY];
-  return reg.has(constructs(obj)) || reg.has(obj);
+  return reg.has(obj && obj.constructor) || reg.has(obj) || reg.has(constructs(obj));
 }
 
 export const satisfies = overload(null, satisfies1, satisfies2);
