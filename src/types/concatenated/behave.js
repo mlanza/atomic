@@ -1,5 +1,5 @@
 import {identity, effect} from '../../core';
-import {implement} from '../../protocol';
+import {implement} from '../protocol';
 import {concatenated, concat} from '../../types/concatenated/construct';
 import {ICollection, INext, ISeq, IArr, ICounted, IReduce, ISeqable, IIndexed, IShow} from '../../protocols';
 import {reduce} from '../../protocols/ireduce';

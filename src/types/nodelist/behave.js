@@ -1,5 +1,5 @@
 import {effect} from '../../core';
-import {implement} from '../../protocol';
+import {implement} from '../protocol';
 import {ISeqable} from '../../protocols';
 import {lazySeq} from '../lazyseq/construct';
 import {EMPTY} from '../empty/construct';

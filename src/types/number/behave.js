@@ -1,5 +1,5 @@
 import {constantly, effect, overload} from '../../core';
-import {implement} from '../../protocol';
+import {implement} from '../protocol';
 import {IUnit, ISteppable, IShow} from '../../protocols';
 
 function step(amount, target){

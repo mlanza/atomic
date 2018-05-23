@@ -1,4 +1,4 @@
-import {protocol} from "../protocol";
+import {protocol, satisfies} from "../types/protocol";
 function _deref(self){
   return self == null ? null : self.valueOf();
 }

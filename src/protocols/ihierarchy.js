@@ -1,4 +1,4 @@
-import {protocol, satisfies} from "../protocol";
+import {protocol, satisfies} from "../types/protocol";
 import {ISeqable} from "../protocols/iseqable";
 function _parent(self){
   return self.parentNode;

@@ -1,10 +1,10 @@
-import {IElementContent, IIndexed, ISeqable, ISeq, IArr, IInclusive, IAppendable, IPrependable, IShow, ICounted, ILookup, IFn, IEmptyableCollection} from '../../protocols';
+import {IElementEmbeddable, IIndexed, ISeqable, ISeq, IArr, IInclusive, IAppendable, IPrependable, IShow, ICounted, ILookup, IFn, IEmptyableCollection} from '../../protocols';
 import {constantly, effect} from "../../core";
-import {implement} from '../../protocol';
+import {implement} from '../protocol';
 import {EMPTY_STRING} from './construct';
 import {indexed} from '../array/behave';
 
-function appendTo(self, parent){
+function embedIn(self, parent){
   parent.appendChild(document.createTextNode(self));
 }
 
@@ -54,7 +54,7 @@ function includes(self, str){
 
 export default effect(
   indexed,
-  implement(IElementContent, {appendTo}),
+  implement(IElementEmbeddable, {embedIn}),
   implement(IInclusive, {includes}),
   implement(IAppendable, {append}),
   implement(IPrependable, {prepend}),

@@ -1,4 +1,4 @@
-import {protocol, satisfies} from "../protocol";
+import {protocol, satisfies} from "../types/protocol";
 export const ISet = protocol({
   union: null,
   intersection: null,

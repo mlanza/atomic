@@ -1,13 +1,13 @@
-import {implement} from '../../protocol';
+import {implement} from '../protocol';
 import {identity, constantly, effect} from '../../core';
 import {objectSelection} from '../../types/objectselection/construct';
-import {IObj, IElementContent, IFind, ICollection, IReduce, IKVReduce, INext, IArr, ISeq, ISeqable, IIndexed, IShow, ICounted, ILookup, IFn, IMap, ICloneable, IEmptyableCollection} from '../../protocols';
+import {IObj, IElementEmbeddable, IFind, ICollection, IReduce, IKVReduce, INext, IArr, ISeq, ISeqable, IIndexed, IShow, ICounted, ILookup, IFn, IMap, ICloneable, IEmptyableCollection} from '../../protocols';
 import {lazySeq} from '../../types/lazyseq/construct';
 import {EMPTY_OBJECT} from '../../types/object/construct';
 import * as t from '../../types/reduced';
 import {equivalence} from '../../types/array/behave';
 
-function appendTo(self, parent){
+function embedIn(self, parent){
   IKVReduce._reducekv(self, function(memo, key, value){
     const f = typeof value === "function" ? memo.addEventListener : memo.setAttribute;
     f.call(parent, key, value);
@@ -87,7 +87,7 @@ function show(self){
 
 export default effect(
   equivalence,
-  implement(IElementContent, {appendTo}),
+  implement(IElementEmbeddable, {embedIn}),
   implement(IObj, {toObject}),
   implement(IFind, {find}),
   implement(IMap, {dissoc, keys, vals}),

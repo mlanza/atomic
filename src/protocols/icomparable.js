@@ -1,4 +1,4 @@
-import {protocol, satisfies} from "../protocol";
+import {protocol, satisfies} from "../types/protocol";
 export const IComparable = protocol({
   compare: function(x, y){
     return x > y ? 1 : x < y ? -1 : 0;

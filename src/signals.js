@@ -4,8 +4,7 @@
 * When building an application from a signal graph there is a tendency to think that events are no longer relevant, that everything must be a signal, but this is inappropriate.  Both can be appropriate.  Use events when there is no reason for an initial value.
 */
 
-import {partial, observable, publisher, subscriptionMonitor, slice} from "./types";
-import {implement} from "./protocol";
+import {implement, partial, observable, publisher, subscriptionMonitor, slice} from "./types";
 import {map} from "./transducers";
 import {pub, sub, IDisposable} from "./protocols";
 import {doto, overload, identity, constantly} from "./core";

@@ -1,7 +1,7 @@
 import {IAssociative, IEquiv, ICollection, INext, IArr, ISeq, IShow, ISeqable, IIndexed, ICounted, ILookup, IReduce, IEmptyableCollection} from '../../protocols';
 import {EMPTY} from '../../types/empty';
 import {identity, constantly, effect} from '../../core';
-import {implement, surrogates} from '../../protocol';
+import {implement, surrogates} from '../protocol';
 import {EMPTY_ARRAY} from '../../types/array/construct';
 import {Nil} from './construct';
 

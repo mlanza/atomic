@@ -7,7 +7,7 @@ export * from "./protocols/icomparable";
 export * from "./protocols/icounted";
 export * from "./protocols/ideref";
 export * from "./protocols/idisposable";
-export * from "./protocols/ielementcontent";
+export * from "./protocols/ielementembeddable";
 export * from "./protocols/iemptyablecollection";
 export * from "./protocols/iequiv";
 export * from "./protocols/ifind";

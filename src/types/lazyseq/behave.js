@@ -1,4 +1,4 @@
-import {implement} from '../../protocol';
+import {implement} from '../protocol';
 import {IInclusive, IFind, IEquiv, ICollection, INext, IArr, ISeq, IReduce, IKVReduce, ISeqable, ISequential, IIndexed, IEmptyableCollection, IShow, IHierarchy, IHierarchicalSet} from '../../protocols';
 import {overload, identity, constantly, effect} from '../../core';
 import Reduced, {reduced} from "../reduced/construct";
