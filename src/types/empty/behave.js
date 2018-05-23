@@ -1,5 +1,5 @@
 import {identity, constantly, effect} from '../../core';
-import {implement} from '../../protocol';
+import {implement} from '../protocol';
 import {EMPTY} from '../../types/empty/construct';
 import {ICollection, INext, ISeq, IArr, ISeqable, IIndexed, IShow, IEmptyableCollection} from '../../protocols';
 import {EMPTY_ARRAY} from '../../types/array/construct';

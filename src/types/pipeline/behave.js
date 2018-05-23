@@ -1,6 +1,6 @@
 import {pipeline} from './construct';
 import {effect} from '../../core';
-import {implement} from '../../protocol';
+import {implement} from '../protocol';
 import {IFn, IAppendable, IPrependable} from '../../protocols';
 
 export default function provideBehavior(piped){

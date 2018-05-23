@@ -4,14 +4,16 @@ import * as c from "./core";
 import * as p from "./protocols";
 import * as a from "./associatives";
 import * as s from "./sequences";
+import * as dom from "./dom";
 import * as pred from "./predicates";
 import * as types from "./types";
 
 export * from "./core";
+export * from "./protocols";
 export * from "./types";
 export * from "./sequences";
 export * from "./pipelines";
-export * from "./protocols";
+export * from "./dom";
 export {someFn} from "./predicates";
 
 export const reduce = curry(p.reduce, 3);
@@ -98,3 +100,6 @@ export const index = obj(a.get);
 export const assocIn = subj(a.assocIn);
 export const update = subj(a.update);
 export const clamp = subj(types.clamp);
+export const matches = subj(dom.matches);
+export const embeds = subj(p.embeds);
+export const embed = subj(p.embed);

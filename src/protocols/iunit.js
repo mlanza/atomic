@@ -1,5 +1,4 @@
-import {constantly, effect, overload} from '../core';
-import {protocol, satisfies} from "../protocol";
+import {protocol, satisfies} from "../types/protocol";
 export const IUnit = protocol({
   unit: null
 });

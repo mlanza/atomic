@@ -1,4 +1,4 @@
-import {protocol, satisfies} from "../protocol";
+import {protocol, satisfies} from "../types/protocol";
 export const IEquiv = protocol({
   equiv: function(x, y){
     return x === y;

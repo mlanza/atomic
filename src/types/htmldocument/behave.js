@@ -1,4 +1,4 @@
-import {implement} from '../../protocol';
+import {implement} from '../protocol';
 import {ISeqable, IHierarchy, IHierarchicalSet} from '../../protocols';
 import {constantly, effect} from '../../core';
 import {EMPTY} from '../../types/empty/construct';

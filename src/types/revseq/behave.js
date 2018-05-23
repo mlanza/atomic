@@ -1,5 +1,5 @@
 import {constantly, identity, effect, overload} from '../../core';
-import {implement} from '../../protocol';
+import {implement} from '../protocol';
 import {EMPTY} from '../../types/empty/construct';
 import {cons} from '../../types/list/construct';
 import {Reduced, unreduced} from '../../types/reduced';

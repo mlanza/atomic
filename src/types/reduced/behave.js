@@ -1,4 +1,4 @@
-import {implement} from '../../protocol';
+import {implement} from '../protocol';
 import {effect} from '../../core';
 import {IDeref} from '../../protocols';
 

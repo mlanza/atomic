@@ -65,7 +65,7 @@ function elements(map){
     return function(coll){
       return distinct(compact(map(f, filter(function(el){
         return el !== document;
-      }, ISeqable.seq(coll)))));
+      }, coll instanceof Element ? ISeqable.seq([coll]) : ISeqable.seq(coll)))));
     }
   }
 }

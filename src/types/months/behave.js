@@ -1,6 +1,6 @@
 import {ISteppable} from '../../protocols';
 import {identity, constantly, effect} from '../../core';
-import {implement} from '../../protocol';
+import {implement} from '../protocol';
 import {months} from './construct';
 
 function step(self, dt){

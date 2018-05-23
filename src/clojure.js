@@ -6,7 +6,6 @@ import * as a from "./associatives";
 import * as t from "./transducers";
 import * as s from "./sequences";
 export * from "./core";
-export * from "./protocol";
 export * from "./protocols";
 export * from "./types";
 export * from "./predicates";

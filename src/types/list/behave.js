@@ -1,5 +1,5 @@
 import {effect} from '../../core';
-import {implement} from '../../protocol';
+import {implement} from '../protocol';
 import {ISeq} from '../../protocols';
 import behave from '../lazyseq/behave';
 

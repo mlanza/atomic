@@ -1,5 +1,5 @@
 import {effect, overload, constantly} from '../../core';
-import {implement} from '../../protocol';
+import {implement} from '../protocol';
 import {IUnit, IShow, ICloneable, IDeref, ILookup, IAssociative} from '../../protocols';
 import {isNumber} from '../../types/number';
 import {days} from '../../types/duration';

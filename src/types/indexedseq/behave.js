@@ -1,5 +1,5 @@
 import {constantly, identity, effect} from '../../core';
-import {implement} from '../../protocol';
+import {implement} from '../protocol';
 import {indexedSeq} from './construct';
 import {revSeq} from '../../types/revseq/construct';
 import {IReversible, IMapEntry, IFind, IInclusive, IAssociative, IAppendable, IPrependable, ICollection, INext, ICounted, IReduce, IKVReduce, IArr, ISeq, ISeqable, ISequential, IIndexed, IShow, ILookup, IFn, IEmptyableCollection} from '../../protocols';

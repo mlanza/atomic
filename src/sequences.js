@@ -1,5 +1,5 @@
 import {overload, constantly, identity} from "./core";
-import {compare, count, nth, first, rest, next, seq, reduce, includes, conj, step, converse, unit, toArray, isSequential, IHierarchy} from "./protocols";
+import {compare, count, nth, first, rest, next, seq, reduce, includes, conj, step, converse, unit, toArray, isSequential} from "./protocols";
 import {inc, comp, not, partial, concat, concatenated, apply, isNil, cons, EMPTY, EMPTY_ARRAY, lazySeq, complement, slice, juxt, isSome, randInt, set} from "./types";
 import * as pred from "./predicates";
 
@@ -518,7 +518,7 @@ export function shuffle(coll) {
 }
 
 export function zip(...colls){
-  return mapcat(identity, map(Array, ...colls));
+  return mapcat(identity, map(seq, ...colls));
 }
 
 //e.g. counter: generate(iterate(inc, 0)) or partial(generate, iterate(inc, 0))) for a counter factory;
@@ -550,83 +550,3 @@ export function scan(pred, xs){
   }
   return true;
 }
-
-function elements(map){
-  return function(f){
-    return function(coll){
-      return distinct(compact(map(f, filter(function(el){
-        return el !== document;
-      }, seq(coll)))));
-    }
-  }
-}
-
-const mapping    = elements(map);
-const mapcatting = elements(mapcat);
-
-function selects(pred){
-  return typeof pred === "string" ? function(el){
-    return el.matches(pred);
-  } : pred;
-}
-
-export function closest(pred, coll){
-  pred = selects(pred);
-  return mapping(function(el){
-    let target = el.parentNode;
-    while(target && target !== document){
-      if (pred(target)){
-        return target;
-      }
-      target = target.parentNode;
-    }
-  }, ISeqable.seq(coll));
-}
-
-function sel2(pred, coll){
-  return filter(selects(pred), descendants(coll));
-}
-
-function sel1(pred){
-  return sel2(pred, document);
-}
-
-function sel0(){
-  return descendants(document);
-}
-
-export const sel = overload(sel0, sel1, sel2);
-
-function follow(key){
-  return function following(el, memo){
-    memo = memo || EMPTY;
-    return el[key] && el[key] !== document ? cons(el[key], following(el[key], memo)) : memo;
-  }
-}
-
-const parentNodes         = follow("parentNode");
-const prevElementSiblings = follow("prevElementSibling");
-const nextElementSiblings = follow("nextElementSibling");
-
-export const ancestors = mapcatting(function(el){
-  const parents = parentNodes(el, EMPTY);
-  return concat(parents, ancestors(parents));
-});
-
-export const descendants = mapcatting(function(el){
-  const children = IHierarchy.children(el);
-  return concat(children, descendants(children));
-});
-
-export const prevSiblings = mapcatting(prevElementSiblings);
-export const nextSiblings = mapcatting(nextElementSiblings);
-
-export const siblings = mapcatting(function(el){
-  return concat(prevSiblings([el]), nextSiblings([el]));
-});
-
-export function andSelf(f, coll){
-  return concat(ISeqable.seq(coll), f(coll));
-}
-
-export const parents = ancestors;

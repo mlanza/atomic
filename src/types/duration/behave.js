@@ -1,4 +1,4 @@
-import {implement} from '../../protocol';
+import {implement} from '../protocol';
 import {effect} from '../../core';
 import {ISteppable} from '../../protocols';
 
