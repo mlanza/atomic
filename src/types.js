@@ -7,6 +7,7 @@ export * from "./types/duration";
 export * from "./types/element";
 export * from "./types/empty";
 export * from "./types/function";
+export * from "./types/guid";
 export * from "./types/hash";
 export * from "./types/htmldocument";
 export * from "./types/indexedseq";

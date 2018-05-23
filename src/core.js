@@ -11,14 +11,6 @@ export function counter(init){
   }
 }
 
-function s4() {
-  return Math.floor((1 + rand()) * 0x10000).toString(16).substring(1);
-}
-
-export function guid() {
-  return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
-}
-
 export function type(self){
   return self == null ? null : self.constructor;
 }
