@@ -1,6 +1,6 @@
 import {overload, constantly, identity} from "./core";
 import {compare, count, nth, first, rest, next, seq, reduce, includes, conj, step, converse, unit, toArray, isSequential} from "./protocols";
-import {inc, comp, not, partial, concat, concatenated, apply, isNil, cons, EMPTY, EMPTY_ARRAY, lazySeq, complement, slice, juxt, isSome, randInt, set} from "./types";
+import {inc, comp, not, partial, concat, concatenated, apply, isNil, cons, EMPTY, EMPTY_ARRAY, lazySeq, complement, slice, juxt, isSome, randInt, set, reduced} from "./types";
 import * as pred from "./predicates";
 
 export function map2(f, xs){
@@ -268,10 +268,6 @@ export function interpose(sep, xs){
   return drop(1, interleave2(repeat1(sep), xs));
 }
 
-function partition1(n){
-  return partial(partition, n);
-}
-
 function partition2(n, xs){
   return partition3(n, n, xs);
 }
@@ -290,7 +286,7 @@ function partition4(n, step, pad, xs){
   return n === count(part) ? cons(part, partition4(n, step, pad, drop(step, coll))) : cons(take(n, concat(part, pad)));
 }
 
-export const partition = overload(null, partition1, partition2, partition3, partition4);
+export const partition = overload(null, null, partition2, partition3, partition4);
 
 export function partitionAll1(n){
   return partial(partitionAll, n);
@@ -549,4 +545,13 @@ export function scan(pred, xs){
     }
   }
   return true;
+}
+
+export function cond(...conditions){
+  return function(...args){
+    return reduce(partition(2, conditions), function(memo, condition){
+      const pred = first(condition);
+      return pred(...args) ? reduced(first(rest(condition))) : memo;
+    }, null);
+  }
 }
