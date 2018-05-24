@@ -1,5 +1,5 @@
 import {implement} from '../protocol';
-import {IInclusive, IFind, IEquiv, ICollection, INext, IArr, ISeq, IReduce, IKVReduce, ISeqable, ISequential, IIndexed, IEmptyableCollection, IShow, IHierarchy, IHierarchicalSet} from '../../protocols';
+import {IInclusive, IFind, IEquiv, ICollection, INext, IArr, ISeq, IReduce, IKVReduce, ISeqable, ISequential, IIndexed, IEmptyableCollection, IShow, IHierarchy, IHierarchicalSet, ICounted} from '../../protocols';
 import {overload, identity, constantly, effect} from '../../core';
 import Reduced, {reduced} from "../reduced/construct";
 import {EMPTY} from '../empty/construct';
@@ -86,6 +86,12 @@ function toArray1(xs){
   return toArray2(xs, []);
 }
 
+function count(self){
+  return reduce(self, function(memo){
+    return memo + 1;
+  }, 0);
+}
+
 const toArray     = overload(null, toArray1, toArray2);
 const parent      = mapping(IHierarchy.parent);
 const children    = mapcatting(IHierarchy.children);
@@ -103,6 +109,7 @@ export default effect(
   showable,
   reduceable,
   hierarchical,
+  implement(ICounted, {count}),
   implement(IEquiv, {equiv}),
   implement(IFind, {find}),
   implement(ISequential),

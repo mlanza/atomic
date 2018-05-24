@@ -2,17 +2,7 @@ import {comp, isNil, slice, partial, apply, reducing, reduced} from "./types";
 import {reduce, reducekv, count, isSequential, IComparable} from "./protocols";
 import {overload, constantly, identity, subj} from "./core";
 
-export function cond(obj, pred, f, ...args){
-  if (pred(obj)) {
-    return f(obj);
-  } else if (args.length) {
-    return cond.apply(null, [obj, pred, f].concat(args))
-  } else {
-    return null;
-  }
-}
-
-export function and(...preds){
+export function and(preds){
   return function(...args){
     return reduce(preds, function(memo, pred){
       return memo ? pred(...args) : reduced(memo);
@@ -20,7 +10,7 @@ export function and(...preds){
   }
 }
 
-export function or(...preds){
+export function or(preds){
   return function(...args){
     return reduce(preds, function(memo, pred){
       return memo ? reduced(memo) : pred(...args);
