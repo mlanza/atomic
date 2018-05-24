@@ -1,5 +1,5 @@
 import {comp, isNil, slice, partial, apply, reducing, reduced} from "./types";
-import {reduce, isSequential, IComparable} from "./protocols";
+import {reduce, reducekv, count, isSequential, IComparable} from "./protocols";
 import {overload, constantly, identity, subj} from "./core";
 
 export function cond(obj, pred, f, ...args){
@@ -28,8 +28,20 @@ export function or(...fs){
   }
 }
 
+function signature3(init, preds, values){
+  return reducekv(preds, function(memo, idx, pred){
+    return memo ? pred(values[idx]) : reduced(memo);
+  }, init);
+}
+
+function signature2(preds, values){
+  return signature3(count(values) === count(preds), preds, values);
+}
+
+export const signature = overload(null, null, signature2, signature3);
+
 export function branch3(pred, yes, obj){
-  return branch4(obj, pred, yes, constantly(null));
+  return branch4(pred, yes, constantly(null), obj);
 }
 
 export function branch4(pred, yes, no, obj){
