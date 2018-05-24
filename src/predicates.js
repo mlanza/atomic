@@ -12,33 +12,35 @@ export function cond(obj, pred, f, ...args){
   }
 }
 
-export function and(...fs){
+export function and(...preds){
   return function(...args){
-    return reduce(fs, function(memo, f){
-      return memo ? f(...args) : reduced(memo);
+    return reduce(preds, function(memo, pred){
+      return memo ? pred(...args) : reduced(memo);
     }, true);
   }
 }
 
-export function or(...fs){
+export function or(...preds){
   return function(...args){
-    return reduce(fs, function(memo, f){
-      return memo ? reduced(memo) : f(...args);
+    return reduce(preds, function(memo, pred){
+      return memo ? reduced(memo) : pred(...args);
     }, false);
   }
 }
 
-function signature3(init, preds, values){
-  return reducekv(preds, function(memo, idx, pred){
-    return memo ? pred(values[idx]) : reduced(memo);
-  }, init);
+export function signature(...preds){
+  return function(...values){
+    return reducekv(preds, function(memo, idx, pred){
+      return memo ? pred(values[idx]) : reduced(memo);
+    }, true);
+  }
 }
 
-function signature2(preds, values){
-  return signature3(count(values) === count(preds), preds, values);
+export function guard(pred, value){
+  return function(...args){
+    return pred(...args) ? value : null;
+  }
 }
-
-export const signature = overload(null, null, signature2, signature3);
 
 export function branch3(pred, yes, obj){
   return branch4(pred, yes, constantly(null), obj);
