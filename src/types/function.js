@@ -2,7 +2,7 @@ import {log, overload, identity, constantly} from "../core";
 import {toArray}  from "../protocols";
 import {isNil}  from "../types/nil";
 import {slice}  from "../types/array";
-import {reduce}  from "../types/reduced";
+import {reduce, reduced}  from "../types/reduced";
 export * from "./function/construct";
 import Function from "./function/construct";
 import behave from "./function/behave";
