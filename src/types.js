@@ -1,6 +1,6 @@
 export * from "./types/array";
 export * from "./types/boolean";
-export * from "./types/classes";
+export * from "./types/classification";
 export * from "./types/concatenated";
 export * from "./types/date";
 export * from "./types/duration";
@@ -14,6 +14,7 @@ export * from "./types/indexedseq";
 export * from "./types/lazyseq";
 export * from "./types/list";
 export * from "./types/months";
+export * from "./types/multimethod";
 export * from "./types/nil";
 export * from "./types/nodelist";
 export * from "./types/number";

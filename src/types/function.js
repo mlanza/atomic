@@ -47,18 +47,18 @@ function curry2(f, minimum){
 
 export const curry = overload(null, curry1, curry2);
 
+export function multi(dispatch){
+  return function(...args){
+    const f = apply(dispatch, args);
+    return apply(f, args);
+  }
+}
+
 export function juxt(...fs){
   return function(...args){
     return reduce(fs, function(memo, f){
       return memo.concat([f.apply(this, args)]);
     }, []);
-  }
-}
-
-export function multimethod(dispatch){
-  return function(...args){
-    const f = apply(dispatch, args);
-    return apply(f, args);
   }
 }
 

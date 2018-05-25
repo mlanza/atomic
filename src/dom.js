@@ -4,6 +4,7 @@ import {IHierarchy, IHierarchicalSet} from "./protocols";
 import * as t from "./types";
 import * as p from "./protocols";
 import * as s from "./sequences";
+import {add} from "./multimethods/amalgam";
 
 export function expansive(f){
   function expand(...xs){
@@ -26,11 +27,11 @@ export function expansive(f){
 }
 
 export const tag = t.partially(expansive(function(name, ...contents){ //partially guarantees calling tag always produces a factory
-  return p.reduce(p.embed, document.createElement(name), contents);
+  return p.reduce(add, document.createElement(name), contents);
 }));
 
 export const frag = expansive(function(...contents){
-  return p.reduce(p.embed, document.createDocumentFragment(), contents);
+  return p.reduce(add, document.createDocumentFragment(), contents);
 });
 
 function elements(map){

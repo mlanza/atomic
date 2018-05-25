@@ -1,6 +1,6 @@
 import {effect} from "../../core";
 import {implement} from '../protocol';
-import {IReduce, IIndexed, ISeqable, ISeq, IArr, INext, IInclusive, IAppendable, IPrependable, ICounted, ILookup, IFn, IEmptyableCollection} from '../../protocols';
+import {IReduce, IIndexed, ISeqable, ISeq, IArr, INext, IInclusive, IAppendable, IPrependable, ICounted, ILookup, IFn, ISequential, IEmptyableCollection} from '../../protocols';
 
 function seq(self){
   return ISeqable.seq(self.items);
@@ -52,6 +52,7 @@ function reduce(self, xf, init){
 }
 
 export default effect(
+  implement(ISequential),
   implement(ICounted, {count}),
   implement(IInclusive, {includes}),
   implement(IAppendable, {append}),

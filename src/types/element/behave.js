@@ -1,13 +1,11 @@
 import {implement, surrogates} from '../protocol';
-import {IAssociative, IEquiv, ICollection, INext, IArr, ISeq, IShow, ISeqable, IIndexed, ICounted, ILookup, IReduce, IEmptyableCollection, IHierarchy, IElementEmbeddable} from '../../protocols';
+import {IAssociative, IEquiv, ICollection, INext, IArr, ISeq, IShow, ISeqable, IIndexed, ICounted, ILookup, IReduce, IEmptyableCollection, IHierarchy, IContent} from '../../protocols';
 import {EMPTY} from '../../types/empty';
 import {identity, constantly, effect} from '../../core';
 import Element from './construct';
 
-function element(self){
-  if (self instanceof Element) {
-    return Element;
-  }
+function contents(self){
+  return ISeqable.seq(self.childNodes);
 }
 
 function lookup(self, key){
@@ -43,10 +41,8 @@ function embedIn(self, parent){
   parent.appendChild(self);
 }
 
-//surrogates.unshift(element);
-
 export default effect(
   implement(ILookup, {lookup}),
-  implement(IElementEmbeddable, {embedIn}),
+  implement(IContent, {contents}),
   implement(IHierarchy, {parent, children, nextSibling, prevSibling}),
   implement(IAssociative, {assoc, contains}));

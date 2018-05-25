@@ -28,3 +28,7 @@ export function compile(self){
     return apply(invoke, self, args);
   }
 }
+
+export function isObject(self){
+  return self.constructor === Object;
+}

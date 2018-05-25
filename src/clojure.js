@@ -1,19 +1,23 @@
-import {comp, cons, str, reducing, EMPTY, lazySeq, concat, set} from "./types";
+import {apply, comp, cons, str, reducing, EMPTY, lazySeq, concat, concatenated, set} from "./types";
 import {overload, identity, constantly} from "./core";
 import * as pl from "./pipelines";
 import * as p  from "./protocols";
-import * as a from "./associatives";
-import * as t from "./transducers";
-import * as s from "./sequences";
+import * as a  from "./associatives";
+import * as t  from "./transducers";
+import * as s  from "./sequences";
+
 export * from "./core";
-export * from "./protocols";
 export * from "./types";
+export * from "./protocols";
+export * from "./multimethods";
 export * from "./predicates";
 export * from "./sequences";
 export * from "./associatives";
 export * from "./pipelines";
 export * from "./signals";
 export * from "./dom";
+
+export {add as embed, remove as unembed} from "./multimethods";
 
 export const map = overload(null, t.map, s.map);
 export const mapcat = overload(null, t.mapcat, s.mapcat);
@@ -67,7 +71,7 @@ function swap4(self, f, a, b){
 
 function swapN(self, f, a, b, cs){
   return p.swap(self, function(state){
-    return f.apply(null, [state, a , b].concat(cs));
+    return f.apply(null, [state, a , b, ...cs]);
   });
 }
 
