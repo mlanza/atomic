@@ -1,9 +1,22 @@
 import {implement} from '../protocol';
 import {IInclusive, IFind, IEquiv, ICollection, INext, IArr, ISeq, IReduce, IKVReduce, ISeqable, ISequential, IIndexed, IEmptyableCollection, IShow, IHierarchy, IHierarchicalSet, ICounted} from '../../protocols';
 import {overload, identity, constantly, effect} from '../../core';
-import Reduced, {reduced} from "../reduced/construct";
+import Reduced, {isReduced, reduced, unreduced} from "../reduced";
 import {EMPTY} from '../empty/construct';
 import {mapping, mapcatting} from './construct';
+
+function reduce(self, xf, init){
+  let memo = init,
+      coll = seq(self);
+  while(coll){
+    memo = xf(memo, first(coll))
+    if (isReduced(memo)) {
+      break;
+    }
+    coll = next(coll);
+  }
+  return unreduced(memo);
+}
 
 function equiv(as, bs){
   const xs = seq(as),
@@ -109,6 +122,7 @@ export default effect(
   showable,
   reduceable,
   hierarchical,
+  implement(IReduce, {reduce}),
   implement(ICounted, {count}),
   implement(IEquiv, {equiv}),
   implement(IFind, {find}),

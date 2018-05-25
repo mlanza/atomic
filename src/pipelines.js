@@ -7,7 +7,6 @@ import {isNil, isBlank, reduced, partial, pipeline, compile} from "./types";
 import {map} from "./transducers";
 import {transduce} from "./sequences";
 import {update} from "./associatives";
-import {providePipeline} from "./types/pipeline";
 
 export function either(f){
   return function(...args){
@@ -67,8 +66,6 @@ export const pipe   = piped(identity);
 export const opt    = piped(option);
 export const prom   = piped(future);
 export const handle = piped(either);
-
-providePipeline(piped);
 
 export const request = pipeline(future, [function(config){
   return fetch(config.url, config);

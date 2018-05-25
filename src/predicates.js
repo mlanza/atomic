@@ -2,7 +2,7 @@ import {comp, isNil, slice, partial, apply, reducing, reduced} from "./types";
 import {reduce, reducekv, count, isSequential, IComparable} from "./protocols";
 import {overload, constantly, identity, subj} from "./core";
 
-export function and(preds){
+export function and(...preds){
   return function(...args){
     return reduce(preds, function(memo, pred){
       return memo ? pred(...args) : reduced(memo);
@@ -10,7 +10,7 @@ export function and(preds){
   }
 }
 
-export function or(preds){
+export function or(...preds){
   return function(...args){
     return reduce(preds, function(memo, pred){
       return memo ? reduced(memo) : pred(...args);
@@ -22,7 +22,7 @@ export function signature(...preds){
   return function(...values){
     return reducekv(preds, function(memo, idx, pred){
       return memo ? pred(values[idx]) : reduced(memo);
-    }, true);
+    }, count(preds) === count(values));
   }
 }
 
