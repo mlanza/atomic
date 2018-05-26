@@ -1,6 +1,6 @@
 //An amalgam is something composed of disparate parts
 
-import {reduced, multimethod, isElement, isString, isObject, isObjectSelection, isClassification, detect} from "../types";
+import {reduced, multimethod, isElement, isString, isFunction, isObject, isObjectSelection, detect, each} from "../types";
 import {signature, or} from "../predicates";
 import * as p from "../protocols";
 
@@ -11,34 +11,90 @@ export const transpose = multimethod(function(self, other){
   return has(self, other) ? remove(self, other) : add(self, other);
 });
 
+/* Element / Key = "class" / Value */
+
+const elementClassValue = signature(isElement, function(name){
+  return name === "class";
+}, null);
+
+p.on(add.instance, elementClassValue, function(self, key, value){
+  let classes = value.split(" ");
+  each(self.classList.add.bind(self.classList), classes);
+  return self;
+});
+
+p.on(remove.instance, elementClassValue, function(self, key, value){
+  let classes = value.split(" ");
+  each(self.classList.remove.bind(self.classList), classes);
+  return self;
+});
+
+p.on(transpose.instance, elementClassValue, function(self, key, value){
+  let classes = value.split(" ");
+  each(self.classList.toggle.bind(self.classList), classes);
+  return self;
+});
+
+p.on(has.instance, elementClassValue, function(self, key, value){
+  let classes = value.split(" ");
+  return p.reduce(classes, function(memo, name){
+    return memo ? self.classList.contains(name) : reduced(memo);
+  }, true);
+});
+
+/* Element / Key / Value */
+
+const elementKeyValue = signature(isElement, isString, null);
+
+p.on(add.instance, elementKeyValue, function(self, key, value){
+  self.setAttribute(key, value);
+  return self;
+});
+
+p.on(remove.instance, elementKeyValue, function(self, key, value){
+  self.removeAttribute(key, value);
+  return self;
+});
+
+p.on(has.instance, elementKeyValue, function(self, key, value){
+  return self.getAttribute(key) === value;
+});
+
+p.on(transpose.instance, elementKeyValue, function(self, key, value){
+  self.getAttribute(key) === value ? self.removeAttribute(key) : self.addAttribute(key, value);
+  return self;
+});
+
+const elementEventCallback = signature(isElement, isString, isFunction);
+
+p.on(add.instance, elementEventCallback, function(self, key, f){
+  self.addEventListener(key, f);
+  return self;
+});
+
+p.on(remove.instance, elementEventCallback, function(self, key, f){
+  self.removeEventListener(key, f);
+  return self;
+});
+
 /* Element / Attributes */
 
 const elementAttrs = signature(isElement, or(isObjectSelection, isObject));
 
 p.on(add.instance, elementAttrs, function(self, obj){
-  return p.reducekv(obj, function(memo, key, value){
-    const f = typeof value === "function" ? memo.addEventListener : memo.setAttribute;
-    f.call(self, key, value);
-    return memo;
-  }, self);
+  return p.reducekv(obj, add, self);
 });
 
 p.on(has.instance, elementAttrs, function(self, obj){
-  return p.reducekv(obj, function(memo, key, value){
-    return memo ? self.getAttribute(key) == value : reduced(memo);
-  }, true);
+  return p.reducekv(obj, has, true);
 });
 
 p.on(remove.instance, elementAttrs, function(self, obj){
-  return p.reducekv(obj, function(memo, key, value){
-    const f = typeof value === "function" ? memo.removeEventListener : function(key, value){
-      if (this.getAttribute(key) == value){
-        this.removeAttribute(key)
-      }
-    };
-    f.call(self, key, value);
-    return memo;
-  }, self);
+  return p.reducekv(obj, remove, self);
+});
+
+p.on(transpose.instance, elementAttrs, function(self, obj){
+  return p.reducekv(obj, transpose, self);
 });
 
 /* Element / Text */
@@ -78,28 +134,5 @@ p.on(add.instance, elementElement, function(self, child){
 
 p.on(remove.instance, elementElement, function(self, child){
   self.removeChild(child);
-  return self;
-});
-
-/* Element / Classification */
-
-const elementClassification = signature(isElement, isClassification);
-
-p.on(has.instance, elementClassification, function(self, classification){
-  return self.classList.contains(classification.name);
-});
-
-p.on(add.instance, elementClassification, function(self, classification){
-  self.classList.add(classification.name);
-  return self;
-});
-
-p.on(transpose.instance, elementClassification, function(self, classification){
-  self.classList.toggle(classification.name);
-  return self;
-});
-
-p.on(remove.instance, elementClassification, function(self, classification){
-  self.classList.remove(classification.name);
   return self;
 });

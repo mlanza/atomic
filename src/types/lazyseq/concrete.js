@@ -249,7 +249,7 @@ function partition2(n, xs){
 }
 
 function partition3(n, step, xs){
-  const coll = seq(xs);
+  const coll = ISeqable.seq(xs);
   if (!coll) return EMPTY;
   const part = take(n, coll);
   return n === ICounted.count(part) ? cons(part, partition3(n, step, drop(step, coll))) : EMPTY;
