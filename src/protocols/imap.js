@@ -1,6 +1,4 @@
 import {protocol, satisfies} from "../types/protocol";
-import {reduce} from "../protocols/ireduce";
-import {overload, identity} from "../core";
 export const IMap = protocol({
   dissoc: null,
   keys: null,
