@@ -1,7 +1,7 @@
 import {pipeline} from './construct';
+import {piped} from './concrete';
 import {effect} from '../../core';
 import {implement} from '../protocol';
-import {piped} from '../../pipelines';
 import {IFn, IAppendable, IPrependable} from '../../protocols';
 
 function append(self, f){

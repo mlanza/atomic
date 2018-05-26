@@ -1,6 +1,9 @@
-import {comp, isNil, slice, partial, apply, reducing, reduced} from "./types";
+import {overload, constantly, identity} from "./core";
 import {reduce, reducekv, count, isSequential, IComparable} from "./protocols";
-import {overload, constantly, identity, subj} from "./core";
+import {reducing, reduced} from "./types/reduced";
+import {comp, partial, apply} from "./types/function/concrete";
+import {isNil} from "./types/nil/construct";
+import {slice} from "./types/array/concrete";
 
 export function and(...preds){
   return function(...args){

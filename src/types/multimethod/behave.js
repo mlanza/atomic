@@ -1,8 +1,8 @@
 import {effect, constantly} from "../../core";
 import {implement} from '../protocol';
-import {multi, apply} from '../function';
+import {multi, apply} from '../function/concrete';
 import {concatenated} from '../concatenated';
-import {cond} from '../lazyseq';
+import {cond} from '../lazyseq/concrete';
 import {IFn, IAppendable, IPrependable, IEvented} from '../../protocols';
 
 function append(self, handler){

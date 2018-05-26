@@ -1,6 +1,5 @@
 import {apply, comp, cons, str, reducing, EMPTY, lazySeq, concat, concatenated, set} from "./types";
 import {overload, identity, constantly} from "./core";
-import * as pl from "./pipelines";
 import * as p  from "./protocols";
 import * as a  from "./associatives";
 import * as t  from "./transducers";
@@ -12,7 +11,6 @@ export * from "./protocols";
 export * from "./multimethods";
 export * from "./predicates";
 export * from "./associatives";
-export * from "./pipelines";
 export * from "./signals";
 export * from "./dom";
 
