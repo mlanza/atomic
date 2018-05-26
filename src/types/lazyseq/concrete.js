@@ -32,7 +32,6 @@ function into3(to, xform, from){
 
 export const into = overload(constantly(EMPTY_ARRAY), identity, into2, into3);
 
-
 export function each(f, xs){
   var ys = ISeqable.seq(xs);
   while(ys){
@@ -534,4 +533,26 @@ export function cond(...conditions){
       return pred(...args) ? reduced(ISeq.first(ISeq.rest(condition))) : memo;
     }, null);
   }
+}
+
+function join1(xs){
+  return into("", map2(str, xs));
+}
+
+function join2(sep, xs){
+  return join1(interpose(sep, xs));
+}
+
+export const join = overload(null, join1, join2);
+
+export function shuffle(coll) {
+  let a = Array.from(coll);
+  let j, x, i;
+  for (i = a.length - 1; i > 0; i--) {
+    j = Math.floor(Math.random() * (i + 1));
+    x = a[i];
+    a[i] = a[j];
+    a[j] = x;
+  }
+  return a;
 }
