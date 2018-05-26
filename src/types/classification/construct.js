@@ -7,3 +7,7 @@ export function classification(name){
 }
 
 export default Classification;
+
+export function isClassification(self){
+  return self.constructor === Classification;
+}

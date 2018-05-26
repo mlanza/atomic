@@ -6,3 +6,11 @@ export function nil(){
 }
 
 export default Nil;
+
+export function isNil(x){
+  return x == null;
+}
+
+export function isSome(x){
+  return x != null;
+}

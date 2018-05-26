@@ -11,3 +11,7 @@ export function objectSelection(obj, keys){
 }
 
 export default ObjectSelection;
+
+export function isObjectSelection(self){
+  return self.constructor === ObjectSelection;
+}

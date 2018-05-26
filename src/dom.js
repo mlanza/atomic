@@ -1,15 +1,14 @@
 import {overload, constantly, identity} from "./core";
-import {satisfies} from "./types";
+import {satisfies, compact, flatten, detect, filter, map, mapcat} from "./types";
 import {IHierarchy, IHierarchicalSet} from "./protocols";
 import * as t from "./types";
 import * as p from "./protocols";
-import * as s from "./sequences";
 import {add} from "./multimethods/amalgam";
 
 export function expansive(f){
   function expand(...xs){
-    const contents = p.toArray(s.compact(s.flatten(xs)));
-    return s.detect(function(content){
+    const contents = p.toArray(compact(flatten(xs)));
+    return detect(function(content){
       return typeof content === "function";
     }, contents) ? step(contents) : f(...contents);
   }
@@ -18,7 +17,7 @@ export function expansive(f){
       const resolve = typeof value === "function" ? t.partial(t.comp, value) : function(f){
         return f(value);
       }
-      return expand(...s.map(function(content){
+      return expand(...map(function(content){
         return typeof content === "function" ? resolve(content) : content;
       }, contents));
     }
@@ -37,15 +36,15 @@ export const frag = expansive(function(...contents){
 function elements(map){
   return function(f){
     return function(coll){
-      return s.distinct(s.compact(map(f, s.filter(function(el){
+      return distinct(compact(map(f, filter(function(el){
         return el !== document;
       }, coll instanceof Element ? p.seq([coll]) : p.seq(coll)))));
     }
   }
 }
 
-const mapping    = elements(s.map);
-const mapcatting = elements(s.mapcat);
+const mapping    = elements(map);
+const mapcatting = elements(mapcat);
 
 function selects(pred){
   return typeof pred === "string" ? function(el){
@@ -71,7 +70,7 @@ export function closest(pred, coll){ //TODO IMatch protocol?
 }
 
 function sel2(pred, context){
-  return s.filter(selects(pred), descendants(context));
+  return filter(selects(pred), descendants(context));
 }
 
 function sel1(pred){
@@ -122,7 +121,7 @@ export const parents = ancestors;
 
 function prioritized(name, ...candidates){
   return function(self){
-    const f = s.detect(function(candidate){
+    const f = detect(function(candidate){
       return satisfies(candidate, self);
     }, candidates)[name];
     return f.apply(this, arguments);
