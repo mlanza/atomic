@@ -3,7 +3,7 @@ import {IInclusive, IFind, IEquiv, ICollection, INext, IArr, ISeq, IReduce, IKVR
 import {overload, identity, constantly, effect} from '../../core';
 import Reduced, {isReduced, reduced, unreduced} from "../reduced";
 import {EMPTY} from '../empty/construct';
-import {mapping, mapcatting} from './construct';
+import {mapping, mapcatting} from './concrete';
 
 function reduce(self, xf, init){
   let memo = init,

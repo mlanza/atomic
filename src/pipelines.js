@@ -3,9 +3,8 @@
 */
 
 import {log, overload, identity, doto} from "./core";
-import {isNil, isBlank, reduced, partial, pipeline, compile} from "./types";
+import {isNil, isBlank, reduced, partial, pipeline, compile, transduce} from "./types";
 import {map} from "./transducers";
-import {transduce} from "./sequences";
 import {update} from "./associatives";
 
 export function either(f){

@@ -1,8 +1,7 @@
 //An amalgam is something composed of disparate parts
 
-import {reduced, multimethod, isElement, isString, isObject, isObjectSelection, isClassification} from "../types";
+import {reduced, multimethod, isElement, isString, isObject, isObjectSelection, isClassification, detect} from "../types";
 import {signature, or} from "../predicates";
-import {detect} from "../sequences";
 import * as p from "../protocols";
 
 export const has = multimethod();

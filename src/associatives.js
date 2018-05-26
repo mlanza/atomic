@@ -1,7 +1,6 @@
-import {slice, apply} from "./types";
-import {lookup, toArray, rest, assoc, contains, reduce, seq, equiv} from "./protocols";
+import {slice, apply, some} from "./types";
+import {lookup, toArray, rest, assoc, contains, reduce, conj, seq, equiv} from "./protocols";
 import {overload} from "./core";
-import {some} from "./sequences";
 import {gt, lt} from "./predicates";
 
 export function get(self, key, notFound){
@@ -115,3 +114,15 @@ export function scanKey(better){
 
 export const maxKey = scanKey(gt);
 export const minKey = scanKey(lt);
+
+function groupInto(seed, f, coll){
+  return reduce(coll, function(memo, value){
+    return update(memo, f(value), function(group){
+      return conj(group || [], value);
+    });
+  }, seed);
+}
+
+export function groupBy(f, coll){
+  return groupInto({}, f, coll);
+}

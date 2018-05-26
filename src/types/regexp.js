@@ -1,9 +1,4 @@
-import {unbind} from "../core";
 export * from "./regexp/construct";
+export * from "./regexp/concrete";
 import RegExp from "./regexp/construct";
-
-export function isRegExp(self){
-  return self.constructor === RegExp;
-}
-
-export const test = unbind(RegExp.prototype.test);
+export default RegExp;
