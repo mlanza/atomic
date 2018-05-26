@@ -1,20 +1,18 @@
 import {overload, constantly, identity} from "./core";
-import {satisfies, compact, flatten, detect, filter, map, mapcat} from "./types";
-import {IHierarchy, IHierarchicalSet} from "./protocols";
-import * as t from "./types";
-import * as p from "./protocols";
+import {EMPTY, lazySeq, concat, partial, partially, comp, satisfies, compact, flatten, detect, filter, map, mapcat, mapping, mapcatting} from "./types";
+import {IHierarchy, IHierarchicalSet, toArray, reduce, seq} from "./protocols";
 import {add} from "./multimethods/amalgam";
 
 export function expansive(f){
   function expand(...xs){
-    const contents = p.toArray(compact(flatten(xs)));
+    const contents = toArray(compact(flatten(xs)));
     return detect(function(content){
       return typeof content === "function";
     }, contents) ? step(contents) : f(...contents);
   }
   function step(contents){
     return function(value){
-      const resolve = typeof value === "function" ? t.partial(t.comp, value) : function(f){
+      const resolve = typeof value === "function" ? partial(comp, value) : function(f){
         return f(value);
       }
       return expand(...map(function(content){
@@ -25,26 +23,13 @@ export function expansive(f){
   return expand;
 }
 
-export const tag = t.partially(expansive(function(name, ...contents){ //partially guarantees calling tag always produces a factory
-  return p.reduce(add, document.createElement(name), contents);
+export const tag = partially(expansive(function(name, ...contents){ //partially guarantees calling tag always produces a factory
+  return reduce(add, document.createElement(name), contents);
 }));
 
 export const frag = expansive(function(...contents){
-  return p.reduce(add, document.createDocumentFragment(), contents);
+  return reduce(add, document.createDocumentFragment(), contents);
 });
-
-function elements(map){
-  return function(f){
-    return function(coll){
-      return distinct(compact(map(f, filter(function(el){
-        return el !== document;
-      }, coll instanceof Element ? p.seq([coll]) : p.seq(coll)))));
-    }
-  }
-}
-
-const mapping    = elements(map);
-const mapcatting = elements(mapcat);
 
 function selects(pred){
   return typeof pred === "string" ? function(el){
@@ -85,8 +70,8 @@ export const sel = overload(sel0, sel1, sel2);
 
 function follow(key){
   return function following(el, memo){
-    memo = memo || t.EMPTY;
-    return el[key] && el[key] !== document ? t.lazySeq(el[key], function(){
+    memo = memo || EMPTY;
+    return el[key] && el[key] !== document ? lazySeq(el[key], function(){
       return following(el[key], memo);
     }) : memo;
   }
@@ -97,24 +82,24 @@ const prevElementSiblings = follow("prevElementSibling");
 const nextElementSiblings = follow("nextElementSibling");
 
 export const ancestors = mapcatting(function(el){
-  const parents = parentNodes(el, t.EMPTY);
-  return t.concat(parents, ancestors(parents));
+  const parents = parentNodes(el, EMPTY);
+  return concat(parents, ancestors(parents));
 });
 
 export const descendants = mapcatting(function(el){
   const children = IHierarchy.children(el);
-  return t.concat(children, descendants(children));
+  return concat(children, descendants(children));
 });
 
 export const prevSiblings = mapcatting(prevElementSiblings);
 export const nextSiblings = mapcatting(nextElementSiblings);
 
 export const siblings = mapcatting(function(el){
-  return t.concat(prevSiblings([el]), nextSiblings([el]));
+  return concat(prevSiblings([el]), nextSiblings([el]));
 });
 
 export function andSelf(f, coll){
-  return t.concat(p.seq(coll), f(coll));
+  return concat(seq(coll), f(coll));
 }
 
 export const parents = ancestors;
@@ -129,4 +114,3 @@ function prioritized(name, ...candidates){
 }
 
 export const children = prioritized("children", IHierarchicalSet, IHierarchy);
-

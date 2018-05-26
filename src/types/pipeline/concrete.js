@@ -4,12 +4,12 @@
 
 import {log, overload, identity, doto} from "../../core";
 import {pipeline} from "./construct";
-import {partial} from "../../types/function/concrete";
-import {compile} from "../../types/object/concrete";
-import {isNil} from "../../types/nil/construct";
-import {isBlank} from "../../types/string/concrete";
-import {transduce} from "../../types/lazyseq/concrete";
-import {reduced} from "../../types/reduced";
+import {partial} from "../function/concrete";
+import {compile} from "../object/concrete";
+import {isNil} from "../nil/construct";
+import {isBlank} from "../string/concrete";
+import {transduce} from "../lazyseq/concrete";
+import {reduced} from "../reduced";
 import {map} from "../../transducers";
 import {update} from "../../associatives";
 
