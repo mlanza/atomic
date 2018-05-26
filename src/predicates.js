@@ -24,7 +24,7 @@ export function or(...preds){
 export function signature(...preds){
   return function(...values){
     return reducekv(preds, function(memo, idx, pred){
-      return memo ? pred(values[idx]) : reduced(memo);
+      return memo ? !pred || pred(values[idx]) : reduced(memo);
     }, count(preds) === count(values));
   }
 }

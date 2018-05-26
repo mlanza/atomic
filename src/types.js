@@ -1,6 +1,5 @@
 export * from "./types/array";
 export * from "./types/boolean";
-export * from "./types/classification";
 export * from "./types/concatenated";
 export * from "./types/date";
 export * from "./types/duration";
