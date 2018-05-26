@@ -1,6 +1,8 @@
-import {slice, apply, some} from "./types";
-import {lookup, toArray, rest, assoc, contains, reduce, conj, seq, equiv} from "./protocols";
 import {overload} from "./core";
+import {lookup, toArray, rest, assoc, contains, reduce, conj, seq, equiv} from "./protocols";
+import {some} from "./types/lazyseq/concrete";
+import {slice} from "./types/array/concrete";
+import {apply} from "./types/function/concrete";
 import {gt, lt} from "./predicates";
 
 export function get(self, key, notFound){
