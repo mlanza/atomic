@@ -24,26 +24,22 @@ const elementClassValue = signature(isElement, function(name){
 }, null);
 
 p.on(add.instance, elementClassValue, function(self, key, value){
-  let classes = value.split(" ");
-  each(self.classList.add.bind(self.classList), classes);
+  each(self.classList.add.bind(self.classList), value.split(" "));
   return self;
 });
 
 p.on(remove.instance, elementClassValue, function(self, key, value){
-  let classes = value.split(" ");
-  each(self.classList.remove.bind(self.classList), classes);
+  each(self.classList.remove.bind(self.classList), value.split(" "));
   return self;
 });
 
 p.on(transpose.instance, elementClassValue, function(self, key, value){
-  let classes = value.split(" ");
-  each(self.classList.toggle.bind(self.classList), classes);
+  each(self.classList.toggle.bind(self.classList), value.split(" "));
   return self;
 });
 
 p.on(has.instance, elementClassValue, function(self, key, value){
-  let classes = value.split(" ");
-  return p.reduce(classes, function(memo, name){
+  return p.reduce(value.split(" "), function(memo, name){
     return memo ? self.classList.contains(name) : reduced(memo);
   }, true);
 });
