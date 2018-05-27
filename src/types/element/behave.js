@@ -1,8 +1,21 @@
 import {implement, surrogates} from '../protocol';
-import {IAssociative, IEquiv, ICollection, INext, IArr, ISeq, IShow, ISeqable, IIndexed, ICounted, ILookup, IReduce, IEmptyableCollection, IHierarchy, IContent} from '../../protocols';
+import {IEvented, IAssociative, IEquiv, ICollection, INext, IArr, ISeq, IShow, ISeqable, IIndexed, ICounted, ILookup, IReduce, IEmptyableCollection, IHierarchy, IContent} from '../../protocols';
 import {EMPTY} from '../../types/empty';
+import {each} from '../../types/lazyseq/concrete';
 import {identity, constantly, effect} from '../../core';
+import {remove} from '../../multimethods/amalgam';
 import Element from './construct';
+
+function on(self, key, callback){
+  self.addEventListener(key, callback);
+  return function(){
+    off(self, key, callback);
+  }
+}
+
+function off(self, key, callback){
+  self.removeEventListener(key, callback);
+}
 
 function contents(self){
   return ISeqable.seq(self.childNodes);
@@ -37,11 +50,13 @@ function prevSibling(self){
   return self.prevElementSibling;
 }
 
-function embedIn(self, parent){
-  parent.appendChild(self);
+function empty(self){
+  each(remove, children(self));
 }
 
 export default effect(
+  implement(IEmptyableCollection, {empty}),
+  implement(IEvented, {on, off}),
   implement(ILookup, {lookup}),
   implement(IContent, {contents}),
   implement(IHierarchy, {parent, children, nextSibling, prevSibling}),
