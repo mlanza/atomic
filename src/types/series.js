@@ -1,1 +1,1 @@
-export {series} from "./series/construct";
+export {default as series} from "./series/behave";

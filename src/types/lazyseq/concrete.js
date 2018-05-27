@@ -10,6 +10,7 @@ import {isNil, isSome} from '../nil';
 import {cons} from '../list/construct';
 import {juxt, complement, comp, apply, partial} from '../function/concrete';
 import {lazySeq} from '../lazyseq/construct';
+import {elements} from '../elements/construct';
 import {concat, concatenated} from "../concatenated/construct";
 
 function transduce3(xform, f, coll){
@@ -149,16 +150,6 @@ export function treeSeq(branch, children, root){
 
 export function flatten(coll){
   return filter(complement(isSequential), ISeq.rest(treeSeq(isSequential, ISeqable.seq, coll)));
-}
-
-function elements(map){
-  return function(f){
-    return function(coll){
-      return distinct(compact(map(f, filter(function(el){
-        return el !== document;
-      }, coll instanceof Element ? ISeqable.seq([coll]) : ISeqable.seq(coll)))));
-    }
-  }
 }
 
 export function zip(...colls){
@@ -383,8 +374,19 @@ export const mapIndexed  = indexed(map);
 export const keepIndexed = indexed(keep);
 export const splitAt     = juxt(take, drop);
 export const splitWith   = juxt(takeWhile, dropWhile);
-export const mapping     = elements(map);
-export const mapcatting  = elements(mapcat);
+
+function eles(map){
+  return function(f){
+    return function(coll){
+      return elements(distinct(compact(map(f, filter(function(el){
+        return el !== document;
+      }, coll instanceof Element ? ISeqable.seq([coll]) : ISeqable.seq(coll))))));
+    }
+  }
+}
+
+export const mapping     = eles(map);
+export const mapcatting  = eles(mapcat);
 
 function doseq3(f, xs, ys){
   each(function(x){

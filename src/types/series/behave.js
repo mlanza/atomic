@@ -1,6 +1,8 @@
 import {effect} from "../../core";
 import {implement} from '../protocol';
 import {IReduce, IIndexed, ISeqable, ISeq, IArr, INext, IInclusive, IAppendable, IPrependable, ICounted, ILookup, IFn, ISequential, IEmptyableCollection} from '../../protocols';
+import {iterable} from '../lazyseq/behave';
+import {constructs} from '../function';
 
 function seq(self){
   return ISeqable.seq(self.items);
@@ -51,7 +53,16 @@ function reduce(self, xf, init){
   return IReduce.reduce(self.items, xf, init);
 }
 
+function construction(Type){
+  Type.create = constructs(Type);
+  Type.from = function(items){
+    return Object.assign(Object.create(Type.prototype), {items: items});
+  }
+}
+
 export default effect(
+  construction,
+  iterable,
   implement(ISequential),
   implement(ICounted, {count}),
   implement(IInclusive, {includes}),
