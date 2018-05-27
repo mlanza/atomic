@@ -5,6 +5,7 @@ export * from "./types/concatenated";
 export * from "./types/date";
 export * from "./types/duration";
 export * from "./types/element";
+export * from "./types/elements";
 export * from "./types/empty";
 export * from "./types/function";
 export * from "./types/guid";
