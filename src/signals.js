@@ -6,7 +6,7 @@
 
 import {implement, partial, observable, publisher, subscriptionMonitor, slice} from "./types";
 import {map} from "./transducers";
-import {pub, sub, IDisposable} from "./protocols";
+import {on, off, pub, sub, IDisposable} from "./protocols";
 import {doto, overload, identity, constantly} from "./core";
 
 function duct(sink, xf, source){
@@ -25,17 +25,6 @@ function signal3(xf, init, source){
 
 export const signal = overload(null, null, signal2, signal3);
 
-export function listen(el, key, callback){
-  el.addEventListener(key, callback);
-  return function(){
-    unlisten(el, key, callback);
-  }
-}
-
-export function unlisten(el, key, callback){
-  el.removeEventListener(key, callback);
-}
-
 export function event3(el, key, init){
   return event4(el, key, init, identity);
 }
@@ -48,7 +37,7 @@ export function event4(el, key, init, transform){
   }
   const publ = subscriptionMonitor(publisher(), function(active){
     dispose();
-    unsub = active ? listen(el, key, function(e){
+    unsub = active ? on(el, key, function(e){
       pub(sink, transform(e));
     }) : null;
   });

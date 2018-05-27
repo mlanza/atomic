@@ -1,6 +1,13 @@
 //An amalgam is something composed of disparate parts
 
-import {reduced, multimethod, isElement, isString, isFunction, isObject, isObjectSelection, detect, each} from "../types";
+import {detect, each} from "../types/lazyseq/concrete";
+import {reduced} from "../types/reduced/construct";
+import {multimethod} from "../types/multimethod/construct";
+import {isElement} from "../types/element/construct";
+import {isString} from "../types/string/construct";
+import {isFunction} from "../types/function/construct";
+import {isObject} from "../types/object/construct";
+import {isObjectSelection} from "../types/objectselection/construct";
 import {signature, or} from "../predicates";
 import * as p from "../protocols";
 
