@@ -11,6 +11,12 @@ export const transpose = multimethod(function(self, other){
   return has(self, other) ? remove(self, other) : add(self, other);
 });
 
+/* Element */
+
+p.on(remove.instance, signature(isElement), function(self){
+  return remove(p.IHierarchy.parent(self), self);
+});
+
 /* Element / Key = "class" / Value */
 
 const elementClassValue = signature(isElement, function(name){
