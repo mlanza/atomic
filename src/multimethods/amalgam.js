@@ -6,9 +6,12 @@ import {multimethod} from "../types/multimethod/construct";
 import {isElement} from "../types/element/construct";
 import {isString} from "../types/string/construct";
 import {isFunction} from "../types/function/construct";
+import {isNodeList} from "../types/nodelist/construct";
+import {isElements} from "../types/elements/construct";
 import {isObject} from "../types/object/construct";
 import {isObjectSelection} from "../types/objectselection/construct";
 import {signature, or} from "../predicates";
+import {apply} from "../types/function/concrete";
 import * as p from "../protocols";
 
 export const has = multimethod();
@@ -16,6 +19,37 @@ export const add = multimethod();
 export const remove = multimethod();
 export const transpose = multimethod(function(self, other){
   return has(self, other) ? remove(self, other) : add(self, other);
+});
+
+/* NodeList or Elements */
+
+const isItems = or(isNodeList, isElements);
+
+p.on(add.instance, isItems, function(items, ...args){
+  each(function(item){
+    apply(add, item, args);
+  }, items);
+  return items;
+});
+
+p.on(remove.instance, isItems, function(items, ...args){
+  each(function(item){
+    apply(remove, item, args);
+  }, items);
+  return items;
+});
+
+p.on(transpose.instance, isItems, function(items, ...args){
+  each(function(item){
+    apply(transpose, item, args);
+  }, items);
+  return items;
+});
+
+p.on(has.instance, isItems, function(items, ...args){
+  return detect(function(item){
+    return apply(has, item, args);
+  }, items);
 });
 
 /* Element */
@@ -61,16 +95,18 @@ p.on(add.instance, elementKeyValue, function(self, key, value){
 });
 
 p.on(remove.instance, elementKeyValue, function(self, key, value){
-  self.removeAttribute(key, value);
+  if (value == null || value == self.getAttribute(key)) {
+    self.removeAttribute(key);
+  }
   return self;
 });
 
 p.on(has.instance, elementKeyValue, function(self, key, value){
-  return self.getAttribute(key) === value;
+  return self.getAttribute(key) == value;
 });
 
 p.on(transpose.instance, elementKeyValue, function(self, key, value){
-  self.getAttribute(key) === value ? self.removeAttribute(key) : self.addAttribute(key, value);
+  self.getAttribute(key) == value ? self.removeAttribute(key) : self.setAttribute(key, value);
   return self;
 });
 
