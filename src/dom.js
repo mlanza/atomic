@@ -1,7 +1,8 @@
 import {overload, constantly, identity} from "./core";
 import {EMPTY, lazySeq, concat, partial, partially, comp, satisfies, compact, flatten, detect, filter, map, mapcat, mapping, mapcatting} from "./types";
 import {IHierarchy, IHierarchicalSet, toArray, reduce, seq} from "./protocols";
-import {add} from "./multimethods/amalgam";
+import {add, matches} from "./multimethods";
+export {has, add, remove, transpose, matches} from "./multimethods";
 
 export function expansive(f){
   function expand(...xs){
@@ -32,26 +33,21 @@ export const frag = expansive(function(...contents){
 });
 
 function selects(pred){
-  return typeof pred === "string" ? function(el){
-    return el.matches(pred);
-  } : pred;
+  return function(el){
+    return matches(el, pred);
+  }
 }
 
-export function matches(el, selector){
-  return el.matches(selector);
-}
-
-export function closest(pred, coll){ //TODO IMatch protocol?
-  pred = selects(pred);
+export function closest(what, coll){
   return mapping(function(el){
     let target = el.parentNode;
     while(target && target !== document){
-      if (pred(target)){
+      if (matches(target, what)){
         return target;
       }
       target = target.parentNode;
     }
-  }, coll);
+  })(coll);
 }
 
 function sel2(pred, context){
