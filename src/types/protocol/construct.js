@@ -1,10 +1,36 @@
+import {overload} from '../../core';
 import {protocolLookupError} from '../protocollookuperror/construct';
 
 export const REGISTRY = window.Symbol ? Symbol("Registry") : "__registry";
 export const TEMPLATE = window.Symbol ? Symbol("Template") : "__template";
 
+export default function Protocol(template){
+  this[REGISTRY] = new WeakMap();
+  this[TEMPLATE] = template;
+  extend(this, template);
+}
+
 export function protocol(template){
   return new Protocol(template);
+}
+
+function dispatcher(protocol){
+  const registry = protocol[REGISTRY], template = protocol[TEMPLATE], blank = {};
+  return function(named){
+    return function(self){
+      const f = (satisfies(protocol, self) || template)[named] || function(){
+        throw protocolLookupError(protocol, named, self, arguments);
+      }
+      return f.apply(this, arguments);
+    }
+  }
+}
+
+export function extend(self, addition){
+  const dispatch = dispatcher(self);
+  for (var key in addition){
+    self[key] = dispatch(key);
+  }
 }
 
 //Must be shallow to uphold performance.  Obviously, performance degrades on surrogates that appear further down.
@@ -20,12 +46,6 @@ export function constructs(self){
   return construct;
 }
 
-export default function Protocol(template){
-  this[REGISTRY] = new WeakMap();
-  this[TEMPLATE] = template;
-  extend(this, template);
-}
-
 function supers(registry, self){
   if (self){
     const proto = Object.getPrototypeOf(self);
@@ -35,21 +55,15 @@ function supers(registry, self){
   }
 }
 
-function dispatcher(protocol){
-  const registry = protocol[REGISTRY], template = protocol[TEMPLATE], blank = {};
-  return function(named){
-    return function(self){
-      const f = (registry.get(self) || blank)[named] || (registry.get(self && self.constructor) || blank)[named] || (registry.get(constructs(self)) || blank)[named] || (supers(registry, Object.getPrototypeOf(self)) || blank)[named] || template[named] || function(){
-        throw protocolLookupError(protocol, named, self, arguments);
-      }
-      return f.apply(this, arguments);
-    }
+function satisfies1(protocol){
+  return function(obj){
+    return satisfies2(protocol, obj);
   }
 }
 
-export function extend(self, addition){
-  const dispatch = dispatcher(self);
-  for (var key in addition){
-    self[key] = dispatch(key);
-  }
+function satisfies2(protocol, obj){
+  const registry = protocol[REGISTRY];
+  return registry.get(obj) || registry.get(obj && obj.constructor) || registry.get(constructs(obj)) || supers(registry, Object.getPrototypeOf(obj));
 }
+
+export const satisfies = overload(null, satisfies1, satisfies2);
