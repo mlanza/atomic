@@ -1,6 +1,6 @@
 import {overload, constantly, unbind} from "../../core";
 import {reducing} from "../reduced";
-import {reducekv} from "../../protocols";
+import {IKVReduce} from "../../protocols";
 import String, {EMPTY_STRING} from "./construct";
 
 export function isBlank(str){
@@ -16,7 +16,7 @@ function str2(x, y){
 }
 
 export function template(template, obj){
-  return reducekv(function(text, key, value){
+  return IKVReduce.reducekv(function(text, key, value){
     return replace(text, new RegExp("\\{" + key + "\\}", 'ig'), value);
   }, template, obj);
 }

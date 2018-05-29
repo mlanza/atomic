@@ -1,5 +1,5 @@
 import {overload, constantly, identity} from "./core";
-import {reduce, reducekv, count, isSequential, IComparable} from "./protocols";
+import {IReduce, IKVReduce, ICounted, IComparable, isSequential} from "./protocols";
 import {reducing, reduced} from "./types/reduced";
 import {comp, partial, apply} from "./types/function/concrete";
 import {isNil} from "./types/nil/construct";
@@ -7,7 +7,7 @@ import {slice} from "./types/array/concrete";
 
 export function and(...preds){
   return function(...args){
-    return reduce(preds, function(memo, pred){
+    return IReduce.reduce(preds, function(memo, pred){
       return memo ? pred(...args) : reduced(memo);
     }, true);
   }
@@ -15,7 +15,7 @@ export function and(...preds){
 
 export function or(...preds){
   return function(...args){
-    return reduce(preds, function(memo, pred){
+    return IReduce.reduce(preds, function(memo, pred){
       return memo ? reduced(memo) : pred(...args);
     }, false);
   }
@@ -23,9 +23,9 @@ export function or(...preds){
 
 export function signature(...preds){
   return function(...values){
-    return reducekv(preds, function(memo, idx, pred){
+    return IKVReduce.reducekv(preds, function(memo, idx, pred){
       return memo ? !pred || pred(values[idx]) : reduced(memo);
-    }, count(preds) === count(values));
+    }, ICounted.count(preds) === ICounted.count(values));
   }
 }
 
@@ -74,7 +74,7 @@ function someFn3(a, b, c){
 
 function someFnN(...preds){
   return function(...args){
-    return reduce(preds, function(result, pred){
+    return IReduce.reduce(preds, function(result, pred){
       let r = apply(pred, args);
       return r ? reduced(r) : result;
     }, false);
@@ -184,8 +184,8 @@ export const max = overload(null, identity, max2, reducing(max2));
 
 export function everyPred(...preds){
   return function(){
-    return reduce(slice(arguments), function(memo, arg){
-      return reduce(preds, function(memo, pred){
+    return IReduce.reduce(slice(arguments), function(memo, arg){
+      return IReduce.reduce(preds, function(memo, pred){
         var result = memo && pred(arg);
         return result ? result : reduced(result);
       }, memo);

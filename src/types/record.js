@@ -1,1 +1,1 @@
-export {record} from "./record/construct";
+export {default as record} from "./record/behave";

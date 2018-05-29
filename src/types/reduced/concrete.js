@@ -50,7 +50,7 @@ export function reducekv(xs, xf, init, from){
 }
 
 export function reducing(rf){
-  return function r(x, ...tail){
-    return tail.length ? rf(x, r(...tail)) : x;
+  return function(init, ...xs){
+    return reduce3(xs, rf, init);
   }
 }

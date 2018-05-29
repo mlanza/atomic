@@ -12,7 +12,7 @@ import {isObject} from "../types/object/construct";
 import {isObjectSelection} from "../types/objectselection/construct";
 import {signature, or} from "../predicates";
 import {apply} from "../types/function/concrete";
-import * as p from "../protocols";
+import {IReduce, IKVReduce, IEvented, IHierarchy, IContent} from "../protocols";
 
 export const has = multimethod();
 export const add = multimethod();
@@ -25,28 +25,28 @@ export const transpose = multimethod(function(self, other){
 
 const isItems = or(isNodeList, isElements);
 
-p.on(add.instance, isItems, function(items, ...args){
+IEvented.on(add.instance, isItems, function(items, ...args){
   each(function(item){
     apply(add, item, args);
   }, items);
   return items;
 });
 
-p.on(remove.instance, isItems, function(items, ...args){
+IEvented.on(remove.instance, isItems, function(items, ...args){
   each(function(item){
     apply(remove, item, args);
   }, items);
   return items;
 });
 
-p.on(transpose.instance, isItems, function(items, ...args){
+IEvented.on(transpose.instance, isItems, function(items, ...args){
   each(function(item){
     apply(transpose, item, args);
   }, items);
   return items;
 });
 
-p.on(has.instance, isItems, function(items, ...args){
+IEvented.on(has.instance, isItems, function(items, ...args){
   return detect(function(item){
     return apply(has, item, args);
   }, items);
@@ -54,8 +54,8 @@ p.on(has.instance, isItems, function(items, ...args){
 
 /* Element */
 
-p.on(remove.instance, signature(isElement), function(self){
-  return remove(p.IHierarchy.parent(self), self);
+IEvented.on(remove.instance, signature(isElement), function(self){
+  return remove(IHierarchy.parent(self), self);
 });
 
 /* Element / Key = "class" / Value */
@@ -64,23 +64,23 @@ const elementClassValue = signature(isElement, function(name){
   return name === "class";
 }, null);
 
-p.on(add.instance, elementClassValue, function(self, key, value){
+IEvented.on(add.instance, elementClassValue, function(self, key, value){
   each(self.classList.add.bind(self.classList), value.split(" "));
   return self;
 });
 
-p.on(remove.instance, elementClassValue, function(self, key, value){
+IEvented.on(remove.instance, elementClassValue, function(self, key, value){
   each(self.classList.remove.bind(self.classList), value.split(" "));
   return self;
 });
 
-p.on(transpose.instance, elementClassValue, function(self, key, value){
+IEvented.on(transpose.instance, elementClassValue, function(self, key, value){
   each(self.classList.toggle.bind(self.classList), value.split(" "));
   return self;
 });
 
-p.on(has.instance, elementClassValue, function(self, key, value){
-  return p.reduce(value.split(" "), function(memo, name){
+IEvented.on(has.instance, elementClassValue, function(self, key, value){
+  return IReduce.reduce(value.split(" "), function(memo, name){
     return memo ? self.classList.contains(name) : reduced(memo);
   }, true);
 });
@@ -89,35 +89,35 @@ p.on(has.instance, elementClassValue, function(self, key, value){
 
 const elementKeyValue = signature(isElement, isString, null);
 
-p.on(add.instance, elementKeyValue, function(self, key, value){
+IEvented.on(add.instance, elementKeyValue, function(self, key, value){
   self.setAttribute(key, value);
   return self;
 });
 
-p.on(remove.instance, elementKeyValue, function(self, key, value){
+IEvented.on(remove.instance, elementKeyValue, function(self, key, value){
   if (value == null || value == self.getAttribute(key)) {
     self.removeAttribute(key);
   }
   return self;
 });
 
-p.on(has.instance, elementKeyValue, function(self, key, value){
+IEvented.on(has.instance, elementKeyValue, function(self, key, value){
   return self.getAttribute(key) == value;
 });
 
-p.on(transpose.instance, elementKeyValue, function(self, key, value){
+IEvented.on(transpose.instance, elementKeyValue, function(self, key, value){
   self.getAttribute(key) == value ? self.removeAttribute(key) : self.setAttribute(key, value);
   return self;
 });
 
 const elementEventCallback = signature(isElement, isString, isFunction);
 
-p.on(add.instance, elementEventCallback, function(self, key, f){
+IEvented.on(add.instance, elementEventCallback, function(self, key, f){
   self.addEventListener(key, f);
   return self;
 });
 
-p.on(remove.instance, elementEventCallback, function(self, key, f){
+IEvented.on(remove.instance, elementEventCallback, function(self, key, f){
   self.removeEventListener(key, f);
   return self;
 });
@@ -126,37 +126,37 @@ p.on(remove.instance, elementEventCallback, function(self, key, f){
 
 const elementAttrs = signature(isElement, or(isObjectSelection, isObject));
 
-p.on(add.instance, elementAttrs, function(self, obj){
-  return p.reducekv(obj, add, self);
+IEvented.on(add.instance, elementAttrs, function(self, obj){
+  return IKVReduce.reducekv(obj, add, self);
 });
 
-p.on(has.instance, elementAttrs, function(self, obj){
-  return p.reducekv(obj, has, true);
+IEvented.on(has.instance, elementAttrs, function(self, obj){
+  return IKVReduce.reducekv(obj, has, true);
 });
 
-p.on(remove.instance, elementAttrs, function(self, obj){
-  return p.reducekv(obj, remove, self);
+IEvented.on(remove.instance, elementAttrs, function(self, obj){
+  return IKVReduce.reducekv(obj, remove, self);
 });
 
-p.on(transpose.instance, elementAttrs, function(self, obj){
-  return p.reducekv(obj, transpose, self);
+IEvented.on(transpose.instance, elementAttrs, function(self, obj){
+  return IKVReduce.reducekv(obj, transpose, self);
 });
 
 /* Element / Text */
 
 const elementText = signature(isElement, isString);
 
-p.on(has.instance, elementText, function(self, text){
+IEvented.on(has.instance, elementText, function(self, text){
   return detect(function(node){
     return node.nodeType === Node.TEXT_NODE && node.data === text;
-  }, p.contents(self));
+  }, IContent.contents(self));
 });
 
-p.on(add.instance, elementText, function(self, text){
+IEvented.on(add.instance, elementText, function(self, text){
   self.appendChild(document.createTextNode(text));
 });
 
-p.on(remove.instance, elementText, function(self, text){
+IEvented.on(remove.instance, elementText, function(self, text){
   const node = has(self, text);
   node && self.removeChild(node);
   return self;
@@ -166,18 +166,18 @@ p.on(remove.instance, elementText, function(self, text){
 
 const elementElement = signature(isElement, isElement);
 
-p.on(has.instance, elementElement, function(self, child){
+IEvented.on(has.instance, elementElement, function(self, child){
   return detect(function(node){
     return node === child;
-  }, p.contents(self));
+  }, IContent.contents(self));
 });
 
-p.on(add.instance, elementElement, function(self, child){
+IEvented.on(add.instance, elementElement, function(self, child){
   self.appendChild(child);
   return self;
 });
 
-p.on(remove.instance, elementElement, function(self, child){
+IEvented.on(remove.instance, elementElement, function(self, child){
   self.removeChild(child);
   return self;
 });

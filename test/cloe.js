@@ -72,7 +72,10 @@ QUnit.test("step, proceed, recede", function(assert){
 });
 
 QUnit.test("record", function(assert){
-  const Person = _.record("name", "surname", "dob");
+  function Person(name, surname, dob){
+    this.attrs = {name, surname, dob};
+  }
+  _.record(Person);
   const sean   = new Person("Sean", "Penn", new Date(1960, 7, 17));
   const robin  = Person.create("Robin", "Wright", new Date(1966, 3, 8));
   const dylan  = Person.from({name: "Dylan", surname: "Penn", dob: new Date(1991, 3, 13)});

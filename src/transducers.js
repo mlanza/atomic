@@ -2,8 +2,7 @@ import {constantly, overload, identity, complement} from "./core";
 import {comp, partial} from "./types/function/concrete";
 import {isSome} from "./types/nil/construct";
 import {reduced} from "./types/reduced";
-import {seq} from "./protocols/iseqable";
-import {reduce} from "./protocols/ireduce";
+import {ISeqable, IReduce} from "./protocols";
 
 export function map(f){
   return function(xf){
@@ -80,7 +79,7 @@ export function drop(n){
 export function interpose(sep){
   return function(xf){
     return overload(xf, xf, function(memo, value){
-      return xf(seq(memo) ? xf(memo, sep) : memo, value);
+      return xf(ISeqable.seq(memo) ? xf(memo, sep) : memo, value);
     });
   }
 }
@@ -144,6 +143,6 @@ export function distinct(){
 
 export function cat(xf){
   return overload(xf, xf, function(memo, value){
-    return reduce(memo, xf, value);
+    return IReduce.reduce(memo, xf, value);
   });
 }

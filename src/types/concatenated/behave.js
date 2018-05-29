@@ -1,8 +1,7 @@
 import {identity, effect} from '../../core';
 import {implement} from '../protocol';
 import {concatenated, concat} from '../../types/concatenated/construct';
-import {ICollection, INext, ISeq, IArr, ICounted, IReduce, ISeqable, IIndexed, IShow} from '../../protocols';
-import {reduce} from '../../protocols/ireduce';
+import {ICollection, INext, ISeq, IArr, ICounted, ISeqable, IIndexed, IShow} from '../../protocols';
 import Reduced from '../../types/reduced';
 import {EMPTY} from "../empty";
 import {reduceable, showable, iterable} from '../lazyseq/behave';

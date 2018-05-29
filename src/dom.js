@@ -1,12 +1,12 @@
 import {overload, constantly, identity} from "./core";
 import {EMPTY, lazySeq, concat, partial, partially, comp, satisfies, compact, flatten, detect, filter, map, mapcat, mapping, mapcatting} from "./types";
-import {IHierarchy, IHierarchicalSet, toArray, reduce, seq} from "./protocols";
+import {IHierarchy, IHierarchicalSet, IArr, IReduce, ISeqable} from "./protocols";
 import {add, matches} from "./multimethods";
 export {has, add, remove, transpose, matches} from "./multimethods";
 
 export function expansive(f){
   function expand(...xs){
-    const contents = toArray(compact(flatten(xs)));
+    const contents = IArr.toArray(compact(flatten(xs)));
     return detect(function(content){
       return typeof content === "function";
     }, contents) ? step(contents) : f(...contents);
@@ -25,11 +25,11 @@ export function expansive(f){
 }
 
 export const tag = partially(expansive(function(name, ...contents){ //partially guarantees calling tag always produces a factory
-  return reduce(add, document.createElement(name), contents);
+  return IReduce.reduce(add, document.createElement(name), contents);
 }));
 
 export const frag = expansive(function(...contents){
-  return reduce(add, document.createDocumentFragment(), contents);
+  return IReduce.reduce(add, document.createDocumentFragment(), contents);
 });
 
 function selects(pred){
@@ -95,7 +95,7 @@ export const siblings = mapcatting(function(el){
 });
 
 export function andSelf(f, coll){
-  return concat(seq(coll), f(coll));
+  return concat(ISeqable.seq(coll), f(coll));
 }
 
 export const parents = ancestors;

@@ -1,9 +1,8 @@
 import {protocol, satisfies} from "../types/protocol";
-function _deref(self){
+function deref(self){
   return self == null ? null : self.valueOf();
 }
 export const IDeref = protocol({
-  deref: _deref
+  deref: deref
 });
-export const deref = IDeref.deref;
-export default IDeref;
+export const isDeref = satisfies(IDeref);
