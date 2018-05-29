@@ -558,3 +558,11 @@ export function shuffle(coll) {
   }
   return a;
 }
+
+//e.g. counter: generate(iterate(inc, 0)) or partial(generate, iterate(inc, 0))) for a counter factory;
+export function generate(iterable){
+  let iter = iterable[Symbol.iterator]();
+  return function(){
+    return iter.done ? null : iter.next().value;
+  }
+}

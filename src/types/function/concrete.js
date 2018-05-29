@@ -1,18 +1,13 @@
-import {IArr, toArray}  from "../../protocols";
+import {IArr, toArray}  from "../../protocols/iarr";
 import {log, overload, identity, constantly} from "../../core";
 import {isNil}  from "../nil";
 import {slice}  from "../array/concrete";
 import {reduce, reduced}  from "../reduced";
+export {complement} from "../../core";
 
 export function partial(f, ...applied){
   return function(...args){
     return f.apply(this, applied.concat(args));
-  }
-}
-
-export function complement(f){
-  return function(){
-    return !f.apply(this, arguments);
   }
 }
 
