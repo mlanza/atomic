@@ -6,11 +6,11 @@
 
 import {implement, partial, observable, publisher, subscriptionMonitor, slice} from "./types";
 import {map} from "./transducers";
-import {on, off, pub, sub, IDisposable} from "./protocols";
+import {IEvented, IPublish, ISubscribe, IDisposable} from "./protocols";
 import {doto, overload, identity, constantly} from "./core";
 
 function duct(sink, xf, source){
-  const unsub = sub(source, partial(xf(pub), sink));
+  const unsub = ISubscribe.sub(source, partial(xf(IPublish.pub), sink));
   return doto(sink,
     implement(IDisposable, {dispose: unsub}));
 }
@@ -37,8 +37,8 @@ export function event4(el, key, init, transform){
   }
   const publ = subscriptionMonitor(publisher(), function(active){
     dispose();
-    unsub = active ? on(el, key, function(e){
-      pub(sink, transform(e));
+    unsub = active ? IEvented.on(el, key, function(e){
+      IPublish.pub(sink, transform(e));
     }) : null;
   });
   const sink = observable(init, publ);
@@ -99,14 +99,14 @@ export function calc(f, ...sources){
     state.push(blank);
   });
   sources.forEach(function(source, idx){
-    sub(source, function(value){
+    ISubscribe.sub(source, function(value){
       state = slice(state);
       state[idx] = value;
       if (!initialized){
         initialized = state.indexOf(blank) === -1;
       }
       if (initialized){
-        pub(sink, f.apply(null, state));
+        IPublish.pub(sink, f.apply(null, state));
       }
     });
   });
@@ -116,13 +116,13 @@ export function calc(f, ...sources){
 function hist2(size, source){
   const sink = observable([]);
   let history = [];
-  sub(source, function(value){
+  ISubscribe.sub(source, function(value){
     history = slice(history);
     history.unshift(value);
     if (history.length > size){
       history.pop();
     }
-    pub(sink, history);
+    IPublish.pub(sink, history);
   });
   return sink;
 }
@@ -131,9 +131,9 @@ export const hist = overload(null, partial(hist2, 2), hist2);
 
 export function join(init, ...sources){ //TODO dispose
   const sink  = observable(init || null),
-        relay = partial(pub, sink);
+        relay = partial(IPublish.pub, sink);
   sources.forEach(function(source){
-    sub(source, relay);
+    ISubscribe.sub(source, relay);
   });
   return sink;
 }
@@ -141,15 +141,15 @@ export function join(init, ...sources){ //TODO dispose
 export function fork(pred, inits, source){
   const leftSink  = observable(inits[0] || null),
         rightSink = observable(inits[1] || null);
-  sub(source, function(value){
+  ISubscribe.sub(source, function(value){
     const sink = pred(value) ? leftSink : rightSink;
-    pub(sink, value);
+    IPublish.pub(sink, value);
   });
   return [leftSink, rightSink];
 }
 
 export function deferred(promise){
   const sink = observable(null);
-  Promise.resolve(promise).then(partial(pub, sink));
+  Promise.resolve(promise).then(partial(IPublish.pub, sink));
   return sink;
 }

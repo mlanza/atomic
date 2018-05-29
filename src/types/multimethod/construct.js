@@ -1,4 +1,4 @@
-import * as p from "../../protocols";
+import {IFn} from "../../protocols";
 
 export function Multimethod(fallback, handlers){
   this.fallback = fallback;
@@ -8,7 +8,7 @@ export function Multimethod(fallback, handlers){
 export function multimethod(fallback){
   const instance = new Multimethod(fallback, []);
   function method(...args){
-    return p.invoke(instance, ...args);
+    return IFn.invoke(instance, ...args);
   }
   method.instance = instance;
   return method;

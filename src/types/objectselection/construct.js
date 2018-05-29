@@ -1,4 +1,4 @@
-import {seq} from "../../protocols/iseqable";
+import {ISeqable} from "../../protocols/iseqable";
 import {EMPTY} from "../empty";
 
 export function ObjectSelection(obj, keys){
@@ -7,7 +7,7 @@ export function ObjectSelection(obj, keys){
 }
 
 export function objectSelection(obj, keys){
-  return new ObjectSelection(obj, seq(keys) ? keys : EMPTY);
+  return new ObjectSelection(obj, ISeqable.seq(keys) ? keys : EMPTY);
 }
 
 export default ObjectSelection;

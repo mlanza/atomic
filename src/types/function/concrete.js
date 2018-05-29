@@ -1,4 +1,4 @@
-import {IArr, toArray}  from "../../protocols/iarr";
+import {IArr}  from "../../protocols/iarr";
 import {log, overload, identity, constantly} from "../../core";
 import {isNil}  from "../nil";
 import {slice}  from "../array/concrete";

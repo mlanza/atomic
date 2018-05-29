@@ -1,6 +1,7 @@
 import {effect, overload} from '../../core';
 import {implement} from '../protocol';
 import {IObj, IAssociative, ISeqable, ILookup, ICounted, IMap, ISeq, IRecord} from '../../protocols';
+import {constructs} from '../function';
 
 function toObject(self){
   return self.attrs;
@@ -46,7 +47,15 @@ function dissoc(self, key){
   return self.constructor.from(IMap.dissoc(self.attrs, key));
 }
 
+function construction(Type){
+  Type.create = constructs(Type);
+  Type.from = function(attrs){
+    return Object.assign(Object.create(Type.prototype), {attrs: attrs});
+  }
+}
+
 export default effect(
+  construction,
   implement(IRecord),
   implement(IObj, {toObject}),
   implement(IAssociative, {assoc, contains}),

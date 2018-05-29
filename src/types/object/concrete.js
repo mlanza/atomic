@@ -1,14 +1,11 @@
-import {invoke} from "../../protocols/ifn";
-import {reduce} from "../../protocols/ireduce";
-import {lookup} from "../../protocols/ilookup";
-import {assoc} from "../../protocols/iassociative";
-import {reducing} from "../../types/reduced";
-import {apply} from "../../types/function";
+import {IFn, IReduce, ILookup, IAssociative} from "../../protocols";
+import {reducing} from "../reduced";
+import {apply} from "../function";
 import {overload, constantly} from "../../core";
 
 function selectKeys3(self, keys, init){
-  return reduce(keys, function(memo, key){
-    return assoc(memo, key, lookup(self, key));
+  return IReduce.reduce(keys, function(memo, key){
+    return IAssociative.assoc(memo, key, ILookup.lookup(self, key));
   }, init);
 }
 
@@ -26,6 +23,6 @@ export const defaults = overload(null, null, defaults2, reducing(defaults2));
 
 export function compile(self){
   return function(...args){
-    return apply(invoke, self, args);
+    return apply(IFn.invoke, self, args);
   }
 }
