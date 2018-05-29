@@ -40,8 +40,8 @@ QUnit.test("iassociative", function(assert){
   assert.deepEqual(_.assoc(court, "ace", 14), {jack: 11, queen: 12, king: 13, ace: 14});
   assert.deepEqual(_.assocIn(worth, ["court","ace"], 1), {pieces: {pawn: 1, knight: 3, bishop: 3, rook: 5, queen: 10, king: Infinity}, court: {ace: 1, jack: 11, queen: 12, king: 13}});
   assert.deepEqual(_.assocIn(worth, ["court","king"], Infinity), {pieces: {pawn: 1, knight: 3, bishop: 3, rook: 5, queen: 10, king: Infinity}, court: {jack: 11, queen: 12, king: Infinity}});
-  assert.deepEqual(_.update(court, "jack", _.partial(_.add, -10)), {jack: 1, queen: 12, king: 13});
-  assert.deepEqual(_.updateIn(worth, ["court","king"], _.partial(_.add, -10)), {pieces: {pawn: 1, knight: 3, bishop: 3, rook: 5, queen: 10, king: Infinity}, court: {jack: 11, queen: 12, king: 3}});
+  assert.deepEqual(_.update(court, "jack", _.partial(_.plus, -10)), {jack: 1, queen: 12, king: 13});
+  assert.deepEqual(_.updateIn(worth, ["court","king"], _.partial(_.plus, -10)), {pieces: {pawn: 1, knight: 3, bishop: 3, rook: 5, queen: 10, king: Infinity}, court: {jack: 11, queen: 12, king: 3}});
   assert.deepEqual(stooges, ["Larry","Curly","Moe"], "no mutations occurred");
   assert.deepEqual(court, {jack: 11, queen: 12, king: 13}, "no mutations occurred");
 });

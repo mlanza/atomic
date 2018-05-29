@@ -1,4 +1,45 @@
+import * as p from "./protocols";
+import * as T from "./types";
+import * as t from "./transducers";
+
+export const transducers = {
+  cat: t.cat,
+  compact: t.compact,
+  dedupe: t.dedupe,
+  detect: t.detect,
+  distinct: t.distinct,
+  drop: t.drop,
+  dropWhile: t.dropWhile,
+  filter: t.filter,
+  interpose: t.interpose,
+  keep: t.keep,
+  keepIndexed: t.keepIndexed,
+  map: t.map,
+  mapcat: t.mapcat,
+  mapIndexed: t.mapIndexed,
+  remove: t.remove,
+  splay: t.splay,
+  take: t.take,
+  takeNth: t.takeNth,
+  takeWhile: t.takeWhile
+}
+
 export * from "./clojure";
+export * from "./core";
+export * from "./types";
+export * from "./protocols";
+export * from "./protocols/ireduce/api";
+export * from "./protocols/ikvreduce/api";
+export * from "./protocols/imap/api";
+export * from "./protocols/isteppable/api";
+export * from "./protocols/iset/api";
+export * from "./protocols/iswap/api";
+export * from "./multimethods";
+export * from "./predicates";
+export * from "./associatives";
+export * from "./signals";
+export * from "./dom";
+export const second = T.comp(p.first, p.next);
 
 /*
 export * from "./pointfree";

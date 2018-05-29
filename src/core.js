@@ -4,6 +4,12 @@ export const log    = console.log.bind(console);
 export function noop(){
 }
 
+export function complement(f){
+  return function(){
+    return !f.apply(this, arguments);
+  }
+}
+
 export function counter(init){
   let memo = init || 0;
   return function(){
@@ -71,5 +77,16 @@ export function spread(f){
 export function unspread(f){
   return function(...args){
     return f(args);
+  }
+}
+
+export function once(f){
+  let pending = {},
+      result  = pending;
+  return function(...args){
+    if (result === pending){
+      result = f(...args);
+    }
+    return result;
   }
 }

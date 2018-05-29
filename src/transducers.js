@@ -1,9 +1,9 @@
-import {constantly, overload, identity} from "./core";
-import {comp, complement, partial} from "./types/function/concrete";
-import {EMPTY_ARRAY} from "./types/array/construct";
+import {constantly, overload, identity, complement} from "./core";
+import {comp, partial} from "./types/function/concrete";
 import {isSome} from "./types/nil/construct";
-import {reducing, reduced} from "./types/reduced";
-import {seq, reduce} from "./protocols";
+import {reduced} from "./types/reduced";
+import {seq} from "./protocols/iseqable";
+import {reduce} from "./protocols/ireduce";
 
 export function map(f){
   return function(xf){
