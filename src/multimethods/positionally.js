@@ -5,7 +5,7 @@ import {isElement} from "../types/element/construct";
 import {isNodes} from "../types/nodes/construct";
 import {each} from "../types/lazyseq/concrete";
 import {signature, or} from "../predicates";
-import {IEvented, IHierarchy} from "../protocols";
+import {isNodeSeq, IEvented, IHierarchy} from "../protocols";
 
 export const before = multimethod();
 export const after  = multimethod();
@@ -30,15 +30,13 @@ IEvented.on(after.instance, signature(isElement, isFunction), function(self, oth
   return after(self, other());
 });
 
-const isItems = or(isNodeList, isNodes);
-
-IEvented.on(before.instance, isItems, function(self, ...args){
+IEvented.on(before.instance, isNodeSeq, function(self, ...args){
   each(function(el){
     return before(el, ...args);
   }, self);
 });
 
-IEvented.on(after.instance, isItems, function(self, ...args){
+IEvented.on(after.instance, isNodeSeq, function(self, ...args){
   each(function(el){
     return after(el, ...args);
   }, self);

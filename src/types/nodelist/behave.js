@@ -1,6 +1,6 @@
 import {effect} from '../../core';
 import {implement} from '../protocol';
-import {ISeqable} from '../../protocols';
+import {ISeqable, INodeSeq} from '../../protocols';
 import {lazySeq} from '../lazyseq/construct';
 import {EMPTY} from '../empty/construct';
 import {showable, iterable} from '../lazyseq/behave';
@@ -21,4 +21,5 @@ export default effect(
   iterable,
   ihierarchicalset,
   icontent,
+  implement(INodeSeq),
   implement(ISeqable, {seq}));

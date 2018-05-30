@@ -1,7 +1,7 @@
 import {effect} from "../../core";
 import {implement} from '../protocol';
-import {IHierarchy, IHierarchicalSet, IContent, ISeqable} from '../../protocols';
-import {map, mapcat, remove, compact, distinct} from '../lazyseq/concrete';
+import {IHierarchy, IHierarchicalSet, IContent, ISeqable, INodeSeq} from '../../protocols';
+import {map, mapcat, filter, compact, distinct} from '../lazyseq/concrete';
 import {series} from '../series';
 import {nodes} from './construct';
 
@@ -28,6 +28,7 @@ export const icontent = implement(IContent, {contents});
 export {mapping, mapcatting};
 
 export default effect(
+  implement(INodeSeq),
   series,
   ihierarchicalset,
   icontent);

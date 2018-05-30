@@ -22,6 +22,7 @@ export * from "./protocols/ilookup";
 export * from "./protocols/imap";
 export * from "./protocols/imapentry";
 export * from "./protocols/inext";
+export * from "./protocols/inodeseq";
 export * from "./protocols/iobj";
 export * from "./protocols/iprependable";
 export * from "./protocols/ipublish";
