@@ -1,10 +1,10 @@
 //An amalgam is something composed of disparate parts
 
-import {detect, each} from "../types/lazyseq/concrete";
+import {detect, each, mapa, compact} from "../types/lazyseq/concrete";
 import {reduced} from "../types/reduced/construct";
 import {multimethod} from "../types/multimethod/construct";
 import {isElement} from "../types/element/construct";
-import {isString} from "../types/string/construct";
+import {isString, trim, split} from "../types/string";
 import {isFunction} from "../types/function/construct";
 import {isNodeList} from "../types/nodelist/construct";
 import {isElements} from "../types/elements/construct";
@@ -56,6 +56,45 @@ IEvented.on(has.instance, isItems, function(items, ...args){
 
 IEvented.on(remove.instance, signature(isElement), function(self){
   return remove(IHierarchy.parent(self), self);
+});
+
+/* Element / Key = "style" / Value */
+
+const elementStyleValue = signature(isElement, function(name){
+  return name === "style";
+}, null);
+
+IEvented.on(add.instance, elementStyleValue, function(self, key, styles){
+  each(function(style){
+    const [key, value] = mapa(trim, compact(split(style, ":")));
+    self.style[key] = value;
+  }, mapa(trim, split(styles, ";")));
+  return self;
+});
+
+IEvented.on(remove.instance, elementStyleValue, function(self, key, styles){
+  each(function(style){
+    const [key, value] = mapa(trim, compact(split(style, ":")));
+    if (self.style[key] == value) {
+      self.style[key] = "";
+    }
+  }, mapa(trim, split(styles, ";")));
+  return self;
+});
+
+IEvented.on(transpose.instance, elementStyleValue, function(self, key, styles){
+  each(function(style){
+    const [key, value] = mapa(trim, compact(split(style, ":")));
+    self.style[key] = self.style[key] == value ? "" : value;
+  }, mapa(trim, split(styles, ";")));
+  return self;
+});
+
+IEvented.on(has.instance, elementStyleValue, function(self, key, styles){
+  return IReduce.reduce(mapa(trim, compact(split(styles, ";"))), function(memo, style){
+    const [key, value] = mapa(trim, split(style, ":"))
+    return memo ? self.style[key] == value : reduced(memo);
+  }, true);
 });
 
 /* Element / Key = "class" / Value */
@@ -131,7 +170,9 @@ IEvented.on(add.instance, elementAttrs, function(self, obj){
 });
 
 IEvented.on(has.instance, elementAttrs, function(self, obj){
-  return IKVReduce.reducekv(obj, has, true);
+  return IKVReduce.reducekv(obj, function(memo, key, value){
+    return memo ? has(self, key, value) : reduced(memo);
+  }, true);
 });
 
 IEvented.on(remove.instance, elementAttrs, function(self, obj){
