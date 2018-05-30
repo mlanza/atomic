@@ -4,7 +4,7 @@ import {ISeqable} from '../../protocols';
 import {lazySeq} from '../lazyseq/construct';
 import {EMPTY} from '../empty/construct';
 import {showable, iterable} from '../lazyseq/behave';
-import {hierarchical} from '../elements/behave';
+import {hierarchical, contentful} from '../elements/behave';
 
 function seq2(self, idx){
   return idx < self.length ? lazySeq(self.item(idx), function(){
@@ -20,4 +20,5 @@ export default effect(
   showable,
   iterable,
   hierarchical,
+  contentful,
   implement(ISeqable, {seq}));
