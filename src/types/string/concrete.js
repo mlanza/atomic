@@ -25,6 +25,11 @@ export function inject(template, ...args){
   return template(template, args);
 }
 
+export function camelToDashed(str){
+  return str.replace(/[A-Z]/, function(x) { return "-" + x.toLowerCase() })
+}
+
+export const split      = unbind(String.prototype.split);
 export const startsWith = unbind(String.prototype.startsWith);
 export const endsWith   = unbind(String.prototype.endsWith);
 export const replace    = unbind(String.prototype.replace);
