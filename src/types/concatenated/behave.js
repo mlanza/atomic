@@ -1,8 +1,9 @@
 import {identity, effect} from '../../core';
 import {implement} from '../protocol';
 import {concatenated, concat} from '../../types/concatenated/construct';
-import {ICollection, INext, ISeq, IArr, ICounted, ISeqable, IIndexed, IShow} from '../../protocols';
-import Reduced from '../../types/reduced';
+import {isReduced, unreduced} from '../../types/reduced';
+import {ICollection, INext, ISeq, IArr, ICounted, ISeqable, IIndexed, IShow, IReduce} from '../../protocols';
+import {apply} from '../../types/function/concrete';
 import {EMPTY} from "../empty";
 import {reduceable, showable, iterable} from '../lazyseq/behave';
 
@@ -20,36 +21,37 @@ function first(self){
 }
 
 function rest(self){
-  return concat(INext.next(ISeq.first(self.colls)), ISeq.rest(self.colls));
-}
-
-function rest(self){ //TODO fix
-  const tail = INext.next(ISeq.first(self.colls));
-  let colls = IArr.toArray(ISeq.rest(self.colls));
-  if (tail) {
-    colls = [tail].concat(colls);
-  }
-  return concatenated(colls);
+  return apply(concat, ISeq.rest(ISeq.first(self.colls)), ISeq.rest(self.colls));
 }
 
 function toArray(self){
-  const result = [];
-  let remaining = ISeqable.seq(self);
-  while(remaining){
-    result.push(ISeq.first(remaining));
+  return reduce(self, function(memo, value){
+    memo.push(value);
+    return memo;
+  }, []);
+}
+
+function reduce(self, xf, init){
+  let memo = init,
+      remaining = self;
+  while(!isReduced(memo) && ISeqable.seq(remaining)){
+    memo = xf(memo, ISeq.first(remaining))
     remaining = INext.next(remaining);
   }
-  return result;
+  return unreduced(memo);
 }
 
 function count(self){
-  return self.length = self.length || IArr.toArray(self).length;
+  return reduce(self, function(memo, value){
+    return memo + 1;
+  }, 0);
 }
 
 export default effect(
   iterable,
   reduceable,
   showable,
+  implement(IReduce, {reduce}),
   implement(ICollection, {conj}),
   implement(INext, {next}),
   implement(ISeq, {first, rest}),

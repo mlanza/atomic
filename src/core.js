@@ -21,10 +21,14 @@ export function type(self){
   return self == null ? null : self.constructor;
 }
 
+export function is(self, constructor){
+  return self != null && self.constructor === constructor;
+}
+
 export function overload(){
-  var fs = arguments, fallback = fs[fs.length - 1];
+  const fs = arguments, fallback = fs[fs.length - 1];
   return function(){
-    var f = fs[arguments.length] || fallback;
+    const f = fs[arguments.length] || fallback;
     return f.apply(this, arguments);
   }
 }
@@ -81,8 +85,8 @@ export function unspread(f){
 }
 
 export function once(f){
-  let pending = {},
-      result  = pending;
+  const pending = {};
+  let result  = pending;
   return function(...args){
     if (result === pending){
       result = f(...args);
@@ -90,3 +94,4 @@ export function once(f){
     return result;
   }
 }
+

@@ -4,6 +4,7 @@ import {detect, each, mapa, compact} from "../types/lazyseq/concrete";
 import {reduced} from "../types/reduced/construct";
 import {multimethod} from "../types/multimethod/construct";
 import {isElement} from "../types/element/construct";
+import {isArray} from "../types/array";
 import {isString, trim, split} from "../types/string";
 import {isFunction} from "../types/function/construct";
 import {isNodeList} from "../types/nodelist/construct";
@@ -16,9 +17,9 @@ import {IReduce, IKVReduce, IEvented, IHierarchy, IContent} from "../protocols";
 
 export const has = multimethod();
 export const add = multimethod();
-export const remove = multimethod();
+export const del = multimethod();
 export const transpose = multimethod(function(self, other){
-  return has(self, other) ? remove(self, other) : add(self, other);
+  return has(self, other) ? del(self, other) : add(self, other);
 });
 
 /* NodeList or Elements */
@@ -32,9 +33,9 @@ IEvented.on(add.instance, isItems, function(items, ...args){
   return items;
 });
 
-IEvented.on(remove.instance, isItems, function(items, ...args){
+IEvented.on(del.instance, isItems, function(items, ...args){
   each(function(item){
-    apply(remove, item, args);
+    apply(del, item, args);
   }, items);
   return items;
 });
@@ -54,8 +55,24 @@ IEvented.on(has.instance, isItems, function(items, ...args){
 
 /* Element */
 
-IEvented.on(remove.instance, signature(isElement), function(self){
-  return remove(IHierarchy.parent(self), self);
+IEvented.on(del.instance, signature(isElement), function(self){
+  return del(IHierarchy.parent(self), self);
+});
+
+
+/* Element / Keys */
+
+const elementKeys = signature(isElement, isArray);
+
+IEvented.on(del.instance, elementKeys, function(self, keys){
+  each(self.removeAttribute.bind(self), keys);
+  return self;
+});
+
+IEvented.on(has.instance, elementKeys, function(self, keys){
+  return IReduce.reduce(keys, function(memo, key){
+    return memo ? self.hasAttribute(key) : reduced(memo);
+  }, true);
 });
 
 /* Element / Key = "style" / Value */
@@ -72,7 +89,7 @@ IEvented.on(add.instance, elementStyleValue, function(self, key, styles){
   return self;
 });
 
-IEvented.on(remove.instance, elementStyleValue, function(self, key, styles){
+IEvented.on(del.instance, elementStyleValue, function(self, key, styles){
   each(function(style){
     const [key, value] = mapa(trim, compact(split(style, ":")));
     if (self.style[key] == value) {
@@ -108,8 +125,8 @@ IEvented.on(add.instance, elementClassValue, function(self, key, value){
   return self;
 });
 
-IEvented.on(remove.instance, elementClassValue, function(self, key, value){
-  each(self.classList.remove.bind(self.classList), value.split(" "));
+IEvented.on(del.instance, elementClassValue, function(self, key, value){
+  each(self.classList.del.bind(self.classList), value.split(" "));
   return self;
 });
 
@@ -133,7 +150,7 @@ IEvented.on(add.instance, elementKeyValue, function(self, key, value){
   return self;
 });
 
-IEvented.on(remove.instance, elementKeyValue, function(self, key, value){
+IEvented.on(del.instance, elementKeyValue, function(self, key, value){
   if (value == null || value == self.getAttribute(key)) {
     self.removeAttribute(key);
   }
@@ -156,8 +173,8 @@ IEvented.on(add.instance, elementEventCallback, function(self, key, f){
   return self;
 });
 
-IEvented.on(remove.instance, elementEventCallback, function(self, key, f){
-  self.removeEventListener(key, f);
+IEvented.on(del.instance, elementEventCallback, function(self, key, f){
+  self.delEventListener(key, f);
   return self;
 });
 
@@ -175,8 +192,8 @@ IEvented.on(has.instance, elementAttrs, function(self, obj){
   }, true);
 });
 
-IEvented.on(remove.instance, elementAttrs, function(self, obj){
-  return IKVReduce.reducekv(obj, remove, self);
+IEvented.on(del.instance, elementAttrs, function(self, obj){
+  return IKVReduce.reducekv(obj, del, self);
 });
 
 IEvented.on(transpose.instance, elementAttrs, function(self, obj){
@@ -195,11 +212,12 @@ IEvented.on(has.instance, elementText, function(self, text){
 
 IEvented.on(add.instance, elementText, function(self, text){
   self.appendChild(document.createTextNode(text));
+  return self;
 });
 
-IEvented.on(remove.instance, elementText, function(self, text){
+IEvented.on(del.instance, elementText, function(self, text){
   const node = has(self, text);
-  node && self.removeChild(node);
+  node && self.delChild(node);
   return self;
 });
 
@@ -218,7 +236,7 @@ IEvented.on(add.instance, elementElement, function(self, child){
   return self;
 });
 
-IEvented.on(remove.instance, elementElement, function(self, child){
-  self.removeChild(child);
+IEvented.on(del.instance, elementElement, function(self, child){
+  self.delChild(child);
   return self;
 });

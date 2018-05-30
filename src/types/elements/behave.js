@@ -10,10 +10,10 @@ const nextSibling = mapping(IHierarchy.nextSibling);
 const prevSibling = mapping(IHierarchy.prevSibling);
 const contents    = mapcatting(IContent.contents);
 
-export const hierarchical = implement(IHierarchicalSet, {parent, children, nextSibling, prevSibling});
-export const contentful = implement(IContent, {contents});
+export const ihierarchicalset = implement(IHierarchicalSet, {parent, children, nextSibling, prevSibling});
+export const icontent = implement(IContent, {contents});
 
 export default effect(
   series,
-  hierarchical,
-  contentful);
+  ihierarchicalset,
+  icontent);

@@ -3,8 +3,9 @@ import {reducing} from "./types/reduced";
 import {IAppendable, IArr, IAssociative, ICloneable, ICollection, IComparable, IContent, ICounted, IDeref, IDisposable, IEmptyableCollection, IEquiv, IEvented, IFind, IFn, IHierarchicalSet, IHierarchy, IInclusive, IIndexed, IKVReduce, ILookup, IMap, IMapEntry, INext, IObj, IPrependable, IPublish, IReduce, IReset, IReversible, ISeq, ISeqable, ISet, IShow, ISteppable, ISubscribe, ISwap, IUnit} from "./protocols";
 import * as T from "./types";
 import * as t from "./transducers";
+import * as d from "./dom";
 
-export const transducers = {
+export const transducers = { //TODO remove in final
   cat: t.cat,
   compact: t.compact,
   dedupe: t.dedupe,
@@ -30,10 +31,11 @@ export * from "./clojure";
 export * from "./core";
 export * from "./types";
 export * from "./protocols";
-export * from "./multimethods";
 export * from "./predicates";
 export * from "./associatives";
 export * from "./signals";
+export * from "./multimethods";
+export * from "./benchmarks"; //TODO remove in final
 export * from "./dom";
 
 export const pub = IPublish.pub;
@@ -58,7 +60,6 @@ export const children = IHierarchicalSet.children;
 export const nextSibling = IHierarchicalSet.nextSibling;
 export const prevSibling = IHierarchicalSet.prevSibling;
 export const compare = IComparable.compare;
-export const contents = IContent.contents;
 export const toArray = IArr.toArray;
 export const assoc = IAssociative.assoc;
 export const contains = IAssociative.contains;
@@ -83,6 +84,14 @@ export const disj = ISet.disj;
 export const union = overload(T.set, identity, ISet.union, reducing(ISet.union));
 export const intersection = overload(null, null, ISet.intersection, reducing(ISet.intersection));
 export const difference = overload(null, null, ISet.difference, reducing(ISet.difference));
+
+export function contents2(self, type){
+  return filter(function(node){
+    return node.nodeType === type;
+  }, IContent.contents(self))
+}
+
+export const contents = overload(null, IContent.contents, contents2);
 
 export function subset(subset, superset){
   return ISet.superset(superset, subset);

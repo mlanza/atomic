@@ -31,11 +31,3 @@ export function days(n){
 export function weeks(n){
   return duration(n * 1000 * 60 * 60 * 24 * 7);
 }
-
-export function time(f){
-  const start = Date.now();
-  return Promise.resolve(f()).then(function(){
-    const end = Date.now();
-    return milliseconds(end - start);
-  });
-}

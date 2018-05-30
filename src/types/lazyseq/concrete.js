@@ -344,6 +344,36 @@ export function notEmpty(coll){
   return isEmpty(coll) ? null : coll;
 }
 
+function asc2(compare, f){
+  return function(a, b){
+    return compare(f(a), f(b));
+  }
+}
+
+function asc1(f){
+  return asc2(IComparable.compare, f);
+}
+
+export const asc = overload(constantly(IComparable.compare), asc1, asc2);
+
+function desc0(){
+  return function(a, b){
+    return IComparable.compare(b, a);
+  }
+}
+
+function desc2(compare, f){
+  return function(a, b){
+    return compare(f(b), f(a));
+  }
+}
+
+function desc1(f){
+  return desc2(IComparable.compare, f);
+}
+
+export const desc = overload(desc0, desc1, desc2);
+
 function sort1(coll){
   return sort2(IComparable.compare, coll);
 }
@@ -352,7 +382,18 @@ function sort2(compare, coll){
   return into([], coll).sort(compare);
 }
 
-export const sort = overload(null, sort1, sort2);
+function sortN(...args){
+  const compares = initial(args),
+        coll     = last(args);
+  function compare(x, y){
+    return IReduce.reduce(compares, function(memo, compare){
+      return memo === 0 ? compare(x, y) : reduced(memo);
+    }, 0);
+  }
+  return sort2(compare, coll);
+}
+
+export const sort = overload(null, sort1, sort2, sortN);
 
 function sortBy2(keyFn, coll){
   return sortBy3(keyFn, IComparable.compare, coll);
@@ -566,3 +607,13 @@ export function generate(iterable){
     return iter.done ? null : iter.next().value;
   }
 }
+
+function splice4(self, start, nix, coll){
+  return concat(take(start, self), coll, drop(start + nix, self))
+}
+
+function splice3(self, start, coll){
+  return splice4(self, start, 0, coll);
+}
+
+export const splice = overload(null, null, null, splice3, splice4);

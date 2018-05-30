@@ -1,4 +1,5 @@
 import {overload, identity, constantly} from "../../core";
+import {IReduce, ICounted} from "../../protocols";
 import {complement, partial, unary} from "../function";
 import {reducing} from "../reduced";
 
@@ -9,6 +10,10 @@ export function number(...args){
 export const num   = unary(number);
 export const int   = parseInt;
 export const float = parseFloat;
+
+export function isNaN(n){
+  return n !== n;
+}
 
 export function isNumber(n){
   return Number(n) === n;
@@ -59,6 +64,17 @@ export const divide   = overload(null, divide1, divide2, reducing(divide2));
 export const inc      = partial(plus2, +1);
 export const dec      = partial(plus2, -1);
 
+function min2(x, y){
+  return x < y ? x : y;
+}
+
+function max2(x, y){
+  return x > y ? x : y;
+}
+
+export const min = overload(null, identity, min2, reducing(min2));
+export const max = overload(null, identity, max2, reducing(max2));
+
 export function isZero(x){
   return x === 0;
 }
@@ -93,4 +109,20 @@ export const rand = overload(rand0, rand1);
 
 export function randInt(n){
   return Math.floor(rand(n));
+}
+
+export function sum(ns){
+  return IReduce.reduce(ns, plus, 0);
+}
+
+export function least(ns){
+  return IReduce.reduce(ns, min, Number.POSITIVE_INFINITY);
+}
+
+export function most(ns){
+  return IReduce.reduce(ns, max, Number.NEGATIVE_INFINITY);
+}
+
+export function average(ns){
+  return sum(ns) / ICounted.count(ns);
 }
