@@ -3,7 +3,21 @@ import {log, overload, identity, constantly} from "../../core";
 import {isNil}  from "../nil";
 import {slice}  from "../array/concrete";
 import {reduce, reduced}  from "../reduced";
+import {isFunction}  from "./construct";
 export {complement} from "../../core";
+
+export function realize(g){
+  return isFunction(g) ? g() : g;
+}
+
+export function realized(f){
+  return function(...args){
+    return apply(f, reduce(args, function(memo, arg){
+      memo.push(realize(arg));
+      return memo;
+    }, []));
+  }
+}
 
 export function partial(f, ...applied){
   return function(...args){
