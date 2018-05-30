@@ -1,7 +1,7 @@
 import {effect} from "../../core";
 import {implement} from '../protocol';
 import {IHierarchy, IHierarchicalSet, IContent, ISeqable} from '../../protocols';
-import {map, mapcat, filter, compact, distinct} from '../lazyseq/concrete';
+import {map, mapcat, remove, compact, distinct} from '../lazyseq/concrete';
 import {series} from '../series';
 import {nodes} from './construct';
 
@@ -10,7 +10,7 @@ function asNodes(map){
     return function(coll){
       return nodes(distinct(compact(map(f, filter(function(el){
         return el !== document;
-      }, coll instanceof Element ? ISeqable.seq([coll]) : ISeqable.seq(coll))))));
+      }, ISeqable.seq(coll))))));
     }
   }
 }
