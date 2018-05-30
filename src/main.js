@@ -163,6 +163,9 @@ function dissocN(obj, ...keys){
 
 export const dissoc = overload(null, identity, IMap.dissoc, dissocN);
 
+export const appendTo  = T.realized(T.reversed(IAppendable.append));
+export const prependTo = T.realized(T.reversed(IPrependable.prepend));
+
 /*
 export * from "./pointfree";
 import * as _ from "./pointfree";
