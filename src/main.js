@@ -86,7 +86,7 @@ export const intersection = overload(null, null, ISet.intersection, reducing(ISe
 export const difference = overload(null, null, ISet.difference, reducing(ISet.difference));
 
 export function contents2(self, type){
-  return filter(function(node){
+  return T.filter(function(node){
     return node.nodeType === type;
   }, IContent.contents(self))
 }
