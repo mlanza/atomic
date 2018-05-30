@@ -2,7 +2,7 @@ import {multimethod} from "../types/multimethod/construct";
 import {isFunction} from "../types/function/construct";
 import {isNodeList} from "../types/nodelist/construct";
 import {isElement} from "../types/element/construct";
-import {isElements} from "../types/elements/construct";
+import {isNodes} from "../types/nodes/construct";
 import {each} from "../types/lazyseq/concrete";
 import {signature, or} from "../predicates";
 import {IEvented, IHierarchy} from "../protocols";
@@ -30,7 +30,7 @@ IEvented.on(after.instance, signature(isElement, isFunction), function(self, oth
   return after(self, other());
 });
 
-const isItems = or(isNodeList, isElements);
+const isItems = or(isNodeList, isNodes);
 
 IEvented.on(before.instance, isItems, function(self, ...args){
   each(function(el){

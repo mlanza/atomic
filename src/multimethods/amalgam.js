@@ -8,7 +8,7 @@ import {isArray} from "../types/array";
 import {isString, trim, split} from "../types/string";
 import {isFunction} from "../types/function/construct";
 import {isNodeList} from "../types/nodelist/construct";
-import {isElements} from "../types/elements/construct";
+import {isNodes} from "../types/nodes/construct";
 import {isObject} from "../types/object/construct";
 import {isObjectSelection} from "../types/objectselection/construct";
 import {signature, or} from "../predicates";
@@ -24,7 +24,7 @@ export const transpose = multimethod(function(self, other){
 
 /* NodeList or Elements */
 
-const isItems = or(isNodeList, isElements);
+const isItems = or(isNodeList, isNodes);
 
 IEvented.on(add.instance, isItems, function(items, ...args){
   each(function(item){

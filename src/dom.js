@@ -1,5 +1,6 @@
 import {overload, constantly, identity} from "./core";
-import {EMPTY, lazySeq, concat, partial, partially, comp, satisfies, compact, flatten, detect, filter, remove, each, map, mapcat, mapping, mapcatting, elements} from "./types";
+import {EMPTY, lazySeq, concat, partial, partially, comp, satisfies, compact, flatten, detect, filter, remove, each, map, mapcat, nodes} from "./types";
+import {mapping, mapcatting} from "./types/nodes/behave";
 import {IContent, IHierarchy, IHierarchicalSet, IArr, IReduce, ISeqable} from "./protocols";
 import {has, add, del, transpose, matches} from "./multimethods";
 export {has, add, del, transpose, matches} from "./multimethods";
@@ -51,7 +52,7 @@ export function closest(what, coll){
 }
 
 function sel2(pred, context){
-  return elements(filter(selects(pred), descendants(context)));
+  return nodes(filter(selects(pred), descendants(context)));
 }
 
 function sel1(pred){
