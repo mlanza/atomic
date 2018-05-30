@@ -13,7 +13,7 @@ import {isObject} from "../types/object/construct";
 import {isObjectSelection} from "../types/objectselection/construct";
 import {signature, or} from "../predicates";
 import {apply} from "../types/function/concrete";
-import {IReduce, IKVReduce, IEvented, IHierarchy, IContent} from "../protocols";
+import {isNodeSeq, IReduce, IKVReduce, IEvented, IHierarchy, IContent} from "../protocols";
 
 export const has = multimethod();
 export const add = multimethod();
@@ -24,30 +24,28 @@ export const transpose = multimethod(function(self, other){
 
 /* NodeList or Elements */
 
-const isItems = or(isNodeList, isNodes);
-
-IEvented.on(add.instance, isItems, function(items, ...args){
+IEvented.on(add.instance, isNodeSeq, function(items, ...args){
   each(function(item){
     apply(add, item, args);
   }, items);
   return items;
 });
 
-IEvented.on(del.instance, isItems, function(items, ...args){
+IEvented.on(del.instance, isNodeSeq, function(items, ...args){
   each(function(item){
     apply(del, item, args);
   }, items);
   return items;
 });
 
-IEvented.on(transpose.instance, isItems, function(items, ...args){
+IEvented.on(transpose.instance, isNodeSeq, function(items, ...args){
   each(function(item){
     apply(transpose, item, args);
   }, items);
   return items;
 });
 
-IEvented.on(has.instance, isItems, function(items, ...args){
+IEvented.on(has.instance, isNodeSeq, function(items, ...args){
   return detect(function(item){
     return apply(has, item, args);
   }, items);
