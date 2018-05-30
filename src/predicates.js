@@ -5,6 +5,17 @@ import {comp, partial, apply} from "./types/function/concrete";
 import {isNil} from "./types/nil/construct";
 import {slice} from "./types/array/concrete";
 
+export function both(memo, value){
+  return memo && value;
+}
+
+export function either(memo, value){
+  return memo || value;
+}
+
+export const all = overload(null, identity, both  , reducing(both));
+export const any = overload(null, identity, either, reducing(either));
+
 export function and(...preds){
   return function(...args){
     return IReduce.reduce(preds, function(memo, pred){
@@ -170,17 +181,6 @@ function equalN(...args){
 }
 
 export const equal = overload(constantly(true), constantly(true), equal2, equalN);
-
-function min2(x, y){
-  return x < y ? x : y;
-}
-
-function max2(x, y){
-  return x > y ? x : y;
-}
-
-export const min = overload(null, identity, min2, reducing(min2));
-export const max = overload(null, identity, max2, reducing(max2));
 
 export function everyPred(...preds){
   return function(){

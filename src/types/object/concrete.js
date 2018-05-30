@@ -1,22 +1,34 @@
-import {IFn, IReduce, ILookup, IAssociative} from "../../protocols";
+import {IFn, IReduce, IKVReduce, ILookup, IAssociative, IEmptyableCollection} from "../../protocols";
 import {reducing} from "../reduced";
 import {apply} from "../function";
 import {overload, constantly} from "../../core";
 
-function selectKeys3(self, keys, init){
+export function juxtm(self, template){
+  return IKVReduce.reducekv(template, function(memo, key, f){
+    return IAssociative.assoc(memo, key, f(self));
+  }, IEmptyableCollection.empty(template));
+}
+
+export function selectKeys(self, keys){
   return IReduce.reduce(keys, function(memo, key){
     return IAssociative.assoc(memo, key, ILookup.lookup(self, key));
-  }, init);
+  }, IEmptyableCollection.empty(self));
 }
 
-function selectKeys2(self, keys){
-  return selectKeys3(self, keys, {});
+export function mapKeys(self, f){
+  return IKVReduce.reducekv(self, function(memo, key, value){
+    return IAssociative.assoc(memo, f(key), value);
+  }, IEmptyableCollection.empty(self));
 }
 
-export const selectKeys = overload(null, null, selectKeys2, selectKeys3);
+export function mapVals(self, f){
+  return IKVReduce.reducekv(self, function(memo, key, value){
+    return IAssociative.assoc(memo, key, f(value));
+  }, IEmptyableCollection.empty(self));
+}
 
 function defaults2(self, defaults){
-  return Object.assign({}, defaults, self);
+  return IKVReduce.reducekv(self, IAssociative.assoc, defaults);
 }
 
 export const defaults = overload(null, null, defaults2, reducing(defaults2));

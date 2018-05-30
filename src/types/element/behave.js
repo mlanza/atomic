@@ -1,9 +1,9 @@
 import {implement, surrogates} from '../protocol';
-import {IEvented, IAssociative, IEquiv, ICollection, INext, IArr, ISeq, IShow, ISeqable, IIndexed, ICounted, ILookup, IReduce, IEmptyableCollection, IHierarchy, IContent} from '../../protocols';
+import {IAppendable, IPrependable, IEvented, IAssociative, IEquiv, ICollection, INext, IArr, ISeq, IShow, ISeqable, IIndexed, ICounted, ILookup, IReduce, IEmptyableCollection, IHierarchy, IContent} from '../../protocols';
 import {EMPTY} from '../../types/empty';
 import {each} from '../../types/lazyseq/concrete';
 import {identity, constantly, effect} from '../../core';
-import {remove} from '../../multimethods/amalgam';
+import {del} from '../../multimethods/amalgam';
 import Element from './construct';
 
 function on(self, key, callback){
@@ -19,6 +19,16 @@ function off(self, key, callback){
 
 function contents(self){
   return ISeqable.seq(self.childNodes);
+}
+
+function append(self, other){
+  self.appendChild(other);
+  return self;
+}
+
+function prepend(self, other){
+  self.prepend(other);
+  return self;
 }
 
 function lookup(self, key){
@@ -51,11 +61,14 @@ function prevSibling(self){
 }
 
 function empty(self){
-  each(remove, children(self));
+  each(del, children(self));
 }
 
 export default effect(
   implement(IEmptyableCollection, {empty}),
+  implement(IAppendable, {append}),
+  implement(IPrependable, {prepend}),
+  implement(ICollection, {conj: append}),
   implement(IEvented, {on, off}),
   implement(ILookup, {lookup}),
   implement(IContent, {contents}),

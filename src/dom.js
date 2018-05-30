@@ -1,8 +1,8 @@
 import {overload, constantly, identity} from "./core";
-import {EMPTY, lazySeq, concat, partial, partially, comp, satisfies, compact, flatten, detect, filter, map, mapcat, mapping, mapcatting} from "./types";
-import {IHierarchy, IHierarchicalSet, IArr, IReduce, ISeqable} from "./protocols";
-import {add, matches} from "./multimethods";
-export {has, add, remove, transpose, matches} from "./multimethods";
+import {EMPTY, lazySeq, concat, partial, partially, comp, satisfies, compact, flatten, detect, filter, remove, each, map, mapcat, mapping, mapcatting, elements} from "./types";
+import {IContent, IHierarchy, IHierarchicalSet, IArr, IReduce, ISeqable} from "./protocols";
+import {has, add, del, transpose, matches} from "./multimethods";
+export {has, add, del, transpose, matches} from "./multimethods";
 
 export function expansive(f){
   function expand(...xs){
@@ -25,11 +25,11 @@ export function expansive(f){
 }
 
 export const tag = partially(expansive(function(name, ...contents){ //partially guarantees calling tag always produces a factory
-  return IReduce.reduce(add, document.createElement(name), contents);
+  return IReduce.reduce(contents, add, document.createElement(name));
 }));
 
 export const frag = expansive(function(...contents){
-  return IReduce.reduce(add, document.createDocumentFragment(), contents);
+  return IReduce.reduce(contents, add, document.createDocumentFragment());
 });
 
 function selects(pred){
@@ -51,7 +51,7 @@ export function closest(what, coll){
 }
 
 function sel2(pred, context){
-  return filter(selects(pred), descendants(context));
+  return elements(filter(selects(pred), descendants(context)));
 }
 
 function sel1(pred){
@@ -110,3 +110,79 @@ function prioritized(name, ...candidates){
 }
 
 export const children = prioritized("children", IHierarchicalSet, IHierarchy);
+
+export function toggle(el){
+  return transpose(el, {style: "display: none;"});
+}
+
+export function hide(el){
+  return add(el, {style: "display: none;"});
+}
+
+export function show(el){
+  return del(el, {style: "display: none;"});
+}
+
+function prop2(self, key){
+  return map(function(el){
+    return el[key];
+  }, self);
+}
+
+function prop3(self, key, value){
+  each(function(el){
+    el[key] = value;
+  }, self);
+}
+
+export const prop = overload(null, null, prop2, prop3);
+
+function value1(self){
+  return map(function(el){
+    return el.value;
+  }, remove(function(el){
+    return el.value == null;
+  }, self));
+}
+
+function value2(self, value){
+  each(function(el){
+    el.value = value;
+  }, remove(function(el){
+    return el.value == null;
+  }, self));
+}
+
+export const value = overload(null, value1, value2);
+
+function text1(self){
+  return map(function(node){
+    return node.data;
+  }, filter(function(node){
+    return node.nodeType === Node.TEXT_NODE;
+  }, IContent.contents(self)));
+}
+
+function text2(self, text){
+  each(function(node){
+    node.data = text;
+  }, filter(function(node){
+    return node.nodeType === Node.TEXT_NODE;
+  }, IContent.contents(self)));
+}
+
+export const text = overload(null, text1, text2);
+
+function html1(self){
+  return map(function(node){
+    return node.innerHTML;
+  }, self);
+}
+
+function html2(self, html){
+  return each(function(node){
+    return node.innerHTML = html;
+  }, self);
+}
+
+export const html = overload(null, html1, html2);
