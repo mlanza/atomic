@@ -106,7 +106,7 @@ export function see(about){
   return tap(partial(log, about));
 }
 
-export function reversed(f){
+export function flip(f){
   return function(...args){
     return f.apply(this, args.reverse());
   }
