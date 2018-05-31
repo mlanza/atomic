@@ -17,7 +17,6 @@ export * from "./types/list";
 export * from "./types/months";
 export * from "./types/nil";
 export * from "./types/nodelist";
-export * from "./types/nodes";
 export * from "./types/number";
 export * from "./types/object";
 export * from "./types/objectselection";

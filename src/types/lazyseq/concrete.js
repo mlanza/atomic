@@ -1,4 +1,4 @@
-import {isSequential, IInclusive, IIndexed, ICollection, IComparable, ICounted, ISeq, ISeqable, INext, IHierarchy, IHierarchicalSet, IReduce, IArr} from '../../protocols';
+import {isSequential, IInclusive, IIndexed, ICollection, IComparable, ICounted, ISeq, ISeqable, INext, IHierarchy, IReduce, IArr} from '../../protocols';
 import {identity, constantly, overload} from '../../core';
 import {EMPTY} from '../empty/construct';
 import {EMPTY_ARRAY} from '../array/construct';
@@ -10,7 +10,6 @@ import {isNil, isSome} from '../nil';
 import {cons} from '../list/construct';
 import {juxt, complement, comp, apply, partial} from '../function/concrete';
 import {lazySeq} from '../lazyseq/construct';
-import {nodes} from '../nodes/construct';
 import {concat, concatenated} from "../concatenated/construct";
 
 function transduce3(xform, f, coll){

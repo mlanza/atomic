@@ -1,7 +1,6 @@
 import {overload, constantly, identity} from "./core";
-import {EMPTY, lazySeq, concat, partial, partially, comp, satisfies, compact, flatten, detect, filter, remove, each, map, mapcat, nodes} from "./types";
-import {mapping, mapcatting} from "./types/nodes/behave";
-import {IContent, IHierarchy, IHierarchicalSet, IArr, IReduce, ISeqable} from "./protocols";
+import {EMPTY, lazySeq, cons, apply, concat, partial, partially, comp, satisfies, compact, flatten, detect, filter, remove, each, map, mapcat} from "./types";
+import {IHierarchy, IArr, IReduce, ISeqable} from "./protocols";
 import {has, add, del, transpose, matches} from "./multimethods";
 export {has, add, del, transpose, matches} from "./multimethods";
 
@@ -39,20 +38,18 @@ function selects(pred){
   }
 }
 
-export function closest(what, coll){
-  return mapping(function(el){
-    let target = el.parentNode;
-    while(target && target !== document){
-      if (matches(target, what)){
-        return target;
-      }
-      target = target.parentNode;
+export function closest(self, selector){
+  let target = self.parentNode;
+  while(target){
+    if (matches(target, selector)){
+      return target;
     }
-  })(coll);
+    target = target.parentNode;
+  }
 }
 
 function sel2(pred, context){
-  return nodes(filter(selects(pred), descendants(context)));
+  return filter(selects(pred), descendants(context));
 }
 
 function sel1(pred){
@@ -65,125 +62,86 @@ function sel0(){
 
 export const sel = overload(sel0, sel1, sel2);
 
-function follow(key){
-  return function following(el, memo){
-    memo = memo || EMPTY;
-    return el[key] && el[key] !== document ? lazySeq(el[key], function(){
-      return following(el[key], memo);
-    }) : memo;
+export function descendants(self){
+  const children = IHierarchy.children(self);
+  const grandchildren = mapcat(descendants, children);
+  return concat(children, grandchildren);
+}
+
+function follow(f){
+  return function step(self){
+    const other = f(self);
+    return other ? cons(other, step(other)) : EMPTY;
   }
 }
 
-const parentNodes         = follow("parentNode");
-const prevElementSiblings = follow("prevElementSibling");
-const nextElementSiblings = follow("nextElementSibling");
+export const parents      = follow(IHierarchy.parent);
+export const prevSiblings = follow(IHierarchy.prevSibling);
+export const nextSiblings = follow(IHierarchy.nextSibling);
+export const ancestors    = parents;
 
-export const ancestors = mapcatting(function(el){
-  const parents = parentNodes(el, EMPTY);
-  return concat(parents, ancestors(parents));
-});
-
-export const descendants = mapcatting(function(el){
-  const children = IHierarchy.children(el);
-  return concat(children, descendants(children));
-});
-
-export const prevSiblings = mapcatting(prevElementSiblings);
-export const nextSiblings = mapcatting(nextElementSiblings);
-
-export const siblings = mapcatting(function(el){
-  return concat(prevSiblings([el]), nextSiblings([el]));
-});
+export function siblings(self){
+  return concat(prevSiblings(self), nextSiblings(self));
+}
 
 export function andSelf(f, coll){
   return concat(ISeqable.seq(coll), f(coll));
 }
 
-export const parents = ancestors;
+const hidden = {style: "display: none;"};
 
-function prioritized(name, ...candidates){
-  return function(self){
-    const f = detect(function(candidate){
-      return satisfies(candidate, self);
-    }, candidates)[name];
-    return f.apply(this, arguments);
-  }
+export function toggle(self){
+  return transpose(self, hidden);
 }
 
-export const children = prioritized("children", IHierarchicalSet, IHierarchy);
-
-export function toggle(el){
-  return transpose(el, {style: "display: none;"});
+export function hide(self){
+  return add(self, hidden);
 }
 
-export function hide(el){
-  return add(el, {style: "display: none;"});
-}
-
-export function show(el){
-  return del(el, {style: "display: none;"});
+export function show(self){
+  return del(self, hidden);
 }
 
 function prop2(self, key){
-  return map(function(el){
-    return el[key];
-  }, self);
+  return self[key];
 }
 
 function prop3(self, key, value){
-  each(function(el){
-    el[key] = value;
-  }, self);
+  self[key] = value;
 }
 
 export const prop = overload(null, null, prop2, prop3);
 
 function value1(self){
-  return map(function(el){
-    return el.value;
-  }, remove(function(el){
-    return el.value == null;
-  }, self));
+  return self.value != null ? self.value : null;
 }
 
 function value2(self, value){
-  each(function(el){
-    el.value = value;
-  }, remove(function(el){
-    return el.value == null;
-  }, self));
+  if (self.value != null) {
+    self.value = value;
+  }
 }
 
 export const value = overload(null, value1, value2);
 
 function text1(self){
-  return map(function(node){
-    return node.data;
-  }, filter(function(node){
-    return node.nodeType === Node.TEXT_NODE;
-  }, IContent.contents(self)));
+  return self.nodeType === Node.TEXT_NODE ? self.data : null;
 }
 
 function text2(self, text){
-  each(function(node){
-    node.data = text;
-  }, filter(function(node){
-    return node.nodeType === Node.TEXT_NODE;
-  }, IContent.contents(self)));
+  if (self.nodeType === Node.TEXT_NODE) {
+    self.data = text;
+  }
 }
 
 export const text = overload(null, text1, text2);
 
 function html1(self){
-  return map(function(node){
-    return node.innerHTML;
-  }, self);
+  return self.innerHTML;
 }
 
 function html2(self, html){
-  return each(function(node){
-    return node.innerHTML = html;
-  }, self);
+  self.innerHTML = html;
 }
 
 export const html = overload(null, html1, html2);
