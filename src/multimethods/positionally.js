@@ -1,11 +1,8 @@
 import {multimethod} from "../types/multimethod/construct";
 import {isFunction} from "../types/function/construct";
-import {isNodeList} from "../types/nodelist/construct";
 import {isElement} from "../types/element/construct";
-import {isNodes} from "../types/nodes/construct";
-import {each} from "../types/lazyseq/concrete";
-import {signature, or} from "../predicates";
-import {isNodeSeq, IEvented, IHierarchy} from "../protocols";
+import {signature} from "../predicates";
+import {IEvented, IHierarchy} from "../protocols";
 
 export const before = multimethod();
 export const after  = multimethod();
@@ -28,16 +25,4 @@ IEvented.on(before.instance, signature(isElement, isFunction), function(self, ot
 
 IEvented.on(after.instance, signature(isElement, isFunction), function(self, other){
   return after(self, other());
-});
-
-IEvented.on(before.instance, isNodeSeq, function(self, ...args){
-  each(function(el){
-    return before(el, ...args);
-  }, self);
-});
-
-IEvented.on(after.instance, isNodeSeq, function(self, ...args){
-  each(function(el){
-    return after(el, ...args);
-  }, self);
 });

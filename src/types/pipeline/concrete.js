@@ -4,14 +4,17 @@
 
 import {log, overload, identity, doto} from "../../core";
 import {pipeline} from "./construct";
-import {partial} from "../function/concrete";
+import {partial, apply, comp} from "../function/concrete";
 import {compile} from "../object/concrete";
 import {isNil} from "../nil/construct";
 import {isBlank} from "../string/concrete";
 import {transduce} from "../lazyseq/concrete";
+import {mapcat, distinct, compact} from "../lazyseq/concrete";
 import {reduced} from "../reduced";
-import {map} from "../../transducers";
+import {EMPTY} from "../empty";
+import * as t from "../../transducers";
 import {update} from "../../associatives";
+import {isSequential, ISeqable} from "../../protocols";
 
 export function either(f){
   return function(...args){
@@ -45,10 +48,26 @@ export function logged(f){
   }
 }
 
+export function multiple(f){
+  return function(x, ...args){
+    const xs = isSequential(x) ? ISeqable.seq(x) : [x];
+    return compact(mapcat(function(x){
+      const result = apply(f, x, args);
+      return isSequential(result) ? ISeqable.seq(result) ? result : [] : [result];
+    }, xs));
+  }
+}
+
+export function unique(f){
+  return function(xs, ...args){
+    return distinct(f(xs, ...args));
+  }
+}
+
 function chainedN(how, init, ...fs){
-  return transduce(map(how), function(memo, f){
+  return transduce(t.map(how), function(memo, f){
     return f(memo);
-  }, init, fs);
+  }, how(identity)(init), fs);
 }
 
 export const chained = overload(null, function(how){
@@ -67,6 +86,7 @@ export const piped = overload(null, function(how){
 
 export const chain  = chained(identity);
 export const maybe  = chained(option);
+export const many   = chained(comp(unique, multiple));
 export const pipe   = piped(identity);
 export const opt    = piped(option);
 export const prom   = piped(future);

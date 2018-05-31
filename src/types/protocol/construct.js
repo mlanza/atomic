@@ -63,7 +63,7 @@ function satisfies1(protocol){
 
 function satisfies2(protocol, obj){
   const registry = protocol[REGISTRY];
-  return registry.get(obj) || registry.get(obj && obj.constructor) || registry.get(constructs(obj)) || supers(registry, Object.getPrototypeOf(obj));
+  return registry.get(obj) || registry.get(obj && obj.constructor) || registry.get(constructs(obj)) || (obj && supers(registry, Object.getPrototypeOf(obj)));
 }
 
 export const satisfies = overload(null, satisfies1, satisfies2);
