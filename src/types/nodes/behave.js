@@ -28,7 +28,7 @@ export const icontent = implement(IContent, {contents});
 export {mapping, mapcatting};
 
 export default effect(
-  implement(INodeSeq),
   series,
   ihierarchicalset,
-  icontent);
+  icontent,
+  implement(INodeSeq));

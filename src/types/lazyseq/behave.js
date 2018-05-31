@@ -1,7 +1,8 @@
 import {implement} from '../protocol';
-import {IInclusive, IFind, IEquiv, ICollection, INext, IArr, ISeq, IReduce, IKVReduce, ISeqable, ISequential, IIndexed, IEmptyableCollection, IShow, ICounted} from '../../protocols';
+import {IInclusive, IFind, IEquiv, ICollection, INext, IArr, ISeq, IReduce, IKVReduce, ISeqable, ISequential, IIndexed, IEmptyableCollection, IShow, ICounted, IAppendable, IPrependable} from '../../protocols';
 import {overload, identity, constantly, effect} from '../../core';
 import Reduced, {isReduced, reduced, unreduced} from "../reduced";
+import {concat} from "../concatenated/construct";
 import {EMPTY} from '../empty/construct';
 
 function reduce(self, xf, init){
@@ -104,6 +105,14 @@ function count(self){
   }, 0);
 }
 
+function append(self, other){
+  return concat(self, [other]);
+}
+
+function prepend(self, other){
+  return concat([other], self);
+}
+
 const toArray = overload(null, toArray1, toArray2);
 
 export const showable = implement(IShow, {show: show});
@@ -115,6 +124,8 @@ export default effect(
   iterable,
   showable,
   reduceable,
+  implement(IAppendable, {append}),
+  implement(IPrependable, {prepend}),
   implement(IReduce, {reduce}),
   implement(ICounted, {count}),
   implement(IEquiv, {equiv}),

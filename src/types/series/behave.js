@@ -29,12 +29,12 @@ function toArray(self){
   return IArr.toArray(self.items);
 }
 
-function append(self, last){
-  return self.constructor.from(IAppendable.append(self.items, last));
+function append(self, other){
+  return self.constructor.from(IAppendable.append(self.items, other));
 }
 
-function prepend(self, first){
-  return self.constructor.from(IPrependable.prepend(self.items, first));
+function prepend(self, other){
+  return self.constructor.from(IPrependable.prepend(self.items, other));
 }
 
 function includes(self, name){
