@@ -86,7 +86,8 @@ export const piped = overload(null, function(how){
 
 export const chain  = chained(identity);
 export const maybe  = chained(option);
-export const many   = chained(comp(unique, multiple));
+export const many   = chained(multiple);
+export const els    = chained(comp(unique, multiple));
 export const pipe   = piped(identity);
 export const opt    = piped(option);
 export const prom   = piped(future);

@@ -1,19 +1,15 @@
-import {overload} from '../../core';
+import {overload, partial} from '../../core';
 import {REGISTRY} from "./construct";
 
 export function mark(protocol){
-  return function(type){
-    implement3(protocol, type, {}); //marker interface
-  }
+  return implement2(protocol, {}); //marker interface
 }
 
 function implement2(protocol, behavior){
-  return function(type){
-    implement3(protocol, type, behavior);
-  }
+  return partial(implement3, protocol, behavior);
 }
 
-function implement3(protocol, type, behavior){
+function implement3(protocol, behavior, type){
   protocol[REGISTRY].set(type, behavior);
 }
 

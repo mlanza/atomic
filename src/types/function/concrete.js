@@ -4,7 +4,7 @@ import {isNil}  from "../nil";
 import {slice}  from "../array/concrete";
 import {reduce, reduced}  from "../reduced";
 import {isFunction}  from "./construct";
-export {complement} from "../../core";
+export {complement, partial} from "../../core";
 
 export function realize(g){
   return isFunction(g) ? g() : g;
@@ -16,12 +16,6 @@ export function realized(f){
       memo.push(realize(arg));
       return memo;
     }, []));
-  }
-}
-
-export function partial(f, ...applied){
-  return function(...args){
-    return f.apply(this, applied.concat(args));
   }
 }
 
