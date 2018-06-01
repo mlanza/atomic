@@ -10,6 +10,12 @@ export function complement(f){
   }
 }
 
+export function partial(f, ...applied){
+  return function(...args){
+    return f.apply(this, applied.concat(args));
+  }
+}
+
 export function counter(init){
   let memo = init || 0;
   return function(){

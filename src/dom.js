@@ -1,3 +1,4 @@
+import {implement} from './types/protocol';
 import {overload, constantly, identity} from "./core";
 import {EMPTY, lazySeq, cons, apply, concat, partial, partially, comp, satisfies, compact, flatten, detect, filter, remove, each, map, mapcat} from "./types";
 import {IHierarchy, IArr, IReduce, ISeqable} from "./protocols";
