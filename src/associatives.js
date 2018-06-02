@@ -1,5 +1,5 @@
 import {overload} from "./core";
-import {isAssociative, isSequential, isObj, ILookup, ISequential, IObj, ISeq, IAssociative, IReduce, IKVReduce, IEmptyableCollection, IEquiv, ICollection, ISeqable} from "./protocols";
+import {isAssociative, isSequential, isDescriptive, ILookup, ISequential, IDescriptive, ISeq, IAssociative, IReduce, IKVReduce, IEmptyableCollection, IEquiv, ICollection, ISeqable} from "./protocols";
 import {some, into} from "./types/lazyseq/concrete";
 import {slice} from "./types/array/concrete";
 import {apply} from "./types/function/concrete";
@@ -150,6 +150,6 @@ export const index = overload(null, null, index2, index3, index4);
 
 export function absorb(tgt, src){
   return IKVReduce.reducekv(src, function(memo, key, value){
-    return IAssociative.assoc(memo, key, isObj(value) ? IObj.toObject(absorb(get(memo, key), value)) : isSequential(value) ? into(IEmptyableCollection.empty(get(memo, key)), concat(get(memo, key), value)) : value);
+    return IAssociative.assoc(memo, key, isDescriptive(value) ? IDescriptive.toObject(absorb(get(memo, key), value)) : isSequential(value) ? into(IEmptyableCollection.empty(get(memo, key)), concat(get(memo, key), value)) : value);
   }, tgt);
 }

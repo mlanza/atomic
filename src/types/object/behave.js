@@ -1,6 +1,6 @@
 import {constantly, effect, identity} from '../../core';
 import {implement} from '../protocol';
-import {ISet, IEquiv, IMapEntry, IReduce, IKVReduce, ISeqable, ISequential, IShow, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, IFn, IMap, ISeq, IObj, ICloneable, IInclusive} from '../../protocols';
+import {ISet, IEquiv, IMapEntry, IReduce, IKVReduce, ISeqable, ISequential, IShow, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, IFn, IMap, ISeq, IDescriptive, ICloneable, IInclusive} from '../../protocols';
 import {objectSelection} from '../objectselection';
 import {reduced} from '../reduced';
 import {lazySeq} from '../lazyseq';
@@ -84,7 +84,7 @@ function show(self){
 
 export default effect(
   equivalence,
-  implement(IObj, {toObject: identity}),
+  implement(IDescriptive, {toObject: identity}),
   implement(IFind, {find}),
   implement(ISet, {superset}),
   implement(IInclusive, {includes}),

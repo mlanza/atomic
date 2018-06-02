@@ -1,6 +1,6 @@
 import {overload, identity} from "./core";
 import {reducing} from "./types/reduced";
-import {IAppendable, IAssociative, ICloneable, ICollection, IComparable, IContent, ICounted, IDeref, IDisposable, IEmptyableCollection, IEquiv, IEvented, IFind, IFn, IHierarchy, IInclusive, IIndexed, IKVReduce, ILookup, IMap, IMapEntry, INext, IObj, IPrependable, IPublish, IReduce, IReset, IReversible, ISeq, ISeqable, ISequential, ISet, IShow, ISteppable, ISubscribe, ISwap, IUnit} from "./protocols";
+import {IAppendable, IAssociative, ICloneable, ICollection, IComparable, IContent, ICounted, IDeref, IDisposable, IEmptyableCollection, IEquiv, IEvented, IFind, IFn, IHierarchy, IInclusive, IIndexed, IKVReduce, ILookup, IMap, IMapEntry, INext, IDescriptive, IPrependable, IPublish, IReduce, IReset, IReversible, ISeq, ISeqable, ISequential, ISet, IShow, ISteppable, ISubscribe, ISwap, IUnit} from "./protocols";
 import * as T from "./types";
 import * as t from "./transducers";
 import * as d from "./dom";
@@ -49,7 +49,7 @@ export const dispose = IDisposable.dispose;
 export const empty = IEmptyableCollection.empty;
 export const equiv = IEquiv.equiv;
 export const conj = ICollection.conj;
-export const toObject = IObj.toObject;
+export const toObject = IDescriptive.toObject;
 export const reset = IReset.reset;
 export const on = IEvented.on;
 export const off = IEvented.off;

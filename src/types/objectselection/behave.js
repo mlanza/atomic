@@ -1,7 +1,7 @@
 import {implement} from '../protocol';
 import {identity, constantly, effect} from '../../core';
 import {objectSelection} from '../../types/objectselection/construct';
-import {IObj, IFind, ICollection, IReduce, IKVReduce, INext, ISequential, ISeq, ISeqable, IIndexed, IShow, ICounted, ILookup, IFn, IMap, ICloneable, IEmptyableCollection} from '../../protocols';
+import {IDescriptive, IFind, ICollection, IReduce, IKVReduce, INext, ISequential, ISeq, ISeqable, IIndexed, IShow, ICounted, ILookup, IFn, IMap, ICloneable, IEmptyableCollection} from '../../protocols';
 import {lazySeq} from '../../types/lazyseq/construct';
 import {EMPTY_OBJECT} from '../../types/object/construct';
 import * as t from '../../types/reduced';
@@ -79,7 +79,7 @@ function show(self){
 
 export default effect(
   equivalence,
-  implement(IObj, {toObject}),
+  implement(IDescriptive, {toObject}),
   implement(IFind, {find}),
   implement(IMap, {dissoc, keys, vals}),
   implement(IReduce, {reduce}),
