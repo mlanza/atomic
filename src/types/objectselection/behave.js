@@ -1,7 +1,7 @@
 import {implement} from '../protocol';
 import {identity, constantly, effect} from '../../core';
 import {objectSelection} from '../../types/objectselection/construct';
-import {IDescriptive, IFind, ICollection, IReduce, IKVReduce, INext, ISequential, ISeq, ISeqable, IIndexed, IShow, ICounted, ILookup, IFn, IMap, ICloneable, IEmptyableCollection} from '../../protocols';
+import {IObject, IDescriptive, IFind, ICollection, IReduce, IKVReduce, INext, IArray, ISeq, ISeqable, IIndexed, IShow, ICounted, ILookup, IFn, IMap, ICloneable, IEmptyableCollection} from '../../protocols';
 import {lazySeq} from '../../types/lazyseq/construct';
 import {EMPTY_OBJECT} from '../../types/object/construct';
 import * as t from '../../types/reduced';
@@ -52,7 +52,7 @@ function count(self){
 }
 
 function clone(self){
-  return t.reduce(ISequential.toArray(seq(self)), function(memo, pair){
+  return t.reduce(IArray.toArray(seq(self)), function(memo, pair){
     memo[pair[0]] = pair[1];
     return memo;
   }, {});
@@ -71,7 +71,7 @@ function reducekv(self, xf, init){
 }
 
 function show(self){
-  const pairs = ISequential.toArray(seq(self));
+  const pairs = IArray.toArray(seq(self));
   return "#object-selection {" + pairs.map(function(pair){
     return show(pair[0]) + ": " + show(pair[1]);
   }).join(", ") + "}";
@@ -79,7 +79,8 @@ function show(self){
 
 export default effect(
   equivalence,
-  implement(IDescriptive, {toObject}),
+  implement(IDescriptive),
+  implement(IObject, {toObject}),
   implement(IFind, {find}),
   implement(IMap, {dissoc, keys, vals}),
   implement(IReduce, {reduce}),

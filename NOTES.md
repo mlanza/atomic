@@ -23,6 +23,7 @@ grep -R "some" --exclude-dir="*node*" .
 * Consider using binary accum functions (e.g. both, either) from which to create reducing versions (and, or) of unlimited arity.
 * The api documentation should offer practical examples showcasing the usefulness of a function.  I found that some popular libraries seem to include arbitrary examples that were of no help.
 * Prefer pure functions
+* JavaScript models structured data primarily with two constructs: Arrays and Objects.  Arrays provides a series of things (ISequential).  Objects provide descriptions of things and are like dictionaries except the keys are always strings (IDescriptive).  ISequential is a promise that a thing contains a series of other things.  Neither of protocol promises order.
 * One should avoid using the library api to act on Map and Set types.  In it's attempt to avoid mutation, it is grossly inefficient.  It exists only to allow interoperability.
 * Some protocols are superseded by a public api (like ICompare and IReduce).  While the protocol can be used directly, prefer the public api when unsure of differences in use.
 * Both protocols and multimethods are just implementation details over programming interfaces.  This leaves room to change the details for performance reasons or otherwise without impacting consumers.

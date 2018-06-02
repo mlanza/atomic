@@ -1,6 +1,6 @@
 import {effect} from "../../core";
 import {implement} from '../protocol';
-import {IReduce, IIndexed, ISeqable, ISeq, INext, IInclusive, IAppendable, IPrependable, ICounted, ILookup, IFn, ISequential, IEmptyableCollection} from '../../protocols';
+import {IArray, IReduce, IIndexed, ISeqable, ISeq, INext, IInclusive, IAppendable, IPrependable, ICounted, ILookup, IFn, ISequential, IEmptyableCollection} from '../../protocols';
 import {iterable} from '../lazyseq/behave';
 import {constructs} from '../function';
 
@@ -9,7 +9,7 @@ function seq(self){
 }
 
 function toArray(self){
-  return ISequential.toArray(self.items);
+  return IArray.toArray(self.items);
 }
 
 function first(self){
@@ -59,12 +59,13 @@ function construction(Type){
 export default effect(
   construction,
   iterable,
+  implement(ISequential),
   implement(ICounted, {count}),
   implement(IInclusive, {includes}),
   implement(IAppendable, {append}),
   implement(IPrependable, {prepend}),
   implement(IEmptyableCollection, {empty}),
-  implement(ISequential, {toArray}),
+  implement(IArray, {toArray}),
   implement(ISeqable, {seq}),
   implement(INext, {next}),
   implement(IReduce, {reduce}),

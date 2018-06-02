@@ -1,5 +1,5 @@
 export default Array;
-export function array(...xs){
-  return Array(...xs);
+export function isArray(self){
+  return self instanceof Array;
 }
 export const EMPTY_ARRAY  = Object.freeze([]);

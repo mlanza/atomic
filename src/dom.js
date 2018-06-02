@@ -1,13 +1,13 @@
 import {implement} from './types/protocol';
 import {overload, constantly, identity, subj} from "./core";
 import {EMPTY, lazySeq, cons, apply, concat, partial, partially, comp, satisfies, compact, flatten, detect, filter, remove, each, map, mapcat, selfish} from "./types";
-import {IHierarchy, ISequential, IReduce, ISeqable} from "./protocols";
+import {IHierarchy, IArray, IReduce, ISeqable} from "./protocols";
 import {has, inject, yank, transpose, matches} from "./multimethods";
 export {has, inject, yank, transpose, matches} from "./multimethods";
 
 export function expansive(f){
   function expand(...xs){
-    const contents = ISequential.toArray(compact(flatten(xs)));
+    const contents = IArray.toArray(compact(flatten(xs)));
     return detect(function(content){
       return typeof content === "function";
     }, contents) ? step(contents) : f(...contents);

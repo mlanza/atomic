@@ -1,4 +1,5 @@
 export * from "./protocols/iappendable";
+export * from "./protocols/iarray";
 export * from "./protocols/iassociative";
 export * from "./protocols/icloneable";
 export * from "./protocols/icollection";
@@ -20,6 +21,7 @@ export * from "./protocols/ilookup";
 export * from "./protocols/imap";
 export * from "./protocols/imapentry";
 export * from "./protocols/inext";
+export * from "./protocols/iobject";
 export * from "./protocols/idescriptive";
 export * from "./protocols/iprependable";
 export * from "./protocols/ipublish";
