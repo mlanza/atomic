@@ -3,7 +3,7 @@ import {implement} from '../protocol';
 import {EMPTY} from '../../types/empty/construct';
 import {cons} from '../../types/list/construct';
 import {Reduced, unreduced} from '../../types/reduced';
-import {IArr, ICloneable, IReduce, ICollection, IEmptyableCollection, INext, ISeq, ICounted, ISeqable, ISequential, IIndexed} from '../../protocols';
+import {ICloneable, IReduce, ICollection, IEmptyableCollection, INext, ISeq, ICounted, ISeqable, ISequential, IIndexed} from '../../protocols';
 import {revSeq} from './construct';
 import {showable, iterable} from '../lazyseq/behave';
 
@@ -54,8 +54,7 @@ const reduce = overload(null, null, reduce2, reduce3);
 export default effect(
   showable,
   iterable,
-  implement(IArr, {toArray: Array.from}),
-  implement(ISequential),
+  implement(ISequential, {toArray: Array.from}),
   implement(IEmptyableCollection, {empty: constantly(EMPTY)}),
   implement(IReduce, {reduce}),
   implement(ICollection, {conj}),

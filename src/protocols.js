@@ -1,5 +1,4 @@
 export * from "./protocols/iappendable";
-export * from "./protocols/iarr";
 export * from "./protocols/iassociative";
 export * from "./protocols/icloneable";
 export * from "./protocols/icollection";

@@ -1,5 +1,5 @@
 import {implement, surrogates} from '../protocol';
-import {IAppendable, IPrependable, IEvented, IAssociative, IEquiv, ICollection, INext, IArr, ISeq, IShow, ISeqable, IIndexed, ICounted, ILookup, IReduce, IEmptyableCollection, IHierarchy, IContent} from '../../protocols';
+import {IAppendable, IPrependable, IEvented, IAssociative, IEquiv, ICollection, INext, ISeq, IShow, ISeqable, IIndexed, ICounted, ILookup, IReduce, IEmptyableCollection, IHierarchy, IContent} from '../../protocols';
 import {EMPTY} from '../../types/empty';
 import {each} from '../../types/lazyseq/concrete';
 import {identity, constantly, effect} from '../../core';

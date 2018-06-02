@@ -1,5 +1,5 @@
 import {implement} from '../protocol';
-import {IInclusive, IFind, IEquiv, ICollection, INext, IArr, ISeq, IReduce, IKVReduce, ISeqable, ISequential, IIndexed, IEmptyableCollection, IShow, ICounted, IAppendable, IPrependable} from '../../protocols';
+import {IInclusive, IFind, IEquiv, ICollection, INext, ISeq, IReduce, IKVReduce, ISeqable, ISequential, IIndexed, IEmptyableCollection, IShow, ICounted, IAppendable, IPrependable} from '../../protocols';
 import {overload, identity, constantly, effect} from '../../core';
 import Reduced, {isReduced, reduced, unreduced} from "../reduced";
 import {concat} from "../concatenated/construct";
@@ -62,7 +62,7 @@ function next(self){
 }
 
 function show(self){
-  var xs = IArr.toArray(ISeqable.seq(self));
+  var xs = ISequential.toArray(ISeqable.seq(self));
   return "#" + self.constructor.name +  " [" + xs.map(IShow.show).join(", ") + "]";
 }
 
@@ -130,9 +130,8 @@ export default effect(
   implement(ICounted, {count}),
   implement(IEquiv, {equiv}),
   implement(IFind, {find}),
-  implement(ISequential),
   implement(IEmptyableCollection, {empty: EMPTY}),
-  implement(IArr, {toArray}),
+  implement(ISequential, {toArray}),
   implement(ISeq, {first, rest}),
   implement(ISeqable, {seq: identity}),
   implement(INext, {next}));

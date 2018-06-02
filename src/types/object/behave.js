@@ -1,6 +1,6 @@
 import {constantly, effect, identity} from '../../core';
 import {implement} from '../protocol';
-import {ISet, IEquiv, IMapEntry, IReduce, IKVReduce, ISeqable, IShow, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, IFn, IMap, ISeq, IArr, IObj, ICloneable, IInclusive} from '../../protocols';
+import {ISet, IEquiv, IMapEntry, IReduce, IKVReduce, ISeqable, ISequential, IShow, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, IFn, IMap, ISeq, IObj, ICloneable, IInclusive} from '../../protocols';
 import {objectSelection} from '../objectselection';
 import {reduced} from '../reduced';
 import {lazySeq} from '../lazyseq';
@@ -76,7 +76,7 @@ function reducekv(self, xf, init){
 }
 
 function show(self){
-  const xs = IArr.toArray(seq(self));
+  const xs = ISequential.toArray(seq(self));
   return "{" + xs.map(function(pair){
     return show(pair[0]) + ": " + show(pair[1]);
   }).join(", ") + "}";

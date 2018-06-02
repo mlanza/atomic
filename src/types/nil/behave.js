@@ -1,4 +1,4 @@
-import {IAssociative, IEquiv, ICollection, INext, IArr, ISeq, IShow, ISeqable, IIndexed, ICounted, ILookup, IReduce, IEmptyableCollection} from '../../protocols';
+import {IAssociative, IEquiv, ICollection, INext, ISeq, IShow, ISeqable, IIndexed, ICounted, ILookup, IReduce, IEmptyableCollection, ISequential} from '../../protocols';
 import {EMPTY} from '../../types/empty';
 import {identity, constantly, effect} from '../../core';
 import {implement, surrogates} from '../protocol';
@@ -33,7 +33,7 @@ export default effect(
   implement(ILookup, {lookup: constantly(null)}),
   implement(IAssociative, {assoc: assoc, contains: constantly(false)}),
   implement(INext, {next: identity}),
-  implement(IArr, {toArray: constantly(EMPTY_ARRAY)}),
+  implement(ISequential, {toArray: constantly(EMPTY_ARRAY)}),
   implement(ISeq, {first: identity, rest: constantly(EMPTY)}),
   implement(ISeqable, {seq: identity}),
   implement(IIndexed, {nth: identity}),

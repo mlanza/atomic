@@ -2,7 +2,7 @@ import {identity, effect} from '../../core';
 import {implement} from '../protocol';
 import {concatenated, concat} from '../../types/concatenated/construct';
 import {isReduced, unreduced} from '../../types/reduced';
-import {ICollection, INext, ISeq, IArr, ICounted, ISeqable, IIndexed, IShow, IReduce, ISequential} from '../../protocols';
+import {ICollection, INext, ISeq, ICounted, ISeqable, IIndexed, IShow, IReduce, ISequential} from '../../protocols';
 import {apply} from '../../types/function/concrete';
 import {EMPTY} from "../empty";
 import {reduceable, showable, iterable} from '../lazyseq/behave';
@@ -51,11 +51,10 @@ export default effect(
   iterable,
   reduceable,
   showable,
-  implement(ISequential),
   implement(IReduce, {reduce}),
   implement(ICollection, {conj}),
   implement(INext, {next}),
   implement(ISeq, {first, rest}),
-  implement(IArr, {toArray}),
+  implement(ISequential, {toArray}),
   implement(ISeqable, {seq: identity}),
   implement(ICounted, {count}));
