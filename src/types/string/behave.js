@@ -2,10 +2,18 @@ import {IIndexed, ISeqable, ISeq, IInclusive, IAppendable, IPrependable, IShow, 
 import {constantly, effect} from "../../core";
 import {implement} from '../protocol';
 import {EMPTY_STRING} from './construct';
+import {EMPTY} from '../empty/construct';
+import {lazySeq} from '../lazyseq/construct';
 import {indexed} from '../array/behave';
 
+function seq2(self, idx){
+  return idx < self.length ? lazySeq(self[idx], function(){
+    return seq2(self, idx + 1);
+  }) : EMPTY;
+}
+
 function seq(self){
-  return self.length ? self : null;
+  return seq2(self, 0);
 }
 
 function lookup(self, key){
