@@ -1,5 +1,5 @@
 import {overload} from "./core";
-import {isAssociative, isSequential, isObj, ILookup, IArr, IObj, ISeq, IAssociative, IReduce, IKVReduce, IEmptyableCollection, IEquiv, ICollection, ISeqable} from "./protocols";
+import {isAssociative, isSequential, isObj, ILookup, ISequential, IObj, ISeq, IAssociative, IReduce, IKVReduce, IEmptyableCollection, IEquiv, ICollection, ISeqable} from "./protocols";
 import {some, into} from "./types/lazyseq/concrete";
 import {slice} from "./types/array/concrete";
 import {apply} from "./types/function/concrete";
@@ -22,7 +22,7 @@ export function assocIn(self, keys, value){
     case 1:
       return IEquiv.equiv(ILookup.lookup(self, key), value) ? self : IAssociative.assoc(self, key, value); //maintain referential equivalence
     default:
-      return IAssociative.assoc(self, key, assocIn(get(self, key), IArr.toArray(ISeq.rest(keys)), value));
+      return IAssociative.assoc(self, key, assocIn(get(self, key), ISequential.toArray(ISeq.rest(keys)), value));
   }
 }
 
@@ -51,22 +51,22 @@ function updateN(self, key, f){
 export const update = overload(null, null, null, update3, update4, update5, update6, updateN);
 
 function updateIn3(self, keys, f){
-  var k = keys[0], ks = IArr.toArray(ISeq.rest(keys));
+  var k = keys[0], ks = ISequential.toArray(ISeq.rest(keys));
   return ks.length ? IAssociative.assoc(self, k, updateIn3(get(self, k), ks, f)) : update3(self, k, f);
 }
 
 function updateIn4(self, keys, f, a){
-  var k = keys[0], ks = IArr.toArray(ISeq.rest(keys));
+  var k = keys[0], ks = ISequential.toArray(ISeq.rest(keys));
   return ks.length ? IAssociative.assoc(self, k, updateIn4(get(self, k), ks, f, a)) : update4(self, k, f, a);
 }
 
 function updateIn5(self, keys, f, a, b){
-  var k = keys[0], ks = IArr.toArray(ISeq.rest(keys));
+  var k = keys[0], ks = ISequential.toArray(ISeq.rest(keys));
   return ks.length ? IAssociative.assoc(self, k, updateIn5(get(self, k), ks, f, a, b)) : update5(self, k, f, a, b);
 }
 
 function updateIn6(self, key, f, a, b, c){
-  var k = keys[0], ks = IArr.toArray(ISeq.rest(keys));
+  var k = keys[0], ks = ISequential.toArray(ISeq.rest(keys));
   return ks.length ? IAssociative.assoc(self, k, updateIn6(get(self, k), ks, f, a, b, c)) : update6(self, k, f, a, b, c);
 }
 

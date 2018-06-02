@@ -1,6 +1,6 @@
 import {overload, identity} from "./core";
 import {reducing} from "./types/reduced";
-import {IAppendable, IArr, IAssociative, ICloneable, ICollection, IComparable, IContent, ICounted, IDeref, IDisposable, IEmptyableCollection, IEquiv, IEvented, IFind, IFn, IHierarchy, IInclusive, IIndexed, IKVReduce, ILookup, IMap, IMapEntry, INext, IObj, IPrependable, IPublish, IReduce, IReset, IReversible, ISeq, ISeqable, ISet, IShow, ISteppable, ISubscribe, ISwap, IUnit} from "./protocols";
+import {IAppendable, IAssociative, ICloneable, ICollection, IComparable, IContent, ICounted, IDeref, IDisposable, IEmptyableCollection, IEquiv, IEvented, IFind, IFn, IHierarchy, IInclusive, IIndexed, IKVReduce, ILookup, IMap, IMapEntry, INext, IObj, IPrependable, IPublish, IReduce, IReset, IReversible, ISeq, ISeqable, ISequential, ISet, IShow, ISteppable, ISubscribe, ISwap, IUnit} from "./protocols";
 import * as T from "./types";
 import * as t from "./transducers";
 import * as d from "./dom";
@@ -60,7 +60,7 @@ export const children = IHierarchy.children;
 export const nextSibling = IHierarchy.nextSibling;
 export const prevSibling = IHierarchy.prevSibling;
 export const compare = IComparable.compare;
-export const toArray = IArr.toArray;
+export const toArray = ISequential.toArray;
 export const assoc = IAssociative.assoc;
 export const contains = IAssociative.contains;
 export const append = overload(null, identity, IAppendable.append, reducing(IAppendable.append));

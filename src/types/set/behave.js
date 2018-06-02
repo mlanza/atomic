@@ -1,7 +1,7 @@
 import {effect, identity, constantly} from '../../core';
 import {implement} from '../protocol';
 import {set, Set} from './construct';
-import {ISeq, ISet, INext, IArr, ICounted, ICollection, IEmptyableCollection, IInclusive, ICloneable} from '../../protocols';
+import {ISeq, ISet, INext, ISequential, ICounted, ICollection, IEmptyableCollection, IInclusive, ICloneable} from '../../protocols';
 import {EMPTY} from '../../types/empty/construct';
 
 function union(self, other){
@@ -43,7 +43,7 @@ function count(self){
 }
 
 export default effect(
-  implement(IArr, {toArray}),
+  implement(ISequential, {toArray}),
   implement(IInclusive, {includes}),
   implement(ISet, {union, intersection}),
   implement(ICloneable, {clone: identity}),
