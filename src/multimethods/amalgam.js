@@ -8,7 +8,7 @@ import {isString, trim, split} from "../types/string";
 import {isFunction} from "../types/function/construct";
 import {signature, or} from "../predicates";
 import {apply} from "../types/function/concrete";
-import {IReduce, IKVReduce, IEvented, IHierarchy, IContent, isSequential, isObj} from "../protocols";
+import {IReduce, IKVReduce, IEvented, IHierarchy, IContent, isSequential, isDescriptive} from "../protocols";
 
 export const has = multimethod();
 export const inject = multimethod();
@@ -143,7 +143,7 @@ IEvented.on(yank.instance, elementEventCallback, function(self, key, f){
 
 /* Element / Attributes */
 
-const elementAttrs = signature(isElement, isObj);
+const elementAttrs = signature(isElement, isDescriptive);
 
 IEvented.on(inject.instance, elementAttrs, function(self, obj){
   return IKVReduce.reducekv(obj, inject, self);
