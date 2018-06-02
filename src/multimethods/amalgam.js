@@ -4,35 +4,30 @@ import {detect, each, mapa, compact} from "../types/lazyseq/concrete";
 import {reduced} from "../types/reduced/construct";
 import {multimethod} from "../types/multimethod/construct";
 import {isElement} from "../types/element/construct";
-import {isArray} from "../types/array";
 import {isString, trim, split} from "../types/string";
 import {isFunction} from "../types/function/construct";
-import {isNodeList} from "../types/nodelist/construct";
-import {isObject} from "../types/object/construct";
-import {isObjectSelection} from "../types/objectselection/construct";
 import {signature, or} from "../predicates";
 import {apply} from "../types/function/concrete";
-import {IReduce, IKVReduce, IEvented, IHierarchy, IContent} from "../protocols";
+import {IReduce, IKVReduce, IEvented, IHierarchy, IContent, isSequential, isObj} from "../protocols";
 
 export const has = multimethod();
-export const add = multimethod();
-export const del = multimethod();
+export const inject = multimethod();
+export const yank = multimethod();
 export const transpose = multimethod(function(self, other){
-  return has(self, other) ? del(self, other) : add(self, other);
+  return has(self, other) ? yank(self, other) : inject(self, other);
 });
 
 /* Element */
 
-IEvented.on(del.instance, signature(isElement), function(self){
-  return del(IHierarchy.parent(self), self);
+IEvented.on(yank.instance, signature(isElement), function(self){
+  return yank(IHierarchy.parent(self), self);
 });
-
 
 /* Element / Keys */
 
-const elementKeys = signature(isElement, isArray);
+const elementKeys = signature(isElement, isSequential);
 
-IEvented.on(del.instance, elementKeys, function(self, keys){
+IEvented.on(yank.instance, elementKeys, function(self, keys){
   each(self.removeAttribute.bind(self), keys);
   return self;
 });
@@ -49,7 +44,7 @@ const elementStyleValue = signature(isElement, function(name){
   return name === "style";
 }, null);
 
-IEvented.on(add.instance, elementStyleValue, function(self, key, styles){
+IEvented.on(inject.instance, elementStyleValue, function(self, key, styles){
   each(function(style){
     const [key, value] = mapa(trim, compact(split(style, ":")));
     self.style[key] = value;
@@ -57,7 +52,7 @@ IEvented.on(add.instance, elementStyleValue, function(self, key, styles){
   return self;
 });
 
-IEvented.on(del.instance, elementStyleValue, function(self, key, styles){
+IEvented.on(yank.instance, elementStyleValue, function(self, key, styles){
   each(function(style){
     const [key, value] = mapa(trim, compact(split(style, ":")));
     if (self.style[key] == value) {
@@ -88,13 +83,13 @@ const elementClassValue = signature(isElement, function(name){
   return name === "class";
 }, null);
 
-IEvented.on(add.instance, elementClassValue, function(self, key, value){
-  each(self.classList.add.bind(self.classList), value.split(" "));
+IEvented.on(inject.instance, elementClassValue, function(self, key, value){
+  each(self.classList.inject.bind(self.classList), value.split(" "));
   return self;
 });
 
-IEvented.on(del.instance, elementClassValue, function(self, key, value){
-  each(self.classList.del.bind(self.classList), value.split(" "));
+IEvented.on(yank.instance, elementClassValue, function(self, key, value){
+  each(self.classList.yank.bind(self.classList), value.split(" "));
   return self;
 });
 
@@ -113,12 +108,12 @@ IEvented.on(has.instance, elementClassValue, function(self, key, value){
 
 const elementKeyValue = signature(isElement, isString, null);
 
-IEvented.on(add.instance, elementKeyValue, function(self, key, value){
+IEvented.on(inject.instance, elementKeyValue, function(self, key, value){
   self.setAttribute(key, value);
   return self;
 });
 
-IEvented.on(del.instance, elementKeyValue, function(self, key, value){
+IEvented.on(yank.instance, elementKeyValue, function(self, key, value){
   if (value == null || value == self.getAttribute(key)) {
     self.removeAttribute(key);
   }
@@ -136,22 +131,22 @@ IEvented.on(transpose.instance, elementKeyValue, function(self, key, value){
 
 const elementEventCallback = signature(isElement, isString, isFunction);
 
-IEvented.on(add.instance, elementEventCallback, function(self, key, f){
+IEvented.on(inject.instance, elementEventCallback, function(self, key, f){
   self.addEventListener(key, f);
   return self;
 });
 
-IEvented.on(del.instance, elementEventCallback, function(self, key, f){
+IEvented.on(yank.instance, elementEventCallback, function(self, key, f){
   self.delEventListener(key, f);
   return self;
 });
 
 /* Element / Attributes */
 
-const elementAttrs = signature(isElement, or(isObjectSelection, isObject));
+const elementAttrs = signature(isElement, isObj);
 
-IEvented.on(add.instance, elementAttrs, function(self, obj){
-  return IKVReduce.reducekv(obj, add, self);
+IEvented.on(inject.instance, elementAttrs, function(self, obj){
+  return IKVReduce.reducekv(obj, inject, self);
 });
 
 IEvented.on(has.instance, elementAttrs, function(self, obj){
@@ -160,8 +155,8 @@ IEvented.on(has.instance, elementAttrs, function(self, obj){
   }, true);
 });
 
-IEvented.on(del.instance, elementAttrs, function(self, obj){
-  return IKVReduce.reducekv(obj, del, self);
+IEvented.on(yank.instance, elementAttrs, function(self, obj){
+  return IKVReduce.reducekv(obj, yank, self);
 });
 
 IEvented.on(transpose.instance, elementAttrs, function(self, obj){
@@ -178,12 +173,12 @@ IEvented.on(has.instance, elementText, function(self, text){
   }, IContent.contents(self));
 });
 
-IEvented.on(add.instance, elementText, function(self, text){
+IEvented.on(inject.instance, elementText, function(self, text){
   self.appendChild(document.createTextNode(text));
   return self;
 });
 
-IEvented.on(del.instance, elementText, function(self, text){
+IEvented.on(yank.instance, elementText, function(self, text){
   const node = has(self, text);
   node && self.delChild(node);
   return self;
@@ -199,12 +194,12 @@ IEvented.on(has.instance, elementElement, function(self, child){
   }, IContent.contents(self));
 });
 
-IEvented.on(add.instance, elementElement, function(self, child){
+IEvented.on(inject.instance, elementElement, function(self, child){
   self.appendChild(child);
   return self;
 });
 
-IEvented.on(del.instance, elementElement, function(self, child){
+IEvented.on(yank.instance, elementElement, function(self, child){
   self.delChild(child);
   return self;
 });
