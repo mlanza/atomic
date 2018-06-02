@@ -1,4 +1,4 @@
-import {IIndexed, ISeqable, ISeq, IInclusive, IAppendable, IPrependable, IShow, ICounted, ILookup, IFn, IEmptyableCollection} from '../../protocols';
+import {IArray, IIndexed, ISeqable, ISeq, IInclusive, IAppendable, IPrependable, IShow, ICounted, ILookup, IFn, IEmptyableCollection} from '../../protocols';
 import {constantly, effect} from "../../core";
 import {implement} from '../protocol';
 import {EMPTY_STRING} from './construct';
@@ -56,8 +56,13 @@ function includes(self, str){
   return self.indexOf(str) > -1;
 }
 
+function toArray(self){
+  return self.split("");
+}
+
 export default effect(
   indexed,
+  implement(IArray, {toArray}),
   implement(IInclusive, {includes}),
   implement(IAppendable, {append}),
   implement(IPrependable, {prepend}),

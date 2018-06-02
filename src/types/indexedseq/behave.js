@@ -2,7 +2,7 @@ import {constantly, identity, effect} from '../../core';
 import {implement} from '../protocol';
 import {indexedSeq} from './construct';
 import {revSeq} from '../../types/revseq/construct';
-import {IReversible, IMapEntry, IFind, IInclusive, IAssociative, IAppendable, IPrependable, ICollection, INext, ICounted, IReduce, IKVReduce, ISeq, ISeqable, ISequential, IIndexed, IShow, ILookup, IFn, IEmptyableCollection} from '../../protocols';
+import {IArray, IReversible, IMapEntry, IFind, IInclusive, IAssociative, IAppendable, IPrependable, ICollection, INext, ICounted, IReduce, IKVReduce, ISeq, ISeqable, ISequential, IIndexed, IShow, ILookup, IFn, IEmptyableCollection} from '../../protocols';
 import * as r from '../../types/reduced';
 import {EMPTY_ARRAY} from '../../types/array/construct';
 import {showable, iterable} from '../lazyseq/behave';
@@ -78,6 +78,7 @@ function includes(self, x){
 export default effect(
   showable,
   iterable,
+  implement(ISequential),
   implement(IReversible, {reverse}),
   implement(IMapEntry, {key, val}),
   implement(IInclusive, {includes}),
@@ -92,7 +93,7 @@ export default effect(
   implement(ILookup, {lookup}),
   implement(ICollection, {conj: append}),
   implement(INext, {next}),
-  implement(ISequential, {toArray}),
+  implement(IArray, {toArray}),
   implement(ISeq, {first, rest}),
   implement(ISeqable, {seq: identity}),
   implement(ICounted, {count}));

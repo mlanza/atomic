@@ -1,5 +1,5 @@
 import {overload, identity} from "./core";
-import {ISequential, IAssociative, ICounted, IDeref, IEmptyableCollection, IKVReduce, IMapEntry, IReduce, ISeqable} from "./protocols";
+import {IArray, IAssociative, ICounted, IDeref, IEmptyableCollection, IKVReduce, IMapEntry, IReduce, ISeqable} from "./protocols";
 import * as T from "./types";
 
 function time1(f){
@@ -32,7 +32,7 @@ export const time = overload(null, time1, time2, time3);
 function race4(chain, fs, n, by){
   return T.sort(T.asc(function(pair){
     return by(IMapEntry.val(pair));
-  }), ISequential.toArray(ISeqable.seq(IKVReduce.reducekv(fs, function(memo, key, f){
+  }), IArray.toArray(ISeqable.seq(IKVReduce.reducekv(fs, function(memo, key, f){
     return IAssociative.assoc(memo, key, time(chain, f, n));
   }, IEmptyableCollection.empty(fs)))));
 }

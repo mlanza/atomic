@@ -1,6 +1,6 @@
 import {effect, overload} from '../../core';
 import {implement} from '../protocol';
-import {IDescriptive, IAssociative, ISeqable, ILookup, ICounted, IMap, ISeq, IRecord} from '../../protocols';
+import {IObject, IDescriptive, IAssociative, ISeqable, ILookup, ICounted, IMap, ISeq, IRecord} from '../../protocols';
 import {constructs} from '../function';
 
 function toObject(self){
@@ -57,7 +57,8 @@ function construction(Type){
 export default effect(
   construction,
   implement(IRecord),
-  implement(IDescriptive, {toObject}),
+  implement(IDescriptive),
+  implement(IObject, {toObject}),
   implement(IAssociative, {assoc, contains}),
   implement(ILookup, {lookup}),
   implement(IMap, {dissoc, keys, vals}),

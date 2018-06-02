@@ -1,4 +1,4 @@
-import {isSequential, IInclusive, IIndexed, ICollection, IComparable, ICounted, ISeq, ISeqable, INext, IHierarchy, IReduce, ISequential} from '../../protocols';
+import {isSequential, IArray, IInclusive, IIndexed, ICollection, IComparable, ICounted, ISeq, ISeqable, INext, IHierarchy, IReduce, ISequential} from '../../protocols';
 import {identity, constantly, overload} from '../../core';
 import {EMPTY} from '../empty/construct';
 import {EMPTY_ARRAY} from '../array/construct';
@@ -155,7 +155,7 @@ export function zip(...colls){
   return mapcat(identity, map(ISeqable.seq, ...colls));
 }
 
-export const filtera = comp(ISequential.toArray, filter);
+export const filtera = comp(IArray.toArray, filter);
 
 export function remove(pred, xs){
   return filter(complement(pred), xs);
@@ -407,7 +407,7 @@ function sortBy3(keyFn, compare, coll){
 export const sortBy = overload(null, null, sortBy2, sortBy3);
 
 export const detect      = comp(ISeq.first, filter);
-export const mapa        = comp(ISequential.toArray, map);
+export const mapa        = comp(IArray.toArray, map);
 export const butlast     = partial(dropLast, 1);
 export const initial     = butlast;
 export const mapIndexed  = indexed(map);

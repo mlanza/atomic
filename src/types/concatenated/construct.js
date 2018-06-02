@@ -21,6 +21,10 @@ export function concatenated(colls){
   return ISeqable.seq(colls) ? new Concatenated(colls) : EMPTY;
 }
 
+export function isConcatenated(self){
+  return self.constructor === Concatenated;
+}
+
 Concatenated.from = concatenated;
 
 export const concat = overload(constantly(EMPTY), ISeqable.seq, unspread(concatenated));

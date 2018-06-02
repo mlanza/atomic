@@ -1,4 +1,4 @@
-import {ISequential}  from "../../protocols/isequential";
+import {IArray}  from "../../protocols/iarray";
 import {log, overload, identity, constantly} from "../../core";
 import {isNil}  from "../nil";
 import {slice}  from "../array/concrete";
@@ -37,23 +37,23 @@ export function comp(...fs){
 }
 
 function apply2(f, args){
-  return f.apply(null, ISequential.toArray(args));
+  return f.apply(null, IArray.toArray(args));
 }
 
 function apply3(f, a, args){
-  return f.apply(null, [a].concat(ISequential.toArray(args)));
+  return f.apply(null, [a].concat(IArray.toArray(args)));
 }
 
 function apply4(f, a, b, args){
-  return f.apply(null, [a, b].concat(ISequential.toArray(args)));
+  return f.apply(null, [a, b].concat(IArray.toArray(args)));
 }
 
 function apply5(f, a, b, c, args){
-  return f.apply(null, [a, b, c].concat(ISequential.toArray(args)));
+  return f.apply(null, [a, b, c].concat(IArray.toArray(args)));
 }
 
 function applyN(f, a, b, c, d, args){
-  return f.apply(null, [a, b, c, d].concat(ISequential.toArray(args)));
+  return f.apply(null, [a, b, c, d].concat(IArray.toArray(args)));
 }
 
 export const apply = overload(null, null, apply2, apply3, apply4, apply5, applyN);
