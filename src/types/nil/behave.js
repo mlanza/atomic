@@ -12,7 +12,7 @@ function nil(self){
 }
 
 function assoc(self, key, value){
-  let obj = {};
+  const obj = {};
   obj[key] = value;
   return obj;
 }

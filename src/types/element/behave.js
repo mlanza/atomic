@@ -3,7 +3,7 @@ import {IAppendable, IPrependable, IEvented, IAssociative, IEquiv, ICollection, 
 import {EMPTY} from '../../types/empty';
 import {each} from '../../types/lazyseq/concrete';
 import {identity, constantly, effect} from '../../core';
-import {del} from '../../multimethods/amalgam';
+import {yank} from '../../multimethods/amalgam';
 import Element from './construct';
 
 function on(self, key, callback){
@@ -61,7 +61,7 @@ function prevSibling(self){
 }
 
 function empty(self){
-  each(del, children(self));
+  each(yank, children(self));
 }
 
 export default effect(

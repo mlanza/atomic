@@ -85,6 +85,9 @@ export const curry = overload(null, curry1, curry2);
 export function multi(dispatch){
   return function(...args){
     const f = apply(dispatch, args);
+    if (!f){
+      throw Error("Failed dispatch");
+    }
     return apply(f, args);
   }
 }

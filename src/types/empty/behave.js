@@ -1,11 +1,12 @@
 import {identity, constantly, effect} from '../../core';
 import {implement} from '../protocol';
 import {EMPTY} from '../../types/empty/construct';
-import {ICollection, INext, ISeq, IArr, ISeqable, ISequential, IIndexed, IShow, IEmptyableCollection, IReduce} from '../../protocols';
+import {ICollection, INext, ISeq, IArr, ISeqable, ISequential, IIndexed, IShow, IEmptyableCollection, IReduce, ICounted} from '../../protocols';
 import {EMPTY_ARRAY} from '../../types/array/construct';
 
 export default effect(
   implement(ISequential),
+  implement(ICounted, {count: constantly(0)}),
   implement(IEmptyableCollection, {empty: identity}),
   implement(IReduce, {reduce: identity}),
   implement(IArr, {toArray: constantly(EMPTY_ARRAY)}),

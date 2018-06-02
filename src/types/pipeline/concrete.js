@@ -7,6 +7,7 @@ import {pipeline} from "./construct";
 import {partial, apply, comp} from "../function/concrete";
 import {compile} from "../object/concrete";
 import {isNil} from "../nil/construct";
+import {cons} from "../list/construct";
 import {isBlank} from "../string/concrete";
 import {transduce} from "../lazyseq/concrete";
 import {mapcat, distinct, compact} from "../lazyseq/concrete";
@@ -19,9 +20,9 @@ import {isSequential, ISeqable} from "../../protocols";
 export function either(f){
   return function(...args){
     try {
-    return f(...args);
+      return f(...args);
     } catch (ex) {
-    return reduced(ex);
+      return reduced(ex);
     }
   }
 }
@@ -51,18 +52,37 @@ export function logged(f){
 export function multiple(f){
   return function(x, ...args){
     const xs = isSequential(x) ? ISeqable.seq(x) : [x];
-    return compact(mapcat(function(x){
+    return mapcat(function(x){
       const result = apply(f, x, args);
-      return isSequential(result) ? ISeqable.seq(result) ? result : [] : [result];
-    }, xs));
+      if (isSequential(result) || result == null) {
+        if (ISeqable.seq(result)) {
+          return result;
+        } else {
+          return [];
+        }
+      } else {
+        return [result];
+      }
+    }, xs);
   }
 }
 
+export function compacted(f){
+  return comp(compact, f);
+}
+
 export function unique(f){
-  return function(xs, ...args){
-    return distinct(f(xs, ...args));
+  return comp(distinct, f);
+}
+
+export function selfish(f){
+  const g = multiple(f);
+  return function(x, ...args){
+    return cons(x, g(x, ...args));
   }
 }
+
+export const elements = comp(unique, compacted, multiple);
 
 function chainedN(how, init, ...fs){
   return transduce(t.map(how), function(memo, f){
@@ -87,7 +107,7 @@ export const piped = overload(null, function(how){
 export const chain  = chained(identity);
 export const maybe  = chained(option);
 export const many   = chained(multiple);
-export const els    = chained(comp(unique, multiple));
+export const els    = chained(elements);
 export const pipe   = piped(identity);
 export const opt    = piped(option);
 export const prom   = piped(future);

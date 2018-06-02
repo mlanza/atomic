@@ -1,7 +1,11 @@
-import {ISteppable} from '../../protocols';
+import {ISteppable, IDeref} from '../../protocols';
 import {identity, constantly, effect} from '../../core';
 import {implement} from '../protocol';
 import {months} from './construct';
+
+function deref(self){
+  return self.n;
+}
 
 function step(self, dt){
   var d = new Date(dt.valueOf());
@@ -9,9 +13,6 @@ function step(self, dt){
   return d;
 }
 
-function converse(self){
-  return months(self.n * -1);
-}
-
 export default effect(
-  implement(ISteppable, {step, converse}));
+  implement(IDeref, {deref}),
+  implement(ISteppable, {step}));

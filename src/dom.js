@@ -1,9 +1,9 @@
 import {implement} from './types/protocol';
-import {overload, constantly, identity} from "./core";
-import {EMPTY, lazySeq, cons, apply, concat, partial, partially, comp, satisfies, compact, flatten, detect, filter, remove, each, map, mapcat} from "./types";
+import {overload, constantly, identity, subj} from "./core";
+import {EMPTY, lazySeq, cons, apply, concat, partial, partially, comp, satisfies, compact, flatten, detect, filter, remove, each, map, mapcat, selfish} from "./types";
 import {IHierarchy, IArr, IReduce, ISeqable} from "./protocols";
-import {has, add, del, transpose, matches} from "./multimethods";
-export {has, add, del, transpose, matches} from "./multimethods";
+import {has, inject, yank, transpose, matches} from "./multimethods";
+export {has, inject, yank, transpose, matches} from "./multimethods";
 
 export function expansive(f){
   function expand(...xs){
@@ -26,18 +26,12 @@ export function expansive(f){
 }
 
 export const tag = partially(expansive(function(name, ...contents){ //partially guarantees calling tag always produces a factory
-  return IReduce.reduce(contents, add, document.createElement(name));
+  return IReduce.reduce(contents, inject, document.createElement(name));
 }));
 
 export const frag = expansive(function(...contents){
-  return IReduce.reduce(contents, add, document.createDocumentFragment());
+  return IReduce.reduce(contents, inject, document.createDocumentFragment());
 });
-
-function selects(pred){
-  return function(el){
-    return matches(el, pred);
-  }
-}
 
 export function closest(self, selector){
   let target = self.parentNode;
@@ -49,12 +43,14 @@ export function closest(self, selector){
   }
 }
 
-function sel2(pred, context){
-  return filter(selects(pred), descendants(context));
+const matching = subj(matches);
+
+function sel2(context, pred){
+  return filter(matching(pred), descendants(context));
 }
 
 function sel1(pred){
-  return sel2(pred, document);
+  return sel2(document, pred);
 }
 
 function sel0(){
@@ -63,30 +59,29 @@ function sel0(){
 
 export const sel = overload(sel0, sel1, sel2);
 
-export function descendants(self){
-  const children = IHierarchy.children(self);
-  const grandchildren = mapcat(descendants, children);
-  return concat(children, grandchildren);
-}
-
-function follow(f){
-  return function step(self){
-    const other = f(self);
-    return other ? cons(other, step(other)) : EMPTY;
+function downward(f){
+  return function down(self){
+    const xs = f(self),
+          ys = mapcat(down, xs);
+    return concat(xs, ys);
   }
 }
 
-export const parents      = follow(IHierarchy.parent);
-export const prevSiblings = follow(IHierarchy.prevSibling);
-export const nextSiblings = follow(IHierarchy.nextSibling);
+function upward(f){
+  return function up(self){
+    const other = f(self);
+    return other ? cons(other, up(other)) : EMPTY;
+  }
+}
+
+export const descendants  = downward(IHierarchy.children);
+export const parents      = upward(IHierarchy.parent);
+export const prevSiblings = upward(IHierarchy.prevSibling);
+export const nextSiblings = upward(IHierarchy.nextSibling);
 export const ancestors    = parents;
 
 export function siblings(self){
   return concat(prevSiblings(self), nextSiblings(self));
-}
-
-export function andSelf(f, coll){
-  return concat(ISeqable.seq(coll), f(coll));
 }
 
 const hidden = {style: "display: none;"};
@@ -96,11 +91,11 @@ export function toggle(self){
 }
 
 export function hide(self){
-  return add(self, hidden);
+  return inject(self, hidden);
 }
 
 export function show(self){
-  return del(self, hidden);
+  return yank(self, hidden);
 }
 
 function prop2(self, key){

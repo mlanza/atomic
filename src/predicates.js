@@ -46,15 +46,19 @@ export function guard(pred, value){
   }
 }
 
-export function branch3(pred, yes, obj){
-  return branch4(pred, yes, constantly(null), obj);
+function fork2(obj, pred){
+  return fork3(obj, pred, identity);
 }
 
-export function branch4(pred, yes, no, obj){
+function fork3(obj, pred, yes){
+  return fork4(obj, pred, yes, constantly(null));
+}
+
+function fork4(obj, pred, yes, no){
   return pred(obj) ? yes(obj) : no(obj);
 }
 
-export const branch = overload(null, null, null, branch3, branch4);
+export const fork = overload(null, null, fork2, fork3, fork4);
 
 export function everyPair(pred, xs){
   var every = xs.length > 0;
@@ -193,21 +197,19 @@ export function everyPred(...preds){
   }
 }
 
-export function pre(f, ...preds){
-  let check = and(...preds);
+export function pre(f, pred){
   return function(){
-    if (!check.apply(this, arguments)) {
+    if (!pred.apply(this, arguments)) {
       throw new TypeError("Failed pre-condition.");
     }
     return f.apply(this, arguments);
   }
 }
 
-export function post(f, ...preds){
-  var check = or(...preds);
+export function post(f, pred){
   return function(){
     var result = f.apply(this, arguments);
-    if (!check(result)) {
+    if (!pred(result)) {
       throw new TypeError("Failed post-condition.");
     }
     return result;

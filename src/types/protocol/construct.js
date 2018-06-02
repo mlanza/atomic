@@ -1,4 +1,4 @@
-import {overload} from '../../core';
+import {overload, obj} from '../../core';
 import {protocolLookupError} from '../protocollookuperror/construct';
 
 export const REGISTRY = window.Symbol ? Symbol("Registry") : "__registry";
@@ -15,11 +15,10 @@ export function protocol(template){
 }
 
 function dispatcher(protocol){
-  const registry = protocol[REGISTRY], template = protocol[TEMPLATE], blank = {};
-  return function(named){
+  return function(method){
     return function(self){
-      const f = (satisfies(protocol, self) || template)[named] || function(){
-        throw protocolLookupError(protocol, named, self, arguments);
+      const f = satisfies3(protocol, method, self) || function(){
+        throw protocolLookupError(protocol, method, self, arguments);
       }
       return f.apply(this, arguments);
     }
@@ -36,7 +35,7 @@ export function extend(self, addition){
 //Must be shallow to uphold performance.  Obviously, performance degrades on surrogates that appear further down.
 export const surrogates = [];
 
-export function constructs(self){
+function surrogate(self){
   let construct = null, len = surrogates.length;
   for (let idx = 0; idx < len; idx++){
     if (construct = surrogates[idx](self)) {
@@ -56,14 +55,18 @@ function supers(registry, self){
 }
 
 function satisfies1(protocol){
-  return function(obj){
-    return satisfies2(protocol, obj);
+  return function(...args){
+    return satisfies(protocol, ...args);
   }
 }
 
 function satisfies2(protocol, obj){
   const registry = protocol[REGISTRY];
-  return registry.get(obj) || registry.get(obj && obj.constructor) || registry.get(constructs(obj)) || (obj && supers(registry, Object.getPrototypeOf(obj)));
+  return registry.get(obj) || registry.get(obj && obj.constructor) || registry.get(surrogate(obj)) || (obj && supers(registry, Object.getPrototypeOf(obj)));
 }
 
-export const satisfies = overload(null, satisfies1, satisfies2);
+function satisfies3(protocol, method, obj){
+  return (satisfies2(protocol, obj) || {})[method] || protocol[TEMPLATE][method];
+}
+
+export const satisfies = overload(null, satisfies1, satisfies2, satisfies3);

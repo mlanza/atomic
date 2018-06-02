@@ -10,10 +10,6 @@ function step(self, dt){
   return new Date(dt.valueOf() + self.milliseconds);
 }
 
-function converse(self){
-  return new self.constructor(self.milliseconds * -1);
-}
-
 export default effect(
   implement(IDeref, {deref}),
-  implement(ISteppable, {step, converse}));
+  implement(ISteppable, {step}));
