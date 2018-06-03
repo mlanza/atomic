@@ -2,10 +2,12 @@ import {constantly, identity, effect} from '../../core';
 import {implement} from '../protocol';
 import {indexedSeq} from './construct';
 import {revSeq} from '../../types/revseq/construct';
-import {IArray, IReversible, IMapEntry, IFind, IInclusive, IAssociative, IAppendable, IPrependable, ICollection, INext, ICounted, IReduce, IKVReduce, ISeq, ISeqable, ISequential, IIndexed, IShow, ILookup, IFn, IEmptyableCollection} from '../../protocols';
-import * as r from '../../types/reduced';
+import {reduced, isReduced, unreduced} from '../../types/reduced';
+import {IArray, IEquiv, IReversible, IMapEntry, IFind, IInclusive, IAssociative, IAppendable, IPrependable, ICollection, INext, ICounted, IReduce, IKVReduce, ISeq, ISeqable, ISequential, IIndexed, IShow, ILookup, IFn, IEmptyableCollection} from '../../protocols';
 import {EMPTY_ARRAY} from '../../types/array/construct';
+import {concat} from '../../types/concatenated/construct';
 import {showable, iterable} from '../lazyseq/behave';
+import {detect, drop} from '../lazyseq/concrete';
 
 function reverse(self){
   let c = ICounted.count(self);
@@ -24,55 +26,69 @@ function find(self, key){
   return IAssociative.contains(self, key) ? [key, ILookup.lookup(self, key)] : null;
 }
 
-function contains(self, idx){
-  return idx < self.arr.length - self.start;
+function contains(self, key){
+  return key < ICounted.count(self.seq) - self.start;
 }
 
 function lookup(self, key){
-  return self.arr[self.start + key];
+  return ILookup.lookup(self.seq, self.start + key);
 }
 
 function append(self, x){
-  return toArray(self).concat([x]);
+  return concat(self, [x]);
 }
 
 function prepend(self, x){
-  return [x].concat(toArray(self));
+  return concat([x], self);
 }
 
 function next(self){
   var pos = self.start + 1;
-  return pos < self.arr.length ? indexedSeq(self.arr, pos) : null;
+  return pos < ICounted.count(self.seq) ? indexedSeq(self.seq, pos) : null;
 }
 
 function first(self){
-  return self.arr[self.start];
+  return IIndexed.nth(self.seq, self.start);
 }
 
 function rest(self){
-  return indexedSeq(self.arr, self.start + 1);
+  return indexedSeq(self.seq, self.start + 1);
 }
 
 function toArray(self){
-  return self.arr.slice(self.start);
+  return reduce(self, function(memo, x){
+    memo.push(x);
+    return memo;
+  }, []);
 }
 
 function count(self){
-  return self.length - self.start;
+  return ICounted.count(self.seq) - self.start;
 }
 
 function reduce(self, xf, init){
-  return r.reduce(self.arr, xf, init, self.start);
+  let memo = init,
+      coll = ISeqable.seq(self);
+  while (coll && !isReduced(memo)){
+    memo = xf(memo, ISeq.first(coll));
+    coll = INext.next(coll);
+  }
+  return unreduced(memo);
 }
 
 function reducekv(self, xf, init){
-  return r.reducekv(self.arr, function(memo, k, v){
-    return xf(memo, k - self.start, v);
-  }, init, self.start);
+  let idx = 0;
+  return reduce(self, function(memo, value){
+    memo = xf(memo, idx, value);
+    idx += 1;
+    return memo;
+  }, init);
 }
 
 function includes(self, x){
-  return self.arr.indexOf(x, self.start) > -1;
+  return detect(function(y){
+    return IEquiv.equiv(x, y);
+  }, drop(self.start, self.seq));
 }
 
 export default effect(
