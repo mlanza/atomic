@@ -58,7 +58,7 @@ export function multiple(f){
         if (ISeqable.seq(result)) {
           return result;
         } else {
-          return [];
+          return EMPTY;
         }
       } else {
         return [result];

@@ -1,10 +1,14 @@
-import {IArray, IIndexed, ISeqable, ISeq, IInclusive, IAppendable, IPrependable, IShow, ICounted, ILookup, IFn, IEmptyableCollection} from '../../protocols';
+import {IArray, IIndexed, ISeqable, ISeq, IInclusive, IAppendable, IPrependable, IShow, ICounted, ILookup, IFn, IComparable, IEmptyableCollection} from '../../protocols';
 import {constantly, effect} from "../../core";
 import {implement} from '../protocol';
 import {EMPTY_STRING} from './construct';
 import {EMPTY} from '../empty/construct';
 import {lazySeq} from '../lazyseq/construct';
 import {indexed} from '../array/behave';
+
+function compare(self, other){
+  return self === other ? 0 : self > other ? 1 : -1;
+}
 
 function seq2(self, idx){
   return idx < self.length ? lazySeq(self[idx], function(){
@@ -63,6 +67,7 @@ function toArray(self){
 export default effect(
   indexed,
   implement(IArray, {toArray}),
+  implement(IComparable, {compare}),
   implement(IInclusive, {includes}),
   implement(IAppendable, {append}),
   implement(IPrependable, {prepend}),

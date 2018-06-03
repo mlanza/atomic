@@ -1,6 +1,6 @@
 import {effect, overload, constantly} from '../../core';
 import {implement} from '../protocol';
-import {IUnit, IShow, ICloneable, IDeref, ILookup, IAssociative} from '../../protocols';
+import {IUnit, IShow, IDeref, IComparable, IEquiv, ICloneable, ILookup, IAssociative} from '../../protocols';
 import {isNumber} from '../../types/number';
 import {days} from '../../types/duration';
 
@@ -75,8 +75,18 @@ function unit2(self, amount){
   return isNumber(amount) ? days(amount) : amount;
 }
 
+function equiv(self, other){
+  return IDeref.deref(self) === IDeref.deref(other);
+}
+
+function compare(self, other){
+  return IDeref.deref(self) - IDeref.deref(other);
+}
+
 export default effect(
   implement(IUnit, {unit: overload(null, constantly(days(1)), unit2)}),
+  implement(IEquiv, {equiv}),
+  implement(IComparable, {compare}),
   implement(IAssociative, {assoc, contains}),
   implement(ILookup, {lookup}),
   implement(ICloneable, {clone}),

@@ -49,7 +49,6 @@ QUnit.test("iassociative", function(assert){
 QUnit.test("comparisons", function(assert){
   assert.equal(_.eq(1, 1, 1), true);
   assert.equal(_.eq(1, "1", 1.0), false);
-  assert.equal(_.equal(1, "1", 1.0), true);
   assert.equal(_.lt(1, 2, 3, 4), true);
   assert.equal(_.lt(1, 6, 2, 3), false);
   assert.equal(_.lte(1, 1, 2, 3, 3, 3), true);
