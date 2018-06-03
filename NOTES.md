@@ -25,6 +25,7 @@ grep -R "some" --exclude-dir="*node*" .
 * Prefer pure functions
 * JavaScript models structured data primarily with two constructs: Arrays and Objects.  Arrays provides a series of things (ISequential).  Objects provide descriptions of things and are like dictionaries except the keys are always strings (IDescriptive).  ISequential is a promise that a thing contains a series of other things.  Neither of protocol promises order.
 * One should avoid using the library api to act on Map and Set types.  In it's attempt to avoid mutation, it is grossly inefficient.  It exists only to allow interoperability.
+* Pipelines wrap each fn to maintain a context throughout the computation then exit the context.  It would be possible to wrap the fns used for use that is independent of the pipeline; however, this puts each fn in a lifted context when what we're after is vanilla fns that can be used apart from any context if desired.
 * Some protocols are superseded by a public api (like ICompare and IReduce).  While the protocol can be used directly, prefer the public api when unsure of differences in use.
 * Both protocols and multimethods are just implementation details over programming interfaces.  This leaves room to change the details for performance reasons or otherwise without impacting consumers.
 * There is no function for `reify` or `speficy` those both are easily possible.  Simply export a behavior and in the case of `reify` apply it to a blank object and in the case of `speficy` apply it to an existing object.
