@@ -5,7 +5,7 @@ import {IObject, IDescriptive, IFind, ICollection, IReduce, IKVReduce, INext, IA
 import {lazySeq} from '../../types/lazyseq/construct';
 import {EMPTY_OBJECT} from '../../types/object/construct';
 import * as t from '../../types/reduced';
-import {equivalence} from '../../types/array/behave';
+import {iequiv} from '../../types/array/behave';
 
 function toObject(self){
   return t.reduce(self.keys, function(memo, key){
@@ -78,7 +78,7 @@ function show(self){
 }
 
 export default effect(
-  equivalence,
+  iequiv,
   implement(IDescriptive),
   implement(IObject, {toObject}),
   implement(IFind, {find}),
