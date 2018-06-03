@@ -1,5 +1,5 @@
-import {overload, constantly, identity} from "./core";
-import {IReduce, IKVReduce, ICounted, IComparable, isSequential} from "./protocols";
+import {overload, constantly, identity, type} from "./core";
+import {IReduce, IKVReduce, ICounted, IComparable, IEquiv, isSequential} from "./protocols";
 import {reducing, reduced} from "./types/reduced";
 import {comp, partial, apply} from "./types/function/concrete";
 import {isNil} from "./types/nil/construct";
@@ -117,7 +117,7 @@ export function compare(x, y){
 }
 
 function lt2(a, b){
-  return a < b;
+  return compare(a, b) < 0
 }
 
 function ltN(...args){
@@ -126,9 +126,7 @@ function ltN(...args){
 
 export const lt = overload(constantly(false), constantly(true), lt2, ltN);
 
-function lte2(a, b){
-  return a <= b;
-}
+const lte2 = or(lt2, eq2);
 
 function lteN(...args){
   return everyPair(lte2, args);
@@ -137,7 +135,7 @@ function lteN(...args){
 export const lte = overload(constantly(false), constantly(true), lte2, lteN);
 
 function gt2(a, b){
-  return a > b;
+  return compare(a, b) > 0;
 }
 
 function gtN(...args){
@@ -146,9 +144,7 @@ function gtN(...args){
 
 export const gt = overload(constantly(false), constantly(true), gt2, gtN);
 
-function gte2(a, b){
-  return a >= b;
-}
+const gte2 = or(eq2, gt2);
 
 function gteN(...args){
   return everyPair(gte2, args);
@@ -157,7 +153,7 @@ function gteN(...args){
 export const gte = overload(constantly(false), constantly(true), gte2, gteN);
 
 function eq2(a, b){
-  return a === b;
+  return IEquiv.equiv(a, b);
 }
 
 function eqN(...args){
@@ -166,25 +162,9 @@ function eqN(...args){
 
 export const eq = overload(constantly(true), constantly(true), eq2, eqN);
 
-function notEq2(a, b){
-  return a !== b;
+export function notEq(...args){
+  return !eq(...args);
 }
-
-function notEqN(...args){
-  return !everyPair(eq2, args);
-}
-
-export const notEq = overload(constantly(true), constantly(true), notEq2, notEqN);
-
-function equal2(a, b){
-  return a == b;
-}
-
-function equalN(...args){
-  return everyPair(equal2, args);
-}
-
-export const equal = overload(constantly(true), constantly(true), equal2, equalN);
 
 export function everyPred(...preds){
   return function(){

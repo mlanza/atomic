@@ -89,7 +89,6 @@ export const lt = subj(pred.lt);
 export const lte = subj(pred.lte);
 export const eq = subj(pred.eq);
 export const notEq = subj(pred.notEq);
-export const equal = subj(pred.equal);
 export const min = subj(pred.min);
 export const max = subj(pred.max);
 export const get = subj(a.get);
