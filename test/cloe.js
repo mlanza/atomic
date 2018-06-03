@@ -61,14 +61,14 @@ QUnit.test("transduce", function(assert){
   assert.deepEqual(_.into([], _.comp(_.take(4), _.map(_.inc)), _.cycle([1,2,3])), [2,3,4,2]);
 });
 
-QUnit.test("step, proceed, recede", function(assert){
-  assert.equal(_.proceed(new Date(2017, 11, 25), _.days(1)).valueOf(), _.proceed(new Date(2017, 11, 25), 1).valueOf());
-  assert.equal(_.proceed(new Date(2017, 11, 25), _.days(1)).valueOf(), _.step(_.days(1), new Date(2017, 11, 25)).valueOf());
-  assert.equal(_.proceed(new Date(2017, 11, 25), _.days(1)).valueOf(), 1514264400000);
-  assert.equal(_.proceed(new Date(2017, 11, 25), _.weeks(1)).valueOf(), 1514782800000);
-  assert.equal(_.proceed(new Date(2017, 11, 25), _.months(1)).valueOf(), 1516856400000);
-  assert.equal(_.proceed(new Date(2017, 11, 25), _.years(1)).valueOf(), 1545714000000);
-  assert.equal(_.recede(new Date(2017, 11, 25), _.years(1)).valueOf(), 1482642000000);
+QUnit.test("step, add, subtract", function(assert){
+  assert.equal(_.add(new Date(2017, 11, 25), _.days(1)).valueOf(), _.add(new Date(2017, 11, 25), 1).valueOf());
+  assert.equal(_.add(new Date(2017, 11, 25), _.days(1)).valueOf(), _.step(_.days(1), new Date(2017, 11, 25)).valueOf());
+  assert.equal(_.add(new Date(2017, 11, 25), _.days(1)).valueOf(), 1514264400000);
+  assert.equal(_.add(new Date(2017, 11, 25), _.weeks(1)).valueOf(), 1514782800000);
+  assert.equal(_.add(new Date(2017, 11, 25), _.months(1)).valueOf(), 1516856400000);
+  assert.equal(_.add(new Date(2017, 11, 25), _.years(1)).valueOf(), 1545714000000);
+  assert.equal(_.subtract(new Date(2017, 11, 25), _.years(1)).valueOf(), 1482642000000);
 });
 
 QUnit.test("record", function(assert){

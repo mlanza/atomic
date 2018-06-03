@@ -117,25 +117,25 @@ export function reducekv3(xf, init, coll){
 
 export const reducekv = overload(null, null, reducekv2, reducekv3);
 
-export function proceed1(self){
+export function add1(self){
   return ISteppable.step(IUnit.unit(self), self);
 }
 
-export function proceed2(self, amount){
+export function add2(self, amount){
   return ISteppable.step(IUnit.unit(self, amount), self);
 }
 
-export const proceed = overload(null, proceed1, proceed2);
+export const add = overload(null, add1, add2, reducing(add2));
 
-export function recede1(self){
+export function subtract1(self){
   return ISteppable.step(ISteppable.converse(IUnit.unit(self)), self);
 }
 
-export function recede2(self, amount){
+export function subtract2(self, amount){
   return ISteppable.step(ISteppable.converse(IUnit.unit(self, amount)), self);
 }
 
-export const recede = overload(null, recede1, recede2);
+export const subtract = overload(null, subtract1, subtract2, reducing(subtract2));
 
 function swap3(self, f, a){
   return ISwap.swap(self, function(state){
