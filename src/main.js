@@ -1,6 +1,6 @@
 import {overload, identity} from "./core";
 import {reducing} from "./types/reduced";
-import {IAppendable, IAssociative, ICloneable, ICollection, IComparable, IContent, ICounted, IDeref, IDisposable, IEmptyableCollection, IEquiv, IEvented, IFind, IFn, IHierarchy, IInclusive, IIndexed, IKVReduce, ILookup, IMap, IMapEntry, INext, IObject, IPrependable, IPublish, IReduce, IReset, IReversible, ISeq, ISeqable, IArray, ISet, IShow, ISteppable, ISubscribe, ISwap, IUnit} from "./protocols";
+import {IAppendable, IAssociative, IConverse, ICloneable, ICollection, IComparable, IContent, ICounted, IDeref, IDisposable, IEmptyableCollection, IEquiv, IEvented, IFind, IFn, IHierarchy, IInclusive, IIndexed, IKVReduce, ILookup, IMap, IMapEntry, INext, IObject, IPrependable, IPublish, IReduce, IReset, IReversible, ISeq, ISeqable, IArray, ISet, IShow, ISteppable, ISubscribe, ISwap, IUnit} from "./protocols";
 import * as T from "./types";
 import * as t from "./transducers";
 import * as d from "./dom";
@@ -66,7 +66,7 @@ export const contains = IAssociative.contains;
 export const append = overload(null, identity, IAppendable.append, reducing(IAppendable.append));
 export const prepend = overload(null, identity, IPrependable.prepend, reducing(IPrependable.prepend));
 export const step = ISteppable.step;
-export const converse = ISteppable.converse;
+export const converse = IConverse.converse;
 export const unit = IUnit.unit;
 export const includes = IInclusive.includes;
 export const nth = IIndexed.nth;
@@ -128,11 +128,11 @@ export function add2(self, amount){
 export const add = overload(null, add1, add2, reducing(add2));
 
 export function subtract1(self){
-  return ISteppable.step(ISteppable.converse(IUnit.unit(self)), self);
+  return ISteppable.step(IConverse.converse(IUnit.unit(self)), self);
 }
 
 export function subtract2(self, amount){
-  return ISteppable.step(ISteppable.converse(IUnit.unit(self, amount)), self);
+  return ISteppable.step(IConverse.converse(IUnit.unit(self, amount)), self);
 }
 
 export const subtract = overload(null, subtract1, subtract2, reducing(subtract2));

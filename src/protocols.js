@@ -5,6 +5,7 @@ export * from "./protocols/icloneable";
 export * from "./protocols/icollection";
 export * from "./protocols/icomparable";
 export * from "./protocols/icontent";
+export * from "./protocols/iconverse";
 export * from "./protocols/icounted";
 export * from "./protocols/ideref";
 export * from "./protocols/idisposable";

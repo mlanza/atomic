@@ -1,6 +1,6 @@
 import {constantly, effect, overload} from '../../core';
 import {implement} from '../protocol';
-import {IUnit, ISteppable, IComparable, IShow} from '../../protocols';
+import {IUnit, ISteppable, IConverse, IComparable, IShow} from '../../protocols';
 
 function compare(self, other){
   return self === other ? 0 : self - other;
@@ -26,6 +26,7 @@ const unit = overload(null, constantly(1), unit2);
 
 export default effect(
   implement(IComparable, {compare}),
-  implement(ISteppable, {step, converse}),
+  implement(IConverse, {converse}),
+  implement(ISteppable, {step}),
   implement(IUnit, {unit}),
   implement(IShow, {show}));
