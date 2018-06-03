@@ -1,20 +1,31 @@
 //An amalgam is something composed of disparate parts
 
 import {detect, each, mapa, compact} from "../types/lazyseq/concrete";
-import {reduced} from "../types/reduced/construct";
+import {reduced, reducing} from "../types/reduced";
 import {multimethod} from "../types/multimethod/construct";
+import {isDate} from "../types/date/construct";
+import {isWhen} from "../types/when/construct";
 import {isElement} from "../types/element/construct";
 import {isString, trim, split} from "../types/string";
 import {isFunction} from "../types/function/construct";
 import {signature, or} from "../predicates";
 import {apply} from "../types/function/concrete";
-import {IReduce, IKVReduce, IEvented, IHierarchy, IContent, isSequential, isDescriptive} from "../protocols";
+import {ICloneable, IReduce, IKVReduce, IEvented, IHierarchy, IContent, ILookup, IAssociative, isSequential, isDescriptive} from "../protocols";
 
 export const has = multimethod();
-export const inject = multimethod();
+const _inject = multimethod();
 export const yank = multimethod();
 export const transpose = multimethod(function(self, other){
-  return has(self, other) ? yank(self, other) : inject(self, other);
+  return has(self, other) ? yank(self, other) : _inject(self, other);
+});
+
+/* Date / When */
+
+IEvented.on(_inject.instance, signature(isDate, isWhen), function(self, when){
+  return IReduce.reduce(["year", "month", "day", "hour", "minute", "second", "millisecond"], function(dt, key){
+    const value = ILookup.lookup(when, key);
+    return value == null ? dt : IAssociative.assoc(dt, key, value);
+  }, self);
 });
 
 /* Element */
@@ -44,7 +55,7 @@ const elementStyleValue = signature(isElement, function(name){
   return name === "style";
 }, null);
 
-IEvented.on(inject.instance, elementStyleValue, function(self, key, styles){
+IEvented.on(_inject.instance, elementStyleValue, function(self, key, styles){
   each(function(style){
     const [key, value] = mapa(trim, compact(split(style, ":")));
     self.style[key] = value;
@@ -83,8 +94,8 @@ const elementClassValue = signature(isElement, function(name){
   return name === "class";
 }, null);
 
-IEvented.on(inject.instance, elementClassValue, function(self, key, value){
-  each(self.classList.inject.bind(self.classList), value.split(" "));
+IEvented.on(_inject.instance, elementClassValue, function(self, key, value){
+  each(self.classList._inject.bind(self.classList), value.split(" "));
   return self;
 });
 
@@ -108,7 +119,7 @@ IEvented.on(has.instance, elementClassValue, function(self, key, value){
 
 const elementKeyValue = signature(isElement, isString, null);
 
-IEvented.on(inject.instance, elementKeyValue, function(self, key, value){
+IEvented.on(_inject.instance, elementKeyValue, function(self, key, value){
   self.setAttribute(key, value);
   return self;
 });
@@ -131,7 +142,7 @@ IEvented.on(transpose.instance, elementKeyValue, function(self, key, value){
 
 const elementEventCallback = signature(isElement, isString, isFunction);
 
-IEvented.on(inject.instance, elementEventCallback, function(self, key, f){
+IEvented.on(_inject.instance, elementEventCallback, function(self, key, f){
   self.addEventListener(key, f);
   return self;
 });
@@ -145,8 +156,8 @@ IEvented.on(yank.instance, elementEventCallback, function(self, key, f){
 
 const elementAttrs = signature(isElement, isDescriptive);
 
-IEvented.on(inject.instance, elementAttrs, function(self, obj){
-  return IKVReduce.reducekv(obj, inject, self);
+IEvented.on(_inject.instance, elementAttrs, function(self, obj){
+  return IKVReduce.reducekv(obj, _inject, self);
 });
 
 IEvented.on(has.instance, elementAttrs, function(self, obj){
@@ -173,7 +184,7 @@ IEvented.on(has.instance, elementText, function(self, text){
   }, IContent.contents(self));
 });
 
-IEvented.on(inject.instance, elementText, function(self, text){
+IEvented.on(_inject.instance, elementText, function(self, text){
   self.appendChild(document.createTextNode(text));
   return self;
 });
@@ -194,7 +205,7 @@ IEvented.on(has.instance, elementElement, function(self, child){
   }, IContent.contents(self));
 });
 
-IEvented.on(inject.instance, elementElement, function(self, child){
+IEvented.on(_inject.instance, elementElement, function(self, child){
   self.appendChild(child);
   return self;
 });
@@ -203,3 +214,8 @@ IEvented.on(yank.instance, elementElement, function(self, child){
   self.delChild(child);
   return self;
 });
+
+const inject = reducing(_inject);
+inject.instance = _inject.instance;
+
+export {inject};

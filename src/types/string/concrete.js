@@ -21,9 +21,9 @@ export function template(template, obj){
   }, template, obj);
 }
 
-export function inject(template, ...args){
+/* export function inject(template, ...args){
   return template(template, args);
-}
+} */
 
 export function camelToDashed(str){
   return str.replace(/[A-Z]/, function(x) { return "-" + x.toLowerCase() })
