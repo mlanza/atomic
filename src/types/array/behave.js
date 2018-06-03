@@ -117,12 +117,12 @@ export const indexed = effect(
   implement(IIndexed, {nth: nth}),
   implement(ICounted, {count: length}));
 
-export const equivalence = implement(IEquiv, {equiv});
+export const iequiv = implement(IEquiv, {equiv});
 
 export default effect(
   showable,
   indexed,
-  equivalence,
+  iequiv,
   implement(ISequential),
   implement(IReversible, {reverse}),
   implement(ISet, {union, intersection, difference, disj, superset}),
