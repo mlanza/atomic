@@ -14,9 +14,9 @@ import {ICloneable, IReduce, IKVReduce, IEvented, IHierarchy, IContent, ILookup,
 
 export const has = multimethod();
 const _inject = multimethod();
-export const yank = multimethod();
+export const _yank = multimethod();
 export const transpose = multimethod(function(self, other){
-  return has(self, other) ? yank(self, other) : _inject(self, other);
+  return has(self, other) ? _yank(self, other) : _inject(self, other);
 });
 
 /* Date / When */
@@ -30,15 +30,15 @@ IEvented.on(_inject.instance, signature(isDate, isWhen), function(self, when){
 
 /* Element */
 
-IEvented.on(yank.instance, signature(isElement), function(self){
-  return yank(IHierarchy.parent(self), self);
+IEvented.on(_yank.instance, signature(isElement), function(self){
+  return _yank(IHierarchy.parent(self), self);
 });
 
 /* Element / Keys */
 
 const elementKeys = signature(isElement, isSequential);
 
-IEvented.on(yank.instance, elementKeys, function(self, keys){
+IEvented.on(_yank.instance, elementKeys, function(self, keys){
   each(self.removeAttribute.bind(self), keys);
   return self;
 });
@@ -63,7 +63,7 @@ IEvented.on(_inject.instance, elementStyleValue, function(self, key, styles){
   return self;
 });
 
-IEvented.on(yank.instance, elementStyleValue, function(self, key, styles){
+IEvented.on(_yank.instance, elementStyleValue, function(self, key, styles){
   each(function(style){
     const [key, value] = mapa(trim, compact(split(style, ":")));
     if (self.style[key] == value) {
@@ -99,8 +99,8 @@ IEvented.on(_inject.instance, elementClassValue, function(self, key, value){
   return self;
 });
 
-IEvented.on(yank.instance, elementClassValue, function(self, key, value){
-  each(self.classList.yank.bind(self.classList), value.split(" "));
+IEvented.on(_yank.instance, elementClassValue, function(self, key, value){
+  each(self.classList._yank.bind(self.classList), value.split(" "));
   return self;
 });
 
@@ -124,7 +124,7 @@ IEvented.on(_inject.instance, elementKeyValue, function(self, key, value){
   return self;
 });
 
-IEvented.on(yank.instance, elementKeyValue, function(self, key, value){
+IEvented.on(_yank.instance, elementKeyValue, function(self, key, value){
   if (value == null || value == self.getAttribute(key)) {
     self.removeAttribute(key);
   }
@@ -147,7 +147,7 @@ IEvented.on(_inject.instance, elementEventCallback, function(self, key, f){
   return self;
 });
 
-IEvented.on(yank.instance, elementEventCallback, function(self, key, f){
+IEvented.on(_yank.instance, elementEventCallback, function(self, key, f){
   self.delEventListener(key, f);
   return self;
 });
@@ -166,8 +166,8 @@ IEvented.on(has.instance, elementAttrs, function(self, obj){
   }, true);
 });
 
-IEvented.on(yank.instance, elementAttrs, function(self, obj){
-  return IKVReduce.reducekv(obj, yank, self);
+IEvented.on(_yank.instance, elementAttrs, function(self, obj){
+  return IKVReduce.reducekv(obj, _yank, self);
 });
 
 IEvented.on(transpose.instance, elementAttrs, function(self, obj){
@@ -189,7 +189,7 @@ IEvented.on(_inject.instance, elementText, function(self, text){
   return self;
 });
 
-IEvented.on(yank.instance, elementText, function(self, text){
+IEvented.on(_yank.instance, elementText, function(self, text){
   const node = has(self, text);
   node && self.delChild(node);
   return self;
@@ -210,12 +210,14 @@ IEvented.on(_inject.instance, elementElement, function(self, child){
   return self;
 });
 
-IEvented.on(yank.instance, elementElement, function(self, child){
+IEvented.on(_yank.instance, elementElement, function(self, child){
   self.delChild(child);
   return self;
 });
 
 const inject = reducing(_inject);
 inject.instance = _inject.instance;
+const yank = reducing(_yank);
+yank.instance = _yank.instance;
 
-export {inject};
+export {inject, yank};
