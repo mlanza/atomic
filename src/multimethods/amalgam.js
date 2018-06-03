@@ -10,7 +10,7 @@ import {isString, trim, split} from "../types/string";
 import {isFunction} from "../types/function/construct";
 import {signature, or} from "../predicates";
 import {apply} from "../types/function/concrete";
-import {ICloneable, IReduce, IKVReduce, IEvented, IHierarchy, IContent, ILookup, IAssociative, isSequential, isDescriptive} from "../protocols";
+import {ICloneable, IReduce, IKVReduce, IEvented, IHierarchy, IContent, ILookup, IAssociative, IMap, isSequential, isDescriptive} from "../protocols";
 
 export const has = multimethod();
 const _inject = multimethod();
@@ -22,9 +22,18 @@ export const transpose = multimethod(function(self, other){
 /* Date / When */
 
 IEvented.on(_inject.instance, signature(isDate, isWhen), function(self, when){
-  return IReduce.reduce(["year", "month", "day", "hour", "minute", "second", "millisecond"], function(dt, key){
+  return IReduce.reduce(IMap.keys(self), function(dt, key){
     const value = ILookup.lookup(when, key);
     return value == null ? dt : IAssociative.assoc(dt, key, value);
+  }, self);
+});
+
+/* When / When */
+
+IEvented.on(_inject.instance, signature(isWhen, isWhen), function(self, other){
+  return IReduce.reduce(IMap.keys(self), function(memo, key){
+    const value = ILookup.lookup(other, key);
+    return value == null ? memo : IAssociative.assoc(memo, key, value);
   }, self);
 });
 

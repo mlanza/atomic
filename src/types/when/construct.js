@@ -6,6 +6,24 @@ export function when(year, month, day, hour, minute, second, millisecond){
   return new When(year, month, day, hour, minute, second, millisecond);
 }
 
+export function time(hour, minute, second, millisecond){
+  return when(null, null, null, hour || 0, minute || 0, second || 0, millisecond || 0);
+}
+
+export function midnight(){
+  return time(0, 0, 0, 0);
+}
+
+export function noon(){
+  return time(12, 0, 0, 0);
+}
+
+export const sod = midnight;
+
+export function eod(){
+  return time(11, 59, 59, 999);
+}
+
 export function year(n){
   return when(n);
 }

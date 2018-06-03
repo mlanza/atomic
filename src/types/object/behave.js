@@ -4,9 +4,15 @@ import {IArray, ISet, IEquiv, IMapEntry, IReduce, IKVReduce, ISeqable, IShow, IF
 import {objectSelection} from '../objectselection';
 import {reduced} from '../reduced';
 import {lazySeq} from '../lazyseq';
-import {equivalence} from '../array/behave';
+import {iequiv} from '../array/behave';
 import {EMPTY_OBJECT} from '../object/construct';
 import {EMPTY} from '../empty/construct';
+
+function equiv(self, other){
+  return ICounted.count(IMap.keys(self)) === ICounted.count(IMap.keys(other)) && IReduce.reduce(IMap.keys(self), function(memo, key){
+    return memo ? IEquiv.equiv(ILookup.lookup(self, key), ILookup.lookup(other, key)) : reduced(memo);
+  }, true);
+}
 
 function find(self, key){
   return IAssociative.contains(self, key) ? [key, ILookup.lookup(self, key)] : null;
@@ -18,11 +24,13 @@ function includes(self, mapentry){
   return self[key] === val;
 }
 
+/*
 function superset(self, subset){
   return IKVReduce.reducekv(subset, function(memo, key, value){
     return memo ? IEquiv.equiv(get(self, key), value) : reduced(memo);
   }, true);
 }
+*/
 
 function lookup(self, key){
   return self[key];
@@ -64,13 +72,13 @@ function clone(self){
 }
 
 function reduce(self, xf, init){
-  return IReduce.reduce(Object.keys(self), function(memo, key){
+  return IReduce.reduce(IMap.keys(self), function(memo, key){
     return xf(memo, [key, self[key]]);
   }, init);
 }
 
 function reducekv(self, xf, init){
-  return IReduce.reduce(Object.keys(self), function(memo, key){
+  return IReduce.reduce(IMap.keys(self), function(memo, key){
     return xf(memo, key, self[key]);
   }, init);
 }
@@ -83,11 +91,12 @@ function show(self){
 }
 
 export default effect(
-  equivalence,
+  iequiv,
   implement(IDescriptive),
+  implement(IEquiv, {equiv}),
   implement(IObject, {toObject: identity}),
   implement(IFind, {find}),
-  implement(ISet, {superset}),
+  //implement(ISet, {superset}),
   implement(IInclusive, {includes}),
   implement(ICloneable, {clone}),
   implement(IReduce, {reduce}),
