@@ -1,5 +1,5 @@
 import {implement, surrogates} from '../protocol';
-import {IAppendable, IPrependable, IEvented, IAssociative, IEquiv, ICollection, INext, ISeq, IShow, ISeqable, IIndexed, ICounted, ILookup, IReduce, IEmptyableCollection, IHierarchy, IContent} from '../../protocols';
+import {IAppendable, IPrependable, IEvented, IAssociative, IEquiv, ICloneable, ICollection, INext, ISeq, IShow, ISeqable, IIndexed, ICounted, ILookup, IReduce, IEmptyableCollection, IHierarchy, IContent} from '../../protocols';
 import {EMPTY} from '../../types/empty';
 import {each} from '../../types/lazyseq/concrete';
 import {identity, constantly, effect} from '../../core';
@@ -64,8 +64,13 @@ function empty(self){
   each(yank, children(self));
 }
 
+function clone(self){
+  return self.cloneNode(true);
+}
+
 export default effect(
   implement(IEmptyableCollection, {empty}),
+  implement(ICloneable, {clone}),
   implement(IAppendable, {append}),
   implement(IPrependable, {prepend}),
   implement(ICollection, {conj: append}),
