@@ -2,7 +2,6 @@ import {overload} from '../../core';
 import {days} from '../duration/construct';
 import {midnight} from '../when/construct';
 import {IComparable} from '../../protocols';
-import {EMPTY} from '../empty';
 import {inject} from '../../multimethods';
 
 export function Period(start, end, step){
@@ -10,6 +9,8 @@ export function Period(start, end, step){
   this.end = end;
   this.step = step;
 }
+
+Period.EMPTY = new Period(null, null, null);
 
 function period0(){
   return period1(Infinity);
@@ -24,7 +25,7 @@ function period2(start, end){
 }
 
 function period3(start, end, step){
-  return IComparable.compare(start, end) < 0 ? new Period(start, end, step) : EMPTY;
+  return IComparable.compare(start, end) < 0 ? new Period(start, end, step) : Period.EMPTY;
 }
 
 export const period = overload(period0, period1, period2, period3);
