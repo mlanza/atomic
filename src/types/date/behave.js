@@ -1,6 +1,6 @@
 import {effect, overload, constantly} from '../../core';
 import {implement} from '../protocol';
-import {IUnit, IShow, IDeref, IComparable, IEquiv, ICloneable, ILookup, IAssociative} from '../../protocols';
+import {IUnit, IMap, IShow, IDeref, IComparable, IEquiv, ICloneable, ILookup, IAssociative} from '../../protocols';
 import {isNumber} from '../../types/number';
 import {days} from '../../types/duration';
 
@@ -29,7 +29,18 @@ function InvalidKeyError(key, target){
 }
 
 function contains(self, key){
-  return ["year", "month", "day", "hour", "minute", "second", "millisecond"].indexOf(key) > -1;
+  return keys(self).indexOf(key) > -1;
+}
+
+function keys(self){
+  return ["year", "month", "day", "hour", "minute", "second", "millisecond"];
+}
+
+function vals(self){
+  return IReduce.reduce(keys(self), function(memo, key){
+    memo.push(ILookup.lookup(self, key));
+    return memo;
+  }, []);
 }
 
 //the benefit of exposing internal state as a map is assocIn and updateIn
@@ -86,6 +97,7 @@ function compare(self, other){
 export default effect(
   implement(IUnit, {unit: overload(null, constantly(days(1)), unit2)}),
   implement(IEquiv, {equiv}),
+  implement(IMap, {keys, vals}),
   implement(IComparable, {compare}),
   implement(IAssociative, {assoc, contains}),
   implement(ILookup, {lookup}),

@@ -21,6 +21,7 @@ export * from "./types/number";
 export * from "./types/object";
 export * from "./types/objectselection";
 export * from "./types/observable";
+export * from "./types/period";
 export * from "./types/pipeline";
 export * from "./types/protocol";
 export * from "./types/protocollookuperror";
