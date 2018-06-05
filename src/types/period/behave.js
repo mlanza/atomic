@@ -36,7 +36,10 @@ function reduce(self, xf, init){
 }
 
 function toArray(self){
-  return reduce(self, ICollection.conj, []);
+  return reduce(self, function(memo, date){
+    memo.push(date);
+    return memo;
+  }, []);
 }
 
 export default effect(
