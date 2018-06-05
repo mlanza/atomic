@@ -3,8 +3,7 @@ import {implement} from '../protocol';
 import {IArray, ISteppable, IComparable, INext, IEquiv, IReduce, IKVReduce, ISeqable, IShow, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, ISeq, IInclusive} from '../../protocols';
 import {reduced} from '../reduced';
 import {lazySeq} from '../lazyseq';
-import {EMPTY} from '../empty';
-import {period} from './construct';
+import {period, Period} from './construct';
 
 function seq(self){
   return lazySeq(first(self), function(){
@@ -17,10 +16,13 @@ function first(self){
 }
 
 function rest(self){
-  return next(self) || EMPTY;
+  return next(self) || Period.EMPTY;
 }
 
 function next(self){
+  if (self === Period.EMPTY) {
+    return null;
+  }
   const second = ISteppable.step(self.step, self.start);
   return IComparable.compare(second, self.end) < 0 ? period(second, self.end, self.step) : null;
 }
