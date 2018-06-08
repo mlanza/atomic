@@ -1,6 +1,6 @@
 import {constantly, effect, identity} from '../../core';
 import {implement} from '../protocol';
-import {IArray, ISteppable, ICollection, IComparable, INext, IEquiv, IReduce, IKVReduce, ISeqable, IShow, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, ISeq, IInclusive} from '../../protocols';
+import {IArray, ISteppable, ISequential, ICollection, IComparable, INext, IEquiv, IReduce, IKVReduce, ISeqable, IShow, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, ISeq, IInclusive} from '../../protocols';
 import {reduced} from '../reduced';
 import {lazySeq} from '../lazyseq';
 import {period, Period} from './construct';
