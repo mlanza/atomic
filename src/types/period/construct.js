@@ -25,7 +25,7 @@ function period2(start, end){
 }
 
 function period3(start, end, step){
-  return IComparable.compare(start, end) < 0 ? new Period(start, end, step) : EMPTY_PERIOD;
+  return IComparable.compare(start, end) <= 0 ? new Period(start, end, step) : EMPTY_PERIOD;
 }
 
 export const period = overload(period0, period1, period2, period3);
