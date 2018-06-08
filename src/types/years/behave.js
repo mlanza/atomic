@@ -1,11 +1,12 @@
-import {ISteppable, IDeref, ICloneable} from '../../protocols';
+import {ISteppable, IConverse, ICloneable} from '../../protocols';
 import {identity, constantly, effect} from '../../core';
 import {implement} from '../protocol';
 import {startOfMonth, endOfMonth} from '../date/concrete';
 import {min} from '../number/concrete';
+import {years} from './construct';
 
-function deref(self){
-  return self.n;
+function converse(self){
+  return years(self.n * -1, self.options);
 }
 
 function step(self, dt){
@@ -25,5 +26,5 @@ function step(self, dt){
 }
 
 export default effect(
-  implement(IDeref, {deref}),
+  implement(IConverse, {converse}),
   implement(ISteppable, {step}));
