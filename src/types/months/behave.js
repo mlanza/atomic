@@ -3,6 +3,7 @@ import {identity, constantly, effect} from '../../core';
 import {implement} from '../protocol';
 import {months} from './construct';
 import {startOfMonth, endOfMonth} from '../date/concrete';
+import {min} from '../number/concrete';
 
 function step(self, dt){
   const som  = startOfMonth(dt);
@@ -11,11 +12,12 @@ function step(self, dt){
   calc.setMonth(calc.getMonth() + self.n);
   const eom  = endOfMonth(calc);
   calc.setDate(self.options.day || dt.getDate());
-  const tgt  = calc > eom ? eom : calc;
+  const tgt  = min(calc, eom);
   if (self.options.dow != null) {
     const tday   = 6 - startOfMonth(tgt).getDay();
     const offset = tday - sday;
     tgt.setDate(tgt.getDate() + offset);
+    //rollback on month size overflows
     while(tgt.getDay() != self.options.dow){
       tgt.setDate(tgt.getDate() - 1);
     }
