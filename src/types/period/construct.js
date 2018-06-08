@@ -10,7 +10,7 @@ export function Period(start, end, step){
   this.step = step;
 }
 
-Period.EMPTY = new Period(null, null, null);
+export const EMPTY_PERIOD = new Period(null, null, null);
 
 function period0(){
   return period1(Infinity);
@@ -25,7 +25,7 @@ function period2(start, end){
 }
 
 function period3(start, end, step){
-  return IComparable.compare(start, end) < 0 ? new Period(start, end, step) : Period.EMPTY;
+  return IComparable.compare(start, end) < 0 ? new Period(start, end, step) : EMPTY_PERIOD;
 }
 
 export const period = overload(period0, period1, period2, period3);

@@ -3,18 +3,18 @@ import {implement} from '../protocol';
 import {IArray, ISteppable, ISequential, ICollection, IComparable, INext, IEquiv, IReduce, IKVReduce, ISeqable, IShow, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, ISeq, IInclusive} from '../../protocols';
 import {reduced, unreduced, isReduced} from '../reduced';
 import {lazySeq} from '../lazyseq';
-import {period, Period} from './construct';
+import {period, Period, EMPTY_PERIOD} from './construct';
 
 function first(self){
   return self.start;
 }
 
 function rest(self){
-  return next(self) || Period.EMPTY;
+  return next(self) || EMPTY_PERIOD;
 }
 
 function next(self){
-  if (self === Period.EMPTY) {
+  if (self === EMPTY_PERIOD) {
     return null;
   }
   const second = ISteppable.step(self.step, self.start);
@@ -46,7 +46,7 @@ export default effect(
   implement(ISequential),
   implement(IArray, {toArray}),
   implement(ISeqable, {seq: identity}),
-  implement(IEmptyableCollection, {empty: constantly(Period.EMPTY)}),
+  implement(IEmptyableCollection, {empty: constantly(EMPTY_PERIOD)}),
   implement(IReduce, {reduce}),
   implement(INext, {next}),
   implement(ISeq, {first, rest}),
