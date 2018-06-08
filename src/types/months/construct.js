@@ -1,7 +1,8 @@
-export default function Months(n){
+export default function Months(n, options){
   this.n = n;
+  this.options = options;
 }
 
-export function months(n){
-  return new Months(n);
+export function months(n, options){
+  return new Months(n, options || {});
 }
