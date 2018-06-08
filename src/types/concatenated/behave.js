@@ -4,7 +4,7 @@ import {concatenated, concat} from '../../types/concatenated/construct';
 import {isReduced, unreduced} from '../../types/reduced';
 import {IArray, ICollection, INext, ISeq, ICounted, ISeqable, IIndexed, IShow, IReduce, ISequential} from '../../protocols';
 import {apply} from '../../types/function/concrete';
-import {EMPTY} from "../empty";
+import EmptyList from "../emptylist";
 import {reduceable, showable, iterable} from '../lazyseq/behave';
 
 function conj(self, x){
@@ -13,7 +13,7 @@ function conj(self, x){
 
 function next(self){
   const tail = ISeq.rest(self);
-  return tail === EMPTY ? null : tail;
+  return tail === EmptyList.EMPTY ? null : tail;
 }
 
 function first(self){

@@ -1,11 +1,11 @@
 import {ISeqable, ISeq} from '../../protocols';
 import {identity, constantly, overload, unspread} from "../../core";
 import {lazySeq} from "../../types/lazyseq/construct";
-import {EMPTY} from '../empty/construct';
+import EmptyList from '../emptylist/construct';
 
 function filter(pred, xs){ //duplicated to break dependencies
   const coll = ISeqable.seq(xs);
-  if (!coll) return EMPTY;
+  if (!coll) return EmptyList.EMPTY;
   const head = ISeq.first(coll);
   return pred(head) ? lazySeq(head, function(){
     return filter(pred, ISeq.rest(coll));
@@ -18,7 +18,7 @@ export function Concatenated(colls){
 
 export function concatenated(colls){
   colls = filter(ISeqable.seq, colls);
-  return ISeqable.seq(colls) ? new Concatenated(colls) : EMPTY;
+  return ISeqable.seq(colls) ? new Concatenated(colls) : EmptyList.EMPTY;
 }
 
 export function isConcatenated(self){
@@ -27,6 +27,6 @@ export function isConcatenated(self){
 
 Concatenated.from = concatenated;
 
-export const concat = overload(constantly(EMPTY), ISeqable.seq, unspread(concatenated));
+export const concat = overload(constantly(EmptyList.EMPTY), ISeqable.seq, unspread(concatenated));
 
 export default Concatenated;

@@ -1,6 +1,7 @@
 export * from "./protocols/iappendable";
 export * from "./protocols/iarray";
 export * from "./protocols/iassociative";
+export * from "./protocols/ibounds";
 export * from "./protocols/icloneable";
 export * from "./protocols/icollection";
 export * from "./protocols/icomparable";

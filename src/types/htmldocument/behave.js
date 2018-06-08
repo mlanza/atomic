@@ -1,7 +1,6 @@
 import {implement} from '../protocol';
 import {ISeqable, IHierarchy} from '../../protocols';
 import {constantly, effect} from '../../core';
-import {EMPTY} from '../../types/empty/construct';
 
 function children(self){
   return ISeqable.seq(document.children);

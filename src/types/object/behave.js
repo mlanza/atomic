@@ -5,8 +5,8 @@ import {objectSelection} from '../objectselection';
 import {reduced} from '../reduced';
 import {lazySeq} from '../lazyseq';
 import {iequiv} from '../array/behave';
-import {EMPTY_OBJECT} from '../object/construct';
-import {EMPTY} from '../empty/construct';
+import Object from '../object/construct';
+import EmptyList from '../emptylist/construct';
 
 function equiv(self, other){
   return ICounted.count(IMap.keys(self)) === ICounted.count(IMap.keys(other)) && IReduce.reduce(IMap.keys(self), function(memo, key){
@@ -40,7 +40,7 @@ function seqObject(self, keys){
   var key = ISeq.first(keys);
   return ISeqable.seq(keys) ? lazySeq([key, self[key]], function(){
     return seqObject(self, ISeq.rest(keys));
-  }) : EMPTY;
+  }) : EmptyList.EMPTY;
 }
 
 function dissoc(obj, key){
@@ -104,7 +104,7 @@ export default effect(
   implement(IMap, {dissoc, keys: Object.keys, vals: Object.values}),
   implement(IFn, {invoke: lookup}),
   implement(ILookup, {lookup: lookup}),
-  implement(IEmptyableCollection, {empty: constantly(EMPTY_OBJECT)}),
+  implement(IEmptyableCollection, {empty: constantly(Object.EMPTY)}),
   implement(IAssociative, {assoc, contains}),
   implement(ISeqable, {seq}),
   implement(ICounted, {count}),

@@ -1,3 +1,7 @@
+import * as _ from "../src/main";
+
+window._ = _;
+
 var stooges = ["Larry","Curly","Moe"],
     pieces  = {pawn: 1, knight: 3, bishop: 3, rook: 5, queen: 10, king: Infinity},
     court   = {jack: 11, queen: 12, king: 13},

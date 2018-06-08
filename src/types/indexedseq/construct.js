@@ -1,4 +1,4 @@
-import {EMPTY} from "../empty";
+import EmptyList from "../emptylist";
 import {ICounted} from '../../protocols';
 
 export function IndexedSeq(seq, start){
@@ -7,7 +7,7 @@ export function IndexedSeq(seq, start){
 }
 
 export function indexedSeq(seq, start){
-  return start < ICounted.count(seq) ? new IndexedSeq(seq, start) : EMPTY;
+  return start < ICounted.count(seq) ? new IndexedSeq(seq, start) : EmptyList.EMPTY;
 }
 
 export default IndexedSeq;

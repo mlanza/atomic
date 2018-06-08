@@ -2,7 +2,7 @@ import {effect, identity, constantly} from '../../core';
 import {implement} from '../protocol';
 import {set, Set} from './construct';
 import {IArray, ISeq, ISet, INext, ISequential, ICounted, ICollection, IEmptyableCollection, IInclusive, ICloneable} from '../../protocols';
-import {EMPTY} from '../../types/empty/construct';
+import EmptyList from '../../types/emptylist/construct';
 
 function union(self, other){
   return Set.union([self, other]);
@@ -30,7 +30,7 @@ function first(self){
 
 function rest(self){
   let tail = self.rest();
-  return tail.size > 0 ? tail : EMPTY;
+  return tail.size > 0 ? tail : EmptyList.EMPTY;
 }
 
 function next(self){

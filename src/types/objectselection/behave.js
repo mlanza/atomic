@@ -3,7 +3,7 @@ import {identity, constantly, effect} from '../../core';
 import {objectSelection} from '../../types/objectselection/construct';
 import {IObject, IDescriptive, IFind, ICollection, IReduce, IKVReduce, INext, IArray, ISeq, ISeqable, IIndexed, IShow, ICounted, ILookup, IFn, IMap, ICloneable, IEmptyableCollection} from '../../protocols';
 import {lazySeq} from '../../types/lazyseq/construct';
-import {EMPTY_OBJECT} from '../../types/object/construct';
+import Object from '../../types/object/construct';
 import * as t from '../../types/reduced';
 import {iequiv} from '../../types/array/behave';
 
@@ -86,7 +86,7 @@ export default effect(
   implement(IReduce, {reduce}),
   implement(IKVReduce, {reducekv}),
   implement(ICloneable, {clone}),
-  implement(IEmptyableCollection, {empty: constantly(EMPTY_OBJECT)}),
+  implement(IEmptyableCollection, {empty: constantly(Object.EMPTY)}),
   implement(IFn, {invoke: lookup}),
   implement(ILookup, {lookup}),
   implement(ISeqable, {seq}),
