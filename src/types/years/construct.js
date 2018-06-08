@@ -1,7 +1,8 @@
-export default function Years(n){
+export default function Years(n, options){
   this.n = n;
+  this.options = options;
 }
 
-export function years(n){
-  return new Years(n);
+export function years(n, options){
+  return new Years(n, options || {});
 }

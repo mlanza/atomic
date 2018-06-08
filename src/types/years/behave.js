@@ -9,12 +9,13 @@ function deref(self){
 }
 
 function step(self, dt){
-  if (dt.getDate() > 28) {
+  const day = self.options.day || dt.getDate();
+  if (day > 28) {
     const som  = startOfMonth(dt);
     const calc = ICloneable.clone(som);
     calc.setFullYear(calc.getFullYear() + self.n);
     const eom  = endOfMonth(calc);
-    calc.setDate(dt.getDate());
+    calc.setDate(day);
     return min(calc, eom);
   } else {
     const calc = ICloneable.clone(dt);
