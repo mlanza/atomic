@@ -1,15 +1,9 @@
 import {constantly, effect, identity} from '../../core';
 import {implement} from '../protocol';
 import {IArray, ISteppable, ISequential, ICollection, IComparable, INext, IEquiv, IReduce, IKVReduce, ISeqable, IShow, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, ISeq, IInclusive} from '../../protocols';
-import {reduced} from '../reduced';
+import {reduced, unreduced, isReduced} from '../reduced';
 import {lazySeq} from '../lazyseq';
 import {period, Period} from './construct';
-
-function seq(self){
-  return lazySeq(first(self), function(){
-    return rest(self);
-  });
-}
 
 function first(self){
   return self.start;
@@ -32,7 +26,13 @@ function equiv(self, other){
 }
 
 function reduce(self, xf, init){
-  return IReduce.reduce(ISeqable.seq(self), xf, init);
+  let memo = init,
+      coll = self;
+  while(coll && !isReduced(memo)){
+    memo = xf(memo, ISeq.first(coll));
+    coll = INext.next(coll);
+  }
+  return unreduced(memo);
 }
 
 function toArray(self){
