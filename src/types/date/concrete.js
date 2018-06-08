@@ -23,3 +23,17 @@ export function endOfMonth(dt){
   d.setDate(0);
   return d;
 }
+
+export function startOfYear(dt){
+  const d = new Date(dt.valueOf());
+  d.setMonth(1);
+  d.setDate(1);
+  return d;
+}
+
+export function endOfYear(dt){
+  const d = new Date(dt.valueOf());
+  d.setMonth(12);
+  d.setDate(31);
+  return d;
+}
