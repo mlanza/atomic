@@ -1,5 +1,5 @@
 export default Function;
 
 export function isFunction(self){
-  return self.constructor === Function;
+  return self && self.constructor === Function;
 }

@@ -1,6 +1,6 @@
-import {effect, overload, constantly} from '../../core';
+import {effect, overload, constantly, identity} from '../../core';
 import {implement} from '../protocol';
-import {IUnit, IMap, IShow, IDeref, IComparable, IEquiv, ICloneable, ILookup, IAssociative} from '../../protocols';
+import {IUnit, IBounds, IMap, IShow, IDeref, IComparable, IEquiv, ICloneable, ILookup, IAssociative} from '../../protocols';
 import {isNumber} from '../../types/number';
 import {days} from '../../types/duration';
 
@@ -96,6 +96,7 @@ function compare(self, other){
 
 export default effect(
   implement(IUnit, {unit: overload(null, constantly(days(1)), unit2)}),
+  implement(IBounds, {start: identity, end: identity}),
   implement(IEquiv, {equiv}),
   implement(IMap, {keys, vals}),
   implement(IComparable, {compare}),

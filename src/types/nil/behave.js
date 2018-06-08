@@ -1,9 +1,9 @@
 import {IAssociative, IArray, IEquiv, ICollection, INext, ISeq, IShow, ISeqable, IIndexed, ICounted, ILookup, IReduce, IEmptyableCollection, ISequential} from '../../protocols';
-import {EMPTY} from '../../types/empty';
+import EmptyList from '../../types/emptylist';
 import {identity, constantly, effect} from '../../core';
 import {implement, surrogates} from '../protocol';
-import {EMPTY_ARRAY} from '../../types/array/construct';
-import {Nil} from './construct';
+import Array from '../../types/array/construct';
+import Nil from './construct';
 
 function nil(self){
   if (self == null) {
@@ -34,8 +34,8 @@ export default effect(
   implement(ILookup, {lookup: constantly(null)}),
   implement(IAssociative, {assoc: assoc, contains: constantly(false)}),
   implement(INext, {next: identity}),
-  implement(IArray, {toArray: constantly(EMPTY_ARRAY)}),
-  implement(ISeq, {first: identity, rest: constantly(EMPTY)}),
+  implement(IArray, {toArray: constantly(Array.EMPTY)}),
+  implement(ISeq, {first: identity, rest: constantly(EmptyList.EMPTY)}),
   implement(ISeqable, {seq: identity}),
   implement(IIndexed, {nth: identity}),
   implement(ICounted, {count: constantly(0)}),

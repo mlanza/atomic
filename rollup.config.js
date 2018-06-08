@@ -2,9 +2,9 @@ import babel from 'rollup-plugin-babel';
 import json  from 'rollup-plugin-json';
 
 export default {
-  input: 'src/main.js',
+  input: 'test/cloe.js',
   output: {
-    file: 'dist/cloe.js',
+    file: 'dist/tests.js',
     format: 'umd',
     name: "_",
     sourceMap: 'inline'

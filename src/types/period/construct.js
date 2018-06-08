@@ -1,16 +1,17 @@
 import {overload} from '../../core';
 import {days} from '../duration/construct';
 import {midnight} from '../when/construct';
-import {IComparable} from '../../protocols';
+import {ISteppable, IComparable} from '../../protocols';
 import {inject} from '../../multimethods';
 
-export function Period(start, end, step){
+export function Period(start, end, step, direction){
   this.start = start;
   this.end = end;
   this.step = step;
+  this.direction = direction;
 }
 
-export const EMPTY_PERIOD = new Period(null, null, null);
+Period.EMPTY = new Period();
 
 function period0(){
   return period1(Infinity);
@@ -25,7 +26,12 @@ function period2(start, end){
 }
 
 function period3(start, end, step){
-  return IComparable.compare(start, end) <= 0 ? new Period(start, end, step) : EMPTY_PERIOD;
+  const stepped = ISteppable.step(step, start),
+        direction = IComparable.compare(stepped, start);;
+  if (direction === 0){
+    throw Error("Period has no direction.");
+  }
+  return new Period(start, end, step, direction);
 }
 
 export const period = overload(period0, period1, period2, period3);

@@ -1,8 +1,8 @@
-import {IArray, IIndexed, ISeqable, ISeq, IInclusive, IAppendable, IPrependable, IShow, ICounted, ILookup, IFn, IComparable, IEmptyableCollection} from '../../protocols';
+import {IArray, IIndexed, ISeqable, INext, ISeq, IInclusive, IAppendable, IPrependable, IShow, ICounted, ILookup, IFn, IComparable, IEmptyableCollection} from '../../protocols';
 import {constantly, effect} from "../../core";
 import {implement} from '../protocol';
-import {EMPTY_STRING} from './construct';
-import {EMPTY} from '../empty/construct';
+import String from './construct';
+import EmptyList from '../emptylist/construct';
 import {lazySeq} from '../lazyseq/construct';
 import {indexed} from '../array/behave';
 
@@ -13,7 +13,7 @@ function compare(self, other){
 function seq2(self, idx){
   return idx < self.length ? lazySeq(self[idx], function(){
     return seq2(self, idx + 1);
-  }) : EMPTY;
+  }) : String.EMPTY;
 }
 
 function seq(self){
@@ -33,11 +33,15 @@ export function subs(s, start, end){
 }
 
 function first(self){
-  return self[0];
+  return self[0] || null;
 }
 
 function rest(self){
-  return self.substring(1);
+  return next(self) || "";
+}
+
+function next(self){
+  return self.substring(1) || null;
 }
 
 function toArray(self){
@@ -71,9 +75,10 @@ export default effect(
   implement(IInclusive, {includes}),
   implement(IAppendable, {append}),
   implement(IPrependable, {prepend}),
-  implement(IEmptyableCollection, {empty: constantly(EMPTY_STRING)}),
+  implement(IEmptyableCollection, {empty: constantly(String.EMPTY)}),
   implement(IFn, {invoke: lookup}),
   implement(ILookup, {lookup}),
   implement(ISeqable, {seq}),
   implement(ISeq, {first, rest}),
+  implement(INext, {next}),
   implement(IShow, {show}));

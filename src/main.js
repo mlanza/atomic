@@ -1,31 +1,10 @@
 import {overload, identity} from "./core";
 import {reducing} from "./types/reduced";
-import {IAppendable, IAssociative, IConverse, ICloneable, ICollection, IComparable, IContent, ICounted, IDeref, IDisposable, IEmptyableCollection, IEquiv, IEvented, IFind, IFn, IHierarchy, IInclusive, IIndexed, IKVReduce, ILookup, IMap, IMapEntry, INext, IObject, IPrependable, IPublish, IReduce, IReset, IReversible, ISeq, ISeqable, IArray, ISet, IShow, ISteppable, ISubscribe, ISwap, IUnit} from "./protocols";
-import * as T from "./types";
-import * as t from "./transducers";
-import * as d from "./dom";
+import {sort} from "./types/lazyseq";
+import {IAppendable, IArray, IAssociative, IBounds, IConverse, ICloneable, ICollection, IComparable, IContent, ICounted, IDeref, IDisposable, IEmptyableCollection, IEquiv, IEvented, IFind, IFn, IHierarchy, IInclusive, IIndexed, IKVReduce, ILookup, IMap, IMapEntry, INext, IObject, IPrependable, IPublish, IReduce, IReset, IReversible, ISeq, ISeqable, ISet, IShow, ISteppable, ISubscribe, ISwap, IUnit} from "./protocols";
 
-export const transducers = { //TODO remove in final
-  cat: t.cat,
-  compact: t.compact,
-  dedupe: t.dedupe,
-  detect: t.detect,
-  distinct: t.distinct,
-  drop: t.drop,
-  dropWhile: t.dropWhile,
-  filter: t.filter,
-  interpose: t.interpose,
-  keep: t.keep,
-  keepIndexed: t.keepIndexed,
-  map: t.map,
-  mapcat: t.mapcat,
-  mapIndexed: t.mapIndexed,
-  remove: t.remove,
-  splay: t.splay,
-  take: t.take,
-  takeNth: t.takeNth,
-  takeWhile: t.takeWhile
-}
+import * as T from "./types";
+import * as d from "./dom";
 
 export * from "./clojure";
 export * from "./core";
@@ -35,9 +14,10 @@ export * from "./predicates";
 export * from "./associatives";
 export * from "./signals";
 export * from "./multimethods";
-export * from "./benchmarks"; //TODO remove in final
 export * from "./dom";
 
+export const start = IBounds.start;
+export const end = IBounds.end;
 export const pub = IPublish.pub;
 export const sub = ISubscribe.sub;
 export const show = IShow.show;

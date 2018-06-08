@@ -1,6 +1,5 @@
 npm-debug.log
 node_modules/*
-dist/cloe.js
-dist/legacy.js
+dist/*
 _src
 .DS_Store

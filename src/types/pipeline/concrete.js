@@ -12,7 +12,7 @@ import {isBlank} from "../string/concrete";
 import {transduce} from "../lazyseq/concrete";
 import {mapcat, distinct, compact} from "../lazyseq/concrete";
 import {reduced} from "../reduced";
-import {EMPTY} from "../empty";
+import EmptyList from "../emptylist";
 import * as t from "../../transducers";
 import {update} from "../../associatives";
 import {isSequential, ISeqable} from "../../protocols";
@@ -58,7 +58,7 @@ export function multiple(f){
         if (ISeqable.seq(result)) {
           return result;
         } else {
-          return EMPTY;
+          return EmptyList.EMPTY;
         }
       } else {
         return [result];

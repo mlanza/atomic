@@ -3,7 +3,7 @@ import {IArray, IInclusive, IFind, IEquiv, ICollection, INext, ISeq, IReduce, IK
 import {overload, identity, constantly, effect} from '../../core';
 import Reduced, {isReduced, reduced, unreduced} from "../reduced";
 import {concat} from "../concatenated/construct";
-import {EMPTY} from '../empty/construct';
+import EmptyList from '../emptylist/construct';
 
 function reduce(self, xf, init){
   let memo = init,
@@ -131,7 +131,7 @@ export default effect(
   implement(ICounted, {count}),
   implement(IEquiv, {equiv}),
   implement(IFind, {find}),
-  implement(IEmptyableCollection, {empty: EMPTY}),
+  implement(IEmptyableCollection, {empty: EmptyList.EMPTY}),
   implement(IArray, {toArray}),
   implement(ISeq, {first, rest}),
   implement(ISeqable, {seq: identity}),

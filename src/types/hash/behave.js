@@ -2,7 +2,6 @@ import {effect, identity, constantly} from '../../core';
 import {implement} from '../protocol';
 import {hash, Hash} from './construct';
 import {ICounted, IAssociative, ILookup, ICloneable} from '../../protocols';
-import {EMPTY} from '../../types/empty/construct';
 
 function assoc(self, key, value){
   return self.set(key, value);

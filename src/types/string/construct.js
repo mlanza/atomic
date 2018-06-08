@@ -1,6 +1,5 @@
 export default String;
-export const EMPTY_STRING = "";
-
+String.EMPTY = "";
 export function isString(s){
   return typeof s === "string";
 }

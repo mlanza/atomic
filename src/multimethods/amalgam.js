@@ -30,7 +30,8 @@ export const transpose = overload(null, null, transpose2, transpose3);
 
 IEvented.on(inject2.instance, signature(isDate, isWhen), function(self, when){
   return IReduce.reduce(IMap.keys(self), function(dt, key){
-    const value = ILookup.lookup(when, key);
+    const init = ILookup.lookup(when, key);
+    const value = isFunction(init) ? init(ILookup.lookup(dt, key)) : init;
     return value == null ? dt : IAssociative.assoc(dt, key, value);
   }, self);
 });

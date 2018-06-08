@@ -100,3 +100,12 @@ export function once(f){
     return result;
   }
 }
+
+export function intercept(fallback, pred, receiver){
+  const next = fallback || function(){
+    throw new Error("No fallback function found.");
+  }
+  return function(...args){
+    return pred(...args) ? receiver(...args) : next(...args);
+  }
+}

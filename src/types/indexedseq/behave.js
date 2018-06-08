@@ -4,10 +4,10 @@ import {indexedSeq} from './construct';
 import {revSeq} from '../../types/revseq/construct';
 import {reduced, isReduced, unreduced} from '../../types/reduced';
 import {IArray, IEquiv, IReversible, IMapEntry, IFind, IInclusive, IAssociative, IAppendable, IPrependable, ICollection, INext, ICounted, IReduce, IKVReduce, ISeq, ISeqable, ISequential, IIndexed, IShow, ILookup, IFn, IEmptyableCollection} from '../../protocols';
-import {EMPTY_ARRAY} from '../../types/array/construct';
 import {concat} from '../../types/concatenated/construct';
 import {showable, iterable} from '../lazyseq/behave';
 import {detect, drop} from '../lazyseq/concrete';
+import Array from '../../types/array/construct';
 
 function reverse(self){
   let c = ICounted.count(self);
@@ -102,7 +102,7 @@ export default effect(
   implement(IAssociative, {contains}),
   implement(IAppendable, {append}),
   implement(IPrependable, {prepend}),
-  implement(IEmptyableCollection, {empty: constantly(EMPTY_ARRAY)}),
+  implement(IEmptyableCollection, {empty: constantly(Array.EMPTY)}),
   implement(IReduce, {reduce}),
   implement(IKVReduce, {reducekv}),
   implement(IFn, {invoke: lookup}),
