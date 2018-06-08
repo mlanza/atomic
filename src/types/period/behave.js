@@ -18,7 +18,7 @@ function next(self){
     return null;
   }
   const second = ISteppable.step(self.step, self.start);
-  return IComparable.compare(second, self.end) < 0 ? period(second, self.end, self.step) : null;
+  return IComparable.compare(second, self.end) <= 0 ? period(second, self.end, self.step) : null;
 }
 
 function equiv(self, other){
