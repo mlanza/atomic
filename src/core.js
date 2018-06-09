@@ -34,7 +34,7 @@ export function is(self, constructor){
 export function overload(){
   const fs = arguments, fallback = fs[fs.length - 1];
   return function(){
-    const f = fs[arguments.length] || fallback;
+    const f = fs[arguments.length] || (arguments.length >= fs.length ? fallback : null);
     return f.apply(this, arguments);
   }
 }

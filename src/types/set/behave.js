@@ -1,8 +1,12 @@
 import {effect, identity, constantly} from '../../core';
 import {implement} from '../protocol';
 import {set, Set} from './construct';
-import {IArray, ISeq, ISet, INext, ISequential, ICounted, ICollection, IEmptyableCollection, IInclusive, ICloneable} from '../../protocols';
+import {IArray, ISeq, ISeqable, ISet, INext, ISequential, ICounted, ICollection, IEmptyableCollection, IInclusive, ICloneable} from '../../protocols';
 import EmptyList from '../../types/emptylist/construct';
+
+function seq(self){
+  return count(self) ? self : null;
+}
 
 function union(self, other){
   return Set.union([self, other]);
@@ -45,6 +49,7 @@ function count(self){
 export default effect(
   implement(ISequential),
   implement(IArray, {toArray}),
+  implement(ISeqable, {seq}),
   implement(IInclusive, {includes}),
   implement(ISet, {union, intersection}),
   implement(ICloneable, {clone: identity}),
