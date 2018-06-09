@@ -1,6 +1,7 @@
 import {constantly, effect, overload, identity} from '../../core';
 import {implement} from '../protocol';
-import {IBounds, IUnit, ISteppable, IConverse, IComparable, IShow} from '../../protocols';
+import {IBounds, ISerialize, IUnit, ISteppable, IConverse, IComparable, IShow} from '../../protocols';
+import {str} from '../string/concrete';
 
 function compare(self, other){
   return self === other ? 0 : self - other;
@@ -26,6 +27,7 @@ const unit = overload(null, constantly(1), unit2);
 
 export default effect(
   implement(IBounds, {start: identity, end: identity}),
+  implement(ISerialize, {serialize: JSON.stringify}),
   implement(IComparable, {compare}),
   implement(IConverse, {converse}),
   implement(ISteppable, {step}),

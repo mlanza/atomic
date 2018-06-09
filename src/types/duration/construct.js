@@ -2,6 +2,8 @@ export default function Duration(milliseconds){
   this.milliseconds = milliseconds;
 }
 
+Duration.prototype[Symbol.toStringTag] = "Duration";
+
 export function duration(milliseconds){
   return new Duration(milliseconds);
 }

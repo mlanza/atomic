@@ -1,7 +1,7 @@
 import {overload, identity} from "./core";
 import {reducing} from "./types/reduced";
 import {sort} from "./types/lazyseq";
-import {IAppendable, IArray, IAssociative, IBounds, IConverse, ICloneable, ICollection, IComparable, IContent, ICounted, IDeref, IDisposable, IEmptyableCollection, IEquiv, IEvented, IFind, IFn, IHierarchy, IInclusive, IIndexed, IKVReduce, ILookup, IMap, IMapEntry, INext, IObject, IPrependable, IPublish, IReduce, IReset, IReversible, ISeq, ISeqable, ISet, IShow, ISteppable, ISubscribe, ISwap, IUnit} from "./protocols";
+import {IAppendable, IArray, IAssociative, IBounds, IConverse, ICloneable, ICollection, IComparable, IContent, ICounted, IDeref, IDeserialize, IDisposable, IEmptyableCollection, IEquiv, IEvented, IFind, IFn, IHierarchy, IInclusive, IIndexed, IKVReduce, ILookup, IMap, IMapEntry, INext, IObject, IPrependable, IPublish, IReduce, IReset, IReversible, ISeq, ISeqable, ISerialize, ISet, IShow, ISteppable, ISubscribe, ISwap, IUnit} from "./protocols";
 
 import * as T from "./types";
 import * as d from "./dom";
@@ -16,6 +16,8 @@ export * from "./signals";
 export * from "./multimethods";
 export * from "./dom";
 
+export const deserialize = IDeserialize.deserialize;
+export const serialize = ISerialize.serialize;
 export const start = IBounds.start;
 export const end = IBounds.end;
 export const pub = IPublish.pub;

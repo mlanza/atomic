@@ -12,6 +12,7 @@ export function Period(start, end, step, direction){
 }
 
 Period.EMPTY = new Period();
+Period.prototype[Symbol.toStringTag] = "Period";
 
 function period0(){
   return period1(Infinity);
