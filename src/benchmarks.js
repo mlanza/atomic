@@ -29,7 +29,7 @@ function time3(chain, f, n){
 
 export const time = overload(null, time1, time2, time3);
 
-function race4(chain, fs, n, by){
+function benchmark4(chain, fs, n, by){
   return T.sort(T.asc(function(pair){
     return by(IMapEntry.val(pair));
   }), IArray.toArray(ISeqable.seq(IKVReduce.reducekv(fs, function(memo, key, f){
@@ -37,18 +37,18 @@ function race4(chain, fs, n, by){
   }, IEmptyableCollection.empty(fs)))));
 }
 
-function race3(chain, fs, n){
-  return race4(chain, fs, n, function(result){
+function benchmark3(chain, fs, n){
+  return benchmark4(chain, fs, n, function(result){
     return result.average.milliseconds;
   });
 }
 
-function race2(fs, n){
-  return race3(T.chain, fs, n);
+function benchmark2(fs, n){
+  return benchmark3(T.chain, fs, n);
 }
 
-function race1(fs){
-  return race3(T.chain, fs, 50);
+function benchmark1(fs){
+  return benchmark3(T.chain, fs, 50);
 }
 
-export const race = overload(null, race1, race2, race3, race4);
+export const benchmark = overload(null, benchmark1, benchmark2, benchmark3, benchmark4);
