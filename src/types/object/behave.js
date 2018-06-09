@@ -1,6 +1,6 @@
 import {constantly, effect, identity} from '../../core';
 import {implement} from '../protocol';
-import {IArray, ISet, IEquiv, IMapEntry, IReduce, IKVReduce, ISeqable, IShow, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, IFn, IMap, ISeq, IDescriptive, IObject, ICloneable, IInclusive} from '../../protocols';
+import {IArray, ISet, ICollection, ISerialize, IDeserialize, IEquiv, IMapEntry, IReduce, IKVReduce, ISeqable, IShow, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, IFn, IMap, ISeq, IDescriptive, IObject, ICloneable, IInclusive} from '../../protocols';
 import {objectSelection} from '../objectselection';
 import {reduced} from '../reduced';
 import {lazySeq} from '../lazyseq';
@@ -86,14 +86,21 @@ function reducekv(self, xf, init){
 function show(self){
   const xs = IArray.toArray(seq(self));
   return "{" + xs.map(function(pair){
-    return show(pair[0]) + ": " + show(pair[1]);
+    return IShow.show(pair[0]) + ": " + IShow.show(pair[1]);
   }).join(", ") + "}";
+}
+
+function serialize(self){
+  return "{" + reducekv(self, function(memo, key, value){
+    return ICollection.conj(memo, ISerialize.serialize(key) + ": " + ISerialize.serialize(value));
+  }, []).join(", ") + "}";
 }
 
 export default effect(
   iequiv,
   implement(IDescriptive),
   implement(IEquiv, {equiv}),
+  implement(ISerialize, {serialize}),
   implement(IObject, {toObject: identity}),
   implement(IFind, {find}),
   //implement(ISet, {superset}),

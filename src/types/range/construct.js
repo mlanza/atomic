@@ -9,6 +9,7 @@ export function Range(start, end, step, direction){
 }
 
 Range.EMPTY = new Range();
+Range.prototype[Symbol.toStringTag] = "Range";
 
 function range0(){
   return range1(Number.POSITIVE_INFINITY);

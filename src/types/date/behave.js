@@ -1,6 +1,6 @@
 import {effect, overload, constantly, identity} from '../../core';
 import {implement} from '../protocol';
-import {IUnit, IBounds, IMap, IShow, IDeref, IComparable, IEquiv, ICloneable, ILookup, IAssociative} from '../../protocols';
+import {IUnit, ISerialize, IBounds, IMap, IShow, IDeref, IComparable, IEquiv, ICloneable, ILookup, IAssociative} from '../../protocols';
 import {isNumber} from '../../types/number';
 import {days} from '../../types/duration';
 
@@ -94,9 +94,20 @@ function compare(self, other){
   return IDeref.deref(self) - IDeref.deref(other);
 }
 
+function serialize1(self){
+  return serialize2(self, "@type");
+}
+
+function serialize2(self, key){
+  return ISerialize.serialize(IAssociative.assoc({data: self.valueOf()}, key, self[Symbol.toStringTag]), key);
+}
+
+const serialize = overload(null, serialize1, serialize2);
+
 export default effect(
   implement(IUnit, {unit: overload(null, constantly(days(1)), unit2)}),
   implement(IBounds, {start: identity, end: identity}),
+  implement(ISerialize, {serialize}),
   implement(IEquiv, {equiv}),
   implement(IMap, {keys, vals}),
   implement(IComparable, {compare}),
