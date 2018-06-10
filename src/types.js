@@ -36,5 +36,6 @@ export * from "./types/series";
 export * from "./types/set";
 export * from "./types/string";
 export * from "./types/subscriptionmonitor";
+export * from "./types/weakmap";
 export * from "./types/when";
 export * from "./types/years";

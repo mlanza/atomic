@@ -1,6 +1,6 @@
 import {overload, constantly, effect} from '../../core';
 import {implement} from '../protocol';
-import {IArray, IBounds, ISerialize, ISteppable, ISequential, ICollection, IComparable, INext, IEquiv, IReduce, IKVReduce, ISeqable, IShow, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, ISeq, IInclusive, between} from '../../protocols';
+import {IArray, IBounds, IEncode, ISteppable, ISequential, ICollection, IComparable, INext, IEquiv, IReduce, IKVReduce, ISeqable, IShow, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, ISeq, IInclusive, between} from '../../protocols';
 import {reduced, unreduced, isReduced} from '../reduced';
 import {lazySeq} from '../lazyseq';
 import {iterable} from '../lazyseq/behave';
@@ -56,25 +56,17 @@ function emptyable(Type){
   implement(IEmptyableCollection, {empty: constantly(Type.EMPTY)}, Type);
 }
 
-function serializable(Type){
-
-  function serialize1(self){
-    return serialize2(self, "@type");
+function encodeable(Type){
+  function encode(self, label, refstore, seed){
+    return IEncode.encode(IAssociative.assoc(IEncode.encode({data: Object.assign({}, self)}, label, refstore, seed), label, self[Symbol.toStringTag]), label, refstore, seed);
   }
-
-  function serialize2(self, key){
-    return ISerialize.serialize(IAssociative.assoc({data: Object.assign({}, self)}, key, self[Symbol.toStringTag]), key);
-  }
-
-  const serialize = overload(null, serialize1, serialize2);
-
-  implement(ISerialize, {serialize}, Type);
+  implement(IEncode, {encode}, Type);
 }
 
 export default effect(
   iterable,
   emptyable,
-  serializable,
+  encodeable,
   implement(ISequential),
   implement(IInclusive, {includes: between}),
   implement(ISeqable, {seq}),

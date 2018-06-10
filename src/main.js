@@ -1,7 +1,7 @@
-import {overload, identity} from "./core";
+import {overload, identity, counter} from "./core";
 import {reducing} from "./types/reduced";
 import {sort} from "./types/lazyseq";
-import {IAppendable, IArray, IAssociative, IBounds, IConverse, ICloneable, ICollection, IComparable, IContent, ICounted, IDeref, IDeserialize, IDisposable, IEmptyableCollection, IEquiv, IEvented, IFind, IFn, IHierarchy, IInclusive, IIndexed, IKVReduce, ILookup, IMap, IMapEntry, INext, IObject, IPrependable, IPublish, IReduce, IReset, IReversible, ISeq, ISeqable, ISerialize, ISet, IShow, ISteppable, ISubscribe, ISwap, IUnit} from "./protocols";
+import {IAppendable, IArray, IAssociative, IBounds, IConverse, ICloneable, ICollection, IComparable, IContent, ICounted, IDeref, IDisposable, IEmptyableCollection, IEncode, IEquiv, IEvented, IFind, IFn, IHierarchy, IInclusive, IIndexed, IKVReduce, ILookup, IMap, IMapEntry, INext, IObject, IPrependable, IPublish, IReduce, IReset, IReversible, ISeq, ISeqable, ISet, IShow, ISteppable, ISubscribe, ISwap, IUnit} from "./protocols";
 
 import * as T from "./types";
 import * as d from "./dom";
@@ -16,8 +16,6 @@ export * from "./signals";
 export * from "./multimethods";
 export * from "./dom";
 
-export const deserialize = IDeserialize.deserialize;
-export const serialize = ISerialize.serialize;
 export const start = IBounds.start;
 export const end = IBounds.end;
 export const pub = IPublish.pub;
@@ -147,6 +145,19 @@ export const dissoc = overload(null, identity, IMap.dissoc, dissocN);
 
 export const appendTo  = T.realized(T.flip(IAppendable.append));
 export const prependTo = T.realized(T.flip(IPrependable.prepend));
+
+const encodedRefs   = new WeakMap()
+const encodedRefIds = counter();
+
+function encode1(self){
+  return encode2(self, "@type");
+}
+
+function encode2(self, label){
+  return IEncode.encode(self, label, encodedRefs, encodedRefIds);
+}
+
+export const encode = overload(null, encode1, encode2, IEncode.encode);
 
 /*
 export * from "./pointfree";
