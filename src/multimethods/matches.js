@@ -11,10 +11,10 @@ function isNode(self){
   return self instanceof Node;
 }
 
-IEvented.on(matches.instance, signature(isElement, isString), function(el, selector){
+IEvented.on(matches, signature(isElement, isString), function(el, selector){
   return el.matches(selector) ? el : null;
 });
 
-IEvented.on(matches.instance, signature(isNode, isFunction), function(el, pred){
+IEvented.on(matches, signature(isNode, isFunction), function(el, pred){
   return pred(el) ? el : null;
 });
