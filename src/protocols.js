@@ -17,6 +17,7 @@ export * from "./protocols/iequiv";
 export * from "./protocols/ievented";
 export * from "./protocols/ifind";
 export * from "./protocols/ifn";
+export * from "./protocols/ihash";
 export * from "./protocols/ihierarchy";
 export * from "./protocols/iinclusive";
 export * from "./protocols/iindexed";

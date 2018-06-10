@@ -7,6 +7,7 @@ import {IArray, IEquiv, IReversible, IMapEntry, IFind, IInclusive, IAssociative,
 import {concat} from '../../types/concatenated/construct';
 import {showable, iterable} from '../lazyseq/behave';
 import {detect, drop} from '../lazyseq/concrete';
+import {encodeable} from '../record/behave';
 import Array from '../../types/array/construct';
 
 function reverse(self){
@@ -94,6 +95,7 @@ function includes(self, x){
 export default effect(
   showable,
   iterable,
+  encodeable,
   implement(ISequential),
   implement(IReversible, {reverse}),
   implement(IMapEntry, {key, val}),

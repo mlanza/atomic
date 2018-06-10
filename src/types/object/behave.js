@@ -106,7 +106,10 @@ function decode(self, label, constructors){
   if (IAssociative.contains(self, label)){
     if (IAssociative.contains(self, "data")) {
       const constructor = ILookup.lookup(constructors, ILookup.lookup(self, label));
-      return constructor(ILookup.lookup(self, "data"));
+      const data = ILookup.lookup(self, "data");
+      return constructor(data && data.constructor === Object ? reducekv(data, function(memo, key, value){
+        return IAssociative.assoc(memo, IDecode.decode(key, label, constructors), IDecode.decode(value, label, constructors));
+      }, {}) : IDecode.decode(data, label, constructors));
     } else {
       throw new Error("Cannot decode reference types.");
     }

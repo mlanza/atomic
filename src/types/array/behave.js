@@ -1,6 +1,6 @@
 import {effect, identity, constantly} from '../../core';
 import {implement} from '../protocol';
-import {IArray, IReversible, ISet, IMapEntry, IEquiv, IReduce, IKVReduce, IAppendable, IPrependable, IInclusive, ICollection, INext, ISeq, IFind, ISeqable, IIndexed, IAssociative, ISequential, IEmptyableCollection, IFn, IShow, ICounted, ILookup, ICloneable} from '../../protocols';
+import {IArray, IEncode, IDecode, IReversible, ISet, IMapEntry, IEquiv, IReduce, IKVReduce, IAppendable, IPrependable, IInclusive, ICollection, INext, ISeq, IFind, ISeqable, IIndexed, IAssociative, ISequential, IEmptyableCollection, IFn, IShow, ICounted, ILookup, ICloneable} from '../../protocols';
 import {reduce, reducekv, reduced} from '../reduced';
 import {indexedSeq} from '../indexedseq';
 import {revSeq} from '../revseq';
@@ -124,6 +124,8 @@ export default effect(
   indexed,
   iequiv,
   implement(ISequential),
+  implement(IEncode, {encode: identity}),
+  implement(IDecode, {decode: identity}),
   implement(IReversible, {reverse}),
   implement(ISet, {union, intersection, difference, disj, superset}),
   implement(IFind, {find}),

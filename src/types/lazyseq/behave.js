@@ -41,6 +41,7 @@ function iterator(){
 
 export function iterable(Type){
   Type.prototype[Symbol.iterator] = iterator;
+  implement(IArray, {toArray}, Type);
 }
 
 export function find(coll, key){
@@ -132,7 +133,6 @@ export default effect(
   implement(IEquiv, {equiv}),
   implement(IFind, {find}),
   implement(IEmptyableCollection, {empty: EmptyList.EMPTY}),
-  implement(IArray, {toArray}),
   implement(ISeq, {first, rest}),
   implement(ISeqable, {seq: identity}),
   implement(INext, {next}));
