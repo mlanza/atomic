@@ -2,7 +2,7 @@ import record from "../record/behave";
 import {reduced} from "../reduced/construct";
 import {effect} from '../../core';
 import {implement} from '../protocol';
-import {IEquiv, IMap, IReduce, ILookup, IComparable} from '../../protocols';
+import {IComparable} from '../../protocols';
 
 function compare(a, b){
   return IEquiv.equiv(a, b) ? 0 : IReduce.reduce(IMap.keys(a), function(memo, key){

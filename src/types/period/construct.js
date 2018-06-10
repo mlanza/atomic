@@ -11,6 +11,11 @@ export function Period(start, end, step, direction){
   this.direction = direction;
 }
 
+function from({start, end, step, direction}){
+  return new Period(start, end, step, direction);
+}
+
+Period.from = from;
 Period.EMPTY = new Period();
 Period.prototype[Symbol.toStringTag] = "Period";
 

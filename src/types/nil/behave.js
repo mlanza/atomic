@@ -1,4 +1,4 @@
-import {IAssociative, IArray, IEquiv, ICollection, INext, ISeq, IShow, ISeqable, IIndexed, ICounted, ILookup, IReduce, IEmptyableCollection, ISequential} from '../../protocols';
+import {IAssociative, IEncode, IDecode, IArray, IEquiv, ICollection, INext, ISeq, IShow, ISeqable, IIndexed, ICounted, ILookup, IReduce, IEmptyableCollection, ISequential} from '../../protocols';
 import EmptyList from '../../types/emptylist';
 import {identity, constantly, effect} from '../../core';
 import {implement, surrogates} from '../protocol';
@@ -29,6 +29,8 @@ surrogates.unshift(nil);
 
 export default effect(
   implement(ISequential),
+  implement(IEncode, {encode: constantly(null)}),
+  implement(IDecode, {decode: constantly(null)}),
   implement(IEmptyableCollection, {empty: identity}),
   implement(IEquiv, {equiv}),
   implement(ILookup, {lookup: constantly(null)}),

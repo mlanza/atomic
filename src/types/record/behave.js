@@ -1,7 +1,7 @@
-import {effect, overload} from '../../core';
+import {effect, overload, constantly} from '../../core';
 import {implement} from '../protocol';
 import {reduced} from "../reduced/construct";
-import {IReduce, IKVReduce, IEquiv, IObject, IDescriptive, IAssociative, ISeqable, ILookup, ICounted, IMap, ISeq, IRecord, IEmptyableCollection, isRecord} from '../../protocols';
+import {IReduce, IKVReduce, IEquiv, IEncode, IObject, IDescriptive, IAssociative, ISeqable, ILookup, ICounted, IMap, ISeq, IRecord, IEmptyableCollection, isRecord} from '../../protocols';
 import {constructs} from '../function';
 
 function toObject(self){
@@ -70,13 +70,27 @@ function reducekv(self, xf, init){
 
 function construction(Type){
   Type.create = constructs(Type);
-  Type.from = function(attrs){
+  Type.from || (Type.from = function(attrs){
     return Object.assign(Object.create(Type.prototype), {attrs: attrs});
+  });
+}
+
+export function encodeable(Type){
+  function encode(self, label, refstore, seed){
+    return IEncode.encode(IAssociative.assoc(IEncode.encode({data: Object.assign({}, self)}, label, refstore, seed), label, self[Symbol.toStringTag]), label, refstore, seed);
   }
+  implement(IEncode, {encode}, Type);
+}
+
+export function emptyable(Type){
+  Type.EMPTY || (Type.EMPTY = new Type());
+  implement(IEmptyableCollection, {empty: constantly(Type.EMPTY)}, Type);
 }
 
 export default effect(
   construction,
+  encodeable,
+  emptyable,
   implement(IRecord),
   implement(IDescriptive),
   implement(IReduce, {reduce}),

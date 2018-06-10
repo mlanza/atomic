@@ -8,6 +8,11 @@ export function Range(start, end, step, direction){
   this.direction = direction;
 }
 
+function from({start, end, step, direction}){
+  return new Range(start, end, step, direction);
+}
+
+Range.from = from;
 Range.EMPTY = new Range();
 Range.prototype[Symbol.toStringTag] = "Range";
 
