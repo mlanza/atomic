@@ -113,6 +113,20 @@ function nth(coll, idx, notFound){
   return coll[idx] || notFound || null;
 }
 
+function encode(self, label, refstore, seed){
+  return reduce(self, function(memo, value){
+    memo.push(IEncode.encode(value, label, refstore, seed));
+    return memo;
+  }, []);
+}
+
+function decode(self, label, constructors){
+  return reduce(self, function(memo, value){
+    memo.push(IDecode.decode(self, label, constructors));
+    return memo;
+  }, []);
+}
+
 export const indexed = effect(
   implement(IIndexed, {nth: nth}),
   implement(ICounted, {count: length}));
@@ -124,8 +138,8 @@ export default effect(
   indexed,
   iequiv,
   implement(ISequential),
-  implement(IEncode, {encode: identity}),
-  implement(IDecode, {decode: identity}),
+  implement(IEncode, {encode}),
+  implement(IDecode, {decode}),
   implement(IReversible, {reverse}),
   implement(ISet, {union, intersection, difference, disj, superset}),
   implement(IFind, {find}),
