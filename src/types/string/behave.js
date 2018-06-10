@@ -1,4 +1,4 @@
-import {IArray, IEncode, IIndexed, ISeqable, INext, ISeq, IInclusive, IAppendable, IPrependable, IShow, ICounted, ILookup, IFn, IComparable, IEmptyableCollection} from '../../protocols';
+import {IArray, IEncode, IDecode, IIndexed, ISeqable, INext, ISeq, IInclusive, IAppendable, IPrependable, IShow, ICounted, ILookup, IFn, IComparable, IEmptyableCollection} from '../../protocols';
 import {constantly, effect, identity} from "../../core";
 import {implement} from '../protocol';
 import String from './construct';
@@ -71,6 +71,7 @@ function toArray(self){
 export default effect(
   indexed,
   implement(IEncode, {encode: identity}),
+  implement(IDecode, {decode: identity}),
   implement(IArray, {toArray}),
   implement(IComparable, {compare}),
   implement(IInclusive, {includes}),

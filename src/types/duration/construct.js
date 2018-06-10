@@ -2,7 +2,12 @@ export default function Duration(milliseconds){
   this.milliseconds = milliseconds;
 }
 
+function from({milliseconds}){
+  return duration(milliseconds);
+}
+
 Duration.prototype[Symbol.toStringTag] = "Duration";
+Duration.from = from;
 
 export function duration(milliseconds){
   return new Duration(milliseconds);
@@ -33,3 +38,5 @@ export function days(n){
 export function weeks(n){
   return duration(n * 1000 * 60 * 60 * 24 * 7);
 }
+
+export {Duration};

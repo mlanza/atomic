@@ -4,6 +4,7 @@ import {implement} from '../protocol';
 import {min} from '../number/concrete';
 import {inject} from '../../multimethods/amalgam';
 import * as w from '../when/construct';
+import {encodeable} from '../record/behave';
 
 function step(self, dt){
   const som  = inject(dt, w.som());
@@ -30,5 +31,6 @@ function converse(self){
 }
 
 export default effect(
+  encodeable,
   implement(IConverse, {converse}),
   implement(ISteppable, {step}));

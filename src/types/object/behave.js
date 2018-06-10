@@ -1,6 +1,6 @@
 import {constantly, effect, identity} from '../../core';
 import {implement} from '../protocol';
-import {IArray, ISet, ICollection, IEncode, IEquiv, IMapEntry, IReduce, IKVReduce, ISeqable, IShow, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, IFn, IMap, ISeq, IDescriptive, IObject, ICloneable, IInclusive} from '../../protocols';
+import {IArray, IDecode, ISet, ICollection, IEncode, IEquiv, IMapEntry, IReduce, IKVReduce, ISeqable, IShow, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, IFn, IMap, ISeq, IDescriptive, IObject, ICloneable, IInclusive} from '../../protocols';
 import {objectSelection} from '../objectselection';
 import {reduced} from '../reduced';
 import {lazySeq} from '../lazyseq';
@@ -102,10 +102,24 @@ function encode(self, label, refstore, seed){
   }, {});
 }
 
+function decode(self, label, constructors){
+  if (IAssociative.contains(self, label)){
+    if (IAssociative.contains(self, "data")) {
+      const constructor = ILookup.lookup(constructors, ILookup.lookup(self, label));
+      return constructor(ILookup.lookup(self, "data"));
+    } else {
+      throw new Error("Cannot decode reference types.");
+    }
+  } else {
+    return self;
+  }
+}
+
 export default effect(
   iequiv,
   implement(IDescriptive),
   implement(IEquiv, {equiv}),
+  implement(IDecode, {decode}),
   implement(IEncode, {encode}),
   implement(IObject, {toObject: identity}),
   implement(IFind, {find}),

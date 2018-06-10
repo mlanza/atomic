@@ -82,4 +82,11 @@ export function isWhen(self){
   return self && self.constructor === When;
 }
 
+export function from({attrs}){
+  return new When(attrs);
+}
+
+When.from = from;
+When.prototype[Symbol.toStringTag] = "When";
+
 export default When;

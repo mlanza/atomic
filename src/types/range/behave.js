@@ -4,6 +4,7 @@ import {IArray, IBounds, IEncode, ISteppable, ISequential, ICollection, ICompara
 import {reduced, unreduced, isReduced} from '../reduced';
 import {lazySeq} from '../lazyseq';
 import {iterable} from '../lazyseq/behave';
+import {encodeable, emptyable} from "../record/behave";
 
 function seq(self){
   return self === self.constructor.EMPTY ? null : self;
@@ -50,17 +51,6 @@ function toArray(self){
     memo.push(date);
     return memo;
   }, []);
-}
-
-function emptyable(Type){
-  implement(IEmptyableCollection, {empty: constantly(Type.EMPTY)}, Type);
-}
-
-function encodeable(Type){
-  function encode(self, label, refstore, seed){
-    return IEncode.encode(IAssociative.assoc(IEncode.encode({data: Object.assign({}, self)}, label, refstore, seed), label, self[Symbol.toStringTag]), label, refstore, seed);
-  }
-  implement(IEncode, {encode}, Type);
 }
 
 export default effect(

@@ -1,7 +1,9 @@
 import {overload, identity, counter} from "./core";
 import {reducing} from "./types/reduced";
 import {sort} from "./types/lazyseq";
-import {IAppendable, IArray, IAssociative, IBounds, IConverse, ICloneable, ICollection, IComparable, IContent, ICounted, IDeref, IDisposable, IEmptyableCollection, IEncode, IEquiv, IEvented, IFind, IFn, IHierarchy, IInclusive, IIndexed, IKVReduce, ILookup, IMap, IMapEntry, INext, IObject, IPrependable, IPublish, IReduce, IReset, IReversible, ISeq, ISeqable, ISet, IShow, ISteppable, ISubscribe, ISwap, IUnit} from "./protocols";
+import {chain} from "./types/pipeline";
+import {IAppendable, IArray, IAssociative, IBounds, IConverse, ICloneable, ICollection, IComparable, IContent, ICounted, IDecode, IDeref, IDisposable, IEmptyableCollection, IEncode, IEquiv, IEvented, IFind, IFn, IHierarchy, IInclusive, IIndexed, IKVReduce, ILookup, IMap, IMapEntry, INext, IObject, IPrependable, IPublish, IReduce, IReset, IReversible, ISeq, ISeqable, ISet, IShow, ISteppable, ISubscribe, ISwap, IUnit} from "./protocols";
+import {Date, Range, Period, When, Duration, Months, Years} from "./types";
 
 import * as T from "./types";
 import * as d from "./dom";
@@ -148,6 +150,15 @@ export const prependTo = T.realized(T.flip(IPrependable.prepend));
 
 const encodedRefs   = new WeakMap()
 const encodedRefIds = counter();
+const constructors  = {
+  Range: Range.from,
+  Period: Period.from,
+  When: When.from,
+  Months: Months.from,
+  Years: Years.from,
+  Date: Date.from,
+  Duration: Duration.from
+}
 
 function encode1(self){
   return encode2(self, "@type");
@@ -158,6 +169,24 @@ function encode2(self, label){
 }
 
 export const encode = overload(null, encode1, encode2, IEncode.encode);
+
+function decode1(self){
+  return decode2(self, "@type");
+}
+
+function decode2(self, label){
+  return IDecode.decode(self, label, constructors);
+}
+
+export const decode = overload(null, decode1, decode2);
+
+export function serialize(self){
+  return JSON.stringify(encode(self));
+}
+
+export function deserialize(text){
+  return decode(JSON.parse(text));
+}
 
 /*
 export * from "./pointfree";

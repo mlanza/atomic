@@ -4,6 +4,7 @@ import {implement} from '../protocol';
 import {min} from '../number/concrete';
 import {inject} from '../../multimethods/amalgam';
 import * as w from '../when/construct';
+import {encodeable} from '../record/behave';
 
 function converse(self){
   return new self.constructor(self.n * -1, self.options);
@@ -26,5 +27,6 @@ function step(self, dt){
 }
 
 export default effect(
+  encodeable,
   implement(IConverse, {converse}),
   implement(ISteppable, {step}));
