@@ -62,7 +62,7 @@ function satisfies1(protocol){
 
 function satisfies2(protocol, obj){
   const registry = protocol[REGISTRY];
-  return registry.get(obj) || registry.get(obj != null && obj.constructor) || registry.get(surrogate(obj)) || (obj && supers(registry, Object.getPrototypeOf(obj)));
+  return registry.get(obj != null && obj.constructor) || registry.get(surrogate(obj)) || (obj && supers(registry, Object.getPrototypeOf(obj)));
 }
 
 function satisfies3(protocol, method, obj){
