@@ -1,5 +1,5 @@
-import {IArray, ISerialize, IDeserialize, IIndexed, ISeqable, INext, ISeq, IInclusive, IAppendable, IPrependable, IShow, ICounted, ILookup, IFn, IComparable, IEmptyableCollection} from '../../protocols';
-import {constantly, effect} from "../../core";
+import {IArray, IEncode, IIndexed, ISeqable, INext, ISeq, IInclusive, IAppendable, IPrependable, IShow, ICounted, ILookup, IFn, IComparable, IEmptyableCollection} from '../../protocols';
+import {constantly, effect, identity} from "../../core";
 import {implement} from '../protocol';
 import String from './construct';
 import EmptyList from '../emptylist/construct';
@@ -70,8 +70,7 @@ function toArray(self){
 
 export default effect(
   indexed,
-  implement(ISerialize, {serialize: JSON.stringify}),
-  implement(IDeserialize, {deserialize: JSON.parse}),
+  implement(IEncode, {encode: identity}),
   implement(IArray, {toArray}),
   implement(IComparable, {compare}),
   implement(IInclusive, {includes}),

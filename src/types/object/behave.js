@@ -1,12 +1,18 @@
 import {constantly, effect, identity} from '../../core';
 import {implement} from '../protocol';
-import {IArray, ISet, ICollection, ISerialize, IDeserialize, IEquiv, IMapEntry, IReduce, IKVReduce, ISeqable, IShow, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, IFn, IMap, ISeq, IDescriptive, IObject, ICloneable, IInclusive} from '../../protocols';
+import {IArray, ISet, ICollection, IEncode, IEquiv, IMapEntry, IReduce, IKVReduce, ISeqable, IShow, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, IFn, IMap, ISeq, IDescriptive, IObject, ICloneable, IInclusive} from '../../protocols';
 import {objectSelection} from '../objectselection';
 import {reduced} from '../reduced';
 import {lazySeq} from '../lazyseq';
 import {iequiv} from '../array/behave';
 import Object from '../object/construct';
 import EmptyList from '../emptylist/construct';
+
+function conj(self, [key, value]){
+  const obj = ICloneable.clone(self);
+  obj[key] = value;
+  return obj;
+}
 
 function equiv(self, other){
   return ICounted.count(IMap.keys(self)) === ICounted.count(IMap.keys(other)) && IReduce.reduce(IMap.keys(self), function(memo, key){
@@ -90,21 +96,22 @@ function show(self){
   }).join(", ") + "}";
 }
 
-function serialize(self){
-  return "{" + reducekv(self, function(memo, key, value){
-    return ICollection.conj(memo, ISerialize.serialize(key) + ": " + ISerialize.serialize(value));
-  }, []).join(", ") + "}";
+function encode(self, label, refstore, seed){
+ return reducekv(self, function(memo, key, value){
+    return IAssociative.assoc(memo, IEncode.encode(key, label, refstore, seed), IEncode.encode(value, label, refstore, seed));
+  }, {});
 }
 
 export default effect(
   iequiv,
   implement(IDescriptive),
   implement(IEquiv, {equiv}),
-  implement(ISerialize, {serialize}),
+  implement(IEncode, {encode}),
   implement(IObject, {toObject: identity}),
   implement(IFind, {find}),
   //implement(ISet, {superset}),
   implement(IInclusive, {includes}),
+  implement(ICollection, {conj}),
   implement(ICloneable, {clone}),
   implement(IReduce, {reduce}),
   implement(IKVReduce, {reducekv}),
