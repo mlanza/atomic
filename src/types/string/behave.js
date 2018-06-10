@@ -1,4 +1,4 @@
-import {IArray, IEncode, IDecode, IIndexed, ISeqable, INext, ISeq, IInclusive, IAppendable, IPrependable, IShow, ICounted, ILookup, IFn, IComparable, IEmptyableCollection} from '../../protocols';
+import {IArray, IHash, IEncode, IDecode, IIndexed, ISeqable, INext, ISeq, IInclusive, IAppendable, IPrependable, IShow, ICounted, ILookup, IFn, IComparable, IEmptyableCollection} from '../../protocols';
 import {constantly, effect, identity} from "../../core";
 import {implement} from '../protocol';
 import String from './construct';
@@ -68,8 +68,18 @@ function toArray(self){
   return self.split("");
 }
 
+function hash(self){
+  let hash = 0;
+  for (let i = 0; i < self.length; i++) {
+    hash += Math.pow(self.charCodeAt(i) * 31, self.length - i);
+    hash = hash & hash;
+  }
+  return hash;
+}
+
 export default effect(
   indexed,
+  implement(IHash, {hash}),
   implement(IEncode, {encode: identity}),
   implement(IDecode, {decode: identity}),
   implement(IArray, {toArray}),

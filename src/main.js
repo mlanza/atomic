@@ -2,8 +2,8 @@ import {overload, identity, counter} from "./core";
 import {reducing} from "./types/reduced";
 import {sort} from "./types/lazyseq";
 import {chain} from "./types/pipeline";
-import {IAppendable, IArray, IAssociative, IBounds, IConverse, ICloneable, ICollection, IComparable, IContent, ICounted, IDecode, IDeref, IDisposable, IEmptyableCollection, IEncode, IEquiv, IEvented, IFind, IFn, IHierarchy, IInclusive, IIndexed, IKVReduce, ILookup, IMap, IMapEntry, INext, IObject, IPrependable, IPublish, IReduce, IReset, IReversible, ISeq, ISeqable, ISet, IShow, ISteppable, ISubscribe, ISwap, IUnit} from "./protocols";
-import {Date, Range, Period, When, Duration, Months, Years} from "./types";
+import {IAppendable, IHash, IArray, IAssociative, IBounds, IConverse, ICloneable, ICollection, IComparable, IContent, ICounted, IDecode, IDeref, IDisposable, IEmptyableCollection, IEncode, IEquiv, IEvented, IFind, IFn, IHierarchy, IInclusive, IIndexed, IKVReduce, ILookup, IMap, IMapEntry, INext, IObject, IPrependable, IPublish, IReduce, IReset, IReversible, ISeq, ISeqable, ISet, IShow, ISteppable, ISubscribe, ISwap, IUnit} from "./protocols";
+import {Array, Concatenated, Date, Range, Period, When, Duration, Months, Years, List, EmptyList} from "./types";
 
 import * as T from "./types";
 import * as d from "./dom";
@@ -18,6 +18,7 @@ export * from "./signals";
 export * from "./multimethods";
 export * from "./dom";
 
+export const hash = IHash.hash;
 export const start = IBounds.start;
 export const end = IBounds.end;
 export const pub = IPublish.pub;
@@ -150,14 +151,17 @@ export const prependTo = T.realized(T.flip(IPrependable.prepend));
 
 const encodedRefs   = new WeakMap()
 const encodedRefIds = counter();
-const constructors  = {
+const constructors  = { //reference types only
   Range: Range.from,
   Period: Period.from,
   When: When.from,
   Months: Months.from,
   Years: Years.from,
   Date: Date.from,
-  Duration: Duration.from
+  Duration: Duration.from,
+  List: List.from,
+  EmptyList: EmptyList.from,
+  Concatenated: Concatenated.from
 }
 
 function encode1(self){

@@ -1,5 +1,5 @@
 import {IArray}  from "../../protocols/iarray";
-import {log, overload, identity, constantly} from "../../core";
+import {log, overload, identity, constantly, partial} from "../../core";
 import {isNil}  from "../nil";
 import {slice}  from "../array/concrete";
 import {reduce, reduced}  from "../reduced";

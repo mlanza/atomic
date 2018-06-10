@@ -4,11 +4,12 @@ import {concatenated, concat} from '../../types/concatenated/construct';
 import {isReduced, unreduced} from '../../types/reduced';
 import {IArray, ICollection, INext, ISeq, ICounted, ISeqable, IIndexed, IShow, IReduce, ISequential} from '../../protocols';
 import {apply} from '../../types/function/concrete';
-import EmptyList from "../emptylist";
+import EmptyList from '../emptylist';
 import {reduceable, showable, iterable} from '../lazyseq/behave';
+import {encodeable} from '../record/behave';
 
 function conj(self, x){
-  return concatenated(ICollection.conj(self.colls, [x]));
+  return new self.constructor(ICollection.conj(self.colls, [x]));
 }
 
 function next(self){
@@ -51,6 +52,7 @@ export default effect(
   iterable,
   reduceable,
   showable,
+  encodeable,
   implement(ISequential),
   implement(IReduce, {reduce}),
   implement(ICollection, {conj}),
