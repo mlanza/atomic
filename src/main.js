@@ -3,7 +3,7 @@ import {reducing} from "./types/reduced";
 import {sort} from "./types/lazyseq";
 import {chain} from "./types/pipeline";
 import {IAppendable, IHash, IArray, IAssociative, IBounds, IConverse, ICloneable, ICollection, IComparable, IContent, ICounted, IDecode, IDeref, IDisposable, IEmptyableCollection, IEncode, IEquiv, IEvented, IFind, IFn, IHierarchy, IInclusive, IIndexed, IKVReduce, ILookup, IMap, IMapEntry, INext, IObject, IPrependable, IPublish, IReduce, IReset, IReversible, ISeq, ISeqable, ISet, IShow, ISteppable, ISubscribe, ISwap, IUnit} from "./protocols";
-import {Method, Array, Concatenated, Date, Range, Period, When, Duration, Months, Years, List, EmptyList} from "./types";
+import {Array, Concatenated, Date, Range, Period, When, Duration, Months, Years, List, EmptyList} from "./types";
 
 import * as T from "./types";
 import * as d from "./dom";
@@ -200,8 +200,6 @@ function hash2(self, label){
 }
 
 export const hash = overload(null, hash1, hash2, IHash.hash);
-
-Method.hash = hash;
 
 /*
 export * from "./pointfree";

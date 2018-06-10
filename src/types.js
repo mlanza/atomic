@@ -1,7 +1,6 @@
 export * from "./types/emptylist";
 export * from "./types/lazyseq";
 export * from "./types/multimethod";
-export * from "./types/method";
 export * from "./types/multidict";
 export * from "./types/array";
 export * from "./types/boolean";

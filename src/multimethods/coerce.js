@@ -6,11 +6,11 @@ import {IEvented, IArray, canBecomeArray, IObject, canBecomeObject} from "../pro
 
 export const coerce = multimethod();
 
-IEvented.on(coerce.instance, signature(isArray, canBecomeArray), function(self, other){
+IEvented.on(coerce, signature(isArray, canBecomeArray), function(self, other){
   return IArray.toArray(other);
 });
 
-IEvented.on(coerce.instance, signature(isObject, canBecomeObject), function(self, other){
+IEvented.on(coerce, signature(isObject, canBecomeObject), function(self, other){
   return IObject.toObject(other);
 });
 
