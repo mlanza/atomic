@@ -165,7 +165,7 @@ IEvented.on(inject3, elementEventCallback, function(self, key, f){
 });
 
 IEvented.on(yank3, elementEventCallback, function(self, key, f){
-  self.delEventListener(key, f);
+  self.removeEventListener(key, f);
   return self;
 });
 
