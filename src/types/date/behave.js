@@ -1,8 +1,9 @@
 import {effect, overload, constantly, identity} from '../../core';
 import {implement} from '../protocol';
-import {IUnit, IEncode, IBounds, IMap, IShow, IDeref, IComparable, IEquiv, ICloneable, ILookup, IAssociative} from '../../protocols';
-import {isNumber} from '../../types/number';
-import {days} from '../../types/duration';
+import {IUnit, IReduce, IKVReduce, ISeqable, IEncode, IBounds, IMap, IShow, IDeref, ISeq, IComparable, IEquiv, ICloneable, ILookup, IAssociative, ICollection} from '../../protocols';
+import {isNumber} from '../number';
+import {lazySeq} from '../lazyseq';
+import {days} from '../duration';
 
 function lookup(self, key){
   switch(key){
@@ -41,6 +42,10 @@ function vals(self){
     memo.push(ILookup.lookup(self, key));
     return memo;
   }, []);
+}
+
+function conj(self, [key, value]){
+  return assoc(self, key, value);
 }
 
 //the benefit of exposing internal state as a map is assocIn and updateIn
@@ -98,13 +103,30 @@ function encode(self, label){
   return IAssociative.assoc({data: self.valueOf()}, label, self[Symbol.toStringTag]);
 }
 
+function reduce(self, xf, init){
+  return IReduce.reduce(keys(self), function(memo, key){
+    const value = ILookup.lookup(self, key);
+    return xf(memo, [key, value]);
+  }, init);
+}
+
+function reducekv(self, xf, init){
+  return reduce(self, function(memo, [key, value]){
+    return xf(memo, key, value);
+  }, init);
+}
+
 export default effect(
   implement(IUnit, {unit: overload(null, constantly(days(1)), unit2)}),
   implement(IBounds, {start: identity, end: identity}),
+  implement(ISeqable, {seq: identity}),
+  implement(IReduce, {reduce}),
+  implement(IKVReduce, {reducekv}),
   implement(IEncode, {encode}),
   implement(IEquiv, {equiv}),
   implement(IMap, {keys, vals}),
   implement(IComparable, {compare}),
+  implement(ICollection, {conj}),
   implement(IAssociative, {assoc, contains}),
   implement(ILookup, {lookup}),
   implement(ICloneable, {clone}),

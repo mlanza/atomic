@@ -3,7 +3,7 @@ import {implement} from '../protocol';
 import {ISeqable, ISequential} from '../../protocols';
 import {lazySeq} from '../lazyseq/construct';
 import EmptyList from '../emptylist/construct';
-import {showable, iterable} from '../lazyseq/behave';
+import {ishow, iterable} from '../lazyseq/behave';
 
 function seq2(self, idx){
   return idx < self.length ? lazySeq(self.item(idx), function(){
@@ -16,7 +16,7 @@ function seq(self){
 }
 
 export default effect(
-  showable,
+  ishow,
   iterable,
   implement(ISequential),
   implement(ISeqable, {seq}));

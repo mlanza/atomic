@@ -5,7 +5,7 @@ import {cons} from '../../types/list/construct';
 import {Reduced, unreduced} from '../../types/reduced';
 import {ISequential, IArray, ICloneable, IReduce, ICollection, IEmptyableCollection, INext, ISeq, ICounted, ISeqable, IIndexed} from '../../protocols';
 import {revSeq} from './construct';
-import {showable, iterable} from '../lazyseq/behave';
+import {ishow, iterable} from '../lazyseq/behave';
 
 function clone(self){
   return new revSeq(self.coll, self.idx);
@@ -52,7 +52,7 @@ function reduce3(coll, f, init){
 const reduce = overload(null, null, reduce2, reduce3);
 
 export default effect(
-  showable,
+  ishow,
   iterable,
   implement(ISequential),
   implement(IArray, {toArray: Array.from}),

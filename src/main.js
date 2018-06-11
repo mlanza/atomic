@@ -2,8 +2,9 @@ import {overload, identity, counter} from "./core";
 import {reducing} from "./types/reduced";
 import {sort} from "./types/lazyseq";
 import {chain} from "./types/pipeline";
-import {IAppendable, IHash, IArray, IAssociative, IBounds, IConverse, ICloneable, ICollection, IComparable, IContent, ICounted, IDecode, IDeref, IDisposable, IEmptyableCollection, IEncode, IEquiv, IEvented, IFind, IFn, IHierarchy, IInclusive, IIndexed, IKVReduce, ILookup, IMap, IMapEntry, INext, IObject, IPrependable, IPublish, IReduce, IReset, IReversible, ISeq, ISeqable, ISet, IShow, ISteppable, ISubscribe, ISwap, IUnit} from "./protocols";
-import {Array, Concatenated, Date, Range, Period, When, Duration, Months, Years, List, EmptyList} from "./types";
+import {IAppendable, IHash, IYank, IArray, IAssociative, IBounds, IConverse, ICloneable, ICollection, IComparable, IContent, ICounted, IDecode, IDeref, IDisposable, IEmptyableCollection, IEncode, IEquiv, IEvented, IFind, IFn, IHierarchy, IInclusive, IIndexed, IKVReduce, ILookup, IMap, IMapEntry, INext, IObject, IPrependable, IPublish, IReduce, IReset, IReversible, ISeq, ISeqable, ISet, IShow, ISteppable, ISubscribe, ISwap, IUnit} from "./protocols";
+import {fork} from "./predicates";
+import {hash} from "./encode";
 
 import * as T from "./types";
 import * as d from "./dom";
@@ -13,6 +14,17 @@ export * from "./core";
 export * from "./types";
 export * from "./protocols";
 export * from "./predicates";
+export * from "./associative";
+export * from "./lookup";
+export * from "./swap";
+export * from "./reduce";
+export * from "./reducekv";
+export * from "./encode";
+export * from "./decode";
+export * from "./contents";
+export * from "./merge";
+export * from "./mergeWith";
+export * from "./patch";
 export * from "./associatives";
 export * from "./signals";
 export * from "./multimethods";
@@ -43,7 +55,6 @@ export const nextSibling = IHierarchy.nextSibling;
 export const prevSibling = IHierarchy.prevSibling;
 export const compare = IComparable.compare;
 export const toArray = IArray.toArray;
-export const assoc = IAssociative.assoc;
 export const contains = IAssociative.contains;
 export const append = overload(null, identity, IAppendable.append, reducing(IAppendable.append));
 export const prepend = overload(null, identity, IPrependable.prepend, reducing(IPrependable.prepend));
@@ -67,37 +78,9 @@ export const union = overload(T.set, identity, ISet.union, reducing(ISet.union))
 export const intersection = overload(null, null, ISet.intersection, reducing(ISet.intersection));
 export const difference = overload(null, null, ISet.difference, reducing(ISet.difference));
 
-export function contents2(self, type){
-  return T.filter(function(node){
-    return node.nodeType === type;
-  }, IContent.contents(self))
-}
-
-export const contents = overload(null, IContent.contents, contents2);
-
 export function subset(subset, superset){
   return ISet.superset(superset, subset);
 }
-
-function reduce2(xf, coll){
-  return IReduce.reduce(coll, xf, xf());
-}
-
-function reduce3(xf, init, coll){
-  return IReduce.reduce(coll, xf, init);
-}
-
-export const reduce = overload(null, null, reduce2, reduce3);
-
-export function reducekv2(xf, coll){
-  return IKVReduce.reducekv(coll, xf, xf());
-}
-
-export function reducekv3(xf, init, coll){
-  return IKVReduce.reducekv(coll, xf, init);
-}
-
-export const reducekv = overload(null, null, reducekv2, reducekv3);
 
 export function add1(self){
   return ISteppable.step(IUnit.unit(self), self);
@@ -119,26 +102,6 @@ export function subtract2(self, amount){
 
 export const subtract = overload(null, subtract1, subtract2, reducing(subtract2));
 
-function swap3(self, f, a){
-  return ISwap.swap(self, function(state){
-    return f(state, a);
-  });
-}
-
-function swap4(self, f, a, b){
-  return ISwap.swap(self, function(state){
-    return f(state, a , b);
-  });
-}
-
-function swapN(self, f, a, b, cs){
-  return ISwap.swap(self, function(state){
-    return f.apply(null, [state, a , b, ...cs]);
-  });
-}
-
-export const swap = overload(null, null, ISwap.swap, swap3, swap4, swapN);
-
 function dissocN(obj, ...keys){
   return IReduce.reduce(keys, IMap.dissoc, obj);
 }
@@ -147,59 +110,29 @@ export const dissoc = overload(null, identity, IMap.dissoc, dissocN);
 
 export const appendTo  = T.realized(T.flip(IAppendable.append));
 export const prependTo = T.realized(T.flip(IPrependable.prepend));
+export const transpose = fork(IInclusive.includes, IYank.yank, ICollection.conj);
 
-const encodedRefs   = new WeakMap()
-const encodedRefIds = counter();
-const constructors  = { //reference types only
-  Range: Range.from,
-  Period: Period.from,
-  When: When.from,
-  Months: Months.from,
-  Years: Years.from,
-  Date: Date.from,
-  Duration: Duration.from,
-  List: List.from,
-  EmptyList: EmptyList.from,
-  Concatenated: Concatenated.from
+function memoize1(f){
+  return memoize2(f, function(...args){
+    return hash(args);
+  });
 }
 
-function encode1(self){
-  return encode2(self, "@type");
+function memoize2(f, hash){
+  const cache = {};
+  return function(...args){
+    const key = hash(...args);
+    if (cache.hasOwnProperty(key)) {
+      return cache[key];
+    } else {
+      const result = f(...args);
+      cache[key] = result;
+      return result;
+    }
+  }
 }
 
-function encode2(self, label){
-  return IEncode.encode(self, label, encodedRefs, encodedRefIds);
-}
-
-export const encode = overload(null, encode1, encode2, IEncode.encode);
-
-function decode1(self){
-  return decode2(self, "@type");
-}
-
-function decode2(self, label){
-  return IDecode.decode(self, label, constructors);
-}
-
-export const decode = overload(null, decode1, decode2);
-
-export function serialize(self){
-  return JSON.stringify(encode(self));
-}
-
-export function deserialize(text){
-  return decode(JSON.parse(text));
-}
-
-function hash1(self){
-  return hash2(self, "@type");
-}
-
-function hash2(self, label){
-  return IHash.hash(self, label, encodedRefs, encodedRefIds);
-}
-
-export const hash = overload(null, hash1, hash2, IHash.hash);
+export const memoize = overload(null, memoize1, memoize2);
 
 /*
 export * from "./pointfree";

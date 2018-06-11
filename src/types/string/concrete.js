@@ -15,15 +15,11 @@ function str2(x, y){
   return str1(x) + str1(y);
 }
 
-export function template(template, obj){
+export function template(template, obj){ //pass in object or array
   return IKVReduce.reducekv(function(text, key, value){
     return replace(text, new RegExp("\\{" + key + "\\}", 'ig'), value);
   }, template, obj);
 }
-
-/* export function inject(template, ...args){
-  return template(template, args);
-} */
 
 export function camelToDashed(str){
   return str.replace(/[A-Z]/, function(x) { return "-" + x.toLowerCase() })

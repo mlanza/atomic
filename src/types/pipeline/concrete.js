@@ -14,8 +14,9 @@ import {mapcat, distinct, compact} from "../lazyseq/concrete";
 import {reduced} from "../reduced";
 import EmptyList from "../emptylist";
 import * as t from "../../transducers";
-import {update} from "../../associatives";
-import {isSequential, ISeqable} from "../../protocols";
+import {update} from "../../associative";
+import {ISeqable} from "../../protocols/iseqable";
+import {isSequential} from "../../protocols/isequential";
 
 export function either(f){
   return function(...args){

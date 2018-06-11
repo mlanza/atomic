@@ -4,7 +4,7 @@ import {implement} from '../protocol';
 import String from './construct';
 import EmptyList from '../emptylist/construct';
 import {lazySeq} from '../lazyseq/construct';
-import {indexed} from '../array/behave';
+import {iindexed} from '../array/behave';
 
 function compare(self, other){
   return self === other ? 0 : self > other ? 1 : -1;
@@ -78,7 +78,7 @@ function hash(self){
 }
 
 export default effect(
-  indexed,
+  iindexed,
   implement(IHash, {hash}),
   implement(IEncode, {encode: identity}),
   implement(IDecode, {decode: identity}),

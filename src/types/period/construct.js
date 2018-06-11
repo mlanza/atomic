@@ -1,8 +1,8 @@
 import {overload} from '../../core';
 import {days} from '../duration/construct';
-import {midnight} from '../when/construct';
-import {ISteppable, IComparable} from '../../protocols';
-import {inject} from '../../multimethods';
+import {midnight} from '../date/concrete';
+import {ISteppable, IComparable, IAssociative} from '../../protocols';
+import {patch} from '../../patch';
 
 export function Period(start, end, step, direction){
   this.start = start;
@@ -24,7 +24,7 @@ function period0(){
 }
 
 function period1(end){
-  return period2(inject(new Date, midnight()), end);
+  return period2(patch(new Date, midnight()), end);
 }
 
 function period2(start, end){
