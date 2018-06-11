@@ -41,7 +41,6 @@ function iterator(){
 
 export function iterable(Type){
   Type.prototype[Symbol.iterator] = iterator;
-  implement(IArray, {toArray}, Type);
 }
 
 export function find(coll, key){
@@ -126,6 +125,7 @@ export default effect(
   showable,
   reduceable,
   implement(ISequential),
+  implement(IArray, {toArray}),
   implement(IAppendable, {append}),
   implement(IPrependable, {prepend}),
   implement(IReduce, {reduce}),

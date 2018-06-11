@@ -1,6 +1,8 @@
 import {implement, surrogates} from '../protocol';
-import {IAppendable, IPrependable, IEvented, IAssociative, IEquiv, ICloneable, ICollection, INext, ISeq, IShow, ISeqable, IIndexed, ICounted, ILookup, IReduce, IEmptyableCollection, IHierarchy, IContent} from '../../protocols';
-import {each} from '../../types/lazyseq/concrete';
+import {IAppendable, IPrependable, IEvented, IAssociative, IMap, IEquiv, ICloneable, ICollection, INext, ISeq, IShow, ISeqable, IIndexed, ICounted, ILookup, IReduce, IEmptyableCollection, IHierarchy, IContent} from '../../protocols';
+import {each} from '../lazyseq/concrete';
+import EmptyList from '../emptylist/construct';
+import {lazySeq} from '../lazyseq/construct';
 import {identity, constantly, effect} from '../../core';
 import {yank} from '../../multimethods/amalgam';
 import Element from './construct';
@@ -37,6 +39,31 @@ function lookup(self, key){
 function assoc(self, key, value){
   self.setAttribute(key, value);
   return self;
+}
+
+function dissoc(self, key){
+  self.removeAttribute(key);
+  return self;
+}
+
+function keys2(self, idx){
+  return idx < self.attributes.length ? lazySeq(self.attributes[idx].name, function(){
+    return keys2(self, idx + 1);
+  }) : EmptyList.EMPTY;
+}
+
+function keys(self){
+  return keys2(self, 0);
+}
+
+function vals2(self, idx){
+  return idx < self.attributes.length ? lazySeq(self.attributes[idx].value, function(){
+    return keys2(self, idx + 1);
+  }) : EmptyList.EMPTY;
+}
+
+function vals(self){
+  return vals2(self, 0);
 }
 
 function contains(self, key){
@@ -77,4 +104,5 @@ export default effect(
   implement(ILookup, {lookup}),
   implement(IContent, {contents}),
   implement(IHierarchy, {parent, children, nextSibling, prevSibling}),
+  implement(IMap, {dissoc, keys, vals}),
   implement(IAssociative, {assoc, contains}));
