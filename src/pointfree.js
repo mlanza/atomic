@@ -12,7 +12,7 @@ export * from "./protocols";
 export * from "./types";
 export * from "./pipelines";
 export * from "./dom";
-export {someFn} from "./predicates";
+export {someFn, fork} from "./predicates";
 
 export const reduce = curry(p.reduce, 3);
 export const append = subj(p.append);
@@ -78,7 +78,6 @@ export const isInstance = subj(c.isInstance);
 export const pre = subj(pred.pre);
 export const post = subj(pred.post);
 export const matches = subj(pred.matches);
-export const fork = obj(pred.fork);
 export const cond = subj(pred.cond);
 export const everyPair = obj(pred.everyPair);
 export const compare = subj(pred.compare);

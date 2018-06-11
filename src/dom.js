@@ -1,9 +1,9 @@
 import {implement} from './types/protocol';
 import {overload, constantly, identity, subj} from "./core";
-import {lazySeq, cons, apply, concat, partial, partially, comp, satisfies, compact, flatten, detect, filter, remove, each, map, mapcat, selfish} from "./types";
-import {IHierarchy, IArray, IReduce, ISeqable} from "./protocols";
-import {has, inject, yank, transpose, matches} from "./multimethods";
-export {has, inject, yank, transpose, matches} from "./multimethods";
+import {split, trim, lazySeq, cons, apply, concat, partial, partially, comp, satisfies, compact, flatten, detect, filter, remove, each, mapa, map, mapcat, into, selfish} from "./types";
+import {IHierarchy, IArray, IReduce, ISeqable, ICollection} from "./protocols";
+import {matches} from "./multimethods";
+export {matches} from "./multimethods";
 
 export function expansive(f){
   function expand(...xs){
@@ -26,11 +26,11 @@ export function expansive(f){
 }
 
 export const tag = partially(expansive(function(name, ...contents){ //partially guarantees calling tag always produces a factory
-  return IReduce.reduce(contents, inject, document.createElement(name));
+  return into(document.createElement(name), contents);
 }));
 
 export const frag = expansive(function(...contents){
-  return IReduce.reduce(contents, inject, document.createDocumentFragment());
+  return into(document.createDocumentFragment(), contents);
 });
 
 export function closest(self, selector){
@@ -91,7 +91,7 @@ export function toggle(self){
 }
 
 export function hide(self){
-  return inject(self, hidden);
+  return conj(self, hidden);
 }
 
 export function show(self){

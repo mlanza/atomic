@@ -5,7 +5,7 @@ import {revSeq} from '../../types/revseq/construct';
 import {reduced, isReduced, unreduced} from '../../types/reduced';
 import {IArray, IEquiv, IReversible, IMapEntry, IFind, IInclusive, IAssociative, IAppendable, IPrependable, ICollection, INext, ICounted, IReduce, IKVReduce, ISeq, ISeqable, ISequential, IIndexed, IShow, ILookup, IFn, IEmptyableCollection} from '../../protocols';
 import {concat} from '../../types/concatenated/construct';
-import {showable, iterable} from '../lazyseq/behave';
+import {ishow, iterable} from '../lazyseq/behave';
 import {detect, drop} from '../lazyseq/concrete';
 import {encodeable} from '../record/behave';
 import Array from '../../types/array/construct';
@@ -93,7 +93,7 @@ function includes(self, x){
 }
 
 export default effect(
-  showable,
+  ishow,
   iterable,
   encodeable,
   implement(ISequential),

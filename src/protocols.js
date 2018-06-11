@@ -44,3 +44,4 @@ export * from "./protocols/isteppable";
 export * from "./protocols/isubscribe";
 export * from "./protocols/iswap";
 export * from "./protocols/iunit";
+export * from "./protocols/iyank";

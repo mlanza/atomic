@@ -1,8 +1,9 @@
 import {overload, obj} from '../../core';
 import {protocolLookupError} from '../protocollookuperror/construct';
 
-export const REGISTRY = window.Symbol ? Symbol("Registry") : "__registry";
-export const TEMPLATE = window.Symbol ? Symbol("Template") : "__template";
+export const REGISTRY  = window.Symbol ? Symbol("Registry")  : "__registry";
+export const TEMPLATE  = window.Symbol ? Symbol("Template")  : "__template";
+export const SPECIFIED = window.Symbol ? Symbol("Specified") : "__specified";
 
 export default function Protocol(template){
   this[REGISTRY] = new WeakMap();
@@ -32,8 +33,12 @@ export function extend(self, addition){
   }
 }
 
+function specified(self){
+  return self == null || self[SPECIFIED];
+}
+
 //Must be shallow to uphold performance.  Obviously, performance degrades on surrogates that appear further down.
-export const surrogates = [];
+export const surrogates = [specified];
 
 function surrogate(self){
   let construct = null, len = surrogates.length;
@@ -52,6 +57,17 @@ function supers(registry, self){
   } else {
     return null;
   }
+}
+
+export function reifiable(properties){
+  function Reifiable(properties){
+    Object.assign(this, properties);
+  }
+  return new Reifiable(properties || {});
+}
+
+export function specify(self){
+  return self[SPECIFIED] || (self[SPECIFIED] = reifiable());
 }
 
 function satisfies1(protocol){

@@ -1,11 +1,18 @@
 import {effect, identity, constantly} from '../../core';
 import {implement} from '../protocol';
-import {IArray, IEncode, IDecode, IReversible, ISet, IMapEntry, IEquiv, IReduce, IKVReduce, IAppendable, IPrependable, IInclusive, ICollection, INext, ISeq, IFind, ISeqable, IIndexed, IAssociative, ISequential, IEmptyableCollection, IFn, IShow, ICounted, ILookup, ICloneable} from '../../protocols';
+import {IArray, IYank, IEncode, IDecode, IReversible, ISet, IMapEntry, IEquiv, IReduce, IKVReduce, IAppendable, IPrependable, IInclusive, ICollection, INext, ISeq, IFind, ISeqable, IIndexed, IAssociative, ISequential, IEmptyableCollection, IFn, IShow, ICounted, ILookup, ICloneable} from '../../protocols';
 import {reduce, reducekv, reduced} from '../reduced';
 import {indexedSeq} from '../indexedseq';
 import {revSeq} from '../revseq';
-import {showable} from '../lazyseq/behave';
+import {filter} from '../lazyseq/concrete';
+import {ishow} from '../lazyseq/behave';
 import Array from './construct';
+
+function yank(self, value){
+  return filter(function(x){
+    return x !== value;
+  }, self);
+}
 
 function reverse(self){
   let c = ICounted.count(self);
@@ -127,19 +134,20 @@ function decode(self, label, constructors){
   }, []);
 }
 
-export const indexed = effect(
+export const iindexed = effect(
   implement(IIndexed, {nth: nth}),
   implement(ICounted, {count: length}));
 
 export const iequiv = implement(IEquiv, {equiv});
 
 export default effect(
-  showable,
-  indexed,
+  ishow,
+  iindexed,
   iequiv,
   implement(ISequential),
   implement(IEncode, {encode}),
   implement(IDecode, {decode}),
+  implement(IYank, {yank}),
   implement(IReversible, {reverse}),
   implement(ISet, {union, intersection, difference, disj, superset}),
   implement(IFind, {find}),

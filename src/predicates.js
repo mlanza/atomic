@@ -46,19 +46,21 @@ export function guard(pred, value){
   }
 }
 
-function fork2(obj, pred){
-  return fork3(obj, pred, identity);
+function fork1(pred){
+  return fork2(pred, identity);
 }
 
-function fork3(obj, pred, yes){
-  return fork4(obj, pred, yes, constantly(null));
+function fork2(pred, yes){
+  return fork3(pred, yes, constantly(null));
 }
 
-function fork4(obj, pred, yes, no){
-  return pred(obj) ? yes(obj) : no(obj);
+function fork3(pred, yes, no){
+  return function(...args){
+    return pred(...args) ? yes(...args) : no(...args);
+  }
 }
 
-export const fork = overload(null, null, fork2, fork3, fork4);
+export const fork = overload(null, fork1, fork2, fork3);
 
 export function everyPair(pred, xs){
   var every = xs.length > 0;
@@ -98,7 +100,7 @@ function someFnN(...preds){
 
 export const someFn = overload(null, someFn1, someFn2, someFn3, someFnN);
 
-export function isIdentical(x, y){ //TODO via protocol
+export const isIdentical = Object.is ? Object.is : function (x, y){
   return x === y;
 }
 
@@ -117,7 +119,7 @@ export function compare(x, y){
 }
 
 function lt2(a, b){
-  return compare(a, b) < 0
+  return compare(a, b) < 0;
 }
 
 function ltN(...args){

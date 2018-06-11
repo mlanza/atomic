@@ -1,17 +1,38 @@
 import {constantly, effect, identity} from '../../core';
 import {implement} from '../protocol';
-import {IArray, IDecode, ISet, ICollection, IEncode, IEquiv, IMapEntry, IReduce, IKVReduce, ISeqable, IShow, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, IFn, IMap, ISeq, IDescriptive, IObject, ICloneable, IInclusive} from '../../protocols';
-import {objectSelection} from '../objectselection';
+import {IComparable, IYank, IArray, IDecode, ISet, INext, ICollection, IEncode, IEquiv, IMapEntry, IReduce, IKVReduce, ISeqable, IShow, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, IFn, IMap, ISeq, IDescriptive, IObject, ICloneable, IInclusive} from '../../protocols';
 import {reduced} from '../reduced';
-import {lazySeq} from '../lazyseq';
+import {lazySeq, into} from '../lazyseq';
 import {iequiv} from '../array/behave';
 import Object from '../object/construct';
-import EmptyList from '../emptylist/construct';
 
-function conj(self, [key, value]){
-  const obj = ICloneable.clone(self);
-  obj[key] = value;
-  return obj;
+const keys = Object.keys;
+const vals = Object.values;
+
+function yank(self, entry){
+  const key = IMapEntry.key(entry),
+        val = IMapEntry.val(entry);
+  if (includes(self, entry)) {
+    const result = clone(self);
+    delete result[key];
+    return result;
+  } else {
+    return self;
+  }
+}
+
+function compare(self, other){ //assume like keys, otherwise use your own comparator!
+  return IEquiv.equiv(self, other) ? 0 : IReduce.reduce(IMap.keys(self), function(memo, key){
+    return memo == 0 ? IComparable.compare(ILookup.lookup(self, key), ILookup.lookup(other, key)) : reduced(memo);
+  }, 0);
+}
+
+function conj(self, entry){
+  const key = IMapEntry.key(entry),
+        val = IMapEntry.val(entry);
+  const result = ICloneable.clone(self);
+  result[key] = value;
+  return result;
 }
 
 function equiv(self, other){
@@ -21,12 +42,12 @@ function equiv(self, other){
 }
 
 function find(self, key){
-  return IAssociative.contains(self, key) ? [key, ILookup.lookup(self, key)] : null;
+  return contains(self, key) ? [key, lookup(self, key)] : null;
 }
 
-function includes(self, mapentry){
-  let key = IMapEntry.key(mapentry),
-      val = IMapEntry.val(mapentry);
+function includes(self, entry){
+  const key = IMapEntry.key(entry),
+        val = IMapEntry.val(entry);
   return self[key] === val;
 }
 
@@ -42,23 +63,40 @@ function lookup(self, key){
   return self[key];
 }
 
-function seqObject(self, keys){
-  var key = ISeq.first(keys);
-  return ISeqable.seq(keys) ? lazySeq([key, self[key]], function(){
-    return seqObject(self, ISeq.rest(keys));
-  }) : EmptyList.EMPTY;
+function first(self){
+  const key = ISeq.first(keys(self));
+  return key ? [key, lookup(self, key)] : null;
 }
 
-function dissoc(obj, key){
-  const result = Object.assign({}, obj);
+function rest(self){
+  return next(self) || Object.EMPTY;
+}
+
+function next2(self, keys){
+  if (ISeqable.seq(keys)) {
+    const key = ISeq.first(keys);
+    return lazySeq([key, lookup(self, key)], function(){
+      return next2(self, INext.next(keys));
+    });
+  } else {
+    return null;
+  }
+}
+
+function next(self){
+  return next2(self, INext.next(keys(self)));
+}
+
+function dissoc(self, key){
+  const result = clone(self);
   delete result[key];
   return result;
 }
 
 function assoc(self, key, value){
-  const obj = Object.assign({}, self);
-  obj[key] = value;
-  return obj;
+  const result = clone(self);
+  result[key] = value;
+  return result;
 }
 
 function contains(self, key){
@@ -66,11 +104,11 @@ function contains(self, key){
 }
 
 function seq(self){
-  return seqObject(self, Object.keys(self));
+  return count(self) ? self : null;
 }
 
 function count(self){
-  return ICounted.count(Object.keys(self));
+  return keys(self).length;
 }
 
 function clone(self){
@@ -78,14 +116,14 @@ function clone(self){
 }
 
 function reduce(self, xf, init){
-  return IReduce.reduce(IMap.keys(self), function(memo, key){
-    return xf(memo, [key, self[key]]);
+  return IReduce.reduce(keys(self), function(memo, key){
+    return xf(memo, [key, lookup(self, key)]);
   }, init);
 }
 
 function reducekv(self, xf, init){
-  return IReduce.reduce(IMap.keys(self), function(memo, key){
-    return xf(memo, key, self[key]);
+  return IReduce.reduce(keys(self), function(memo, key){
+    return xf(memo, key, lookup(self, key));
   }, init);
 }
 
@@ -105,7 +143,7 @@ function encode(self, label, refstore, seed){
 function decode(self, label, constructors){
   if (IAssociative.contains(self, label)){
     if (IAssociative.contains(self, "data")) {
-      const constructor = ILookup.lookup(constructors, ILookup.lookup(self, label));
+      const constructor = ILookup.lookup(constructors, ILookup.lookup(self, label)).from;
       const data = ILookup.lookup(self, "data");
       return constructor(data && data.constructor === Object ? reducekv(data, function(memo, key, value){
         return IAssociative.assoc(memo, IDecode.decode(key, label, constructors), IDecode.decode(value, label, constructors));
@@ -126,14 +164,18 @@ export default effect(
   implement(IEncode, {encode}),
   implement(IObject, {toObject: identity}),
   implement(IFind, {find}),
+  implement(IYank, {yank}),
   //implement(ISet, {superset}),
   implement(IInclusive, {includes}),
   implement(ICollection, {conj}),
   implement(ICloneable, {clone}),
+  implement(IComparable, {compare}),
   implement(IReduce, {reduce}),
   implement(IKVReduce, {reducekv}),
-  implement(IMap, {dissoc, keys: Object.keys, vals: Object.values}),
+  implement(IMap, {dissoc, keys, vals}),
   implement(IFn, {invoke: lookup}),
+  implement(ISeq, {first, rest}),
+  implement(INext, {next}),
   implement(ILookup, {lookup: lookup}),
   implement(IEmptyableCollection, {empty: constantly(Object.EMPTY)}),
   implement(IAssociative, {assoc, contains}),

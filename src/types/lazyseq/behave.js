@@ -115,15 +115,15 @@ function prepend(self, other){
 
 const toArray = overload(null, toArray1, toArray2);
 
-export const showable = implement(IShow, {show: show});
-export const reduceable = effect(
+export const ishow = implement(IShow, {show: show});
+export const ireduce = effect(
   implement(IReduce, {reduce}),
   implement(IKVReduce, {reducekv}));
 
 export default effect(
   iterable,
-  showable,
-  reduceable,
+  ishow,
+  ireduce,
   implement(ISequential),
   implement(IArray, {toArray}),
   implement(IAppendable, {append}),
