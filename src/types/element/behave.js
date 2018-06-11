@@ -3,6 +3,7 @@ import {IAppendable, IPrependable, IEvented, IAssociative, IMap, IEquiv, IClonea
 import {each} from '../lazyseq/concrete';
 import EmptyList from '../emptylist/construct';
 import {lazySeq} from '../lazyseq/construct';
+import {isString} from '../string/construct';
 import {identity, constantly, effect} from '../../core';
 import {yank} from '../../multimethods/amalgam';
 import Element from './construct';
@@ -23,12 +24,12 @@ function contents(self){
 }
 
 function append(self, other){
-  self.appendChild(other);
+  appendChild(isString(other) ? document.createTextNode(other) : other);
   return self;
 }
 
 function prepend(self, other){
-  self.prepend(other);
+  self.prepend(isString(other) ? document.createTextNode(other) : other);
   return self;
 }
 
