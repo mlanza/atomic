@@ -1,111 +1,140 @@
-export const unbind = Function.call.bind(Function.bind, Function.call);
-export const log    = console.log.bind(console);
+import {overload, identity, counter, intercept} from "./core/core";
+import {reducing, sort, chain, set, flip, realized, comp, isNumber} from "./core/types";
+import {IAppendable, IHash, IYank, IArray, IAssociative, IBounds, IConverse, ICloneable, ICollection, IComparable, IContent, ICounted, IDecode, IDeref, IDisposable, IEmptyableCollection, IEncode, IEquiv, IEvented, IFind, IFn, IHierarchy, IInclusive, IIndexed, IKVReduce, ILookup, IMap, IMapEntry, INext, IObject, IPrependable, IPublish, IReduce, IReset, IReversible, ISeq, ISeqable, ISet, IShow, ISteppable, ISubscribe, ISwap, IUnit} from "./core/protocols";
+import {fork, hash} from "./core/api";
+import * as T from "./core/types";
 
-export function noop(){
+export * from "./core/core";
+export * from "./core/types";
+export * from "./core/protocols";
+export * from "./core/api";
+export * from "./core/multimethods";
+
+export const yank = IYank.yank;
+export const start = IBounds.start;
+export const end = IBounds.end;
+export const pub = IPublish.pub;
+export const sub = ISubscribe.sub;
+export const show = IShow.show;
+export const deref = IDeref.deref;
+export const reverse = IReversible.reverse;
+export const clone = ICloneable.clone;
+export const dispose = IDisposable.dispose;
+export const empty = IEmptyableCollection.empty;
+export const equiv = IEquiv.equiv;
+export const conj = overload(null, identity, ICollection.conj, reducing(ICollection.conj));
+export const toObject = IObject.toObject;
+export const reset = IReset.reset;
+export const on = IEvented.on;
+export const off = IEvented.off;
+export const find = IFind.find;
+export const invoke = IFn.invoke;
+export const parent = IHierarchy.parent;
+export const children = IHierarchy.children;
+export const nextSibling = IHierarchy.nextSibling;
+export const prevSibling = IHierarchy.prevSibling;
+export const toArray = IArray.toArray;
+export const contains = IAssociative.contains;
+export const append = overload(null, identity, IAppendable.append, reducing(IAppendable.append));
+export const prepend = overload(null, identity, IPrependable.prepend, reducing(IPrependable.prepend));
+export const step = ISteppable.step;
+export const converse = IConverse.converse;
+export const unit = IUnit.unit;
+export const includes = IInclusive.includes;
+export const nth = IIndexed.nth;
+export const keys = IMap.keys;
+export const vals = IMap.vals;
+export const key = IMapEntry.key;
+export const val = IMapEntry.val;
+export const seq = ISeqable.seq;
+export const first = ISeq.first;
+export const rest = ISeq.rest;
+export const count = ICounted.count;
+export const next = INext.next;
+export const superset = ISet.superset;
+export const disj = ISet.disj;
+export const union = overload(set, identity, ISet.union, reducing(ISet.union));
+export const intersection = overload(null, null, ISet.intersection, reducing(ISet.intersection));
+export const difference = overload(null, null, ISet.difference, reducing(ISet.difference));
+
+export function subset(subset, superset){
+  return ISet.superset(superset, subset);
 }
 
-export function complement(f){
-  return function(){
-    return !f.apply(this, arguments);
-  }
+export function add1(self){
+  return ISteppable.step(IUnit.unit(self), self);
 }
 
-export function partial(f, ...applied){
+export function add2(self, amount){
+  return ISteppable.step(IUnit.unit(self, amount), self);
+}
+
+export const add = overload(null, add1, add2, reducing(add2));
+
+export function subtract1(self){
+  return ISteppable.step(IConverse.converse(IUnit.unit(self)), self);
+}
+
+export function subtract2(self, amount){
+  return ISteppable.step(IConverse.converse(IUnit.unit(self, amount)), self);
+}
+
+export const subtract = overload(null, subtract1, subtract2, reducing(subtract2));
+
+function dissocN(obj, ...keys){
+  return IReduce.reduce(keys, IMap.dissoc, obj);
+}
+
+export const dissoc = overload(null, identity, IMap.dissoc, dissocN);
+
+export const appendTo  = realized(flip(IAppendable.append));
+export const prependTo = realized(flip(IPrependable.prepend));
+export const transpose = fork(IInclusive.includes, IYank.yank, ICollection.conj);
+
+function memoize1(f){
+  return memoize2(f, function(...args){
+    return hash(args);
+  });
+}
+
+function memoize2(f, hash){
+  const cache = {};
   return function(...args){
-    return f.apply(this, applied.concat(args));
-  }
-}
-
-export function counter(init){
-  let memo = init || 0;
-  return function(){
-    return memo++;
-  }
-}
-
-export function type(self){
-  return self == null ? null : self.constructor;
-}
-
-export function is(self, constructor){
-  return self != null && self.constructor === constructor;
-}
-
-export function overload(){
-  const fs = arguments, fallback = fs[fs.length - 1];
-  return function(){
-    const f = fs[arguments.length] || (arguments.length >= fs.length ? fallback : null);
-    return f.apply(this, arguments);
-  }
-}
-
-export function subj(f){ //subjective
-  return function(...ys){
-    return function(...xs){
-      return f.apply(null, xs.concat(ys));
+    const key = hash(...args);
+    if (cache.hasOwnProperty(key)) {
+      return cache[key];
+    } else {
+      const result = f(...args);
+      cache[key] = result;
+      return result;
     }
   }
 }
 
-export function obj(f){ //objective
-  return function(...xs){
-    return function(...ys){
-      return f.apply(null, xs.concat(ys));
-    }
-  }
+export const memoize = overload(null, memoize1, memoize2);
+
+/*
+export * from "./pointfree";
+import * as _ from "./pointfree";
+
+function checkStatus(resp){
+  return resp.ok ? Promise.resolve(resp) : Promise.reject(resp);
 }
 
-export function identity(x){
-  return x;
-}
-
-export function constantly(x){
-  return function(){
-    return x;
-  }
-}
-
-export function doto(obj, ...effects){
-  effects.forEach(function(effect){
-    effect(obj);
-  }, effects);
-  return obj;
-}
-
-export const effect = subj(doto);
-
-export function isInstance(x, constructor){
-  return x instanceof constructor;
-}
-
-export function spread(f){
-  return function(args){
-    return f(...args);
-  }
-}
-
-export function unspread(f){
-  return function(...args){
-    return f(args);
-  }
-}
-
-export function once(f){
-  const pending = {};
-  let result  = pending;
-  return function(...args){
-    if (result === pending){
-      result = f(...args);
-    }
-    return result;
-  }
-}
-
-export function intercept(fallback, pred, receiver){
-  const next = fallback || function(){
-    throw new Error("No fallback function found.");
-  }
-  return function(...args){
-    return pred(...args) ? receiver(...args) : next(...args);
-  }
-}
+export const request = _.chain(_.request,
+  _.prepend(function(params){
+    return Object.assign({
+      credentials: "same-origin",
+      method: "GET",
+      headers: {
+        "Accept": "application/json;odata=verbose",
+        "Content-Type": "application/json;odata=verbose"
+      }
+    }, params);
+  }),
+  _.append(checkStatus),
+  _.append(function(resp){
+    return resp.json();
+  }),
+  _.append(_.getIn(["d", "results"])));
+*/

@@ -1,6 +1,6 @@
-import {overload} from "./core";
-import * as t from "./transducers";
-import * as T from "./types";
+import {overload} from "./core/core";
+import * as t from "./core/transducers";
+import * as T from "./core/types";
 
 export const map = overload(null, t.map, T.map);
 export const mapcat = overload(null, t.mapcat, T.mapcat);

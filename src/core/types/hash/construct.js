@@ -1,4 +1,4 @@
-import {Map} from "../../vendor/immutable";
+import {Map} from "../../../vendor/immutable";
 export const Hash = Map;
 
 export function hash(obj){

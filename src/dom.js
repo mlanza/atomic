@@ -1,9 +1,11 @@
-import {implement} from './types/protocol';
-import {overload, constantly, identity, subj} from "./core";
-import {split, trim, lazySeq, cons, apply, concat, partial, partially, comp, satisfies, compact, flatten, detect, filter, remove, each, mapa, map, mapcat, into, selfish} from "./types";
-import {IHierarchy, IArray, IReduce, ISeqable, ICollection} from "./protocols";
-import {matches} from "./multimethods";
-export {matches} from "./multimethods";
+import {implement} from './core/types/protocol';
+import {conj, yank, overload, constantly, identity, subj} from "./core";
+import {split, trim, lazySeq, cons, apply, concat, partial, partially, comp, satisfies, compact, flatten, detect, filter, remove, each, mapa, map, mapcat, into, selfish} from "./core/types";
+import {IHierarchy, IArray, IReduce, ISeqable, ICollection} from "./core/protocols";
+import {reduce} from "./core";
+import {matches} from "./core/multimethods";
+export {matches} from "./core/multimethods";
+export {parent, nextSibling, prevSibling, children, contents} from "./core";
 
 export function expansive(f){
   function expand(...xs){
@@ -33,24 +35,31 @@ export const frag = expansive(function(...contents){
   return into(document.createDocumentFragment(), contents);
 });
 
+export function tags(...names){
+  return reduce(function(memo, name){
+    memo[name] = tag(name);
+    return memo;
+  }, {}, names);
+}
+
 export function closest(self, selector){
-  let target = self.parentNode;
+  let target = IHierarchy.parent(self);
   while(target){
     if (matches(target, selector)){
       return target;
     }
-    target = target.parentNode;
+    target = IHierarchy.parent(target);
   }
 }
 
 const matching = subj(matches);
 
-function sel2(context, pred){
+function sel2(pred, context){
   return filter(matching(pred), descendants(context));
 }
 
 function sel1(pred){
-  return sel2(document, pred);
+  return sel2(pred, document);
 }
 
 function sel0(){
@@ -91,7 +100,7 @@ export function toggle(self){
 }
 
 export function hide(self){
-  return conj(self, hidden);
+  return ICollection.conj(self, hidden);
 }
 
 export function show(self){

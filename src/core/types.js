@@ -6,6 +6,7 @@ export * from "./types/array";
 export * from "./types/boolean";
 export * from "./types/concatenated";
 export * from "./types/date";
+export * from "./types/documentfragment";
 export * from "./types/duration";
 export * from "./types/element";
 export * from "./types/function";

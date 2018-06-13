@@ -1,28 +1,27 @@
-import {overload, identity} from "./core";
-import {IArray, IAssociative, ICounted, IDeref, IEmptyableCollection, IKVReduce, IMapEntry, IReduce, ISeqable} from "./protocols";
-import * as T from "./types";
+import {overload, identity, milliseconds, mapa, partial, range, pipe, chain, juxtm, average, most, least, sort, asc} from "./core";
+import {IArray, IAssociative, ICounted, IDeref, IEmptyableCollection, IKVReduce, IMapEntry, IReduce, ISeqable} from "./core/protocols";
 
 function time1(f){
-  return time2(T.chain, f);
+  return time2(chain, f);
 }
 
 function time2(chain, f){
   const start = Date.now();
   return chain(f(), function(){
     const end = Date.now();
-    return T.milliseconds(end - start);
+    return milliseconds(end - start);
   });
 }
 
 function time3(chain, f, n){
-  return chain(T.mapa(function(){
+  return chain(mapa(function(){
     return time2(chain, f);
-  }, T.range(n)), T.partial(T.mapa, IDeref.deref), function(results){
-    return T.juxtm(results, {
+  }, range(n)), partial(mapa, IDeref.deref), function(results){
+    return juxtm(results, {
       count: ICounted.count,
-      average: T.pipe(T.average, T.milliseconds),
-      most: T.pipe(T.most, T.milliseconds),
-      least: T.pipe(T.least, T.milliseconds)
+      average: pipe(average, milliseconds),
+      most: pipe(most, milliseconds),
+      least: pipe(least, milliseconds)
     });
   });
 }
@@ -30,7 +29,7 @@ function time3(chain, f, n){
 export const time = overload(null, time1, time2, time3);
 
 function benchmark4(chain, fs, n, by){
-  return T.sort(T.asc(function(pair){
+  return sort(asc(function(pair){
     return by(IMapEntry.val(pair));
   }), IArray.toArray(ISeqable.seq(IKVReduce.reducekv(fs, function(memo, key, f){
     return IAssociative.assoc(memo, key, time(chain, f, n));
@@ -44,11 +43,11 @@ function benchmark3(chain, fs, n){
 }
 
 function benchmark2(fs, n){
-  return benchmark3(T.chain, fs, n);
+  return benchmark3(chain, fs, n);
 }
 
 function benchmark1(fs){
-  return benchmark3(T.chain, fs, 50);
+  return benchmark3(chain, fs, 50);
 }
 
 export const benchmark = overload(null, benchmark1, benchmark2, benchmark3, benchmark4);
