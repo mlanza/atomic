@@ -1,7 +1,8 @@
-import * as _ from "./main";
-import {curry, overload, subj, obj} from "./main";
-export {chain, repeat, butlast, empty, isTrue, isFalse, opt, upperCase, lowerCase, satisfies, indexedSeq, pipe, record, list, count, observable, years, months, days, weeks, deref, comp, maybe, inc, dec, everyPred, maxKey, minKey, scanKey, constantly, distinct, dedupe, isOdd, isEven, toArray, toObject, cycle, curry, overload, subj, obj, integers, repeatedly, first, second, rest, next, range, flatten} from "./main";
+import * as _ from "./core";
+import {curry, overload, subj, obj} from "./core";
+export {chain, isReduceable, els, unless, date, repeat, butlast, empty, isTrue, isFalse, opt, yank, upperCase, lowerCase, satisfies, indexedSeq, pipe, record, list, count, observable, years, months, days, weeks, deref, comp, maybe, inc, dec, everyPred, maxKey, minKey, scanKey, constantly, distinct, dedupe, isOdd, isEven, toArray, toObject, cycle, curry, overload, subj, obj, integers, repeatedly, first, second, rest, next, range, flatten} from "./core";
 
+export const join = obj(_.join);
 export const any = subj(_.any);
 export const all = subj(_.all);
 export const or = subj(_.or);
@@ -9,7 +10,6 @@ export const and = subj(_.and);
 export const str = subj(_.str);
 export const split = subj(_.split);
 export const subs = subj(_.subs);
-export const join = subj(_.join);
 export const union = subj(_.union);
 export const difference = subj(_.difference);
 export const subset = subj(_.subset);

@@ -1,5 +1,8 @@
-import {IKVReduce, IAssociative} from '../../protocols';
+import {ISeq, INext, IKVReduce, IAssociative} from '../../protocols';
+import {intercept} from '../../core';
+import {comp} from '../../types/function/concrete';
 import {selectKeys} from '../../types/object/concrete';
+import {isNumber} from '../../types/number/concrete';
 import {into} from '../../types/lazyseq/concrete';
 
 function trim(obj){ //TODO protocol, compact on sequence, trim on string?
@@ -74,9 +77,11 @@ export function minute(n){
   return {minute: n};
 }
 
-export function second(n){
+function second1(n){
   return {second: n};
 }
+
+export const second = intercept(comp(ISeq.first, INext.next), isNumber, second1);
 
 export function millisecond(n){
   return {millisecond: n};

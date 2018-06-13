@@ -13,7 +13,7 @@ import {transduce} from "../lazyseq/concrete";
 import {mapcat, distinct, compact} from "../lazyseq/concrete";
 import {reduced} from "../reduced";
 import EmptyList from "../emptylist";
-import * as t from "../../transducers";
+import * as t from "../../../transducers";
 import {update} from "../../api/associative";
 import {ISeqable} from "../../protocols/iseqable";
 import {isSequential} from "../../protocols/isequential";

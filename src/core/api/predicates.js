@@ -62,6 +62,10 @@ function fork3(pred, yes, no){
 
 export const fork = overload(null, fork1, fork2, fork3);
 
+export function unless(pred, f){
+  return fork(pred, identity, f);
+}
+
 export function everyPair(pred, xs){
   var every = xs.length > 0;
   while(every && xs.length > 1){

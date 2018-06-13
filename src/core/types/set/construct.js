@@ -1,5 +1,5 @@
-import {Set} from "../../vendor/immutable";
-export {Set} from "../../vendor/immutable";
+import {Set} from "../../../vendor/immutable";
+export {Set} from "../../../vendor/immutable";
 import {IArray} from "../../protocols/iarray";
 
 export function set(coll){

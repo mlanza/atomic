@@ -4,10 +4,10 @@
 * When building an application from a signal graph there is a tendency to think that events are no longer relevant, that everything must be a signal, but this is inappropriate.  Both can be appropriate.  Use events when there is no reason for an initial value.
 */
 
-import {implement, partial, observable, publisher, subscriptionMonitor, slice} from "./types";
+import {implement, partial, observable, publisher, subscriptionMonitor, slice} from "./core/types";
 import {map} from "./transducers";
-import {IEvented, IPublish, ISubscribe, IDisposable} from "./protocols";
-import {doto, overload, identity, constantly} from "./core";
+import {IEvented, IPublish, ISubscribe, IDisposable} from "./core/protocols";
+import {doto, overload, identity, constantly} from "./core/core";
 
 function duct(sink, xf, source){
   const unsub = ISubscribe.sub(source, partial(xf(IPublish.pub), sink));

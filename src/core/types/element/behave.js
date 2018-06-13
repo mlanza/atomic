@@ -6,6 +6,7 @@ import EmptyList from '../emptylist/construct';
 import {lazySeq} from '../lazyseq/construct';
 import {mapa, detect, compact, distinct} from '../lazyseq/concrete';
 import {maybe} from '../pipeline/concrete';
+import {isObject} from '../object/construct';
 import {isString} from '../string/construct';
 import {isFunction} from '../function/construct';
 import {reduced} from '../reduced/construct';
@@ -25,9 +26,13 @@ function fromNestedAttrs(text){
 }
 
 function toNestedAttrs(obj){
-  return obj == null || !isAttrs(obj) ? mapa(function([key, value]){
-    return str(key, ": ", value, ";");
-  }, ISeqable.seq(obj)).join(" ") : null;
+  if (isString(obj)) {
+    return obj;
+  } else {
+    return obj == null || !isAttrs(obj) ? mapa(function([key, value]){
+      return str(key, ": ", value, ";");
+    }, ISeqable.seq(obj)).join(" ") : null;
+  }
 }
 
 function fromSpaceSeparated(text){
@@ -35,7 +40,11 @@ function fromSpaceSeparated(text){
 }
 
 function toSpaceSeparated(xs){
-  return xs == null || !isSequential(xs) ? null : IArray.toArray(distinct(xs)).join(" ");
+  if (isString(xs)){
+    return xs;
+  } else {
+    return xs == null || !isSequential(xs) ? null : IArray.toArray(distinct(xs)).join(" ");
+  }
 }
 
 const readers = {
@@ -128,7 +137,7 @@ function contains(self, key){
 }
 
 function parent(self){
-  return self.parentNode;
+  return self && self.parentNode;
 }
 
 function children(self){
@@ -151,11 +160,19 @@ function yank2(self, node){
   if (isSequential(node)) {
     const keys = node;
     each(self.removeAttribute.bind(self), keys);
+    return self;
   } else if (isAttrs(node)) {
     const attrs = node;
     each(function([key, value]){
-      lookup(self, key) == value && dissoc(self, key);
+      let curr = lookup(self, key);
+      if (isObject(curr)){
+        curr = mapa(function(pair){
+          return pair.join(": ") + "; ";
+        }, IArray.toArray(curr)).join("").trim();
+      }
+      curr == value && dissoc(self, key);
     }, attrs);
+    return self;
   } else if (isString(node)) {
     node = includes(self, node);
   }

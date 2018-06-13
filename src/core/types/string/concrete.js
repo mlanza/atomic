@@ -25,7 +25,28 @@ export function camelToDashed(str){
   return str.replace(/[A-Z]/, function(x) { return "-" + x.toLowerCase() })
 }
 
-export const split      = unbind(String.prototype.split);
+function split1(str){
+  return str.split("");
+}
+
+function split3(str, pattern, n){
+  var parts = [];
+  while(str && n !== 0){
+    var found = str.match(pattern);
+    if (!found || n < 2) {
+      parts.push(str);
+      break;
+    }
+    var pos  = str.indexOf(found),
+        part = str.substring(0, pos);
+    parts.push(part);
+    str = str.substring(pos + found.length);
+    n = n ? n - 1 : n;
+  }
+  return parts;
+}
+
+export const split      = overload(split1, unbind(String.prototype.split), split3)
 export const startsWith = unbind(String.prototype.startsWith);
 export const endsWith   = unbind(String.prototype.endsWith);
 export const replace    = unbind(String.prototype.replace);
