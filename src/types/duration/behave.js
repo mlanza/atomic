@@ -1,6 +1,6 @@
 import {implement} from '../protocol';
 import {effect, overload} from '../../core';
-import {ISteppable, IAssociative, IDeref} from '../../protocols';
+import {ISteppable, IDeref} from '../../protocols';
 import {encodeable} from '../record/behave';
 
 function deref(self){

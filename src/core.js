@@ -40,17 +40,17 @@ export function overload(){
 }
 
 export function subj(f){ //subjective
-  return function(...args){
-    return function(obj){
-      return f.apply(null, [obj].concat(args));
+  return function(...ys){
+    return function(...xs){
+      return f.apply(null, xs.concat(ys));
     }
   }
 }
 
 export function obj(f){ //objective
-  return function(...args){
-    return function(obj){
-      return f.apply(null, [args].concat(obj));
+  return function(...xs){
+    return function(...ys){
+      return f.apply(null, xs.concat(ys));
     }
   }
 }

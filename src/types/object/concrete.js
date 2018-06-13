@@ -1,6 +1,5 @@
 import {IFn, IReduce, IKVReduce, ILookup, IAssociative, IEmptyableCollection} from "../../protocols";
-import {reducing} from "../reduced";
-import {apply} from "../function";
+import {apply, reducing} from "../function";
 import {overload, constantly} from "../../core";
 
 export function juxtm(self, template){

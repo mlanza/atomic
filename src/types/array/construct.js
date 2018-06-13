@@ -1,5 +1,4 @@
 export default Array;
-export function isArray(self){
-  return self instanceof Array;
-}
+export const isArray = Array.isArray.bind(Array);
 Array.EMPTY = Object.freeze([]);
+export {Array};

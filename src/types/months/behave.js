@@ -4,7 +4,7 @@ import {implement} from '../protocol';
 import {min} from '../number/concrete';
 import * as w from '../date/concrete';
 import {encodeable} from '../record/behave';
-import {patch} from '../../patch';
+import {patch} from '../../api/patch';
 
 function step(self, dt){
   const som  = patch(dt, w.som());

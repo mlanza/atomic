@@ -1,8 +1,9 @@
 import {effect, identity, constantly} from '../../core';
 import {implement} from '../protocol';
 import {set, Set} from './construct';
-import {IArray, ISeq, ISeqable, ISet, INext, ISequential, ICounted, ICollection, IEmptyableCollection, IInclusive, ICloneable} from '../../protocols';
+import {IArray, ISeq, IReduce, ISeqable, ISet, INext, ISequential, ICounted, ICollection, IEmptyableCollection, IInclusive, ICloneable} from '../../protocols';
 import EmptyList from '../../types/emptylist/construct';
+import {unreduced} from '../../types/reduced/concrete';
 
 function seq(self){
   return count(self) ? self : null;
@@ -46,8 +47,19 @@ function count(self){
   return self.size;
 }
 
+function reduce(self, xf, init){
+  let memo = init;
+  let coll = seq(self);
+  while(coll){
+    memo = xf(memo, first(coll));
+    coll = next(coll);
+  }
+  return unreduced(memo);
+}
+
 export default effect(
   implement(ISequential),
+  implement(IReduce, {reduce}),
   implement(IArray, {toArray}),
   implement(ISeqable, {seq}),
   implement(IInclusive, {includes}),

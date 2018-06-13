@@ -9,6 +9,7 @@ import {not} from '../boolean';
 import {isNil, isSome} from '../nil';
 import {cons} from '../list/construct';
 import {range} from '../range/construct';
+import {str} from '../string/concrete';
 import {juxt, complement, comp, apply, partial} from '../function/concrete';
 import {lazySeq} from '../lazyseq/construct';
 import {concat, concatenated} from "../concatenated/construct";
@@ -49,12 +50,16 @@ export function juxts(f, ...fs){
   } : constantly(EmptyList.EMPTY);
 }
 
-export function some(pred, coll){
+export function some(f, coll){
   var xs = ISeqable.seq(coll);
-  while(xs && !pred(ISeq.first(xs))){
+  while(xs){
+    const value = f(ISeq.first(xs));
+    if (value) {
+      return value;
+    }
     xs = INext.next(xs);
   }
-  return !!xs;
+  return null;
 }
 
 export const notSome = comp(not, some);
@@ -203,7 +208,7 @@ export function takeWhile(pred, xs){
 
 export function takeNth(n, xs){
   return ISeqable.seq(xs) ? lazySeq(ISeq.first(xs), function(){
-    return takeNth(n, drop2(n, xs));
+    return takeNth(n, drop(n, xs));
   }) : EmptyList.EMPTY;
 }
 
@@ -448,27 +453,34 @@ export function doseqN(f, xs, ...colls){
 
 export const doseq = overload(null, null, each, doseq3, doseq4, doseqN);
 
-export function best(pred, xs){
+function best2(better, xs){
   const coll = ISeqable.seq(xs);
   return coll ? IReduce.reduce(ISeq.rest(coll), function(a, b){
-    return pred(a, b) ? a : b;
+    return better(a, b) ? a : b;
   }, ISeq.first(coll)) : null;
 }
 
-export function scan(pred, xs){
-  if (!ISeqable.seq(xs)) return true;
-  let head = ISeq.first(xs),
-      coll = INext.next(xs);
-  while (coll){
-    if (pred(head, ISeq.first(coll))){
-      head = ISeq.first(coll);
-      coll = INext.next(coll);
-    } else {
-      return false;
-    }
-  }
-  return true;
+function best3(f, better, xs){
+  const coll = ISeqable.seq(xs);
+  return coll ? IReduce.reduce(ISeq.rest(coll), function(a, b){
+    return better(f(a), f(b)) ? a : b;
+  }, ISeq.first(coll)) : null;
 }
+
+export const best = overload(null, best2, best3);
+
+function scan1(xs){
+  return scan2(2, xs);
+}
+
+function scan2(n, xs){
+  const ys = take(n, xs);
+  return ICounted.count(ys) === n ? lazySeq(ys, function(){
+    return scan2(n, ISeq.rest(xs));
+  }) : EmptyList.EMPTY;
+}
+
+export const scan = overload(null, scan1, scan2);
 
 function isDistinct1(coll){
   let seen = new Set();

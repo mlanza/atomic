@@ -8,8 +8,12 @@ function deref(self){
 
 function reset(self, value){
   if (value !== self.state){
-    self.state = value;
-    IPublish.pub(self.publisher, value);
+    if (!self.validate || self.validate(value)) {
+      self.state = value;
+      IPublish.pub(self.publisher, value);
+    } else {
+      throw new Error("Observable update failed - invalid value.");
+    }
   }
   return self.state;
 }

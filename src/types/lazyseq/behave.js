@@ -3,7 +3,13 @@ import {IArray, IInclusive, IFind, IEquiv, ICollection, INext, ISeq, IReduce, IK
 import {overload, identity, constantly, effect} from '../../core';
 import Reduced, {isReduced, reduced, unreduced} from "../reduced";
 import {concat} from "../concatenated/construct";
+import {cons} from "../list/construct";
+
 import EmptyList from '../emptylist/construct';
+
+function conj(self, value){
+  return cons(value, self);
+}
 
 function reduce(self, xf, init){
   let memo = init,
@@ -109,10 +115,6 @@ function append(self, other){
   return concat(self, [other]);
 }
 
-function prepend(self, other){
-  return concat([other], self);
-}
-
 const toArray = overload(null, toArray1, toArray2);
 
 export const ishow = implement(IShow, {show: show});
@@ -125,9 +127,10 @@ export default effect(
   ishow,
   ireduce,
   implement(ISequential),
+  implement(ICollection, {conj}),
   implement(IArray, {toArray}),
   implement(IAppendable, {append}),
-  implement(IPrependable, {prepend}),
+  implement(IPrependable, {prepend: conj}),
   implement(IReduce, {reduce}),
   implement(ICounted, {count}),
   implement(IEquiv, {equiv}),

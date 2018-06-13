@@ -1,5 +1,5 @@
-import {overload} from "./core";
-import {ISwap} from "./protocols/iswap";
+import {overload} from "../core";
+import {ISwap} from "../protocols/iswap";
 
 function swap3(self, f, a){
   return ISwap.swap(self, function(state){

@@ -31,7 +31,7 @@ function conj(self, entry){
   const key = IMapEntry.key(entry),
         val = IMapEntry.val(entry);
   const result = ICloneable.clone(self);
-  result[key] = value;
+  result[key] = val;
   return result;
 }
 
@@ -127,6 +127,13 @@ function reducekv(self, xf, init){
   }, init);
 }
 
+function toArray(self){
+  return reduce(self, function(memo, pair){
+    memo.push(pair);
+    return memo;
+  }, []);
+}
+
 function show(self){
   const xs = IArray.toArray(seq(self));
   return "{" + xs.map(function(pair){
@@ -162,6 +169,7 @@ export default effect(
   implement(IEquiv, {equiv}),
   implement(IDecode, {decode}),
   implement(IEncode, {encode}),
+  implement(IArray, {toArray: toArray}),
   implement(IObject, {toObject: identity}),
   implement(IFind, {find}),
   implement(IYank, {yank}),

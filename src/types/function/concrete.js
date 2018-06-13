@@ -1,10 +1,18 @@
 import {IArray}  from "../../protocols/iarray";
+import {IReduce}  from "../../protocols/ireduce";
 import {log, overload, identity, constantly, partial} from "../../core";
 import {isNil}  from "../nil";
 import {slice}  from "../array/concrete";
-import {reduce, reduced}  from "../reduced";
+import {satisfies}  from "../protocol";
+import {reduced}  from "../reduced";
 import {isFunction}  from "./construct";
 export {complement, partial} from "../../core";
+
+export function reducing(rf){
+  return function(init, ...xs){
+    return IReduce.reduce(xs, rf, init);
+  }
+}
 
 export function realize(g){
   return isFunction(g) ? g() : g;
@@ -12,7 +20,7 @@ export function realize(g){
 
 export function realized(f){
   return function(...args){
-    return apply(f, reduce(args, function(memo, arg){
+    return apply(f, IReduce.reduce(args, function(memo, arg){
       memo.push(realize(arg));
       return memo;
     }, []));
@@ -21,7 +29,7 @@ export function realized(f){
 
 export function juxt(...fs){
   return function(...args){
-    return reduce(fs, function(memo, f){
+    return IReduce.reduce(fs, function(memo, f){
       return memo.concat([f.apply(this, args)]);
     }, []);
   }
@@ -30,7 +38,7 @@ export function juxt(...fs){
 export function comp(...fs){
   var last = fs.length - 1, init = fs[last];
   return function(...args){
-    return reduce(fs, function(memo, f){
+    return IReduce.reduce(fs, function(memo, f){
       return f(memo);
     }, init.apply(null, args), last - 1, 0);
   }

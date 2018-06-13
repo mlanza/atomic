@@ -14,11 +14,11 @@ import {mapcat, distinct, compact} from "../lazyseq/concrete";
 import {reduced} from "../reduced";
 import EmptyList from "../emptylist";
 import * as t from "../../transducers";
-import {update} from "../../associative";
+import {update} from "../../api/associative";
 import {ISeqable} from "../../protocols/iseqable";
 import {isSequential} from "../../protocols/isequential";
 
-export function either(f){
+export function trap(f){
   return function(...args){
     try {
       return f(...args);
@@ -112,7 +112,7 @@ export const els    = chained(elements);
 export const pipe   = piped(identity);
 export const opt    = piped(option);
 export const prom   = piped(future);
-export const handle = piped(either);
+export const handle = piped(trap);
 
 export const request = pipeline(future, [function(config){
   return fetch(config.url, config);

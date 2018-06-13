@@ -1,6 +1,6 @@
-import {overload, counter} from "./core";
-import {IEncode} from "./protocols/iencode";
-import {IHash} from "./protocols/ihash";
+import {overload, counter} from "../core";
+import {IEncode} from "../protocols/iencode";
+import {IHash} from "../protocols/ihash";
 
 const encodedRefs   = new WeakMap()
 const encodedRefIds = counter();

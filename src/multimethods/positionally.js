@@ -1,7 +1,7 @@
 import {multimethod} from "../types/multimethod/construct";
 import {isFunction} from "../types/function/construct";
 import {isElement} from "../types/element/construct";
-import {signature} from "../predicates";
+import {signature} from "../api/predicates";
 import {IEvented, IHierarchy} from "../protocols";
 
 export const before = multimethod();

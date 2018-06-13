@@ -1,12 +1,57 @@
-import {effect, identity, constantly} from '../../core';
+import {effect, identity, overload, constantly} from '../../core';
 import {implement} from '../protocol';
-import {IArray, IYank, IEncode, IDecode, IReversible, ISet, IMapEntry, IEquiv, IReduce, IKVReduce, IAppendable, IPrependable, IInclusive, ICollection, INext, ISeq, IFind, ISeqable, IIndexed, IAssociative, ISequential, IEmptyableCollection, IFn, IShow, ICounted, ILookup, ICloneable} from '../../protocols';
-import {reduce, reducekv, reduced} from '../reduced';
+import {IArray, IObject, IYank, IEncode, IDecode, IReversible, ISet, IMapEntry, IEquiv, IReduce, IKVReduce, IAppendable, IPrependable, IInclusive, ICollection, INext, ISeq, IFind, ISeqable, IIndexed, IAssociative, ISequential, IEmptyableCollection, IFn, IShow, ICounted, ILookup, ICloneable} from '../../protocols';
+import {reduced, unreduced, isReduced} from '../reduced';
 import {indexedSeq} from '../indexedseq';
 import {revSeq} from '../revseq';
 import {filter} from '../lazyseq/concrete';
 import {ishow} from '../lazyseq/behave';
+import {set} from '../set/construct';
 import Array from './construct';
+
+function reduce3(xs, xf, init){
+  var memo = init, to = xs.length - 1;
+  for(var i = 0; i <= to; i++){
+    if (isReduced(memo))
+      break;
+    memo = xf(memo, xs[i]);
+  }
+  return unreduced(memo);
+}
+
+function reduce4(xs, xf, init, from){
+  return reduce5(xs, xf, init, from, xs.length - 1);
+}
+
+function reduce5(xs, xf, init, from, to){
+  var memo = init;
+  if (from <= to) {
+    for(var i = from; i <= to; i++){
+      if (isReduced(memo))
+        break;
+      memo = xf(memo, xs[i]);
+    }
+  } else {
+    for(var i = from; i >= to; i--){
+      if (isReduced(memo))
+        break;
+      memo = xf(memo, xs[i]);
+    }
+  }
+  return unreduced(memo);
+}
+
+const reduce = overload(null, null, null, reduce3, reduce4, reduce5);
+
+function reducekv(xs, xf, init, from){
+  var memo = init, len = xs.length;
+  for(var i = from || 0; i < len; i++){
+    if (isReduced(memo))
+      break;
+    memo = xf(memo, i, xs[i]);
+  }
+  return unreduced(memo);
+}
 
 function yank(self, value){
   return filter(function(x){
@@ -20,18 +65,18 @@ function reverse(self){
 }
 
 function union(xs, ys){
-  return new Set([...xs, ...ys]);
+  return set([...xs, ...ys]);
 }
 
 function intersection(xs, ys){
-  ys = new Set(Array.from(ys));
+  ys = set(ys);
   return xs.filter(function(x){
     return ys.has(x);
   });
 }
 
 function difference(xs, ys){
-  ys = new Set(Array.from(ys));
+  ys = set(ys);
   return xs.filter(function(x){
     return !ys.has(x);
   });
@@ -134,8 +179,15 @@ function decode(self, label, constructors){
   }, []);
 }
 
+function toObject(self){
+  return reduce(self, function(memo, [key, value]){
+    memo[key] = value;
+    return memo;
+  }, {});
+}
+
 export const iindexed = effect(
-  implement(IIndexed, {nth: nth}),
+  implement(IIndexed, {nth}),
   implement(ICounted, {count: length}));
 
 export const iequiv = implement(IEquiv, {equiv});
@@ -147,6 +199,7 @@ export default effect(
   implement(ISequential),
   implement(IEncode, {encode}),
   implement(IDecode, {decode}),
+  implement(IObject, {toObject}),
   implement(IYank, {yank}),
   implement(IReversible, {reverse}),
   implement(ISet, {union, intersection, difference, disj, superset}),

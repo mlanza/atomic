@@ -48,8 +48,12 @@ function next(self){
   return pos < ICounted.count(self.seq) ? indexedSeq(self.seq, pos) : null;
 }
 
+function nth(self, idx){
+  return IIndexed.nth(self.seq, idx + self.start);
+}
+
 function first(self){
-  return IIndexed.nth(self.seq, self.start);
+  return nth(self, 0);
 }
 
 function rest(self){
@@ -97,6 +101,7 @@ export default effect(
   iterable,
   encodeable,
   implement(ISequential),
+  implement(IIndexed, {nth}),
   implement(IReversible, {reverse}),
   implement(IMapEntry, {key, val}),
   implement(IInclusive, {includes}),

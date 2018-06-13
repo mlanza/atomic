@@ -4,7 +4,6 @@ import {IObject, IDescriptive, IFind, ICollection, IReduce, IKVReduce, INext, IA
 import {lazySeq} from '../../types/lazyseq/construct';
 import {remove, into} from '../../types/lazyseq/concrete';
 import Object from '../../types/object/construct';
-import * as t from '../../types/reduced';
 import {iequiv} from '../../types/array/behave';
 
 function toObject(self){
@@ -52,13 +51,13 @@ function clone(self){
 }
 
 function reduce(self, xf, init){
-  return t.reduce(keys(self), function(memo, key){
+  return IReduce.reduce(keys(self), function(memo, key){
     return xf(memo, [key, lookup(self, key)]);
   }, init);
 }
 
 function reducekv(self, xf, init){
-  return t.reduce(keys(self), function(memo, key){
+  return IReduce.reduce(keys(self), function(memo, key){
     return xf(memo, key, lookup(self, key));
   }, init);
 }

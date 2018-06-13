@@ -1,7 +1,7 @@
 import {multimethod} from "../types/multimethod/construct";
 import {isArray} from "../types/array/construct";
 import {isObject} from "../types/object/construct";
-import {signature} from "../predicates";
+import {signature} from "../api/predicates";
 import {IEvented, IArray, canBecomeArray, IObject, canBecomeObject} from "../protocols";
 
 export const coerce = multimethod();
