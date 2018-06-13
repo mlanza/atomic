@@ -1,29 +1,30 @@
-import {overload, identity} from "./core";
-import {isSequential, isDescriptive, IObject, ISeq, IAssociative, IReduce, IKVReduce, IEmptyableCollection, ICollection, ISeqable} from "./protocols";
-import {some, into} from "./types/lazyseq/concrete";
-import {slice} from "./types/array/concrete";
-import {apply} from "./types/function/concrete";
-import {concat} from "./types/concatenated";
+import {overload, identity, partial} from "../core";
+import {isSequential, isDescriptive, IObject, ISeq, IAssociative, IReduce, IKVReduce, IEmptyableCollection, ICollection, ISeqable} from "../protocols";
+import {some, into, best} from "../types/lazyseq/concrete";
+import {slice} from "../types/array/concrete";
+import {apply} from "../types/function/concrete";
+import {concat} from "../types/concatenated";
 import {gt, lt} from "./predicates";
 
-export function scanKey(better){
-  function scanKey2(k, x){
-    return x;
-  }
-
-  function scanKey3(k, x, y){
-    return better(k(x), k(y)) ? x : y;
-  }
-
-  function scanKeyN(k, x){
-    return apply(IReduce.reduce, slice(arguments, 2), scanKey2, x);
-  }
-
-  return overload(null, null, scanKey2, scanKey3, scanKeyN);
+function scanKey1(better){
+  return partial(scanKey, better);
 }
 
-export const maxKey = scanKey(gt);
-export const minKey = scanKey(lt);
+function scanKey3(better, k, x){
+  return x;
+}
+
+function scanKey4(better, k, x, y){
+  return better(k(x), k(y)) ? x : y;
+}
+
+function scanKeyN(better, k, x, ...args){
+  return apply(IReduce.reduce, args, partial(scanKey3, better), x);
+}
+
+export const scanKey = overload(null, scanKey1, null, scanKey3, scanKey4, scanKeyN);
+export const maxKey  = scanKey(gt);
+export const minKey  = scanKey(lt);
 
 function groupBy3(init, f, coll){
   return IReduce.reduce(coll, function(memo, value){

@@ -1,7 +1,6 @@
 import {overload, identity, constantly} from "../../core";
 import {IReduce, ICounted} from "../../protocols";
-import {complement, partial, unary} from "../function";
-import {reducing} from "../reduced";
+import {complement, partial, unary, reducing} from "../function";
 
 export function number(...args){
   return Number(...args);

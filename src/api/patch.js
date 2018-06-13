@@ -1,5 +1,5 @@
 import {mergeWith} from "./mergeWith";
-import {isFunction} from "./types/function/construct";
+import {isFunction} from "../types/function/construct";
 
 export default function patch(...maps){
   return mergeWith(function(prior, value){

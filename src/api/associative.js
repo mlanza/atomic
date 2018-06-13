@@ -1,9 +1,9 @@
-import {overload} from "./core";
-import {ISeq} from "./protocols/iseq";
-import {IEquiv} from "./protocols/iequiv";
-import {IArray} from "./protocols/iarray";
-import {ILookup} from "./protocols/ilookup";
-import {IAssociative} from "./protocols/iassociative";
+import {overload} from "../core";
+import {ISeq} from "../protocols/iseq";
+import {IEquiv} from "../protocols/iequiv";
+import {IArray} from "../protocols/iarray";
+import {ILookup} from "../protocols/ilookup";
+import {IAssociative} from "../protocols/iassociative";
 
 function assocN(self, key, value, ...args){
   const instance = IAssociative.assoc(self, key, value);

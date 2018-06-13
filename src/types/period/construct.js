@@ -2,7 +2,7 @@ import {overload} from '../../core';
 import {days} from '../duration/construct';
 import {midnight} from '../date/concrete';
 import {ISteppable, IComparable, IAssociative} from '../../protocols';
-import {patch} from '../../patch';
+import {patch} from '../../api/patch';
 
 export function Period(start, end, step, direction){
   this.start = start;

@@ -1,41 +1,21 @@
-import {overload, identity, counter} from "./core";
-import {reducing} from "./types/reduced";
-import {sort} from "./types/lazyseq";
-import {chain} from "./types/pipeline";
+import {overload, identity, counter, intercept} from "./core";
+import {reducing, sort, chain, set, flip, realized, comp, isNumber} from "./types";
 import {IAppendable, IHash, IYank, IArray, IAssociative, IBounds, IConverse, ICloneable, ICollection, IComparable, IContent, ICounted, IDecode, IDeref, IDisposable, IEmptyableCollection, IEncode, IEquiv, IEvented, IFind, IFn, IHierarchy, IInclusive, IIndexed, IKVReduce, ILookup, IMap, IMapEntry, INext, IObject, IPrependable, IPublish, IReduce, IReset, IReversible, ISeq, ISeqable, ISet, IShow, ISteppable, ISubscribe, ISwap, IUnit} from "./protocols";
-import {fork} from "./predicates";
-import {hash} from "./encode";
-
+import {fork, hash} from "./api";
 import * as T from "./types";
-import * as d from "./dom";
 
-export * from "./clojure";
 export * from "./core";
 export * from "./types";
 export * from "./protocols";
-export * from "./predicates";
-export * from "./associative";
-export * from "./lookup";
-export * from "./swap";
-export * from "./reduce";
-export * from "./reducekv";
-export * from "./encode";
-export * from "./decode";
-export * from "./contents";
-export * from "./merge";
-export * from "./mergeWith";
-export * from "./patch";
-export * from "./associatives";
-export * from "./signals";
+export * from "./api";
 export * from "./multimethods";
-export * from "./dom";
 
 export const start = IBounds.start;
 export const end = IBounds.end;
 export const pub = IPublish.pub;
 export const sub = ISubscribe.sub;
 export const show = IShow.show;
-export const second = T.comp(ISeq.first, INext.next);
+export const second = intercept(comp(ISeq.first, INext.next), isNumber, T.second);
 export const deref = IDeref.deref;
 export const reverse = IReversible.reverse;
 export const clone = ICloneable.clone;
@@ -53,7 +33,6 @@ export const parent = IHierarchy.parent;
 export const children = IHierarchy.children;
 export const nextSibling = IHierarchy.nextSibling;
 export const prevSibling = IHierarchy.prevSibling;
-export const compare = IComparable.compare;
 export const toArray = IArray.toArray;
 export const contains = IAssociative.contains;
 export const append = overload(null, identity, IAppendable.append, reducing(IAppendable.append));
@@ -74,7 +53,7 @@ export const count = ICounted.count;
 export const next = INext.next;
 export const superset = ISet.superset;
 export const disj = ISet.disj;
-export const union = overload(T.set, identity, ISet.union, reducing(ISet.union));
+export const union = overload(set, identity, ISet.union, reducing(ISet.union));
 export const intersection = overload(null, null, ISet.intersection, reducing(ISet.intersection));
 export const difference = overload(null, null, ISet.difference, reducing(ISet.difference));
 
@@ -108,8 +87,8 @@ function dissocN(obj, ...keys){
 
 export const dissoc = overload(null, identity, IMap.dissoc, dissocN);
 
-export const appendTo  = T.realized(T.flip(IAppendable.append));
-export const prependTo = T.realized(T.flip(IPrependable.prepend));
+export const appendTo  = realized(flip(IAppendable.append));
+export const prependTo = realized(flip(IPrependable.prepend));
 export const transpose = fork(IInclusive.includes, IYank.yank, ICollection.conj);
 
 function memoize1(f){

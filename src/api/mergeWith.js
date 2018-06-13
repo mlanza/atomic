@@ -1,6 +1,6 @@
-import {identity} from "./core";
-import {IReduce, ISeqable, IAssociative} from "./protocols";
-import {some} from "./types/lazyseq/concrete";
+import {identity} from "../core";
+import {IReduce, ISeqable, IAssociative} from "../protocols";
+import {some} from "../types/lazyseq/concrete";
 import {update} from "./associative";
 
 export default function mergeWith(f, init, ...maps){

@@ -1,9 +1,9 @@
-import {overload, constantly, identity, type} from "./core";
-import {IReduce, IKVReduce, ICounted, IComparable, IEquiv, isSequential} from "./protocols";
-import {reducing, reduced} from "./types/reduced";
-import {comp, partial, apply} from "./types/function/concrete";
-import {isNil} from "./types/nil/construct";
-import {slice} from "./types/array/concrete";
+import {overload, constantly, identity, type} from "../core";
+import {IReduce, IKVReduce, ICounted, IComparable, IEquiv, isSequential} from "../protocols";
+import {reduced} from "../types/reduced";
+import {comp, partial, apply, reducing} from "../types/function/concrete";
+import {isNil} from "../types/nil/construct";
+import {slice} from "../types/array/concrete";
 
 export function both(memo, value){
   return memo && value;
@@ -100,8 +100,8 @@ function someFnN(...preds){
 
 export const someFn = overload(null, someFn1, someFn2, someFn3, someFnN);
 
-export const isIdentical = Object.is ? Object.is : function (x, y){
-  return x === y;
+export function isIdentical(x, y){
+  return x === y; //TODO Object.is?
 }
 
 export function compare(x, y){

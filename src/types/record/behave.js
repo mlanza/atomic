@@ -13,7 +13,7 @@ function contains(self, key){
 }
 
 function lookup(self, key){
-  return self.attrs[key];
+  return ILookup.lookup(self.attrs, key);
 }
 
 function seq(self){
@@ -21,7 +21,7 @@ function seq(self){
 }
 
 function count(self){
-  return Object.keys(self.attrs).length;
+  return ICounted.count(self.attrs);
 }
 
 function first(self){
@@ -49,7 +49,9 @@ function dissoc(self, key){
 }
 
 function equiv(self, other){
-  return isRecord(other) && IEquiv.equiv(self.attrs, other.attrs);
+  return ICounted.count(self) === ICounted.count(other) && reducekv(self, function(memo, key, value){
+    return memo ? IEquiv.equiv(ILookup.lookup(other, key), value) : reduced(memo);
+  }, true);
 }
 
 function empty(self){
@@ -58,13 +60,13 @@ function empty(self){
 
 function reduce(self, xf, init){
   return IReduce.reduce(IMap.keys(self), function(memo, key){
-    return xf(memo, [key, self[key]]);
+    return xf(memo, [key, lookup(self, key)]);
   }, init);
 }
 
 function reducekv(self, xf, init){
   return IReduce.reduce(IMap.keys(self), function(memo, key){
-    return xf(memo, key, self[key]);
+    return xf(memo, key, lookup(self, key));
   }, init);
 }
 

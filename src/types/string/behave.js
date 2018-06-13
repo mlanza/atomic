@@ -1,13 +1,18 @@
-import {IArray, IHash, IEncode, IDecode, IIndexed, ISeqable, INext, ISeq, IInclusive, IAppendable, IPrependable, IShow, ICounted, ILookup, IFn, IComparable, IEmptyableCollection} from '../../protocols';
+import {IArray, IReduce, ICollection, IHash, IEncode, IDecode, IIndexed, ISeqable, INext, ISeq, IInclusive, IAppendable, IPrependable, IShow, ICounted, ILookup, IFn, IComparable, IEmptyableCollection} from '../../protocols';
 import {constantly, effect, identity} from "../../core";
 import {implement} from '../protocol';
 import String from './construct';
 import EmptyList from '../emptylist/construct';
+import {isReduced, unreduced} from '../reduced';
 import {lazySeq} from '../lazyseq/construct';
 import {iindexed} from '../array/behave';
 
 function compare(self, other){
   return self === other ? 0 : self > other ? 1 : -1;
+}
+
+function conj(self, other){
+  return self + other;
 }
 
 function seq2(self, idx){
@@ -52,10 +57,6 @@ function show(self){
   return "\"" + self + "\"";
 }
 
-function append(self, tail){
-  return self + tail;
-}
-
 function prepend(self, head){
   return head + self;
 }
@@ -77,15 +78,27 @@ function hash(self){
   return hash;
 }
 
+function reduce(self, xf, init){
+  let memo = init;
+  let coll = ISeqable.seq(self);
+  while(coll && !isReduced(memo)){
+    memo = xf(memo, ISeq.first(coll));
+    coll = INext.next(coll);
+  }
+  return unreduced(memo);
+}
+
 export default effect(
   iindexed,
   implement(IHash, {hash}),
+  implement(ICollection, {conj}),
+  implement(IReduce, {reduce}),
   implement(IEncode, {encode: identity}),
   implement(IDecode, {decode: identity}),
   implement(IArray, {toArray}),
   implement(IComparable, {compare}),
   implement(IInclusive, {includes}),
-  implement(IAppendable, {append}),
+  implement(IAppendable, {append: conj}),
   implement(IPrependable, {prepend}),
   implement(IEmptyableCollection, {empty: constantly(String.EMPTY)}),
   implement(IFn, {invoke: lookup}),

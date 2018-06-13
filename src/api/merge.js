@@ -1,6 +1,6 @@
-import {identity} from "./core";
-import {IReduce, ISeqable} from "./protocols";
-import {some} from "./types/lazyseq/concrete";
+import {identity} from "../core";
+import {IReduce, ISeqable} from "../protocols";
+import {some} from "../types/lazyseq/concrete";
 
 export default function merge(...maps){
   return some(identity, maps) ? IReduce.reduce(maps, function(memo, map){

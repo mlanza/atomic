@@ -1,3 +1,4 @@
+import {overload} from '../../core';
 import EmptyList from "../emptylist";
 import {ICounted} from '../../protocols';
 
@@ -6,9 +7,15 @@ export function IndexedSeq(seq, start){
   this.start = start;
 }
 
-export function indexedSeq(seq, start){
+function indexedSeq1(seq){
+  return indexedSeq2(seq, 0);
+}
+
+function indexedSeq2(seq, start){
   return start < ICounted.count(seq) ? new IndexedSeq(seq, start) : EmptyList.EMPTY;
 }
+
+export const indexedSeq = overload(null, indexedSeq1, indexedSeq2);
 
 function from({seq, start}){
   return indexedSeq(seq, start);

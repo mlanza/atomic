@@ -1,6 +1,7 @@
 import {constantly, overload} from "../../core";
-import {reducing} from "../../types/reduced";
+import {reducing, apply} from "../../types/function/concrete";
 import EmptyList from '../../types/emptylist';
+import {IReduce} from '../../protocols/ireduce';
 
 export function List(head, tail){
   this.head = head;
@@ -27,7 +28,13 @@ List.prototype[Symbol.toStringTag] = "List";
 List.from = from;
 
 export function isList(self){
-  return self && self.constructor === List;
+  return self && self.constructor === List || self.constructor === EmptyList;
+}
+
+export function list(...args){
+  return IReduce.reduce(args.reverse(), function(memo, value){
+    return cons(value, memo);
+  }, EmptyList.EMPTY);
 }
 
 export default List;

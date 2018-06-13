@@ -1,5 +1,5 @@
-import {overload} from "./core";
-import {IReduce} from "./protocols/ireduce";
+import {overload} from "../core";
+import {IReduce} from "../protocols/ireduce";
 
 function reduce2(xf, coll){
   return IReduce.reduce(coll, xf, xf());

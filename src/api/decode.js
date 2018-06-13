@@ -1,6 +1,6 @@
-import {overload} from "./core";
-import {IDecode} from "./protocols/idecode";
-import {Array, Concatenated, Date, Range, Period, Duration, Months, Years, List, EmptyList} from "./types";
+import {overload} from "../core";
+import {IDecode} from "../protocols/idecode";
+import {Array, Concatenated, Date, Range, Period, Duration, Months, Years, List, EmptyList} from "../types";
 
 //reference types only
 export const decodables = {Array, Concatenated, Date, Range, Period, Duration, Months, Years, List, EmptyList};
