@@ -5,9 +5,8 @@ export default {
   input: 'test/cloe.js',
   output: {
     file: 'dist/tests.js',
-    format: 'umd',
-    name: "_",
-    sourceMap: 'inline'
+    format: 'iife',
+    name: "_"
   },
   plugins: [
     babel({
