@@ -1,8 +1,10 @@
 {
   "presets": [
-    ["es2015", { "modules": false }]
+    ["@babel/es2015", { "modules": false }]
   ],
   "plugins": [
-    "external-helpers"
+    "babel-plugin-macros",
+    "@babel/plugin-proposal-pipeline-operator",
+    "@babel/plugin-transform-arrow-functions"
   ]
 }
