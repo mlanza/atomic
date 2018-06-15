@@ -19,12 +19,13 @@ QUnit.test("dom", function(assert){
       li({id: 'larry'}, "Larry Fine")));
   const moe = stooges |> dom.sel("li", v) |> _.first;
   const who = div(_.get(v, "givenName"), " ", _.get(v, "surname"));
-  assert.equal(_.els(moe, dom.contents, dom.text) |> _.join("", v), "Moe Howard", "Found by tag");
-  assert.equal(_.els({givenName: "Curly", surname: "Howard"}, who, dom.contents, dom.text) |> _.join("", v), "Curly Howard"); //TODO chain around els is awkward
+  assert.equal(moe |> dom.contents |> dom.text |> _.join("", v), "Moe Howard", "Found by tag");
+  assert.deepEqual(stooges |> dom.sel("li", v) |> dom.get(v, "id") |> _.toArray, ["moe", "curly", "larry"], "Found by tag");
+  assert.equal({givenName: "Curly", surname: "Howard"} |> who |> dom.contents |> dom.text |> _.join("", v), "Curly Howard");
   assert.equal(moe |> _.update(v, "class", _.conj(v, "main")) |> _.assoc(v, "data-tagged", "tests") |> _.get(v, "data-tagged"), "tests");
   stooges |> _.append(v, div({id: 'branding'}, span("Three Blind Mice")));
   assert.ok(stooges |> dom.sel("#branding", v) |> _.first |> (el => el instanceof HTMLDivElement), "Found by id");
-  assert.deepEqual(_.els(stooges, dom.sel("#branding span", v), dom.contents, dom.text) |> _.toArray, ["Three Blind Mice"], "Read text content");
+  assert.deepEqual(stooges |> dom.sel("#branding span", v) |> dom.contents |> dom.text |> _.toArray, ["Three Blind Mice"], "Read text content");
   const greeting = stooges |> dom.sel("#branding span", v) |> _.first;
   dom.hide(greeting);
   assert.deepEqual(greeting |> _.get(v, "style"), {display: "none"}, "Hidden");
@@ -32,7 +33,7 @@ QUnit.test("dom", function(assert){
   assert.deepEqual(greeting |> _.get(v, "style"), {}, "Shown");
   const branding = stooges |> dom.sel("#branding", v) |> _.first;
   _.yank(branding);
-  assert.equal(branding |> dom.parent, null, "Removed");
+  assert.equal(branding |> dom.parent |> _.first, null, "Removed");
 });
 
 QUnit.test("transducers", function(assert){

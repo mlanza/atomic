@@ -10,12 +10,6 @@ export function complement(f){
   }
 }
 
-export function partial(f, ...applied){
-  return function(...args){
-    return f.apply(this, applied.concat(args));
-  }
-}
-
 export function counter(init){
   let memo = init || 0;
   return function(){
@@ -39,21 +33,65 @@ export function overload(){
   }
 }
 
-export function subj(f){ //subjective
+export function subj(f, len){ //subjective
+  const length = len || f.length;
   return function(...ys){
-    return function(...xs){
+    return ys.length >= length ? f.apply(null, ys) : function(...xs){
       return f.apply(null, xs.concat(ys));
     }
   }
 }
 
-export function obj(f){ //objective
+export function obj(f, len){ //objective
+  const length = len || f.length;
   return function(...xs){
-    return function(...ys){
+    return xs.length >= length ? f.apply(null, xs) : function(...ys){
       return f.apply(null, xs.concat(ys));
     }
   }
 }
+
+export function partial(f, ...applied){
+  return function(...args){
+    return f.apply(this, applied.concat(args));
+  }
+}
+
+export const later = {};
+
+function partly2(f, later){
+  return function g(...xs){
+    if (xs.indexOf(later) < 0) {
+      return f.apply(null, xs);
+    } else {
+      return function(...ys){
+        const zs = [];
+        let a = 0, b = 0, xl = xs.length, yl = ys.length;
+        while(a < xl && b < yl){
+          if (xs[a] === later) {
+            a++;
+            zs.push(ys[b++]);
+          } else {
+            zs.push(xs[a++]);
+          }
+        }
+        while(a < xl){
+          zs.push(xs[a++]);
+        }
+        while(b < yl){
+          zs.push(ys[b++]);
+        }
+        return g.apply(null, zs);
+      }
+    }
+  }
+}
+
+function partly1(f){
+  return partly2(f, later);
+}
+
+export const partly = overload(null, partly1, partly2);
 
 export function identity(x){
   return x;
@@ -72,7 +110,7 @@ export function doto(obj, ...effects){
   return obj;
 }
 
-export const effect = subj(doto);
+export const effect = subj(doto, Infinity);
 
 export function isInstance(x, constructor){
   return x instanceof constructor;

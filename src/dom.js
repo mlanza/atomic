@@ -1,11 +1,20 @@
 import {implement} from './core/types/protocol';
 import {conj, yank, overload, constantly, identity, subj} from "./core";
-import {split, trim, lazySeq, cons, apply, concat, partial, partially, comp, satisfies, compact, flatten, detect, filter, remove, each, mapa, map, mapcat, into, selfish} from "./core/types";
+import {multiple, split, trim, lazySeq, cons, apply, concat, partial, partially, comp, satisfies, compact, flatten, detect, filter, remove, each, mapa, map, mapcat, into, selfish} from "./core/types";
 import {IHierarchy, IArray, IReduce, ISeqable, ICollection} from "./core/protocols";
 import {reduce} from "./core";
 import {matches} from "./core/multimethods";
 export {matches} from "./core/multimethods";
-export {parent, nextSibling, prevSibling, children, contents} from "./core";
+import * as core from "./core";
+
+export const parent = multiple(core.parent);
+export const nextSibling = multiple(core.nextSibling);
+export const prevSibling = multiple(core.prevSibling);
+export const children = multiple(core.children);
+export const contents = multiple(core.contents);
+export const get = multiple(core.get);
+export const assoc = multiple(core.assoc);
+export const update = multiple(core.update);
 
 export function expansive(f){
   function expand(...xs){
@@ -42,7 +51,7 @@ export function tags(...names){
   }, {}, names);
 }
 
-export function closest(self, selector){
+export const closest = multiple(function(self, selector){
   let target = IHierarchy.parent(self);
   while(target){
     if (matches(target, selector)){
@@ -50,7 +59,7 @@ export function closest(self, selector){
     }
     target = IHierarchy.parent(target);
   }
-}
+});
 
 const matching = subj(matches);
 
@@ -83,29 +92,29 @@ function upward(f){
   }
 }
 
-export const descendants  = downward(IHierarchy.children);
-export const parents      = upward(IHierarchy.parent);
-export const prevSiblings = upward(IHierarchy.prevSibling);
-export const nextSiblings = upward(IHierarchy.nextSibling);
+export const descendants  = multiple(downward(IHierarchy.children));
+export const parents      = multiple(upward(IHierarchy.parent));
+export const prevSiblings = multiple(upward(IHierarchy.prevSibling));
+export const nextSiblings = multiple(upward(IHierarchy.nextSibling));
 export const ancestors    = parents;
 
-export function siblings(self){
+export const siblings = multiple(function(self){
   return concat(prevSiblings(self), nextSiblings(self));
-}
+});
 
 const hidden = {style: "display: none;"};
 
-export function toggle(self){
+export const toggle = multiple(function(self){
   return transpose(self, hidden);
-}
+});
 
-export function hide(self){
+export const hide = multiple(function(self){
   return ICollection.conj(self, hidden);
-}
+})
 
-export function show(self){
+export const show = multiple(function(self){
   return yank(self, hidden);
-}
+})
 
 function prop2(self, key){
   return self[key];
@@ -115,7 +124,7 @@ function prop3(self, key, value){
   self[key] = value;
 }
 
-export const prop = overload(null, null, prop2, prop3);
+export const prop = multiple(overload(null, null, prop2, prop3));
 
 function value1(self){
   return self.value != null ? self.value : null;
@@ -127,7 +136,7 @@ function value2(self, value){
   }
 }
 
-export const value = overload(null, value1, value2);
+export const value = multiple(overload(null, value1, value2));
 
 function text1(self){
   return self.nodeType === Node.TEXT_NODE ? self.data : null;
@@ -139,7 +148,7 @@ function text2(self, text){
   }
 }
 
-export const text = overload(null, text1, text2);
+export const text = multiple(overload(null, text1, text2));
 
 function html1(self){
   return self.innerHTML;
@@ -149,4 +158,4 @@ function html2(self, html){
   self.innerHTML = html;
 }
 
-export const html = overload(null, html1, html2);
+export const html = multiple(overload(null, html1, html2));

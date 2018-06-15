@@ -1,5 +1,5 @@
 import {overload, identity, counter, intercept} from "./core/core";
-import {reducing, sort, chain, set, flip, realized, comp, isNumber} from "./core/types";
+import {multiple, reducing, sort, chain, set, flip, realized, comp, isNumber} from "./core/types";
 import {IAppendable, IHash, IYank, IArray, IAssociative, IBounds, IConverse, ICloneable, ICollection, IComparable, IContent, ICounted, IDecode, IDeref, IDisposable, IEmptyableCollection, IEncode, IEquiv, IEvented, IFind, IFn, IHierarchy, IInclusive, IIndexed, IKVReduce, ILookup, IMap, IMapEntry, INext, IObject, IPrependable, IPublish, IReduce, IReset, IReversible, ISeq, ISeqable, ISet, IShow, ISteppable, ISubscribe, ISwap, IUnit} from "./core/protocols";
 import {fork, hash} from "./core/api";
 import * as T from "./core/types";

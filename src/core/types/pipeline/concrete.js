@@ -50,7 +50,7 @@ export function logged(f){
   }
 }
 
-export function multiple(f){
+export function multiple(f){ //f takes 1, returns 1 or many
   return function(x, ...args){
     const xs = isSequential(x) ? ISeqable.seq(x) : [x];
     return mapcat(function(x){
@@ -66,6 +66,41 @@ export function multiple(f){
       }
     }, xs);
   }
+}
+
+export function card(f){
+  return function(x, ...args){
+    return isSequential(x) ? mapcat(function(x){
+      const result = apply(f, x, args);
+      if (isSequential(result) || result == null) {
+        if (ISeqable.seq(result)) {
+          return result;
+        } else {
+          return EmptyList.EMPTY;
+        }
+      } else {
+        return [result];
+      }
+    }, ISeqable.seq(x)) : apply(f, x, args);
+  }
+}
+
+function fan(f){ //f takes 1, returns 1
+  return function(x, ...args){
+    return isSequential(x) ? mapcat(function(x){
+      const result = apply(f, x, args);
+      if (isSequential(result) || result == null) {
+        if (ISeqable.seq(result)) {
+          return result;
+        } else {
+          return EmptyList.EMPTY;
+        }
+      } else {
+        return [result];
+      }
+    }, ISeqable.seq(x)) : apply(f, x, args);
+  }
+
 }
 
 export function compacted(f){
