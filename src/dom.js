@@ -4,8 +4,6 @@ import {conj, yank, overload, constantly, identity, subj} from "./core";
 import {multiple, split, trim, lazySeq, cons, apply, concat, partial, partially, comp, satisfies, compact, flatten, detect, filter, remove, each, mapa, map, mapcat, into, selfish} from "./core/types";
 import {IHierarchy, IArray, IReduce, ISeqable, ICollection} from "./core/protocols";
 import {reduce} from "./core";
-import {matches} from "./core/multimethods";
-export {matches} from "./core/multimethods";
 import * as core from "./core";
 
 export function expansive(f){
@@ -42,8 +40,6 @@ export function tags(...names){
     return memo;
   }, {}, names);
 }
-
-const matching = subj(matches);
 
 function sel2(pred, context){
   return filter(matching(pred), descendants(context));

@@ -1,11 +1,18 @@
 import {implement} from '../protocol';
-import {IArray, IInclusive, IFind, IEquiv, ICollection, INext, ISeq, IReduce, IKVReduce, ISeqable, ISequential, IIndexed, IEmptyableCollection, IShow, ICounted, IAppendable, IPrependable} from '../../protocols';
+import {IFunctor, IMatch, IArray, IHierarchy, IInclusive, IFind, IEquiv, ICollection, INext, ISeq, IReduce, IKVReduce, ISeqable, ISequential, IIndexed, IEmptyableCollection, IShow, ICounted, IAppendable, IPrependable} from '../../protocols';
 import {overload, identity, constantly, effect} from '../../core';
 import Reduced, {isReduced, reduced, unreduced} from "../reduced";
 import {concat} from "../concatenated/construct";
+import {members} from "../members/construct";
 import {cons} from "../list/construct";
-
+import {comp} from "../function/concrete";
+import {downward, upward, closest} from "../element/behave";
+import {map} from "./concrete";
 import EmptyList from '../emptylist/construct';
+
+function fmap(self, f){
+  return map(f, self);
+}
 
 function conj(self, value){
   return cons(value, self);
@@ -115,6 +122,50 @@ function append(self, other){
   return concat(self, [other]);
 }
 
+function children(self){
+  return fmap(self, IHierarchy.children);
+}
+
+const descendants = comp(members, downward(IHierarchy.children));
+
+function nextSibling(self){
+  return members(map(IHierarchy.nextSibling, self.items));
+}
+
+function nextSiblings(self){
+  return members(fmap(self, IHierarchy.nextSiblings));
+}
+
+function prevSibling(self){
+  return members(map(IHierarchy.prevSibling, self.items));
+}
+
+function prevSiblings(self){
+  return members(fmap(self, IHierarchy.prevSiblings));
+}
+
+function siblings(self){
+  return members(fmap(self, IHierarchy.siblings));
+}
+
+function sel(self, selector){
+  return members(filter(function(node){
+    return IMatch.matches(node, selector);
+  }, descendants(self)));
+}
+
+function parent(self){
+  return members(map(IHierarchy.parent, self.items));
+}
+
+function parents(self){
+  return members(fmap(self, IHierarchy.parents));
+}
+
+function contents(self){
+  return map(identity, mapcat(IContent.contents, self)); //return lazyseq and not concatenated
+}
+
 const toArray = overload(null, toArray1, toArray2);
 
 export const ishow = implement(IShow, {show: show});
@@ -127,6 +178,7 @@ export default effect(
   ishow,
   ireduce,
   implement(ISequential),
+  implement(IFunctor, {fmap}),
   implement(ICollection, {conj}),
   implement(IArray, {toArray}),
   implement(IAppendable, {append}),
@@ -135,6 +187,7 @@ export default effect(
   implement(ICounted, {count}),
   implement(IEquiv, {equiv}),
   implement(IFind, {find}),
+  implement(IHierarchy, {children, descendants, sel, nextSibling, nextSiblings, prevSibling, prevSiblings, siblings, parent, parents}),
   implement(IEmptyableCollection, {empty: EmptyList.EMPTY}),
   implement(ISeq, {first, rest}),
   implement(ISeqable, {seq: identity}),
