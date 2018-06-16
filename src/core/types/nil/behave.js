@@ -1,4 +1,4 @@
-import {IFunctor, IAssociative, IEncode, IDecode, IArray, IEquiv, ICollection, INext, ISeq, IShow, ISeqable, IIndexed, ICounted, ILookup, IReduce, IEmptyableCollection, ISequential} from '../../protocols';
+import {IFunctor, IAssociative, IOtherwise, IEncode, IDecode, IFold, IArray, IEquiv, ICollection, INext, ISeq, IShow, ISeqable, IIndexed, ICounted, ILookup, IReduce, IEmptyableCollection, ISequential} from '../../protocols';
 import EmptyList from '../../types/emptylist/construct';
 import {identity, constantly, effect, overload} from '../../core';
 import {implement, surrogates} from '../protocol';
@@ -25,13 +25,23 @@ function equiv(self, other){
   return null == other;
 }
 
+function otherwise(self, other){
+  return other;
+}
+
+function fold(self, missing, okay){
+  missing(self);
+}
+
 surrogates.unshift(nil);
 
 export default effect(
   implement(ISequential),
   implement(IEncode, {encode: identity}),
   implement(IDecode, {decode: identity}),
+  implement(IFold, {fold}),
   implement(IEmptyableCollection, {empty: identity}),
+  implement(IOtherwise, {otherwise}),
   implement(IEquiv, {equiv}),
   implement(IFunctor, {fmap: identity}),
   implement(ILookup, {lookup: identity}),
