@@ -1,4 +1,5 @@
 export * from "./api/predicates";
+export * from "./api/fmap";
 export * from "./api/associative";
 export * from "./api/lookup";
 export * from "./api/swap";

@@ -1,6 +1,6 @@
-import {IAssociative, IEncode, IDecode, IArray, IEquiv, ICollection, INext, ISeq, IShow, ISeqable, IIndexed, ICounted, ILookup, IReduce, IEmptyableCollection, ISequential} from '../../protocols';
-import EmptyList from '../../types/emptylist';
-import {identity, constantly, effect} from '../../core';
+import {IFunctor, IAssociative, IEncode, IDecode, IArray, IEquiv, ICollection, INext, ISeq, IShow, ISeqable, IIndexed, ICounted, ILookup, IReduce, IEmptyableCollection, ISequential} from '../../protocols';
+import EmptyList from '../../types/emptylist/construct';
+import {identity, constantly, effect, overload} from '../../core';
 import {implement, surrogates} from '../protocol';
 import Array from '../../types/array/construct';
 import Nil from './construct';
@@ -29,11 +29,12 @@ surrogates.unshift(nil);
 
 export default effect(
   implement(ISequential),
-  implement(IEncode, {encode: constantly(null)}),
-  implement(IDecode, {decode: constantly(null)}),
+  implement(IEncode, {encode: identity}),
+  implement(IDecode, {decode: identity}),
   implement(IEmptyableCollection, {empty: identity}),
   implement(IEquiv, {equiv}),
-  implement(ILookup, {lookup: constantly(null)}),
+  implement(IFunctor, {fmap: identity}),
+  implement(ILookup, {lookup: identity}),
   implement(IAssociative, {assoc: assoc, contains: constantly(false)}),
   implement(INext, {next: identity}),
   implement(IArray, {toArray: constantly(Array.EMPTY)}),

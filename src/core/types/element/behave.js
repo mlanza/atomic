@@ -1,10 +1,12 @@
-import {identity, constantly, effect, overload} from '../../core';
+import {identity, constantly, effect, overload, subj} from '../../core';
 import {implement, surrogates} from '../protocol';
 import {isAssociative, isSequential, IYank, IInclusive, IArray, IAppendable, IPrependable, IEvented, IAssociative, IMap, IEquiv, ICloneable, ICollection, INext, ISeq, IShow, ISeqable, IIndexed, ICounted, ILookup, IReduce, IEmptyableCollection, IHierarchy, IContent} from '../../protocols';
-import {each} from '../lazyseq/concrete';
+import {each, mapcat} from '../lazyseq/concrete';
 import EmptyList from '../emptylist/construct';
+import {concat} from '../concatenated/construct';
+import {cons} from '../list/construct';
 import {lazySeq} from '../lazyseq/construct';
-import {mapa, detect, compact, distinct} from '../lazyseq/concrete';
+import {mapa, detect, compact, distinct, filter} from '../lazyseq/concrete';
 import {maybe} from '../pipeline/concrete';
 import {isObject} from '../object/construct';
 import {isString} from '../string/construct';
@@ -12,6 +14,25 @@ import {isFunction} from '../function/construct';
 import {reduced} from '../reduced/construct';
 import {trim, split, str} from '../string/concrete';
 import Element, {isElement} from './construct';
+import {matches} from "../../multimethods/matches";
+import {members} from "../members/construct";
+
+const matching = subj(matches);
+
+export function downward(f){
+  return function down(self){
+    const xs = f(self),
+          ys = mapcat(down, xs);
+    return concat(xs, ys);
+  }
+}
+
+export function upward(f){
+  return function up(self){
+    const other = f(self);
+    return other ? cons(other, up(other)) : EmptyList.EMPTY;
+  }
+}
 
 function isAttrs(self){
   return !isElement(self) && isAssociative(self);
@@ -140,16 +161,42 @@ function parent(self){
   return self && self.parentNode;
 }
 
+const parents = upward(parent);
+
+function closest(self, selector){
+  let target = IHierarchy.parent(self);
+  while(target){
+    if (matches(target, selector)){
+      return target;
+    }
+    target = IHierarchy.parent(target);
+  }
+}
+
+function sel(self, selector){
+  return members(filter(matching(selector), descendants(self)));
+}
+
 function children(self){
   return ISeqable.seq(self.children);
 }
+
+const descendants = downward(children);
 
 function nextSibling(self){
   return self.nextElementSibling;
 }
 
+const nextSiblings = upward(nextSibling);
+
 function prevSibling(self){
   return self.prevElementSibling;
+}
+
+const prevSiblings = upward(prevSibling);
+
+export function siblings(self){
+  return concat(prevSiblings(self), nextSiblings(self));
 }
 
 function yank1(self){ //no jokes, please!
@@ -220,6 +267,6 @@ export default effect(
   implement(IEvented, {on, off}),
   implement(ILookup, {lookup}),
   implement(IContent, {contents}),
-  implement(IHierarchy, {parent, children, nextSibling, prevSibling}),
+  implement(IHierarchy, {parent, parents, closest, children, descendants, sel, nextSibling, nextSiblings, prevSibling, prevSiblings, siblings}),
   implement(IMap, {dissoc, keys, vals}),
   implement(IAssociative, {assoc, contains}));

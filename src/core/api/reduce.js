@@ -10,3 +10,9 @@ function reduce3(xf, init, coll){
 }
 
 export const reduce = overload(null, null, reduce2, reduce3);
+
+export function reducing(rf){
+  return function(init, ...xs){
+    return IReduce.reduce(xs, rf, init);
+  }
+}

@@ -12,28 +12,28 @@ const stooges = ["Larry","Curly","Moe"],
 
 QUnit.test("dom", function(assert){
   const {ul, li, div, span} = dom.tags("ul", "li", "div", "span");
-  const stooges = dom.frag(
+  const stooges = window.stooges = dom.frag(
     ul(
       li({id: 'moe'}, "Moe Howard"),
       li({id: 'curly'}, "Curly Howard"),
       li({id: 'larry'}, "Larry Fine")));
-  const moe = stooges |> dom.sel("li", v) |> _.first;
+  const moe = stooges |> _.sel(v, "li") |> _.first;
   const who = div(_.get(v, "givenName"), " ", _.get(v, "surname"));
-  assert.equal(moe |> dom.contents |> dom.text |> _.join("", v), "Moe Howard", "Found by tag");
-  assert.deepEqual(stooges |> dom.sel("li", v) |> dom.get(v, "id") |> _.toArray, ["moe", "curly", "larry"], "Found by tag");
-  assert.equal({givenName: "Curly", surname: "Howard"} |> who |> dom.contents |> dom.text |> _.join("", v), "Curly Howard");
+  assert.equal(moe |> _.contents |> dom.text |> _.join("", v), "Moe Howard", "Found by tag");
+  assert.deepEqual(stooges |> _.sel(v, "li") |> _.get(v, "id") |> _.toArray, ["moe", "curly", "larry"], "Extracted ids");
+  assert.equal({givenName: "Curly", surname: "Howard"} |> who |> _.contents |> dom.text |> _.join("", v), "Curly Howard");
   assert.equal(moe |> _.update(v, "class", _.conj(v, "main")) |> _.assoc(v, "data-tagged", "tests") |> _.get(v, "data-tagged"), "tests");
   stooges |> _.append(v, div({id: 'branding'}, span("Three Blind Mice")));
-  assert.ok(stooges |> dom.sel("#branding", v) |> _.first |> (el => el instanceof HTMLDivElement), "Found by id");
-  assert.deepEqual(stooges |> dom.sel("#branding span", v) |> dom.contents |> dom.text |> _.toArray, ["Three Blind Mice"], "Read text content");
-  const greeting = stooges |> dom.sel("#branding span", v) |> _.first;
+  assert.ok(stooges |> _.sel(v, "#branding") |> _.first |> (el => el instanceof HTMLDivElement), "Found by id");
+  assert.deepEqual(stooges |> _.sel(v, "#branding span") |> _.contents |> dom.text |> _.toArray, ["Three Blind Mice"], "Read text content");
+  const greeting = stooges |> _.sel(v, "#branding span") |> _.first;
   dom.hide(greeting);
   assert.deepEqual(greeting |> _.get(v, "style"), {display: "none"}, "Hidden");
   dom.show(greeting);
   assert.deepEqual(greeting |> _.get(v, "style"), {}, "Shown");
-  const branding = stooges |> dom.sel("#branding", v) |> _.first;
+  const branding = stooges |> _.sel(v, "#branding") |> _.first;
   _.yank(branding);
-  assert.equal(branding |> dom.parent |> _.first, null, "Removed");
+  assert.equal(branding |> _.parent |> _.first, null, "Removed");
 });
 
 QUnit.test("transducers", function(assert){

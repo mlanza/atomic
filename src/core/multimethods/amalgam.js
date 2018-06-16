@@ -2,7 +2,8 @@
 
 import {overload} from "../core";
 import {detect, each, mapa, compact} from "../types/lazyseq/concrete";
-import {reduced, reducing} from "../types/reduced";
+import {reduced} from "../types/reduced";
+import {reducing} from "../api/reduce";
 import {multimethod} from "../types/multimethod/construct";
 import {isDate} from "../types/date/construct";
 import {isWhen} from "../types/when/construct";
