@@ -1,15 +1,12 @@
-import {overload, identity, effect, subj} from "../../core";
+import {overload, identity, effect} from "../../core";
 import {implement} from '../protocol';
-import {IFunctor, IHierarchy, IContent, ILookup, IAssociative, IReduce, INext} from '../../protocols';
+import {IFunctor, IMatch, IHierarchy, IContent, ILookup, IAssociative, IReduce, INext} from '../../protocols';
 import {mapcat, map, each, filter} from "../lazyseq/concrete";
 import {reduced} from "../reduced/construct";
 import {members} from "./construct";
 import {downward} from "../element/behave";
 import {comp} from "../function/concrete";
 import behave from "../series/behave";
-import {matches} from "../../multimethods/matches";
-
-const matching = subj(matches);
 
 function next(self){
   return INext.next(self.items);
@@ -65,7 +62,9 @@ function siblings(self){
 }
 
 function sel(self, selector){
-  return members(filter(matching(selector), descendants(self)));
+  return members(filter(function(node){
+    return IMatch.matches(node, selector);
+  }, descendants(self)));
 }
 
 function parent(self){
@@ -77,7 +76,7 @@ function parents(self){
 }
 
 function contents(self){
-  return mapcat(IContent.contents, self);
+  return map(identity, mapcat(IContent.contents, self)); //return lazyseq and not concatenated
 }
 
 export default effect(
