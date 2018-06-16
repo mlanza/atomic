@@ -23,6 +23,7 @@ export * from "./protocols/ihash";
 export * from "./protocols/ihierarchy";
 export * from "./protocols/iinclusive";
 export * from "./protocols/iindexed";
+export * from "./protocols/iinsertable";
 export * from "./protocols/ikvreduce";
 export * from "./protocols/ilookup";
 export * from "./protocols/imap";
