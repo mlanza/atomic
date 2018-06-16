@@ -6,7 +6,7 @@ export default function Members(items){
 }
 
 export function members(self){
-  return new Members(distinct(compact(isSequential(self) ? ISeqable.seq(self) : [self])));
+  return new Members(distinct(compact(isSequential(self) ? self : [self])));
 }
 
 Members.from = members;
