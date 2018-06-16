@@ -16,6 +16,7 @@ export * from "./types/htmlcollection";
 export * from "./types/htmldocument";
 export * from "./types/indexedseq";
 export * from "./types/list";
+export * from "./types/members";
 export * from "./types/months";
 export * from "./types/nil";
 export * from "./types/nodelist";

@@ -1,5 +1,6 @@
 import {constantly, overload} from "../../core";
-import {reducing, apply} from "../../types/function/concrete";
+import {apply} from "../../types/function/concrete";
+import {reducing} from "../../api/reduce";
 import EmptyList from '../../types/emptylist';
 import {IReduce} from '../../protocols/ireduce';
 

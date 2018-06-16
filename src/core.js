@@ -1,7 +1,7 @@
 import {overload, identity, counter, intercept} from "./core/core";
-import {multiple, reducing, sort, chain, set, flip, realized, comp, isNumber} from "./core/types";
-import {IAppendable, IHash, IYank, IArray, IAssociative, IBounds, IConverse, ICloneable, ICollection, IComparable, IContent, ICounted, IDecode, IDeref, IDisposable, IEmptyableCollection, IEncode, IEquiv, IEvented, IFind, IFn, IHierarchy, IInclusive, IIndexed, IKVReduce, ILookup, IMap, IMapEntry, INext, IObject, IPrependable, IPublish, IReduce, IReset, IReversible, ISeq, ISeqable, ISet, IShow, ISteppable, ISubscribe, ISwap, IUnit} from "./core/protocols";
-import {fork, hash} from "./core/api";
+import {multiple, sort, chain, set, flip, realized, comp, isNumber} from "./core/types";
+import {IAppendable, IHash, IYank, IArray, IAssociative, IBounds, IConverse, ICloneable, ICollection, IComparable, IContent, ICounted, IDecode, IDeref, IDisposable, IEmptyableCollection, IEncode, IEquiv, IEvented, IFind, IFn, IFunctor, IHierarchy, IInclusive, IIndexed, IKVReduce, ILookup, IMap, IMapEntry, INext, IObject, IPrependable, IPublish, IReduce, IReset, IReversible, ISeq, ISeqable, ISet, IShow, ISteppable, ISubscribe, ISwap, IUnit} from "./core/protocols";
+import {fork, hash, reducing} from "./core/api";
 import * as T from "./core/types";
 
 export * from "./core/core";
@@ -30,9 +30,17 @@ export const off = IEvented.off;
 export const find = IFind.find;
 export const invoke = IFn.invoke;
 export const parent = IHierarchy.parent;
+export const parents = IHierarchy.parents;
+export const closest = IHierarchy.closest;
+export const ancestors = IHierarchy.parents;
 export const children = IHierarchy.children;
+export const descendants = IHierarchy.descendants;
+export const sel = IHierarchy.sel;
 export const nextSibling = IHierarchy.nextSibling;
 export const prevSibling = IHierarchy.prevSibling;
+export const nextSiblings = IHierarchy.nextSiblings;
+export const prevSiblings = IHierarchy.prevSiblings;
+export const siblings = IHierarchy.siblings;
 export const toArray = IArray.toArray;
 export const contains = IAssociative.contains;
 export const append = overload(null, identity, IAppendable.append, reducing(IAppendable.append));

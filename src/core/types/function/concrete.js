@@ -4,15 +4,9 @@ import {log, overload, identity, constantly, partial} from "../../core";
 import {isNil}  from "../nil";
 import {slice}  from "../array/concrete";
 import {satisfies}  from "../protocol";
-import {reduced}  from "../reduced";
+import {reduced}  from "../reduced/construct";
 import {isFunction}  from "./construct";
 export {complement, partial} from "../../core";
-
-export function reducing(rf){
-  return function(init, ...xs){
-    return IReduce.reduce(xs, rf, init);
-  }
-}
 
 export function realize(g){
   return isFunction(g) ? g() : g;

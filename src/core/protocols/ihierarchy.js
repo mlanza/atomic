@@ -2,8 +2,15 @@ import {protocol, satisfies} from "../types/protocol";
 import {ISeqable} from "../protocols/iseqable";
 export const IHierarchy = protocol({
   parent: null,
+  parents: null,
+  closest: null,
   children: null,
+  sel: null,
+  descendants: null,
+  siblings: null,
   nextSibling: null,
-  prevSibling: null
+  nextSiblings: null,
+  prevSibling: null,
+  prevSiblings: null
 });
 export const isHierarchy = satisfies(isHierarchy);

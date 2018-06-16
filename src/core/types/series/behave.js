@@ -50,8 +50,8 @@ function reduce(self, xf, init){
 }
 
 function construction(Type){
-  Type.create = constructs(Type);
-  Type.from = function(items){
+  Type.create = Type.create || constructs(Type);
+  Type.from = Type.from || function(items){
     return Object.assign(Object.create(Type.prototype), {items: items});
   }
 }

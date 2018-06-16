@@ -1,4 +1,5 @@
 import {implement} from './core/types/protocol';
+import EmptyList from './core/types/emptylist/construct';
 import {conj, yank, overload, constantly, identity, subj} from "./core";
 import {multiple, split, trim, lazySeq, cons, apply, concat, partial, partially, comp, satisfies, compact, flatten, detect, filter, remove, each, mapa, map, mapcat, into, selfish} from "./core/types";
 import {IHierarchy, IArray, IReduce, ISeqable, ICollection} from "./core/protocols";
@@ -6,15 +7,6 @@ import {reduce} from "./core";
 import {matches} from "./core/multimethods";
 export {matches} from "./core/multimethods";
 import * as core from "./core";
-
-export const parent = multiple(core.parent);
-export const nextSibling = multiple(core.nextSibling);
-export const prevSibling = multiple(core.prevSibling);
-export const children = multiple(core.children);
-export const contents = multiple(core.contents);
-export const get = multiple(core.get);
-export const assoc = multiple(core.assoc);
-export const update = multiple(core.update);
 
 export function expansive(f){
   function expand(...xs){
@@ -51,16 +43,6 @@ export function tags(...names){
   }, {}, names);
 }
 
-export const closest = multiple(function(self, selector){
-  let target = IHierarchy.parent(self);
-  while(target){
-    if (matches(target, selector)){
-      return target;
-    }
-    target = IHierarchy.parent(target);
-  }
-});
-
 const matching = subj(matches);
 
 function sel2(pred, context){
@@ -76,31 +58,6 @@ function sel0(){
 }
 
 export const sel = overload(sel0, sel1, sel2);
-
-function downward(f){
-  return function down(self){
-    const xs = f(self),
-          ys = mapcat(down, xs);
-    return concat(xs, ys);
-  }
-}
-
-function upward(f){
-  return function up(self){
-    const other = f(self);
-    return other ? cons(other, up(other)) : EmptyList.EMPTY;
-  }
-}
-
-export const descendants  = multiple(downward(IHierarchy.children));
-export const parents      = multiple(upward(IHierarchy.parent));
-export const prevSiblings = multiple(upward(IHierarchy.prevSibling));
-export const nextSiblings = multiple(upward(IHierarchy.nextSibling));
-export const ancestors    = parents;
-
-export const siblings = multiple(function(self){
-  return concat(prevSiblings(self), nextSiblings(self));
-});
 
 const hidden = {style: "display: none;"};
 
