@@ -1,6 +1,6 @@
 import {identity, constantly, effect, overload, subj} from '../../core';
 import {implement, surrogates} from '../protocol';
-import {isAssociative, isSequential, IMatch, IYank, IInclusive, IArray, IAppendable, IPrependable, IEvented, IAssociative, IMap, IEquiv, ICloneable, ICollection, INext, ISeq, IShow, ISeqable, IIndexed, ICounted, ILookup, IReduce, IEmptyableCollection, IHierarchy, IContent} from '../../protocols';
+import {isAssociative, isSequential, IMatch, IYank, IInclusive, IInsertable, IArray, IAppendable, IPrependable, IEvented, IAssociative, IMap, IEquiv, ICloneable, ICollection, INext, ISeq, IShow, ISeqable, IIndexed, ICounted, ILookup, IReduce, IEmptyableCollection, IHierarchy, IContent} from '../../protocols';
 import {each, mapcat} from '../lazyseq/concrete';
 import EmptyList from '../emptylist/construct';
 import {concat} from '../concatenated/construct';
@@ -16,6 +16,20 @@ import {reduced} from '../reduced/construct';
 import {trim, split, str} from '../string/concrete';
 import Element, {isElement} from './construct';
 import {members} from "../members/construct";
+
+function before(self, other){
+  other = isFunction(other) ? other() : other;
+  const parent = IHierarchy.parent(self);
+  parent.insertBefore(other, self);
+  return self;
+}
+
+function after(self, other){
+  other = isFunction(other) ? other() : other;
+  const relative = IHierarchy.nextSibling(self), parent = IHierarchy.parent(self);
+  relative ? parent.insertBefore(other, relative) : parent.prependChild(other);
+  return self;
+}
 
 function matches(self, selector){
   return (isString(selector) && self.matches(selector)) || (isFunction(selector) && selector(self));
@@ -262,6 +276,7 @@ function clone(self){
 
 export default effect(
   implement(IEmptyableCollection, {empty}),
+  implement(IInsertable, {before, after}),
   implement(IInclusive, {includes}),
   implement(IYank, {yank}),
   implement(IMatch, {matches}),
