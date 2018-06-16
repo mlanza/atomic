@@ -1,17 +1,22 @@
 import {overload, identity, effect, subj} from "../../core";
 import {implement} from '../protocol';
-import {IFunctor, IHierarchy, IContent, ILookup, IAssociative, IReduce} from '../../protocols';
+import {IFunctor, IHierarchy, IContent, ILookup, IAssociative, IReduce, INext} from '../../protocols';
 import {mapcat, map, each, filter} from "../lazyseq/concrete";
 import {reduced} from "../reduced/construct";
 import {members} from "./construct";
 import {downward} from "../element/behave";
+import {comp} from "../function/concrete";
 import behave from "../series/behave";
 import {matches} from "../../multimethods/matches";
 
 const matching = subj(matches);
 
+function next(self){
+  return INext.next(self.items);
+}
+
 function fmap(self, f){
-  return self.constructor.from(mapcat(f, self.items));
+  return members(mapcat(f, self.items));
 }
 
 function lookup(self, key){
@@ -37,10 +42,10 @@ function children(self){
   return fmap(self, IHierarchy.children);
 }
 
-const descendants = downward(IHierarchy.children);
+const descendants = comp(members, downward(IHierarchy.children));
 
 function nextSibling(self){
-  return self.constructor.from(map(IHierarchy.nextSibling, self.items));
+  return members(map(IHierarchy.nextSibling, self.items));
 }
 
 function nextSiblings(self){
@@ -48,7 +53,7 @@ function nextSiblings(self){
 }
 
 function prevSibling(self){
-  return self.constructor.from(map(IHierarchy.prevSibling, self.items));
+  return members(map(IHierarchy.prevSibling, self.items));
 }
 
 function prevSiblings(self){
@@ -64,7 +69,7 @@ function sel(self, selector){
 }
 
 function parent(self){
-  return self.constructor.from(map(IHierarchy.parent, self.items));
+  return members(map(IHierarchy.parent, self.items));
 }
 
 function parents(self){
@@ -72,11 +77,12 @@ function parents(self){
 }
 
 function contents(self){
-  return fmap(self, IContent.contents);
+  return mapcat(IContent.contents, self);
 }
 
 export default effect(
   behave,
+  implement(INext, {next}),
   implement(IAssociative, {assoc, contains}),
   implement(ILookup, {lookup}),
   implement(IContent, {contents}),
