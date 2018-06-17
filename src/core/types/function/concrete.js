@@ -60,12 +60,6 @@ function applyN(f, a, b, c, d, args){
 
 export const apply = overload(null, null, apply2, apply3, apply4, apply5, applyN);
 
-export function partially(f){
-  return function(...args){
-    return apply(partial, f, args);
-  }
-}
-
 function curry1(f){
   return curry2(f, f.length);
 }

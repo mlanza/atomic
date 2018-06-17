@@ -1,7 +1,3 @@
-/*
-* Monads, like promises, once introduced force themselves everywhere.  Pipelines allow one to dip into monadic operations without commiting to them.
-*/
-
 import {log, overload, identity, doto} from "../../core";
 import {pipeline} from "./construct";
 import {partial, apply, comp} from "../function/concrete";
@@ -141,13 +137,7 @@ export const piped = overload(null, function(how){
 }, pipedN);
 
 export const chain  = chained(identity);
-export const maybe  = chained(option);
-export const many   = chained(multiple);
-export const els    = chained(elements);
 export const pipe   = piped(identity);
-export const opt    = piped(option);
-export const prom   = piped(future);
-export const handle = piped(trap);
 
 export const request = pipeline(future, [function(config){
   return fetch(config.url, config);
