@@ -30,7 +30,7 @@ function otherwise(self, other){
 }
 
 function fold(self, missing, okay){
-  missing(self);
+  return missing(self);
 }
 
 surrogates.unshift(nil);
