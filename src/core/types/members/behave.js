@@ -1,7 +1,8 @@
 import {overload, identity, effect} from "../../core";
 import {implement} from '../protocol';
-import {IFunctor, IMatch, IHierarchy, IContent, ILookup, IAssociative, IReduce, INext} from '../../protocols';
+import {IFunctor, IHideable, IMatch, IHierarchy, IContent, ILookup, IAssociative, IReduce, INext} from '../../protocols';
 import {mapcat, map, each, filter} from "../lazyseq/concrete";
+import {ihideable} from "../lazyseq/behave";
 import {reduced} from "../reduced/construct";
 import {members} from "./construct";
 import {downward} from "../element/behave";
@@ -81,6 +82,7 @@ function contents(self){
 
 export default effect(
   behave,
+  ihideable,
   implement(INext, {next}),
   implement(IAssociative, {assoc, contains}),
   implement(ILookup, {lookup}),

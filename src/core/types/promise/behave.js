@@ -7,8 +7,8 @@ function fmap(self, f){
   return self.then(f);
 }
 
-function fold(self, error, ok){
-  self.then(ok, error);
+function fold(self, error, okay){
+  self.then(okay, error);
 }
 
 export default effect(

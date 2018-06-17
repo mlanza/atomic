@@ -3,7 +3,7 @@ import {identity, constantly, effect, overload} from '../../core';
 import {implement} from '../protocol';
 import Error from './construct';
 
-function fold(self, error, ok){
+function fold(self, error, okay){
   error(self);
 }
 

@@ -1,15 +1,12 @@
-import {IReduce} from '../../protocols';
+import {IReduce, ICollection} from '../../protocols';
 
 export default DocumentFragment;
 
-function frag(children){
-  return IReduce.reduce(children, function(memo, child){
-    memo.appendChild(child);
-    return memo;
-  }, document.createDocumentFragment());
+export function fragment(...contents){
+  return IReduce.reduce(contents, ICollection.conj, document.createDocumentFragment());
 }
 
-DocumentFragment.from = frag;
+DocumentFragment.from = fragment;
 
 export function isDocumentFragment(self){
   return self && self instanceof DocumentFragment;

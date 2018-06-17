@@ -11,27 +11,29 @@ const stooges = ["Larry","Curly","Moe"],
       worth   = {pieces: pieces, court: court};
 
 QUnit.test("dom", function(assert){
-  const {ul, li, div, span} = dom.tags("ul", "li", "div", "span");
-  const stooges = window.stooges = dom.frag(
+  const {ul, li, div, span} = _.tags("ul", "li", "div", "span");
+  const stooges = window.stooges = _.frag(
     ul(
       li({id: 'moe'}, "Moe Howard"),
       li({id: 'curly'}, "Curly Howard"),
       li({id: 'larry'}, "Larry Fine")));
-  const moe = stooges |> _.sel(v, "li") |> _.first;
+  const moe = stooges |> _.sel("li", v) |> _.first;
   const who = div(_.get(v, "givenName"), " ", _.get(v, "surname"));
   assert.equal(moe |> _.contents |> dom.text |> _.join("", v), "Moe Howard", "Found by tag");
-  assert.deepEqual(stooges |> _.sel(v, "li") |> _.get(v, "id") |> _.toArray, ["moe", "curly", "larry"], "Extracted ids");
+  assert.deepEqual(stooges |> _.sel("li", v) |> _.get(v, "id") |> _.toArray, ["moe", "curly", "larry"], "Extracted ids");
   assert.equal({givenName: "Curly", surname: "Howard"} |> who |> _.contents |> dom.text |> _.join("", v), "Curly Howard");
-  assert.equal(moe |> _.update(v, "class", _.conj(v, "main")) |> _.assoc(v, "data-tagged", "tests") |> _.get(v, "data-tagged"), "tests");
+  assert.deepEqual(moe |> _.spacesep(v, "class") |> _.conj(v, "main") |> _.deref, ["main"]);
+  assert.equal(moe |> _.assoc(v, "data-tagged", "tests") |> _.get(v, "data-tagged"), "tests");
   stooges |> _.append(v, div({id: 'branding'}, span("Three Blind Mice")));
-  assert.ok(stooges |> _.sel(v, "#branding") |> _.first |> (el => el instanceof HTMLDivElement), "Found by id");
-  assert.deepEqual(stooges |> _.sel(v, "#branding span") |> _.contents |> dom.text |> _.toArray, ["Three Blind Mice"], "Read text content");
-  const greeting = stooges |> _.sel(v, "#branding span") |> _.first;
-  dom.hide(greeting);
-  assert.deepEqual(greeting |> _.get(v, "style"), {display: "none"}, "Hidden");
-  dom.show(greeting);
-  assert.deepEqual(greeting |> _.get(v, "style"), {}, "Shown");
-  const branding = stooges |> _.sel(v, "#branding") |> _.first;
+  assert.ok(stooges |> _.sel("#branding", v) |> _.first |> (el => el instanceof HTMLDivElement), "Found by id");
+  assert.deepEqual(stooges |> _.sel("#branding span", v) |> _.contents |> dom.text |> _.toArray, ["Three Blind Mice"], "Read text content");
+  const greeting = stooges |> _.sel("#branding span", v) |> _.first;
+  _.hide(greeting);
+  assert.deepEqual(greeting |> _.nestedattrs(v, "style") |> _.deref, {display: "none"}, "Hidden");
+  assert.equal(greeting |> _.nestedattrs(v, "style") |> _.get(v, "display"), "none");
+  _.show(greeting);
+  assert.deepEqual(greeting |> _.nestedattrs(v, "style") |> _.deref, {}, "Shown");
+  const branding = stooges |> _.sel("#branding", v) |> _.first;
   _.yank(branding);
   assert.equal(branding |> _.parent |> _.first, null, "Removed");
 });

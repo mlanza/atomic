@@ -1,5 +1,5 @@
 import {implement} from '../protocol';
-import {IFunctor, IMatch, IArray, IHierarchy, IInclusive, IFind, IEquiv, ICollection, INext, ISeq, IReduce, IKVReduce, ISeqable, ISequential, IIndexed, IEmptyableCollection, IShow, ICounted, IAppendable, IPrependable} from '../../protocols';
+import {IFunctor, IHideable, IMatch, IArray, IHierarchy, IInclusive, IFind, IEquiv, ICollection, INext, ISeq, IReduce, IKVReduce, ISeqable, ISequential, IIndexed, IEmptyableCollection, IShow, ICounted, IAppendable, IPrependable} from '../../protocols';
 import {overload, identity, constantly, effect} from '../../core';
 import Reduced, {isReduced, reduced, unreduced} from "../reduced";
 import {concat} from "../concatenated/construct";
@@ -74,7 +74,7 @@ function next(self){
   return ISeqable.seq(ISeq.rest(self));
 }
 
-function show(self){
+function _show(self){
   var xs = IArray.toArray(ISeqable.seq(self));
   return "#" + self.constructor.name +  " [" + xs.map(IShow.show).join(", ") + "]";
 }
@@ -166,16 +166,27 @@ function contents(self){
   return map(identity, mapcat(IContent.contents, self)); //return lazyseq and not concatenated
 }
 
+function show(self){
+  return IFunctor.fmap(self, IHideable.show);
+}
+
+function hide(self){
+  return IFunctor.fmap(self, IHideable.hide);
+}
+
+function toggle(self){
+  return IFunctor.fmap(self, IHideable.toggle);
+}
+
 const toArray = overload(null, toArray1, toArray2);
 
-export const ishow = implement(IShow, {show: show});
+export const ihideable = implement(IHideable, {show, hide, toggle});
 export const ireduce = effect(
   implement(IReduce, {reduce}),
   implement(IKVReduce, {reducekv}));
 
 export default effect(
   iterable,
-  ishow,
   ireduce,
   implement(ISequential),
   implement(IFunctor, {fmap}),

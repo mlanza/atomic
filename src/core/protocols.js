@@ -20,6 +20,7 @@ export * from "./protocols/ifn";
 export * from "./protocols/ifold";
 export * from "./protocols/ifunctor";
 export * from "./protocols/ihash";
+export * from "./protocols/ihideable";
 export * from "./protocols/ihierarchy";
 export * from "./protocols/iinclusive";
 export * from "./protocols/iindexed";
