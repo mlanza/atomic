@@ -1,5 +1,5 @@
 import {implement} from '../protocol';
-import {IFunctor, IHideable, IMatch, IArray, IHierarchy, IInclusive, IFind, IEquiv, ICollection, INext, ISeq, IReduce, IKVReduce, ISeqable, ISequential, IIndexed, IEmptyableCollection, IShow, ICounted, IAppendable, IPrependable} from '../../protocols';
+import {IFunctor, IHideable, IMatch, IArray, IHierarchy, IContent, IInclusive, IFind, IEquiv, ICollection, INext, ISeq, IReduce, IKVReduce, ISeqable, ISequential, IIndexed, IEmptyableCollection, IShow, ICounted, IAppendable, IPrependable} from '../../protocols';
 import {overload, identity, constantly, effect} from '../../core';
 import Reduced, {isReduced, reduced, unreduced} from "../reduced";
 import {concat} from "../concatenated/construct";
@@ -7,7 +7,7 @@ import {members} from "../members/construct";
 import {cons} from "../list/construct";
 import {comp} from "../function/concrete";
 import {downward, upward, closest} from "../element/behave";
-import {map} from "./concrete";
+import {map, mapcat} from "./concrete";
 import EmptyList from '../emptylist/construct';
 
 function fmap(self, f){
@@ -123,21 +123,21 @@ function append(self, other){
 }
 
 function children(self){
-  return fmap(self, IHierarchy.children);
+  return members(mapcat(IHierarchy.children, self));
 }
 
 const descendants = comp(members, downward(IHierarchy.children));
 
 function nextSibling(self){
-  return members(map(IHierarchy.nextSibling, self.items));
+  return members(fmap(self, IHierarchy.nextSibling));
 }
 
 function nextSiblings(self){
-  return members(fmap(self, IHierarchy.nextSiblings));
+  return members(mapcat(IHierarchy.nextSiblings, self));
 }
 
 function prevSibling(self){
-  return members(map(IHierarchy.prevSibling, self.items));
+  return members(fmap(self, IHierarchy.prevSibling));
 }
 
 function prevSiblings(self){
@@ -145,7 +145,7 @@ function prevSiblings(self){
 }
 
 function siblings(self){
-  return members(fmap(self, IHierarchy.siblings));
+  return members(mapcat(IHierarchy.siblings, self));
 }
 
 function sel(self, selector){
@@ -155,15 +155,15 @@ function sel(self, selector){
 }
 
 function parent(self){
-  return members(map(IHierarchy.parent, self.items));
+  return members(fmap(self, IHierarchy.parent));
 }
 
 function parents(self){
-  return members(fmap(self, IHierarchy.parents));
+  return members(mapcat(IHierarchy.parents, self));
 }
 
 function contents(self){
-  return map(identity, mapcat(IContent.contents, self)); //return lazyseq and not concatenated
+  return members(mapcat(IContent.contents, self));
 }
 
 function show(self){
@@ -188,6 +188,7 @@ export const ireduce = effect(
 export default effect(
   iterable,
   ireduce,
+  ihideable,
   implement(ISequential),
   implement(IFunctor, {fmap}),
   implement(ICollection, {conj}),
@@ -198,6 +199,7 @@ export default effect(
   implement(ICounted, {count}),
   implement(IEquiv, {equiv}),
   implement(IFind, {find}),
+  implement(IContent, {contents}),
   implement(IHierarchy, {children, descendants, sel, nextSibling, nextSiblings, prevSibling, prevSiblings, siblings, parent, parents}),
   implement(IEmptyableCollection, {empty: EmptyList.EMPTY}),
   implement(ISeq, {first, rest}),
