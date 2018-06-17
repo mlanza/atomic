@@ -12,7 +12,7 @@ function otherwise(self, other){
 }
 
 function fold(self, error, okay){
-  okay(self);
+  return okay(self);
 }
 
 export default effect(

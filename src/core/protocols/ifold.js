@@ -1,6 +1,6 @@
 import {protocol, satisfies} from "../types/protocol";
 function fold(self, error, okay){
-  okay(self);
+  return okay(self);
 }
 export const IFold = protocol({
   fold: fold

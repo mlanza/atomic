@@ -13,7 +13,7 @@ function fmap(self, f){
 }
 
 function fold(self, error, okay){
-  okay(self);
+  return okay(self);
 }
 
 export default effect(

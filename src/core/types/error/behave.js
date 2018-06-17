@@ -4,7 +4,7 @@ import {implement} from '../protocol';
 import Error from './construct';
 
 function fold(self, error, okay){
-  error(self);
+  return error(self);
 }
 
 export default effect(
