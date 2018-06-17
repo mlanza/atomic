@@ -1,6 +1,6 @@
 import {overload, identity, counter, intercept} from "./core/core";
-import {multiple, sort, chain, set, flip, realized, comp, isNumber} from "./core/types";
-import {IAppendable, IHash, IYank, IArray, IAssociative, IBounds, IConverse, ICloneable, ICollection, IComparable, IContent, ICounted, IDecode, IDeref, IDisposable, IEmptyableCollection, IEncode, IEquiv, IEvented, IFind, IFn, IFold, IFunctor, IHierarchy, IInclusive, IIndexed, IInsertable, IKVReduce, ILookup, IMap, IMapEntry, IMatch, INext, IObject, IOtherwise, IPrependable, IPublish, IReduce, IReset, IReversible, ISeq, ISeqable, ISet, IShow, ISteppable, ISubscribe, ISwap, IUnit} from "./core/protocols";
+import {partially, compact, flatten, map, fragment, element, multiple, sort, chain, set, flip, realized, comp, isNumber, detect} from "./core/types";
+import {IAppendable, IHash, IYank, IArray, IAssociative, IBounds, IConverse, ICloneable, ICollection, IComparable, IContent, ICounted, IDecode, IDeref, IDisposable, IEmptyableCollection, IEncode, IEquiv, IEvented, IFind, IFn, IFold, IFunctor, IHideable, IHierarchy, IInclusive, IIndexed, IInsertable, IKVReduce, ILookup, IMap, IMapEntry, IMatch, INext, IObject, IOtherwise, IPrependable, IPublish, IReduce, IReset, IReversible, ISeq, ISeqable, ISet, IShow, ISteppable, ISubscribe, ISwap, IUnit} from "./core/protocols";
 import {fork, hash, reducing} from "./core/api";
 import * as T from "./core/types";
 
@@ -10,6 +10,9 @@ export * from "./core/protocols";
 export * from "./core/api";
 export * from "./core/multimethods";
 
+export const show = IHideable.show;
+export const hide = IHideable.hide;
+export const toggle = IHideable.toggle;
 export const matches = IMatch.matches;
 export const yank = IYank.yank;
 export const before = IInsertable.before;
@@ -18,7 +21,6 @@ export const start = IBounds.start;
 export const end = IBounds.end;
 export const pub = IPublish.pub;
 export const sub = ISubscribe.sub;
-export const show = IShow.show;
 export const deref = IDeref.deref;
 export const reverse = IReversible.reverse;
 export const clone = ICloneable.clone;
@@ -38,7 +40,6 @@ export const closest = IHierarchy.closest;
 export const ancestors = IHierarchy.parents;
 export const children = IHierarchy.children;
 export const descendants = IHierarchy.descendants;
-export const sel = IHierarchy.sel;
 export const nextSibling = IHierarchy.nextSibling;
 export const prevSibling = IHierarchy.prevSibling;
 export const nextSiblings = IHierarchy.nextSiblings;
@@ -122,7 +123,38 @@ function memoize2(f, hash){
   }
 }
 
+export function expansive(f){
+  function expand(...xs){
+    const contents = IArray.toArray(compact(flatten(xs)));
+    return detect(function(content){
+      return typeof content === "function";
+    }, contents) ? step(contents) : f(...contents);
+  }
+  function step(contents){
+    return function(value){
+      const resolve = typeof value === "function" ? partial(comp, value) : function(f){
+        return f(value);
+      }
+      return expand(...map(function(content){
+        return typeof content === "function" ? resolve(content) : content;
+      }, contents));
+    }
+  }
+  return expand;
+}
+
 export const memoize = overload(null, memoize1, memoize2);
+
+export const tag  = partially(expansive(element));
+export const frag = expansive(fragment);
+
+export function tags(...names){
+  return IReduce.reduce(names, function(memo, name){
+    memo[name] = tag(name);
+    return memo;
+  }, {});
+}
+
 
 /*
 export * from "./pointfree";

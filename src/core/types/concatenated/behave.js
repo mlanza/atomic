@@ -5,7 +5,7 @@ import {isReduced, unreduced} from '../../types/reduced';
 import {IArray, ICollection, INext, ISeq, ICounted, ISeqable, IIndexed, IShow, IReduce, ISequential} from '../../protocols';
 import {apply} from '../../types/function/concrete';
 import EmptyList from '../emptylist';
-import {ireduce, ishow, iterable} from '../lazyseq/behave';
+import {ireduce, iterable} from '../lazyseq/behave';
 import {encodeable} from '../record/behave';
 
 function conj(self, x){
@@ -51,7 +51,6 @@ function count(self){
 export default effect(
   iterable,
   ireduce,
-  ishow,
   encodeable,
   implement(ISequential),
   implement(IReduce, {reduce}),

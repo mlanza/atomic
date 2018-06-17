@@ -5,7 +5,6 @@ import {reduced, unreduced, isReduced} from '../reduced';
 import {indexedSeq} from '../indexedseq';
 import {revSeq} from '../revseq';
 import {filter} from '../lazyseq/concrete';
-import {ishow} from '../lazyseq/behave';
 import {set} from '../set/construct';
 import Array from './construct';
 
@@ -193,7 +192,6 @@ export const iindexed = effect(
 export const iequiv = implement(IEquiv, {equiv});
 
 export default effect(
-  ishow,
   iindexed,
   iequiv,
   implement(ISequential),

@@ -1,6 +1,6 @@
-import {identity, constantly, effect, overload, subj} from '../../core';
+import {identity, constantly, effect, overload} from '../../core';
 import {implement, surrogates} from '../protocol';
-import {isAssociative, isSequential, IMatch, IYank, IInclusive, IInsertable, IArray, IAppendable, IPrependable, IEvented, IAssociative, IMap, IEquiv, ICloneable, ICollection, INext, ISeq, IShow, ISeqable, IIndexed, ICounted, ILookup, IReduce, IEmptyableCollection, IHierarchy, IContent} from '../../protocols';
+import {isAssociative, isSequential, IHideable, IMatch, IYank, IInclusive, IInsertable, IArray, IAppendable, IPrependable, IEvented, IAssociative, IMap, IEquiv, ICloneable, ICollection, INext, ISeq, IShow, ISeqable, IIndexed, ICounted, ILookup, IReduce, IEmptyableCollection, IHierarchy, IContent} from '../../protocols';
 import {each, mapcat} from '../lazyseq/concrete';
 import EmptyList from '../emptylist/construct';
 import {concat} from '../concatenated/construct';
@@ -13,9 +13,26 @@ import {isObject} from '../object/construct';
 import {isString} from '../string/construct';
 import {isFunction} from '../function/construct';
 import {reduced} from '../reduced/construct';
+import {nestedattrs} from '../nestedattrs/construct';
 import {trim, split, str} from '../string/concrete';
 import Element, {isElement} from './construct';
 import {members} from "../members/construct";
+
+const hidden = ["display", "none"];
+
+function toggle(self){
+  return transpose(nestedattrs(self, "style"), hidden);
+}
+
+function hide(self){
+  ICollection.conj(nestedattrs(self, "style"), hidden);
+  return self;
+}
+
+function show(self){
+  IYank.yank(nestedattrs(self, "style"), hidden);
+  return self;
+}
 
 function before(self, other){
   other = isFunction(other) ? other() : other;
@@ -30,7 +47,6 @@ function after(self, other){
   relative ? parent.insertBefore(other, relative) : parent.prependChild(other);
   return self;
 }
-
 function matches(self, selector){
   return (isString(selector) && self.matches(selector)) || (isFunction(selector) && selector(self));
 }
@@ -52,46 +68,6 @@ export function upward(f){
 
 function isAttrs(self){
   return !isElement(self) && isAssociative(self);
-}
-
-function fromNestedAttrs(text){
-  return text == null ? {} : IReduce.reduce(mapa(function(text){
-    return mapa(trim, split(text, ":"));
-  }, compact(split(text, ";"))), function(memo, pair){
-    return ICollection.conj(memo, pair);
-  }, {});
-}
-
-function toNestedAttrs(obj){
-  if (isString(obj)) {
-    return obj;
-  } else {
-    return obj == null || !isAttrs(obj) ? mapa(function([key, value]){
-      return str(key, ": ", value, ";");
-    }, ISeqable.seq(obj)).join(" ") : null;
-  }
-}
-
-function fromSpaceSeparated(text){
-  return text == null ? [] : mapa(trim, compact(split(text, " ")));
-}
-
-function toSpaceSeparated(xs){
-  if (isString(xs)){
-    return xs;
-  } else {
-    return xs == null || !isSequential(xs) ? null : IArray.toArray(distinct(xs)).join(" ");
-  }
-}
-
-const readers = {
-  class: fromSpaceSeparated,
-  style: fromNestedAttrs
-}
-
-const writers = {
-  class: toSpaceSeparated,
-  style: toNestedAttrs
 }
 
 function on(self, key, callback){
@@ -134,13 +110,11 @@ function prepend(self, other){
 }
 
 function lookup(self, key){
-  const reader = readers[key] || identity;
-  return reader(self.getAttribute(key));
+  return self.getAttribute(key);
 }
 
 function assoc(self, key, value){
-  const writer = writers[key] || identity;
-  self.setAttribute(key, writer(value));
+  self.setAttribute(key, value);
   return self;
 }
 
@@ -278,6 +252,7 @@ export default effect(
   implement(IEmptyableCollection, {empty}),
   implement(IInsertable, {before, after}),
   implement(IInclusive, {includes}),
+  implement(IHideable, {show, hide, toggle}),
   implement(IYank, {yank}),
   implement(IMatch, {matches}),
   implement(ICloneable, {clone}),
