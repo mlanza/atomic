@@ -1,5 +1,5 @@
-import {overload, identity, counter, intercept} from "./core/core";
-import {partially, compact, flatten, map, fragment, element, multiple, sort, chain, set, flip, realized, comp, isNumber, detect} from "./core/types";
+import {overload, identity, counter, intercept, obj} from "./core/core";
+import {compact, flatten, map, fragment, element, multiple, sort, chain, set, flip, realized, comp, isNumber, detect} from "./core/types";
 import {IAppendable, IHash, IYank, IArray, IAssociative, IBounds, IConverse, ICloneable, ICollection, IComparable, IContent, ICounted, IDecode, IDeref, IDisposable, IEmptyableCollection, IEncode, IEquiv, IEvented, IFind, IFn, IFold, IFunctor, IHideable, IHierarchy, IInclusive, IIndexed, IInsertable, IKVReduce, ILookup, IMap, IMapEntry, IMatch, INext, IObject, IOtherwise, IPrependable, IPublish, IReduce, IReset, IReversible, ISeq, ISeqable, ISet, IShow, ISteppable, ISubscribe, ISwap, IUnit} from "./core/protocols";
 import {fork, hash, reducing} from "./core/api";
 import * as T from "./core/types";
@@ -145,7 +145,7 @@ export function expansive(f){
 
 export const memoize = overload(null, memoize1, memoize2);
 
-export const tag  = partially(expansive(element));
+export const tag  = obj(expansive(element), Infinity);
 export const frag = expansive(fragment);
 
 export function tags(...names){

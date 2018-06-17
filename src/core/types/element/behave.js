@@ -7,7 +7,6 @@ import {concat} from '../concatenated/construct';
 import {cons} from '../list/construct';
 import {lazySeq} from '../lazyseq/construct';
 import {mapa, detect, compact, distinct, filter} from '../lazyseq/concrete';
-import {maybe} from '../pipeline/concrete';
 import {comp} from '../function/concrete';
 import {isObject} from '../object/construct';
 import {isString} from '../string/construct';
