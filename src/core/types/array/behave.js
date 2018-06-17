@@ -1,10 +1,10 @@
 import {effect, identity, overload, constantly} from '../../core';
 import {implement} from '../protocol';
-import {IArray, IObject, IYank, IEncode, IDecode, IReversible, ISet, IMapEntry, IEquiv, IReduce, IKVReduce, IAppendable, IPrependable, IInclusive, ICollection, INext, ISeq, IFind, ISeqable, IIndexed, IAssociative, ISequential, IEmptyableCollection, IFn, IShow, ICounted, ILookup, ICloneable} from '../../protocols';
+import {IArray, IObject, IFunctor, IYank, IEncode, IDecode, IReversible, ISet, IMapEntry, IEquiv, IReduce, IKVReduce, IAppendable, IPrependable, IInclusive, ICollection, INext, ISeq, IFind, ISeqable, IIndexed, IAssociative, ISequential, IEmptyableCollection, IFn, IShow, ICounted, ILookup, ICloneable} from '../../protocols';
 import {reduced, unreduced, isReduced} from '../reduced';
 import {indexedSeq} from '../indexedseq';
 import {revSeq} from '../revseq';
-import {filter} from '../lazyseq/concrete';
+import {filter, mapa} from '../lazyseq/concrete';
 import {set} from '../set/construct';
 import Array from './construct';
 
@@ -185,6 +185,10 @@ function toObject(self){
   }, {});
 }
 
+function fmap(self, f){
+  return mapa(f, self);
+}
+
 export const iindexed = effect(
   implement(IIndexed, {nth}),
   implement(ICounted, {count: length}));
@@ -195,6 +199,7 @@ export default effect(
   iindexed,
   iequiv,
   implement(ISequential),
+  implement(IFunctor, {fmap}),
   implement(IEncode, {encode}),
   implement(IDecode, {decode}),
   implement(IObject, {toObject}),

@@ -1,15 +1,4 @@
-import {conj, yank, overload, constantly, identity, subj, multiple, nestedattrs} from "./core";
-import {IHierarchy, IArray, IReduce, ISeqable, ICollection} from "./core/protocols";
-
-function prop2(self, key){
-  return self[key];
-}
-
-function prop3(self, key, value){
-  self[key] = value;
-}
-
-export const prop = multiple(overload(null, null, prop2, prop3));
+import {overload, multiple} from "./core";
 
 function value1(self){
   return self.value != null ? self.value : null;

@@ -77,7 +77,7 @@ function parents(self){
 }
 
 function contents(self){
-  return map(identity, mapcat(IContent.contents, self)); //return lazyseq and not concatenated
+  return fmap(self, IContent.contents);
 }
 
 export default effect(

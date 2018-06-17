@@ -24,6 +24,7 @@ export * from "./types/nil";
 export * from "./types/nodelist";
 export * from "./types/number";
 export * from "./types/object";
+export * from "./types/props";
 export * from "./types/associativesubset";
 export * from "./types/observable";
 export * from "./types/period";
