@@ -1,5 +1,5 @@
 import {implement} from '../protocol';
-import {IFunctor, IText, IHtml, IHideable, IMatch, IArray, IHierarchy, IContent, IInclusive, IFind, IEquiv, ICollection, INext, ISeq, IReduce, IKVReduce, ISeqable, ISequential, IIndexed, IEmptyableCollection, IShow, ICounted, IAppendable, IPrependable} from '../../protocols';
+import {IFunctor, IText, IHtml, IValue, IHideable, IMatch, IArray, IHierarchy, IContent, IInclusive, IFind, IEquiv, ICollection, INext, ISeq, IReduce, IKVReduce, ISeqable, ISequential, IIndexed, IEmptyableCollection, IShow, ICounted, IAppendable, IPrependable} from '../../protocols';
 import {overload, identity, constantly, effect} from '../../core';
 import Reduced, {isReduced, reduced, unreduced} from "../reduced";
 import {concat} from "../concatenated/construct";

@@ -1,6 +1,6 @@
 import {overload} from "../core";
 import {IContent} from "../protocols/icontent";
-import {filter, multiple} from "../types";
+import {filter} from "../types";
 
 function contents2(self, type){
   return filter(function(node){
