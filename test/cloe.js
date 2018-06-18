@@ -60,10 +60,10 @@ QUnit.test("ilookup", function(assert){
   }};
   var moe = {givenName: "Moe", surname: "Howard"};
   var givenName = _.overload(null, _.get(v, "givenName"), _.assoc(v, "givenName", v)); //lens
-  var getAddressLine1 = _.pipe(_.maybe, _.fmap(v, _.get(v, "address"), _.get(v, "lines"), _.get(v, 1)));
-  assert.equal(moe |> getAddressLine1 |> _.otherwise(v, ""), "");
+  var getAddressLine1 = _.pipe(_.maybe, _.fmap(v, _.get(v, "address"), _.get(v, "lines"), _.get(v, 1)), _.otherwise(v, ""));
+  assert.equal(moe   |> getAddressLine1, "");
+  assert.equal(boris |> getAddressLine1, "Suite 401");
   assert.equal(boris |> _.maybe |> _.fmap(v, _.get(v, "address"), _.get(v, "lines"), _.get(v, 1)) |> _.otherwise(v, ""), "Suite 401");
-  assert.equal(boris |> getAddressLine1 |> _.otherwise(v, ""), "Suite 401");
   assert.equal(boris |> _.getIn(v, ["address", "lines", 1]), "Suite 401");
   assert.equal(boris |> _.getIn(v, ["address", "lines", 2]), null);
   assert.deepEqual(boris |> _.assocIn(v, ["address", "lines", 1], "attn: Finance Dept."), {givenName: "Boris", surname: "Lasky", address: {
