@@ -1,6 +1,6 @@
 import {overload, identity, counter, intercept, obj} from "./core/core";
 import {compact, flatten, map, fragment, element, multiple, sort, chain, set, flip, realized, comp, isNumber, detect} from "./core/types";
-import {IAppendable, IHash, IYank, IArray, IAssociative, IBounds, IConverse, ICloneable, ICollection, IComparable, IContent, ICounted, IDecode, IDeref, IDisposable, IEmptyableCollection, IEncode, IEquiv, IEvented, IFind, IFn, IFold, IFunctor, IHideable, IHierarchy, IInclusive, IIndexed, IInsertable, IKVReduce, ILookup, IMap, IMapEntry, IMatch, INext, IObject, IOtherwise, IPrependable, IPublish, IReduce, IReset, IReversible, ISeq, ISeqable, ISet, IShow, ISteppable, ISubscribe, ISwap, IUnit} from "./core/protocols";
+import {IAppendable, IHash, IYank, IArray, IAssociative, IBounds, IConverse, ICloneable, ICollection, IComparable, IContent, ICounted, IDecode, IDeref, IDisposable, IEmptyableCollection, IEncode, IEquiv, IEvented, IFind, IFn, IFold, IFunctor, IHideable, IHierarchy, IHtml, IInclusive, IIndexed, IInsertable, IKVReduce, ILookup, IMap, IMapEntry, IMatch, INext, IObject, IOtherwise, IPrependable, IPublish, IReduce, IReset, IReversible, ISeq, ISeqable, ISet, IShow, ISteppable, ISubscribe, ISwap, IText, IUnit} from "./core/protocols";
 import {fork, hash, reducing} from "./core/api";
 import * as T from "./core/types";
 
@@ -10,6 +10,8 @@ export * from "./core/protocols";
 export * from "./core/api";
 export * from "./core/multimethods";
 
+export const text = IText.text;
+export const html = IHtml.html;
 export const show = IHideable.show;
 export const hide = IHideable.hide;
 export const toggle = IHideable.toggle;

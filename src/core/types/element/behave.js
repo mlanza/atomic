@@ -1,6 +1,6 @@
 import {identity, constantly, effect, overload} from '../../core';
 import {implement, surrogates} from '../protocol';
-import {isAssociative, isSequential, IHideable, IMatch, IYank, IInclusive, IInsertable, IArray, IAppendable, IPrependable, IEvented, IAssociative, IMap, IEquiv, ICloneable, ICollection, INext, ISeq, IShow, ISeqable, IIndexed, ICounted, ILookup, IReduce, IEmptyableCollection, IHierarchy, IContent} from '../../protocols';
+import {isAssociative, isSequential, IValue, IText, IHtml, IHideable, IMatch, IYank, IInclusive, IInsertable, IArray, IAppendable, IPrependable, IEvented, IAssociative, IMap, IEquiv, ICloneable, ICollection, INext, ISeq, IShow, ISeqable, IIndexed, ICounted, ILookup, IReduce, IEmptyableCollection, IHierarchy, IContent} from '../../protocols';
 import {each, mapcat} from '../lazyseq/concrete';
 import EmptyList from '../emptylist/construct';
 import {concat} from '../concatenated/construct';
@@ -247,7 +247,44 @@ function clone(self){
   return self.cloneNode(true);
 }
 
+function text1(self){
+  return self.nodeType === Node.TEXT_NODE ? self.data : null;
+}
+
+function text2(self, text){
+  if (self.nodeType === Node.TEXT_NODE) {
+    self.data = text;
+  }
+}
+
+export const text = overload(null, text1, text2);
+
+function html1(self){
+  return self.innerHTML;
+}
+
+function html2(self, html){
+  self.innerHTML = html;
+}
+
+export const html = overload(null, html1, html2);
+
+function value1(self){
+  return self.value != null ? self.value : null;
+}
+
+function value2(self, value){
+  if (self.value != null) {
+    self.value = value;
+  }
+}
+
+export const value = overload(null, value1, value2);
+
 export default effect(
+  implement(IText, {text}),
+  implement(IHtml, {html}),
+  implement(IValue, {value}),
   implement(IEmptyableCollection, {empty}),
   implement(IInsertable, {before, after}),
   implement(IInclusive, {includes}),

@@ -1,12 +1,13 @@
-import {ISeqable, isSequential} from '../../protocols';
+import {isSequential} from '../../protocols';
 import {distinct, compact} from "../lazyseq/concrete";
+import {cons} from "../list/construct";
 
 export default function Members(items){
   this.items = items;
 }
 
 export function members(self){
-  return new Members(distinct(compact(isSequential(self) ? self : [self])));
+  return new Members(distinct(compact(isSequential(self) ? self : cons(self))));
 }
 
 Members.from = members;
