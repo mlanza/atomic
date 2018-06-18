@@ -29,6 +29,18 @@ export function juxt(...fs){
   }
 }
 
+export function chain(init, ...fs){
+  return pipe(...fs)(init);
+}
+
+export function pipe(init, ...fs){
+  return function(...args){
+    return IReduce.reduce(fs, function(memo, f){
+      return f(memo);
+    }, init.apply(null, args));
+  }
+}
+
 export function comp(...fs){
   var last = fs.length - 1, init = fs[last];
   return function(...args){

@@ -30,7 +30,6 @@ export * from "./types/props";
 export * from "./types/associativesubset";
 export * from "./types/observable";
 export * from "./types/period";
-export * from "./types/pipeline";
 export * from "./types/promise";
 export * from "./types/protocol";
 export * from "./types/protocollookuperror";
