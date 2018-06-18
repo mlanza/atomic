@@ -1,5 +1,5 @@
 import {implement} from '../protocol';
-import {IFunctor, IHideable, IMatch, IArray, IHierarchy, IContent, IInclusive, IFind, IEquiv, ICollection, INext, ISeq, IReduce, IKVReduce, ISeqable, ISequential, IIndexed, IEmptyableCollection, IShow, ICounted, IAppendable, IPrependable} from '../../protocols';
+import {IFunctor, IText, IHtml, IHideable, IMatch, IArray, IHierarchy, IContent, IInclusive, IFind, IEquiv, ICollection, INext, ISeq, IReduce, IKVReduce, ISeqable, ISequential, IIndexed, IEmptyableCollection, IShow, ICounted, IAppendable, IPrependable} from '../../protocols';
 import {overload, identity, constantly, effect} from '../../core';
 import Reduced, {isReduced, reduced, unreduced} from "../reduced";
 import {concat} from "../concatenated/construct";
@@ -7,7 +7,7 @@ import {members} from "../members/construct";
 import {cons} from "../list/construct";
 import {comp} from "../function/concrete";
 import {downward, upward, closest} from "../element/behave";
-import {map, mapcat} from "./concrete";
+import {map, mapcat, compact} from "./concrete";
 import EmptyList from '../emptylist/construct';
 
 function fmap(self, f){
@@ -180,6 +180,49 @@ function toggle(self){
 
 const toArray = overload(null, toArray1, toArray2);
 
+function text1(self){
+  return compact(map(IText.text, self));
+}
+
+function text2(self, value){
+  each(function(node){
+    IText.text(node, value);
+  }, self);
+  return self;
+}
+
+export const text = overload(null, text1, text2);
+
+function html1(self){
+  return compact(map(IHtml.html, self));
+}
+
+function html2(self, value){
+  each(function(node){
+    IHtml.html(node, value);
+  }, self);
+  return self;
+}
+
+export const html = overload(null, html1, html2);
+
+function value1(self){
+  return compact(map(IValue.value, self));
+}
+
+function value2(self, value){
+  each(function(node){
+    IValue.value(node, value);
+  }, self);
+  return self;
+}
+
+export const value = overload(null, value1, value2);
+
+export const itext  = implement(IText, {text});
+export const ihtml  = implement(IHtml, {html});
+export const ivalue = implement(IValue, {value});
+
 export const ihideable = implement(IHideable, {show, hide, toggle});
 export const ireduce = effect(
   implement(IReduce, {reduce}),
@@ -189,6 +232,9 @@ export default effect(
   iterable,
   ireduce,
   ihideable,
+  itext,
+  ihtml,
+  ivalue,
   implement(ISequential),
   implement(IFunctor, {fmap}),
   implement(ICollection, {conj}),

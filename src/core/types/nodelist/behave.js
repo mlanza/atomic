@@ -5,6 +5,7 @@ import {lazySeq} from '../lazyseq/construct';
 import {comp} from '../function/concrete';
 import EmptyList from '../emptylist/construct';
 import {iterable} from '../lazyseq/behave';
+import {ihtml, itext, ivalue} from '../members/behave';
 
 function seq2(self, idx){
   return idx < self.length ? lazySeq(self.item(idx), function(){
@@ -33,6 +34,9 @@ const toggle = comp(IHideable.toggle, seq);
 
 export default effect(
   iterable,
+  ihtml,
+  itext,
+  ivalue,
   implement(IContent, {contents}),
   implement(IHideable, {show, hide, toggle}),
   implement(IHierarchy, {parent, parent, nextSiblings, nextSibling, prevSiblings, prevSibling, siblings, children, descendants}),

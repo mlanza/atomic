@@ -1,7 +1,7 @@
 import {overload, identity, effect} from "../../core";
 import {implement} from '../protocol';
-import {IFunctor, IHideable, IMatch, IHierarchy, IContent, ILookup, IAssociative, IReduce, INext} from '../../protocols';
-import {mapcat, map, each, filter} from "../lazyseq/concrete";
+import {IText, IHtml, IValue, IFunctor, IHideable, IMatch, IHierarchy, IContent, ILookup, IAssociative, IReduce, INext} from '../../protocols';
+import {mapcat, map, each, filter, compact} from "../lazyseq/concrete";
 import {ihideable} from "../lazyseq/behave";
 import {reduced} from "../reduced/construct";
 import {members} from "./construct";
@@ -80,9 +80,57 @@ function contents(self){
   return fmap(self, IContent.contents);
 }
 
+function text1(self){
+  return compact(map(IText.text, self));
+}
+
+function text2(self, value){
+  each(function(node){
+    IText.text(node, value);
+  }, self);
+  return self;
+}
+
+export const text = overload(null, text1, text2);
+
+function html1(self){
+  return compact(map(IHtml.html, self));
+}
+
+function html2(self, value){
+  each(function(node){
+    IHtml.html(node, value);
+  }, self);
+  return self;
+}
+
+export const html = overload(null, html1, html2);
+
+function value1(self){
+  return compact(map(IValue.value, self));
+}
+
+function value2(self, value){
+  each(function(node){
+    IValue.value(node, value);
+  }, self);
+  return self;
+}
+
+export const value = overload(null, value1, value2);
+
+export const itext  = implement(IText, {text});
+export const ihtml  = implement(IHtml, {html});
+export const ivalue = implement(IValue, {value});
+
 export default effect(
   behave,
   ihideable,
+  itext,
+  ihtml,
+  ivalue,
+  implement(IText, {text}),
+  implement(IHtml, {html}),
   implement(INext, {next}),
   implement(IAssociative, {assoc, contains}),
   implement(ILookup, {lookup}),

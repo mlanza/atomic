@@ -1,9 +1,8 @@
 import {_ as v, it} from "param.macro";
 import * as _ from "../src/core";
-import * as dom from "../src/dom";
 import * as signals from "../src/signals";
 import * as transducers from "../src/transducers";
-export default Object.assign({}, _, {dom, signals, transducers});
+export default Object.assign({}, _, {signals, transducers});
 
 const stooges = ["Larry","Curly","Moe"],
       pieces  = {pawn: 1, knight: 3, bishop: 3, rook: 5, queen: 10, king: Infinity},
@@ -19,20 +18,20 @@ QUnit.test("dom", function(assert){
       li({id: 'larry'}, "Larry Fine")));
   const moe = stooges |> _.sel("li", v) |> _.first;
   const who = div(_.get(v, "givenName"), " ", _.get(v, "surname"));
-  assert.equal(moe |> _.contents |> dom.text |> _.join("", v), "Moe Howard", "Found by tag");
+  assert.equal(moe |> _.contents |> _.text |> _.join("", v), "Moe Howard", "Found by tag");
   assert.deepEqual(stooges |> _.sel("li", v) |> _.get(v, "id") |> _.toArray, ["moe", "curly", "larry"], "Extracted ids");
-  assert.equal({givenName: "Curly", surname: "Howard"} |> who |> _.contents |> dom.text |> _.join("", v), "Curly Howard");
-  assert.deepEqual(moe |> _.spacesep(v, "class") |> _.conj(v, "main") |> _.deref, ["main"]);
+  assert.equal({givenName: "Curly", surname: "Howard"} |> who |> _.contents |> _.text |> _.join("", v), "Curly Howard");
+  assert.deepEqual(moe |> _.classes |> _.conj(v, "main") |> _.deref, ["main"]);
   assert.equal(moe |> _.assoc(v, "data-tagged", "tests") |> _.get(v, "data-tagged"), "tests");
   stooges |> _.append(v, div({id: 'branding'}, span("Three Blind Mice")));
   assert.ok(stooges |> _.sel("#branding", v) |> _.first |> (el => el instanceof HTMLDivElement), "Found by id");
-  assert.deepEqual(stooges |> _.sel("#branding span", v) |> _.contents |> dom.text |> _.toArray, ["Three Blind Mice"], "Read text content");
+  assert.deepEqual(stooges |> _.sel("#branding span", v) |> _.contents |> _.text |> _.toArray, ["Three Blind Mice"], "Read text content");
   const greeting = stooges |> _.sel("#branding span", v) |> _.first;
   _.hide(greeting);
-  assert.deepEqual(greeting |> _.nestedattrs(v, "style") |> _.deref, {display: "none"}, "Hidden");
-  assert.equal(greeting |> _.nestedattrs(v, "style") |> _.get(v, "display"), "none");
+  assert.deepEqual(greeting |> _.style |> _.deref, {display: "none"}, "Hidden");
+  assert.equal(greeting |> _.style |> _.get(v, "display"), "none");
   _.show(greeting);
-  assert.deepEqual(greeting |> _.nestedattrs(v, "style") |> _.deref, {}, "Shown");
+  assert.deepEqual(greeting |> _.style |> _.deref, {}, "Shown");
   const branding = stooges |> _.sel("#branding", v) |> _.first;
   _.yank(branding);
   assert.equal(branding |> _.parent |> _.first, null, "Removed");
