@@ -1,6 +1,6 @@
 import {implement} from '../protocol';
 import {identity, constantly, effect} from '../../core';
-import {IObject, IDescriptive, IFind, ICollection, IReduce, IKVReduce, INext, IArray, ISeq, ISeqable, IIndexed, IShow, ICounted, ILookup, IFn, IMap, ICloneable, IEmptyableCollection} from '../../protocols';
+import {IObject, IDescriptive, IFind, ICollection, IReduce, IKVReduce, INext, IArray, ISeq, ISeqable, IIndexed, ICounted, ILookup, IFn, IMap, ICloneable, IEmptyableCollection} from '../../protocols';
 import {lazySeq} from '../../types/lazyseq/construct';
 import {remove, into} from '../../types/lazyseq/concrete';
 import Object from '../../types/object/construct';
@@ -62,13 +62,6 @@ function reducekv(self, xf, init){
   }, init);
 }
 
-function show(self){
-  const pairs = IArray.toArray(seq(self));
-  return "#associative-subset {" + pairs.map(function(pair){
-    return show(pair[0]) + ": " + show(pair[1]);
-  }).join(", ") + "}";
-}
-
 export default effect(
   iequiv,
   implement(IDescriptive),
@@ -82,5 +75,4 @@ export default effect(
   implement(IFn, {invoke: lookup}),
   implement(ILookup, {lookup}),
   implement(ISeqable, {seq}),
-  implement(ICounted, {count}),
-  implement(IShow, {show}));
+  implement(ICounted, {count}));

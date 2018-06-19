@@ -1,6 +1,6 @@
 import {identity, constantly, effect} from '../../core';
 import {implement} from '../protocol';
-import {IArray, IReversible, IEncode, ICollection, INext, ISeq, ISeqable, ISequential, IAssociative, IIndexed, IShow, IEmptyableCollection, IReduce, ICounted} from '../../protocols';
+import {IArray, IReversible, IEncode, ICollection, INext, ISeq, ISeqable, ISequential, IAssociative, IIndexed, IEmptyableCollection, IReduce, ICounted} from '../../protocols';
 import EmptyList from '../../types/emptylist/construct';
 import Array from '../../types/array/construct';
 
@@ -18,5 +18,4 @@ export default effect(
   implement(IArray, {toArray: constantly(Array.EMPTY)}),
   implement(ISeq, {first: constantly(null), rest: constantly(EmptyList.EMPTY)}),
   implement(INext, {next: constantly(null)}),
-  implement(ISeqable, {seq: constantly(null)}),
-  implement(IShow, {show: constantly("[]")}));
+  implement(ISeqable, {seq: constantly(null)}));

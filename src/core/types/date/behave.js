@@ -1,6 +1,6 @@
 import {effect, overload, constantly, identity} from '../../core';
 import {implement} from '../protocol';
-import {IReduce, IKVReduce, ISeqable, IEncode, IBounds, IMap, IShow, IDeref, ISeq, IComparable, IEquiv, ICloneable, ILookup, IAssociative, ICollection} from '../../protocols';
+import {IReduce, IKVReduce, ISeqable, IEncode, IBounds, IMap, IDeref, ISeq, IComparable, IEquiv, ICloneable, ILookup, IAssociative, ICollection} from '../../protocols';
 import {isNumber} from '../number';
 import {lazySeq} from '../lazyseq';
 import {days} from '../duration';
@@ -128,5 +128,4 @@ export default effect(
   implement(ICollection, {conj}),
   implement(IAssociative, {assoc, contains}),
   implement(ILookup, {lookup}),
-  implement(ICloneable, {clone}),
-  implement(IShow, {show}));
+  implement(ICloneable, {clone}));

@@ -1,6 +1,6 @@
 import {identity, constantly, effect, overload} from '../../core';
 import {implement, surrogates} from '../protocol';
-import {isAssociative, isSequential, IValue, IText, IHtml, IHideable, IMatch, IYank, IInclusive, IInsertable, IArray, IAppendable, IPrependable, IEvented, IAssociative, IMap, IEquiv, ICloneable, ICollection, INext, ISeq, IShow, ISeqable, IIndexed, ICounted, ILookup, IReduce, IEmptyableCollection, IHierarchy, IContent} from '../../protocols';
+import {isAssociative, isSequential, IValue, IText, IHtml, IHideable, IMatch, IYank, IInclusive, IInsertable, IArray, IAppendable, IPrependable, IEvented, IAssociative, IMap, IEquiv, ICloneable, ICollection, INext, ISeq, ISeqable, IIndexed, ICounted, ILookup, IReduce, IEmptyableCollection, IHierarchy, IContent} from '../../protocols';
 import {each, mapcat} from '../lazyseq/concrete';
 import EmptyList from '../emptylist/construct';
 import {concat} from '../concatenated/construct';

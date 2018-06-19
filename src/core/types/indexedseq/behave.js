@@ -3,7 +3,7 @@ import {implement} from '../protocol';
 import {indexedSeq} from './construct';
 import {revSeq} from '../../types/revseq/construct';
 import {reduced, isReduced, unreduced} from '../../types/reduced';
-import {IArray, IEquiv, IReversible, IMapEntry, IFind, IInclusive, IAssociative, IAppendable, IPrependable, ICollection, INext, ICounted, IReduce, IKVReduce, ISeq, ISeqable, ISequential, IIndexed, IShow, ILookup, IFn, IEmptyableCollection} from '../../protocols';
+import {IArray, IEquiv, IReversible, IMapEntry, IFind, IInclusive, IAssociative, IAppendable, IPrependable, ICollection, INext, ICounted, IReduce, IKVReduce, ISeq, ISeqable, ISequential, IIndexed, ILookup, IFn, IEmptyableCollection} from '../../protocols';
 import {concat} from '../../types/concatenated/construct';
 import {iterable} from '../lazyseq/behave';
 import {detect, drop} from '../lazyseq/concrete';

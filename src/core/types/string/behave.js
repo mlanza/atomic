@@ -1,4 +1,4 @@
-import {IArray, IReduce, ICollection, IHash, IEncode, IDecode, IIndexed, ISeqable, INext, ISeq, IInclusive, IAppendable, IPrependable, IShow, ICounted, ILookup, IFn, IComparable, IEmptyableCollection} from '../../protocols';
+import {IArray, IReduce, ICollection, IHash, IEncode, IDecode, IIndexed, ISeqable, INext, ISeq, IInclusive, IAppendable, IPrependable, ICounted, ILookup, IFn, IComparable, IEmptyableCollection} from '../../protocols';
 import {constantly, effect, identity} from "../../core";
 import {implement} from '../protocol';
 import String from './construct';
@@ -53,10 +53,6 @@ function toArray(self){
   return self.split('');
 }
 
-function show(self){
-  return "\"" + self + "\"";
-}
-
 function prepend(self, head){
   return head + self;
 }
@@ -105,5 +101,4 @@ export default effect(
   implement(ILookup, {lookup}),
   implement(ISeqable, {seq}),
   implement(ISeq, {first, rest}),
-  implement(INext, {next}),
-  implement(IShow, {show}));
+  implement(INext, {next}));

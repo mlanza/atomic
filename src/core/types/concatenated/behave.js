@@ -2,7 +2,7 @@ import {identity, effect} from '../../core';
 import {implement} from '../protocol';
 import {concatenated, concat} from '../../types/concatenated/construct';
 import {isReduced, unreduced} from '../../types/reduced';
-import {IArray, ICollection, INext, ISeq, ICounted, ISeqable, IIndexed, IShow, IReduce, ISequential} from '../../protocols';
+import {IArray, ICollection, INext, ISeq, ICounted, ISeqable, IIndexed, IReduce, ISequential} from '../../protocols';
 import {apply} from '../../types/function/concrete';
 import EmptyList from '../emptylist';
 import {ireduce, iterable} from '../lazyseq/behave';
