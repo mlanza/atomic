@@ -188,7 +188,6 @@ QUnit.test("sequences", function(assert){
 
 QUnit.test("step, add, subtract", function(assert){
   const christmas = _.date(2017, 12, 25);
-  assert.equal(christmas |> _.add(v, _.days(1)) |> _.deref, christmas |> _.add(v, 1) |> _.deref);
   assert.equal(christmas |> _.add(v, _.days(1)) |> _.deref, christmas |> _.step(_.days(1), v) |> _.deref);
   assert.equal(christmas |> _.add(v, _.days(1)) |> _.deref, 1514264400000);
   assert.equal(christmas |> _.add(v, _.weeks(1)) |> _.deref, 1514782800000);

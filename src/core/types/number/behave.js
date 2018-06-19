@@ -1,6 +1,6 @@
 import {constantly, effect, overload, identity} from '../../core';
 import {implement} from '../protocol';
-import {IBounds, IEncode, IDecode, IUnit, ISteppable, IConverse, IComparable, IShow} from '../../protocols';
+import {IBounds, IEncode, IDecode, ISteppable, IConverse, IComparable, IShow} from '../../protocols';
 import {str} from '../string/concrete';
 
 function compare(self, other){
@@ -32,5 +32,4 @@ export default effect(
   implement(IComparable, {compare}),
   implement(IConverse, {converse}),
   implement(ISteppable, {step}),
-  implement(IUnit, {unit}),
   implement(IShow, {show}));
