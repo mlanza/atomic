@@ -1,5 +1,5 @@
 import {implement} from '../protocol';
-import {IFunctor, IText, IHtml, IValue, IHideable, IMatch, IArray, IHierarchy, IContent, IInclusive, IFind, IEquiv, ICollection, INext, ISeq, IReduce, IKVReduce, ISeqable, ISequential, IIndexed, IEmptyableCollection, IShow, ICounted, IAppendable, IPrependable} from '../../protocols';
+import {IFunctor, IText, IHtml, IValue, IHideable, IMatch, IArray, IHierarchy, IContent, IInclusive, IFind, IEquiv, ICollection, INext, ISeq, IReduce, IKVReduce, ISeqable, ISequential, IIndexed, IEmptyableCollection, ICounted, IAppendable, IPrependable} from '../../protocols';
 import {overload, identity, constantly, effect} from '../../core';
 import Reduced, {isReduced, reduced, unreduced} from "../reduced";
 import {concat} from "../concatenated/construct";
@@ -72,11 +72,6 @@ function rest(self){
 
 function next(self){
   return ISeqable.seq(ISeq.rest(self));
-}
-
-function _show(self){
-  var xs = IArray.toArray(ISeqable.seq(self));
-  return "#" + self.constructor.name +  " [" + xs.map(IShow.show).join(", ") + "]";
 }
 
 function reduce(xs, xf, init){

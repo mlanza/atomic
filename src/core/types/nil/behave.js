@@ -1,4 +1,4 @@
-import {IFunctor, IAssociative, IOtherwise, IEncode, IDecode, IFold, IArray, IEquiv, ICollection, INext, ISeq, IShow, ISeqable, IIndexed, ICounted, ILookup, IReduce, IEmptyableCollection, ISequential} from '../../protocols';
+import {IFunctor, IAssociative, IOtherwise, IEncode, IDecode, IFold, IArray, IEquiv, ICollection, INext, ISeq, ISeqable, IIndexed, ICounted, ILookup, IReduce, IEmptyableCollection, ISequential} from '../../protocols';
 import EmptyList from '../../types/emptylist/construct';
 import {identity, constantly, effect, overload} from '../../core';
 import {implement, surrogates} from '../protocol';
@@ -52,5 +52,4 @@ export default effect(
   implement(ISeqable, {seq: identity}),
   implement(IIndexed, {nth: identity}),
   implement(ICounted, {count: constantly(0)}),
-  implement(IReduce, {reduce}),
-  implement(IShow, {show: constantly("null")}));
+  implement(IReduce, {reduce}));

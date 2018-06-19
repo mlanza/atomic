@@ -1,6 +1,6 @@
 import {constantly, effect, identity} from '../../core';
 import {implement} from '../protocol';
-import {IComparable, IYank, IArray, IDecode, ISet, INext, ICollection, IEncode, IEquiv, IMapEntry, IReduce, IKVReduce, ISeqable, IShow, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, IFn, IMap, ISeq, IDescriptive, IObject, ICloneable, IInclusive} from '../../protocols';
+import {IComparable, IYank, IArray, IDecode, ISet, INext, ICollection, IEncode, IEquiv, IMapEntry, IReduce, IKVReduce, ISeqable, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, IFn, IMap, ISeq, IDescriptive, IObject, ICloneable, IInclusive} from '../../protocols';
 import {reduced} from '../reduced';
 import {lazySeq, into} from '../lazyseq';
 import {iequiv} from '../array/behave';
@@ -134,13 +134,6 @@ function toArray(self){
   }, []);
 }
 
-function show(self){
-  const xs = IArray.toArray(seq(self));
-  return "{" + xs.map(function(pair){
-    return IShow.show(pair[0]) + ": " + IShow.show(pair[1]);
-  }).join(", ") + "}";
-}
-
 function encode(self, label, refstore, seed){
  return reducekv(self, function(memo, key, value){
     return IAssociative.assoc(memo, IEncode.encode(key, label, refstore, seed), IEncode.encode(value, label, refstore, seed));
@@ -188,5 +181,4 @@ export default effect(
   implement(IEmptyableCollection, {empty: constantly(Object.EMPTY)}),
   implement(IAssociative, {assoc, contains}),
   implement(ISeqable, {seq}),
-  implement(ICounted, {count}),
-  implement(IShow, {show}));
+  implement(ICounted, {count}));
