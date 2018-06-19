@@ -1,6 +1,6 @@
 import {effect, overload, constantly, identity} from '../../core';
 import {implement} from '../protocol';
-import {IUnit, IReduce, IKVReduce, ISeqable, IEncode, IBounds, IMap, IShow, IDeref, ISeq, IComparable, IEquiv, ICloneable, ILookup, IAssociative, ICollection} from '../../protocols';
+import {IReduce, IKVReduce, ISeqable, IEncode, IBounds, IMap, IShow, IDeref, ISeq, IComparable, IEquiv, ICloneable, ILookup, IAssociative, ICollection} from '../../protocols';
 import {isNumber} from '../number';
 import {lazySeq} from '../lazyseq';
 import {days} from '../duration';
@@ -117,7 +117,6 @@ function reducekv(self, xf, init){
 }
 
 export default effect(
-  implement(IUnit, {unit: overload(null, constantly(days(1)), unit2)}),
   implement(IBounds, {start: identity, end: identity}),
   implement(ISeqable, {seq: identity}),
   implement(IReduce, {reduce}),
