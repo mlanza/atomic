@@ -1,11 +1,10 @@
 import {effect} from '../../core';
 import {implement} from '../protocol';
-import {ISeqable, ISequential, IContent, IHideable, IHierarchy} from '../../protocols';
+import {ISeq, INext, ISeqable, ISequential, IContent, IHierarchy} from '../../protocols';
 import {lazySeq} from '../lazyseq/construct';
 import {comp} from '../function/concrete';
 import EmptyList from '../emptylist/construct';
 import {iterable} from '../lazyseq/behave';
-import {ihtml, itext, ivalue} from '../members/behave';
 
 function seq2(self, idx){
   return idx < self.length ? lazySeq(self.item(idx), function(){
@@ -17,6 +16,9 @@ function seq(self){
   return seq2(self, 0);
 }
 
+const first = comp(ISeq.first, seq);
+const rest = comp(ISeq.rest, seq);
+const next = comp(INext.next, seq);
 const children = comp(IHierarchy.children, seq);
 const descendants = comp(IHierarchy.descendants, seq);
 const nextSibling = comp(IHierarchy.nextSibling, seq);
@@ -28,17 +30,16 @@ const sel = comp(IHierarchy.sel, seq);
 const parent = comp(IHierarchy.parent, seq);
 const parents = comp(IHierarchy.parents, seq);
 const contents = comp(IContent.contents, seq);
-const show = comp(IHideable.show, seq);
-const hide = comp(IHideable.hide, seq);
-const toggle = comp(IHideable.toggle, seq);
+
+function closest(self, selector){
+  return IHierarchy.closest(seq(self), selector);
+}
 
 export default effect(
   iterable,
-  ihtml,
-  itext,
-  ivalue,
+  implement(ISeq, {first, rest}),
+  implement(INext, {next}),
   implement(IContent, {contents}),
-  implement(IHideable, {show, hide, toggle}),
-  implement(IHierarchy, {parent, parent, nextSiblings, nextSibling, prevSiblings, prevSibling, siblings, children, descendants}),
+  implement(IHierarchy, {parent, parent, closest, nextSiblings, nextSibling, prevSiblings, prevSibling, siblings, children, descendants}),
   implement(ISequential),
   implement(ISeqable, {seq}));

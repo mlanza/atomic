@@ -59,39 +59,37 @@ export function partial(f, ...applied){
 
 export const placeholder = {};
 
-function partly2(f, placeholder){
-  return function g(...xs){
-    if (xs.indexOf(placeholder) < 0) {
-      return f.apply(null, xs);
-    } else {
-      return function(...ys){
-        const zs = [];
-        let a = 0, b = 0, xl = xs.length, yl = ys.length;
-        while(a < xl && b < yl){
-          if (xs[a] === placeholder) {
-            a++;
-            zs.push(ys[b++]);
-          } else {
-            zs.push(xs[a++]);
-          }
-        }
-        while(a < xl){
+export function part(f, ...xs){
+  if (xs.indexOf(placeholder) < 0) {
+    return f.apply(null, xs);
+  } else {
+    return function(...ys){
+      const zs = [];
+      let a = 0, b = 0, xl = xs.length, yl = ys.length;
+      while(a < xl && b < yl){
+        if (xs[a] === placeholder) {
+          a++;
+          zs.push(ys[b++]);
+        } else {
           zs.push(xs[a++]);
         }
-        while(b < yl){
-          zs.push(ys[b++]);
-        }
-        return g.apply(null, zs);
       }
+      while(a < xl){
+        zs.push(xs[a++]);
+      }
+      while(b < yl){
+        zs.push(ys[b++]);
+      }
+      return part.apply(null, [f].concat(zs));
     }
   }
 }
 
-function partly1(f){
-  return partly2(f, placeholder);
+export function partly(f){
+  return function(...args){
+    return part(f, ...args);
+  }
 }
-
-export const partly = overload(null, partly1, partly2);
 
 export function identity(x){
   return x;

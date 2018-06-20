@@ -596,3 +596,10 @@ function splice3(self, start, coll){
 }
 
 export const splice = overload(null, null, null, splice3, splice4);
+
+export function also(f, xs){
+  return concat(xs, mapcat(function(x){
+    const result = f(x);
+    return isSequential(result) ? result : [result];
+  }, xs));
+}

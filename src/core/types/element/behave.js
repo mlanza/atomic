@@ -1,5 +1,5 @@
 import {identity, constantly, effect, overload} from '../../core';
-import {implement, surrogates} from '../protocol';
+import {implement} from '../protocol';
 import {isAssociative, isSequential, IValue, IText, IHtml, IHideable, IMatch, IYank, IInclusive, IInsertable, IArray, IAppendable, IPrependable, IEvented, IAssociative, IMap, IEquiv, ICloneable, ICollection, INext, ISeq, ISeqable, IIndexed, ICounted, ILookup, IReduce, IEmptyableCollection, IHierarchy, IContent} from '../../protocols';
 import {each, mapcat} from '../lazyseq/concrete';
 import EmptyList from '../emptylist/construct';
@@ -15,7 +15,6 @@ import {reduced} from '../reduced/construct';
 import {nestedattrs} from '../nestedattrs/construct';
 import {trim, split, str} from '../string/concrete';
 import Element, {isElement} from './construct';
-import {members} from "../members/construct";
 
 const hidden = ["display", "none"];
 
@@ -150,7 +149,7 @@ function parent(self){
   return self && self.parentNode;
 }
 
-const parents = comp(members, upward(parent));
+const parents = upward(parent);
 
 export function closest(self, selector){
   let target = IHierarchy.parent(self);
@@ -163,31 +162,31 @@ export function closest(self, selector){
 }
 
 function sel(self, selector){
-  return members(filter(function(node){
-    return matches(node, selector);
-  }, descendants(self)));
+  return isFunction(selector) ? filter(function(node){
+    return IMatch.matches(node, selector);
+  }, IHierarchy.descendants(self)) : self.querySelectorAll(selector);
 }
 
 function children(self){
-  return members(ISeqable.seq(self.children));
+  return ISeqable.seq(self.children);
 }
 
-const descendants = comp(members, downward(children));
+const descendants = downward(IHierarchy.children);
 
 function nextSibling(self){
   return self.nextElementSibling;
 }
 
-const nextSiblings = comp(members, upward(nextSibling));
+const nextSiblings = upward(IHierarchy.nextSibling);
 
 function prevSibling(self){
   return self.prevElementSibling;
 }
 
-const prevSiblings = comp(members, upward(prevSibling));
+const prevSiblings = upward(IHierarchy.prevSibling);
 
 export function siblings(self){
-  return members(concat(prevSiblings(self), nextSiblings(self)));
+  return concat(prevSiblings(self), nextSiblings(self));
 }
 
 function yank1(self){ //no jokes, please!
@@ -248,13 +247,11 @@ function clone(self){
 }
 
 function text1(self){
-  return self.nodeType === Node.TEXT_NODE ? self.data : null;
+  return self.innerText;
 }
 
 function text2(self, text){
-  if (self.nodeType === Node.TEXT_NODE) {
-    self.data = text;
-  }
+  self.innerText = text;
 }
 
 export const text = overload(null, text1, text2);
@@ -281,7 +278,18 @@ function value2(self, value){
 
 export const value = overload(null, value1, value2);
 
+function reduce(self, xf, init){
+  return IReduce.reduce(IHierarchy.descendants(self), xf, init);
+}
+
+export const ihierarchy = implement(IHierarchy, {parent, parents, closest, children, descendants, sel, nextSibling, nextSiblings, prevSibling, prevSiblings, siblings});
+export const icontents = implement(IContent, {contents});
+export const ireduce = implement(IReduce, {reduce});
+
 export default effect(
+  ihierarchy,
+  icontents,
+  ireduce,
   implement(IText, {text}),
   implement(IHtml, {html}),
   implement(IValue, {value}),
@@ -297,7 +305,5 @@ export default effect(
   implement(ICollection, {conj}),
   implement(IEvented, {on, off}),
   implement(ILookup, {lookup}),
-  implement(IContent, {contents}),
-  implement(IHierarchy, {parent, parents, closest, children, descendants, sel, nextSibling, nextSiblings, prevSibling, prevSiblings, siblings}),
   implement(IMap, {dissoc, keys, vals}),
   implement(IAssociative, {assoc, contains}));

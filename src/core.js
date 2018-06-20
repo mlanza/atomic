@@ -1,7 +1,7 @@
 import {overload, identity, counter, intercept, obj} from "./core/core";
-import {compact, flatten, map, fragment, element, sort, set, flip, realized, comp, isNumber, detect} from "./core/types";
+import {duration, compact, remove, flatten, map, fragment, element, sort, set, flip, realized, comp, isNumber, detect} from "./core/types";
 import {IAppendable, IHash, IYank, IArray, IAssociative, IBounds, IConverse, ICloneable, ICollection, IComparable, IContent, ICounted, IDecode, IDeref, IDisposable, IEmptyableCollection, IEncode, IEquiv, IEvented, IFind, IFn, IFold, IFunctor, IHideable, IHierarchy, IHtml, IInclusive, IIndexed, IInsertable, IKVReduce, ILookup, IMap, IMapEntry, IMatch, INext, IObject, IOtherwise, IPrependable, IPublish, IReduce, IReset, IReversible, ISeq, ISeqable, ISet, ISteppable, ISubscribe, ISwap, IText} from "./core/protocols";
-import {fork, hash, reducing} from "./core/api";
+import {fmap, fork, hash, reducing} from "./core/api";
 import * as T from "./core/types";
 
 export * from "./core/core";
@@ -137,17 +137,27 @@ export function expansive(f){
 }
 
 export const memoize = overload(null, memoize1, memoize2);
-
-export const tag  = obj(expansive(element), Infinity);
+export const tag = obj(expansive(element), Infinity);
 export const frag = expansive(fragment);
 
-export function tags(...names){
-  return IReduce.reduce(names, function(memo, name){
-    memo[name] = tag(name);
+function tagged(f, keys){
+  return IReduce.reduce(keys, function(memo, key){
+    memo[key] = f(key);
     return memo;
   }, {});
 }
 
+export function tags(...names){
+  return tagged(tag, names);
+}
+
+export function elapsed(self){
+  return duration(end(self) - start(self));
+}
+
+export function leaves(self){
+  return remove(comp(ICounted.count, IHierarchy.children), IHierarchy.descendants(self));
+}
 
 /*
 export * from "./pointfree";

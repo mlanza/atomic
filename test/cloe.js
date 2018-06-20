@@ -1,8 +1,10 @@
 import {_ as v, it} from "param.macro";
+import {placeholder, reducekv, partly, map, mapa} from "../src/core";
 import * as _ from "../src/core";
 import * as signals from "../src/signals";
 import * as transducers from "../src/transducers";
-export default Object.assign({}, _, {signals, transducers});
+
+export default Object.assign(placeholder, {signals, transducers});
 
 const stooges = ["Larry","Curly","Moe"],
       pieces  = {pawn: 1, knight: 3, bishop: 3, rook: 5, queen: 10, king: Infinity},
@@ -11,21 +13,32 @@ const stooges = ["Larry","Curly","Moe"],
 
 QUnit.test("dom", function(assert){
   const {ul, li, div, span} = _.tags("ul", "li", "div", "span");
-  const stooges = window.stooges = _.frag(
-    ul(
-      li({id: 'moe'}, "Moe Howard"),
-      li({id: 'curly'}, "Curly Howard"),
-      li({id: 'larry'}, "Larry Fine")));
-  const moe = stooges |> _.sel("li", v) |> _.first;
+  const duo = _.frag() |> _.append(v, div("Abbott")) |> _.append(v, _.tag("div", "Costello"));
   const who = div(_.get(v, "givenName"), " ", _.get(v, "surname"));
-  assert.equal(moe |> _.contents |> _.text |> _.join("", v), "Moe Howard", "Found by tag");
-  assert.deepEqual(stooges |> _.sel("li", v) |> _.get(v, "id") |> _.toArray, ["moe", "curly", "larry"], "Extracted ids");
-  assert.equal({givenName: "Curly", surname: "Howard"} |> who |> _.contents |> _.text |> _.join("", v), "Curly Howard");
+  const template = _.frag(
+    ul(
+      map(function([id, person]){
+        return li({id: id}, who(person));
+      }, v)));
+  const stooges = template({
+    moe: {givenName: "Moe", surname: "Howard"},
+    curly: {givenName: "Curly", surname: "Howard"},
+    larry: {givenName: "Larry", surname: "Fine"}
+  });
+  const moe = stooges |> _.sel("li", v) |> _.first;
+
+  assert.equal(duo |> _.children |> _.first  |> _.text, "Abbott");
+  assert.equal(duo |> _.children |> _.second |> _.text, "Costello");
+  assert.equal(stooges |> _.members |>_.fpipe(_.children, _.children) |> _.ftap(_.also(_.parent, v)) |> _.count, 4);
+  assert.equal(stooges |> _.leaves |> _.count, 3);
+  assert.equal(moe |> _.text, "Moe Howard", "Found by tag");
+  assert.deepEqual(stooges |> _.sel("li", v) |> _.map(_.get(v, "id"), v) |> _.toArray, ["moe", "curly", "larry"], "Extracted ids");
+  assert.equal({givenName: "Curly", surname: "Howard"} |> who |> _.text, "Curly Howard");
   assert.deepEqual(moe |> _.classes |> _.conj(v, "main") |> _.deref, ["main"]);
   assert.equal(moe |> _.assoc(v, "data-tagged", "tests") |> _.get(v, "data-tagged"), "tests");
   stooges |> _.append(v, div({id: 'branding'}, span("Three Blind Mice")));
   assert.ok(stooges |> _.sel("#branding", v) |> _.first |> (el => el instanceof HTMLDivElement), "Found by id");
-  assert.deepEqual(stooges |> _.sel("#branding span", v) |> _.contents |> _.text |> _.toArray, ["Three Blind Mice"], "Read text content");
+  assert.deepEqual(stooges |> _.sel("#branding span", v) |> _.map(_.text, v) |> _.first, "Three Blind Mice", "Read text content");
   const greeting = stooges |> _.sel("#branding span", v) |> _.first;
   _.hide(greeting);
   assert.deepEqual(greeting |> _.style |> _.deref, {display: "none"}, "Hidden");
@@ -317,3 +330,9 @@ QUnit.test("unless", function(assert){
   assert.equal(odd(1), 1);
   assert.equal(odd(2), 3);
 });
+
+//convenience for executing partially-applied functions from repl.
+reducekv(function(memo, key, f){
+  memo[key] = partly(f);
+  return memo;
+}, placeholder, _);

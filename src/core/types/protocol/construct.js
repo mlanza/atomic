@@ -1,5 +1,7 @@
-import {overload, obj} from '../../core';
+import {overload, obj, constantly} from '../../core';
 import {protocolLookupError} from '../protocollookuperror/construct';
+import Nil from '../nil/construct';
+import {lazySeq} from '../lazyseq/construct';
 
 export const REGISTRY  = window.Symbol ? Symbol("Registry")  : "__registry";
 export const TEMPLATE  = window.Symbol ? Symbol("Template")  : "__template";
@@ -37,25 +39,23 @@ function specified(self){
   return self == null || self[SPECIFIED];
 }
 
-//Must be shallow to uphold performance.  Obviously, performance degrades on surrogates that appear further down.
-export const surrogates = [specified];
-
-function surrogate(self){
-  let construct = null, len = surrogates.length;
-  for (let idx = 0; idx < len; idx++){
-    if (construct = surrogates[idx](self)) {
-      break;
+function inheritance(self, protocol, specific){
+  if (self == null) {
+    return lazySeq(Nil, constantly(lazySeq(null)));
+  } else if (!specific) {
+    const specified = self[SPECIFIED];
+    if (specified) {
+      return lazySeq(specified, function(){
+        return inheritance(self, protocol, true);
+      });
+    } else {
+      return inheritance(self, protocol, true);
     }
-  }
-  return construct;
-}
-
-function supers(registry, self){
-  if (self){
-    const proto = Object.getPrototypeOf(self);
-    return proto && proto.constructor !== Object ? registry.get(proto.constructor) || supers(registry, proto) : null;
   } else {
-    return null;
+    return lazySeq(self.constructor, function(){
+      const proto = Object.getPrototypeOf(self);
+      return proto && proto.constructor === Object ? lazySeq(null) : inheritance(proto, protocol, true);
+    });
   }
 }
 
@@ -78,11 +78,28 @@ function satisfies1(protocol){
 
 function satisfies2(protocol, obj){
   const registry = protocol[REGISTRY];
-  return registry.get(obj != null && obj.constructor) || registry.get(surrogate(obj)) || (obj && supers(registry, Object.getPrototypeOf(obj)));
+  let result = inheritance(obj, protocol);
+  while(result.head){
+    const found = registry.get(result.head);
+    if (found) {
+      return found;
+    }
+    result = result.tail();
+  }
+  return null;
 }
 
 function satisfies3(protocol, method, obj){
-  return (satisfies2(protocol, obj) || {})[method] || protocol[TEMPLATE][method];
+  const registry = protocol[REGISTRY];
+  let result = inheritance(obj, protocol);
+  while(result.head){
+    const found = (registry.get(result.head) || {})[method];
+    if (found) {
+      return found;
+    }
+    result = result.tail();
+  }
+  return (protocol[TEMPLATE] || {})[method];
 }
 
 export const satisfies = overload(null, satisfies1, satisfies2, satisfies3);

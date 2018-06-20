@@ -9,12 +9,6 @@ export function just(value){
   return new Just(value);
 }
 
-function maybe1(x){
+export function maybe(x){
   return x == null ? x : just(x);
 }
-
-function maybeN(x, ...fs){
-  return IReduce.reduce(fs, IFunctor.fmap, maybe1(x));
-}
-
-export const maybe = overload(null, maybe1, maybeN);
