@@ -1,15 +1,9 @@
 import {IFunctor, IAssociative, IOtherwise, IEncode, IDecode, IFold, IArray, IEquiv, ICollection, INext, ISeq, ISeqable, IIndexed, ICounted, ILookup, IReduce, IEmptyableCollection, ISequential} from '../../protocols';
 import EmptyList from '../../types/emptylist/construct';
 import {identity, constantly, effect, overload} from '../../core';
-import {implement, surrogates} from '../protocol';
+import {implement} from '../protocol';
 import Array from '../../types/array/construct';
 import Nil from './construct';
-
-function nil(self){
-  if (self == null) {
-    return Nil;
-  }
-}
 
 function assoc(self, key, value){
   const obj = {};
@@ -32,8 +26,6 @@ function otherwise(self, other){
 function fold(self, missing, okay){
   return missing(self);
 }
-
-surrogates.unshift(nil);
 
 export default effect(
   implement(ISequential),

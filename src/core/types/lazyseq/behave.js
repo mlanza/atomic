@@ -1,13 +1,10 @@
 import {implement} from '../protocol';
-import {IFunctor, IText, IHtml, IValue, IHideable, IMatch, IArray, IHierarchy, IContent, IInclusive, IFind, IEquiv, ICollection, INext, ISeq, IReduce, IKVReduce, ISeqable, ISequential, IIndexed, IEmptyableCollection, ICounted, IAppendable, IPrependable} from '../../protocols';
+import {IFunctor, IYank, IMatch, IArray, IInclusive, IFind, IEquiv, ICollection, INext, ISeq, IReduce, IKVReduce, ISeqable, ISequential, IIndexed, IEmptyableCollection, ICounted, IAppendable, IPrependable} from '../../protocols';
 import {overload, identity, constantly, effect} from '../../core';
 import Reduced, {isReduced, reduced, unreduced} from "../reduced";
 import {concat} from "../concatenated/construct";
-import {members} from "../members/construct";
 import {cons} from "../list/construct";
-import {comp} from "../function/concrete";
-import {downward, upward, closest} from "../element/behave";
-import {map, mapcat, compact} from "./concrete";
+import {map, detect} from "./concrete";
 import EmptyList from '../emptylist/construct';
 
 function fmap(self, f){
@@ -117,108 +114,20 @@ function append(self, other){
   return concat(self, [other]);
 }
 
-function children(self){
-  return members(mapcat(IHierarchy.children, self));
-}
-
-const descendants = comp(members, downward(IHierarchy.children));
-
-function nextSibling(self){
-  return members(fmap(self, IHierarchy.nextSibling));
-}
-
-function nextSiblings(self){
-  return members(mapcat(IHierarchy.nextSiblings, self));
-}
-
-function prevSibling(self){
-  return members(fmap(self, IHierarchy.prevSibling));
-}
-
-function prevSiblings(self){
-  return members(fmap(self, IHierarchy.prevSiblings));
-}
-
-function siblings(self){
-  return members(mapcat(IHierarchy.siblings, self));
-}
-
-function sel(self, selector){
-  return members(filter(function(node){
-    return IMatch.matches(node, selector);
-  }, descendants(self)));
-}
-
-function parent(self){
-  return members(fmap(self, IHierarchy.parent));
-}
-
-function parents(self){
-  return members(mapcat(IHierarchy.parents, self));
-}
-
-function contents(self){
-  return members(mapcat(IContent.contents, self));
-}
-
-function show(self){
-  return IFunctor.fmap(self, IHideable.show);
-}
-
-function hide(self){
-  return IFunctor.fmap(self, IHideable.hide);
-}
-
-function toggle(self){
-  return IFunctor.fmap(self, IHideable.toggle);
-}
-
 const toArray = overload(null, toArray1, toArray2);
 
-function text1(self){
-  return compact(map(IText.text, self));
-}
-
-function text2(self, value){
-  each(function(node){
-    IText.text(node, value);
+function yank(self, value){
+  return remove(function(x){
+    return x === value;
   }, self);
-  return self;
 }
 
-export const text = overload(null, text1, text2);
-
-function html1(self){
-  return compact(map(IHtml.html, self));
-}
-
-function html2(self, value){
-  each(function(node){
-    IHtml.html(node, value);
+function includes(self, value){
+  return detect(function(x){
+    return x === value;
   }, self);
-  return self;
 }
 
-export const html = overload(null, html1, html2);
-
-function value1(self){
-  return compact(map(IValue.value, self));
-}
-
-function value2(self, value){
-  each(function(node){
-    IValue.value(node, value);
-  }, self);
-  return self;
-}
-
-export const value = overload(null, value1, value2);
-
-export const itext  = implement(IText, {text});
-export const ihtml  = implement(IHtml, {html});
-export const ivalue = implement(IValue, {value});
-
-export const ihideable = implement(IHideable, {show, hide, toggle});
 export const ireduce = effect(
   implement(IReduce, {reduce}),
   implement(IKVReduce, {reducekv}));
@@ -226,11 +135,9 @@ export const ireduce = effect(
 export default effect(
   iterable,
   ireduce,
-  ihideable,
-  itext,
-  ihtml,
-  ivalue,
   implement(ISequential),
+  implement(IInclusive, {includes}),
+  implement(IYank, {yank}),
   implement(IFunctor, {fmap}),
   implement(ICollection, {conj}),
   implement(IArray, {toArray}),
@@ -240,8 +147,6 @@ export default effect(
   implement(ICounted, {count}),
   implement(IEquiv, {equiv}),
   implement(IFind, {find}),
-  implement(IContent, {contents}),
-  implement(IHierarchy, {children, descendants, sel, nextSibling, nextSiblings, prevSibling, prevSiblings, siblings, parent, parents}),
   implement(IEmptyableCollection, {empty: EmptyList.EMPTY}),
   implement(ISeq, {first, rest}),
   implement(ISeqable, {seq: identity}),

@@ -138,17 +138,7 @@ export function join(init, ...sources){ //TODO dispose
   return sink;
 }
 
-export function fork(pred, inits, source){
-  const leftSink  = observable(inits[0] || null),
-        rightSink = observable(inits[1] || null);
-  ISubscribe.sub(source, function(value){
-    const sink = pred(value) ? leftSink : rightSink;
-    IPublish.pub(sink, value);
-  });
-  return [leftSink, rightSink];
-}
-
-export function deferred(promise){
+export function fromPromise(promise){
   const sink = observable(null);
   Promise.resolve(promise).then(partial(IPublish.pub, sink));
   return sink;

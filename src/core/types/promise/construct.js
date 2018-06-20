@@ -9,3 +9,5 @@ Promise.from = promise;
 export function isPromise(self){
   return self && self instanceof Promise;
 }
+
+export {Promise};

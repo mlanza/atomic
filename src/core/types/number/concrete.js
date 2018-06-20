@@ -126,3 +126,13 @@ export function most(ns){
 export function average(ns){
   return sum(ns) / ICounted.count(ns);
 }
+
+export function measure(ns){
+  return {
+    count: ICounted.count(ns),
+    sum: sum(ns),
+    least: least(ns),
+    most: most(ns),
+    average: average(ns)
+  }
+}

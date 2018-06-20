@@ -10,7 +10,7 @@ function implement2(protocol, behavior){
 }
 
 function implement3(protocol, behavior, type){
-  protocol[REGISTRY].set(type, behavior);
+  protocol[REGISTRY].set(type, Object.assign({}, protocol[REGISTRY].get(type), behavior));
 }
 
 export function cease(protocol, type){
