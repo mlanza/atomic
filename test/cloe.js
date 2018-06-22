@@ -224,9 +224,23 @@ QUnit.test("record", function(assert){
 });
 
 QUnit.test("observable", function(assert){
+  const button = _.tag('button');
+  const tally = button("Tally");
+  const clicks = _.observable(0);
+  tally.click();
+  assert.equal(clicks |> _.deref, 0);
+  const tallied = _.click(tally);
+  _.sub(tallied, function(){
+    _.swap(clicks, _.inc);
+  });
+  _.sub(tallied, _.noop);
+  tally.click();
+  _.dispose(tallied);
+  tally.click();
   const source = _.observable(0);
-  const sink   = signals.signal(transducers.map(_.inc), null, source);
+  const sink   = signals.signal(transducers.map(_.inc), source);
   source |> _.swap(v, _.inc);
+  assert.equal(clicks |> _.deref, 1);
   assert.equal(source |> _.deref, 1);
   assert.equal(sink |> _.deref, 2);
   const bucket = _.observable([], null, _.pipe(_.get(v, 'length'), _.lt(v, 3))),

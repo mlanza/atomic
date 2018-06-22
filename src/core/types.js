@@ -44,6 +44,6 @@ export * from "./types/series";
 export * from "./types/set";
 export * from "./types/string";
 export * from "./types/spacesep";
-export * from "./types/subscriptionmonitor";
 export * from "./types/weakmap";
 export * from "./types/years";
+export * from "./types/lazypub";
