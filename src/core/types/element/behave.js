@@ -45,6 +45,7 @@ function after(self, other){
   relative ? parent.insertBefore(other, relative) : parent.prependChild(other);
   return self;
 }
+
 function matches(self, selector){
   return (isString(selector) && self.matches(selector)) || (isFunction(selector) && selector(self));
 }
@@ -68,15 +69,46 @@ function isAttrs(self){
   return !isElement(self) && isAssociative(self);
 }
 
-function on(self, key, callback){
+function on3(self, key, callback){
   self.addEventListener(key, callback);
   return function(){
     off(self, key, callback);
   }
 }
 
+function on4(self, key, selector, callback){
+  return on3(self, key, function(e){
+    if (e.target.matches(selector)) {
+      callback.call(e.target, e);
+    }
+  });
+}
+
+const on = overload(null, null, null, on3, on4);
+
 function off(self, key, callback){
   self.removeEventListener(key, callback);
+}
+
+const eventConstructors = {
+  "click": MouseEvent,
+  "mousedown": MouseEvent,
+  "mouseup": MouseEvent,
+  "mouseover": MouseEvent,
+  "mousemove": MouseEvent,
+  "mouseout": MouseEvent,
+  "focus": FocusEvent,
+  "blur": FocusEvent
+}
+
+const eventDefaults = {
+  bubbles: true
+}
+
+function trigger(self, key, options){
+  const Event = eventConstructors[key] || CustomEvent;
+  self.dispatchEvent(new Event(key, Object.assign({}, eventDefaults, options)));
+  return self;
 }
 
 function contents(self){
@@ -303,7 +335,7 @@ export default effect(
   implement(IAppendable, {append: conj}),
   implement(IPrependable, {prepend}),
   implement(ICollection, {conj}),
-  implement(IEvented, {on, off}),
+  implement(IEvented, {on, off, trigger}),
   implement(ILookup, {lookup}),
   implement(IMap, {dissoc, keys, vals}),
   implement(IAssociative, {assoc, contains}));

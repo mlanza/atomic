@@ -4,100 +4,69 @@
 * When building an application from a signal graph there is a tendency to think that events are no longer relevant, that everything must be a signal, but this is inappropriate.  Both can be appropriate.  Use events when there is no reason for an initial value.
 */
 
-import {implement, partial, observable, publisher, subscriptionMonitor, slice} from "./core/types";
-import {map} from "./transducers";
+import {implement, partial, observable, publisher, lazyPub, slice, event, map, mapa, apply} from "./core/types";
+import * as t from "./transducers";
 import {IEvented, IPublish, ISubscribe, IDisposable} from "./core/protocols";
-import {doto, overload, identity, constantly} from "./core/core";
-
-function duct(sink, xf, source){
-  const unsub = ISubscribe.sub(source, partial(xf(IPublish.pub), sink));
-  return doto(sink,
-    implement(IDisposable, {dispose: unsub}));
-}
+import {doto, effect, overload, identity, constantly} from "./core/core";
 
 function signal2(xf, source){
   return signal3(xf, null, source);
 }
 
 function signal3(xf, init, source){
-  return duct(observable(init), xf, source);
+  return lazyPub(observable(init), xf, source);
 }
 
 export const signal = overload(null, null, signal2, signal3);
 
-export function event3(el, key, init){
-  return event4(el, key, init, identity);
-}
-
-export function event4(el, key, init, transform){
-  let unsub = null;
-  function dispose(){
-    unsub && unsub();
-    unsub = null;
-  }
-  const publ = subscriptionMonitor(publisher(), function(active){
-    dispose();
-    unsub = active ? IEvented.on(el, key, function(e){
-      IPublish.pub(sink, transform(e));
-    }) : null;
-  });
-  const sink = observable(init, publ);
-  return doto(sink,
-    implement(IDisposable, {dispose: dispose}));
-}
-
-export const event = overload(null, null, null, event3, event4);
-
 export function mousemove(el){
-  return event(el, "mousemove", [], function(e){
+  return signal(observable([]), t.map(function(e){
     return [e.clientX, e.clientY];
-  });
+  }), event(el, "mousemove"));
 }
 
 export function keydown(document){
-  return event(document, "keydown", null);
+  return join(observable(null), event(document, "keydown"));
 }
 
 export function keyup(document){
-  return event(document, "keyup", null);
+  return join(observable(null), event(document, "keyup"));
 }
 
 export function keypress(document){
-  return event(document, "keypress", null);
+  return join(observable(null), event(document, "keypress"));
 }
 
 export function hashchange(window){
-  return event(window, "hashchange", "", function(){
+  return signal(observable(""), t.map(function(e){
     return location.hash;
-  });
+  }), event(window, "hashchange"));
 }
 
 export function change(el){
-  return event(el, "change", el.value, function(){
+  return signal(observable(el.value), t.map(function(){
     return el.value;
-  });
+  }), event(el, "change"));
 }
 
 export function input(el){
-  return event(el, "input", el.value, function(){
+  return signal(observable(el.value), t.map(function(){
     return el.value;
-  });
+  }), event(el, "input"));
 }
 
 export function focus(el){
-  return join(el === document.activeElement,
-    event(el, "focus", null, constantly(true)),
-    event(el, "blur" , null, constantly(false)));
+  const sink = observable(el === document.activeElement);
+  return join(sink,
+    signal(sink, t.map(constantly(true)), event(el, "focus")),
+    signal(sink, t.map(constantly(false)), event(el, "blur")));
 }
 
 export function calc(f, ...sources){
-  const sink  = observable(null),
-        blank = {};
-  let initialized = false,
-      state = [];
-  sources.forEach(function(){
-    state.push(blank);
-  });
+  const blank = {},
+        sink  = observable(mapa(constantly(blank), sources));
+  let initialized = false, state = [];
+
   sources.forEach(function(source, idx){
     ISubscribe.sub(source, function(value){
       state = slice(state);
@@ -110,7 +79,15 @@ export function calc(f, ...sources){
       }
     });
   });
-  return sink;
+  return lazyPublication(sink, function(sink){
+    return apply(effect, mapIndexed(function(idx, source){
+      return ISubscribe.sub(source, function(value){
+        swap(sink, function(state){
+          return assoc(state, idx, value);
+        });
+      });
+    }, sources));
+  })
 }
 
 function hist2(size, source){
@@ -129,13 +106,13 @@ function hist2(size, source){
 
 export const hist = overload(null, partial(hist2, 2), hist2);
 
-export function join(init, ...sources){ //TODO dispose
-  const sink  = observable(init || null),
-        relay = partial(IPublish.pub, sink);
-  sources.forEach(function(source){
-    ISubscribe.sub(source, relay);
+export function join(sink, ...sources){ //TODO dispose
+  const send = partial(IPublish.pub, sink);
+  return lazyPublication(sink, function(sink){
+    return effect.apply(null, map(function(source){
+      return ISubscribe.sub(source, send);
+    }, sources));
   });
-  return sink;
 }
 
 export function fromPromise(promise){

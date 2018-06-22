@@ -116,7 +116,12 @@ function reducekv(self, xf, init){
   }, init);
 }
 
+function deref(self){
+  return self.valueOf();
+}
+
 export default effect(
+  implement(IDeref, {deref}),
   implement(IBounds, {start: identity, end: identity}),
   implement(ISeqable, {seq: identity}),
   implement(IReduce, {reduce}),

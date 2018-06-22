@@ -128,7 +128,7 @@ export function unspread(f){
 
 export function once(f){
   const pending = {};
-  let result  = pending;
+  let result = pending;
   return function(...args){
     if (result === pending){
       result = f(...args);
