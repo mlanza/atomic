@@ -137,6 +137,12 @@ export function once(f){
   }
 }
 
+export function applyTo(...args){
+  return function(f){
+    return f.apply(this, args);
+  }
+}
+
 export function intercept(fallback, pred, receiver){
   const next = fallback || function(){
     throw new Error("No fallback function found.");

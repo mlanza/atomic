@@ -11,10 +11,6 @@ const stooges = ["Larry","Curly","Moe"],
       court   = {jack: 11, queen: 12, king: 13},
       worth   = {pieces: pieces, court: court};
 
-_.benchmark(200, function(){
-  return [_.get(court, "jack"), _.get(null, "jack"), _.equiv(1, 1)];
-}).then(_.log);
-
 QUnit.test("dom", function(assert){
   const {ul, li, div, span} = _.tags("ul", "li", "div", "span");
   const duo = _.frag() |> _.append(v, div("Abbott")) |> _.append(v, _.tag("div", "Costello"));
@@ -234,7 +230,7 @@ QUnit.test("observable", function(assert){
   tally.click();
   assert.equal(clicks |> _.deref, 0);
   const tallied = _.click(tally);
-  _.sub(tallied, function(){
+  _.sub(talliedlied, function(){
     _.swap(clicks, _.inc);
   });
   _.sub(tallied, _.noop);
