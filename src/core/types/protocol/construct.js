@@ -1,7 +1,8 @@
 import {overload, obj, constantly} from '../../core';
 import {protocolLookupError} from '../protocollookuperror/construct';
 import Nil from '../nil/construct';
-import {lazySeq} from '../lazyseq/construct';
+
+const BLANK = {};
 
 export const REGISTRY  = window.Symbol ? Symbol("Registry")  : "__registry";
 export const TEMPLATE  = window.Symbol ? Symbol("Template")  : "__template";
@@ -39,26 +40,6 @@ function specified(self){
   return self == null || self[SPECIFIED];
 }
 
-function inheritance(self, protocol, specific){
-  if (self == null) {
-    return lazySeq(Nil, constantly(lazySeq(null)));
-  } else if (!specific) {
-    const specified = self[SPECIFIED];
-    if (specified) {
-      return lazySeq(specified, function(){
-        return inheritance(self, protocol, true);
-      });
-    } else {
-      return inheritance(self, protocol, true);
-    }
-  } else {
-    return lazySeq(self.constructor, function(){
-      const proto = Object.getPrototypeOf(self);
-      return proto && proto.constructor === Object ? lazySeq(null) : inheritance(proto, protocol, true);
-    });
-  }
-}
-
 export function reifiable(properties){
   function Reifiable(properties){
     Object.assign(this, properties);
@@ -78,28 +59,30 @@ function satisfies1(protocol){
 
 function satisfies2(protocol, obj){
   const registry = protocol[REGISTRY];
-  let result = inheritance(obj, protocol);
-  while(result.head){
-    const found = registry.get(result.head);
-    if (found) {
-      return found;
+  let memo   = obj,
+      result = memo == null ? registry.get(Nil) : registry.get(memo[SPECIFIED]);
+  while(!result){
+    result = registry.get(memo.constructor);
+    memo   = Object.getPrototypeOf(memo);
+    if (memo == null || memo.constructor === Object) {
+      break;
     }
-    result = result.tail();
   }
-  return null;
+  return result;
 }
 
 function satisfies3(protocol, method, obj){
   const registry = protocol[REGISTRY];
-  let result = inheritance(obj, protocol);
-  while(result.head){
-    const found = (registry.get(result.head) || {})[method];
-    if (found) {
-      return found;
+  let memo   = obj,
+      result = memo == null ? registry.get(Nil) : registry.get(memo[SPECIFIED]);
+  while(!(result || BLANK)[method]){
+    result = registry.get(memo.constructor);
+    memo   = Object.getPrototypeOf(memo);
+    if (memo == null || memo.constructor === Object) {
+      break;
     }
-    result = result.tail();
   }
-  return (protocol[TEMPLATE] || {})[method];
+  return (result || protocol[TEMPLATE] || BLANK)[method];
 }
 
 export const satisfies = overload(null, satisfies1, satisfies2, satisfies3);

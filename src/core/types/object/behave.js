@@ -1,6 +1,6 @@
 import {constantly, effect, identity} from '../../core';
 import {implement} from '../protocol';
-import {IComparable, IYank, IArray, IDecode, ISet, INext, ICollection, IEncode, IEquiv, IMapEntry, IReduce, IKVReduce, ISeqable, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, IFn, IMap, ISeq, IDescriptive, IObject, ICloneable, IInclusive} from '../../protocols';
+import {IComparable, IYank, IArray, IDecode, ISet, INext, ICollection, IEncode, IEquiv, IMapEntry, IReduce, IKVReduce, ISeqable, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, IFn, IMap, ISeq, IDescriptive, IObject, ICloneable, IInclusive, isDescriptive} from '../../protocols';
 import {reduced} from '../reduced';
 import {lazySeq, into} from '../lazyseq';
 import {iequiv} from '../array/behave';
@@ -22,9 +22,9 @@ function yank(self, entry){
 }
 
 function compare(self, other){ //assume like keys, otherwise use your own comparator!
-  return IEquiv.equiv(self, other) ? 0 : IReduce.reduce(IMap.keys(self), function(memo, key){
+  return IEquiv.equiv(self, other) ? 0 : isDescriptive(other) ? IReduce.reduce(IMap.keys(self), function(memo, key){
     return memo == 0 ? IComparable.compare(ILookup.lookup(self, key), ILookup.lookup(other, key)) : reduced(memo);
-  }, 0);
+  }, 0) : -1;
 }
 
 function conj(self, entry){
@@ -36,7 +36,7 @@ function conj(self, entry){
 }
 
 function equiv(self, other){
-  return ICounted.count(IMap.keys(self)) === ICounted.count(IMap.keys(other)) && IReduce.reduce(IMap.keys(self), function(memo, key){
+  return isDescriptive(other) && ICounted.count(IMap.keys(self)) === ICounted.count(IMap.keys(other)) && IReduce.reduce(IMap.keys(self), function(memo, key){
     return memo ? IEquiv.equiv(ILookup.lookup(self, key), ILookup.lookup(other, key)) : reduced(memo);
   }, true);
 }
@@ -88,15 +88,23 @@ function next(self){
 }
 
 function dissoc(self, key){
-  const result = clone(self);
-  delete result[key];
-  return result;
+  if (IAssociative.contains(self, key)) {
+    const result = clone(self);
+    delete result[key];
+    return result;
+  } else {
+    return self;
+  }
 }
 
 function assoc(self, key, value){
-  const result = clone(self);
-  result[key] = value;
-  return result;
+  if (IEquiv.equiv(ILookup.lookup(self, key), value)) {
+    return self;
+  } else {
+    const result = clone(self);
+    result[key] = value;
+    return result;
+  }
 }
 
 function contains(self, key){
