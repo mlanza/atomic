@@ -230,7 +230,7 @@ QUnit.test("observable", function(assert){
   tally.click();
   assert.equal(clicks |> _.deref, 0);
   const tallied = _.click(tally);
-  _.sub(talliedlied, function(){
+  _.sub(tallied, function(){
     _.swap(clicks, _.inc);
   });
   _.sub(tallied, _.noop);
