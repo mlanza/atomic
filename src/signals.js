@@ -4,10 +4,14 @@
 * When building an application from a signal graph there is a tendency to think that events are no longer relevant, that everything must be a signal, but this is inappropriate.  Both can be appropriate.  Use events when there is no reason for an initial value.
 */
 
-import {implement, partial, observable, publisher, lazyPub, slice, event, map, mapa, apply} from "./core/types";
+import {implement, isDeref, filtera, notEq, get, detect, distinct, comp, spread, partial, observable, publisher, lazyPub, slice, event, map, mapa, mapIndexed, apply, assoc, swap} from "./core";
 import * as t from "./transducers";
-import {IEvented, IPublish, ISubscribe, IDisposable} from "./core/protocols";
+import {IEvented, IPublish, ISubscribe, ICollection, IDisposable} from "./core/protocols";
 import {doto, effect, overload, identity, constantly} from "./core/core";
+
+function signal1(source){
+  return signal3(t.map(identity), null, source);
+}
 
 function signal2(xf, source){
   return signal3(xf, null, source);
@@ -17,42 +21,61 @@ function signal3(xf, init, source){
   return lazyPub(observable(init), xf, source);
 }
 
-export const signal = overload(null, null, signal2, signal3);
+export const signal = overload(null, signal1, signal2, signal3);
 
 export function mousemove(el){
-  return signal(observable([]), t.map(function(e){
+  return signal(t.map(function(e){
     return [e.clientX, e.clientY];
-  }), event(el, "mousemove"));
+  }), [], event(el, "mousemove"));
 }
 
-export function keydown(document){
-  return join(observable(null), event(document, "keydown"));
+export function keydown(el){
+  return signal(event(el, "keydown"));
 }
 
-export function keyup(document){
-  return join(observable(null), event(document, "keyup"));
+export function keyup(el){
+  return signal(event(el, "keyup"));
 }
 
-export function keypress(document){
-  return join(observable(null), event(document, "keypress"));
+export function keypress(el){
+  return signal(event(el, "keypress"));
+}
+
+export function scan(f, init, source){
+  let memo = init;
+  return signal(t.map(function(value){
+    memo = f(memo, value);
+    return memo;
+  }), init, source);
+}
+
+export function pressed(el){
+  return signal(t.dedupe(), [], scan(function(memo, value){
+    if (value.type === "keyup") {
+      memo = filtera(partial(notEq, value.key), memo);
+    } else if (memo.indexOf(value.key) === -1) {
+      memo = ICollection.conj(memo, value.key);
+    }
+    return memo;
+  }, [], join(publisher(), keydown(el), keyup(el))));
 }
 
 export function hashchange(window){
-  return signal(observable(""), t.map(function(e){
+  return signal(t.map(function(e){
     return location.hash;
-  }), event(window, "hashchange"));
+  }), "", event(window, "hashchange"));
 }
 
 export function change(el){
-  return signal(observable(el.value), t.map(function(){
+  return signal(t.map(function(){
     return el.value;
-  }), event(el, "change"));
+  }), el.value, event(el, "change"));
 }
 
 export function input(el){
-  return signal(observable(el.value), t.map(function(){
+  return signal(t.map(function(){
     return el.value;
-  }), event(el, "input"));
+  }), el.value, event(el, "input"));
 }
 
 export function focus(el){
@@ -65,21 +88,9 @@ export function focus(el){
 export function calc(f, ...sources){
   const blank = {},
         sink  = observable(mapa(constantly(blank), sources));
-  let initialized = false, state = [];
-
-  sources.forEach(function(source, idx){
-    ISubscribe.sub(source, function(value){
-      state = slice(state);
-      state[idx] = value;
-      if (!initialized){
-        initialized = state.indexOf(blank) === -1;
-      }
-      if (initialized){
-        IPublish.pub(sink, f.apply(null, state));
-      }
-    });
-  });
-  return lazyPublication(sink, function(sink){
+  return signal(comp(t.filter(function(xs){
+    return !detect(_.partial(_.eq, blank), xs);
+  }), t.map(spread(f))), lazyPub(sink, function(sink){
     return apply(effect, mapIndexed(function(idx, source){
       return ISubscribe.sub(source, function(value){
         swap(sink, function(state){
@@ -87,7 +98,7 @@ export function calc(f, ...sources){
         });
       });
     }, sources));
-  })
+  }));
 }
 
 function hist2(size, source){
@@ -108,8 +119,8 @@ export const hist = overload(null, partial(hist2, 2), hist2);
 
 export function join(sink, ...sources){ //TODO dispose
   const send = partial(IPublish.pub, sink);
-  return lazyPublication(sink, function(sink){
-    return effect.apply(null, map(function(source){
+  return lazyPub(sink, function(sink){
+    return effect.apply(null, mapa(function(source){
       return ISubscribe.sub(source, send);
     }, sources));
   });

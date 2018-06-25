@@ -2,7 +2,7 @@ import {constantly, overload, identity, complement} from "./core/core";
 import {comp, partial} from "./core/types/function/concrete";
 import {isSome} from "./core/types/nil/construct";
 import {reduced} from "./core/types/reduced";
-import {ISeqable, IReduce} from "./core/protocols";
+import {IEquiv, ISeqable, IReduce} from "./core/protocols";
 
 export function map(f){
   return function(xf){
@@ -51,7 +51,7 @@ export function dedupe(){
   return function(xf){
     var last;
     return overload(xf, xf, function(memo, value){
-      const result = value === last ? memo : xf(memo, value);
+      const result = IEquiv.equiv(value, last) ? memo : xf(memo, value);
       last = value;
       return result;
     });
