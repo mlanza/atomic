@@ -42,12 +42,12 @@ export function each(f, xs){
   }
 }
 
-export function juxts(f, ...fs){
-  return arguments.length ? function(x){
-    return lazySeq(f(x), function(){
-      return apply(juxts, fs)(x);
-    });
-  } : constantly(EmptyList.EMPTY);
+export function seek(...fs){
+  return function(...args){
+    return IReduce.reduce(function(memo, f){
+      return memo == null ? f(...args) : reduced(memo);
+    }, null, fs);
+  }
 }
 
 export function some(f, coll){
@@ -416,6 +416,7 @@ export const detect      = comp(ISeq.first, filter);
 export const mapa        = comp(IArray.toArray, map);
 export const butlast     = partial(dropLast, 1);
 export const initial     = butlast;
+export const eachIndexed = indexed(each);
 export const mapIndexed  = indexed(map);
 export const keepIndexed = indexed(keep);
 export const splitAt     = juxt(take, drop);

@@ -112,11 +112,10 @@ export function see(about){
 }
 
 export function flip(f){
-  return function(...args){
-    return f.apply(this, args.reverse());
+  return function(b, a, ...args){
+    return f.apply(this, [a, b].concat(args));
   }
 }
-
 
 function fnil(f, ...substitutes){
   return function(...args){
