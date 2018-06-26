@@ -13,7 +13,6 @@ export * from "./types/element";
 export * from "./types/error";
 export * from "./types/function";
 export * from "./types/guid";
-export * from "./types/hash";
 export * from "./types/htmlcollection";
 export * from "./types/htmldocument";
 export * from "./types/indexedseq";
