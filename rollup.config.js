@@ -2,15 +2,16 @@ import babel from 'rollup-plugin-babel';
 import json  from 'rollup-plugin-json';
 
 export default {
-  input: 'src/main.js',
+  input: 'src/cloe.js',
   output: {
     file: 'dist/cloe.js',
     format: 'iife',
-    name: "_",
+    name: "Cloe",
     globals: {
       "immutable": "Immutable"
     }
   },
+  external: ["immutable"],
   plugins: [
     babel({
       exclude: 'node_modules/**'
@@ -20,6 +21,5 @@ export default {
       exclude: [ 'node_modules/foo/**', 'node_modules/bar/**' ],
       indent: '  '
     })
-  ],
-  external: ["immutable"]
+  ]
 };

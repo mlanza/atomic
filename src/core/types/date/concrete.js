@@ -3,7 +3,7 @@ import {intercept} from '../../core';
 import {comp} from '../../types/function/concrete';
 import {selectKeys} from '../../types/object/concrete';
 import {isNumber} from '../../types/number/concrete';
-import {into} from '../../types/lazyseq/concrete';
+import {into} from '../../types/lazy-seq/concrete';
 
 function trim(obj){ //TODO protocol, compact on sequence, trim on string?
   return IKVReduce.reduce(obj, function(memo, key, value){

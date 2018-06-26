@@ -1,8 +1,8 @@
 import {effect} from '../../core';
 import {implement} from '../protocol';
 import {ISeq, ISeqable, IEncode, IAssociative, IArray} from '../../protocols';
-import EmptyList from '../emptylist/construct';
-import behave from '../lazyseq/behave';
+import EmptyList from '../empty-list/construct';
+import behave from '../lazy-seq/behave';
 
 function seq(self){
   return self === EmptyList.EMPTY ? null : self;

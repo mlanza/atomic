@@ -1,7 +1,7 @@
 import {ISeqable, ISeq, IArray} from '../../protocols';
 import {identity, constantly, overload, unspread} from "../../core";
-import {lazySeq} from "../../types/lazyseq/construct";
-import EmptyList from '../emptylist/construct';
+import {lazySeq} from "../../types/lazy-seq/construct";
+import EmptyList from '../empty-list/construct';
 
 function filter(pred, xs){ //duplicated to break dependencies
   const coll = ISeqable.seq(xs);

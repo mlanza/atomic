@@ -2,7 +2,7 @@ import {overload, partial} from '../../core';
 import {ISeq} from '../../protocols';
 import Promise from '../promise/construct';
 import {period} from '../period/construct';
-import {mapa, sort, asc} from '../lazyseq/concrete';
+import {mapa, sort, asc} from '../lazy-seq/concrete';
 import {measure} from '../number/concrete';
 
 export default function Benchmark(operation, result, period, duration){

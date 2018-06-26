@@ -1,5 +1,5 @@
 import {isSequential} from '../../protocols';
-import {distinct, compact} from "../lazyseq/concrete";
+import {distinct, compact} from "../lazy-seq/concrete";
 import {cons} from "../list/construct";
 
 export default function Members(items){

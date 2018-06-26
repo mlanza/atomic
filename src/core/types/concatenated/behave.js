@@ -4,8 +4,8 @@ import {concatenated, concat} from '../../types/concatenated/construct';
 import {isReduced, unreduced} from '../../types/reduced';
 import {IArray, ICollection, INext, ISeq, ICounted, ISeqable, IIndexed, IReduce, ISequential} from '../../protocols';
 import {apply} from '../../types/function/concrete';
-import EmptyList from '../emptylist';
-import {ireduce, iterable} from '../lazyseq/behave';
+import EmptyList from '../empty-list';
+import {ireduce, iterable} from '../lazy-seq/behave';
 import {encodeable} from '../record/behave';
 
 function conj(self, x){

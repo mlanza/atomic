@@ -1,6 +1,6 @@
 import {overload, identity, partial} from "../core";
 import {isSequential, isDescriptive, IObject, ISeq, IAssociative, IReduce, IKVReduce, IEmptyableCollection, ICollection, ISeqable} from "../protocols";
-import {some, into, best} from "../types/lazyseq/concrete";
+import {some, into, best} from "../types/lazy-seq/concrete";
 import {slice} from "../types/array/concrete";
 import {apply} from "../types/function/concrete";
 import {concat} from "../types/concatenated";
