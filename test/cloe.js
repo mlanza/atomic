@@ -1,10 +1,5 @@
 import {_ as v, it} from "param.macro";
-import {placeholder, reducekv, partly, map, mapa} from "../src/core";
-import * as _ from "../src/core";
-import * as signals from "../src/signals";
-import * as transducers from "../src/transducers";
-
-export default Object.assign(placeholder, {signals, transducers});
+import * as _ from "cloe";
 
 const stooges = ["Larry","Curly","Moe"],
       pieces  = {pawn: 1, knight: 3, bishop: 3, rook: 5, queen: 10, king: Infinity},
@@ -17,7 +12,7 @@ QUnit.test("dom", function(assert){
   const who = div(_.get(v, "givenName"), " ", _.get(v, "surname"));
   const template = _.frag(
     ul(
-      map(function([id, person]){
+      _.map(function([id, person]){
         return li({id: id}, who(person));
       }, v)));
   const stooges = template({
@@ -51,9 +46,9 @@ QUnit.test("dom", function(assert){
 });
 
 QUnit.test("transducers", function(assert){
-  assert.deepEqual([1,2,3] |> _.cycle |> _.into([], _.comp(transducers.take(4), transducers.map(_.inc)), v), [2,3,4,2]);
-  assert.deepEqual([1, 3, 2, 2, 3] |> _.into([], transducers.dedupe(), v), [1,3,2,3]);
-  assert.deepEqual([1, 3, 2, 2, 3] |> _.into([], transducers.filter(_.isEven), v), [2,2]);
+  assert.deepEqual([1,2,3] |> _.cycle |> _.into([], _.comp(_.transducers.take(4), _.transducers.map(_.inc)), v), [2,3,4,2]);
+  assert.deepEqual([1, 3, 2, 2, 3] |> _.into([], _.transducers.dedupe(), v), [1,3,2,3]);
+  assert.deepEqual([1, 3, 2, 2, 3] |> _.into([], _.transducers.filter(_.isEven), v), [2,2]);
 });
 
 QUnit.test("iinclusive", function(assert){
@@ -238,7 +233,7 @@ QUnit.test("observable", function(assert){
   _.dispose(tallied);
   tally.click();
   const source = _.observable(0);
-  const sink   = signals.signal(transducers.map(_.inc), source);
+  const sink   = _.signals.signal(_.transducers.map(_.inc), source);
   source |> _.swap(v, _.inc);
   assert.equal(clicks |> _.deref, 1);
   assert.equal(source |> _.deref, 1);
@@ -344,9 +339,3 @@ QUnit.test("unless", function(assert){
   assert.equal(odd(1), 1);
   assert.equal(odd(2), 3);
 });
-
-//convenience for executing partially-applied functions from repl.
-reducekv(function(memo, key, f){
-  memo[key] = partly(f);
-  return memo;
-}, placeholder, _);

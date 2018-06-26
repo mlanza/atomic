@@ -1,5 +1,5 @@
 import {overload, obj, constantly} from '../../core';
-import {protocolLookupError} from '../protocollookuperror/construct';
+import {protocolLookupError} from '../protocol-lookup-error/construct';
 import Nil from '../nil/construct';
 
 const BLANK = {};

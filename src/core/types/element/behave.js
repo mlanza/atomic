@@ -1,34 +1,34 @@
 import {identity, constantly, effect, overload} from '../../core';
 import {implement} from '../protocol';
 import {isAssociative, isSequential, IValue, IText, IHtml, IHideable, IMatch, IYank, IInclusive, IInsertable, IArray, IAppendable, IPrependable, IEvented, IAssociative, IMap, IEquiv, ICloneable, ICollection, INext, ISeq, ISeqable, IIndexed, ICounted, ILookup, IReduce, IEmptyableCollection, IHierarchy, IContent} from '../../protocols';
-import {each, mapcat} from '../lazyseq/concrete';
-import EmptyList from '../emptylist/construct';
+import {each, mapcat} from '../lazy-seq/concrete';
+import EmptyList from '../empty-list/construct';
 import {concat} from '../concatenated/construct';
 import {cons} from '../list/construct';
-import {lazySeq} from '../lazyseq/construct';
-import {mapa, detect, compact, distinct, filter} from '../lazyseq/concrete';
+import {lazySeq} from '../lazy-seq/construct';
+import {mapa, detect, compact, distinct, filter} from '../lazy-seq/concrete';
 import {comp} from '../function/concrete';
 import {isObject} from '../object/construct';
 import {isString} from '../string/construct';
 import {isFunction} from '../function/construct';
 import {reduced} from '../reduced/construct';
-import {nestedattrs} from '../nestedattrs/construct';
+import {nestedAttrs} from '../nested-attrs/construct';
 import {trim, split, str} from '../string/concrete';
 import Element, {isElement} from './construct';
 
 const hidden = ["display", "none"];
 
 function toggle(self){
-  return transpose(nestedattrs(self, "style"), hidden);
+  return transpose(nestedAttrs(self, "style"), hidden);
 }
 
 function hide(self){
-  ICollection.conj(nestedattrs(self, "style"), hidden);
+  ICollection.conj(nestedAttrs(self, "style"), hidden);
   return self;
 }
 
 function show(self){
-  IYank.yank(nestedattrs(self, "style"), hidden);
+  IYank.yank(nestedAttrs(self, "style"), hidden);
   return self;
 }
 

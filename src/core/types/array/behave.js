@@ -2,10 +2,10 @@ import {effect, identity, overload, constantly} from '../../core';
 import {implement} from '../protocol';
 import {IArray, IObject, IFunctor, IYank, IEncode, IDecode, IReversible, ISet, IMapEntry, IEquiv, IReduce, IKVReduce, IAppendable, IPrependable, IInclusive, ICollection, INext, ISeq, IFind, ISeqable, IIndexed, IAssociative, ISequential, IEmptyableCollection, IFn, ICounted, ILookup, ICloneable} from '../../protocols';
 import {reduced, unreduced, isReduced} from '../reduced';
-import {indexedSeq} from '../indexedseq';
-import {revSeq} from '../revseq';
-import {filter, mapa} from '../lazyseq/concrete';
-import {set} from '../set/construct';
+import {indexedSeq} from '../indexed-seq';
+import {revSeq} from '../rev-seq';
+import {filter, mapa} from '../lazy-seq/concrete';
+import {set} from '../immutable-set/construct';
 import Array from './construct';
 
 function reduce3(xs, xf, init){

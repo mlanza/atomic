@@ -1,4 +1,4 @@
-import {overload, identity, counter, intercept, obj} from "./core/core";
+import {overload, identity, obj} from "./core/core";
 import {duration, compact, remove, flatten, map, fragment, element, sort, set, flip, realized, comp, isNumber, detect} from "./core/types";
 import {IAppendable, IHash, IYank, IArray, IAssociative, IBounds, IConverse, ICloneable, ICollection, IComparable, IContent, ICounted, IDecode, IDeref, IDisposable, IEmptyableCollection, IEncode, IEquiv, IEvented, IFind, IFn, IFold, IFunctor, IHideable, IHierarchy, IHtml, IInclusive, IIndexed, IInsertable, IKVReduce, ILookup, IMap, IMapEntry, IMatch, INext, IObject, IOtherwise, IPrependable, IPublish, IReduce, IReset, IReversible, ISeq, ISeqable, ISet, ISteppable, ISubscribe, ISwap, IText} from "./core/protocols";
 import {fmap, fork, hash, reducing} from "./core/api";
@@ -160,8 +160,6 @@ export function leaves(self){
 }
 
 /*
-export * from "./pointfree";
-import * as _ from "./pointfree";
 
 function checkStatus(resp){
   return resp.ok ? Promise.resolve(resp) : Promise.reject(resp);

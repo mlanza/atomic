@@ -2,7 +2,7 @@ import {effect, overload, constantly, identity} from '../../core';
 import {implement} from '../protocol';
 import {IReduce, IKVReduce, ISeqable, IEncode, IBounds, IMap, IDeref, ISeq, IComparable, IEquiv, ICloneable, ILookup, IAssociative, ICollection} from '../../protocols';
 import {isNumber} from '../number';
-import {lazySeq} from '../lazyseq';
+import {lazySeq} from '../lazy-seq';
 import {days} from '../duration';
 
 function lookup(self, key){

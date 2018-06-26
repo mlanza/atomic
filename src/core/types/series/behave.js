@@ -1,7 +1,7 @@
 import {effect} from "../../core";
 import {implement} from '../protocol';
 import {IArray, IReduce, IIndexed, ISeqable, ISeq, INext, IInclusive, IAppendable, IPrependable, ICounted, ILookup, IFn, ISequential, IEmptyableCollection} from '../../protocols';
-import {iterable} from '../lazyseq/behave';
+import {iterable} from '../lazy-seq/behave';
 import {constructs} from '../function';
 
 function seq(self){

@@ -1,7 +1,7 @@
 import {overload, identity, effect} from "../../core";
 import {implement} from '../protocol';
 import {IFunctor, ISeq, INext, isSequential} from '../../protocols';
-import {mapcat} from "../lazyseq/concrete";
+import {mapcat} from "../lazy-seq/concrete";
 import {reduced} from "../reduced/construct";
 import Members, {members} from "./construct";
 import behave from "../series/behave";

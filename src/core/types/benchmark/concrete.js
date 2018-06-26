@@ -1,5 +1,5 @@
 import {overload} from '../../core';
-import {mapa, sort, asc} from '../lazyseq/concrete';
+import {mapa, sort, asc} from '../lazy-seq/concrete';
 import {benchmark} from './construct';
 import Promise from '../promise/construct';
 import {ISeq, INext} from '../../protocols';

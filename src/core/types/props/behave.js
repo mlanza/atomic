@@ -1,6 +1,6 @@
 import {constantly, identity, effect, overload} from '../../core';
 import {implement} from '../protocol';
-import {mapa, detect, compact} from '../../types/lazyseq/concrete';
+import {mapa, detect, compact} from '../../types/lazy-seq/concrete';
 import {trim, split, str} from '../../types/string/concrete';
 import {IDescriptive, ISeqable, IMap, IAssociative, ILookup, IDeref, IObject, IArray, ICounted, ICollection, IReduce, IInclusive, IYank} from '../../protocols';
 

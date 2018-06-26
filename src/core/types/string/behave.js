@@ -2,9 +2,9 @@ import {IArray, IReduce, ICollection, IHash, IEncode, IDecode, IIndexed, ISeqabl
 import {constantly, effect, identity} from "../../core";
 import {implement} from '../protocol';
 import String from './construct';
-import EmptyList from '../emptylist/construct';
+import EmptyList from '../empty-list/construct';
 import {isReduced, unreduced} from '../reduced';
-import {lazySeq} from '../lazyseq/construct';
+import {lazySeq} from '../lazy-seq/construct';
 import {iindexed} from '../array/behave';
 
 function compare(self, other){

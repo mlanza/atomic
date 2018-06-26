@@ -1,7 +1,7 @@
 import {constantly, overload} from "../../core";
 import {apply} from "../../types/function/concrete";
 import {reducing} from "../../api/reduce";
-import EmptyList from '../../types/emptylist';
+import EmptyList from '../../types/empty-list';
 import {IReduce} from '../../protocols/ireduce';
 
 export function List(head, tail){

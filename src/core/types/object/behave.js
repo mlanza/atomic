@@ -2,7 +2,7 @@ import {constantly, effect, identity} from '../../core';
 import {implement} from '../protocol';
 import {IComparable, IYank, IArray, IDecode, ISet, INext, ICollection, IEncode, IEquiv, IMapEntry, IReduce, IKVReduce, ISeqable, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, IFn, IMap, ISeq, IDescriptive, IObject, ICloneable, IInclusive, isDescriptive} from '../../protocols';
 import {reduced} from '../reduced';
-import {lazySeq, into} from '../lazyseq';
+import {lazySeq, into} from '../lazy-seq';
 import {iequiv} from '../array/behave';
 import Object from '../object/construct';
 

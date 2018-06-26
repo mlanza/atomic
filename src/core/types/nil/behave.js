@@ -1,5 +1,5 @@
 import {IFunctor, IAssociative, IOtherwise, IEncode, IDecode, IFold, IArray, IEquiv, ICollection, INext, ISeq, ISeqable, IIndexed, ICounted, ILookup, IReduce, IEmptyableCollection, ISequential} from '../../protocols';
-import EmptyList from '../../types/emptylist/construct';
+import EmptyList from '../../types/empty-list/construct';
 import {identity, constantly, effect, overload} from '../../core';
 import {implement} from '../protocol';
 import Array from '../../types/array/construct';

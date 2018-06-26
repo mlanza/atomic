@@ -1,5 +1,5 @@
 import {IPublish, IEvented} from '../../protocols';
-import {lazyPub} from "../lazypub/construct";
+import {lazyPub} from "../lazy-pub/construct";
 import {identity, overload} from "../../core";
 
 function event2(el, key){
