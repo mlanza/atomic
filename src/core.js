@@ -1,8 +1,9 @@
 import {overload, identity, obj} from "./core/core";
-import {see, actuator, executor, commandBus, messageHandler, messageProcessor, duration, compact, remove, flatten, map, fragment, element, sort, set, flip, realized, comp, isNumber, observable, detect} from "./core/types";
+import {duration, compact, remove, flatten, map, fragment, element, sort, set, flip, realized, comp, isNumber, observable, detect} from "./core/types";
 import {IAppendable, IHash, IMiddleware, IDispatch, IYank, IArray, IAssociative, IBounds, IConverse, ICloneable, ICollection, IComparable, IContent, ICounted, IDecode, IDeref, IDisposable, IEmptyableCollection, IEncode, IEquiv, IEvented, IFind, IFn, IFold, IFunctor, IHideable, IHierarchy, IHtml, IInclusive, IIndexed, IInsertable, IKVReduce, ILookup, IMap, IMapEntry, IMatch, INext, IObject, IOtherwise, IPrependable, IPublish, IReduce, IReset, IReversible, ISeq, ISeqable, ISet, ISteppable, ISubscribe, ISwap, IText} from "./core/protocols";
 import {fmap, fork, hash, reducing} from "./core/api";
 import * as T from "./core/types";
+import {_ as v} from "param.macro";
 
 export * from "./core/core";
 export * from "./core/types";
@@ -160,24 +161,6 @@ export function elapsed(self){
 export function leaves(self){
   return remove(comp(ICounted.count, IHierarchy.children), IHierarchy.descendants(self));
 }
-
-export const people = observable([{name: "Moe"}, {name: "Curly"}]);
-
-function accept(type){
-  return function(state, command){
-    return [IAssociative.assoc(command, "type", type)];
-  }
-}
-
-export const bus = commandBus([
-  messageProcessor(see("command")),
-  messageHandler({"add": actuator(people, accept("added"))}),
-  messageProcessor(see("changing")),
-  messageHandler({"added": executor(people, ICollection.conj)}),
-  messageProcessor(see("changed"))
-]);
-
-dispatch(bus, {type: "add", args: [{name: "Shemp"}]});
 
 /*
 

@@ -3,7 +3,7 @@ import {apply} from "../function";
 import {reducing} from "../../api/reduce";
 import {overload, constantly} from "../../core";
 
-export function juxtm(self, template){
+export function juxtVals(self, template){
   return IKVReduce.reducekv(template, function(memo, key, f){
     return IAssociative.assoc(memo, key, f(self));
   }, IEmptyableCollection.empty(template));

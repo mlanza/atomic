@@ -1,10 +1,46 @@
-import {_ as v, it} from "param.macro";
+import {_ as v} from "param.macro";
 import * as _ from "cloe";
 
 const stooges = ["Larry","Curly","Moe"],
       pieces  = {pawn: 1, knight: 3, bishop: 3, rook: 5, queen: 10, king: Infinity},
       court   = {jack: 11, queen: 12, king: 13},
       worth   = {pieces: pieces, court: court};
+
+QUnit.test("command bus", function(assert){
+  const people = _.observable([{name: "Moe"}, {name: "Curly"}]);
+  const logged = _.observable([]);
+
+  function log(key, value){
+    _.swap(logged, _.conj(v, [key, value]));
+  }
+
+  function accept(type){
+    return function(state, command){
+      return [_.assoc(command, "type", type)];
+    }
+  }
+
+  const publ = _.publisher();
+  const commands = _.juxtVals(v, {"add": _.actuator(v, accept("added"))});
+  const events = _.juxtVals(v, {"added": _.executor(v, _.conj)});
+
+  _.sub(publ, log("published", v));
+
+  const bus = _.commandBus([
+    _.messageProcessor(log("command", v)),
+    _.messageHandler(commands(people)),
+    _.messageProcessor(log("changing", v)),
+    _.messageHandler(events(people)),
+    _.messageProcessor(_.pub(publ, v))
+  ]);
+
+  _.dispatch(bus, {type: "add", args: [{name: "Shemp"}]});
+
+  assert.equal(_.count(_.deref(people)), 3);
+  assert.equal(_.count(_.deref(logged)), 3);
+  _.log("logged", _.deref(logged));
+
+});
 
 QUnit.test("dom", function(assert){
   const {ul, li, div, span} = _.tags("ul", "li", "div", "span");
