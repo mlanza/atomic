@@ -20,7 +20,7 @@ function first(self){
 }
 
 function rest(self){
-  return next(self) || EmptyList.EMPTY;
+  return INext.next(self) || EmptyList.EMPTY;
 }
 
 function next(self){
@@ -32,19 +32,19 @@ function conj(self, value){
 }
 
 function reduce2(coll, f){
-  let xs = seq(coll);
+  let xs = ISeqable.seq(coll);
   return xs ? IReduce.reduce(INext.next(xs), f, ISeq.first(xs)) : f();
 }
 
 function reduce3(coll, f, init){
   let memo = init,
-      xs   = seq(coll);
+      xs   = ISeqable.seq(coll);
   while(xs){
-    let memo = f(memo, first(xs));
+    memo = f(memo, ISeq.first(xs));
     if (memo instanceof Reduced) {
       return unreduced(memo);
     }
-    xs = next(xs);
+    xs = INext.next(xs);
   }
   return memo;
 }
