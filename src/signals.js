@@ -4,10 +4,16 @@
 * When building an application from a signal graph there is a tendency to think that events are no longer relevant, that everything must be a signal, but this is inappropriate.  Both can be appropriate.  Use events when there is no reason for an initial value.
 */
 
-import {implement, isDeref, filtera, notEq, get, detect, distinct, comp, spread, partial, observable, publisher, lazyPub, slice, event, map, mapa, mapIndexed, apply, assoc, swap} from "./core";
-import * as t from "./transducers";
-import {IEvented, IPublish, ISubscribe, ICollection, IDisposable} from "./core/protocols";
+import {IEvented, IPublish, ISubscribe, ICollection, IDisposable, ISwap, IAssociative} from "./core/protocols";
 import {doto, effect, overload, identity, constantly} from "./core/core";
+import {detect, filtera, mapa, mapIndexed} from "./core/types/lazy-seq/concrete";
+import {comp, apply, partial, spread} from "./core/types/function/concrete";
+import {lazyPub} from "./core/types/lazy-pub/construct";
+import {publisher} from "./core/types/publisher/construct";
+import {observable} from "./core/types/observable/construct";
+import {event} from "./core/types/element/concrete";
+import {notEq} from "./core/api/predicates";
+import * as t from "./transducers";
 
 function signal1(source){
   return signal3(t.map(identity), null, source);
@@ -93,8 +99,8 @@ export function calc(f, ...sources){
   }), t.map(spread(f))), lazyPub(sink, function(sink){
     return apply(effect, mapIndexed(function(idx, source){
       return ISubscribe.sub(source, function(value){
-        swap(sink, function(state){
-          return assoc(state, idx, value);
+        ISwap.swap(sink, function(state){
+          return IAssociative.assoc(state, idx, value);
         });
       });
     }, sources));
@@ -105,7 +111,7 @@ function hist2(size, source){
   const sink = observable([]);
   let history = [];
   ISubscribe.sub(source, function(value){
-    history = slice(history);
+    history = [...history];
     history.unshift(value);
     if (history.length > size){
       history.pop();

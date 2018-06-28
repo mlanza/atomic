@@ -13,5 +13,5 @@ export * from "./api/contents";
 export * from "./api/merge";
 export * from "./api/mergeWith";
 export * from "./api/otherwise";
-export * from "./api/patch";
+//export * from "./api/patch";
 export * from "./api/associatives";

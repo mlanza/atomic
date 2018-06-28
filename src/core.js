@@ -1,7 +1,7 @@
 import {overload, identity, obj} from "./core/core";
-import {duration, compact, remove, flatten, map, fragment, element, sort, set, flip, realized, comp, isNumber, observable, detect} from "./core/types";
-import {IAppendable, IHash, IMiddleware, IDispatch, IYank, IArray, IAssociative, IBounds, IConverse, ICloneable, ICollection, IComparable, IContent, ICounted, IDecode, IDeref, IDisposable, IEmptyableCollection, IEncode, IEquiv, IEvented, IFind, IFn, IFold, IFunctor, IHideable, IHierarchy, IHtml, IInclusive, IIndexed, IInsertable, IKVReduce, ILookup, IMap, IMapEntry, IMatch, INext, IObject, IOtherwise, IPrependable, IPublish, IReduce, IReset, IReversible, ISeq, ISeqable, ISet, ISteppable, ISubscribe, ISwap, IText} from "./core/protocols";
-import {fmap, fork, hash, reducing} from "./core/api";
+import {isEmpty, duration, compact, remove, flatten, map, fragment, element, sort, set, flip, realized, comp, isNumber, observable, detect} from "./core/types";
+import {IAppendable, IHash, IMiddleware, IDispatch, IYank, IArray, IAssociative, IBounds, IConverse, ICloneable, ICollection, IComparable, IContent, ICounted, IDecode, IDeref, IDisposable, IEmptyableCollection, IEncode, IEquiv, IEvented, IFind, IFn, IFold, IFunctor, IHideable, IHierarchy, IHtml, IInclusive, IIndexed, IInsertable, IKVReduce, ILookup, IMap, IMapEntry, IMatch, INext, IObject, IOtherwise, IPrependable, IPublish, IReduce, IReset, IReversible, ISeq, ISeqable, ISet, ISteppable, ISubscribe, ISwap, IText, IView} from "./core/protocols";
+import {unless, fmap, fork, hash, reducing} from "./core/api";
 import * as T from "./core/types";
 import {_ as v} from "param.macro";
 
@@ -11,6 +11,11 @@ export * from "./core/protocols";
 export * from "./core/api";
 export * from "./core/multimethods";
 
+export const render = IView.render;
+export const patch = IView.patch;
+export const init = IView.init;
+export const commands = IView.commands;
+export const events = IView.events;
 export const dispatch = IDispatch.dispatch;
 export const handle = IMiddleware.handle;
 export const text = IText.text;
@@ -99,6 +104,18 @@ export const appendTo  = realized(flip(IAppendable.append));
 export const prependTo = realized(flip(IPrependable.prepend));
 export const transpose = fork(IInclusive.includes, IYank.yank, ICollection.conj);
 
+function include3(self, value, want){
+  const has = IInclusive.includes(self, value);
+  const f = want ? has ? identity : ICollection.conj : IYank.yank;
+  return f(self, value);
+}
+
+function include2(self, value){
+  return include3(self, value, true);
+}
+
+export const include = overload(null, null, include2, include3);
+
 function memoize1(f){
   return memoize2(f, function(...args){
     return hash(args);
@@ -161,6 +178,11 @@ export function elapsed(self){
 export function leaves(self){
   return remove(comp(ICounted.count, IHierarchy.children), IHierarchy.descendants(self));
 }
+
+export function envelop(start, end){
+  return unless(isEmpty, comp(prepend(v, "("), append(v, ")")));
+}
+
 
 /*
 

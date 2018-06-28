@@ -1,6 +1,6 @@
 import {constantly, effect, identity} from '../../core';
 import {implement} from '../protocol';
-import {IComparable, IYank, IArray, IDecode, ISet, INext, ICollection, IEncode, IEquiv, IMapEntry, IReduce, IKVReduce, ISeqable, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, IFn, IMap, ISeq, IDescriptive, IObject, ICloneable, IInclusive, isDescriptive} from '../../protocols';
+import {IComparable, IYank, IMatch, IArray, IDecode, ISet, INext, ICollection, IEncode, IEquiv, IMapEntry, IReduce, IKVReduce, ISeqable, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, IFn, IMap, ISeq, IDescriptive, IObject, ICloneable, IInclusive, isDescriptive} from '../../protocols';
 import {reduced} from '../reduced';
 import {lazySeq, into} from '../lazy-seq';
 import {iequiv} from '../array/behave';
@@ -8,6 +8,12 @@ import Object from '../object/construct';
 
 const keys = Object.keys;
 const vals = Object.values;
+
+function matches(self, template){
+  return IKVReduce.reducekv(template, function(memo, key, value){
+    return memo ? IEquiv.equiv(ILookup.lookup(self, key), value) : reduced(memo);
+  }, true);
+}
 
 function yank(self, entry){
   const key = IMapEntry.key(entry),
@@ -174,6 +180,7 @@ export default effect(
   implement(IObject, {toObject: identity}),
   implement(IFind, {find}),
   implement(IYank, {yank}),
+  implement(IMatch, {matches}),
   //implement(ISet, {superset}),
   implement(IInclusive, {includes}),
   implement(ICollection, {conj}),

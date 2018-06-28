@@ -85,10 +85,10 @@ export function part(f, ...xs){
   }
 }
 
-export function partly(f){
-  return function(...args){
-    return part(f, ...args);
-  }
+export function partly(wrapped){
+  return Object.assign(function(...args){
+    return part(wrapped, ...args);
+  }, {wrapped});
 }
 
 export function identity(x){
@@ -112,12 +112,6 @@ export const effect = subj(doto, Infinity);
 
 export function isInstance(x, constructor){
   return x instanceof constructor;
-}
-
-export function spread(f){
-  return function(args){
-    return f(...args);
-  }
 }
 
 export function unspread(f){
