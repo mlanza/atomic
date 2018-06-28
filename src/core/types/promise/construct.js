@@ -1,3 +1,4 @@
+import Promise from "promise";
 export default Promise;
 
 function promise(handler){

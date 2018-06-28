@@ -8,6 +8,7 @@ export * from "./types/boolean";
 export * from "./types/command-bus";
 export * from "./types/message-handler";
 export * from "./types/message-processor";
+export * from "./types/component";
 export * from "./types/concatenated";
 export * from "./types/date";
 export * from "./types/document-fragment";

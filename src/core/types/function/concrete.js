@@ -8,6 +8,12 @@ import {reduced}  from "../reduced/construct";
 import {isFunction}  from "./construct";
 export {complement, partial} from "../../core";
 
+export function spread(f){
+  return function(args){
+    return f(...IArray.toArray(args));
+  }
+}
+
 export function realize(g){
   return isFunction(g) ? g() : g;
 }

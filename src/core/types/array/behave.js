@@ -160,8 +160,8 @@ function length(self){
   return self.length;
 }
 
-function nth(coll, idx, notFound){
-  return coll[idx] || notFound || null;
+function nth(coll, idx){
+  return coll[idx];
 }
 
 function encode(self, label, refstore, seed){
