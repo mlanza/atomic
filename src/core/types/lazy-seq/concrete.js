@@ -104,6 +104,12 @@ function mapN(f, ...tail){
 
 export const map  = overload(null, null, map2, map3, mapN);
 
+export function mapSome(f, pred, coll){
+  return IReduce.reduce(self, function(memo, value){
+    return pred(value) ? f(value) : value;
+  }, coll);
+}
+
 export function mapcat(f, colls){
   return concatenated(map(f, colls));
 }

@@ -12,6 +12,14 @@ export function map(f){
   }
 }
 
+export function mapSome(f, pred){
+  return function(xf){
+    return overload(xf, xf, function(memo, value){
+      return xf(memo, pred(value) ? f(value) : value);
+    });
+  }
+}
+
 export function mapcat(f){
   return comp(map(f), cat);
 }

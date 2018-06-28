@@ -15,17 +15,41 @@ export function selectKeys(self, keys){
   }, IEmptyableCollection.empty(self));
 }
 
-export function mapKeys(self, f){
+function mapSomeVals4(self, f, pred, init){
+  return IKVReduce.reducekv(self, function(memo, key, value){
+    return IAssociative.assoc(memo, key, pred(key) ? f(value) : value);
+  }, init);
+}
+
+function mapSomeVals3(self, f, pred){
+  return mapSomeVals4(self, f, pred, IEmptyableCollection.empty(self));
+}
+
+export const mapSomeVals = overload(null, null, null, mapSomeVals3, mapSomeVals4);
+
+function mapKeys3(self, f, init){
   return IKVReduce.reducekv(self, function(memo, key, value){
     return IAssociative.assoc(memo, f(key), value);
   }, IEmptyableCollection.empty(self));
 }
 
-export function mapVals(self, f){
+function mapKeys2(self, f){
+  return mapKeys3(self, f, IEmptyableCollection.empty(self));
+}
+
+export const mapKeys = overload(null, null, mapKeys2, mapKeys3);
+
+function mapVals3(self, f, init){
   return IKVReduce.reducekv(self, function(memo, key, value){
     return IAssociative.assoc(memo, key, f(value));
-  }, IEmptyableCollection.empty(self));
+  }, init);
 }
+
+function mapVals2(self, f){
+  return mapVals3(self, f, IEmptyableCollection.empty(self));
+}
+
+export const mapVals = overload(null, null, mapVals2, mapVals3);
 
 function defaults2(self, defaults){
   return IKVReduce.reducekv(self, IAssociative.assoc, defaults);
