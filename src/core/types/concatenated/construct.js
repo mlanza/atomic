@@ -2,6 +2,7 @@ import {ISeqable, ISeq, IArray} from '../../protocols';
 import {identity, constantly, overload, unspread} from "../../core";
 import {lazySeq} from "../../types/lazy-seq/construct";
 import EmptyList from '../empty-list/construct';
+import Symbol from '../symbol/construct';
 
 function filter(pred, xs){ //duplicated to break dependencies
   const coll = ISeqable.seq(xs);

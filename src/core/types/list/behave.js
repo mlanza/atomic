@@ -3,6 +3,7 @@ import {implement} from '../protocol';
 import {ISeq, ISeqable, IEncode, IAssociative, IArray} from '../../protocols';
 import EmptyList from '../empty-list/construct';
 import behave from '../lazy-seq/behave';
+import Symbol from '../symbol/construct';
 
 function seq(self){
   return self === EmptyList.EMPTY ? null : self;

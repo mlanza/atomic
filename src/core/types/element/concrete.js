@@ -1,6 +1,11 @@
-import {IPublish, IEvented} from '../../protocols';
+import {IPublish, IEvented, ICollection, IYank} from '../../protocols';
 import {lazyPub} from "../lazy-pub/construct";
 import {identity, overload} from "../../core";
+
+export function replaceWith(self, other){
+  self.replaceWith(other);
+  return self;
+}
 
 function event2(el, key){
   return event3(el, key, {});

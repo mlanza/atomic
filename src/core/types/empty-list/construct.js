@@ -1,4 +1,6 @@
 import {constantly} from "../../core";
+import Symbol from '../symbol/construct';
+
 export default function EmptyList(){
 }
 EmptyList.prototype[Symbol.toStringTag] = "EmptyList";

@@ -1,6 +1,6 @@
 import {overload, constantly, unbind} from "../../core";
 import {reducing} from "../../api/reduce";
-import {IKVReduce} from "../../protocols";
+import {IKVReduce, ITemplate} from "../../protocols";
 import String from "./construct";
 
 export function isBlank(str){
@@ -15,10 +15,8 @@ function str2(x, y){
   return str1(x) + str1(y);
 }
 
-export function template(template, obj){ //pass in object or array
-  return IKVReduce.reducekv(function(text, key, value){
-    return replace(text, new RegExp("\\{" + key + "\\}", 'ig'), value);
-  }, template, obj);
+export function template(template, ...args){
+  return ITemplate.fill(args, template);
 }
 
 export function camelToDashed(str){

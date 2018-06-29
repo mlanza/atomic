@@ -8,11 +8,12 @@ export default {
     format: 'iife',
     name: "Cloe",
     globals: {
-      "immutable": "Immutable",
-      "promise": "Promise"
+      "symbol": "Symbol",
+      "promise": "Promise",
+      "immutable": "Immutable"
     }
   },
-  external: ["immutable", "promise"],
+  external: ["immutable", "promise", "symbol"],
   plugins: [
     babel({
       exclude: 'node_modules/**'

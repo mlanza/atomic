@@ -3,6 +3,7 @@ import {implement} from '../protocol';
 import {IArray, IReversible, IEncode, ICollection, INext, ISeq, ISeqable, ISequential, IAssociative, IIndexed, IEmptyableCollection, IReduce, ICounted} from '../../protocols';
 import EmptyList from '../../types/empty-list/construct';
 import Array from '../../types/array/construct';
+import Symbol from '../symbol/construct';
 
 function encode(self, label){
   return IAssociative.assoc({data: null}, label, self[Symbol.toStringTag]);

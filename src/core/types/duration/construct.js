@@ -1,3 +1,5 @@
+import Symbol from '../symbol/construct';
+
 export default function Duration(milliseconds){
   this.milliseconds = milliseconds;
 }

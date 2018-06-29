@@ -4,7 +4,7 @@ import {IObject, IDescriptive, IFind, ICollection, IReduce, IKVReduce, INext, IA
 import {lazySeq} from '../../types/lazy-seq/construct';
 import {remove, into} from '../../types/lazy-seq/concrete';
 import Object from '../../types/object/construct';
-import {iequiv} from '../../types/array/behave';
+import {iequiv, itemplate} from '../../types/array/behave';
 
 function toObject(self){
   return into({}, self);
@@ -64,6 +64,7 @@ function reducekv(self, xf, init){
 
 export default effect(
   iequiv,
+  itemplate,
   implement(IDescriptive),
   implement(IObject, {toObject}),
   implement(IFind, {find}),

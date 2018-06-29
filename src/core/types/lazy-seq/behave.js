@@ -6,6 +6,7 @@ import {concat} from "../concatenated/construct";
 import {cons} from "../list/construct";
 import {map, detect} from "./concrete";
 import EmptyList from '../empty-list/construct';
+import Symbol from '../symbol/construct';
 
 function fmap(self, f){
   return map(f, self);

@@ -3,7 +3,7 @@ import {implement} from '../protocol';
 import {IComparable, IYank, IMatch, IArray, IDecode, ISet, INext, ICollection, IEncode, IEquiv, IMapEntry, IReduce, IKVReduce, ISeqable, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, IFn, IMap, ISeq, IDescriptive, IObject, ICloneable, IInclusive, isDescriptive} from '../../protocols';
 import {reduced} from '../reduced';
 import {lazySeq, into} from '../lazy-seq';
-import {iequiv} from '../array/behave';
+import {iequiv, itemplate} from '../array/behave';
 import Object from '../object/construct';
 
 const keys = Object.keys;
@@ -172,6 +172,7 @@ function decode(self, label, constructors){
 
 export default effect(
   iequiv,
+  itemplate,
   implement(IDescriptive),
   implement(IEquiv, {equiv}),
   implement(IDecode, {decode}),

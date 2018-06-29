@@ -1,12 +1,19 @@
 import {effect, identity, overload, constantly} from '../../core';
 import {implement} from '../protocol';
-import {IArray, IObject, IFunctor, IYank, IEncode, IDecode, IReversible, ISet, IMapEntry, IEquiv, IReduce, IKVReduce, IAppendable, IPrependable, IInclusive, ICollection, INext, ISeq, IFind, ISeqable, IIndexed, IAssociative, ISequential, IEmptyableCollection, IFn, ICounted, ILookup, ICloneable} from '../../protocols';
+import {ITemplate, IArray, IObject, IFunctor, IYank, IEncode, IDecode, IReversible, ISet, IMapEntry, IEquiv, IReduce, IKVReduce, IAppendable, IPrependable, IInclusive, ICollection, INext, ISeq, IFind, ISeqable, IIndexed, IAssociative, ISequential, IEmptyableCollection, IFn, ICounted, ILookup, ICloneable} from '../../protocols';
 import {reduced, unreduced, isReduced} from '../reduced';
 import {indexedSeq} from '../indexed-seq';
+import {replace} from '../string/concrete';
 import {revSeq} from '../rev-seq';
 import {filter, mapa} from '../lazy-seq/concrete';
 import {set} from '../immutable-set/construct';
 import Array from './construct';
+
+function fill(self, template){
+  return IKVReduce.reducekv(self, function(text, key, value){
+    return replace(text, new RegExp("\\{" + key + "\\}", 'ig'), value);
+  }, template);
+}
 
 function reduce3(xs, xf, init){
   var memo = init, to = xs.length - 1;
@@ -194,10 +201,12 @@ export const iindexed = effect(
   implement(ICounted, {count: length}));
 
 export const iequiv = implement(IEquiv, {equiv});
+export const itemplate = implement(ITemplate, {fill});
 
 export default effect(
   iindexed,
   iequiv,
+  itemplate,
   implement(ISequential),
   implement(IFunctor, {fmap}),
   implement(IEncode, {encode}),

@@ -1,6 +1,7 @@
 import {effect, partial} from '../../core';
 import {implement} from '../protocol';
 import {IFn, IAssociative, ILookup, IEncode, IAppendable, IPrependable} from '../../protocols';
+import Symbol from '../symbol/construct';
 
 export function append(f, ...applied){
   return function(...args){

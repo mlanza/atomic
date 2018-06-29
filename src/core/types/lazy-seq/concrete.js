@@ -13,6 +13,7 @@ import {str} from '../string/concrete';
 import {juxt, complement, comp, apply, partial} from '../function/concrete';
 import {lazySeq} from '../lazy-seq/construct';
 import {concat, concatenated} from "../concatenated/construct";
+import Symbol from '../symbol/construct';
 
 function transduce3(xform, f, coll){
   return transduce4(xform, f, f(), coll);
