@@ -4,6 +4,7 @@ import {IReduce, IKVReduce, ISeqable, IEncode, IBounds, IMap, IDeref, ISeq, ICom
 import {isNumber} from '../number';
 import {lazySeq} from '../lazy-seq';
 import {days} from '../duration';
+import Symbol from '../symbol/construct';
 
 function lookup(self, key){
   switch(key){

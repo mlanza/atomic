@@ -3,6 +3,7 @@ import {implement} from '../protocol';
 import {reduced} from "../reduced/construct";
 import {IReduce, IKVReduce, IEquiv, IEncode, IObject, IDescriptive, IAssociative, ISeqable, ILookup, ICounted, IMap, ISeq, IRecord, IEmptyableCollection, isRecord} from '../../protocols';
 import {constructs} from '../function';
+import Symbol from '../symbol/construct';
 
 function toObject(self){
   return self.attrs;

@@ -3,6 +3,7 @@ import {days} from '../duration/construct';
 import {midnight} from '../date/concrete';
 import {ISteppable, IComparable, IAssociative} from '../../protocols';
 import {patch} from '../../api/patch';
+import Symbol from '../symbol/construct';
 
 export function Period(start, end, step, direction){
   this.start = start;

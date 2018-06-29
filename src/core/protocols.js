@@ -51,6 +51,7 @@ export * from "./protocols/iset";
 export * from "./protocols/isteppable";
 export * from "./protocols/isubscribe";
 export * from "./protocols/iswap";
+export * from "./protocols/itemplate";
 export * from "./protocols/itext";
 export * from "./protocols/ivalue";
 export * from "./protocols/iview";

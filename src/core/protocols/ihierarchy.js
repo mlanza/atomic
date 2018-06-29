@@ -6,6 +6,7 @@ export const IHierarchy = protocol({
   closest: null,
   children: null,
   sel: null,
+  sel1: null,
   descendants: null,
   siblings: null,
   nextSibling: null,

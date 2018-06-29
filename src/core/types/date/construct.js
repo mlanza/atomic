@@ -1,4 +1,5 @@
 import {overload} from '../../core';
+import Symbol from '../symbol/construct';
 
 export default Date;
 

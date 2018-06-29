@@ -1,5 +1,6 @@
 import {overload} from '../../core';
 import {IComparable, ISteppable} from '../../protocols';
+import Symbol from '../symbol/construct';
 
 export function Range(start, end, step, direction){
   this.start = start;

@@ -1,12 +1,13 @@
 import {overload, obj, constantly} from '../../core';
 import {protocolLookupError} from '../protocol-lookup-error/construct';
 import Nil from '../nil/construct';
+import Symbol from '../symbol/construct';
 
 const BLANK = {};
 
-export const REGISTRY  = window.Symbol ? Symbol("Registry")  : "__registry";
-export const TEMPLATE  = window.Symbol ? Symbol("Template")  : "__template";
-export const SPECIFIED = window.Symbol ? Symbol("Specified") : "__specified";
+export const REGISTRY  = Symbol("Registry");
+export const TEMPLATE  = Symbol("Template");
+export const SPECIFIED = Symbol("Specified");
 
 export default function Protocol(template){
   this[REGISTRY] = new WeakMap();

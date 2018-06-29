@@ -3,6 +3,7 @@ import {apply} from "../../types/function/concrete";
 import {reducing} from "../../api/reduce";
 import EmptyList from '../../types/empty-list';
 import {IReduce} from '../../protocols/ireduce';
+import Symbol from '../symbol/construct';
 
 export function List(head, tail){
   this.head = head;

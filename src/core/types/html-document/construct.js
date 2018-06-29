@@ -1,1 +1,1 @@
-export default HTMLDocument;
+export default (window.HTMLDocument || window.Document);

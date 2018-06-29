@@ -1,5 +1,6 @@
 export * from "./api/predicates";
 export * from "./api/sel";
+export * from "./api/sel1";
 export * from "./api/fmap";
 export * from "./api/fold";
 export * from "./api/associative";

@@ -199,6 +199,10 @@ function sel(self, selector){
   }, IHierarchy.descendants(self)) : self.querySelectorAll(selector);
 }
 
+function sel1(self, selector){
+  return isFunction(selector) ? ISeq.first(IHierarchy.sel(self, selector)) : self.querySelector(selector);
+}
+
 function children(self){
   return ISeqable.seq(self.children);
 }
@@ -314,7 +318,7 @@ function reduce(self, xf, init){
   return IReduce.reduce(IHierarchy.descendants(self), xf, init);
 }
 
-export const ihierarchy = implement(IHierarchy, {parent, parents, closest, children, descendants, sel, nextSibling, nextSiblings, prevSibling, prevSiblings, siblings});
+export const ihierarchy = implement(IHierarchy, {parent, parents, closest, children, descendants, sel, sel1, nextSibling, nextSiblings, prevSibling, prevSiblings, siblings});
 export const icontents = implement(IContent, {contents});
 export const ireduce = implement(IReduce, {reduce});
 

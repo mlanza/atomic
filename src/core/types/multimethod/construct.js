@@ -1,4 +1,6 @@
-import {IFn} from "../../protocols";
+import {IFn, IEvented} from "../../protocols";
+import {doto} from "../../core";
+import {implement, specify} from "../../types/protocol";
 
 export function Multimethod(fallback, handlers){
   this.fallback = fallback;
@@ -10,15 +12,15 @@ export function multimethod(fallback){
   function fn(...args) {
     return IFn.invoke(instance, ...args);
   }
-  return new Proxy(fn, {
-    get: function(target, prop, receiver){
-      return prop === 'apply' ? fn[prop].bind(fn) : instance[prop];
-    },
-    set: function(target, prop, value){
-      instance[prop] = value;
-      return true;
-    }
-  });
+  function on(self, pred, callback){
+    return IEvented.on(instance, pred, callback);
+  }
+  function off(self, pred, callback){
+    return IEvented.off(instance, pred, callback);
+  }
+  doto(specify(fn),
+    implement(IEvented, {on,off}));
+  return fn;
 }
 
 export default Multimethod;

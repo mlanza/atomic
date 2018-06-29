@@ -8,6 +8,7 @@ import {IEvented, IPublish, ISubscribe, ICollection, IDisposable, ISwap, IAssoci
 import {doto, effect, overload, identity, constantly} from "./core/core";
 import {detect, filtera, mapa, mapIndexed} from "./core/types/lazy-seq/concrete";
 import {comp, apply, partial, spread} from "./core/types/function/concrete";
+import Promise from "./core/types/promise/construct";
 import {lazyPub} from "./core/types/lazy-pub/construct";
 import {publisher} from "./core/types/publisher/construct";
 import {observable} from "./core/types/observable/construct";
