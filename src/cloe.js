@@ -1,13 +1,15 @@
-import * as Cloe from "./core";
+import * as _ from "./core";
 import * as transducers from "./transducers";
 import * as signals from "./signals";
+import {_ as v} from "param.macro";
 
 //convenience for executing partially-applied functions without macros.
-function addPartly(target, source){
-  return Cloe.mapSomeVals(source, Cloe.partly, Cloe.isFunction, target);
-}
+const impart = _.overload(
+  null, 
+  _.mapSomeVals(v, _.partly, _.isFunction), 
+  _.mapSomeVals(v, v, _.partly, _.isFunction));
 
-export default Object.assign(addPartly(Cloe.placeholder, Cloe), {
-  transducers: addPartly({}, transducers),
-  signals: addPartly({}, signals)
+export default Object.assign(impart(_.placeholder, _), {
+  transducers: impart(transducers),
+  signals: impart(signals)
 });
