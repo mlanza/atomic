@@ -8,7 +8,6 @@ const stooges = ["Larry","Curly","Moe"],
 
 QUnit.test("command bus", function(assert){
   const people = _.observable([]);
-  const publ   = _.publisher();
 
   function accept(type){
     return function(state, command){
@@ -19,11 +18,10 @@ QUnit.test("command bus", function(assert){
   const bus =
     _.doto(
       _.commandBus(
-        _.middleware(
-          people,
-          _.juxtVals(v, {"add": _.actuator(v, accept("added"))}),
-          _.juxtVals(v, {"added": _.executor(v, _.conj)}),
-          publ), publ),
+        people,
+        _.juxtVals(v, {"add": _.actuator(v, accept("added"))}),
+        _.juxtVals(v, {"added": _.executor(v, _.conj)}),
+        _.publisher()),
       _.dispatch(v, {type: "add", args: [{name: "Moe"}]}),
       _.dispatch(v, {type: "add", args: [{name: "Curly"}]}),
       _.dispatch(v, {type: "add", args: [{name: "Shemp"}]}));
