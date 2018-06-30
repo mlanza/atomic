@@ -48,6 +48,7 @@ export * from "./protocols/iseq";
 export * from "./protocols/iseqable";
 export * from "./protocols/isequential";
 export * from "./protocols/iset";
+export * from "./protocols/istateful";
 export * from "./protocols/isteppable";
 export * from "./protocols/isubscribe";
 export * from "./protocols/iswap";
