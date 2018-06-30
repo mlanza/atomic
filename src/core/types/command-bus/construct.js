@@ -11,9 +11,15 @@ export default function CommandBus(handler, publ){
   this.publ = publ;
 }
 
-export function commandBus(handler, publ){
+function commandBus2(handler, publ){
   return new CommandBus(handler, publ);
 }
+
+function commandBus4(state, commands, events, publ){
+  return commandBus2(middleware4(state, commands, events, publ), publ);
+}
+
+export const commandBus = overload(null, null, commandBus2, null, commandBus4);
 
 function middleware1(handlers){
   const f = IReduce.reduce(IReversible.reverse(handlers), function(memo, handler){
