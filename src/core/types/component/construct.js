@@ -1,4 +1,4 @@
-import {IPublish, ISubscribe, IDispatch, IMiddleware, IView, IStateful, IAppendable} from '../../protocols';
+import {IPublish, ISubscribe, IDispatch, IMiddleware, IView, IAppendable} from '../../protocols';
 import {hist} from '../../../signals';
 import {_ as v} from "param.macro";
 
