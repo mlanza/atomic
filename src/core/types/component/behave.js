@@ -7,7 +7,7 @@ function dispatch(self, command){
 }
 
 function sub(self, callback){
-  return ISubscribe.sub(self.publ, callback);
+  return ISubscribe.sub(self.bus, callback);
 }
 
 export default effect(

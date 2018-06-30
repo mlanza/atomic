@@ -42,3 +42,14 @@ grep -R "some" --exclude-dir="*node*" .
 * Start with a basic function before lifting it into a flavor of partial application.
 * A variadic function that partially applies on the initial call, should generally accept only the primary operand on the next call.
 * Avoid using both `overload` or `curry` on the same function.  Use one or the other to achieve partial application.
+* Observe command-query segregation so that commands return no results.
+
+# Components
+
+* Commands decide whether to produce additional side effects. `State -> Command -> [Events]`
+* Events are applied as is without decision.  Listeners, however, may react and produce new side effects (commands). `State -> Event -> State`
+* Commands may be aborted.  They are piped down a channel, oft intercepted by middleware that validate and augment the command.
+* Events cannot be aborted.  They are announced to all who care.
+* While events are immutable fact, it is reasonable to pare them down to hide sensitive information when propagated to listeners.
+* That components have a bus that separate command processing from event processing lends to event replay (e.g. omitting command processing) at a later time from an event store.
+* 

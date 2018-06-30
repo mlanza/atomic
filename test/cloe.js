@@ -7,12 +7,7 @@ const stooges = ["Larry","Curly","Moe"],
       worth   = {pieces: pieces, court: court};
 
 QUnit.test("command bus", function(assert){
-  const people = _.observable([{name: "Moe"}, {name: "Curly"}]);
-  const logged = _.observable([]);
-
-  function log(key, value){
-    _.swap(logged, _.conj(v, [key, value]));
-  }
+  const people = _.observable([]);
 
   function accept(type){
     return function(state, command){
@@ -20,25 +15,18 @@ QUnit.test("command bus", function(assert){
     }
   }
 
-  const publ = _.publisher();
-  const commands = _.juxtVals(v, {"add": _.actuator(v, accept("added"))});
-  const events = _.juxtVals(v, {"added": _.executor(v, _.conj)});
-
-  _.sub(publ, log("published", v));
-
-  const bus = _.commandBus([
-    _.messageProcessor(log("command", v)),
-    _.messageHandler(commands(people)),
-    _.messageProcessor(log("changing", v)),
-    _.messageHandler(events(people)),
-    _.messageProcessor(_.pub(publ, v))
-  ]);
-
-  _.dispatch(bus, {type: "add", args: [{name: "Shemp"}]});
+  const bus =
+    _.doto(
+      _.commandBus(
+        people,
+        _.juxtVals(v, {"add": _.actuator(v, accept("added"))}),
+        _.juxtVals(v, {"added": _.executor(v, _.conj)}),
+        _.publisher()),
+      _.dispatch(v, {type: "add", args: [{name: "Moe"}]}),
+      _.dispatch(v, {type: "add", args: [{name: "Curly"}]}),
+      _.dispatch(v, {type: "add", args: [{name: "Shemp"}]}));
 
   assert.equal(_.count(_.deref(people)), 3);
-  assert.equal(_.count(_.deref(logged)), 3);
-  _.log("logged", _.deref(logged));
 
 });
 

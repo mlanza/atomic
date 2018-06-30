@@ -17,6 +17,7 @@ export * from "./types/element";
 export * from "./types/actuator";
 export * from "./types/executor";
 export * from "./types/error";
+export * from "./types/fluent";
 export * from "./types/function";
 export * from "./types/guid";
 export * from "./types/html-collection";

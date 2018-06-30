@@ -1,6 +1,6 @@
 import {overload, identity, obj} from "./core/core";
 import {classes, isEmpty, duration, compact, remove, flatten, map, fragment, element, sort, set, flip, realized, comp, isNumber, observable, detect} from "./core/types";
-import {IAppendable, IHash, ITemplate, IMiddleware, IDispatch, IYank, IArray, IAssociative, IBounds, IConverse, ICloneable, ICollection, IComparable, IContent, ICounted, IDecode, IDeref, IDisposable, IEmptyableCollection, IEncode, IEquiv, IEvented, IFind, IFn, IFold, IFunctor, IHideable, IHierarchy, IHtml, IInclusive, IIndexed, IInsertable, IKVReduce, ILookup, IMap, IMapEntry, IMatch, INext, IObject, IOtherwise, IPrependable, IPublish, IReduce, IReset, IReversible, ISeq, ISeqable, ISet, ISteppable, ISubscribe, ISwap, IText, IView} from "./core/protocols";
+import {IAppendable, IHash, ITemplate, IMiddleware, IDispatch, IYank, IArray, IAssociative, IBounds, IConverse, ICloneable, ICollection, IComparable, IContent, ICounted, IDecode, IDeref, IDisposable, IEmptyableCollection, IEncode, IEquiv, IEvented, IFind, IFn, IFold, IFunctor, IHideable, IHierarchy, IHtml, IInclusive, IIndexed, IInsertable, IKVReduce, ILookup, IMap, IMapEntry, IMatch, INext, IObject, IOtherwise, IPrependable, IPublish, IReduce, IReset, IReversible, ISeq, ISeqable, ISet, IStateful, ISteppable, ISubscribe, ISwap, IText, IView} from "./core/protocols";
 import {unless, fmap, fork, hash, reducing} from "./core/api";
 import * as T from "./core/types";
 import {_ as v} from "param.macro";
@@ -14,9 +14,9 @@ export * from "./core/multimethods";
 export const fill = flip(ITemplate.fill);
 export const render = IView.render;
 export const patch = IView.patch;
-export const init = IView.init;
-export const commands = IView.commands;
-export const events = IView.events;
+export const init = IStateful.init;
+export const commands = IStateful.commands;
+export const events = IStateful.events;
 export const dispatch = IDispatch.dispatch;
 export const handle = IMiddleware.handle;
 export const text = IText.text;
@@ -119,22 +119,18 @@ export const include = overload(null, null, include2, include3);
 
 export function addClass(self, name){
   ICollection.conj(classes(self), name);
-  return self;
 }
 
 export function removeClass(self, name){
   IYank.yank(classes(self), name);
-  return self;
 }
 
 function toggleClass2(self, name){
   transpose(classes(self), name);
-  return self;
 }
 
 function toggleClass3(self, name, want){
   include3(classes(self), name, want);
-  return self;
 }
 
 export const toggleClass = overload(null, null, toggleClass2, toggleClass3);
@@ -205,6 +201,22 @@ export function leaves(self){
 export function envelop(before, after){
   return unless(isEmpty, comp(prepend(v, before), append(v, after)));
 }
+
+function one3(self, key, callback){
+  const unsub = IEvented.on(self, key, effect(callback, function(){
+    unsub();
+  }));
+  return unsub;
+}
+
+function one4(self, key, selector, callback){
+  const unsub = IEvented.on(self, key, selector, effect(callback, function(){
+    unsub();
+  }));
+  return unsub;
+}
+
+export const one = overload(null, null, null, one3, one4);
 
 /*
 
