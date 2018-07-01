@@ -1,20 +1,14 @@
-import {overload, partial} from '../../core';
-import {REGISTRY} from "./construct";
+import {unbind} from '../../core';
+import Protocol from "./construct";
 
-export function mark(protocol){
-  return implement2(protocol, {}); //marker interface
+export const satisfies = unbind(Protocol.prototype.satisfies);
+export const specify   = unbind(Protocol.prototype.specify);
+export const implement = unbind(Protocol.prototype.implement);
+export const extend    = unbind(Protocol.prototype.extend);
+
+export function reifiable(properties){
+  function Reifiable(properties){
+    Object.assign(this, properties);
+  }
+  return new Reifiable(properties || {});
 }
-
-function implement2(protocol, behavior){
-  return partial(implement3, protocol, behavior);
-}
-
-function implement3(protocol, behavior, type){
-  protocol[REGISTRY].set(type, Object.assign({}, protocol[REGISTRY].get(type), behavior));
-}
-
-export function cease(protocol, type){
-  protocol[REGISTRY].delete(type);
-}
-
-export const implement = overload(null, mark, implement2, implement3);

@@ -1,89 +1,95 @@
-import {overload, obj, constantly} from '../../core';
+import {overload} from '../../core';
 import {protocolLookupError} from '../protocol-lookup-error/construct';
 import Nil from '../nil/construct';
 import Symbol from '../symbol/construct';
 
-const BLANK = {};
-
-export const REGISTRY  = Symbol("Registry");
-export const TEMPLATE  = Symbol("Template");
-export const SPECIFIED = Symbol("Specified");
+const TEMPLATE = Symbol("@protocol-template"),
+      INDEX    = Symbol("@protocol-index"),
+      MISSING  = Symbol("@protocol-missing");
 
 export default function Protocol(template){
-  this[REGISTRY] = new WeakMap();
+  this[INDEX] = {};
   this[TEMPLATE] = template;
-  extend(this, template);
+  this.extend(template);
 }
 
 export function protocol(template){
   return new Protocol(template);
 }
 
-function dispatcher(protocol){
+Protocol.prototype.extend = function(behavior){
+  for(var method in behavior){
+    this[method] = this.dispatch(method);
+  }
+}
+
+Protocol.prototype.dispatch = function(method){
+  const protocol = this;
+  return function(self, ...args){
+    const f = satisfies2.call(protocol, method, self) || function(){
+      throw protocolLookupError(protocol, method, self, args);
+    };
+    return f.apply(null, [self].concat(args));
+  }
+}
+
+Protocol.prototype.generate = function(){
+  const index = this[INDEX];
   return function(method){
-    return function(self){
-      const f = satisfies3(protocol, method, self) || function(){
-        throw protocolLookupError(protocol, method, self, arguments);
-      }
-      return f.apply(this, arguments);
-    }
+    const sym = index[method] || Symbol(method);
+    index[method] = sym;
+    return sym;
   }
 }
 
-export function extend(self, addition){
-  const dispatch = dispatcher(self);
-  for (var key in addition){
-    self[key] = dispatch(key);
+function specify1(behavior){
+  const protocol = this;
+  return function(target){
+    specify2.call(protocol, behavior, target);
   }
 }
 
-function specified(self){
-  return self == null || self[SPECIFIED];
-}
-
-export function reifiable(properties){
-  function Reifiable(properties){
-    Object.assign(this, properties);
+function specify2(behavior, target){
+  if (target.constructor === Object) {
+    target = Object;
   }
-  return new Reifiable(properties || {});
-}
-
-export function specify(self){
-  return self[SPECIFIED] || (self[SPECIFIED] = reifiable());
-}
-
-function satisfies1(protocol){
-  return function(...args){
-    return satisfies(protocol, ...args);
+  const keys = this.generate();
+  target[keys("__marker__")] = this;
+  for(var method in behavior){
+    target[keys(method)] = behavior[method];
   }
 }
 
-function satisfies2(protocol, obj){
-  const registry = protocol[REGISTRY];
-  let memo   = obj,
-      result = memo == null ? registry.get(Nil) : registry.get(memo[SPECIFIED]);
-  while(!result){
-    result = registry.get(memo.constructor);
-    memo   = Object.getPrototypeOf(memo);
-    if (memo == null || memo.constructor === Object) {
-      break;
-    }
-  }
-  return result;
+Protocol.prototype.specify = overload(null, specify1, specify2);
+
+export function implement0(){
+  return implement1.call(this, {}); //marker interface
 }
 
-function satisfies3(protocol, method, obj){
-  const registry = protocol[REGISTRY];
-  let memo   = obj,
-      result = memo == null ? registry.get(Nil) : registry.get(memo[SPECIFIED]);
-  while(!(result || BLANK)[method]){
-    result = registry.get(memo.constructor);
-    memo   = Object.getPrototypeOf(memo);
-    if (memo == null || memo.constructor === Object) {
-      break;
-    }
-  }
-  return (result || protocol[TEMPLATE] || BLANK)[method];
+function implement1(behavior){
+  return implement2.bind(this, behavior);
 }
 
-export const satisfies = overload(null, satisfies1, satisfies2, satisfies3);
+function implement2(behavior, target){
+  specify2.call(this, behavior, target.prototype);
+}
+
+Protocol.prototype.implement = overload(implement0, implement1, implement2);
+
+function satisfies0(){
+  return this.satisfies.bind(this);
+}
+
+function satisfies1(obj){
+  const target = obj == null ? new Nil() : obj,
+        key    = this[INDEX]["__marker__"] || MISSING;
+  return target[key] || target.constructor[key];
+}
+
+function satisfies2(method, obj){
+  const target = obj == null ? new Nil() : obj,
+        key    = this[INDEX][method] || MISSING;
+  return target[key] || target.constructor[key] || this[TEMPLATE][method];
+}
+
+Protocol.prototype.satisfies = overload(satisfies0, satisfies1, satisfies2);

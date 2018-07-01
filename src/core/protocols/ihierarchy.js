@@ -14,4 +14,4 @@ export const IHierarchy = protocol({
   prevSibling: null,
   prevSiblings: null
 });
-export const isHierarchy = satisfies(isHierarchy);
+export const isHierarchy = satisfies(IHierarchy);
