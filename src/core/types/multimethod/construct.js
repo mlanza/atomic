@@ -18,8 +18,8 @@ export function multimethod(fallback){
   function off(self, pred, callback){
     return IEvented.off(instance, pred, callback);
   }
-  doto(specify(fn),
-    implement(IEvented, {on,off}));
+  doto(fn,
+    specify(IEvented, {on,off}));
   return fn;
 }
 
