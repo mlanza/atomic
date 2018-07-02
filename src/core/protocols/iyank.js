@@ -1,5 +1,4 @@
-import {protocol, satisfies} from "../types/protocol";
-export const IYank = protocol({
-  yank: null
-});
-export const isYankable = satisfies(IYank);
+import IYank from "./iyank/instance";
+export default IYank;
+export * from "./iyank/instance";
+export * from "./iyank/concrete";

@@ -1,6 +1,4 @@
-import {protocol, satisfies} from "../types/protocol";
-export const IInsertable = protocol({
-  before: null,
-  after: null
-});
-export const isInsertable = satisfies(IInsertable);
+import IInsertable from "./iinsertable/instance";
+export default IInsertable;
+export * from "./iinsertable/instance";
+export * from "./iinsertable/concrete";

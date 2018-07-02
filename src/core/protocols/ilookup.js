@@ -1,5 +1,4 @@
-import {protocol, satisfies} from "../types/protocol";
-export const ILookup = protocol({
-  lookup: null
-});
-export const isLookup = satisfies(ILookup);
+import ILookup from "./ilookup/instance";
+export default ILookup;
+export * from "./ilookup/instance";
+export * from "./ilookup/concrete";

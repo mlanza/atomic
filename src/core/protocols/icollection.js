@@ -1,5 +1,4 @@
-import {protocol, satisfies} from "../types/protocol";
-export const ICollection = protocol({
-  conj: null
-});
-export const isCollection = satisfies(ICollection);
+import ICollection from "./icollection/instance";
+export default ICollection;
+export * from "./icollection/instance";
+export * from "./icollection/concrete";

@@ -1,5 +1,4 @@
-import {protocol, satisfies} from "../types/protocol";
-export const ISubscribe = protocol({
-  sub: null
-});
-export const isSubscribeable = satisfies(ISubscribe);
+import ISubscribe from "./isubscribe/instance";
+export default ISubscribe;
+export * from "./isubscribe/instance";
+export * from "./isubscribe/concrete";

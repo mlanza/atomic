@@ -1,5 +1,4 @@
-import {protocol, satisfies} from "../types/protocol";
-export const IInclusive = protocol({
-  includes: null
-});
-export const isInclusive = satisfies(IInclusive);
+import IInclusive from "./iinclusive/instance";
+export default IInclusive;
+export * from "./iinclusive/instance";
+export * from "./iinclusive/concrete";

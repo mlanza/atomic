@@ -1,6 +1,4 @@
-import {protocol, satisfies} from "../types/protocol";
-export const IView = protocol({
-  render: null,
-  patch: null
-});
-export const isView = satisfies(IView);
+import IView from "./iview/instance";
+export default IView;
+export * from "./iview/instance";
+export * from "./iview/concrete";

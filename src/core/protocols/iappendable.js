@@ -1,5 +1,4 @@
-import {protocol, satisfies} from "../types/protocol";
-export const IAppendable = protocol({
-  append: null
-});
-export const isAppendable = satisfies(IAppendable);
+import IAppendable from "./iappendable/instance";
+export default IAppendable;
+export * from "./iappendable/instance";
+export * from "./iappendable/concrete";

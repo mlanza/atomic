@@ -1,7 +1,4 @@
-import {protocol, satisfies} from "../types/protocol";
-export const IEvented = protocol({
-  on: null,
-  off: null,
-  trigger: null
-});
-export const isEvented = satisfies(IEvented);
+import IEvented from "./ievented/instance";
+export default IEvented;
+export * from "./ievented/instance";
+export * from "./ievented/concrete";

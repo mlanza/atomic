@@ -1,6 +1,6 @@
 import {IFn, IReduce, IKVReduce, ILookup, IAssociative, IEmptyableCollection} from "../../protocols";
 import {apply} from "../function";
-import {reducing} from "../../api/reduce";
+import {reducing} from "../../protocols/ireduce/concrete";
 import {overload, constantly} from "../../core";
 
 export function juxtVals(self, template){

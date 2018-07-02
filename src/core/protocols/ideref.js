@@ -1,5 +1,4 @@
-import {protocol, satisfies} from "../types/protocol";
-export const IDeref = protocol({
-  deref: null
-});
-export const isDeref = satisfies(IDeref);
+import IDeref from "./ideref/instance";
+export default IDeref;
+export * from "./ideref/instance";
+export * from "./ideref/concrete";

@@ -1,5 +1,4 @@
-import {protocol, satisfies} from "../types/protocol";
-export const ICloneable = protocol({
-  clone: null
-});
-export const isCloneable = satisfies(ICloneable);
+import ICloneable from "./icloneable/instance";
+export default ICloneable;
+export * from "./icloneable/instance";
+export * from "./icloneable/concrete";

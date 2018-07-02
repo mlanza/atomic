@@ -1,5 +1,4 @@
-import {protocol, satisfies} from "../types/protocol";
-export const ISeqable = protocol({
-  seq: null
-});
-export const isSeqable = satisfies(ISeqable);
+import ISeqable from "./iseqable/instance";
+export default ISeqable;
+export * from "./iseqable/instance";
+export * from "./iseqable/concrete";

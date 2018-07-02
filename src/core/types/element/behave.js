@@ -1,6 +1,6 @@
 import {identity, constantly, effect, overload} from '../../core';
-import {implement} from '../protocol';
-import {isAssociative, isSequential, IValue, IText, IHtml, IHideable, IMatch, IYank, IInclusive, IInsertable, IArray, IAppendable, IPrependable, IEvented, IAssociative, IMap, IEquiv, ICloneable, ICollection, INext, ISeq, ISeqable, IIndexed, ICounted, ILookup, IReduce, IEmptyableCollection, IHierarchy, IContent} from '../../protocols';
+import {implement, satisfies} from '../protocol';
+import {IValue, ISequential, IText, IHtml, IHideable, IMatch, IYank, IInclusive, IInsertable, IArray, IAppendable, IPrependable, IEvented, IAssociative, IMap, IEquiv, ICloneable, ICollection, INext, ISeq, ISeqable, IIndexed, ICounted, ILookup, IReduce, IEmptyableCollection, IHierarchy, IContent} from '../../protocols';
 import {each, mapcat} from '../lazy-seq/concrete';
 import EmptyList from '../empty-list/construct';
 import {concat} from '../concatenated/construct';
@@ -66,7 +66,7 @@ export function upward(f){
 }
 
 function isAttrs(self){
-  return !isElement(self) && isAssociative(self);
+  return !isElement(self) && satisfies(IAssociative, self);
 }
 
 function on3(self, key, callback){
@@ -230,7 +230,7 @@ function yank1(self){ //no jokes, please!
 }
 
 function yank2(self, node){
-  if (isSequential(node)) {
+  if (satisfies(ISequential, node)) {
     const keys = node;
     each(self.removeAttribute.bind(self), keys);
     return self;
@@ -256,7 +256,7 @@ function yank2(self, node){
 export const yank = overload(null, yank1, yank2);
 
 function includes(self, target){
-  if (isSequential(target)){
+  if (satisfies(ISequential, target)){
     const keys = target;
     return IReduce.reduce(keys, function(memo, key){
       return memo ? self.hasAttribute(key) : reduced(memo);

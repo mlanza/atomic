@@ -1,5 +1,4 @@
-import {protocol, satisfies} from "../types/protocol";
-export const IReversible = protocol({
-  reverse: null
-});
-export const isReversible = satisfies(IReversible);
+import IReversible from "./ireversible/instance";
+export default IReversible;
+export * from "./ireversible/instance";
+export * from "./ireversible/concrete";

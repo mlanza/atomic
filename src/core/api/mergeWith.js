@@ -1,7 +1,7 @@
 import {identity} from "../core";
 import {IReduce, ISeqable, IAssociative} from "../protocols";
 import {some} from "../types/lazy-seq/concrete";
-import {update} from "./associative";
+import {update} from "../protocols/iassociative/concrete";
 
 export default function mergeWith(f, init, ...maps){
   return init && some(identity, maps) ? IReduce.reduce(maps, function(memo, map){

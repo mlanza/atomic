@@ -1,5 +1,4 @@
-import {protocol, satisfies} from "../types/protocol";
-export const ISteppable = protocol({
-  step: null
-});
-export const isSteppable = satisfies(ISteppable);
+import ISteppable from "./isteppable/instance";
+export default ISteppable;
+export * from "./isteppable/instance";
+export * from "./isteppable/concrete";

@@ -1,4 +1,6 @@
-import {ISeqable, ISeq, IArray} from '../../protocols';
+import {ISeqable} from '../../protocols/iseqable';
+import {ISeq} from '../../protocols/iseq';
+import IArray from '../../protocols/iarray/instance';
 import {identity, constantly, overload, unspread} from "../../core";
 import {lazySeq} from "../../types/lazy-seq/construct";
 import EmptyList from '../empty-list/construct';

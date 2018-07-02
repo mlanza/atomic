@@ -1,5 +1,4 @@
-import {protocol, satisfies} from "../types/protocol";
-export const IIndexed = protocol({
-  nth: null
-});
-export const isIndexed = satisfies(IIndexed);
+import IIndexed from "./iindexed/instance";
+export default IIndexed;
+export * from "./iindexed/instance";
+export * from "./iindexed/concrete";

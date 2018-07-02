@@ -1,5 +1,4 @@
-import {protocol, satisfies} from "../types/protocol";
-export const IFn = protocol({
-  invoke: null
-});
-export const isFn = satisfies(IFn);
+import IFn from "./ifn/instance";
+export default IFn;
+export * from "./ifn/instance";
+export * from "./ifn/concrete";

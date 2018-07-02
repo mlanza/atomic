@@ -1,5 +1,4 @@
-import {protocol, satisfies} from "../types/protocol";
-export const IReduce = protocol({
-  reduce: null
-});
-export const isReduceable = satisfies(IReduce);
+import IReduce from "./ireduce/instance";
+export default IReduce;
+export * from "./ireduce/instance";
+export * from "./ireduce/concrete";

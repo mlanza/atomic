@@ -1,6 +1,6 @@
-import {implement} from '../protocol';
+import {implement, satisfies} from '../protocol';
 import {effect} from '../../core';
-import {IPublish, ISubscribe, IReset, ISwap, IDeref, IDisposable, isDisposable} from '../../protocols';
+import {IPublish, ISubscribe, IReset, ISwap, IDeref, IDisposable} from '../../protocols';
 
 function deref(self){
   return self.state;
@@ -29,7 +29,7 @@ function sub(self, callback){
 }
 
 function dispose(self){
-  isDisposable(self.publisher) && IDisposable.dispose(self.publisher);
+  satisfies(IDisposable, self.publisher) && IDisposable.dispose(self.publisher);
 }
 
 export default effect(

@@ -1,3 +1,4 @@
-import {protocol, satisfies} from "../types/protocol";
-export const ISequential = protocol();
-export const isSequential = satisfies(ISequential);
+import ISequential from "./isequential/instance";
+export default ISequential;
+export * from "./isequential/instance";
+export * from "./isequential/concrete";

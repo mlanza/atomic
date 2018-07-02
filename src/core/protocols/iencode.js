@@ -1,5 +1,4 @@
-import {protocol, satisfies} from "../types/protocol";
-export const IEncode = protocol({
-  encode: null
-});
-export const canEncode = satisfies(IEncode);
+import IEncode from "./iencode/instance";
+export default IEncode;
+export * from "./iencode/instance";
+export * from "./iencode/concrete";

@@ -1,9 +1,4 @@
-import {overload} from "../core";
-import {protocol, satisfies} from "../types/protocol";
-function fmap(self, f){
-  return f(self);
-}
-export const IFunctor = protocol({
-  fmap: fmap
-});
-export const isFunctor = satisfies(IFunctor);
+import IFunctor from "./ifunctor/instance";
+export default IFunctor;
+export * from "./ifunctor/instance";
+export * from "./ifunctor/concrete";

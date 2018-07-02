@@ -1,5 +1,4 @@
-import {protocol, satisfies} from "../types/protocol";
-export const IDisposable = protocol({
-  dispose: null
-});
-export const isDisposable = satisfies(IDisposable);
+import IDisposable from "./idisposable/instance";
+export default IDisposable;
+export * from "./idisposable/instance";
+export * from "./idisposable/concrete";

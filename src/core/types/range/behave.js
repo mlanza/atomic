@@ -1,6 +1,7 @@
 import {overload, constantly, effect} from '../../core';
 import {implement} from '../protocol';
-import {IArray, IBounds, IEncode, ISteppable, ISequential, ICollection, IComparable, INext, IEquiv, IReduce, IKVReduce, ISeqable, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, ISeq, IInclusive, between} from '../../protocols';
+import {IArray, IBounds, IEncode, ISteppable, ISequential, ICollection, IComparable, INext, IEquiv, IReduce, IKVReduce, ISeqable, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, ISeq, IInclusive} from '../../protocols';
+import {between} from '../../protocols/ibounds/concrete';
 import {reduced, unreduced, isReduced} from '../reduced';
 import {lazySeq} from '../lazy-seq';
 import {iterable} from '../lazy-seq/behave';

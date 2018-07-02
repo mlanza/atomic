@@ -1,5 +1,4 @@
-import {protocol, satisfies} from "../types/protocol";
-export const IContent = protocol({
-  contents: null
-});
-export const isContent = satisfies(IContent);
+import IContent from "./icontent/instance";
+export default IContent;
+export * from "./icontent/instance";
+export * from "./icontent/concrete";

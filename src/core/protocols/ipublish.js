@@ -1,5 +1,4 @@
-import {protocol, satisfies} from "../types/protocol";
-export const IPublish = protocol({
-  pub: null
-});
-export const isPublishable = satisfies(IPublish);
+import IPublish from "./ipublish/instance";
+export default IPublish;
+export * from "./ipublish/instance";
+export * from "./ipublish/concrete";

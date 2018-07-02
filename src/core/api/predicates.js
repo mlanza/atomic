@@ -1,8 +1,8 @@
 import {overload, constantly, identity, type} from "../core";
-import {IReduce, IKVReduce, ICounted, IComparable, IEquiv, isSequential} from "../protocols";
+import {IReduce, IKVReduce, ICounted, IComparable, IEquiv} from "../protocols";
 import {reduced} from "../types/reduced";
 import {comp, partial, apply} from "../types/function/concrete";
-import {reducing} from "../api/reduce";
+import {reducing} from "../protocols/ireduce/concrete";
 import {isNil} from "../types/nil/construct";
 import {slice} from "../types/array/concrete";
 
