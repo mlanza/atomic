@@ -1,5 +1,4 @@
-import {protocol, satisfies} from "../types/protocol";
-export const IValue = protocol({
-  value: null
-});
-export const hasValue = satisfies(IValue);
+import IValue from "./ivalue/instance";
+export default IValue;
+export * from "./ivalue/instance";
+export * from "./ivalue/concrete";

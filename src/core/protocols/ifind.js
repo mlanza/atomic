@@ -1,5 +1,4 @@
-import {protocol, satisfies} from "../types/protocol";
-export const IFind = protocol({
-  find: null
-});
-export const isFindable = satisfies(IFind);
+import IFind from "./ifind/instance";
+export default IFind;
+export * from "./ifind/instance";
+export * from "./ifind/concrete";

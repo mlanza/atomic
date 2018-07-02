@@ -1,8 +1,4 @@
-import {protocol, satisfies} from "../types/protocol";
-function compare(x, y){
-  return x > y ? 1 : x < y ? -1 : 0;
-}
-export const IComparable = protocol({
-  compare: compare
-});
-export const isComparable = satisfies(IComparable);
+import IComparable from "./icomparable/instance";
+export default IComparable;
+export * from "./icomparable/instance";
+export * from "./icomparable/concrete";

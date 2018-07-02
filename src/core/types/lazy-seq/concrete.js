@@ -1,4 +1,4 @@
-import {isSequential, IArray, IInclusive, IIndexed, ICollection, IComparable, ICounted, ISeq, ISeqable, INext, IHierarchy, IReduce, ISequential} from '../../protocols';
+import {IArray, IInclusive, IIndexed, ICollection, IComparable, ICounted, ISeq, ISeqable, INext, IHierarchy, IReduce, ISequential} from '../../protocols';
 import {identity, constantly, overload} from '../../core';
 import EmptyList from '../empty-list/construct';
 import Array from '../array/construct';
@@ -13,6 +13,7 @@ import {str} from '../string/concrete';
 import {juxt, complement, comp, apply, partial} from '../function/concrete';
 import {lazySeq} from '../lazy-seq/construct';
 import {concat, concatenated} from "../concatenated/construct";
+import {satisfies} from '../protocol/concrete';
 import Symbol from '../symbol/construct';
 
 function transduce3(xform, f, coll){
@@ -161,7 +162,7 @@ export function treeSeq(branch, children, root){
 }
 
 export function flatten(coll){
-  return filter(complement(isSequential), ISeq.rest(treeSeq(isSequential, ISeqable.seq, coll)));
+  return filter(complement(satisfies(ISequential)), ISeq.rest(treeSeq(satisfies(ISequential), ISeqable.seq, coll)));
 }
 
 export function zip(...colls){
@@ -608,6 +609,6 @@ export const splice = overload(null, null, null, splice3, splice4);
 export function also(f, xs){
   return concat(xs, mapcat(function(x){
     const result = f(x);
-    return isSequential(result) ? result : [result];
+    return satisfies(ISequential, result) ? result : [result];
   }, xs));
 }

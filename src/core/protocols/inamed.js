@@ -1,5 +1,4 @@
-import {protocol, satisfies} from "../types/protocol";
-export const INamed = protocol({
-  name: null
-});
-export const isNamed = satisfies(INamed);
+import INamed from "./inamed/instance";
+export default INamed;
+export * from "./inamed/instance";
+export * from "./inamed/concrete";

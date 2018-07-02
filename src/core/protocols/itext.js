@@ -1,5 +1,4 @@
-import {protocol, satisfies} from "../types/protocol";
-export const IText = protocol({
-  text: null
-});
-export const isText = satisfies(IText);
+import IText from "./itext/instance";
+export default IText;
+export * from "./itext/instance";
+export * from "./itext/concrete";

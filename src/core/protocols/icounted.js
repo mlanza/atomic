@@ -1,5 +1,4 @@
-import {protocol, satisfies} from "../types/protocol";
-export const ICounted = protocol({
-  count: null
-});
-export const isCounted = satisfies(ICounted);
+import ICounted from "./icounted/instance";
+export default ICounted;
+export * from "./icounted/instance";
+export * from "./icounted/concrete";

@@ -1,5 +1,4 @@
-import {protocol} from "../types/protocol";
-import {identity} from '../core';
-export const IOtherwise = protocol({
-  otherwise: identity
-});
+import IOtherwise from "./iotherwise/instance";
+export default IOtherwise;
+export * from "./iotherwise/instance";
+export * from "./iotherwise/concrete";

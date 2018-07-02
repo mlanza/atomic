@@ -1,5 +1,5 @@
 import {overload, constantly, unbind} from "../../core";
-import {reducing} from "../../api/reduce";
+import {reducing} from "../../protocols/ireduce/concrete";
 import {IKVReduce, ITemplate} from "../../protocols";
 import String from "./construct";
 

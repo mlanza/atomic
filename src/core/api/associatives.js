@@ -1,8 +1,9 @@
 import {overload, identity, partial} from "../core";
-import {isSequential, isDescriptive, IObject, ISeq, IAssociative, ILookup, IReduce, IKVReduce, IEmptyableCollection, ICollection, ISeqable} from "../protocols";
+import {IDescriptive, ISequential, IObject, ISeq, IAssociative, ILookup, IReduce, IKVReduce, IEmptyableCollection, ICollection, ISeqable} from "../protocols";
 import {some, into, best} from "../types/lazy-seq/concrete";
 import {slice} from "../types/array/concrete";
 import {apply} from "../types/function/concrete";
+import {satisfies} from "../types/protocol/concrete";
 import {concat} from "../types/concatenated";
 import {gt, lt} from "./predicates";
 
@@ -58,6 +59,6 @@ export const index = overload(null, null, index2, index3, index4);
 
 export function absorb(tgt, src){
   return IKVReduce.reducekv(src, function(memo, key, value){
-    return IAssociative.assoc(memo, key, isDescriptive(value) ? IObject.toObject(absorb(ILookup.lookup(memo, key), value)) : isSequential(value) ? into(IEmptyableCollection.empty(ILookup.lookup(memo, key)), concat(ILookup.lookup(memo, key), value)) : value);
+    return IAssociative.assoc(memo, key, satisfies(IDescriptive, value) ? IObject.toObject(absorb(ILookup.lookup(memo, key), value)) : satisfies(ISequential, value) ? into(IEmptyableCollection.empty(ILookup.lookup(memo, key)), concat(ILookup.lookup(memo, key), value)) : value);
   }, tgt);
 }

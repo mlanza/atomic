@@ -1,5 +1,4 @@
-import {protocol, satisfies} from "../types/protocol";
-export const IKVReduce = protocol({
-  reducekv: null
-});
-export const isKVReduceable = satisfies(IKVReduce);
+import IKVReduce from "./ikvreduce/instance";
+export default IKVReduce;
+export * from "./ikvreduce/instance";
+export * from "./ikvreduce/concrete";

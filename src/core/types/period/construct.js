@@ -1,7 +1,9 @@
 import {overload} from '../../core';
 import {days} from '../duration/construct';
 import {midnight} from '../date/concrete';
-import {ISteppable, IComparable, IAssociative} from '../../protocols';
+import IAssociative from '../../protocols/iassociative/instance';
+import IComparable from '../../protocols/icomparable/instance';
+import {ISteppable} from '../../protocols/isteppable';
 import {patch} from '../../api/patch';
 import Symbol from '../symbol/construct';
 

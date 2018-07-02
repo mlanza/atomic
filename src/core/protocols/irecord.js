@@ -1,3 +1,4 @@
-import {protocol, satisfies} from "../types/protocol";
-export const IRecord = protocol({});
-export const isRecord = satisfies(IRecord);
+import IRecord from "./irecord/instance";
+export default IRecord;
+export * from "./irecord/instance";
+export * from "./irecord/concrete";

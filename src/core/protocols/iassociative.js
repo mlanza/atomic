@@ -1,6 +1,4 @@
-import {protocol, satisfies} from "../types/protocol";
-export const IAssociative = protocol({
-  assoc: null,
-  contains: null
-});
-export const isAssociative = satisfies(IAssociative);
+import IAssociative from "./iassociative/instance";
+export default IAssociative;
+export * from "./iassociative/instance";
+export * from "./iassociative/concrete";

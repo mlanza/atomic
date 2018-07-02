@@ -1,5 +1,4 @@
-import {protocol, satisfies} from "../types/protocol";
-export const ISwap = protocol({
-  swap: null
-});
-export const isSwappable = satisfies(ISwap);
+import ISwap from "./iswap/instance";
+export default ISwap;
+export * from "./iswap/instance";
+export * from "./iswap/concrete";

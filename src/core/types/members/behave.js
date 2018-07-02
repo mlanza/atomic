@@ -1,6 +1,6 @@
 import {overload, identity, effect} from "../../core";
-import {implement} from '../protocol';
-import {IFunctor, ISeq, INext, isSequential} from '../../protocols';
+import {implement, satisfies} from '../protocol';
+import {IFunctor, ISeq, INext, ISequential} from '../../protocols';
 import {mapcat} from "../lazy-seq/concrete";
 import {reduced} from "../reduced/construct";
 import Members, {members} from "./construct";
@@ -9,7 +9,7 @@ import behave from "../series/behave";
 function fmap(self, f){
   return members(mapcat(function(item){
     const result = f(item);
-    return isSequential(result) ? result : [result];
+    return satisfies(ISequential, result) ? result : [result];
   }, self.items));
 }
 

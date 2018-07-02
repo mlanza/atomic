@@ -1,5 +1,4 @@
-import {protocol, satisfies} from "../types/protocol";
-export const IArray = protocol({
-  toArray: null
-});
-export const canBecomeArray = satisfies(IArray);
+import IArray from "./iarray/instance";
+export default IArray;
+export * from "./iarray/instance";
+export * from "./iarray/concrete";

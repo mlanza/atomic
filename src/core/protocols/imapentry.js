@@ -1,6 +1,4 @@
-import {protocol, satisfies} from "../types/protocol";
-export const IMapEntry = protocol({
-  key: null,
-  val: null
-});
-export const isMapEntry = satisfies(IMapEntry);
+import IMapEntry from "./imapentry/instance";
+export default IMapEntry;
+export * from "./imapentry/instance";
+export * from "./imapentry/concrete";

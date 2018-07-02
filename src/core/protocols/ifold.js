@@ -1,8 +1,4 @@
-import {protocol, satisfies} from "../types/protocol";
-function fold(self, error, okay){
-  return okay(self);
-}
-export const IFold = protocol({
-  fold: fold
-});
-export const canFold = satisfies(IFold);
+import IFold from "./ifold/instance";
+export default IFold;
+export * from "./ifold/instance";
+export * from "./ifold/concrete";

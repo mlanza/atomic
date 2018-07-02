@@ -1,5 +1,4 @@
-import {protocol, satisfies} from "../types/protocol";
-export const IEmptyableCollection = protocol({
-  empty: null
-});
-export const isEmptyableCollection = satisfies(IEmptyableCollection);
+import IEmptyableCollection from "./iemptyablecollection/instance";
+export default IEmptyableCollection;
+export * from "./iemptyablecollection/instance";
+export * from "./iemptyablecollection/concrete";

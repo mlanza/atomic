@@ -1,5 +1,4 @@
-import {protocol, satisfies} from "../types/protocol";
-export const INext = protocol({
-  next: null
-});
-export const isNext = satisfies(INext);
+import INext from "./inext/instance";
+export default INext;
+export * from "./inext/instance";
+export * from "./inext/concrete";

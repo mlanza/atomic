@@ -1,5 +1,4 @@
-import {protocol, satisfies} from "../types/protocol";
-export const IReset = protocol({
-  reset: null
-});
-export const isResettable = satisfies(IReset);
+import IReset from "./ireset/instance";
+export default IReset;
+export * from "./ireset/instance";
+export * from "./ireset/concrete";

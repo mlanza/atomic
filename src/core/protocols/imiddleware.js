@@ -1,5 +1,4 @@
-import {protocol, satisfies} from "../types/protocol";
-export const IMiddleware = protocol({
-  handle: null
-});
-export const isMiddleware = satisfies(IMiddleware);
+import IMiddleware from "./imiddleware/instance";
+export default IMiddleware;
+export * from "./imiddleware/instance";
+export * from "./imiddleware/concrete";

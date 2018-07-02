@@ -1,7 +1,4 @@
-import {protocol, satisfies} from "../types/protocol";
-export const IMap = protocol({
-  dissoc: null,
-  keys: null,
-  vals: null
-});
-export const isMap = satisfies(IMap);
+import IMap from "./imap/instance";
+export default IMap;
+export * from "./imap/instance";
+export * from "./imap/concrete";
