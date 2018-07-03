@@ -5,15 +5,16 @@ export default {
   input: 'src/cloe.js',
   output: {
     file: 'dist/cloe.js',
-    format: 'iife',
+    format: 'amd',
     name: "Cloe",
     globals: {
+      "weak-map": "WeakMap",
       "symbol": "Symbol",
       "promise": "Promise",
       "immutable": "Immutable"
     }
   },
-  external: ["immutable", "promise", "symbol"],
+  external: ["immutable", "promise", "symbol", "weak-map"],
   plugins: [
     babel({
       exclude: 'node_modules/**'

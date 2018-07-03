@@ -1,6 +1,7 @@
 import {overload, counter} from "../../core";
 import IEncode from "./instance";
 import {IHash} from "../ihash";
+import WeakMap from "weak-map";
 
 const encodedRefs   = new WeakMap()
 const encodedRefIds = counter();

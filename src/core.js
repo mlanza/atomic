@@ -183,7 +183,7 @@ export function leaves(self){
 }
 
 export function envelop(before, after){
-  return unless(isEmpty, comp(prepend(v, before), append(v, after)));
+  return unless(isEmpty, comp(IPrependable.prepend(v, before), IAppendable.append(v, after)));
 }
 
 function one3(self, key, callback){
