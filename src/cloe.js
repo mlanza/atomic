@@ -3,8 +3,12 @@ import * as transducers from "./transducers";
 import * as signals from "./signals";
 import {_ as v} from "param.macro";
 
+function isNotConstructor(text){
+  return !/^[A-Z]./.test(text.name);
+}
+
 //convenience for executing partially-applied functions without macros.
-const impart = _.mapSomeVals(v, _.partly, _.isFunction);
+const impart = _.mapSomeVals(v, _.partly, _.and(_.isFunction, isNotConstructor));
 
 export default Object.assign(_.placeholder, impart(_), {
   transducers: impart(transducers),
