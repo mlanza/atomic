@@ -4,7 +4,7 @@ import {identity, overload} from "../../core";
 
 export function replaceWith(self, other){
   const parent = IHierarchy.parent(self);
-  self.replaceChild(other);
+  parent.replaceChild(other, self);
 }
 
 function event2(el, key){
