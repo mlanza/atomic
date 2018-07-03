@@ -13,7 +13,7 @@ import {lazyPub} from "./core/types/lazy-pub/construct";
 import {publisher} from "./core/types/publisher/construct";
 import {observable} from "./core/types/observable/construct";
 import {event} from "./core/types/element/concrete";
-import {notEq} from "./core/api/predicates";
+import {notEq} from "./core/predicates";
 import * as t from "./transducers";
 
 function signal1(source){

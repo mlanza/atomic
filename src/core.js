@@ -1,10 +1,10 @@
 import {overload, identity, obj} from "./core/core";
 import {classes, isEmpty, duration, compact, remove, flatten, map, fragment, element, sort, set, flip, realized, comp, isNumber, observable, detect} from "./core/types";
 import {IAppendable, IHash, ITemplate, IMiddleware, IDispatch, IYank, IArray, IAssociative, IBounds, IConverse, ICloneable, ICollection, IComparable, IContent, ICounted, IDecode, IDeref, IDisposable, IEmptyableCollection, IEncode, IEquiv, IEvented, IFind, IFn, IFold, IFunctor, IHideable, IHierarchy, IHtml, IInclusive, IIndexed, IInsertable, IKVReduce, ILookup, IMap, IMapEntry, IMatch, INext, IObject, IOtherwise, IPrependable, IPublish, IReduce, IReset, IReversible, ISeq, ISeqable, ISet, ISteppable, ISubscribe, ISwap, IText, IView} from "./core/protocols";
-import {unless, fork} from "./core/api";
 import {hash} from "./core/protocols/iencode/concrete";
 import {fmap} from "./core/protocols/ifunctor/concrete";
 import {reducing} from "./core/protocols/ireduce/concrete";
+import {unless, fork} from "./core/predicates";
 
 import * as T from "./core/types";
 import {_ as v} from "param.macro";
@@ -34,6 +34,7 @@ export * from "./core/protocols/ifind/concrete";
 export * from "./core/protocols/ifn/concrete";
 export * from "./core/protocols/ifold/concrete";
 export * from "./core/protocols/ifunctor/concrete";
+//export * from "./core/protocols/ihash/concrete";
 export * from "./core/protocols/ihideable/concrete";
 export * from "./core/protocols/ihierarchy/concrete";
 export * from "./core/protocols/ihtml/concrete";
@@ -68,9 +69,8 @@ export * from "./core/protocols/itext/concrete";
 export * from "./core/protocols/ivalue/concrete";
 export * from "./core/protocols/iview/concrete";
 export * from "./core/protocols/iyank/concrete";
-
-//export * from "./core/protocols/ihash/concrete";
-export * from "./core/api";
+export * from "./core/predicates";
+export * from "./core/associatives";
 export * from "./core/multimethods";
 
 function add2(self, n){
