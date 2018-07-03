@@ -1,4 +1,4 @@
-import {IArray, IInclusive, IIndexed, ICollection, IComparable, ICounted, ISeq, ISeqable, INext, IHierarchy, IReduce, ISequential} from '../../protocols';
+import {IArray, IAssociative, IInclusive, IIndexed, ICollection, IComparable, ICounted, ISeq, ISeqable, INext, IHierarchy, IReduce, ISequential} from '../../protocols';
 import {identity, constantly, overload} from '../../core';
 import EmptyList from '../empty-list/construct';
 import Array from '../array/construct';
@@ -15,6 +15,7 @@ import {lazySeq} from '../lazy-seq/construct';
 import {concat, concatenated} from "../concatenated/construct";
 import {satisfies} from '../protocol/concrete';
 import Symbol from '../symbol/construct';
+import {update} from "../../protocols/iassociative/concrete";
 
 function transduce3(xform, f, coll){
   return transduce4(xform, f, f(), coll);
@@ -612,3 +613,33 @@ export function also(f, xs){
     return satisfies(ISequential, result) ? result : [result];
   }, xs));
 }
+
+function groupBy3(init, f, coll){
+  return IReduce.reduce(coll, function(memo, value){
+    return update(memo, f(value), function(group){
+      return ICollection.conj(group || [], value);
+    });
+  }, init);
+}
+
+function groupBy2(f, coll){
+  return groupBy3({}, f, coll);
+}
+
+export const groupBy = overload(null, null, groupBy2, groupBy3);
+
+function index4(init, key, val, coll){
+  return IReduce.reduce(coll, function(memo, x){
+    return IAssociative.assoc(memo, key(x), val(x));
+  }, init);
+}
+
+function index3(key, val, coll){
+  return index4({}, key, val, coll);
+}
+
+function index2(key, coll){
+  return index4({}, key, identity, coll);
+}
+
+export const index = overload(null, null, index2, index3, index4);

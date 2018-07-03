@@ -4,7 +4,7 @@ import {midnight} from '../date/concrete';
 import IAssociative from '../../protocols/iassociative/instance';
 import IComparable from '../../protocols/icomparable/instance';
 import {ISteppable} from '../../protocols/isteppable';
-import {patch} from '../../api/patch';
+import {patch} from '../../associatives';
 import Symbol from '../symbol/construct';
 
 export function Period(start, end, step, direction){
