@@ -21,10 +21,6 @@ export function type(self){
   return self == null ? null : self.constructor;
 }
 
-export function is(self, constructor){
-  return self != null && self.constructor === constructor;
-}
-
 export function overload(){
   const fs = arguments, fallback = fs[fs.length - 1];
   return function(){
@@ -102,16 +98,34 @@ export function constantly(x){
 }
 
 export function doto(obj, ...effects){
-  effects.forEach(function(effect){
+  const len = effects.length;
+  for(var i = 0; i < len; i++){
+    const effect = effects[i];
     effect(obj);
-  }, effects);
+  }
   return obj;
 }
 
-export const effect = subj(doto, Infinity);
+export function effect(...fs){
+  return function(obj){
+    return doto(obj, ...fs);
+  }
+}
 
-export function isInstance(x, constructor){
-  return x instanceof constructor;
+function is1(constructor){
+  return function(self){
+    return is2(self, constructor);
+  }
+}
+
+function is2(self, constructor){
+  return self != null && self.constructor === constructor;
+}
+
+export const is = overload(null, is1, is2);
+
+export function isInstance(self, constructor){
+  return self instanceof constructor;
 }
 
 export function unspread(f){

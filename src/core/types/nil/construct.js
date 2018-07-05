@@ -1,11 +1,9 @@
-export function Nil(){
+import Symbol from '../symbol/construct';
+
+export default function Nil(){
 }
 
-export function nil(){
-  return null;
-}
-
-export default Nil;
+export {Nil};
 
 export function isNil(x){
   return x == null;
@@ -14,3 +12,7 @@ export function isNil(x){
 export function isSome(x){
   return x != null;
 }
+
+Object.defineProperty(Nil, Symbol.hasInstance, {
+  value: isNil
+});
