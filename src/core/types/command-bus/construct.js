@@ -1,6 +1,7 @@
 import {reifiable, implement} from '../../types/protocol';
 import {IReduce, IPublish, IReversible, IMiddleware} from '../../protocols';
 import {doto, noop, overload} from '../../core';
+import {publisher} from '../publisher';
 import {messageHandler} from '../message-handler';
 import {messageProcessor} from '../message-processor';
 import {observable} from '../observable';
@@ -11,15 +12,23 @@ export default function CommandBus(handler, publ){
   this.publ = publ;
 }
 
+function commandBus1(handler){
+  return commandBus2(handler, publisher());
+}
+
 function commandBus2(handler, publ){
   return new CommandBus(handler, publ);
+}
+
+function commandBus3(state, commands, events){
+  return commandBus4(state, commands, events, publisher());
 }
 
 function commandBus4(state, commands, events, publ){
   return commandBus2(middleware4(state, commands, events, publ), publ);
 }
 
-export const commandBus = overload(null, null, commandBus2, null, commandBus4);
+export const commandBus = overload(null, commandBus1, commandBus2, commandBus3, commandBus4);
 
 function middleware1(handlers){
   const f = IReduce.reduce(IReversible.reverse(handlers), function(memo, handler){

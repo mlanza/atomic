@@ -177,7 +177,3 @@ export function constructs(Type) {
     return new (Function.prototype.bind.apply(Type, [null].concat(args)));
   }
 }
-
-export function exec(f, ...args){ //for use with pointfree/subj
-  return f.apply(this, args);
-}

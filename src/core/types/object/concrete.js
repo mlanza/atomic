@@ -1,11 +1,11 @@
 import {IFn, IReduce, IKVReduce, ILookup, IAssociative, IEmptyableCollection} from "../../protocols";
-import {apply} from "../function";
+import {apply, isFunction} from "../function";
 import {reducing} from "../../protocols/ireduce/concrete";
 import {overload, constantly} from "../../core";
 
 export function juxtVals(self, template){
   return IKVReduce.reducekv(template, function(memo, key, f){
-    return IAssociative.assoc(memo, key, f(self));
+    return IAssociative.assoc(memo, key, isFunction(f) ? f(self) : f);
   }, IEmptyableCollection.empty(template));
 }
 

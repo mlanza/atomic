@@ -1,4 +1,4 @@
-import {identity, constantly, effect, overload, subj} from '../../core';
+import {identity, constantly, effect, overload} from '../../core';
 import {implement} from '../protocol';
 import {IReduce, ISeqable, ISeq, INext, IMatch, IHierarchy} from '../../protocols';
 import behave from "../element/behave";

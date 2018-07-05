@@ -14,7 +14,7 @@ export function component($view, $bus, state, el){
   const bus = $bus(state);
   const view = $view(function(message){
     IDispatch.dispatch(bus, message);
-  });
+  }, state);
   ISubscribe.sub(changed, function([present, past]){
     if (past) {
       IView.patch(view, present, past, el);
