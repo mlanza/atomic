@@ -1,6 +1,6 @@
 import {IFn, IEvented} from "../../protocols";
 import {doto} from "../../core";
-import {implement, specify} from "../../types/protocol";
+import {specify} from "../../types/protocol";
 
 export function Multimethod(fallback, handlers){
   this.fallback = fallback;
