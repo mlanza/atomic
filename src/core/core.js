@@ -106,9 +106,13 @@ export function doto(obj, ...effects){
   return obj;
 }
 
-export function effect(...fs){
-  return function(obj){
-    return doto(obj, ...fs);
+export function effect(...effects){
+  return function(...args){
+    const len = effects.length;
+    for(var i = 0; i < len; i++){
+      const effect = effects[i];
+      effect(...args);
+    }
   }
 }
 

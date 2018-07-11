@@ -1,4 +1,4 @@
-import {IArray, IAssociative, IInclusive, IIndexed, ICollection, IComparable, ICounted, ISeq, ISeqable, INext, IHierarchy, IReduce, ISequential} from '../../protocols';
+import {IEquiv, IArray, IAssociative, IInclusive, IIndexed, ICollection, IComparable, ICounted, ISeq, ISeqable, INext, IHierarchy, IReduce, ISequential} from '../../protocols';
 import {identity, constantly, overload} from '../../core';
 import EmptyList from '../empty-list/construct';
 import Array from '../array/construct';
@@ -304,16 +304,22 @@ export function last(coll){
   return ISeq.first(xs);
 }
 
-export function dedupe(coll){
+function dedupe1(coll){
+  return dedupe2(identity, coll);
+}
+
+function dedupe2(f, coll){
   var xs = ISeqable.seq(coll);
   const last = ISeq.first(xs);
   return xs ? lazySeq(last, function(){
-    while(INext.next(xs) && ISeq.first(INext.next(xs)) === last) {
+    while(INext.next(xs) && IEquiv.equiv(f(ISeq.first(INext.next(xs))), f(last))) {
       xs = INext.next(xs);
     }
-    return dedupe(INext.next(xs));
+    return dedupe2(f, INext.next(xs));
   }) : EmptyList.EMPTY;
 }
+
+export const dedupe = overload(null, dedupe1, dedupe2);
 
 export function indexed(iter){
   return function(f, xs){

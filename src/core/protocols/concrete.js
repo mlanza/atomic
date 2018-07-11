@@ -33,6 +33,7 @@ export * from "./imap/concrete";
 export * from "./imapentry/concrete";
 export * from "./imatch/concrete";
 export * from "./imiddleware/concrete";
+export * from "./imountable/concrete";
 export * from "./inamed/concrete";
 export * from "./inext/concrete";
 export * from "./iobject/concrete";
