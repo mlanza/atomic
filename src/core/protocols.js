@@ -34,6 +34,7 @@ export * from "./protocols/imap/instance";
 export * from "./protocols/imapentry/instance";
 export * from "./protocols/imatch/instance";
 export * from "./protocols/imiddleware/instance";
+export * from "./protocols/imountable/instance";
 export * from "./protocols/inamed/instance";
 export * from "./protocols/inext/instance";
 export * from "./protocols/iobject/instance";

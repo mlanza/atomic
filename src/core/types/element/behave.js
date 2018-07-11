@@ -1,6 +1,7 @@
 import {identity, constantly, effect, overload} from '../../core';
 import {implement, satisfies} from '../protocol';
-import {IValue, ISequential, IText, IHtml, IHideable, IMatch, IYank, IInclusive, IInsertable, IArray, IAppendable, IPrependable, IEvented, IAssociative, IMap, IEquiv, ICloneable, ICollection, INext, ISeq, ISeqable, IIndexed, ICounted, ILookup, IReduce, IEmptyableCollection, IHierarchy, IContent} from '../../protocols';
+import {IValue, IMountable, ISequential, IText, IHtml, IHideable, IMatch, IYank, IInclusive, IInsertable, IArray, IAppendable, IPrependable, IEvented, IAssociative, IMap, IEquiv, ICloneable, ICollection, INext, ISeq, ISeqable, IIndexed, ICounted, ILookup, IReduce, IEmptyableCollection, IHierarchy, IContent} from '../../protocols';
+import {mount} from '../../protocols/imountable/concrete';
 import {each, mapcat} from '../lazy-seq/concrete';
 import EmptyList from '../empty-list/construct';
 import {concat} from '../concatenated/construct';
@@ -106,8 +107,17 @@ const eventDefaults = {
 }
 
 function trigger(self, key, options){
+  options = Object.assign({}, eventDefaults, options || {});
   const Event = eventConstructors[key] || CustomEvent;
-  self.dispatchEvent(new Event(key, Object.assign({}, eventDefaults, options)));
+  let event = null;
+  try {
+    event = new Event(key, options);
+  } catch (ex) {
+    event = document.createEvent('HTMLEvents');
+    event.initEvent(key, options.bubbles || false, options.cancelable || false);
+    event.detail = options.detail;
+  }
+  self.dispatchEvent(event);
   return self;
 }
 
@@ -116,14 +126,18 @@ function contents(self){
 }
 
 function conj(self, other){
-  if (isFunction(other)){
+  if (satisfies(IMountable, other)) {
+    mount(other, self);
+  } else if (isFunction(other)){
     return conj(self, other());
   } else if (isAttrs(other)){
     each(function([key, value]){
       assoc(self, key, value);
     }, other);
+  } else if (isString(other)) {
+    self.appendChild(document.createTextNode(other));
   } else {
-    self.appendChild(isString(other) ? document.createTextNode(other) : other);
+    self.appendChild(other);
   }
   return self;
 }

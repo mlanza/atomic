@@ -55,16 +55,22 @@ export function compact(){
   return filter(identity);
 }
 
-export function dedupe(){
+function dedupe0(){
+  return dedupe1(identity);
+}
+
+function dedupe1(f){
   return function(xf){
     var last;
     return overload(xf, xf, function(memo, value){
-      const result = IEquiv.equiv(value, last) ? memo : xf(memo, value);
+      const result = IEquiv.equiv(f(value), f(last)) ? memo : xf(memo, value);
       last = value;
       return result;
     });
   }
 }
+
+export const dedupe = overload(dedupe0, dedupe1);
 
 export function take(n){
   return function(xf){

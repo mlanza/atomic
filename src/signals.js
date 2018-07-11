@@ -4,7 +4,7 @@
 * When building an application from a signal graph there is a tendency to think that events are no longer relevant, that everything must be a signal, but this is inappropriate.  Both can be appropriate.  Use events when there is no reason for an initial value.
 */
 
-import {IEvented, IPublish, ISubscribe, ICollection, IDisposable, ISwap, IAssociative} from "./core/protocols";
+import {IDeref, IEvented, IPublish, ISubscribe, ICollection, IDisposable, ISwap, IAssociative} from "./core/protocols";
 import {doto, effect, overload, identity, constantly} from "./core/core";
 import {detect, filtera, mapa, mapIndexed} from "./core/types/lazy-seq/concrete";
 import {comp, apply, partial, spread} from "./core/types/function/concrete";
@@ -17,11 +17,11 @@ import {notEq} from "./core/predicates";
 import * as t from "./transducers";
 
 function signal1(source){
-  return signal3(t.map(identity), null, source);
+  return signal2(t.map(identity), source);
 }
 
 function signal2(xf, source){
-  return signal3(xf, null, source);
+  return signal3(xf, IDeref.deref(source), source);
 }
 
 function signal3(xf, init, source){
