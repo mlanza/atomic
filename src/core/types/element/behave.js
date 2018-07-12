@@ -81,6 +81,11 @@ function on4(self, key, selector, callback){
   return on3(self, key, function(e){
     if (e.target.matches(selector)) {
       callback.call(e.target, e);
+    } else {
+      var found = closest(e.target, selector);
+      if (found && self.contains(found)) {
+        callback.call(found, e);
+      }
     }
   });
 }
@@ -288,7 +293,9 @@ function includes(self, target){
 }
 
 function empty(self){
-  each(self.removeChild.bind(self), contents(self));
+  while (self.firstChild) {
+    self.removeChild(self.firstChild);
+  }
   return self;
 }
 
