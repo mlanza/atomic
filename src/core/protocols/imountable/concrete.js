@@ -2,6 +2,7 @@ import {ISubscribe, IDeref, IView, IEvented} from '../../protocols';
 import IMountable from "./instance";
 import {on, trigger} from "../../protocols/ievented/concrete";
 import {specify, satisfies} from "../../types/protocol";
+import {partial} from "../../types/function/concrete";
 import {hist} from '../../../signals';
 import {doto, overload, noop} from '../../../core/core';
 import {_ as v} from "param.macro";
@@ -49,3 +50,9 @@ function mountable3($self, state, events){
 }
 
 export const mountable = overload(null, null, mountable2, mountable3);
+
+export function mutate(state, f){
+  return function(el){
+    return ISubscribe.sub(state, partial(f, el));
+  }
+}

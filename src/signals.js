@@ -30,6 +30,10 @@ function signal3(xf, init, source){
 
 export const signal = overload(null, signal1, signal2, signal3);
 
+export function map(f, source){
+  return signal2(comp(t.map(f), t.dedupe()), source);
+}
+
 export function mousemove(el){
   return signal(t.map(function(e){
     return [e.clientX, e.clientY];
