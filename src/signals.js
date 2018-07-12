@@ -21,7 +21,7 @@ function signal1(source){
 }
 
 function signal2(xf, source){
-  return signal3(xf, IDeref.deref(source), source);
+  return signal3(xf, null, source);
 }
 
 function signal3(xf, init, source){
