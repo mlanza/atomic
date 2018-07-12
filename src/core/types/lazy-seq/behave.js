@@ -18,7 +18,7 @@ function conj(self, value){
 
 function reduce(self, xf, init){
   let memo = init,
-      coll = seq(self);
+      coll = ISeqable.seq(self);
   while(coll){
     memo = xf(memo, first(coll))
     if (isReduced(memo)) {
@@ -30,9 +30,9 @@ function reduce(self, xf, init){
 }
 
 function equiv(as, bs){
-  const xs = seq(as),
-        ys = seq(bs);
-  return xs === ys || (IEquiv.equiv(first(xs), first(ys)) && IEquiv.equiv(rest(xs), rest(ys)));
+  const xs = ISeqable.seq(as),
+        ys = ISeqable.seq(bs);
+  return ys == null ? false : xs === ys || (IEquiv.equiv(first(xs), first(ys)) && IEquiv.equiv(rest(xs), rest(ys)));
 }
 
 function iterate(self){

@@ -93,11 +93,11 @@ function unit2(self, amount){
 }
 
 function equiv(self, other){
-  return IDeref.deref(self) === IDeref.deref(other);
+  return other != null && IDeref.deref(self) === IDeref.deref(other);
 }
 
 function compare(self, other){
-  return IDeref.deref(self) - IDeref.deref(other);
+  return other == null ? -1 : IDeref.deref(self) - IDeref.deref(other);
 }
 
 function encode(self, label){

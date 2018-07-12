@@ -13,7 +13,7 @@ import {lazyPub} from "./core/types/lazy-pub/construct";
 import {publisher} from "./core/types/publisher/construct";
 import {observable} from "./core/types/observable/construct";
 import {event} from "./core/types/element/concrete";
-import {notEq} from "./core/predicates";
+import {notEq, eq} from "./core/predicates";
 import * as t from "./transducers";
 
 function signal1(source){
@@ -30,9 +30,15 @@ function signal3(xf, init, source){
 
 export const signal = overload(null, signal1, signal2, signal3);
 
-export function map(f, source){
-  return signal2(comp(t.map(f), t.dedupe()), source);
+function map2(f, source){
+  return map3(f, f(IDeref.deref(source)), source);
 }
+
+function map3(f, init, source){
+  return signal3(comp(t.map(f), t.dedupe()), init, source);
+}
+
+export const map = overload(null, null, map2, map3);
 
 export function mousemove(el){
   return signal(t.map(function(e){
@@ -100,7 +106,7 @@ export function calc(f, ...sources){
   const blank = {},
         sink  = observable(mapa(constantly(blank), sources));
   return signal(comp(t.filter(function(xs){
-    return !detect(_.partial(_.eq, blank), xs);
+    return !detect(partial(eq, blank), xs);
   }), t.map(spread(f))), lazyPub(sink, function(sink){
     return apply(effect, mapIndexed(function(idx, source){
       return ISubscribe.sub(source, function(value){

@@ -44,7 +44,8 @@ function mountable3($self, state, events){
       patch(self, e.detail.present, e.detail.past, this);
     });
   } : noop;
-  return doto(IView.render(self, IDeref.deref(state)),
+  const el = IView.render(self, IDeref.deref(state));
+  return doto(el,
     specify(IMountable, {mounting, mount, mounted}),
     patching);
 }
