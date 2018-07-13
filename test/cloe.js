@@ -251,7 +251,7 @@ QUnit.test("observable", function(assert){
   tally.click();
   const source = _.observable(0);
   const sink   = _.signals.signal(_.transducers.map(_.inc), source);
-  const msink  = _.signals.map(_.inc, source);
+  const msink  = _.fmap(source, _.inc);
   source |> _.swap(v, _.inc);
   assert.equal(clicks |> _.deref, 1);
   assert.equal(source |> _.deref, 1);
