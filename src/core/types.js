@@ -24,6 +24,7 @@ export * from "./types/html-document";
 export * from "./types/indexed-seq";
 export * from "./types/just";
 export * from "./types/list";
+export * from "./types/mapped-signal";
 export * from "./types/members";
 export * from "./types/months";
 export * from "./types/nested-attrs";

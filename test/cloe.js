@@ -251,10 +251,12 @@ QUnit.test("observable", function(assert){
   tally.click();
   const source = _.observable(0);
   const sink   = _.signals.signal(_.transducers.map(_.inc), source);
+  const msink  = _.signals.map(_.inc, source);
   source |> _.swap(v, _.inc);
   assert.equal(clicks |> _.deref, 1);
   assert.equal(source |> _.deref, 1);
-  assert.equal(sink |> _.deref, 2);
+  assert.equal(sink   |> _.deref, 2);
+  assert.equal(msink  |> _.deref, 2);
   const bucket = _.observable([], null, _.pipe(_.get(v, 'length'), _.lt(v, 3))),
         states = _.observable([]);
   bucket |> _.sub(v, state => states |> _.swap(v, _.conj(v, state)));
