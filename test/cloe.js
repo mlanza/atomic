@@ -6,18 +6,20 @@ const stooges = ["Larry","Curly","Moe"],
       court   = {jack: 11, queen: 12, king: 13},
       worth   = {pieces: pieces, court: court};
 
-QUnit.test("command bus", function(assert){
-  const people = _.observable([]);
-  const bus =
+QUnit.test("component", function(assert){
+  const obs = _.observable([]);
+  const people =
     _.doto(
-      _.commandBus(
-        people,
-        _.juxtVals(v, {"add": _.actuator(v, _.accept("added"))}),
-        _.juxtVals(v, {"added": _.executor(v, _.conj)}),
-        _.publisher()),
-      _.dispatch(v, {type: "add", args: [{name: "Moe"}]}),
-      _.dispatch(v, {type: "add", args: [{name: "Curly"}]}),
-      _.dispatch(v, {type: "add", args: [{name: "Shemp"}]}));
+      _.component({},
+        _.commandBus(
+          obs,
+          _.juxtVals(v, {"add": _.actuator(v, _.accept("added"))}),
+          _.juxtVals(v, {"added": _.executor(v, _.conj)}),
+          _.publisher()),
+        obs),
+        _.dispatch(v, {type: "add", args: [{name: "Moe"}]}),
+        _.dispatch(v, {type: "add", args: [{name: "Curly"}]}),
+        _.dispatch(v, {type: "add", args: [{name: "Shemp"}]}));
 
   assert.equal(_.count(_.deref(people)), 3);
 

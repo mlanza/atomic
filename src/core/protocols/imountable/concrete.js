@@ -1,6 +1,6 @@
-import {ISubscribe, IDeref, IView, IEvented} from '../../protocols';
+import {ISubscribe, IDeref} from '../../protocols';
 import IMountable from "./instance";
-import {on, trigger} from "../../protocols/ievented/concrete";
+import {trigger} from "../../protocols/ievented/concrete";
 import {specify, satisfies} from "../../types/protocol";
 import {partial} from "../../types/function/concrete";
 import {hist} from '../../../signals';
@@ -17,12 +17,17 @@ export function mount(self, parent){
   return self;
 }
 
-function mountable2($self, state){
-  return mountable3($self, state, "updated mounting");
+function mounts1(state){
+  return function(self){
+    return mounts2(self, state);
+  }
 }
 
-function mountable3($self, state, events){
-  const self = $self(state);
+function mounts2(self, state){
+  return mounts3(self, state, "updated mounting");
+}
+
+function mounts3(self, state, events){
   function mounting(self){
     trigger(self, "mounting", {bubbles: false, detail: {present: IDeref.deref(state)}});
   }
@@ -38,19 +43,11 @@ function mountable3($self, state, events){
     });
     trigger(self, "mounted", {bubbles: false, detail: {present: IDeref.deref(state)}});
   }
-  const patch = satisfies(IView, "patch", self);
-  const patching = patch ? function(el){
-    on(el, events, function(e){
-      patch(self, e.detail.present, e.detail.past, this);
-    });
-  } : noop;
-  const el = IView.render(self, IDeref.deref(state));
-  return doto(el,
-    specify(IMountable, {mounting, mount, mounted}),
-    patching);
+  return doto(self,
+    specify(IMountable, {mounting, mount, mounted}));
 }
 
-export const mountable = overload(null, null, mountable2, mountable3);
+export const mounts = overload(null, mounts1, mounts2, mounts3);
 
 export function mutate(state, f){
   return function(el){
