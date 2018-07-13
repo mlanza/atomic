@@ -4,18 +4,18 @@
 * When building an application from a signal graph there is a tendency to think that events are no longer relevant, that everything must be a signal, but this is inappropriate.  Both can be appropriate.  Use events when there is no reason for an initial value.
 */
 
-import {IDeref, IEvented, IPublish, ISubscribe, ICollection, IDisposable, ISwap, IAssociative} from "./core/protocols";
+import {IDeref, IEvented, IPublish, ISubscribe, ICollection, IDisposable, ISwap, IAssociative, IFunctor} from "./core/protocols";
 import {doto, effect, overload, identity, constantly} from "./core/core";
 import {detect, filtera, mapa, mapIndexed} from "./core/types/lazy-seq/concrete";
 import {comp, apply, partial, spread} from "./core/types/function/concrete";
-import {mappedSignal as map} from "./core/types/mapped-signal/construct";
-export {mappedSignal as map} from "./core/types/mapped-signal/construct";
+import {mappedSignal} from "./core/types/mapped-signal/construct";
 import Promise from "./core/types/promise/construct";
-import {lazyPub} from "./core/types/lazy-pub/construct";
-import {publisher} from "./core/types/publisher/construct";
-import {observable} from "./core/types/observable/construct";
+import LazyPublication, {lazyPub} from "./core/types/lazy-pub/construct";
+import Publisher, {publisher} from "./core/types/publisher/construct";
+import Observable, {observable} from "./core/types/observable/construct";
 import {event} from "./core/types/element/concrete";
 import {notEq, eq} from "./core/predicates";
+import {implement} from "./core/types/protocol";
 import * as t from "./transducers";
 
 function signal1(source){
@@ -32,9 +32,17 @@ function signal3(xf, init, source){
 
 export const signal = overload(null, signal1, signal2, signal3);
 
-/* function map(f, source){
-  return signal3(comp(t.map(f), t.dedupe()), f(IDeref.deref(source)), source);
-} */
+function fmap(source, f){
+  return mappedSignal(f, source); //signal3(comp(t.map(f), t.dedupe()), f(IDeref.deref(source)), source);
+}
+
+const fmappable = implement(IFunctor, {fmap});
+
+fmappable(LazyPublication);
+fmappable(Observable);
+fmappable(Publisher);
+
+export map = mappedSignal;
 
 export function mousemove(el){
   return signal(t.map(function(e){
