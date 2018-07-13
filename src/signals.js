@@ -9,6 +9,7 @@ import {doto, effect, overload, identity, constantly} from "./core/core";
 import {detect, filtera, mapa, mapIndexed} from "./core/types/lazy-seq/concrete";
 import {comp, apply, partial, spread} from "./core/types/function/concrete";
 import {mappedSignal} from "./core/types/mapped-signal/construct";
+export {mappedSignal as map} from "./core/types/mapped-signal/construct";
 import Promise from "./core/types/promise/construct";
 import LazyPublication, {lazyPub} from "./core/types/lazy-pub/construct";
 import Publisher, {publisher} from "./core/types/publisher/construct";
@@ -41,8 +42,6 @@ const fmappable = implement(IFunctor, {fmap});
 fmappable(LazyPublication);
 fmappable(Observable);
 fmappable(Publisher);
-
-export map = mappedSignal;
 
 export function mousemove(el){
   return signal(t.map(function(e){

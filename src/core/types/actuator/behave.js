@@ -4,7 +4,7 @@ import {implement} from '../protocol';
 import {IDeref, IMiddleware} from '../../protocols';
 
 function handle(self, command, next){
-  each(next, self.effects(IDeref.deref(self.state), command));
+  self.effects(self.state, command, next);
 }
 
 export default effect(
