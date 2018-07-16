@@ -3,7 +3,7 @@ import {implement} from '../protocol';
 import {IDispatch, ISubscribe, IMiddleware, ILookup, ISwap, IReset, IDeref, IDisposable, IConfigured} from '../../protocols';
 
 function dispatch(self, command){
-  IMiddleware.handle(self.handler, command);
+  return IMiddleware.handle(self.handler, command);
 }
 
 function sub(self, callback){
