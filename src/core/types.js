@@ -49,7 +49,6 @@ export * from "./types/reg-exp";
 export * from "./types/rev-seq";
 export * from "./types/series";
 export * from "./types/symbol";
-export * from "./types/component";
 //export * from "./types/immutable-map";
 export * from "./types/immutable-set";
 export * from "./types/string";
