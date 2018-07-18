@@ -17,6 +17,7 @@ export * from "./iemptyablecollection/concrete";
 export * from "./iencode/concrete";
 export * from "./iequiv/concrete";
 export * from "./ievented/concrete";
+export * from "./ieventprovider/concrete";
 export * from "./ifind/concrete";
 export * from "./ifn/concrete";
 export * from "./ifold/concrete";

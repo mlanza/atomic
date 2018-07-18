@@ -18,6 +18,7 @@ export * from "./protocols/idisposable/instance";
 export * from "./protocols/iemptyablecollection/instance";
 export * from "./protocols/iencode/instance";
 export * from "./protocols/iequiv/instance";
+export * from "./protocols/ieventprovider/instance";
 export * from "./protocols/ifind/instance";
 export * from "./protocols/ifn/instance";
 export * from "./protocols/ifold/instance";

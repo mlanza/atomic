@@ -2,6 +2,8 @@ import {reifiable, implement} from '../../types/protocol';
 import {IReduce, IPublish, IReversible, IMiddleware} from '../../protocols';
 import {doto, noop, overload} from '../../core';
 import {publisher} from '../publisher';
+import {events} from '../events';
+import {eventDispatcher} from '../event-dispatcher';
 import {messageHandler} from '../message-handler';
 import {messageProcessor} from '../message-processor';
 import {observable} from '../observable';
@@ -21,12 +23,12 @@ function commandBus4(config, commands, events, state){
   return commandBus5(config, commands, events, publisher(), state);
 }
 
-function commandBus5(config, commands, events, publisher, state){
-  var bus = new CommandBus(config, null, state);
+function commandBus5(config, commandMap, eventMap, publisher, state){
+  const bus = new CommandBus(config, null, state),
+        evts = events();
   bus.handler = middleware([
-    messageHandler(commands(bus)),
-    messageHandler(events(bus)),
-    messageProcessor(IPublish.pub(publisher, v))
+    messageHandler(commandMap, null, [bus, evts]),
+    eventDispatcher(evts, messageHandler(eventMap, null, [bus, bus]), publisher)
   ]);
   return bus;
 }

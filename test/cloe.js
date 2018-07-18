@@ -11,8 +11,8 @@ QUnit.test("command bus", function(assert){
   const people =
     _.doto(
       _.commandBus({},
-        _.juxtVals(v, {"add": _.actuator(v, _.accept("added"))}),
-        _.juxtVals(v, {"added": _.executor(v, _.conj)}),
+        {"add": _.commandHandler(_.accept("added"), v, v)},
+        {"added": _.executor(_.conj, v, v)},
         obs),
       _.dispatch(v, {type: "add", args: [{name: "Moe"}]}),
       _.dispatch(v, {type: "add", args: [{name: "Curly"}]}),
