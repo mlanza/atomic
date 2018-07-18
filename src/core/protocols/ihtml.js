@@ -1,5 +1,4 @@
-import {protocol, satisfies} from "../types/protocol";
-export const IHtml = protocol({
-  html: null
-});
-export const isHtml = satisfies(IHtml);
+import IHtml from "./ihtml/instance";
+export default IHtml;
+export * from "./ihtml/instance";
+export * from "./ihtml/concrete";

@@ -1,2 +1,6 @@
+import {effect, overload, noop} from '../../core';
 import IMiddleware from "./instance";
-export const handle = IMiddleware.handle;
+function handle2(self, message){
+  return IMiddleware.handle(self, message, noop);
+}
+export const handle = overload(null, null, handle2, IMiddleware.handle);

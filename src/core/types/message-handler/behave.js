@@ -5,7 +5,7 @@ import {IMiddleware, ILookup} from '../../protocols';
 function handle(self, command, next){
   const type = ILookup.lookup(command, "type");
   const handler = ILookup.lookup(self.handlers, type) || self.fallback;
-  return IMiddleware.handle(handler, command, next);
+  IMiddleware.handle(handler, command, next);
 }
 
 export default effect(
