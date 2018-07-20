@@ -2,6 +2,7 @@ import {identity, constantly, effect, overload} from '../../core';
 import {implement, satisfies} from '../protocol';
 import {IValue, IMountable, ISequential, IText, IHtml, IHideable, IMatch, IYank, IInclusive, IInsertable, IArray, IAppendable, IPrependable, IEvented, IAssociative, IMap, IEquiv, ICloneable, ICollection, INext, ISeq, ISeqable, IIndexed, ICounted, ILookup, IReduce, IEmptyableCollection, IHierarchy, IContent} from '../../protocols';
 import {mount} from '../../protocols/imountable/concrete';
+import {transpose} from '../../protocols/iinclusive/concrete';
 import {each, mapcat} from '../lazy-seq/concrete';
 import EmptyList from '../empty-list/construct';
 import {concat} from '../concatenated/construct';
@@ -19,18 +20,23 @@ import Element, {isElement} from './construct';
 
 const hidden = ["display", "none"];
 
-function toggle(self){
+function toggle1(self){
   return transpose(nestedAttrs(self, "style"), hidden);
 }
 
+function toggle2(self, yes){
+  const f = yes ? show : hide;
+  f(self);
+}
+
+export const toggle = overload(null, toggle1, toggle2);
+
 function hide(self){
   ICollection.conj(nestedAttrs(self, "style"), hidden);
-  return self;
 }
 
 function show(self){
   IYank.yank(nestedAttrs(self, "style"), hidden);
-  return self;
 }
 
 function before(self, other){
@@ -342,11 +348,13 @@ function reduce(self, xf, init){
 export const ihierarchy = implement(IHierarchy, {parent, parents, closest, children, descendants, sel, sel1, nextSibling, nextSiblings, prevSibling, prevSiblings, siblings});
 export const icontents = implement(IContent, {contents});
 export const ireduce = implement(IReduce, {reduce});
+export const ievented = implement(IEvented, {on, off, trigger});
 
 export default effect(
   ihierarchy,
   icontents,
   ireduce,
+  ievented,
   implement(IText, {text}),
   implement(IHtml, {html}),
   implement(IValue, {value}),
@@ -360,7 +368,6 @@ export default effect(
   implement(IAppendable, {append: conj}),
   implement(IPrependable, {prepend}),
   implement(ICollection, {conj}),
-  implement(IEvented, {on, off, trigger}),
   implement(ILookup, {lookup}),
   implement(IMap, {dissoc, keys, vals}),
   implement(IAssociative, {assoc, contains}));
