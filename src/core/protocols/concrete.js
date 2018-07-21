@@ -42,6 +42,7 @@ export * from "./iobject/concrete";
 export * from "./iotherwise/concrete";
 export * from "./iprependable/concrete";
 export * from "./ipublish/concrete";
+export * from "./ipush/concrete";
 export * from "./irecord/concrete";
 export * from "./ireduce/concrete";
 export * from "./ireset/concrete";

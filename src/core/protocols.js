@@ -1,3 +1,4 @@
+
 export * from "./protocols/ievented/instance";
 export * from "./protocols/iappendable/instance";
 export * from "./protocols/iarray/instance";
@@ -43,6 +44,7 @@ export * from "./protocols/iobject/instance";
 export * from "./protocols/iotherwise/instance";
 export * from "./protocols/iprependable/instance";
 export * from "./protocols/ipublish/instance";
+export * from "./protocols/ipush/instance";
 export * from "./protocols/irecord/instance";
 export * from "./protocols/ireduce/instance";
 export * from "./protocols/ireset/instance";
