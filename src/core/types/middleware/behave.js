@@ -2,7 +2,7 @@ import {effect, overload, constantly, identity, doto, noop} from '../../core';
 import {reverse} from "../../protocols/ireversible/concrete";
 import {reduce} from "../../protocols/ireduce/concrete";
 import {IMiddleware, IPush, ICollection} from '../../protocols';
-import {reifiable, implement} from '../../types/protocol';
+import {specify, implement} from '../../types/protocol';
 
 function push(self, handler){
   self.handlers = ICollection.conj(self.handlers, handler);
@@ -18,10 +18,8 @@ function combine(handlers){
   function handle(_, command){
     return f(command);
   }
-  const compound = reifiable();
-  doto(compound.constructor,
-    implement(IMiddleware, {handle}));
-  return compound;
+  return doto({},
+    specify(IMiddleware, {handle}));
 }
 
 function handle(self, command, next){

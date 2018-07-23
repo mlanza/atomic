@@ -9,11 +9,11 @@ const stooges = ["Larry","Curly","Moe"],
 QUnit.test("component", function(assert){
   const people =
     _.doto(
-      _.component({}, _.observable([]), function(raise, affect){
+      _.component({}, _.observable([]), function(accepts, raises, affects){
         return [{
-          "add": raise("added")
+          "add": accepts("added")
         }, {
-          "added": affect(_.conj)
+          "added": affects(_.conj)
         }]
       }),
     _.dispatch(v, {type: "add", args: [{name: "Moe"}]}),

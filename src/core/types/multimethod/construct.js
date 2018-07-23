@@ -19,7 +19,7 @@ export function multimethod(fallback){
     return IEvented.off(instance, pred, callback);
   }
   doto(fn,
-    specify(IEvented, {on,off}));
+    specify(IEvented, {on, off}));
   return fn;
 }
 

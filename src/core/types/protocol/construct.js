@@ -50,9 +50,6 @@ function specify1(behavior){
 }
 
 function specify2(behavior, target){
-  if (target.constructor === Object) {
-    target = Object;
-  }
   const keys = this.generate();
   target[keys("__marker__")] = this;
   for(var method in behavior){
@@ -71,7 +68,11 @@ function implement1(behavior){
 }
 
 function implement2(behavior, target){
-  specify2.call(this, behavior, target.prototype);
+  target = target.prototype;
+  if (target.constructor === Object) {
+    target = Object;
+  }
+  specify2.call(this, behavior, target);
 }
 
 Protocol.prototype.implement = overload(implement0, implement1, implement2);
