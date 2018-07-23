@@ -281,7 +281,9 @@ function yank2(self, node){
 export const yank = overload(null, yank1, yank2);
 
 function includes(self, target){
-  if (satisfies(ISequential, target)){
+  if (isElement(target)) {
+    return self.contains(target);
+  } else if (satisfies(ISequential, target)){
     const keys = target;
     return IReduce.reduce(keys, function(memo, key){
       return memo ? self.hasAttribute(key) : reduced(memo);
@@ -290,12 +292,13 @@ function includes(self, target){
     return IKVReduce.reducekv(target, function(memo, key, value){
       return memo ? lookup(self, key) == value : reduced(memo);
     }, true);
+  } else {
+    return detect(isString(target) ? function(node){
+      return node.nodeType === Node.TEXT_NODE && node.data === target;
+    } : function(node){
+      return node === target;
+    }, contents(self));
   }
-  return detect(isString(target) ? function(node){
-    return node.nodeType === Node.TEXT_NODE && node.data === target;
-  } : function(node){
-    return node === target;
-  }, contents(self));
 }
 
 function empty(self){

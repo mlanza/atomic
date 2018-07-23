@@ -7,8 +7,8 @@ export const includes = IInclusive.includes;
 
 function include3(self, value, want){
   const has = includes(self, value);
-  const f = want ? has ? identity : ICollection.conj : IYank.yank;
-  return f(self, value);
+  const f = want ? ICollection.conj : IYank.yank;
+  want === has || f(self, value);
 }
 
 function include2(self, value){
