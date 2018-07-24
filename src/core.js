@@ -1,8 +1,8 @@
 import {overload, identity, obj, partly, doto} from "./core/core";
-import {classes, isEmpty, duration, compact, remove, flatten, map, fragment, element, sort, set, flip, realized, comp, isNumber, observable, detect, mapSomeVals, isFunction, apply} from "./core/types";
 import {IEventProvider, IAppendable, IHash, ITemplate, IMiddleware, IDispatch, IYank, IArray, IAssociative, IBounds, IConverse, ICloneable, ICollection, IComparable, IContent, ICounted, IDecode, IDeref, IDisposable, IEmptyableCollection, IEncode, IEquiv, IEvented, IFind, IFn, IFold, IFunctor, IHideable, IHierarchy, IHtml, IInclusive, IIndexed, IInsertable, IKVReduce, ILookup, IMap, IMapEntry, IMatch, INext, IObject, IOtherwise, IPrependable, IPublish, IReduce, IReset, IReversible, ISeq, ISeqable, ISet, ISteppable, ISubscribe, ISwap, IText} from "./core/protocols";
-import {include, hash, fmap, reducing, transpose} from "./core/protocols/concrete";
-import {and, unless} from "./core/predicates";
+import {classes, isEmpty, duration, compact, remove, flatten, map, fragment, element, sort, set, flip, realized, comp, isNumber, observable, detect, mapSomeVals, isFunction, apply} from "./core/types";
+import {yank, conj, hash, fmap, reducing} from "./core/protocols/concrete";
+import {and, unless, fork} from "./core/predicates";
 import {_ as v} from "param.macro";
 
 export * from "./core/core";
@@ -26,11 +26,11 @@ function subtract2(self, n){
 export const subtract = overload(null, null, subtract2, reducing(subtract2));
 
 export function addClass(self, name){
-  ICollection.conj(classes(self), name);
+  conj(classes(self), name);
 }
 
 export function removeClass(self, name){
-  IYank.yank(classes(self), name);
+  yank(classes(self), name);
 }
 
 function toggleClass2(self, name){
@@ -116,3 +116,13 @@ function isNotConstructor(text){
 
 //convenience for executing partially-applied functions without macros.
 export const impart = mapSomeVals(v, partly, and(isFunction, isNotConstructor));
+
+function include2(self, value){
+  return toggles(conj(v, value), yank(v, value), includes(v, value), self);
+}
+
+function include3(self, value, want){
+  return toggles(conj(v, value), yank(v, value), includes(v, value), self, want);
+}
+
+export const include = overload(null, null, include2, include3);

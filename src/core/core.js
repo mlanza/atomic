@@ -1,5 +1,4 @@
 export const unbind = Function.call.bind(Function.bind, Function.call);
-export const log    = console.log.bind(console);
 
 export function noop(){
 }
