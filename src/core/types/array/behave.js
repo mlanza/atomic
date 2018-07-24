@@ -1,6 +1,6 @@
 import {effect, identity, overload, constantly} from '../../core';
 import {implement} from '../protocol';
-import {ITemplate, IArray, IObject, IFunctor, IYank, IEncode, IDecode, IReversible, ISet, IMapEntry, IEquiv, IReduce, IKVReduce, IAppendable, IPrependable, IInclusive, ICollection, INext, ISeq, IFind, ISeqable, IIndexed, IAssociative, ISequential, IEmptyableCollection, IFn, ICounted, ILookup, ICloneable} from '../../protocols';
+import {IWrite, ITemplate, IArray, IObject, IFunctor, IYank, IEncode, IDecode, IReversible, ISet, IMapEntry, IEquiv, IReduce, IKVReduce, IAppendable, IPrependable, IInclusive, ICollection, INext, ISeq, IFind, ISeqable, IIndexed, IAssociative, ISequential, IEmptyableCollection, IFn, ICounted, ILookup, ICloneable} from '../../protocols';
 import {reduced, unreduced, isReduced} from '../reduced';
 import {indexedSeq} from '../indexed-seq';
 import {replace} from '../string/concrete';
@@ -196,6 +196,10 @@ function fmap(self, f){
   return mapa(f, self);
 }
 
+function write(self, message){
+  self.push(message);
+}
+
 export const iindexed = effect(
   implement(IIndexed, {nth}),
   implement(ICounted, {count: length}));
@@ -208,6 +212,7 @@ export default effect(
   iequiv,
   itemplate,
   implement(ISequential),
+  implement(IWrite, {write}),
   implement(IFunctor, {fmap}),
   implement(IEncode, {encode}),
   implement(IDecode, {decode}),

@@ -1,4 +1,4 @@
-import {identity, constantly, effect, overload} from '../../core';
+import {identity, constantly, effect, overload, partial} from '../../core';
 import {implement, satisfies} from '../protocol';
 import {IValue, IMountable, ISequential, IText, IHtml, IHideable, IMatch, IYank, IInclusive, IInsertable, IArray, IAppendable, IPrependable, IEvented, IAssociative, IMap, IEquiv, ICloneable, ICollection, INext, ISeq, ISeqable, IIndexed, ICounted, ILookup, IReduce, IEmptyableCollection, IHierarchy, IContent} from '../../protocols';
 import {mount} from '../../protocols/imountable/concrete';
@@ -17,26 +17,30 @@ import {reduced} from '../reduced/construct';
 import {nestedAttrs} from '../nested-attrs/construct';
 import {trim, split, str} from '../string/concrete';
 import Element, {isElement} from './construct';
+import {isIdentical} from '../../predicates';
+import {_ as v} from "param.macro";
 
-const hidden = ["display", "none"];
+const hides = ["display", "none"];
 
-function toggle1(self){
-  return transpose(nestedAttrs(self, "style"), hidden);
+function toggles4(on, off, want, self){
+  return want(self) ? on(self) : off(self);
 }
 
-function toggle2(self, yes){
-  const f = yes ? show : hide;
-  f(self);
+function toggles5(on, off, _, self, want){
+  return want ? on(self) : off(self);
 }
 
-export const toggle = overload(null, toggle1, toggle2);
+export const hidden = comp(IInclusive.includes(v, hides), nestedAttrs(v, "style"));
+export const toggles = overload(null, null, null, null, toggles4, toggles5);
+
+const toggle = partial(toggles, show, hide, hidden);
 
 function hide(self){
-  ICollection.conj(nestedAttrs(self, "style"), hidden);
+  ICollection.conj(nestedAttrs(self, "style"), hides);
 }
 
 function show(self){
-  IYank.yank(nestedAttrs(self, "style"), hidden);
+  IYank.yank(nestedAttrs(self, "style"), hides);
 }
 
 function before(self, other){
@@ -251,14 +255,15 @@ export function siblings(self){
 }
 
 function yank1(self){ //no jokes, please!
-  return yank2(parent(self), self);
+  yank2(parent(self), self);
 }
 
 function yank2(self, node){
-  if (satisfies(ISequential, node)) {
+  if (isElement(node)) {
+    self.removeChild(node);
+  } else if (satisfies(ISequential, node)) {
     const keys = node;
     each(self.removeAttribute.bind(self), keys);
-    return self;
   } else if (isAttrs(node)) {
     const attrs = node;
     each(function([key, value]){
@@ -270,19 +275,17 @@ function yank2(self, node){
       }
       curr == value && dissoc(self, key);
     }, attrs);
-    return self;
   } else if (isString(node)) {
     node = includes(self, node);
+    self.removeChild(node);
   }
-  self.removeChild(node);
-  return self;
 }
 
 export const yank = overload(null, yank1, yank2);
 
 function includes(self, target){
   if (isElement(target)) {
-    return self.contains(target);
+    return detect(isIdentical(target, v), children(self));
   } else if (satisfies(ISequential, target)){
     const keys = target;
     return IReduce.reduce(keys, function(memo, key){

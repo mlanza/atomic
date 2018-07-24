@@ -1,6 +1,6 @@
 import {IArray}  from "../../protocols/iarray";
 import {IReduce}  from "../../protocols/ireduce";
-import {log, overload, identity, constantly, partial} from "../../core";
+import {overload, identity, constantly, partial} from "../../core";
 import {isNil}  from "../nil";
 import {slice}  from "../array/concrete";
 import {satisfies}  from "../protocol";
@@ -114,7 +114,7 @@ export function tap(f){
 }
 
 export function see(about){
-  return tap(partial(log, about));
+  return tap(partial(console.log.bind(console), about));
 }
 
 export function flip(f){

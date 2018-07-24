@@ -10,7 +10,7 @@ function sub(self, callback){
   let last = null,
       pred = constantly(true); //force priming callback
   return ISubscribe.sub(self.source, function(value){
-    let curr = self.f(value);
+    const curr = self.f(value);
     if (pred(curr, last)){
       callback(curr);
     }
