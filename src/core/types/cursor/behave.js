@@ -1,6 +1,8 @@
 import {implement} from '../protocol';
 import {effect} from '../../core';
-import {IPublish, ISubscribe, IReset, ISwap, IDeref, IDisposable} from '../../protocols';
+import {IPublish, ISubscribe, IReset, ISwap, IDeref, IDisposable, IDispatch} from '../../protocols';
+import {apply} from "../../types/function/concrete";
+import * as icollection from "../../protocols/icollection/concrete";
 import * as ideref from '../../protocols/ideref/concrete';
 import * as ilookup from '../../protocols/ilookup/concrete';
 import * as iassociative from '../../protocols/iassociative/concrete';
@@ -29,8 +31,15 @@ function sub(self, callback){
   });
 }
 
+function dispatch(self, command){
+  IDispatch.dispatch(self.source, iassociative.update(command, "path", function(path){
+    return apply(icollection.conj, path || [], self.path);
+  }));
+}
+
 export default effect(
   //implement(IDisposable, {dispose}), TODO
+  implement(IDispatch, {dispatch}),
   implement(IDeref, {deref}),
   implement(ISubscribe, {sub}),
   implement(IPublish, {pub: reset}),

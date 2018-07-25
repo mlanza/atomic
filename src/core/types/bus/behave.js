@@ -15,7 +15,7 @@ function deref(self){
 }
 
 function reset(self, value){
-  return IReset.rest(self.state, value);
+  return IReset.reset(self.state, value);
 }
 
 function swap(self, f){

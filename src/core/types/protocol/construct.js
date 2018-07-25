@@ -42,6 +42,15 @@ Protocol.prototype.generate = function(){
   }
 }
 
+function nonenum(target, key, value){
+  Object.defineProperty(target, key, {
+    configurable: true,
+    enumerable: false,
+    writable: true,
+    value: value
+  });
+}
+
 function specify1(behavior){
   const protocol = this;
   return function(target){
@@ -51,9 +60,9 @@ function specify1(behavior){
 
 function specify2(behavior, target){
   const keys = this.generate();
-  target[keys("__marker__")] = this;
+  nonenum(target, keys("__marker__"), this);
   for(var method in behavior){
-    target[keys(method)] = behavior[method];
+    nonenum(target, keys(method), behavior[method])
   }
 }
 
@@ -68,11 +77,11 @@ function implement1(behavior){
 }
 
 function implement2(behavior, target){
-  target = target.prototype;
-  if (target.constructor === Object) {
-    target = Object;
+  let tgt = target.prototype;
+  if (tgt.constructor === Object) {
+    tgt = Object;
   }
-  specify2.call(this, behavior, target);
+  specify2.call(this, behavior, tgt);
 }
 
 Protocol.prototype.implement = overload(implement0, implement1, implement2);
