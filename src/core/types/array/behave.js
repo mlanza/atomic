@@ -7,7 +7,7 @@ import {replace} from '../string/concrete';
 import {revSeq} from '../rev-seq';
 import {filter, mapa} from '../lazy-seq/concrete';
 import {set} from '../immutable-set/construct';
-import Array from './construct';
+import Array, {emptyArray} from './construct';
 
 function fill(self, template){
   return IKVReduce.reducekv(self, function(text, key, value){
@@ -227,7 +227,7 @@ export default effect(
   implement(IPrependable, {prepend}),
   implement(ICloneable, {clone: Array.from}),
   implement(IFn, {invoke: lookup}),
-  implement(IEmptyableCollection, {empty: constantly(Array.EMPTY)}),
+  implement(IEmptyableCollection, {empty: emptyArray}),
   implement(IReduce, {reduce}),
   implement(IKVReduce, {reducekv}),
   implement(ILookup, {lookup}),

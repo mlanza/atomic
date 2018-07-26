@@ -1,4 +1,6 @@
 export default Array;
 export const isArray = Array.isArray.bind(Array);
-Array.EMPTY = Object.freeze([]);
+export function emptyArray(){
+  return [];
+}
 export {Array};

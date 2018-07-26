@@ -1,11 +1,10 @@
 import {IArray, IReduce, ICollection, IHash, IEncode, IDecode, IIndexed, ISeqable, INext, ISeq, IInclusive, IAppendable, IPrependable, ICounted, ILookup, IFn, IComparable, IEmptyableCollection} from '../../protocols';
-import {constantly, effect, identity} from "../../core";
+import {effect, identity} from "../../core";
 import {implement} from '../protocol';
-import String from './construct';
-import EmptyList from '../empty-list/construct';
 import {isReduced, unreduced} from '../reduced';
 import {lazySeq} from '../lazy-seq/construct';
 import {iindexed} from '../array/behave';
+import {emptyString} from "./construct";
 
 function compare(self, other){
   return self === other ? 0 : self > other ? 1 : -1;
@@ -18,7 +17,7 @@ function conj(self, other){
 function seq2(self, idx){
   return idx < self.length ? lazySeq(self[idx], function(){
     return seq2(self, idx + 1);
-  }) : String.EMPTY;
+  }) : "";
 }
 
 function seq(self){
@@ -96,7 +95,7 @@ export default effect(
   implement(IInclusive, {includes}),
   implement(IAppendable, {append: conj}),
   implement(IPrependable, {prepend}),
-  implement(IEmptyableCollection, {empty: constantly(String.EMPTY)}),
+  implement(IEmptyableCollection, {empty: emptyString}),
   implement(IFn, {invoke: lookup}),
   implement(ILookup, {lookup}),
   implement(ISeqable, {seq}),

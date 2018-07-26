@@ -1,8 +1,8 @@
 import {IFunctor, IAssociative, IOtherwise, IEncode, IDecode, IFold, IArray, IEquiv, ICollection, INext, ISeq, ISeqable, IIndexed, ICounted, ILookup, IReduce, IEmptyableCollection, ISequential} from '../../protocols';
-import EmptyList from '../../types/empty-list/construct';
+import {emptyList} from '../../types/empty-list/construct';
 import {identity, constantly, effect, overload} from '../../core';
 import {implement} from '../protocol';
-import Array from '../../types/array/construct';
+import {emptyArray} from '../../types/array/construct';
 import Nil from './construct';
 
 function assoc(self, key, value){
@@ -39,8 +39,8 @@ export default effect(
   implement(ILookup, {lookup: identity}),
   implement(IAssociative, {assoc: assoc, contains: constantly(false)}),
   implement(INext, {next: identity}),
-  implement(IArray, {toArray: constantly(Array.EMPTY)}),
-  implement(ISeq, {first: identity, rest: constantly(EmptyList.EMPTY)}),
+  implement(IArray, {toArray: emptyArray}),
+  implement(ISeq, {first: identity, rest: emptyList}),
   implement(ISeqable, {seq: identity}),
   implement(IIndexed, {nth: identity}),
   implement(ICounted, {count: constantly(0)}),

@@ -86,8 +86,10 @@ export function encodeable(Type){
 }
 
 export function emptyable(Type){
-  Type.EMPTY || (Type.EMPTY = new Type());
-  implement(IEmptyableCollection, {empty: constantly(Type.EMPTY)}, Type);
+  function empty(){
+    return new Type();
+  }
+  implement(IEmptyableCollection, {empty}, Type);
 }
 
 export default effect(

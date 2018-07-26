@@ -3,7 +3,7 @@ import {implement, satisfies} from '../protocol';
 import {IFunctor, ISeq, INext, ISequential} from '../../protocols';
 import {mapcat} from "../lazy-seq/concrete";
 import {reduced} from "../reduced/construct";
-import Members, {members} from "./construct";
+import Members, {members, emptyMembers} from "./construct";
 import behave from "../series/behave";
 
 function fmap(self, f){
@@ -19,7 +19,7 @@ function first(self){
 
 function rest(self){
   const result = next(self);
-  return result ? members(result) : Members.EMPTY;
+  return result ? members(result) : emptyMembers();
 }
 
 function next(self){

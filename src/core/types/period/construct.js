@@ -18,8 +18,11 @@ function from({start, end, step, direction}){
   return new Period(start, end, step, direction);
 }
 
+export function emptyPeriod(){
+  return new Period();
+}
+
 Period.from = from;
-Period.EMPTY = new Period();
 Period.prototype[Symbol.toStringTag] = "Period";
 
 function period0(){

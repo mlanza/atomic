@@ -14,7 +14,7 @@ function conj(self, x){
 
 function next(self){
   const tail = ISeq.rest(self);
-  return tail === EmptyList.EMPTY ? null : tail;
+  return ISeqable.seq(tail) ? tail : null;
 }
 
 function first(self){

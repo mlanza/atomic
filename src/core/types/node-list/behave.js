@@ -3,13 +3,13 @@ import {implement} from '../protocol';
 import {ISeq, INext, ISeqable, ISequential, IContent, IHierarchy} from '../../protocols';
 import {lazySeq} from '../lazy-seq/construct';
 import {comp} from '../function/concrete';
-import EmptyList from '../empty-list/construct';
+import {emptyList} from '../empty-list/construct';
 import {iterable} from '../lazy-seq/behave';
 
 function seq2(self, idx){
   return idx < self.length ? lazySeq(self.item(idx), function(){
     return seq2(self, idx + 1);
-  }) : EmptyList.EMPTY;
+  }) : emptyList();
 }
 
 function seq(self){

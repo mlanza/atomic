@@ -5,7 +5,7 @@ import Reduced, {isReduced, reduced, unreduced} from "../reduced";
 import {concat} from "../concatenated/construct";
 import {cons} from "../list/construct";
 import {map, detect} from "./concrete";
-import EmptyList from '../empty-list/construct';
+import {emptyList} from '../empty-list/construct';
 import Symbol from '../symbol/construct';
 
 function fmap(self, f){
@@ -148,7 +148,7 @@ export default effect(
   implement(ICounted, {count}),
   implement(IEquiv, {equiv}),
   implement(IFind, {find}),
-  implement(IEmptyableCollection, {empty: EmptyList.EMPTY}),
+  implement(IEmptyableCollection, {empty: emptyList}),
   implement(ISeq, {first, rest}),
   implement(ISeqable, {seq: identity}),
   implement(INext, {next}));

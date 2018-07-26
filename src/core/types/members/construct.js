@@ -11,7 +11,10 @@ export function members(self){
   return new Members(distinct(satisfies(ISequential, self) ? self : cons(self)));
 }
 
+export function emptyMembers(){
+  return new Members();
+}
+
 Members.from = members;
-Members.EMPTY = new Members();
 
 export {Members};

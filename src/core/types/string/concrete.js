@@ -1,7 +1,7 @@
-import {overload, constantly, unbind} from "../../core";
+import {overload, unbind} from "../../core";
 import {reducing} from "../../protocols/ireduce/concrete";
 import {IKVReduce, ITemplate} from "../../protocols";
-import String from "./construct";
+import String, {emptyString} from "./construct";
 
 export function isBlank(str){
   return str == null || typeof str === "string" && str.trim().length === 0;
@@ -56,4 +56,4 @@ export const rpad       = unbind(String.prototype.padEnd);
 export const trim       = unbind(String.prototype.trim);
 export const rtrim      = unbind(String.prototype.trimRight);
 export const ltrim      = unbind(String.prototype.trimLeft);
-export const str        = overload(constantly(String.EMPTY), str1, str2, reducing(str2));
+export const str        = overload(emptyString, str1, str2, reducing(str2));

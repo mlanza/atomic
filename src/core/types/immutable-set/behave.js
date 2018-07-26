@@ -1,9 +1,8 @@
 import {effect, identity, constantly} from '../../core';
 import {implement} from '../protocol';
-import {set, Set} from './construct';
-import {IArray, ISeq, IReduce, ISeqable, ISet, INext, ISequential, ICounted, ICollection, IEmptyableCollection, IInclusive, ICloneable} from '../../protocols';
-import EmptyList from '../../types/empty-list/construct';
+import {Set, emptySet} from './construct';
 import {unreduced} from '../../types/reduced/concrete';
+import {IArray, ISeq, IReduce, ISeqable, ISet, INext, ISequential, ICounted, ICollection, IEmptyableCollection, IInclusive, ICloneable} from '../../protocols';
 
 function seq(self){
   return count(self) ? self : null;
@@ -35,7 +34,7 @@ function first(self){
 
 function rest(self){
   let tail = self.rest();
-  return tail.size > 0 ? tail : EmptyList.EMPTY;
+  return tail.size > 0 ? tail : emptySet();
 }
 
 function next(self){
@@ -65,7 +64,7 @@ export default effect(
   implement(IInclusive, {includes}),
   implement(ISet, {union, intersection}),
   implement(ICloneable, {clone: identity}),
-  implement(IEmptyableCollection, {empty: constantly(set())}),
+  implement(IEmptyableCollection, {empty: emptySet}),
   implement(ICollection, {conj}),
   implement(ICounted, {count}),
   implement(INext, {next}),

@@ -14,8 +14,11 @@ function from({start, end, step, direction}){
   return new Range(start, end, step, direction);
 }
 
+export function emptyRange(){
+  return new Range();
+}
+
 Range.from = from;
-Range.EMPTY = new Range();
 Range.prototype[Symbol.toStringTag] = "Range";
 
 function range0(){
@@ -36,7 +39,7 @@ function range3(start, end, step){
   if (direction === 0){
     throw Error("Range has no direction.");
   }
-  return IComparable.compare(start, end) * direction < 0 ? new Range(start, end, step, direction) : Range.EMPTY;
+  return IComparable.compare(start, end) * direction < 0 ? new Range(start, end, step, direction) : emptyRange();
 }
 
 export const range = overload(range0, range1, range2, range3);
