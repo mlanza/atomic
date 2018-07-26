@@ -5,7 +5,7 @@ import {reduced} from '../reduced';
 import {lazySeq, into} from '../lazy-seq';
 import {iequiv, itemplate} from '../array/behave';
 import {satisfies} from "../protocol/concrete";
-import Object from '../object/construct';
+import Object, {emptyObject} from '../object/construct';
 
 const keys = Object.keys;
 const vals = Object.values;
@@ -76,7 +76,7 @@ function first(self){
 }
 
 function rest(self){
-  return next(self) || Object.EMPTY;
+  return next(self) || {};
 }
 
 function next2(self, keys){
@@ -195,7 +195,7 @@ export default effect(
   implement(ISeq, {first, rest}),
   implement(INext, {next}),
   implement(ILookup, {lookup: lookup}),
-  implement(IEmptyableCollection, {empty: constantly(Object.EMPTY)}),
+  implement(IEmptyableCollection, {empty: emptyObject}),
   implement(IAssociative, {assoc, contains}),
   implement(ISeqable, {seq}),
   implement(ICounted, {count}));

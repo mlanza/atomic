@@ -1,6 +1,6 @@
 import {constantly, identity, effect, overload} from '../../core';
 import {implement} from '../protocol';
-import EmptyList from '../../types/empty-list/construct';
+import EmptyList, {emptyList} from '../../types/empty-list/construct';
 import {cons} from '../../types/list/construct';
 import {Reduced, unreduced} from '../../types/reduced';
 import {ISequential, IArray, ICloneable, IReduce, ICollection, IEmptyableCollection, INext, ISeq, ICounted, ISeqable, IIndexed} from '../../protocols';
@@ -20,7 +20,7 @@ function first(self){
 }
 
 function rest(self){
-  return INext.next(self) || EmptyList.EMPTY;
+  return INext.next(self) || emptyList();
 }
 
 function next(self){
@@ -55,7 +55,7 @@ export default effect(
   iterable,
   implement(ISequential),
   implement(IArray, {toArray: Array.from}),
-  implement(IEmptyableCollection, {empty: constantly(EmptyList.EMPTY)}),
+  implement(IEmptyableCollection, {empty: emptyList}),
   implement(IReduce, {reduce}),
   implement(ICollection, {conj}),
   implement(ISeq, {first, rest}),

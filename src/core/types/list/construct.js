@@ -1,7 +1,7 @@
 import {constantly, overload} from "../../core";
 import {apply} from "../../types/function/concrete";
 import {reducing} from "../../protocols/ireduce/concrete";
-import EmptyList from '../../types/empty-list';
+import EmptyList, {emptyList} from '../../types/empty-list';
 import {IReduce} from '../../protocols/ireduce';
 import Symbol from '../symbol/construct';
 
@@ -15,16 +15,16 @@ function from({head, tail}){
 }
 
 function cons2(head, tail){
-  return new List(head, tail || EmptyList.EMPTY);
+  return new List(head, tail || emptyList());
 }
 
 const _consN = reducing(cons2);
 
 function consN(...args){
-  return _consN.apply(this, args.concat([EmptyList.EMPTY]));
+  return _consN.apply(this, args.concat([emptyList()]));
 }
 
-export const cons = overload(constantly(EmptyList.EMPTY), cons2, cons2, consN);
+export const cons = overload(emptyList, cons2, cons2, consN);
 
 List.prototype[Symbol.toStringTag] = "List";
 List.from = from;
@@ -36,7 +36,7 @@ export function isList(self){
 export function list(...args){
   return IReduce.reduce(args.reverse(), function(memo, value){
     return cons(value, memo);
-  }, EmptyList.EMPTY);
+  }, emptyList());
 }
 
 export default List;

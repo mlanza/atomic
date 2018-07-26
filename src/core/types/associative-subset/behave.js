@@ -3,7 +3,7 @@ import {identity, constantly, effect} from '../../core';
 import {IObject, IDescriptive, IFind, ICollection, IReduce, IKVReduce, INext, IArray, ISeq, ISeqable, IIndexed, ICounted, ILookup, IFn, IMap, ICloneable, IEmptyableCollection} from '../../protocols';
 import {lazySeq} from '../../types/lazy-seq/construct';
 import {remove, into} from '../../types/lazy-seq/concrete';
-import Object from '../../types/object/construct';
+import Object, {emptyObject} from '../../types/object/construct';
 import {iequiv, itemplate} from '../../types/array/behave';
 
 function toObject(self){
@@ -72,7 +72,7 @@ export default effect(
   implement(IReduce, {reduce}),
   implement(IKVReduce, {reducekv}),
   implement(ICloneable, {clone}),
-  implement(IEmptyableCollection, {empty: constantly(Object.EMPTY)}),
+  implement(IEmptyableCollection, {empty: emptyObject}),
   implement(IFn, {invoke: lookup}),
   implement(ILookup, {lookup}),
   implement(ISeqable, {seq}),

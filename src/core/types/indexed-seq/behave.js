@@ -8,7 +8,7 @@ import {concat} from '../../types/concatenated/construct';
 import {iterable} from '../lazy-seq/behave';
 import {detect, drop} from '../lazy-seq/concrete';
 import {encodeable} from '../record/behave';
-import Array from '../../types/array/construct';
+import {emptyArray} from '../../types/array/construct';
 
 function reverse(self){
   let c = ICounted.count(self);
@@ -108,7 +108,7 @@ export default effect(
   implement(IAssociative, {contains}),
   implement(IAppendable, {append}),
   implement(IPrependable, {prepend}),
-  implement(IEmptyableCollection, {empty: constantly(Array.EMPTY)}),
+  implement(IEmptyableCollection, {empty: emptyArray}),
   implement(IReduce, {reduce}),
   implement(IKVReduce, {reducekv}),
   implement(IFn, {invoke: lookup}),

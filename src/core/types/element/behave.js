@@ -4,7 +4,7 @@ import {IValue, IMountable, ISequential, IText, IHtml, IHideable, IMatch, IYank,
 import {mount} from '../../protocols/imountable/concrete';
 import {transpose} from '../../protocols/iinclusive/concrete';
 import {each, mapcat} from '../lazy-seq/concrete';
-import EmptyList from '../empty-list/construct';
+import EmptyList, {emptyList} from '../empty-list/construct';
 import {concat} from '../concatenated/construct';
 import {cons} from '../list/construct';
 import {lazySeq} from '../lazy-seq/construct';
@@ -17,6 +17,7 @@ import {reduced} from '../reduced/construct';
 import {nestedAttrs} from '../nested-attrs/construct';
 import {trim, split, str} from '../string/concrete';
 import Element, {isElement} from './construct';
+import {isDocumentFragment} from '../document-fragment/construct';
 import {isIdentical} from '../../predicates';
 import {_ as v} from "param.macro";
 
@@ -72,12 +73,12 @@ export function downward(f){
 export function upward(f){
   return function up(self){
     const other = f(self);
-    return other ? cons(other, up(other)) : EmptyList.EMPTY;
+    return other ? cons(other, up(other)) : emptyList();
   }
 }
 
 function isAttrs(self){
-  return !isElement(self) && satisfies(IAssociative, self);
+  return !isDocumentFragment(self) && !isElement(self) && satisfies(IAssociative, self);
 }
 
 function on3(self, key, callback){
@@ -185,7 +186,7 @@ function dissoc(self, key){
 function keys2(self, idx){
   return idx < self.attributes.length ? lazySeq(self.attributes[idx].name, function(){
     return keys2(self, idx + 1);
-  }) : EmptyList.EMPTY;
+  }) : emptyList();
 }
 
 function keys(self){
@@ -195,7 +196,7 @@ function keys(self){
 function vals2(self, idx){
   return idx < self.attributes.length ? lazySeq(self.attributes[idx].value, function(){
     return keys2(self, idx + 1);
-  }) : EmptyList.EMPTY;
+  }) : emptyList();
 }
 
 function vals(self){

@@ -6,9 +6,10 @@ import {reduced, unreduced, isReduced} from '../reduced';
 import {lazySeq} from '../lazy-seq';
 import {iterable} from '../lazy-seq/behave';
 import {encodeable, emptyable} from "../record/behave";
+import {emptyRange} from "./construct";
 
 function seq(self){
-  return self === self.constructor.EMPTY ? null : self;
+  return self.step == null && self.direction == null && self.start == null && self.end == null ? null : self;
 }
 
 function start(self){
@@ -24,11 +25,11 @@ function first(self){
 }
 
 function rest(self){
-  return next(self) || self.constructor.EMPTY;
+  return next(self) || emptyRange();
 }
 
 function next(self){
-  if (self === self.constructor.EMPTY) return null;
+  if (!seq(self)) return null;
   const stepped = ISteppable.step(self.step, self.start);
   return (IComparable.compare(stepped, self.end) * self.direction) < 0 ? new self.constructor(stepped, self.end, self.step, self.direction) : null;
 }

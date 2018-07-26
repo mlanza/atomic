@@ -6,14 +6,14 @@ import {lazySeq} from "../lazy-seq/construct";
 import {map, filter} from "../lazy-seq/concrete";
 import {cons} from "../list/construct";
 import {ihierarchy, icontents, ireduce} from "../element/behave";
-import EmptyList from "../empty-list/construct";
+import {emptyList} from "../empty-list/construct";
 
 export default effect(
   behave,
   ihierarchy,
   icontents,
   ireduce,
-  implement(IHierarchy, {nextSibling: constantly(null), nextSiblings: constantly(EmptyList.EMPTY), prevSibling: constantly(null), prevSiblings: constantly(EmptyList.EMPTY), siblings: constantly(EmptyList.EMPTY), parent: constantly(null), parents: constantly(EmptyList.EMPTY)}),
+  implement(IHierarchy, {nextSibling: constantly(null), nextSiblings: emptyList, prevSibling: constantly(null), prevSiblings: emptyList, siblings: emptyList, parent: constantly(null), parents: emptyList}),
   implement(INext, {next: constantly(null)}),
-  implement(ISeq, {first: identity, rest: constantly(EmptyList.EMPTY)}),
+  implement(ISeq, {first: identity, rest: emptyList}),
   implement(ISeqable, {seq: cons}));

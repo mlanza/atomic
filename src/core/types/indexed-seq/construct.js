@@ -1,5 +1,5 @@
 import {overload} from '../../core';
-import EmptyList from "../empty-list";
+import {emptyList} from "../empty-list";
 import Symbol from '../symbol/construct';
 import {ICounted} from '../../protocols';
 
@@ -13,7 +13,7 @@ function indexedSeq1(seq){
 }
 
 function indexedSeq2(seq, start){
-  return start < ICounted.count(seq) ? new IndexedSeq(seq, start) : EmptyList.EMPTY;
+  return start < ICounted.count(seq) ? new IndexedSeq(seq, start) : emptyList();
 }
 
 export const indexedSeq = overload(null, indexedSeq1, indexedSeq2);

@@ -1,13 +1,8 @@
-import {effect} from '../../core';
+import {effect, identity} from '../../core';
 import {implement} from '../protocol';
 import {ISeq, ISeqable, IEncode, IAssociative, IArray} from '../../protocols';
-import EmptyList from '../empty-list/construct';
 import behave from '../lazy-seq/behave';
 import Symbol from '../symbol/construct';
-
-function seq(self){
-  return self === EmptyList.EMPTY ? null : self;
-}
 
 function first(self){
   return self.head;
@@ -24,5 +19,5 @@ function encode(self, label, refstore, seed){
 export default effect(
   behave,
   implement(IEncode, {encode}),
-  implement(ISeqable, {seq}),
+  implement(ISeqable, {seq: identity}),
   implement(ISeq, {first, rest}));

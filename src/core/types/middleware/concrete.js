@@ -40,10 +40,8 @@ function affects3(bus, f, react){
     const past = deref(bus),
           present = event.path ? apply(updateIn, past, event.path, f, event.args) : apply(f, past, event.args),
           scope = event.path ? getIn(v, event.path) : identity;
-    if (past !== present) {
-      IReset.reset(bus, present);
-      react(bus, event, scope(present), scope(past));
-    }
+    IReset.reset(bus, present);
+    react(bus, event, scope(present), scope(past));
     next(event);
   })
 }

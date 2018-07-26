@@ -3,7 +3,9 @@ import Symbol from '../symbol/construct';
 
 export default function EmptyList(){
 }
+export function emptyList(){
+  return new EmptyList();
+}
 EmptyList.prototype[Symbol.toStringTag] = "EmptyList";
-EmptyList.EMPTY = new EmptyList();
-EmptyList.from = constantly(EmptyList.EMPTY);
+EmptyList.from = emptyList;
 export {EmptyList};

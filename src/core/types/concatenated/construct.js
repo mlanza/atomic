@@ -3,12 +3,12 @@ import {ISeq} from '../../protocols/iseq';
 import IArray from '../../protocols/iarray/instance';
 import {identity, constantly, overload, unspread} from "../../core";
 import {lazySeq} from "../../types/lazy-seq/construct";
-import EmptyList from '../empty-list/construct';
+import {emptyList} from '../empty-list/construct';
 import Symbol from '../symbol/construct';
 
 function filter(pred, xs){ //duplicated to break dependencies
   const coll = ISeqable.seq(xs);
-  if (!coll) return EmptyList.EMPTY;
+  if (!coll) return xs;
   const head = ISeq.first(coll);
   return pred(head) ? lazySeq(head, function(){
     return filter(pred, ISeq.rest(coll));
@@ -21,7 +21,7 @@ export function Concatenated(colls){
 
 export function concatenated(colls){
   colls = IArray.toArray(filter(ISeqable.seq, colls));
-  return ISeqable.seq(colls) ? new Concatenated(colls) : EmptyList.EMPTY;
+  return ISeqable.seq(colls) ? new Concatenated(colls) : emptyList();
 }
 
 export function isConcatenated(self){
@@ -35,6 +35,6 @@ function from({colls}){
 Concatenated.prototype[Symbol.toStringTag] = "Concatenated";
 Concatenated.from = from;
 
-export const concat = overload(constantly(EmptyList.EMPTY), ISeqable.seq, unspread(concatenated));
+export const concat = overload(emptyList, ISeqable.seq, unspread(concatenated));
 
 export default Concatenated;

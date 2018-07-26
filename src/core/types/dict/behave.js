@@ -3,7 +3,7 @@ import {implement} from '../protocol';
 import {ISeq, IArray, IReduce, IKVReduce, ICounted, ISeqable, ICollection, ILookup, IMap, IAssociative} from '../../protocols';
 import {lazySeq, map} from '../lazy-seq';
 import {comp} from '../function/concrete';
-import EmptyList from '../empty-list/construct';
+import {emptyList} from '../empty-list/construct';
 import {concatenated} from '../concatenated/construct';
 import record from '../record/behave';
 
@@ -19,7 +19,7 @@ function seq(self){
   return concatenated(map(function(key){
     return map(function(value){
       return [key, value];
-    }, ISeqable.seq(ILookup.lookup(self, key)) || EmptyList.EMPTY);
+    }, ISeqable.seq(ILookup.lookup(self, key)) || emptyList());
   }, keys(self)));
 }
 
