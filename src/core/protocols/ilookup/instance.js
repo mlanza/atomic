@@ -1,5 +1,6 @@
 import {protocol} from "../../types/protocol";
-export const ILookup = protocol({
-  lookup: null
-});
+function lookup(self, key){
+  return self && self[key];
+}
+export const ILookup = protocol({lookup});
 export default ILookup;
