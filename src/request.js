@@ -4,6 +4,7 @@ import {append} from "./core/protocols/iappendable/concrete";
 import {getIn, get} from "./core/protocols/ilookup/concrete";
 import {absorb} from "./core/associatives";
 import {assoc, update} from "./core/protocols/iassociative/concrete";
+import {before, after} from "./core/protocols/iinsertable/concrete";
 import {fork} from "./core/predicates";
 import {emptyObject} from "./core/types/object/construct";
 import {resolve, reject} from "./core/types/promise/concrete";
@@ -37,8 +38,6 @@ const json = pipe(
   after(v, request, invokes(v, "json")),
   after(v, request, getIn(v, ["d", "results"])));
 
-export const getJSON = json(requests);
-
 export const getJSON2 =
   pipeline() |>
     append(v, emptyObject) |>
@@ -51,3 +50,5 @@ export const getJSON2 =
     append(v, request, checkStatus) |>
     append(v, invokes(v, "json")) |>
     append(v, getIn(v, ["d", "results"]));
+
+export const getJSON = json(requests);
