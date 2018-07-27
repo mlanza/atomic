@@ -2,7 +2,7 @@ import {constantly, effect, identity} from '../../core';
 import {implement} from '../protocol';
 import {IComparable, IYank, IMatch, IArray, IDecode, ISet, INext, ICollection, IEncode, IEquiv, IMapEntry, IReduce, IKVReduce, ISeqable, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, IFn, IMap, ISeq, IDescriptive, IObject, ICloneable, IInclusive} from '../../protocols';
 import {reduced} from '../reduced';
-import {lazySeq, into} from '../lazy-seq';
+import {lazySeq, into, map} from '../lazy-seq';
 import {iequiv, itemplate} from '../array/behave';
 import {satisfies} from "../protocol/concrete";
 import Object, {emptyObject} from '../object/construct';
@@ -119,7 +119,10 @@ function contains(self, key){
 }
 
 function seq(self){
-  return count(self) ? self : null;
+  if (!count(self)) return null;
+  return map(function(key){
+    return [key, lookup(self, key)];
+  }, keys(self));
 }
 
 function count(self){

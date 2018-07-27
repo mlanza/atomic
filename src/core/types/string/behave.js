@@ -28,14 +28,6 @@ function lookup(self, key){
   return self[key];
 }
 
-export function replace(s, match, replacement){
-  return s.replace(match, replacement);
-}
-
-export function subs(s, start, end){
-  return s.substring(start, end);
-}
-
 function first(self){
   return self[0] || null;
 }

@@ -5,7 +5,7 @@ export default {
   input: 'src/cloe.js',
   output: {
     file: 'dist/cloe.js',
-    format: 'iife',
+    format: 'amd',
     name: "Cloe",
     globals: {
       "fetch": "fetch",
