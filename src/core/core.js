@@ -9,6 +9,10 @@ export function complement(f){
   }
 }
 
+export function invokes(self, method, ...args){
+  return self[method].apply(self, args);
+}
+
 export function counter(init){
   let memo = init || 0;
   return function(){

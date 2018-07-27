@@ -39,11 +39,11 @@ export function chain(init, ...fs){
   return pipe(...fs)(init);
 }
 
-export function pipe(init, ...fs){
+export function pipe(f, ...fs){
   return function(...args){
     return IReduce.reduce(fs, function(memo, f){
       return f(memo);
-    }, init.apply(null, args));
+    }, f.apply(null, args));
   }
 }
 

@@ -44,17 +44,17 @@ function show(self){
   IYank.yank(nestedAttrs(self, "style"), hides);
 }
 
-function before(self, other){
-  other = isFunction(other) ? other() : other;
+function before(self, inserted){
+  inserted = isFunction(inserted) ? inserted() : inserted;
   const parent = IHierarchy.parent(self);
-  parent.insertBefore(other, self);
+  parent.insertBefore(inserted, self);
   return self;
 }
 
-function after(self, other){
-  other = isFunction(other) ? other() : other;
+function after(self, inserted){
+  inserted = isFunction(inserted) ? inserted() : inserted;
   const relative = IHierarchy.nextSibling(self), parent = IHierarchy.parent(self);
-  relative ? parent.insertBefore(other, relative) : parent.prependChild(other);
+  relative ? parent.insertBefore(inserted, relative) : parent.prependChild(inserted);
   return self;
 }
 

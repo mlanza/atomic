@@ -1,6 +1,6 @@
-import {effect, identity, overload, constantly} from '../../core';
+import {effect, identity, overload, constantly, doto} from '../../core';
 import {implement} from '../protocol';
-import {IWrite, ITemplate, IArray, IObject, IFunctor, IYank, IEncode, IDecode, IReversible, ISet, IMapEntry, IEquiv, IReduce, IKVReduce, IAppendable, IPrependable, IInclusive, ICollection, INext, ISeq, IFind, ISeqable, IIndexed, IAssociative, ISequential, IEmptyableCollection, IFn, ICounted, ILookup, ICloneable} from '../../protocols';
+import {IWrite, ITemplate, IArray, IObject, IFunctor, IInsertable, IYank, IEncode, IDecode, IReversible, ISet, IMapEntry, IEquiv, IReduce, IKVReduce, IAppendable, IPrependable, IInclusive, ICollection, INext, ISeq, IFind, ISeqable, IIndexed, IAssociative, ISequential, IEmptyableCollection, IFn, ICounted, ILookup, ICloneable} from '../../protocols';
 import {reduced, unreduced, isReduced} from '../reduced';
 import {indexedSeq} from '../indexed-seq';
 import {replace} from '../string/concrete';
@@ -8,6 +8,20 @@ import {revSeq} from '../rev-seq';
 import {filter, mapa} from '../lazy-seq/concrete';
 import {set} from '../immutable-set/construct';
 import Array, {emptyArray} from './construct';
+
+function before(self, reference, inserted){
+  const pos = self.indexOf(reference);
+  return pos === -1 ? self : doto(clone(self), function(self){
+    self.splice(pos, 0, inserted);
+  });
+}
+
+function after(self, reference, inserted){
+  const pos = self.indexOf(reference);
+  return pos === -1 ? self : doto(clone(self), function(self){
+    self.splice(pos + 1, 0, inserted);
+  });
+}
 
 function fill(self, template){
   return IKVReduce.reducekv(self, function(text, key, value){
@@ -212,6 +226,7 @@ export default effect(
   iequiv,
   itemplate,
   implement(ISequential),
+  implement(IInsertable, {before, after}),
   implement(IWrite, {write}),
   implement(IFunctor, {fmap}),
   implement(IEncode, {encode}),
