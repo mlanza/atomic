@@ -8,6 +8,7 @@ import {before, after} from "./core/protocols/iinsertable/concrete";
 import {fork} from "./core/predicates";
 import {emptyObject} from "./core/types/object/construct";
 import {resolve, reject} from "./core/types/promise/concrete";
+import {pipe} from "./core/types/function/concrete";
 import fetch from "fetch";
 import {_ as v} from "param.macro";
 

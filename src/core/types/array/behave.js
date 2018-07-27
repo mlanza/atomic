@@ -9,6 +9,8 @@ import {filter, mapa} from '../lazy-seq/concrete';
 import {set} from '../immutable-set/construct';
 import Array, {emptyArray} from './construct';
 
+const clone = Array.from;
+
 function before(self, reference, inserted){
   const pos = self.indexOf(reference);
   return pos === -1 ? self : doto(clone(self), function(self){
@@ -240,7 +242,7 @@ export default effect(
   implement(IInclusive, {includes}),
   implement(IAppendable, {append}),
   implement(IPrependable, {prepend}),
-  implement(ICloneable, {clone: Array.from}),
+  implement(ICloneable, {clone}),
   implement(IFn, {invoke: lookup}),
   implement(IEmptyableCollection, {empty: emptyArray}),
   implement(IReduce, {reduce}),
