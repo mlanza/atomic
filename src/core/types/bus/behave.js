@@ -1,25 +1,9 @@
 import {effect, overload, constantly, identity} from '../../core';
-import {implement} from '../protocol';
+import {implement, forwardTo} from '../protocol';
 import {IDispatch, ISubscribe, IMiddleware, ILookup, ISwap, IReset, IDeref, IDisposable, IConfigured} from '../../protocols';
 
 function dispatch(self, command){
   IMiddleware.handle(self.handler, command);
-}
-
-function sub(self, callback){
-  return ISubscribe.sub(self.state, callback);
-}
-
-function deref(self){
-  return IDeref.deref(self.state);
-}
-
-function reset(self, value){
-  return IReset.reset(self.state, value);
-}
-
-function swap(self, f){
-  return ISwap.swap(self.state, f);
 }
 
 function dispose(self){
@@ -31,11 +15,18 @@ function config(self){
   return self.config;
 }
 
+const forward = forwardTo("state");
+const sub = forward(ISubscribe.sub);
+const unsub = forward(ISubscribe.unsub);
+const deref = forward(IDeref.deref);
+const reset = forward(IReset.reset);
+const swap = forward(ISwap.swap);
+
 export default effect(
   implement(IDeref, {deref}),
   implement(IReset, {reset}),
   implement(ISwap, {swap}),
   implement(IConfigured, {config}),
-  implement(ISubscribe, {sub}),
+  implement(ISubscribe, {sub, unsub}),
   implement(IDispatch, {dispatch}),
   implement(IDisposable, {dispose}));

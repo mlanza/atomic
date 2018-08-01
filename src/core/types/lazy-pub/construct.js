@@ -9,8 +9,10 @@ export default function LazyPublication(sink, activate, deactivate){
   this.deactivate = deactivate;
 }
 
-function lazyPub1(source){
-  return lazyPub2(publisher(), source);
+function lazyPub1(callback){
+  const sink = publisher(),
+        {activate, deactivate} = callback(sink);
+  return new LazyPublication(sink, activate, deactivate);
 }
 
 function lazyPub2(sink, source){
@@ -19,9 +21,11 @@ function lazyPub2(sink, source){
 
 function lazyPub3(sink, xf, source){
   const callback = partial(xf(IPublish.pub), sink);
-  return new LazyPublication(sink, isFunction(source) ? source : function(sink){
-    return ISubscribe.sub(source, callback);
-  }, noop);
+  return new LazyPublication(sink, function(){
+    ISubscribe.sub(source, callback);
+  }, function(){
+    ISubscribe.unsub(source, callback);
+  });
 }
 
 export const lazyPub = overload(null, lazyPub1, lazyPub2, lazyPub3);

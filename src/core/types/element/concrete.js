@@ -13,17 +13,31 @@ function event2(el, key){
 
 function event3(el, key, options){
   return lazyPub(function(sink){
-    return IEvented.on(el, key, function(e){
+    function callback(e){
       IPublish.pub(sink, e);
-    });
+    }
+    function activate(){
+      IEvented.on(el, key, callback);
+    }
+    function deactivate(){
+      IEvented.off(el, key, callback);
+    }
+    return {activate, deactivate};
   });
 }
 
 function event4(el, key, selector, options){
   return lazyPub(function(sink){
-    return IEvented.on(el, key, selector, function(e){
+    function callback(e){
       IPublish.pub(sink, e);
-    });
+    }
+    function activate(){
+      IEvented.on(el, key, selector, callback);
+    }
+    function deactivate(){
+      IEvented.off(el, key, callback);
+    }
+    return {activate, deactivate};
   });
 }
 

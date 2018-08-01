@@ -46,7 +46,7 @@ function defaults2(self, defaults){
 export const defaults = overload(null, null, defaults2, reducing(defaults2));
 
 export function compile(self){
-  return function(...args){
+  return isFunction(self) ? self : function(...args){
     return apply(IFn.invoke, self, args);
   }
 }

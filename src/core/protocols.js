@@ -1,4 +1,3 @@
-
 export * from "./protocols/ievented/instance";
 export * from "./protocols/iappendable/instance";
 export * from "./protocols/iarray/instance";
@@ -43,6 +42,7 @@ export * from "./protocols/inamed/instance";
 export * from "./protocols/inext/instance";
 export * from "./protocols/iobject/instance";
 export * from "./protocols/iotherwise/instance";
+export * from "./protocols/ipersistent/instance";
 export * from "./protocols/iprependable/instance";
 export * from "./protocols/ipublish/instance";
 export * from "./protocols/ipush/instance";
@@ -59,6 +59,7 @@ export * from "./protocols/isubscribe/instance";
 export * from "./protocols/iswap/instance";
 export * from "./protocols/itemplate/instance";
 export * from "./protocols/itext/instance";
+export * from "./protocols/itransient/instance";
 export * from "./protocols/ivalue/instance";
 export * from "./protocols/iwrite/instance";
 export * from "./protocols/iyank/instance";

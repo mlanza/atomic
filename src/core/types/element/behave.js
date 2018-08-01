@@ -1,8 +1,10 @@
-import {identity, constantly, effect, overload, partial} from '../../core';
+import {identity, constantly, effect, overload, partial, doto} from '../../core';
 import {implement, satisfies} from '../protocol';
 import {IValue, IMountable, ISequential, IText, IHtml, IHideable, IMatch, IYank, IInclusive, IInsertable, IArray, IAppendable, IPrependable, IEvented, IAssociative, IMap, IEquiv, ICloneable, ICollection, INext, ISeq, ISeqable, IIndexed, ICounted, ILookup, IReduce, IEmptyableCollection, IHierarchy, IContent} from '../../protocols';
 import {mount} from '../../protocols/imountable/concrete';
 import {transpose} from '../../protocols/iinclusive/concrete';
+import * as iassociative from '../../protocols/iassociative/concrete';
+import * as ilookup from '../../protocols/ilookup/concrete';
 import {each, mapcat} from '../lazy-seq/concrete';
 import EmptyList, {emptyList} from '../empty-list/construct';
 import {concat} from '../concatenated/construct';
@@ -16,7 +18,8 @@ import {isFunction} from '../function/construct';
 import {reduced} from '../reduced/construct';
 import {nestedAttrs} from '../nested-attrs/construct';
 import {trim, split, str} from '../string/concrete';
-import Element, {isElement} from './construct';
+import {isElement} from './construct';
+import {weakMap} from "../weak-map/construct";
 import {isDocumentFragment} from '../document-fragment/construct';
 import {isIdentical} from '../../predicates';
 import {_ as v} from "param.macro";
@@ -81,31 +84,35 @@ function isAttrs(self){
   return !isDocumentFragment(self) && !isElement(self) && satisfies(IAssociative, self);
 }
 
-function on3(self, key, callback){
-  self.addEventListener(key, callback);
-  return function(){
-    off(self, key, callback);
+
+function eventContext(catalog){
+  function on3(self, key, callback){
+    self.addEventListener(key, callback);
   }
-}
 
-function on4(self, key, selector, callback){
-  return on3(self, key, function(e){
-    if (e.target.matches(selector)) {
-      callback.call(e.target, e);
-    } else {
-      var found = closest(e.target, selector);
-      if (found && self.contains(found)) {
-        callback.call(found, e);
+  function on4(self, key, selector, callback){
+    on3(self, key, doto(function(e){
+      if (e.target.matches(selector)) {
+        callback.call(e.target, e);
+      } else {
+        var found = closest(e.target, selector);
+        if (found && self.contains(found)) {
+          callback.call(found, e);
+        }
       }
-    }
-  });
+    }, iassociative.assoc(catalog, callback, v)));
+  }
+
+  const on = overload(null, null, null, on3, on4);
+
+  function off(self, key, callback){
+    self.removeEventListener(key, ilookup.get(catalog, callback, callback));
+  }
+
+  return {on, off};
 }
 
-const on = overload(null, null, null, on3, on4);
-
-function off(self, key, callback){
-  self.removeEventListener(key, callback);
-}
+const {on, off} = eventContext(weakMap());
 
 const eventConstructors = {
   "click": MouseEvent,
