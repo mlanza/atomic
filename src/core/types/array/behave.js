@@ -1,28 +1,32 @@
 import {effect, identity, overload, constantly, doto} from '../../core';
-import {implement} from '../protocol';
-import {IWrite, ITemplate, IArray, IObject, IFunctor, IInsertable, IYank, IEncode, IDecode, IReversible, ISet, IMapEntry, IEquiv, IReduce, IKVReduce, IAppendable, IPrependable, IInclusive, ICollection, INext, ISeq, IFind, ISeqable, IIndexed, IAssociative, ISequential, IEmptyableCollection, IFn, ICounted, ILookup, ICloneable} from '../../protocols';
+import {implement, specify, satisfies} from '../protocol';
+import {ITransient, IPersistent, IWrite, ITemplate, IArray, IObject, IFunctor, IInsertable, IYank, IEncode, IDecode, IReversible, ISet, IMapEntry, IEquiv, IReduce, IKVReduce, IAppendable, IPrependable, IInclusive, ICollection, INext, ISeq, IFind, ISeqable, IIndexed, IAssociative, ISequential, IEmptyableCollection, IFn, ICounted, ILookup, ICloneable} from '../../protocols';
 import {reduced, unreduced, isReduced} from '../reduced';
 import {indexedSeq} from '../indexed-seq';
 import {replace} from '../string/concrete';
 import {revSeq} from '../rev-seq';
 import {filter, mapa} from '../lazy-seq/concrete';
 import {set} from '../immutable-set/construct';
+import {transientArray} from '../transient-array/construct';
 import Array, {emptyArray} from './construct';
+import {_ as v} from "param.macro";
 
 const clone = Array.from;
 
+function transient(self){
+  return transientArray(clone(self));
+}
+
 function before(self, reference, inserted){
-  const pos = self.indexOf(reference);
-  return pos === -1 ? self : doto(clone(self), function(self){
-    self.splice(pos, 0, inserted);
-  });
+  return IPersistent.persistent(
+    doto(transient(self),
+      IInsertable.before(v, reference, inserted)));
 }
 
 function after(self, reference, inserted){
-  const pos = self.indexOf(reference);
-  return pos === -1 ? self : doto(clone(self), function(self){
-    self.splice(pos + 1, 0, inserted);
-  });
+  return IPersistent.persistent(
+    doto(transient(self),
+      IInsertable.after(v, reference, inserted)));
 }
 
 function fill(self, template){
@@ -227,6 +231,7 @@ export default effect(
   iindexed,
   iequiv,
   itemplate,
+  implement(ITransient, {transient}),
   implement(ISequential),
   implement(IInsertable, {before, after}),
   implement(IWrite, {write}),

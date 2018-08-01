@@ -85,7 +85,7 @@ export function part(f, ...xs){
 }
 
 export function partly(wrapped){
-  return Object.assign(function(...args){
+  return wrapped.hasOwnProperty("wrapped") ? wrapped : Object.assign(function(...args){
     return part(wrapped, ...args);
   }, {wrapped});
 }
@@ -115,6 +115,16 @@ export function effect(...effects){
     for(var i = 0; i < len; i++){
       const effect = effects[i];
       effect(...args);
+    }
+  }
+}
+
+export function doing(effect){ //mutating counterpart to `reducing`
+  return function(self, ...values){
+    const len = values.length;
+    for(var i = 0; i < len; i++){
+      const value = values[i];
+      effect(self, value);
     }
   }
 }
@@ -152,7 +162,7 @@ export function once(f){
   }
 }
 
-export function applyTo(...args){
+export function applying(...args){
   return function(f){
     return f.apply(this, args);
   }

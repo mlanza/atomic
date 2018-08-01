@@ -1,10 +1,7 @@
-import {noop, counter} from "../../core";
-
-export default function Publisher(subscribers, seed){
+export default function Publisher(subscribers){
   this.subscribers = subscribers;
-  this.seed = seed;
 }
 
 export function publisher(){
-  return new Publisher({}, counter());
+  return new Publisher([]);
 }

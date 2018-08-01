@@ -15,17 +15,19 @@ function reset(self, value){
       throw new Error("Observable update failed - invalid value.");
     }
   }
-  return self.state;
 }
 
 function swap(self, f){
-  return reset(self, f(self.state));
+  reset(self, f(self.state));
 }
 
-//The callback is called immediately to prime the subscriber state.
 function sub(self, callback){
-  callback(self.state);
-  return ISubscribe.sub(self.publisher, callback);
+  callback(self.state); //to prime subscriber state
+  ISubscribe.sub(self.publisher, callback);
+}
+
+function unsub(self, callback){
+  ISubscribe.unsub(self.publisher, callback);
 }
 
 function dispose(self){
@@ -35,7 +37,7 @@ function dispose(self){
 export default effect(
   implement(IDisposable, {dispose}),
   implement(IDeref, {deref}),
-  implement(ISubscribe, {sub}),
+  implement(ISubscribe, {sub, unsub}),
   implement(IPublish, {pub: reset}),
   implement(IReset, {reset}),
   implement(ISwap, {swap}));

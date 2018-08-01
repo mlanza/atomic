@@ -1,21 +1,21 @@
 import {implement} from '../protocol';
-import {effect} from '../../core';
+import {effect, once, applying} from '../../core';
+import {each} from "../lazy-seq/concrete";
 import {IPublish, ISubscribe} from '../../protocols';
 
 function sub(self, callback){
-  const id = self.seed();
-  self.subscribers[id] = callback;
-  return function(){
-    delete self.subscribers[id];
-  }
+  self.subscribers.push(callback);
+}
+
+function unsub(self, callback){
+  const pos = self.subscribers.indexOf(callback);
+  pos === -1 || self.subscribers.splice(pos, 1);
 }
 
 function pub(self, message){
-  Object.values(self.subscribers).forEach(function(callback){
-    callback(message);
-  });
+  each(applying(message), self.subscribers);
 }
 
 export default effect(
-  implement(ISubscribe, {sub}),
+  implement(ISubscribe, {sub, unsub}),
   implement(IPublish, {pub}));

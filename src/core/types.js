@@ -54,6 +54,7 @@ export * from "./types/symbol";
 export * from "./types/immutable-set";
 export * from "./types/string";
 export * from "./types/space-sep";
+export * from "./types/transient-array";
 export * from "./types/weak-map";
 export * from "./types/years";
 export * from "./types/lazy-pub";

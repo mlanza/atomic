@@ -9,16 +9,24 @@ function deref(self){
 function sub(self, callback){
   let last = null,
       pred = constantly(true); //force priming callback
-  return ISubscribe.sub(self.source, function(value){
+  function cb(value){
     const curr = self.f(value);
     if (pred(curr, last)){
       callback(curr);
     }
     last = curr;
     pred = self.pred;
-  });
+  }
+  self.callbacks.set(callback, cb);
+  ISubscribe.sub(self.source, cb);
+}
+
+function unsub(self, callback){
+  const cb = self.callbacks.get(callback);
+  cb && self.callbacks.delete(callback);
+  ISubscribe.unsub(self, cb);
 }
 
 export default effect(
   implement(IDeref, {deref}),
-  implement(ISubscribe, {sub}));
+  implement(ISubscribe, {sub, unsub}));

@@ -42,7 +42,7 @@ Protocol.prototype.generate = function(){
   }
 }
 
-function nonenum(target, key, value){
+function application(target, key, value){
   Object.defineProperty(target, key, {
     configurable: true,
     enumerable: false,
@@ -60,9 +60,9 @@ function specify1(behavior){
 
 function specify2(behavior, target){
   const keys = this.generate();
-  nonenum(target, keys("__marker__"), this);
+  application(target, keys("__marker__"), this);
   for(var method in behavior){
-    nonenum(target, keys(method), behavior[method])
+    application(target, keys(method), behavior[method])
   }
 }
 

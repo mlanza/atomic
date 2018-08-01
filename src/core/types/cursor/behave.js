@@ -14,21 +14,29 @@ function deref(self){
 }
 
 function reset(self, value){
-  return iswap.swap(self.source, function(state){
+  iswap.swap(self.source, function(state){
     return iassociative.assocIn(state, self.path, value);
   });
 }
 
 function swap(self, f){
-  return iswap.swap(self.source, function(state){
+  iswap.swap(self.source, function(state){
     return iassociative.updateIn(state, self.path, f);
   });
 }
 
 function sub(self, callback){
-  return isubscribe.sub(self.source, function(state){
+  function cb(state){
     callback(ilookup.getIn(state, self.path));
-  });
+  }
+  self.callbacks.set(callback, cb);
+  isubscribe.sub(self.source, cb);
+}
+
+function unsub(self, callback){
+  const cb = self.callbacks.get(callback);
+  isubscribe.unsub(self.source, cb);
+  cb && self.callbacks.delete(callback);
 }
 
 function dispatch(self, command){
@@ -41,7 +49,7 @@ export default effect(
   //implement(IDisposable, {dispose}), TODO
   implement(IDispatch, {dispatch}),
   implement(IDeref, {deref}),
-  implement(ISubscribe, {sub}),
+  implement(ISubscribe, {sub, unsub}),
   implement(IPublish, {pub: reset}),
   implement(IReset, {reset}),
   implement(ISwap, {swap}));
