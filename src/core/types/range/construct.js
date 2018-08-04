@@ -1,6 +1,6 @@
 import {overload} from '../../core';
-import IComparable from '../../protocols/icomparable/instance';
-import {ISteppable} from '../../protocols/isteppable';
+import {steps} from '../../protocols/isteppable/concrete';
+import {isNumber} from '../number/concrete';
 import Symbol from '../symbol/construct';
 
 export function Range(start, end, step, direction){
@@ -18,9 +18,6 @@ export function emptyRange(){
   return new Range();
 }
 
-Range.from = from;
-Range.prototype[Symbol.toStringTag] = "Range";
-
 function range0(){
   return range1(Number.POSITIVE_INFINITY);
 }
@@ -33,15 +30,12 @@ function range2(start, end){
   return range3(start, end, 1);
 }
 
-function range3(start, end, step){
-  const stepped = ISteppable.step(step, start),
-        direction = IComparable.compare(stepped, start);;
-  if (direction === 0){
-    throw Error("Range has no direction.");
-  }
-  return IComparable.compare(start, end) * direction < 0 ? new Range(start, end, step, direction) : emptyRange();
-}
+const range3 = steps(Range, isNumber);
 
 export const range = overload(range0, range1, range2, range3);
+
+Range.from = from;
+Range.create = range;
+Range.prototype[Symbol.toStringTag] = "Range";
 
 export default Range;

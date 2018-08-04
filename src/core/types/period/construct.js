@@ -1,9 +1,8 @@
 import {overload} from '../../core';
 import {days} from '../duration/construct';
 import {midnight} from '../date/concrete';
-import IAssociative from '../../protocols/iassociative/instance';
-import IComparable from '../../protocols/icomparable/instance';
-import {ISteppable} from '../../protocols/isteppable';
+import {isDate} from '../date/construct';
+import {steps} from '../../protocols/isteppable/concrete';
 import {patch} from '../../associatives';
 import Symbol from '../symbol/construct';
 
@@ -22,9 +21,6 @@ export function emptyPeriod(){
   return new Period();
 }
 
-Period.from = from;
-Period.prototype[Symbol.toStringTag] = "Period";
-
 function period0(){
   return period1(Infinity);
 }
@@ -37,15 +33,12 @@ function period2(start, end){
   return period3(start, end, days(1));
 }
 
-function period3(start, end, step){
-  const stepped = ISteppable.step(step, start),
-        direction = IComparable.compare(stepped, start);;
-  if (direction === 0){
-    throw Error("Period has no direction.");
-  }
-  return new Period(start, end, step, direction);
-}
+const period3 = steps(Period, isDate);
 
 export const period = overload(period0, period1, period2, period3);
+
+Period.from = from;
+Period.create = period;
+Period.prototype[Symbol.toStringTag] = "Period";
 
 export default Period;
