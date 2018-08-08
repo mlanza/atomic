@@ -1,12 +1,13 @@
 import {effect, overload, constantly, identity, doto, noop} from '../../core';
 import {reverse} from "../../protocols/ireversible/concrete";
 import {reduce} from "../../protocols/ireduce/concrete";
-import {IMiddleware, IPush, ICollection} from '../../protocols';
+import {IMiddleware, ICollection} from '../../protocols';
 import {specify, implement} from '../../types/protocol';
 
-function push(self, handler){
+function conj(self, handler){
   self.handlers = ICollection.conj(self.handlers, handler);
   self.handler = combine(self.handlers);
+  return self;
 }
 
 function combine(handlers){
@@ -27,5 +28,5 @@ function handle(self, command, next){
 }
 
 export default effect(
-  implement(IPush, {push}),
+  implement(ICollection, {conj}),
   implement(IMiddleware, {handle}));

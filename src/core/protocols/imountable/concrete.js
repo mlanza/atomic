@@ -18,9 +18,7 @@ export function mount(self, parent){
 }
 
 function mounts1(state){
-  return function(self){
-    return mounts2(self, state);
-  }
+  return mounts2(v, state);
 }
 
 function mounts2(self, state){
@@ -49,8 +47,13 @@ function mounts3(self, state, events){
 
 export const mounts = overload(null, mounts1, mounts2, mounts3);
 
-export function mutate(state, f){
-  return function(el){
-    return ISubscribe.sub(state, partial(f, el));
-  }
+function mutate3(self, state, f){
+  ISubscribe.sub(state, partial(f, self));
+  return self;
 }
+
+function mutate2(state, f){
+  return mutate3(v, state, f);
+}
+
+export const mutate = overload(null, null, mutate2, mutate3);

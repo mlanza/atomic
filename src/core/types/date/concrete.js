@@ -45,6 +45,9 @@ export function eom(){
   return {
     month: function(n){
       return n + 1;
+    },
+    millisecond: function(n){
+      return n - 1;
     }
   }
 }
