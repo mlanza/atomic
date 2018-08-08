@@ -1,12 +1,12 @@
-import {ISteppable, IConverse, ICloneable} from '../../protocols';
-import {identity, constantly, effect} from '../../core';
+import {ISteppable, IInverse, ICloneable} from '../../protocols';
+import {effect} from '../../core';
 import {implement} from '../protocol';
 import {min} from '../number/concrete';
 import * as w from '../date/concrete';
 import {encodeable} from '../record/behave';
 import {patch} from '../../associatives';
 
-function converse(self){
+function inverse(self){
   return new self.constructor(self.n * -1, self.options);
 }
 
@@ -28,5 +28,5 @@ function step(self, dt){
 
 export default effect(
   encodeable,
-  implement(IConverse, {converse}),
+  implement(IInverse, {inverse}),
   implement(ISteppable, {step}));

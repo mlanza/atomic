@@ -1,7 +1,7 @@
 export * from "./types/empty-list";
 export * from "./types/lazy-seq";
 export * from "./types/multimethod";
-export * from "./types/dict";
+export * from "./types/multi-dict";
 export * from "./types/array";
 export * from "./types/benchmark";
 export * from "./types/boolean";
@@ -55,6 +55,7 @@ export * from "./types/immutable-set";
 export * from "./types/string";
 export * from "./types/space-sep";
 export * from "./types/transient-array";
+export * from "./types/transient-object";
 export * from "./types/weak-map";
 export * from "./types/years";
 export * from "./types/lazy-pub";

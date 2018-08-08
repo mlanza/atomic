@@ -1,4 +1,4 @@
-import {push} from "../../protocols/ipush/concrete";
+import {conj} from "../../protocols/icollection/concrete";
 import {updateIn, assoc} from "../../protocols/iassociative/concrete";
 import {get, getIn} from "../../protocols/ilookup/concrete";
 import {deref} from "../../protocols/ideref/concrete";
@@ -58,7 +58,7 @@ export function component(config, state, callback){
         publ = publisher();
   return doto(bus(config, state, ware), function(bus){
     const [commandMap, eventMap] = callback(partial(accepts, evts), partial(raises, evts, bus), partial(affects, bus));
-    push(ware,
+    conj(ware,
       messageHandler(commandMap),
       eventDispatcher(evts, messageHandler(eventMap), publ));
   });

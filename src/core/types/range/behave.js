@@ -1,6 +1,6 @@
 import {overload, constantly, effect} from '../../core';
 import {implement} from '../protocol';
-import {IArray, IBounds, IConverse, IEncode, ISteppable, ISequential, ICollection, IComparable, INext, IEquiv, IReduce, IKVReduce, ISeqable, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, ISeq, IInclusive} from '../../protocols';
+import {IArray, IBounds, IInverse, IEncode, ISteppable, ISequential, ICollection, IComparable, INext, IEquiv, IReduce, IKVReduce, ISeqable, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, ISeq, IInclusive} from '../../protocols';
 import {between} from '../../protocols/ibounds/concrete';
 import {reduced, unreduced, isReduced} from '../reduced';
 import {lazySeq} from '../lazy-seq';
@@ -55,8 +55,8 @@ function toArray(self){
   }, []);
 }
 
-function converse(self){
-  return self.constructor.create(self.end, self.start, IConverse.converse(self.step));
+function inverse(self){
+  return self.constructor.create(self.end, self.start, IInverse.inverse(self.step));
 }
 
 export default effect(
@@ -64,7 +64,7 @@ export default effect(
   emptyable,
   encodeable,
   implement(ISequential),
-  implement(IConverse, {converse}),
+  implement(IInverse, {inverse}),
   implement(IInclusive, {includes: between}),
   implement(ISeqable, {seq}),
   implement(IBounds, {start, end}),

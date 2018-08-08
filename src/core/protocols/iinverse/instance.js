@@ -1,9 +1,9 @@
 import {protocol} from "../../types/protocol";
 import {IDeref} from "../ideref";
-function converse(self){
+function inverse(self){
   return new self.constructor(IDeref.deref(self) * -1);
 }
-export const IConverse = protocol({
-  converse: converse
+export const IInverse = protocol({
+  inverse: inverse
 });
-export default IConverse;
+export default IInverse;

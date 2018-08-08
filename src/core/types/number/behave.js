@@ -1,6 +1,6 @@
 import {constantly, effect, overload, identity} from '../../core';
 import {implement} from '../protocol';
-import {IBounds, IEncode, IDecode, ISteppable, IConverse, IComparable} from '../../protocols';
+import {IBounds, IEncode, IDecode, ISteppable, IInverse, IComparable} from '../../protocols';
 import {str} from '../string/concrete';
 
 function compare(self, other){
@@ -11,7 +11,7 @@ function step(amount, target){
   return target + amount;
 }
 
-function converse(amount){
+function inverse(amount){
   return amount * -1;
 }
 
@@ -26,5 +26,5 @@ export default effect(
   implement(IDecode, {decode: identity}),
   implement(IEncode, {encode: identity}),
   implement(IComparable, {compare}),
-  implement(IConverse, {converse}),
+  implement(IInverse, {inverse}),
   implement(ISteppable, {step}));

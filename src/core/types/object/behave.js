@@ -1,7 +1,8 @@
 import {constantly, effect, identity} from '../../core';
 import {implement} from '../protocol';
-import {IComparable, IYank, IMatch, IArray, IDecode, ISet, INext, ICollection, IEncode, IEquiv, IMapEntry, IReduce, IKVReduce, ISeqable, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, IFn, IMap, ISeq, IDescriptive, IObject, ICloneable, IInclusive} from '../../protocols';
+import {ITransient, IComparable, IYank, IMatch, IArray, IDecode, ISet, INext, ICollection, IEncode, IEquiv, IMapEntry, IReduce, IKVReduce, ISeqable, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, IFn, IMap, ISeq, IDescriptive, IObject, ICloneable, IInclusive} from '../../protocols';
 import {reduced} from '../reduced';
+import {transientObject} from '../transient-object/construct';
 import {lazySeq, into, map} from '../lazy-seq';
 import {iequiv, itemplate} from '../array/behave';
 import {satisfies} from "../protocol/concrete";
@@ -9,6 +10,10 @@ import Object, {emptyObject} from '../object/construct';
 
 const keys = Object.keys;
 const vals = Object.values;
+
+function transient(self){
+  return transientObject(clone(self));
+}
 
 function matches(self, template){
   return IKVReduce.reducekv(template, function(memo, key, value){
@@ -178,6 +183,7 @@ export default effect(
   iequiv,
   itemplate,
   implement(IDescriptive),
+  implement(ITransient, {transient}),
   implement(IEquiv, {equiv}),
   implement(IDecode, {decode}),
   implement(IEncode, {encode}),
