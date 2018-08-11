@@ -1,6 +1,6 @@
-import {IFunctor, IAssociative, IOtherwise, IEncode, IDecode, IFold, IArray, IEquiv, ICollection, INext, ISeq, ISeqable, IIndexed, ICounted, ILookup, IReduce, IEmptyableCollection, ISequential} from '../../protocols';
+import {IFunctor, ILog, IAssociative, IOtherwise, IEncode, IDecode, IFold, IArray, IEquiv, ICollection, INext, ISeq, ISeqable, IIndexed, ICounted, ILookup, IReduce, IEmptyableCollection, ISequential} from '../../protocols';
 import {emptyList} from '../../types/empty-list/construct';
-import {identity, constantly, effect, overload} from '../../core';
+import {identity, constantly, effect, overload, noop} from '../../core';
 import {implement} from '../protocol';
 import {emptyArray} from '../../types/array/construct';
 import Nil from './construct';
@@ -29,6 +29,7 @@ function fold(self, missing, okay){
 
 export default effect(
   implement(ISequential),
+  implement(ILog, {log: noop}),
   implement(IEncode, {encode: identity}),
   implement(IDecode, {decode: identity}),
   implement(IFold, {fold}),

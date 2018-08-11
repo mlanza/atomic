@@ -30,6 +30,10 @@ function unsub(self, callback){
   ISubscribe.unsub(self.publisher, callback);
 }
 
+function subscribed(self){
+  return ISubscribe.subscribed(self.publisher);
+}
+
 function dispose(self){
   satisfies(IDisposable, self.publisher) && IDisposable.dispose(self.publisher);
 }
@@ -37,7 +41,7 @@ function dispose(self){
 export default effect(
   implement(IDisposable, {dispose}),
   implement(IDeref, {deref}),
-  implement(ISubscribe, {sub, unsub}),
+  implement(ISubscribe, {sub, unsub, subscribed}),
   implement(IPublish, {pub: reset}),
   implement(IReset, {reset}),
   implement(ISwap, {swap}));

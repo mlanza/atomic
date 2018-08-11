@@ -1,6 +1,6 @@
 import {implement} from '../protocol';
 import {effect} from '../../core';
-import {IPublish, ISubscribe, IReset, ISwap, IDeref, IDisposable, IDispatch} from '../../protocols';
+import {IPublish, ISubscribe, IReset, ISwap, IDeref, IDisposable, IDispatch, ICounted} from '../../protocols';
 import {apply} from "../../types/function/concrete";
 import * as icollection from "../../protocols/icollection/concrete";
 import * as ideref from '../../protocols/ideref/concrete';
@@ -39,9 +39,13 @@ function unsub(self, callback){
   cb && self.callbacks.delete(callback);
 }
 
+function subscribed(self){
+  return ICounted.count(self.callbacks);
+}
+
 function dispatch(self, command){
   IDispatch.dispatch(self.source, iassociative.update(command, "path", function(path){
-    return apply(icollection.conj, path || [], self.path);
+    return apply(icollection.conj, self.path, path || []);
   }));
 }
 
@@ -49,7 +53,7 @@ export default effect(
   //implement(IDisposable, {dispose}), TODO
   implement(IDispatch, {dispatch}),
   implement(IDeref, {deref}),
-  implement(ISubscribe, {sub, unsub}),
+  implement(ISubscribe, {sub, unsub, subscribed}),
   implement(IPublish, {pub: reset}),
   implement(IReset, {reset}),
   implement(ISwap, {swap}));
