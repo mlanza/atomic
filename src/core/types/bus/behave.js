@@ -18,6 +18,7 @@ function config(self){
 const forward = forwardTo("state");
 const sub = forward(ISubscribe.sub);
 const unsub = forward(ISubscribe.unsub);
+const subscribed = forward(ISubscribe.subscribed);
 const deref = forward(IDeref.deref);
 const reset = forward(IReset.reset);
 const swap = forward(ISwap.swap);
@@ -27,6 +28,6 @@ export default effect(
   implement(IReset, {reset}),
   implement(ISwap, {swap}),
   implement(IConfigured, {config}),
-  implement(ISubscribe, {sub, unsub}),
+  implement(ISubscribe, {sub, unsub, subscribed}),
   implement(IDispatch, {dispatch}),
   implement(IDisposable, {dispose}));

@@ -12,10 +12,14 @@ function unsub(self, callback){
   pos === -1 || self.subscribers.splice(pos, 1);
 }
 
+function subscribed(self){
+  return self.subscribers.length;
+}
+
 function pub(self, message){
   each(applying(message), self.subscribers);
 }
 
 export default effect(
-  implement(ISubscribe, {sub, unsub}),
+  implement(ISubscribe, {sub, unsub, subscribed}),
   implement(IPublish, {pub}));

@@ -26,7 +26,7 @@ function dissoc(self, key){
 }
 
 function assoc(self, key, value){
-  if (!equiv(lookup(self, key), value)) {
+  if (!IEquiv.equiv(lookup(self, key), value)) {
     self.obj[key] = value;
   }
   return self;

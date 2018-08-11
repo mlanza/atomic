@@ -1,8 +1,13 @@
 import {overload} from '../../core';
 import Symbol from '../symbol/construct';
+import {rand} from '../number/concrete';
 
 export default function GUID(id){
   this.id = id;
+}
+
+GUID.prototype.toString = function(){
+  return this.id;
 }
 
 GUID.prototype[Symbol.toStringTag] = "GUID";
