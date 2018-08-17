@@ -20,7 +20,7 @@ export function assocIn(self, keys, value){
     case 0:
       return self;
     case 1:
-      return IEquiv.equiv(ILookup.lookup(self, key), value) ? self : IAssociative.assoc(self, key, value); //maintain referential equivalence
+      return IAssociative.assoc(self, key, value);
     default:
       return IAssociative.assoc(self, key, assocIn(ILookup.lookup(self, key), IArray.toArray(ISeq.rest(keys)), value));
   }

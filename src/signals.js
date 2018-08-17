@@ -6,18 +6,21 @@
 
 import {IDeref, IEvented, IPublish, ISubscribe, ICollection, IDisposable, ISwap, IAssociative, IFunctor} from "./core/protocols";
 import {doto, effect, overload, identity, constantly} from "./core/core";
-import {detect, filtera, mapa, mapIndexed} from "./core/types/lazy-seq/concrete";
+import {detect, filtera, doall, mapa, mapIndexed} from "./core/types/lazy-seq/concrete";
 import {comp, apply, partial, spread} from "./core/types/function/concrete";
 import {mappedSignal} from "./core/types/mapped-signal/construct";
 export {mappedSignal as map} from "./core/types/mapped-signal/construct";
 import Promise from "./core/types/promise/construct";
-import LazyPublication, {lazyPub} from "./core/types/lazy-pub/construct";
+import LazyPub, {lazyPub, conduit} from "./core/types/lazy-pub";
 import Publisher, {publisher} from "./core/types/publisher/construct";
 import Observable, {observable} from "./core/types/observable/construct";
 import {event} from "./core/types/element/concrete";
+import {str} from "./core/types/string/concrete";
 import {notEq, eq} from "./core/predicates";
 import {implement} from "./core/types/protocol";
+import {memoize} from "./core/protocols/ihash/concrete";
 import * as t from "./transducers";
+import {_ as v} from "param.macro";
 
 function signal1(source){
   return signal2(t.map(identity), source);
@@ -28,7 +31,7 @@ function signal2(xf, source){
 }
 
 function signal3(xf, init, source){
-  return lazyPub(observable(init), xf, source);
+  return conduit(observable(init), xf, source);
 }
 
 export const signal = overload(null, signal1, signal2, signal3);
@@ -39,7 +42,7 @@ function fmap(source, f){
 
 const fmappable = implement(IFunctor, {fmap});
 
-fmappable(LazyPublication);
+fmappable(LazyPub);
 fmappable(Observable);
 fmappable(Publisher);
 
@@ -99,26 +102,40 @@ export function input(el){
 }
 
 export function focus(el){
-  const sink = observable(el === document.activeElement);
-  return join(sink,
-    signal(sink, t.map(constantly(true)), event(el, "focus")),
-    signal(sink, t.map(constantly(false)), event(el, "blur")));
+  return join(observable(el === document.activeElement),
+    mappedSignal(constantly(true), event(el, "focus")),
+    mappedSignal(constantly(false), event(el, "blur")));
+}
+
+export function join(sink, ...sources){
+  const callback = IPublish.pub(sink, v);
+  return lazyPub(sink, function(){
+    each(ISubscribe.sub(v, callback), sources);
+  }, function(){
+    each(ISubscribe.unsub(v, callback), sources);
+  });
 }
 
 export function calc(f, ...sources){
-  const blank = {},
-        sink  = observable(mapa(constantly(blank), sources));
-  return signal(comp(t.filter(function(xs){
-    return !detect(partial(eq, blank), xs);
-  }), t.map(spread(f))), lazyPub(sink, function(sink){
-    return apply(effect, mapIndexed(function(idx, source){
-      return ISubscribe.sub(source, function(value){
-        ISwap.swap(sink, function(state){
-          return IAssociative.assoc(state, idx, value);
-        });
-      });
+  return mappedSignal(spread(f), latest(sources));
+}
+
+export function latest(sources){
+  const sink = observable(mapa(constantly(null), sources));
+  const fs = memoize(function(idx){
+    return function(value){
+      ISwap.swap(sink, IAssociative.assoc(v, idx, value));
+    }
+  }, str);
+  return lazyPub(sink, function(){
+    doall(mapIndexed(function(idx, source){
+      ISubscribe.sub(source, fs(idx));
     }, sources));
-  }));
+  }, function(){
+    doall(mapIndexed(function(idx, source){
+      ISubscribe.unsub(source, fs(idx));
+    }, sources));
+  });
 }
 
 function hist2(size, source){
@@ -136,15 +153,6 @@ function hist2(size, source){
 }
 
 export const hist = overload(null, partial(hist2, 2), hist2);
-
-export function join(sink, ...sources){ //TODO dispose
-  const send = partial(IPublish.pub, sink);
-  return lazyPub(sink, function(sink){
-    return effect.apply(null, mapa(function(source){
-      return ISubscribe.sub(source, send);
-    }, sources));
-  });
-}
 
 export function fromPromise(promise){
   const sink = observable(null);

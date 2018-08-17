@@ -1,7 +1,10 @@
 import IInclusive from "./instance";
-import {fork} from "../../predicates";
+import {branch} from "../../predicates";
 import {yank} from "../iyank/concrete";
 import {conj} from "../icollection/concrete";
 
 export const includes = IInclusive.includes;
-export const transpose = fork(includes, yank, conj);
+export function excludes(self, value){
+  return !includes(self, value);
+}
+export const transpose = branch(includes, yank, conj);

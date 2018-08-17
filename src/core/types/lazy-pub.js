@@ -1,5 +1,6 @@
 export * from "./lazy-pub/construct";
-import LazyPublication from "./lazy-pub/construct";
-export default LazyPublication;
+export * from "./lazy-pub/concrete";
+import LazyPub from "./lazy-pub/construct";
+export default LazyPub;
 import behave from "./lazy-pub/behave";
-behave(LazyPublication);
+behave(LazyPub);

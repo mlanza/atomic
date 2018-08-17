@@ -5,7 +5,7 @@ export default {
   input: 'test/cloe.js',
   output: {
     file: 'dist/tests.js',
-    format: 'iife',
+    format: 'amd',
     name: "_",
     globals: {
       "cloe": "Cloe"

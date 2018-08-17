@@ -35,16 +35,16 @@ export function juxt(...fs){
   }
 }
 
-export function chain(init, ...fs){
-  return pipe(...fs)(init);
-}
-
 export function pipe(f, ...fs){
   return function(...args){
     return IReduce.reduce(fs, function(memo, f){
       return f(memo);
     }, f.apply(null, args));
   }
+}
+
+export function piped(init, ...fs){
+  return pipe(...fs)(init);
 }
 
 export function comp(...fs){

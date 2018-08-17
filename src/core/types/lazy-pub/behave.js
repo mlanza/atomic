@@ -1,17 +1,18 @@
 import {implement} from '../protocol';
 import {effect, noop} from '../../core';
-import {ISubscribe, IDisposable, ICounted, IDeref} from '../../protocols';
+import {IStateMachine, ISubscribe, IDisposable, ICounted, IDeref} from '../../protocols';
+import {transition} from "../../protocols/istatemachine/concrete";
+import {swap} from "../../protocols/iswap/concrete";
+import {_ as v} from "param.macro";
 
 function sub(self, callback){
-  const activated = subscribed(self) === 0;
-  activated && self.activate(self.sink);
+  subscribed(self) === 0 && swap(self.toggle, transition(v, "active"));
   ISubscribe.sub(self.sink, callback);
 }
 
 function unsub(self, callback){
   ISubscribe.unsub(self.sink, callback);
-  const deactivated = subscribed(self) === 0;
-  deactivated && self.deactivate(self.sink);
+  subscribed(self) === 0 && swap(self.toggle, transition(v, "idle"));
 }
 
 function subscribed(self){
@@ -19,16 +20,20 @@ function subscribed(self){
 }
 
 function dispose(self){
-  self.deactivate(self.sink);
+  swap(self.toggle, transition(v, "idle"));
 }
 
 function deref(self){
-  const activated = subscribed(self) === 0;
-  activated && sub(self, noop) && unsub(self, noop); //force state update
+  subscribed(self) === 0 && sub(self, noop) && unsub(self, noop); //force refresh of observable state
   return IDeref.deref(self.sink);
+}
+
+function state(self){
+  return IStateMachine.state(IDeref.deref(self.toggle));
 }
 
 export default effect(
   implement(IDeref, {deref}),
   implement(IDisposable, {dispose}),
+  implement(IStateMachine, {state}),
   implement(ISubscribe, {sub, unsub, subscribed}));

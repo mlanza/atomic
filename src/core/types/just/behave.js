@@ -1,7 +1,7 @@
 import {implement} from '../protocol';
 import {identity, constantly, effect} from '../../core';
 import {maybe} from './construct';
-import {IFunctor, IOtherwise, IFold} from '../../protocols';
+import {IFunctor, IOtherwise, IFork} from '../../protocols';
 
 function fmap(self, f){
   return maybe(f(self.value));
@@ -11,11 +11,11 @@ function otherwise(self, other){
   return self.value;
 }
 
-function fold(self, error, okay){
-  return okay(self);
+function fork(self, reject, resolve){
+  return resolve(self);
 }
 
 export default effect(
-  implement(IFold, {fold}),
+  implement(IFork, {fork}),
   implement(IOtherwise, {otherwise}),
   implement(IFunctor, {fmap}));

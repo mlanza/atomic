@@ -8,6 +8,8 @@ export default {
     format: 'amd',
     name: "Cloe",
     globals: {
+      "jquery": "jQuery",
+      "qunit": "QUnit",
       "fetch": "fetch",
       "weak-map": "WeakMap",
       "symbol": "Symbol",

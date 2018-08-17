@@ -110,7 +110,7 @@ function dissoc(self, key){
 }
 
 function assoc(self, key, value){
-  if (IEquiv.equiv(ILookup.lookup(self, key), value)) {
+  if (ILookup.lookup(self, key) === value) {
     return self;
   } else {
     const result = clone(self);

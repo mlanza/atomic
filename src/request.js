@@ -1,29 +1,23 @@
-import {overload, constantly, identity, invokes, partial} from "./core/core";
-import {pipeline} from "./core/types/pipeline/construct";
 import {satisfies} from "./core/types/protocol/concrete";
-import {append} from "./core/protocols/iappendable/concrete";
-import {prepend} from "./core/protocols/iprependable/concrete";
 import {getIn, get} from "./core/protocols/ilookup/concrete";
 import {absorb} from "./core/associatives";
-import {assoc, update, assocIn, contains} from "./core/protocols/iassociative/concrete";
 import {dissoc} from "./core/protocols/imap/concrete";
-import {before, after} from "./core/protocols/iinsertable/concrete";
+import {fmap} from "./core/protocols/ifunctor/concrete";
 import {count} from "./core/protocols/icounted/concrete";
 import {fill} from "./core/protocols/itemplate/concrete";
 import {first} from "./core/protocols/iseq/concrete";
 import {reducekv} from "./core/protocols/ikvreduce/concrete";
-import {reduce} from "./core/protocols/ireduce/concrete";
 import {keys} from "./core/protocols/imap/concrete";
 import {includes} from "./core/protocols/iinclusive/concrete";
-import {fork, either} from "./core/predicates";
-import {filter, mapa, map, every, compact, detect, dropWhile, takeWhile} from "./core/types/lazy-seq/concrete";
+import {assoc, update, assocIn, contains} from "./core/protocols/iassociative/concrete";
+import {filter, mapa, map, every, detect, dropWhile, takeWhile} from "./core/types/lazy-seq/concrete";
 import {emptyObject} from "./core/types/object/construct";
-import {reject, resolve} from "./core/types/promise";
 import {not} from "./core/types/boolean";
-import {apply, comp} from "./core/types/function/concrete";
-import fetch from "fetch";
+import {comp} from "./core/types/function/concrete";
 import {IDescriptive} from "./core/protocols/idescriptive/instance";
-import {ISequential} from "./core/protocols/isequential/instance";
+import {fork} from "./core/protocols/ifork/concrete";
+import Task, {task} from "./core/types/task";
+import fetch from "fetch";
 import {_ as v} from "param.macro";
 
 function matches(re, pos, text){
@@ -34,81 +28,71 @@ function matches(re, pos, text){
   return results;
 }
 
-export function many(data){
-  const xs = getIn(data, ["d", "results"]) || getIn(data, ["d"]);
-  return satisfies(ISequential, xs) ? xs : [xs];
-}
-
+const wants = matches(/\{([a-z]+)\}/gi, 1, v);
 const isNotDescriptive = comp(not, satisfies(IDescriptive));
-const wants = partial(matches, /\{([a-z]+)\}/gi, 1);
 
-export const checkStatus = fork(get(v, "ok"), resolve, reject);
-export const json = invokes(v, "json");
-export const one = comp(first, many);
-
-export function request(options){
-  return fetch(options.url, options.options).
-    then(apply(comp, compact([options.extract, options.read, options.status])));
-}
-
-export function headers(value){
-  return update(v, "headers", function(was){
-    return absorb(was || {}, value);
+export function url(url){
+  return fmap(v, function(options){
+    return absorb(options, {url});
   });
 }
 
-function config1(options){
-  options = absorb({
-    options: {
-      method: "GET",
-    },
-    status: checkStatus,
-    read: json,
-    extract: many,
-    isParam: constantly(false)
-  }, options || {});
-  return pipeline([request]) |>
-    before(v, request, comp(absorb(v, options), either(v, {}))) |>
-    before(v, request, loadUrl);
+export function method(method){
+  return fmap(v, function(options){
+    return absorb(options, {method});
+  });
 }
 
-function config2(self, settings){
-  return before(self, loadUrl, absorb(v, settings));
+export function credentails(credentails){
+  return fmap(v, function(options){
+    return absorb(options, {credentails});
+  });
 }
 
-export const config = overload(null, config1, config2);
-
-export function defaults(self, context){
-  return before(self, loadUrl, absorb({context}, v));
+export function headers(headers){
+  return fmap(v, function(options){
+    return absorb(options, {headers});
+  });
 }
 
-export function given(self, args){
-  return prepend(self, comp(resolve, function(context){
-    return {context};
-  }, positional(args)));
+export function context(context){
+  return fmap(v, function(options){
+    return absorb(options, {context});
+  });
 }
 
-export function firstGiven(self, args){
-  return self |>
-    given(v, args) |>
-    returns(v, one);
+export function request(options){
+  return task(function(reject, resolve){
+    fork(fetch(options.url, options), reject, resolve);
+  });
 }
 
-export function returns(self, extract){
-  return before(self, request, assoc(v, "extract", extract));
+export function check(resp){
+  return task(function(reject, resolve){
+    return resp.ok ? resolve(resp) : reject(resp);
+  });
 }
 
-export function url(self, templates){
-  return before(self, loadUrl, selectUrl(templates));
+export function json(resp){
+  return task(function(reject, resolve){
+    fork(resp.json(), reject, resolve);
+  });
 }
 
-export function loadUrl(options){
-  return options |>
-    addQueryString |>
-    update(v, "url", fill(v, options.context));
+export function addQueryString(pred){
+  return function(options){
+    const qs = mapa(function(key){
+      const value = get(options.context, key).toString();
+      return `${key}=${value}`;
+    }, filter(pred, keys(options.context))).join("&");
+    return update(options, "url", function(url){
+      const prefix = includes(url, "?") ? "&" : "?";
+      return qs ? url + prefix + qs : url;
+    });
+  }
 }
 
-function selectUrl(templates){
+export function selectUrl(templates){
   return function(options){
     const url = count(templates) === 1 ? first(templates) : detect(function(template){
       return every(contains(options.context, v), wants(template));
@@ -117,19 +101,11 @@ function selectUrl(templates){
   }
 }
 
-function addQueryString(options){
-  const context = get(options, "context");
-  const qs = mapa(function(key){
-    const value = get(context, key);
-    return key + "=" + value.toString();
-  }, filter(options.isParam, keys(context))).join("&");
-  return update(options, "url", function(url){
-    const prefix = includes(url, "?") ? "&" : "?";
-    return qs ? url + prefix + qs : url;
-  });
+export function loadUrl(options){
+  return update(options, "url", fill(v, options.context));
 }
 
-function positional(keys){
+export function mandatory(keys){
   return function(...vals){
     const xs = takeWhile(isNotDescriptive, vals),
           x  = first(dropWhile(isNotDescriptive, vals)) || {};
@@ -137,4 +113,8 @@ function positional(keys){
       return [key, value];
     }, keys, xs));
   }
+}
+
+export function requests(keys){
+  return comp(Task.of, assoc({}, "context", v), mandatory(keys));
 }

@@ -1,9 +1,11 @@
-import {overload, identity, obj, partly, doto} from "./core/core";
-import {IEventProvider, IAppendable, IHash, ITemplate, IMiddleware, IDispatch, IYank, IArray, IAssociative, IBounds, IInverse, ICloneable, ICollection, IComparable, IContent, ICounted, IDecode, IDeref, IDisposable, IEmptyableCollection, IEncode, IEquiv, IEvented, IFind, IFn, IFold, IFunctor, IHideable, IHierarchy, IHtml, IInclusive, IIndexed, IInsertable, IKVReduce, ILookup, IMap, IMapEntry, IMatch, INext, IObject, IOtherwise, IPrependable, IPublish, IReduce, IReset, IReversible, ISeq, ISeqable, ISet, ISteppable, ISubscribe, ISwap, IText} from "./core/protocols";
-import {classes, isEmpty, duration, compact, remove, flatten, map, fragment, element, sort, set, flip, realized, comp, isNumber, observable, detect, mapSomeVals, isFunction, apply} from "./core/types";
-import {assoc, yank, conj, hash, fmap, reducing, reducekv, includes} from "./core/protocols/concrete";
+import {overload, identity, obj, partly, doto, constantly} from "./core/core";
+import {IEventProvider, IAppendable, IHash, ITemplate, IMiddleware, IDispatch, IYank, IArray, IAssociative, IBounds, IInverse, ICloneable, ICollection, IComparable, IContent, ICounted, IDecode, IDeref, IDisposable, IEmptyableCollection, IEncode, IEquiv, IEvented, IFind, IFn, IFork, IFunctor, IHideable, IHierarchy, IHtml, IInclusive, IIndexed, IInsertable, IKVReduce, ILookup, IMap, IMapEntry, IMatch, INext, IObject, IOtherwise, IPrependable, IPublish, IReduce, IReset, IReversible, ISeq, ISeqable, ISet, ISteppable, ISubscribe, ISwap, IText} from "./core/protocols";
+import {maybe, each, see, props, classes, isEmpty, duration, compact, remove, flatten, map, fragment, element, sort, set, flip, realized, comp, isNumber, observable, detect, mapSomeVals, isFunction, apply} from "./core/types";
+import {mounts, get, assoc, yank, conj, hash, otherwise, fmap, reducing, reducekv, includes, excludes} from "./core/protocols/concrete";
 import {toggles} from "./core/types/element/behave";
-import {and, unless, fork} from "./core/predicates";
+import {resolve} from "./core/types/promise/concrete";
+import {and, unless} from "./core/predicates";
+import {absorb} from "./core/associatives";
 import {_ as v} from "param.macro";
 
 export * from "./core/core";
@@ -26,43 +28,60 @@ function subtract2(self, n){
 
 export const subtract = overload(null, null, subtract2, reducing(subtract2));
 
+function prop3(self, key, value){
+  return assoc(props(self), key, value);
+}
+
+function prop2(self, key){
+  return get(props(self), key);
+}
+
+export const prop = overload(null, null, prop2, prop3);
+
 export function addClass(self, name){
   conj(classes(self), name);
+  return self;
 }
 
 export function removeClass(self, name){
   yank(classes(self), name);
+  return self;
 }
 
 function toggleClass2(self, name){
   transpose(classes(self), name);
+  return self;
 }
 
 function toggleClass3(self, name, want){
   include(classes(self), name, want);
+  return self;
 }
 
 export const toggleClass = overload(null, null, toggleClass2, toggleClass3);
 
-function memoize1(f){
-  return memoize2(f, function(...args){
-    return hash(args);
-  });
+function install5(defaults, create, render, config, parent){
+  config = absorb({changed: [], commands: []}, defaults || {}, config || {});
+  var bus = create(config);
+  IAppendable.append(parent, mounts(render(bus), bus));
+  each(ISubscribe.sub(bus, v), config.changed);
+  each(IDispatch.dispatch(bus, v), config.commands);
 }
 
-function memoize2(f, hash){
-  const cache = {};
-  return function(...args){
-    const key = hash(...args);
-    if (cache.hasOwnProperty(key)) {
-      return cache[key];
-    } else {
-      const result = f(...args);
-      cache[key] = result;
-      return result;
-    }
-  }
+function install4(defaults, render, config, parent){
+  config = absorb({}, defaults || {}, config || {});
+  var img = tag('img'),
+      loading = img({src: config.spinner, alt: "Loading..."});
+  IAppendable.append(parent, loading);
+  fmap(resolve(render(config)),
+    mounts,
+    IAppendable.append(parent, v),
+    function(){
+      IYank.yank(loading);
+    });
 }
+
+export const install = overload(null, null, null, null, install4, install5);
 
 export function expansive(f){
   function expand(...xs){
@@ -84,7 +103,6 @@ export function expansive(f){
   return expand;
 }
 
-export const memoize = overload(null, memoize1, memoize2);
 export const tag = obj(expansive(element), Infinity);
 export const frag = expansive(fragment);
 
@@ -115,15 +133,15 @@ function isNotConstructor(text){
   return !/^[A-Z]./.test(text.name);
 }
 
-function impart2(self, keys){
+function impart2(self, pred){
   return reducekv(function(memo, key, value){
-    const f = isFunction(value) && isNotConstructor(value) && !includes(keys, key) ? partly : identity;
+    const f = isFunction(value) && isNotConstructor(value) && pred(key, value) ? partly : identity;
     return assoc(memo, key, f(value));
   }, {}, self);
 }
 
 function impart1(self){
-  return impart2(self, []);
+  return impart2(self, constantly(true));
 }
 
 //convenience for executing partially-applied functions.
@@ -138,3 +156,7 @@ function include3(self, value, want){
 }
 
 export const include = overload(null, null, include2, include3);
+
+export function opt(value, ...fs){
+  return otherwise(fmap(maybe(value), ...fs), null);
+}
