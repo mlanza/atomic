@@ -85,9 +85,7 @@ export function part(f, ...xs){
 }
 
 export function partly(wrapped){
-  return wrapped.hasOwnProperty("wrapped") ? wrapped : Object.assign(function(...args){
-    return part(wrapped, ...args);
-  }, {wrapped});
+  return wrapped.hasOwnProperty("wrapped") ? wrapped : Object.assign(partial(part, wrapped), {wrapped});
 }
 
 export function identity(x){

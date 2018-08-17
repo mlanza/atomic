@@ -1,4 +1,4 @@
-import {IFunctor, ILog, IAssociative, IOtherwise, IEncode, IDecode, IFold, IArray, IEquiv, ICollection, INext, ISeq, ISeqable, IIndexed, ICounted, ILookup, IReduce, IEmptyableCollection, ISequential} from '../../protocols';
+import {IFunctor, ILog, IAssociative, IOtherwise, IEncode, IDecode, IFork, IArray, IEquiv, ICollection, INext, ISeq, ISeqable, IIndexed, ICounted, ILookup, IReduce, IEmptyableCollection, ISequential} from '../../protocols';
 import {emptyList} from '../../types/empty-list/construct';
 import {identity, constantly, effect, overload, noop} from '../../core';
 import {implement} from '../protocol';
@@ -23,16 +23,15 @@ function otherwise(self, other){
   return other;
 }
 
-function fold(self, missing, okay){
-  return missing(self);
+function fork(self, reject, resolve){
+  return reject(self);
 }
 
 export default effect(
-  implement(ISequential),
   implement(ILog, {log: noop}),
   implement(IEncode, {encode: identity}),
   implement(IDecode, {decode: identity}),
-  implement(IFold, {fold}),
+  implement(IFork, {fork}),
   implement(IEmptyableCollection, {empty: identity}),
   implement(IOtherwise, {otherwise}),
   implement(IEquiv, {equiv}),

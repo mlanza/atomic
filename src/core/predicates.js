@@ -48,24 +48,24 @@ export function guard(pred, value){
   }
 }
 
-function fork1(pred){
-  return fork2(pred, identity);
+function branch1(pred){
+  return branch2(pred, identity);
 }
 
-function fork2(pred, yes){
-  return fork3(pred, yes, constantly(null));
+function branch2(pred, yes){
+  return branch3(pred, yes, constantly(null));
 }
 
-function fork3(pred, yes, no){
+function branch3(pred, yes, no){
   return function(...args){
     return pred(...args) ? yes(...args) : no(...args);
   }
 }
 
-export const fork = overload(null, fork1, fork2, fork3);
+export const branch = overload(null, branch1, branch2, branch3);
 
 export function unless(pred, f){
-  return fork(pred, identity, f);
+  return branch(pred, identity, f);
 }
 
 export function everyPair(pred, xs){

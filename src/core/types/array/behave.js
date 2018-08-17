@@ -1,9 +1,10 @@
 import {effect, identity, overload, constantly, doto} from '../../core';
 import {implement, specify, satisfies} from '../protocol';
-import {ITransient, IPersistent, IWrite, ITemplate, IArray, IObject, IFunctor, IInsertable, IYank, IEncode, IDecode, IReversible, ISet, IMapEntry, IEquiv, IReduce, IKVReduce, IAppendable, IPrependable, IInclusive, ICollection, INext, ISeq, IFind, ISeqable, IIndexed, IAssociative, ISequential, IEmptyableCollection, IFn, ICounted, ILookup, ICloneable} from '../../protocols';
+import {IMap, ITransient, IPersistent, IWrite, ITemplate, IArray, IObject, IFunctor, IInsertable, IYank, IEncode, IDecode, IReversible, ISet, IMapEntry, IEquiv, IReduce, IKVReduce, IAppendable, IPrependable, IInclusive, ICollection, INext, ISeq, IFind, ISeqable, IIndexed, IAssociative, ISequential, IEmptyableCollection, IFn, ICounted, ILookup, ICloneable} from '../../protocols';
 import {reduced, unreduced, isReduced} from '../reduced';
 import {indexedSeq} from '../indexed-seq';
 import {replace} from '../string/concrete';
+import {range} from '../range/construct';
 import {revSeq} from '../rev-seq';
 import {filter, mapa} from '../lazy-seq/concrete';
 import {set} from '../immutable-set/construct';
@@ -120,6 +121,16 @@ function disj(self, value){
   });
 }
 
+function keys(self){
+  return range(ICounted.count(self));
+}
+
+function dissoc(self, idx){
+  return IPersistent.persistent(
+    doto(transient(self),
+      IMap.dissoc(v, idx)));
+}
+
 function key(self){
   return self[0];
 }
@@ -143,7 +154,7 @@ function lookup(self, key){
 }
 
 function assoc(self, key, value){
-  if (IEquiv.equiv(lookup(self, key), value)) {
+  if (lookup(self, key) === value) {
     return self;
   }
   var arr = Array.from(self);
@@ -243,6 +254,7 @@ export default effect(
   implement(IReversible, {reverse}),
   implement(ISet, {union, intersection, difference, disj, superset}),
   implement(IFind, {find}),
+  implement(IMap, {dissoc, keys, vals: identity}),
   implement(IMapEntry, {key, val}),
   implement(IInclusive, {includes}),
   implement(IAppendable, {append}),

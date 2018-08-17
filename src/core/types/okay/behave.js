@@ -1,4 +1,4 @@
-import {IFunctor, IFold} from '../../protocols';
+import {IFunctor, IFork} from '../../protocols';
 import {effect, overload} from '../../core';
 import {implement} from '../protocol';
 import {okay} from './construct';
@@ -12,10 +12,10 @@ function fmap(self, f){
   }
 }
 
-function fold(self, error, okay){
-  return okay(self);
+function fork(self, reject, resolve){
+  return resolve(self);
 }
 
 export default effect(
-  implement(IFold, {fold}),
+  implement(IFork, {fork}),
   implement(IFunctor, {fmap}));

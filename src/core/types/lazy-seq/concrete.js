@@ -1,4 +1,4 @@
-import {IEquiv, IArray, IAssociative, IInclusive, IIndexed, ICollection, IComparable, ICounted, ISeq, ISeqable, INext, IHierarchy, IReduce, ISequential} from '../../protocols';
+import {IEquiv, IMap, IArray, IAssociative, ILookup, IInclusive, IIndexed, ICollection, IComparable, ICounted, ISeq, ISeqable, INext, IHierarchy, IReduce, ISequential} from '../../protocols';
 import {identity, constantly, overload} from '../../core';
 import EmptyList, {emptyList} from '../empty-list/construct';
 import Array, {emptyArray} from '../array/construct';
@@ -16,6 +16,7 @@ import {concat, concatenated} from "../concatenated/construct";
 import {satisfies} from '../protocol/concrete';
 import Symbol from '../symbol/construct';
 import {update} from "../../protocols/iassociative/concrete";
+import {reducekv} from "../../protocols/ikvreduce/concrete";
 
 function transduce3(xform, f, coll){
   return transduce4(xform, f, f(), coll);
@@ -43,6 +44,30 @@ export function each(f, xs){
     f(ISeq.first(ys));
     ys = ISeqable.seq(ISeq.rest(ys));
   }
+}
+
+export function eachWithKey(f, xs){
+  each(function([key, value]){
+    return f(value, key);
+  }, entries(xs));
+}
+
+function entries2(xs, keys){
+  return ISeqable.seq(keys) ? lazySeq([ISeq.first(keys), ILookup.lookup(xs, ISeq.first(keys))], function(){
+    return entries2(xs, ISeq.rest(keys));
+  }) : emptyList();
+}
+
+function entries1(xs){
+  return entries2(xs, IMap.keys(xs));
+}
+
+export const entries = overload(null, entries1, entries2);
+
+export function mapWithKey(f, xs){
+  return map(function([key, value]){
+    return f(value, key);
+  }, entries(xs));
 }
 
 export function seek(...fs){

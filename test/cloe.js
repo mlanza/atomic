@@ -1,5 +1,7 @@
 import {_ as v} from "param.macro";
 import * as _ from "cloe";
+import jQuery from "qunit";
+import QUnit from "qunit";
 
 const stooges = ["Larry","Curly","Moe"],
       pieces  = {pawn: 1, knight: 3, bishop: 3, rook: 5, queen: 10, king: Infinity},
@@ -160,6 +162,7 @@ QUnit.test("sequences", function(assert){
   assert.deepEqual([9,8,7,6,5,4,3] |> _.dropLast(3, v) |> _.toArray, [9,8,7,6]);
   assert.deepEqual(stooges |> _.sort |> _.toArray, ["Curly","Larry","Moe"])
   assert.deepEqual(["A","B",["C","D"],["E", ["F", "G"]]] |> _.flatten |> _.toArray, ["A","B","C","D","E","F","G"]);
+  assert.deepEqual([null, ""] |> _.flatten |> _.toArray, [null, ""]);
   assert.deepEqual(pieces |> _.selectKeys(v, ["pawn", "knight"]), {pawn: 1, knight: 3});
   assert.deepEqual(["A","B","C","D","E"] |> _.interleave(v, _.repeat("="), _.integers()) |> _.toArray, ["A","=",1,"B","=",2,"C","=",3,"D","=",4,"E","=",5]);
   assert.deepEqual([1,2,3] |> _.interleave(v, [10,11,12]) |> _.toArray, [1,10,2,11,3,12]);
@@ -346,7 +349,7 @@ QUnit.test("coersion", function(assert){
 });
 
 QUnit.test("predicates", function(assert){
-  //assert.ok(_.chain({ace: 1, king: 2, queen: 3}, matches({ace: 1, king: 2})));
+  assert.ok({ace: 1, king: 2, queen: 3} |> _.matches(v, {ace: 1, king: 2}));
   assert.equal(_.any(3, 1), 3);
   assert.equal(_.any(null, 1), 1);
   assert.equal(_.all(3, 1), 1);

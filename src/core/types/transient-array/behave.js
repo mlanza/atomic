@@ -6,11 +6,13 @@ import {IObject, IInsertable, IFunctor, ILookup, IAssociative, IFind, IMapEntry,
 function before(self, reference, inserted){
   const pos = self.arr.indexOf(reference);
   pos === -1 || self.arr.splice(pos, 0, inserted);
+  return self;
 }
 
 function after(self, reference, inserted){
   const pos = self.arr.indexOf(reference);
   pos === -1 || self.arr.splice(pos + 1, 0, inserted);
+  return self;
 }
 
 function seq(self){
@@ -19,10 +21,12 @@ function seq(self){
 
 function append(self, value){
   self.arr.push(value);
+  return self;
 }
 
 function prepend(self, value){
   self.arr.unshift(value);
+  return self;
 }
 
 function empty(){
@@ -31,10 +35,17 @@ function empty(){
 
 function reverse(self){
   self.arr.reverse();
+  return self;
 }
 
 function assoc(self, idx, value){
   self.arr[idx] = value;
+  return self;
+}
+
+function dissoc(self, idx){
+  self.arr.splice(idx, 1);
+  return self;
 }
 
 function yank(self, value){
@@ -42,6 +53,7 @@ function yank(self, value){
   while ((pos = self.arr.indexOf(value)) > -1) {
     self.arr.splice(pos, 1);
   }
+  return self;
 }
 
 function persistent(self){
@@ -85,7 +97,7 @@ export default effect(
   implement(ILookup, {lookup}),
   implement(IAssociative, {contains, assoc}),
   implement(IReversible, {reverse}),
-  implement(IMap, {keys, vals}),
+  implement(IMap, {dissoc, keys, vals}),
   implement(IObject, {toObject}),
   implement(IReduce, {reduce}),
   implement(IKVReduce, {reducekv}),

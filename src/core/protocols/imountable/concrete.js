@@ -12,44 +12,25 @@ export const mounting = IMountable.mounting;
 export const mounted = IMountable.mounted;
 
 export function mount(self, parent){
-  mounting(self);
+  mounting(self, parent);
   IMountable.mount(self, parent);
-  mounted(self);
+  mounted(self, parent);
   return self;
 }
 
-function mounts1(state){
-  return mounts2(v, state);
-}
-
-function mounts2(self, state){
-  return mounts3(self, state, ["mounting", "mounted"]);
-}
-
-function mounts3(self, state, events){
-  var include = includes(events, v);
-  var mounting = include("mounting") ? function(self){
-    trigger(self, "mounting", {bubbles: false, detail: {present: IDeref.deref(state)}});
-  } : noop;
+export function mounts(self, context){
+  function mounting(self, parent){
+    trigger(self, "mounting", {bubbles: true, detail: {parent, context}});
+  }
   function mount(self, parent){
     parent.appendChild(self);
   }
-  var updated = include("updated") ? function(self){
-    const changed = hist(state);
-    ISubscribe.sub(changed, function([present, past]){
-      if (past && past !== present) {
-        trigger(self, "updated", {bubbles: false, detail: {present: present, past: past}});
-      }
-    });
-  } : noop;
-  var mounted = include("mounted") ? function(self){
-    trigger(self, "mounted", {bubbles: false, detail: {present: IDeref.deref(state)}});
-  } : noop;
+  function mounted(self, parent){
+    trigger(self, "mounted", {bubbles: true, detail: {parent, context}});
+  }
   return doto(self,
-    specify(IMountable, {mounting, mount, mounted: effect(updated, mounted)}));
+    specify(IMountable, {mounting, mount, mounted}));
 }
-
-export const mounts = overload(null, mounts1, mounts2, mounts3);
 
 function mutate3(self, state, f){
   ISubscribe.sub(state, partial(f, self));

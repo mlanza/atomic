@@ -7,7 +7,6 @@ grep -R "some" --exclude-dir="*node*" .
 * Avoid using type constructors (e.g. the keyword "new") directly.  Use the provided constructor functions.
 * Avoid virtual doms.  Use a model diff/patch strategy.
 * Avoid creating types where primitives will do.  A type should be introduced to vary protocol implementations.
-* Avoid monads as they necessitate commitment.  Use monadic pipelines instead.
 * Avoid recursion for potentially large stacks.
 * Avoid writing functions that care about `this` bindings, rather pass `self` as the first argument when required.
 * Avoid thinking in concrete types.  Prefer thinking in abstract types that provide behaviors.
@@ -28,7 +27,6 @@ grep -R "some" --exclude-dir="*node*" .
 * Prefer pure functions
 * JavaScript models structured data primarily with two constructs: Arrays and Objects.  Arrays provides a series of things (ISequential).  Objects provide descriptions of things and are like dictionaries except the keys are always strings (IDescriptive).  ISequential is a promise that a thing contains a series of other things.  Neither of protocol promises order.
 * One should avoid using the library api to act on Map and Set types.  In it's attempt to avoid mutation, it is grossly inefficient.  It exists only to allow interoperability.
-* Pipelines wrap each fn to maintain a context throughout the computation then exit the context.  It would be possible to wrap the fns used for use that is independent of the pipeline; however, this puts each fn in a lifted context when what we're after is vanilla fns that can be used apart from any context if desired.
 * Some protocols are superseded by a public api (like ICompare and IReduce).  While the protocol can be used directly, prefer the public api when unsure of differences in use.
 * It would seem that ICloneable is superfluous in a library espousing immutable values since you could simply pass everything by reference.  We should assume that any desire to clone, therefore, implies a desire to mutate, so unless the value itself (as in Immutable.js) is actually immutable, produce a clone.
 * Both protocols and multimethods are just implementation details over programming interfaces.  This leaves room to change the details for performance reasons or otherwise without impacting consumers.  When possible prefer protocols to multimethods.  Furthermore, if the type provided to the second arg affects the result, either branch internally or use an exposed multimethod internally.
@@ -52,4 +50,4 @@ grep -R "some" --exclude-dir="*node*" .
 * Events cannot be aborted.  They are announced to all who care.
 * While events are immutable fact, it is reasonable to pare them down to hide sensitive information when propagated to listeners.
 * That components have a bus that separate command processing from event processing lends to event replay (e.g. omitting command processing) at a later time from an event store.
-* 
+*

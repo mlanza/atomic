@@ -52,7 +52,7 @@ function affects2(bus, f){
 
 export const affects = overload(null, null, affects2, affects3);
 
-export function component(config, state, callback){
+function component3(config, state, callback){
   const evts = events(),
         ware = middleware(),
         publ = publisher();
@@ -63,3 +63,11 @@ export function component(config, state, callback){
       eventDispatcher(evts, messageHandler(eventMap), publ));
   });
 }
+
+function component2(config, state){
+  return component3(config, state, function(){
+    return [{}, {}]; //static components may lack commands that drive state change.
+  });
+}
+
+export const component = overload(null, null, component2, component3);
