@@ -1,5 +1,5 @@
 import {implement} from '../protocol';
-import {identity, constantly, effect} from '../../core';
+import {identity, constantly, does} from '../../core';
 import {IObject, IDescriptive, IFind, ICollection, IReduce, IKVReduce, INext, IArray, ISeq, ISeqable, IIndexed, ICounted, ILookup, IFn, IMap, ICloneable, IEmptyableCollection} from '../../protocols';
 import {lazySeq} from '../../types/lazy-seq/construct';
 import {remove, into} from '../../types/lazy-seq/concrete';
@@ -62,7 +62,7 @@ function reducekv(self, xf, init){
   }, init);
 }
 
-export default effect(
+export default does(
   iequiv,
   itemplate,
   implement(IDescriptive),

@@ -5,7 +5,7 @@ import {trigger} from "../../protocols/ievented/concrete";
 import {specify, satisfies} from "../../types/protocol";
 import {partial} from "../../types/function/concrete";
 import {hist} from '../../../signals';
-import {doto, overload, noop, effect} from '../../../core/core';
+import {doto, overload, noop, does} from '../../../core/core';
 import {_ as v} from "param.macro";
 
 export const mounting = IMountable.mounting;

@@ -15,7 +15,9 @@ function mappedSignal1(source){
 }
 
 function mappedSignal2(f, source){
-  return mappedSignal3(complement(IEquiv.equiv), f, source);
+  return mappedSignal3(function(a, b){
+    return a !== b;
+  }, f, source);
 }
 
 function mappedSignal3(pred, f, source){

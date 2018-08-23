@@ -1,4 +1,4 @@
-import {effect, partial} from '../../core';
+import {does, partial} from '../../core';
 import {implement} from '../protocol';
 import {IFn, IAssociative, ILookup, IEncode, IAppendable, IPrependable} from '../../protocols';
 import Symbol from '../symbol/construct';
@@ -19,7 +19,7 @@ function encode(self, label, refstore, seed){
   return IAssociative.assoc({id: id}, label, self[Symbol.toStringTag]);
 }
 
-export default effect(
+export default does(
   implement(IAppendable, {append}),
   implement(IPrependable, {prepend: partial}),
   implement(IEncode, {encode}),

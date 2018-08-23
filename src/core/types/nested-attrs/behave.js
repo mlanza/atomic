@@ -1,4 +1,4 @@
-import {constantly, identity, effect, overload} from '../../core';
+import {constantly, identity, does, overload} from '../../core';
 import {implement} from '../protocol';
 import {mapa, detect, compact} from '../../types/lazy-seq/concrete';
 import {trim, split, str} from '../../types/string/concrete';
@@ -59,7 +59,7 @@ function conj(self, pair){
   return self;
 }
 
-export default effect(
+export default does(
   implement(IDescriptive),
   implement(IDeref, {deref}),
   implement(IMap, {keys, vals, dissoc}),

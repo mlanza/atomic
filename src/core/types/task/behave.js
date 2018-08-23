@@ -1,5 +1,5 @@
 import {IFunctor, IFork, ISubscribe, IChainable} from '../../protocols';
-import {identity, constantly, effect, overload, noop} from '../../core';
+import {identity, constantly, does, overload, noop} from '../../core';
 import {implement} from '../protocol';
 import {task} from './construct';
 import {comp} from "../function/concrete";
@@ -26,7 +26,7 @@ function sub(self, callback){
   fork(self, console.error, callback);
 }
 
-export default effect(
+export default does(
   implement(ISubscribe, {sub}),
   implement(IChainable, {chain}),
   implement(IFork, {fork}),

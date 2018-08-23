@@ -1,4 +1,4 @@
-import {overload, identity, effect} from "../../core";
+import {overload, identity, does} from "../../core";
 import {implement, satisfies} from '../protocol';
 import {IFunctor, ISeq, INext, ISequential} from '../../protocols';
 import {mapcat} from "../lazy-seq/concrete";
@@ -27,7 +27,7 @@ function next(self){
   return result ? members(result) : null;
 }
 
-export default effect(
+export default does(
   behave,
   implement(INext, {next}),
   implement(ISeq, {first, rest}),

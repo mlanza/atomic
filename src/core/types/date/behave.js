@@ -1,4 +1,4 @@
-import {effect, overload, constantly, identity} from '../../core';
+import {does, overload, constantly, identity} from '../../core';
 import {implement} from '../protocol';
 import {IReduce, IKVReduce, ISeqable, IEncode, IBounds, IMap, IDeref, ISeq, IComparable, IEquiv, ICloneable, ILookup, IAssociative, ICollection} from '../../protocols';
 import {isNumber} from '../number';
@@ -14,13 +14,13 @@ function lookup(self, key){
       return self.getMonth() + 1;
     case "day":
       return self.getDate();
-    case "hour":
+    case "hours":
       return self.getHours();
-    case "minute":
+    case "minutes":
       return self.getMinutes();
-    case "second":
+    case "seconds":
       return self.getSeconds();
-    case "millisecond":
+    case "milliseconds":
       return self.getMilliseconds();
   }
 }
@@ -35,7 +35,7 @@ function contains(self, key){
 }
 
 function keys(self){
-  return ["year", "month", "day", "hour", "minute", "second", "millisecond"];
+  return ["year", "month", "day", "hours", "minutes", "seconds", "milliseconds"];
 }
 
 function vals(self){
@@ -62,16 +62,16 @@ function assoc(self, key, value){
     case "day":
       dt.setDate(value);
       break;
-    case "hour":
+    case "hours":
       dt.setHours(value);
       break;
-    case "minute":
+    case "minutes":
       dt.setMinutes(value);
       break;
-    case "second":
+    case "seconds":
       dt.setSeconds(value);
       break;
-    case "millisecond":
+    case "milliseconds":
       dt.setMilliseconds(value);
       break;
     default:
@@ -121,7 +121,7 @@ function deref(self){
   return self.valueOf();
 }
 
-export default effect(
+export default does(
   implement(IDeref, {deref}),
   implement(IBounds, {start: identity, end: identity}),
   implement(ISeqable, {seq: identity}),

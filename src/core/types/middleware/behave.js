@@ -1,4 +1,4 @@
-import {effect, overload, constantly, identity, doto, noop} from '../../core';
+import {does, overload, constantly, identity, doto, noop} from '../../core';
 import {reverse} from "../../protocols/ireversible/concrete";
 import {reduce} from "../../protocols/ireduce/concrete";
 import {IMiddleware, ICollection} from '../../protocols';
@@ -27,6 +27,6 @@ function handle(self, command, next){
   IMiddleware.handle(self.handler, command, next);
 }
 
-export default effect(
+export default does(
   implement(ICollection, {conj}),
   implement(IMiddleware, {handle}));

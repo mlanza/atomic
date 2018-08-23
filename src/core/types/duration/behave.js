@@ -1,5 +1,5 @@
 import {implement} from '../protocol';
-import {effect, overload} from '../../core';
+import {does, overload} from '../../core';
 import {ISteppable, IDeref} from '../../protocols';
 import {encodeable} from '../record/behave';
 
@@ -11,7 +11,7 @@ function step(self, dt){
   return new Date(dt.valueOf() + self.milliseconds);
 }
 
-export default effect(
+export default does(
   encodeable,
   implement(IDeref, {deref}),
   implement(ISteppable, {step}));

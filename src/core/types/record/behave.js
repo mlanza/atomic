@@ -1,4 +1,4 @@
-import {effect, overload, constantly} from '../../core';
+import {does, overload, constantly} from '../../core';
 import {implement} from '../protocol';
 import {reduced} from "../reduced/construct";
 import {IReduce, IKVReduce, IEquiv, IEncode, IObject, IDescriptive, IAssociative, ISeqable, ILookup, ICounted, IMap, ISeq, IRecord, IEmptyableCollection} from '../../protocols';
@@ -92,7 +92,7 @@ export function emptyable(Type){
   implement(IEmptyableCollection, {empty}, Type);
 }
 
-export default effect(
+export default does(
   construction,
   encodeable,
   emptyable,

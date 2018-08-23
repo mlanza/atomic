@@ -1,4 +1,4 @@
-import {effect, overload, constantly, identity} from '../../core';
+import {does, overload, constantly, identity} from '../../core';
 import {implement, forwardTo} from '../protocol';
 import {IDispatch, ISubscribe, IMiddleware, ILookup, ISwap, IReset, IDeref, IDisposable, IConfigured} from '../../protocols';
 
@@ -23,7 +23,7 @@ const deref = forward(IDeref.deref);
 const reset = forward(IReset.reset);
 const swap = forward(ISwap.swap);
 
-export default effect(
+export default does(
   implement(IDeref, {deref}),
   implement(IReset, {reset}),
   implement(ISwap, {swap}),

@@ -1,4 +1,4 @@
-import {overload, constantly, effect} from '../../core';
+import {overload, constantly, does} from '../../core';
 import {implement} from '../protocol';
 import {IArray, IBounds, IInverse, IEncode, ISteppable, ISequential, ICollection, IComparable, INext, IEquiv, IReduce, IKVReduce, ISeqable, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, ISeq, IInclusive} from '../../protocols';
 import {between} from '../../protocols/ibounds/concrete';
@@ -59,7 +59,7 @@ function inverse(self){
   return self.constructor.create(self.end, self.start, IInverse.inverse(self.step));
 }
 
-export default effect(
+export default does(
   iterable,
   emptyable,
   encodeable,

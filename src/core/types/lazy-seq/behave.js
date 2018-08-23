@@ -1,6 +1,6 @@
 import {implement} from '../protocol';
 import {IFunctor, IYank, IMatch, IArray, IInclusive, IFind, IEquiv, ICollection, INext, ISeq, IReduce, IKVReduce, ISeqable, ISequential, IIndexed, IEmptyableCollection, ICounted, IAppendable, IPrependable} from '../../protocols';
-import {overload, identity, constantly, effect} from '../../core';
+import {overload, identity, constantly, does} from '../../core';
 import Reduced, {isReduced, reduced, unreduced} from "../reduced";
 import {concat} from "../concatenated/construct";
 import {cons} from "../list/construct";
@@ -129,11 +129,11 @@ function includes(self, value){
   }, self);
 }
 
-export const ireduce = effect(
+export const ireduce = does(
   implement(IReduce, {reduce}),
   implement(IKVReduce, {reducekv}));
 
-export default effect(
+export default does(
   iterable,
   ireduce,
   implement(ISequential),

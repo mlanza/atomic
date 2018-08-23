@@ -1,4 +1,4 @@
-import {effect, constantly} from '../../core';
+import {does, constantly} from '../../core';
 import {implement} from '../protocol';
 import {ISubscribe, IDeref, ICounted} from '../../protocols';
 
@@ -30,6 +30,6 @@ function subscribed(self){
   return ICounted.count(self.callbacks);
 }
 
-export default effect(
+export default does(
   implement(IDeref, {deref}),
   implement(ISubscribe, {sub, unsub, subscribed}));

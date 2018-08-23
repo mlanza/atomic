@@ -1,5 +1,5 @@
 import {IEventProvider} from '../../protocols';
-import {effect} from '../../core';
+import {does} from '../../core';
 import {implement} from '../protocol';
 
 function raise(self, event){
@@ -12,5 +12,5 @@ function release(self){
   return released;
 }
 
-export default effect(
+export default does(
   implement(IEventProvider, {raise, release}));

@@ -23,6 +23,7 @@ export * from "./types/function";
 export * from "./types/guid";
 export * from "./types/html-collection";
 export * from "./types/html-document";
+export * from "./types/html-select-element";
 export * from "./types/indexed-seq";
 export * from "./types/just";
 export * from "./types/list";

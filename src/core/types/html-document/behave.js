@@ -1,10 +1,10 @@
 import {implement} from '../protocol';
 import {IHierarchy} from '../../protocols';
-import {constantly, effect} from '../../core';
+import {constantly, does} from '../../core';
 import {ihierarchy, icontents, ievented} from "../element/behave";
 import {emptyList} from "../empty-list/construct";
 
-export default effect(
+export default does(
   ihierarchy,
   icontents,
   ievented,

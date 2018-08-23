@@ -13,6 +13,7 @@ import {assoc, update, assocIn, contains} from "./core/protocols/iassociative/co
 import {filter, mapa, map, every, detect, dropWhile, takeWhile} from "./core/types/lazy-seq/concrete";
 import {emptyObject} from "./core/types/object/construct";
 import {not} from "./core/types/boolean";
+import {reSeq} from "./core/types/reg-exp/concrete";
 import {comp} from "./core/types/function/concrete";
 import {IDescriptive} from "./core/protocols/idescriptive/instance";
 import {fork} from "./core/protocols/ifork/concrete";
@@ -20,15 +21,7 @@ import Task, {task} from "./core/types/task";
 import fetch from "fetch";
 import {_ as v} from "param.macro";
 
-function matches(re, pos, text){
-  var match, results = [];
-  while(match = re.exec(text)){
-    results.push(match[pos]);
-  }
-  return results;
-}
-
-const wants = matches(/\{([a-z]+)\}/gi, 1, v);
+const wants = reSeq(/\{[a-z0-9]+\}/gi, v);
 const isNotDescriptive = comp(not, satisfies(IDescriptive));
 
 export function url(url){
@@ -43,9 +36,9 @@ export function method(method){
   });
 }
 
-export function credentails(credentails){
+export function credentials(credentials){
   return fmap(v, function(options){
-    return absorb(options, {credentails});
+    return absorb(options, {credentials});
   });
 }
 

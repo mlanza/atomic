@@ -1,4 +1,4 @@
-import {effect, identity, constantly} from '../../core';
+import {does, identity, constantly} from '../../core';
 import {implement} from '../protocol';
 import {Set, emptySet} from './construct';
 import {unreduced} from '../../types/reduced/concrete';
@@ -56,7 +56,7 @@ function reduce(self, xf, init){
   return unreduced(memo);
 }
 
-export default effect(
+export default does(
   implement(ISequential),
   implement(IReduce, {reduce}),
   implement(IArray, {toArray}),

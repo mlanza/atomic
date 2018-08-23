@@ -1,9 +1,15 @@
 import {ISeq, INext, IKVReduce, IAssociative} from '../../protocols';
-import {intercept} from '../../core';
+import {branch} from '../../core';
 import {comp} from '../../types/function/concrete';
 import {selectKeys} from '../../types/object/concrete';
 import {isNumber} from '../../types/number/concrete';
 import {into} from '../../types/lazy-seq/concrete';
+import Date from './construct';
+import {_ as v} from "param.macro";
+
+export function isDate(self){
+  return self && self.constructor === Date;
+}
 
 function trim(obj){ //TODO protocol, compact on sequence, trim on string?
   return IKVReduce.reduce(obj, function(memo, key, value){
@@ -11,16 +17,16 @@ function trim(obj){ //TODO protocol, compact on sequence, trim on string?
   }, {});
 }
 
-export function when(year, month, day, hour, minute, second, millisecond){
-  return trim({year, month, day, hour, minute, second, millisecond});
+export function when(year, month, day, hours, minutes, seconds, milliseconds){
+  return trim({year, month, day, hours, minutes, seconds, milliseconds});
 }
 
 export function at(date, keys){
   return selectKeys(_.into({}, date), keys);
 }
 
-export function time(hour, minute, second, millisecond){
-  return {hour: hour || 0, minute: minute || 0, second: second || 0, millisecond: millisecond || 0};
+export function time(hours, minutes, seconds, milliseconds){
+  return {hours: hours || 0, minutes: minutes || 0, seconds: seconds || 0, milliseconds: milliseconds || 0};
 }
 
 export function sod(){
@@ -46,7 +52,7 @@ export function eom(){
     month: function(n){
       return n + 1;
     },
-    millisecond: function(n){
+    milliseconds: function(n){
       return n - 1;
     }
   }
@@ -58,34 +64,4 @@ export function soy(){
 
 export function eoy(){
   return {month: 12, day: 31};
-}
-
-export function year(n){
-  return {year: n};
-}
-
-export function month(n){
-  return {month: n};
-}
-
-export function day(n){
-  return {day: n};
-}
-
-export function hour(n){
-  return {hour: n};
-}
-
-export function minute(n){
-  return {minute: n};
-}
-
-function second1(n){
-  return {second: n};
-}
-
-export const second = intercept(comp(ISeq.first, INext.next), isNumber, second1);
-
-export function millisecond(n){
-  return {millisecond: n};
 }

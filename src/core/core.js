@@ -50,42 +50,38 @@ export function obj(f, len){ //objective
   }
 }
 
+export const placeholder = {};
+
+export function part(f, ...xs){
+  return xs.indexOf(placeholder) > -1 ? function(...ys){
+    const args = [f], xl = xs.length, yl = ys.length;
+    let a = 0, b = 0;
+    while(a < xl && b < yl){
+      if (xs[a] === placeholder) {
+        a++;
+        args.push(ys[b++]);
+      } else {
+        args.push(xs[a++]);
+      }
+    }
+    while(a < xl){
+      args.push(xs[a++]);
+    }
+    while(b < yl){
+      args.push(ys[b++]);
+    }
+    return part.apply(null, args);
+  } : f.apply(null, xs);
+}
+
 export function partial(f, ...applied){
   return function(...args){
     return f.apply(this, applied.concat(args));
   }
 }
 
-export const placeholder = {};
-
-export function part(f, ...xs){
-  if (xs.indexOf(placeholder) < 0) {
-    return f.apply(null, xs);
-  } else {
-    return function(...ys){
-      const zs = [];
-      let a = 0, b = 0, xl = xs.length, yl = ys.length;
-      while(a < xl && b < yl){
-        if (xs[a] === placeholder) {
-          a++;
-          zs.push(ys[b++]);
-        } else {
-          zs.push(xs[a++]);
-        }
-      }
-      while(a < xl){
-        zs.push(xs[a++]);
-      }
-      while(b < yl){
-        zs.push(ys[b++]);
-      }
-      return part.apply(null, [f].concat(zs));
-    }
-  }
-}
-
-export function partly(wrapped){
-  return wrapped.hasOwnProperty("wrapped") ? wrapped : Object.assign(partial(part, wrapped), {wrapped});
+export function partly(f){
+  return partial(part, f);
 }
 
 export function identity(x){
@@ -107,7 +103,7 @@ export function doto(obj, ...effects){
   return obj;
 }
 
-export function effect(...effects){
+export function does(...effects){
   return function(...args){
     const len = effects.length;
     for(var i = 0; i < len; i++){
@@ -166,11 +162,18 @@ export function applying(...args){
   }
 }
 
-export function intercept(fallback, pred, receiver){
-  const next = fallback || function(){
-    throw new Error("No fallback function found.");
-  }
+function branch1(pred){
+  return branch2(pred, identity);
+}
+
+function branch2(pred, yes){
+  return branch3(pred, yes, constantly(null));
+}
+
+function branch3(pred, yes, no){
   return function(...args){
-    return pred(...args) ? receiver(...args) : next(...args);
+    return pred(...args) ? yes(...args) : no(...args);
   }
 }
+
+export const branch = overload(null, branch1, branch2, branch3);

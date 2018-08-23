@@ -1,4 +1,4 @@
-import {effect} from "../../core";
+import {does} from "../../core";
 import {implement} from '../protocol';
 import {IArray, IReduce, IIndexed, ISeqable, ISeq, INext, IInclusive, IAppendable, IPrependable, ICounted, ILookup, IFn, ISequential, IEmptyableCollection} from '../../protocols';
 import {iterable} from '../lazy-seq/behave';
@@ -56,7 +56,7 @@ function construction(Type){
   }
 }
 
-export default effect(
+export default does(
   construction,
   iterable,
   implement(ISequential),

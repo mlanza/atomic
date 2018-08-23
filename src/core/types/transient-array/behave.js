@@ -1,4 +1,4 @@
-import {effect, overload, doto} from '../../core';
+import {does, overload, doto} from '../../core';
 import {implement, forwardTo} from '../../types/protocol';
 import {transientArray} from "./construct";
 import {IObject, IInsertable, IFunctor, ILookup, IAssociative, IFind, IMapEntry, IYank, ISeq, INext, ISeqable, ICounted, IInclusive, IReversible, IEmptyableCollection, IMap, IPersistent, IReduce, IKVReduce, ICloneable, IAppendable, IPrependable, ITemplate, ISequential, ICollection} from '../../protocols';
@@ -81,7 +81,7 @@ const first = forward(ISeq.first);
 const rest = forward(ISeq.rest);
 const next = forward(INext.next);
 
-export default effect(
+export default does(
   implement(ISequential),
   implement(IPersistent, {persistent}),
   implement(ISeqable, {seq}),

@@ -1,4 +1,4 @@
-import {effect, overload, constantly, identity} from '../../core';
+import {does, overload, constantly, identity} from '../../core';
 import {implement} from '../protocol';
 import {IMiddleware, ILookup} from '../../protocols';
 
@@ -8,5 +8,5 @@ function handle(self, command, next){
   IMiddleware.handle(handler, command, next);
 }
 
-export default effect(
+export default does(
   implement(IMiddleware, {handle}));

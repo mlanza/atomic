@@ -1,5 +1,5 @@
 import {implement} from '../protocol';
-import {effect} from '../../core';
+import {does} from '../../core';
 import {IBounds} from '../../protocols';
 
 function start(self){
@@ -10,5 +10,5 @@ function end(self){
   return IBounds.start(self.period);
 }
 
-export default effect(
+export default does(
   implement(IBounds, {start, end}));

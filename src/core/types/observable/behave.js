@@ -1,5 +1,5 @@
 import {implement, satisfies} from '../protocol';
-import {effect} from '../../core';
+import {does} from '../../core';
 import {IPublish, ISubscribe, IReset, ISwap, IDeref, IDisposable} from '../../protocols';
 
 function deref(self){
@@ -38,7 +38,7 @@ function dispose(self){
   satisfies(IDisposable, self.publisher) && IDisposable.dispose(self.publisher);
 }
 
-export default effect(
+export default does(
   implement(IDisposable, {dispose}),
   implement(IDeref, {deref}),
   implement(ISubscribe, {sub, unsub, subscribed}),

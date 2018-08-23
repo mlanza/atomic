@@ -1,4 +1,4 @@
-import {effect, identity, constantly} from '../../core';
+import {does, identity, constantly} from '../../core';
 import {implement} from '../protocol';
 import {ICounted, IAssociative, ILookup, ICloneable} from '../../protocols';
 
@@ -18,7 +18,7 @@ function count(self){
   return self.size;
 }
 
-export default effect(
+export default does(
   implement(ICloneable, {clone: identity}),
   implement(ICounted, {count}),
   implement(ILookup, {lookup}),

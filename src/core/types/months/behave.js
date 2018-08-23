@@ -1,5 +1,5 @@
 import {ISteppable, IInverse, ICloneable} from '../../protocols';
-import {identity, constantly, effect} from '../../core';
+import {identity, constantly, does} from '../../core';
 import {implement} from '../protocol';
 import {min} from '../number/concrete';
 import * as w from '../date/concrete';
@@ -39,7 +39,7 @@ function inverse(self){
   return new self.construct(self.n * -1, self.options);
 }
 
-export default effect(
+export default does(
   encodeable,
   implement(IInverse, {inverse}),
   implement(ISteppable, {step}));

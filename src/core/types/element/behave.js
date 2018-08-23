@@ -1,4 +1,4 @@
-import {identity, constantly, effect, overload, partial, doto} from '../../core';
+import {identity, constantly, does, overload, partial, doto} from '../../core';
 import {implement, satisfies} from '../protocol';
 import {IValue, IMountable, ISequential, IText, IHtml, IHideable, IMatch, IYank, IInclusive, IInsertable, IArray, IAppendable, IPrependable, IEvented, IAssociative, IMap, IEquiv, ICloneable, ICollection, INext, ISeq, ISeqable, IIndexed, ICounted, ILookup, IReduce, IEmptyableCollection, IHierarchy, IContent} from '../../protocols';
 import {mount} from '../../protocols/imountable/concrete';
@@ -339,6 +339,7 @@ function html1(self){
 
 function html2(self, html){
   self.innerHTML = html;
+  return self;
 }
 
 export const html = overload(null, html1, html2);
@@ -364,7 +365,7 @@ export const icontents = implement(IContent, {contents});
 export const ireduce = implement(IReduce, {reduce});
 export const ievented = implement(IEvented, {on, off, trigger});
 
-export default effect(
+export default does(
   ihierarchy,
   icontents,
   ireduce,

@@ -1,5 +1,5 @@
 import {IFunctor, IFork} from '../../protocols';
-import {identity, constantly, effect, overload} from '../../core';
+import {identity, constantly, does, overload} from '../../core';
 import {implement} from '../protocol';
 import Promise from './construct';
 
@@ -11,6 +11,6 @@ function fork(self, reject, resolve){
   return self.then(resolve, reject);
 }
 
-export default effect(
+export default does(
   implement(IFork, {fork}),
   implement(IFunctor, {fmap}));

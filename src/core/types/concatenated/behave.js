@@ -1,4 +1,4 @@
-import {identity, effect} from '../../core';
+import {identity, does} from '../../core';
 import {implement} from '../protocol';
 import {concatenated, concat} from '../../types/concatenated/construct';
 import {isReduced, unreduced} from '../../types/reduced';
@@ -48,7 +48,7 @@ function count(self){
   }, 0);
 }
 
-export default effect(
+export default does(
   iterable,
   ireduce,
   encodeable,
