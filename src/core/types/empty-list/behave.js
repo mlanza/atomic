@@ -1,4 +1,4 @@
-import {identity, constantly, effect} from '../../core';
+import {identity, constantly, does} from '../../core';
 import {implement} from '../protocol';
 import {IArray, IInclusive, IReversible, IEncode, ICollection, INext, ISeq, ISeqable, ISequential, IAssociative, IIndexed, IEmptyableCollection, IKVReduce, IReduce, ICounted} from '../../protocols';
 import {emptyList} from '../../types/empty-list/construct';
@@ -13,7 +13,7 @@ function reduce(self, f, init){
   return init;
 }
 
-export default effect(
+export default does(
   implement(ISequential),
   implement(IEncode, {encode}),
   implement(IReversible, {reverse: emptyList}),

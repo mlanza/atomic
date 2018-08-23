@@ -1,4 +1,4 @@
-import {constantly, effect, overload, identity} from '../../core';
+import {constantly, does, overload, identity} from '../../core';
 import {implement} from '../protocol';
 import {IBounds, IEncode, IDecode, ISteppable, IInverse, IComparable} from '../../protocols';
 import {str} from '../string/concrete';
@@ -21,7 +21,7 @@ function unit2(self, amount){
 
 const unit = overload(null, constantly(1), unit2);
 
-export default effect(
+export default does(
   implement(IBounds, {start: identity, end: identity}),
   implement(IDecode, {decode: identity}),
   implement(IEncode, {encode: identity}),

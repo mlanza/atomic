@@ -1,10 +1,10 @@
 import {implement} from '../protocol';
-import {effect} from '../../core';
+import {does} from '../../core';
 import {IDeref} from '../../protocols';
 
 function deref(self){
   return self.valueOf();
 }
 
-export default effect(
+export default does(
   implement(IDeref, {deref}));

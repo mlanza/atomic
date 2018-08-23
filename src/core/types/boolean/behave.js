@@ -1,4 +1,4 @@
-import {constantly, effect, identity} from '../../core';
+import {constantly, does, identity} from '../../core';
 import {implement} from '../protocol';
 import {IEncode, IDecode, IInverse, IComparable} from '../../protocols';
 
@@ -10,7 +10,7 @@ function inverse(self){
   return !self;
 }
 
-export default effect(
+export default does(
   implement(IDecode, {decode: identity}),
   implement(IEncode, {encode: identity}),
   implement(IComparable, {compare}),

@@ -1,5 +1,5 @@
 import {IAssociative, ILookup} from '../../protocols';
-import {identity, constantly, effect} from '../../core';
+import {identity, constantly, does} from '../../core';
 import {implement} from '../protocol';
 
 function lookup(self, ref){
@@ -15,6 +15,6 @@ function contains(self, ref){
   return self.has(ref);
 }
 
-export default effect(
+export default does(
   implement(ILookup, {lookup}),
   implement(IAssociative, {assoc, contains}));

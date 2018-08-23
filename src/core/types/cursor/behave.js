@@ -1,5 +1,5 @@
 import {implement} from '../protocol';
-import {effect} from '../../core';
+import {does} from '../../core';
 import {IPublish, ISubscribe, IReset, ISwap, IDeref, IDisposable, IDispatch, ICounted} from '../../protocols';
 import {apply} from "../../types/function/concrete";
 import * as icollection from "../../protocols/icollection/concrete";
@@ -49,7 +49,7 @@ function dispatch(self, command){
   }));
 }
 
-export default effect(
+export default does(
   //implement(IDisposable, {dispose}), TODO
   implement(IDispatch, {dispatch}),
   implement(IDeref, {deref}),

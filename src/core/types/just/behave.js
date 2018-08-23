@@ -1,5 +1,5 @@
 import {implement} from '../protocol';
-import {identity, constantly, effect} from '../../core';
+import {identity, constantly, does} from '../../core';
 import {maybe} from './construct';
 import {IFunctor, IOtherwise, IFork} from '../../protocols';
 
@@ -15,7 +15,7 @@ function fork(self, reject, resolve){
   return resolve(self);
 }
 
-export default effect(
+export default does(
   implement(IFork, {fork}),
   implement(IOtherwise, {otherwise}),
   implement(IFunctor, {fmap}));

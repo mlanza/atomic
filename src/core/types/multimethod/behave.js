@@ -1,4 +1,4 @@
-import {effect, constantly} from "../../core";
+import {does, constantly} from "../../core";
 import {implement} from '../protocol';
 import {multi, apply} from '../function/concrete';
 import {concatenated} from '../concatenated';
@@ -27,7 +27,7 @@ function cache(self){
   self.fn = multi(apply(cond, concatenated(self.handlers.concat([[constantly(true), self.fallback]]))));
 }
 
-export default effect(
+export default does(
   implement(IFn, {invoke}),
   implement(IEvented, {on}),
   implement(IPrependable, {prepend}),

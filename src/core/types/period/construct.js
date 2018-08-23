@@ -1,7 +1,6 @@
 import {overload} from '../../core';
 import {days} from '../duration/construct';
-import {midnight} from '../date/concrete';
-import {isDate} from '../date/construct';
+import {midnight, isDate} from '../date/concrete';
 import {steps} from '../../protocols/isteppable/concrete';
 import {patch} from '../../associatives';
 import Symbol from '../symbol/construct';

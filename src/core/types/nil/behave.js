@@ -1,6 +1,6 @@
 import {IFunctor, ILog, IAssociative, IOtherwise, IEncode, IDecode, IFork, IArray, IEquiv, ICollection, INext, ISeq, ISeqable, IIndexed, ICounted, ILookup, IReduce, IEmptyableCollection, ISequential} from '../../protocols';
 import {emptyList} from '../../types/empty-list/construct';
-import {identity, constantly, effect, overload, noop} from '../../core';
+import {identity, constantly, does, overload, noop} from '../../core';
 import {implement} from '../protocol';
 import {emptyArray} from '../../types/array/construct';
 import Nil from './construct';
@@ -27,7 +27,7 @@ function fork(self, reject, resolve){
   return reject(self);
 }
 
-export default effect(
+export default does(
   implement(ILog, {log: noop}),
   implement(IEncode, {encode: identity}),
   implement(IDecode, {decode: identity}),

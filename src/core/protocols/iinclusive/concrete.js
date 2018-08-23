@@ -1,5 +1,5 @@
 import IInclusive from "./instance";
-import {branch} from "../../predicates";
+import {branch} from "../../core";
 import {yank} from "../iyank/concrete";
 import {conj} from "../icollection/concrete";
 

@@ -1,5 +1,5 @@
 import {implement} from '../protocol';
-import {effect, once, applying} from '../../core';
+import {does, once, applying} from '../../core';
 import {each} from "../lazy-seq/concrete";
 import {IPublish, ISubscribe} from '../../protocols';
 
@@ -20,6 +20,6 @@ function pub(self, message){
   each(applying(message), self.subscribers);
 }
 
-export default effect(
+export default does(
   implement(ISubscribe, {sub, unsub, subscribed}),
   implement(IPublish, {pub}));

@@ -1,4 +1,4 @@
-import {constantly, identity, effect} from '../../core';
+import {constantly, identity, does} from '../../core';
 import {implement} from '../protocol';
 import {indexedSeq} from './construct';
 import {revSeq} from '../../types/rev-seq/construct';
@@ -96,7 +96,7 @@ function includes(self, x){
   }, drop(self.start, self.seq));
 }
 
-export default effect(
+export default does(
   iterable,
   encodeable,
   implement(ISequential),

@@ -8,10 +8,9 @@ function conduit2(sink, source){
 
 function conduit3(sink, xf, source){
   const callback = partial(xf(IPublish.pub), sink);
-  return lazyPub(sink, function(){
-    ISubscribe.sub(source, callback);
-  }, function(){
-    ISubscribe.unsub(source, callback);
+  return lazyPub(sink, function(state){
+    const f = state === "active" ? ISubscribe.sub : ISubscribe.unsub;
+    f(source, callback);
   });
 }
 

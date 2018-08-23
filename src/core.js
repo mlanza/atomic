@@ -16,6 +16,8 @@ export * from "./core/predicates";
 export * from "./core/associatives";
 export * from "./core/multimethods";
 
+export const second = comp(ISeq.first, INext.next);
+
 function add2(self, n){
   return ISteppable.step(n, self);
 }
@@ -133,19 +135,13 @@ function isNotConstructor(text){
   return !/^[A-Z]./.test(text.name);
 }
 
-function impart2(self, pred){
+//convenience for wrapping batches of functions.
+export function impart(self, f){
   return reducekv(function(memo, key, value){
-    const f = isFunction(value) && isNotConstructor(value) && pred(key, value) ? partly : identity;
-    return assoc(memo, key, f(value));
+    const g = isFunction(value) && isNotConstructor(value) ? f : identity;
+    return assoc(memo, key, g(value));
   }, {}, self);
 }
-
-function impart1(self){
-  return impart2(self, constantly(true));
-}
-
-//convenience for executing partially-applied functions.
-export const impart = overload(null, impart1, impart2);
 
 function include2(self, value){
   return toggles(conj(v, value), yank(v, value), includes(v, value), self);

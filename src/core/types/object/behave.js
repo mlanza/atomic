@@ -1,4 +1,4 @@
-import {constantly, effect, identity} from '../../core';
+import {constantly, does, identity} from '../../core';
 import {implement} from '../protocol';
 import {ITransient, IComparable, IYank, IMatch, IArray, IDecode, ISet, INext, ICollection, IEncode, IEquiv, IMapEntry, IReduce, IKVReduce, ISeqable, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, IFn, IMap, ISeq, IDescriptive, IObject, ICloneable, IInclusive} from '../../protocols';
 import {reduced} from '../reduced';
@@ -179,7 +179,7 @@ function decode(self, label, constructors){
   }
 }
 
-export default effect(
+export default does(
   iequiv,
   itemplate,
   implement(IDescriptive),

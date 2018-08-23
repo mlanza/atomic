@@ -1,4 +1,4 @@
-import {effect, overload, noop} from '../../core';
+import {does, overload, noop} from '../../core';
 import IMiddleware from "./instance";
 function handle2(self, message){
   return IMiddleware.handle(self, message, noop);

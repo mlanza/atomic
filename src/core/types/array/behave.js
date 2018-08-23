@@ -1,4 +1,4 @@
-import {effect, identity, overload, constantly, doto} from '../../core';
+import {does, identity, overload, constantly, doto} from '../../core';
 import {implement, specify, satisfies} from '../protocol';
 import {IMap, ITransient, IPersistent, IWrite, ITemplate, IArray, IObject, IFunctor, IInsertable, IYank, IEncode, IDecode, IReversible, ISet, IMapEntry, IEquiv, IReduce, IKVReduce, IAppendable, IPrependable, IInclusive, ICollection, INext, ISeq, IFind, ISeqable, IIndexed, IAssociative, ISequential, IEmptyableCollection, IFn, ICounted, ILookup, ICloneable} from '../../protocols';
 import {reduced, unreduced, isReduced} from '../reduced';
@@ -231,14 +231,14 @@ function write(self, message){
   self.push(message);
 }
 
-export const iindexed = effect(
+export const iindexed = does(
   implement(IIndexed, {nth}),
   implement(ICounted, {count: length}));
 
 export const iequiv = implement(IEquiv, {equiv});
 export const itemplate = implement(ITemplate, {fill});
 
-export default effect(
+export default does(
   iindexed,
   iequiv,
   itemplate,

@@ -1,4 +1,4 @@
-import {constantly, identity, effect, overload} from '../../core';
+import {constantly, identity, does, overload} from '../../core';
 import {implement} from '../protocol';
 import {filtera, detect} from '../../types/lazy-seq/concrete';
 import {ISequential, IDeref, IArray, ICounted, ICollection, IInclusive, IYank} from '../../protocols';
@@ -34,7 +34,7 @@ function count(self){
   return deref(self).length;
 }
 
-export default effect(
+export default does(
   implement(ISequential),
   implement(IDeref, {deref}),
   implement(IInclusive, {includes}),

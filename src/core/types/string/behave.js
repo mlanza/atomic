@@ -1,9 +1,10 @@
-import {IArray, IReduce, ICollection, IHash, IEncode, IDecode, IIndexed, ISeqable, INext, ISeq, IInclusive, IAppendable, IPrependable, ICounted, ILookup, IFn, IComparable, IEmptyableCollection} from '../../protocols';
-import {effect, identity} from "../../core";
+import {IArray, IMatch, IReduce, ICollection, IHash, IEncode, IDecode, IIndexed, ISeqable, INext, ISeq, IInclusive, IAppendable, IPrependable, ICounted, ILookup, IFn, IComparable, IEmptyableCollection} from '../../protocols';
+import {does, identity} from "../../core";
 import {implement} from '../protocol';
 import {isReduced, unreduced} from '../reduced';
 import {lazySeq} from '../lazy-seq/construct';
 import {iindexed} from '../array/behave';
+import {rePattern} from '../reg-exp/concrete';
 import {emptyString} from "./construct";
 
 function compare(self, other){
@@ -75,9 +76,14 @@ function reduce(self, xf, init){
   return unreduced(memo);
 }
 
-export default effect(
+function matches(self, re){
+  return rePattern(re).test(self);
+}
+
+export default does(
   iindexed,
   implement(IHash, {hash}),
+  implement(IMatch, {matches}),
   implement(ICollection, {conj}),
   implement(IReduce, {reduce}),
   implement(IEncode, {encode: identity}),

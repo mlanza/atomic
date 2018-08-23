@@ -1,4 +1,4 @@
-import {constantly, identity, effect, overload} from '../../core';
+import {constantly, identity, does, overload} from '../../core';
 import {implement} from '../protocol';
 import EmptyList, {emptyList} from '../../types/empty-list/construct';
 import {cons} from '../../types/list/construct';
@@ -51,7 +51,7 @@ function reduce3(coll, f, init){
 
 const reduce = overload(null, null, reduce2, reduce3);
 
-export default effect(
+export default does(
   iterable,
   implement(ISequential),
   implement(IArray, {toArray: Array.from}),

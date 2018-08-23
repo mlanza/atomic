@@ -1,4 +1,4 @@
-import {overload, constantly, identity, type} from "./core";
+import {overload, constantly, identity, type, branch} from "./core";
 import {IReduce, IKVReduce, ICounted, IComparable, IEquiv} from "./protocols";
 import {reduced} from "./types/reduced";
 import {comp, partial, apply} from "./types/function/concrete";
@@ -47,22 +47,6 @@ export function guard(pred, value){
     return pred(...args) ? value : null;
   }
 }
-
-function branch1(pred){
-  return branch2(pred, identity);
-}
-
-function branch2(pred, yes){
-  return branch3(pred, yes, constantly(null));
-}
-
-function branch3(pred, yes, no){
-  return function(...args){
-    return pred(...args) ? yes(...args) : no(...args);
-  }
-}
-
-export const branch = overload(null, branch1, branch2, branch3);
 
 export function unless(pred, f){
   return branch(pred, identity, f);

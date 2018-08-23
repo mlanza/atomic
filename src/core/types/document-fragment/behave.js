@@ -1,4 +1,4 @@
-import {identity, constantly, effect, overload} from '../../core';
+import {identity, constantly, does, overload} from '../../core';
 import {implement} from '../protocol';
 import {IReduce, ISeqable, ISeq, INext, IMatch, IHierarchy} from '../../protocols';
 import behave from "../element/behave";
@@ -8,7 +8,7 @@ import {cons} from "../list/construct";
 import {ihierarchy, icontents, ireduce} from "../element/behave";
 import {emptyList} from "../empty-list/construct";
 
-export default effect(
+export default does(
   behave,
   ihierarchy,
   icontents,

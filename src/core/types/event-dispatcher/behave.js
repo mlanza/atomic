@@ -1,5 +1,5 @@
 import {IMiddleware} from '../../protocols';
-import {effect, partial} from '../../core';
+import {does, partial} from '../../core';
 import {implement} from '../protocol';
 import {handle as _handle} from '../../protocols/imiddleware/concrete';
 import {pub} from '../../protocols/ipublish/concrete';
@@ -14,5 +14,5 @@ function handle(self, command, next){
   }, release(self.events));
 }
 
-export default effect(
+export default does(
   implement(IMiddleware, {handle}));

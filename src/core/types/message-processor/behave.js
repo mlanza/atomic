@@ -1,4 +1,4 @@
-import {effect} from '../../core';
+import {does} from '../../core';
 import {implement} from '../protocol';
 import {IMiddleware} from '../../protocols';
 
@@ -7,5 +7,5 @@ function handle(self, message, next){
   next(message);
 }
 
-export default effect(
+export default does(
   implement(IMiddleware, {handle}));
