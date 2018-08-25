@@ -315,7 +315,7 @@ export function partitionBy(f, xs){
   if (!coll) return xs;
   const head = ISeq.first(coll),
         val  = f(head),
-        run  = cons(head, takeWhile2(function(x){
+        run  = cons(head, takeWhile(function(x){
           return val === f(x);
         }, INext.next(coll)));
   return cons(run, partitionBy(f, ISeqable.seq(drop(ICounted.count(run), coll))));

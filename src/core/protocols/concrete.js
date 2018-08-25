@@ -3,6 +3,7 @@ export * from "./iarray/concrete";
 export * from "./iassociative/concrete";
 export * from "./ibounds/concrete";
 export * from "./ichainable/concrete";
+export * from "./icheckable/concrete";
 export * from "./icloneable/concrete";
 export * from "./icollection/concrete";
 export * from "./iconfigured/concrete";

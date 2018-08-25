@@ -1,11 +1,11 @@
-import {IArray, IMatch, IReduce, ICollection, IHash, IEncode, IDecode, IIndexed, ISeqable, INext, ISeq, IInclusive, IAppendable, IPrependable, ICounted, ILookup, IFn, IComparable, IEmptyableCollection} from '../../protocols';
-import {does, identity} from "../../core";
-import {implement} from '../protocol';
+import {IArray, ICheckable, IMatch, IReduce, ICollection, IHash, IEncode, IDecode, IIndexed, ISeqable, INext, ISeq, IInclusive, IAppendable, IPrependable, ICounted, ILookup, IFn, IComparable, IEmptyableCollection} from '../../protocols';
+import {does, identity, constantly} from "../../core";
+import {implement, specify} from '../protocol';
 import {isReduced, unreduced} from '../reduced';
 import {lazySeq} from '../lazy-seq/construct';
 import {iindexed} from '../array/behave';
 import {rePattern} from '../reg-exp/concrete';
-import {emptyString} from "./construct";
+import {emptyString, isString} from "./construct";
 
 function compare(self, other){
   return self === other ? 0 : self > other ? 1 : -1;
@@ -80,8 +80,17 @@ function matches(self, re){
   return rePattern(re).test(self);
 }
 
+function check(self, text){
+  return isString(text);
+}
+
+function complaint(self){
+  return "must be text";
+}
+
 export default does(
   iindexed,
+  specify(ICheckable, {check, complaint, terminal: constantly(true)}),
   implement(IHash, {hash}),
   implement(IMatch, {matches}),
   implement(ICollection, {conj}),

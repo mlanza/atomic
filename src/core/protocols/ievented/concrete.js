@@ -1,16 +1,18 @@
 import {does, overload} from "../../core";
 import {apply} from "../../types/function/concrete";
-import {compact, each} from "../../types/lazy-seq/concrete";
+import {isString} from "../../types/string/construct";
+import {compact} from "../../types/lazy-seq/concrete";
 import {count} from "../../protocols/icounted/concrete";
+import {reduce} from "../../protocols/ireduce/concrete";
 import IEvented from "./instance";
 
 export const off = IEvented.off;
 export const trigger = IEvented.trigger;
 
 export function on(self, key, ...args){
-  each(function(key){
-    apply(IEvented.on, self, key, args)
-  }, compact(key.split(" ")));
+  return isString(key) ? reduce(function(self, key){  //TODO move string key/split to element
+    return apply(IEvented.on, self, key, args);
+  }, self, compact(key.split(" "))) : IEvented.on(self, key, ...args);
 }
 
 function one3(self, key, callback){

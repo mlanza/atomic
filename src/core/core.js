@@ -113,6 +113,7 @@ export function does(...effects){
   }
 }
 
+//TODO unnecessary if CQS pattern is that commands return self
 export function doing(effect){ //mutating counterpart to `reducing`
   return function(self, ...values){
     const len = values.length;

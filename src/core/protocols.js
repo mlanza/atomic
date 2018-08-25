@@ -4,6 +4,7 @@ export * from "./protocols/iarray/instance";
 export * from "./protocols/iassociative/instance";
 export * from "./protocols/ibounds/instance";
 export * from "./protocols/ichainable/instance";
+export * from "./protocols/icheckable/instance";
 export * from "./protocols/icloneable/instance";
 export * from "./protocols/icollection/instance";
 export * from "./protocols/iconfigured/instance";

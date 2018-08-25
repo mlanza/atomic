@@ -12,3 +12,7 @@ export function just(value){
 export function maybe(x){
   return x == null ? x : just(x);
 }
+
+export function isJust(self){
+  return self instanceof Just;
+}

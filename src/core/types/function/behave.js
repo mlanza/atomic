@@ -1,6 +1,7 @@
 import {does, partial} from '../../core';
 import {implement} from '../protocol';
-import {IFn, IAssociative, ILookup, IEncode, IAppendable, IPrependable} from '../../protocols';
+import {apply} from './concrete';
+import {IFn, IAssociative, ILookup, IEncode, IAppendable, IPrependable, IDispatch} from '../../protocols';
 import Symbol from '../symbol/construct';
 
 export function append(f, ...applied){
@@ -19,7 +20,12 @@ function encode(self, label, refstore, seed){
   return IAssociative.assoc({id: id}, label, self[Symbol.toStringTag]);
 }
 
+function dispatch(self, args){
+  return apply(self, args);
+}
+
 export default does(
+  implement(IDispatch, {dispatch}),
   implement(IAppendable, {append}),
   implement(IPrependable, {prepend: partial}),
   implement(IEncode, {encode}),

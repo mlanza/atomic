@@ -1,6 +1,6 @@
 import {overload, identity, obj, partly, doto, constantly} from "./core/core";
 import {IEventProvider, IAppendable, IHash, ITemplate, IMiddleware, IDispatch, IYank, IArray, IAssociative, IBounds, IInverse, ICloneable, ICollection, IComparable, IContent, ICounted, IDecode, IDeref, IDisposable, IEmptyableCollection, IEncode, IEquiv, IEvented, IFind, IFn, IFork, IFunctor, IHideable, IHierarchy, IHtml, IInclusive, IIndexed, IInsertable, IKVReduce, ILookup, IMap, IMapEntry, IMatch, INext, IObject, IOtherwise, IPrependable, IPublish, IReduce, IReset, IReversible, ISeq, ISeqable, ISet, ISteppable, ISubscribe, ISwap, IText} from "./core/protocols";
-import {maybe, each, see, props, classes, isEmpty, duration, compact, remove, flatten, map, fragment, element, sort, set, flip, realized, comp, isNumber, observable, detect, mapSomeVals, isFunction, apply} from "./core/types";
+import {specify, maybe, each, see, props, classes, isEmpty, duration, compact, remove, flatten, map, fragment, element, sort, set, flip, realized, comp, isNumber, observable, detect, mapSomeVals, isFunction, apply} from "./core/types";
 import {mounts, get, assoc, yank, conj, hash, otherwise, fmap, reducing, reducekv, includes, excludes} from "./core/protocols/concrete";
 import {toggles} from "./core/types/element/behave";
 import {resolve} from "./core/types/promise/concrete";
@@ -155,4 +155,14 @@ export const include = overload(null, null, include2, include3);
 
 export function opt(value, ...fs){
   return otherwise(fmap(maybe(value), ...fs), null);
+}
+
+export function signed(f, signature){
+  function matches(self, args){
+    return signature(...args);
+  }
+  return doto(function(){
+      return f.apply(this, arguments);
+    },
+    specify(IMatch, {matches}));
 }
