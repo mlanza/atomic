@@ -8,6 +8,29 @@ const stooges = ["Larry","Curly","Moe"],
       court   = {jack: 11, queen: 12, king: 13},
       worth   = {pieces: pieces, court: court};
 
+QUnit.test("validation", function(assert){
+  function validPostalCode(code){
+    return _.mapa(_.complaint, _.validate(code, [_.required(), String, _.complaint(/^\d{5}$/, "invalid postal code")]));
+  }
+  assert.deepEqual(validPostalCode("17055"), []);
+  assert.deepEqual(validPostalCode(17055), ["must be text"]);
+  assert.deepEqual(validPostalCode(null), ["is required"]);
+  assert.deepEqual(validPostalCode(" "), ["is required"]);
+  assert.deepEqual(validPostalCode(""), ["is required"]);
+  assert.deepEqual(validPostalCode("1705"), ["invalid postal code"]);
+})
+
+QUnit.test("dispatchable", function(assert){ //not just for fns!
+  var f = _.piped(_.dispatchable(null, [
+    //_.signed(_.str(v, "!"), _.signature(_.isString)),
+    //_.signed(_.multiply(v, 2), _.signature(_.isNumber))
+  ]),
+    _.on(v, _.spread(_.signature(_.isString)), _.str(v, "!")),
+    _.on(v, _.spread(_.signature(_.isNumber)), _.multiply(v, 2)));
+  assert.equal(_.dispatch(f, [1]), 2);
+  assert.equal(_.dispatch(f, ["timber"]), "timber!");
+});
+
 QUnit.test("component", function(assert){
   const people =
     _.doto(
