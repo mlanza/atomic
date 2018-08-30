@@ -1,7 +1,6 @@
 import {protocol} from "../../types/protocol";
 export const IMountable = protocol({
-  mounting: null,
-  mount: null,
-  mounted: null
+  mountable: null,
+  mount: null
 });
 export default IMountable;

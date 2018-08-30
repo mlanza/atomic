@@ -1,7 +1,7 @@
 import {constantly, does, overload, identity} from '../../core';
-import {implement} from '../protocol';
-import {IBounds, IEncode, IDecode, ISteppable, IInverse, IComparable} from '../../protocols';
-import {str} from '../string/concrete';
+import {implement, specify} from '../protocol';
+import {IBounds, IEncode, IDecode, ISteppable, IInverse, IComparable, ICheckable} from '../../protocols';
+import {isNumber} from "./concrete";
 
 function compare(self, other){
   return self === other ? 0 : self - other;
@@ -21,7 +21,16 @@ function unit2(self, amount){
 
 const unit = overload(null, constantly(1), unit2);
 
+function check(self, value){
+  return isNumber(value);
+}
+
+function complaint(self){
+  return "not a number";
+}
+
 export default does(
+  specify(ICheckable, {check, complaint, terminal: constantly(true)}),
   implement(IBounds, {start: identity, end: identity}),
   implement(IDecode, {decode: identity}),
   implement(IEncode, {encode: identity}),

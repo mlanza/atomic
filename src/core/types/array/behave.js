@@ -7,7 +7,7 @@ import {replace} from '../string/concrete';
 import {range} from '../range/construct';
 import {revSeq} from '../rev-seq';
 import {filter, mapa} from '../lazy-seq/concrete';
-import {set} from '../immutable-set/construct';
+import {set} from '../set/construct';
 import {transientArray} from '../transient-array/construct';
 import Array, {emptyArray} from './construct';
 import {_ as v} from "param.macro";

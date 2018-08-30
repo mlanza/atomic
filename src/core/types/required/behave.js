@@ -7,7 +7,7 @@ function check(self, text){
 }
 
 function complaint(self){
-  return "is required";
+  return "required";
 }
 
 export default does(

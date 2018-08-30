@@ -2,9 +2,9 @@ import {identity, does} from '../../core';
 import {implement} from '../protocol';
 import {concatenated, concat} from '../../types/concatenated/construct';
 import {isReduced, unreduced} from '../../types/reduced';
-import {IArray, ICollection, INext, ISeq, ICounted, ISeqable, IIndexed, IReduce, ISequential} from '../../protocols';
+import {IArray, ICollection, INext, ISeq, ICounted, ISeqable, IIndexed, IReduce, IKVReduce, ISequential, IEmptyableCollection} from '../../protocols';
 import {apply} from '../../types/function/concrete';
-import EmptyList from '../empty-list';
+import EmptyList, {emptyList} from '../empty-list';
 import {ireduce, iterable} from '../lazy-seq/behave';
 import {encodeable} from '../record/behave';
 
@@ -42,6 +42,18 @@ function reduce(self, xf, init){
   return unreduced(memo);
 }
 
+function reducekv(self, xf, init){
+  let memo = init,
+      remaining = self,
+      idx = 0;
+  while(!isReduced(memo) && ISeqable.seq(remaining)){
+    memo = xf(memo, idx, ISeq.first(remaining))
+    remaining = INext.next(remaining);
+    idx++;
+  }
+  return unreduced(memo);
+}
+
 function count(self){
   return reduce(self, function(memo, value){
     return memo + 1;
@@ -53,6 +65,8 @@ export default does(
   ireduce,
   encodeable,
   implement(ISequential),
+  implement(IEmptyableCollection, {empty: emptyList}),
+  implement(IKVReduce, {reducekv}),
   implement(IReduce, {reduce}),
   implement(ICollection, {conj}),
   implement(INext, {next}),

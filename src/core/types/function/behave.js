@@ -1,7 +1,7 @@
 import {does, partial} from '../../core';
 import {implement} from '../protocol';
 import {apply} from './concrete';
-import {IFn, IAssociative, ILookup, IEncode, IAppendable, IPrependable, IDispatch} from '../../protocols';
+import {IFn, ICheckable, IAssociative, ILookup, IEncode, IAppendable, IPrependable, IDispatch} from '../../protocols';
 import Symbol from '../symbol/construct';
 
 export function append(f, ...applied){
@@ -24,7 +24,12 @@ function dispatch(self, args){
   return apply(self, args);
 }
 
+function check(self, text){
+  return self(text);
+}
+
 export default does(
+  implement(ICheckable, {check}),
   implement(IDispatch, {dispatch}),
   implement(IAppendable, {append}),
   implement(IPrependable, {prepend: partial}),

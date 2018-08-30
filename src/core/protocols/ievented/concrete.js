@@ -19,14 +19,14 @@ function one3(self, key, callback){
   const cb = does(callback, function(){
     off(self, key, cb);
   });
-  on(self, key, cb);
+  return on(self, key, cb);
 }
 
 function one4(self, key, selector, callback){
   const cb = does(callback, function(){
     off(self, key, cb);
   });
-  on(self, key, selector, cb);
+  return on(self, key, selector, cb);
 }
 
 export const one = overload(null, null, null, one3, one4);

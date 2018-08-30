@@ -1,6 +1,6 @@
 import {overload, identity} from "../../core";
 import {reducing} from "../ireduce/concrete";
-import {set} from "../../types/immutable-set/construct";
+import {set} from "../../types/set/construct";
 import ISet from "./instance";
 
 export const superset = ISet.superset;

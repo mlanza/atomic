@@ -1,7 +1,33 @@
 import {overload} from "../../core";
 import IHierarchy from "./instance";
-import ISeq from "../iseq";
+import {first} from "../iseq/concrete";
+import {count} from "../icounted/concrete";
+import {deref} from "../ideref/concrete";
+import {path} from "../ipath/concrete";
+import {lens} from "../../types/lens/construct";
+import {cons} from "../../types/list/construct";
+import {emptyList} from "../../types/empty-list/construct";
+import {map, mapcat, remove} from "../../types/lazy-seq/concrete";
+import {concat} from "../../types/concatenated/construct";
+import {comp, juxt} from "../../types/function/concrete";
+import {_ as v} from "param.macro";
 
+export function downward(f){
+  return function down(self){
+    const xs = f(self),
+          ys = mapcat(down, xs);
+    return concat(xs, ys);
+  }
+}
+
+export function upward(f){
+  return function up(self){
+    const other = f(self);
+    return other ? cons(other, up(other)) : emptyList();
+  }
+}
+
+export const root = IHierarchy.root;
 export const parent = IHierarchy.parent;
 export const parents = IHierarchy.parents;
 export const closest = IHierarchy.closest;
@@ -37,7 +63,13 @@ function sel11(selector){
 }
 
 function sel10(){
-  return ISeq.first(IHierarchy.descendants(document));
+  return first(descendants(document));
 }
 
 export const sel1 = overload(sel10, sel11, sel12);
+
+export function leaves(self){
+  return remove(comp(count, children), descendants(self));
+}
+
+export const asLeaves = comp(map(juxt(path, deref), v), leaves, lens);
