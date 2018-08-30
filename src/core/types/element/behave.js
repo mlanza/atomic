@@ -1,16 +1,17 @@
-import {identity, constantly, does, overload, partial, doto} from '../../core';
+import {identity, constantly, does, overload, partial, doto, noop} from '../../core';
 import {implement, satisfies} from '../protocol';
 import {IValue, IMountable, ISequential, IText, IHtml, IHideable, IMatch, IYank, IInclusive, IInsertable, IArray, IAppendable, IPrependable, IEvented, IAssociative, IMap, IEquiv, ICloneable, ICollection, INext, ISeq, ISeqable, IIndexed, ICounted, ILookup, IReduce, IEmptyableCollection, IHierarchy, IContent} from '../../protocols';
-import {mount} from '../../protocols/imountable/concrete';
 import {transpose} from '../../protocols/iinclusive/concrete';
+import * as imountable from '../../protocols/imountable/concrete';
 import * as iassociative from '../../protocols/iassociative/concrete';
 import * as ilookup from '../../protocols/ilookup/concrete';
-import {each, mapcat} from '../lazy-seq/concrete';
+import {downward, upward} from '../../protocols/ihierarchy/concrete';
+import {each} from '../lazy-seq/concrete';
 import EmptyList, {emptyList} from '../empty-list/construct';
 import {concat} from '../concatenated/construct';
 import {cons} from '../list/construct';
 import {lazySeq} from '../lazy-seq/construct';
-import {mapa, detect, compact, distinct, filter} from '../lazy-seq/concrete';
+import {mapa, detect, compact, distinct, filter, last} from '../lazy-seq/concrete';
 import {comp} from '../function/concrete';
 import {isObject} from '../object/construct';
 import {isString} from '../string/construct';
@@ -65,21 +66,6 @@ function matches(self, selector){
   return (isString(selector) && self.matches(selector)) || (isFunction(selector) && selector(self));
 }
 
-export function downward(f){
-  return function down(self){
-    const xs = f(self),
-          ys = mapcat(down, xs);
-    return concat(xs, ys);
-  }
-}
-
-export function upward(f){
-  return function up(self){
-    const other = f(self);
-    return other ? cons(other, up(other)) : emptyList();
-  }
-}
-
 function isAttrs(self){
   return !isDocumentFragment(self) && !isElement(self) && satisfies(IAssociative, self);
 }
@@ -88,6 +74,7 @@ function isAttrs(self){
 function eventContext(catalog){
   function on3(self, key, callback){
     self.addEventListener(key, callback);
+    return self;
   }
 
   function on4(self, key, selector, callback){
@@ -101,12 +88,14 @@ function eventContext(catalog){
         }
       }
     }, iassociative.assoc(catalog, callback, v)));
+    return self;
   }
 
   const on = overload(null, null, null, on3, on4);
 
   function off(self, key, callback){
     self.removeEventListener(key, ilookup.get(catalog, callback, callback));
+    return self;
   }
 
   return {on, off};
@@ -148,9 +137,20 @@ function contents(self){
   return ISeqable.seq(self.childNodes);
 }
 
+function mountable(self){
+  return !parent(self);
+}
+
+function mount(self, parent){
+  IEvented.trigger(self, "mounting", {bubbles: false, detail: {parent}});
+  parent.appendChild(self);
+  IEvented.trigger(self, "mounted", {bubbles: false, detail: {parent}});
+  return self;
+}
+
 function conj(self, other){
   if (satisfies(IMountable, other)) {
-    mount(other, self);
+    imountable.mount(other, self);
   } else if (isFunction(other)){
     return conj(self, other());
   } else if (isAttrs(other)){
@@ -219,6 +219,8 @@ function parent(self){
 }
 
 const parents = upward(parent);
+
+const root = comp(last, parents);
 
 export function closest(self, selector){
   let target = IHierarchy.parent(self);
@@ -360,7 +362,7 @@ function reduce(self, xf, init){
   return IReduce.reduce(IHierarchy.descendants(self), xf, init);
 }
 
-export const ihierarchy = implement(IHierarchy, {parent, parents, closest, children, descendants, sel, sel1, nextSibling, nextSiblings, prevSibling, prevSiblings, siblings});
+export const ihierarchy = implement(IHierarchy, {root, parent, parents, closest, children, descendants, sel, sel1, nextSibling, nextSiblings, prevSibling, prevSiblings, siblings});
 export const icontents = implement(IContent, {contents});
 export const ireduce = implement(IReduce, {reduce});
 export const ievented = implement(IEvented, {on, off, trigger});
@@ -373,6 +375,7 @@ export default does(
   implement(IText, {text}),
   implement(IHtml, {html}),
   implement(IValue, {value}),
+  implement(IMountable, {mountable, mount}),
   implement(IEmptyableCollection, {empty}),
   implement(IInsertable, {before, after}),
   implement(IInclusive, {includes}),

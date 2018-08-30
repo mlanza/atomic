@@ -8,7 +8,7 @@ import Date from './construct';
 import {_ as v} from "param.macro";
 
 export function isDate(self){
-  return self && self.constructor === Date;
+  return self instanceof Date && !isNaN(self);
 }
 
 function trim(obj){ //TODO protocol, compact on sequence, trim on string?

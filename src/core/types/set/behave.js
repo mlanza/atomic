@@ -1,8 +1,13 @@
 import {does, identity, constantly} from '../../core';
 import {implement} from '../protocol';
 import {Set, emptySet} from './construct';
+import {transientSet} from "../transient-set/construct";
 import {unreduced} from '../../types/reduced/concrete';
-import {IArray, ISeq, IReduce, ISeqable, ISet, INext, ISequential, ICounted, ICollection, IEmptyableCollection, IInclusive, ICloneable} from '../../protocols';
+import {IArray, ITransient, ISeq, IReduce, ISeqable, ISet, INext, ISequential, ICounted, ICollection, IEmptyableCollection, IInclusive, ICloneable} from '../../protocols';
+
+function transient(self){
+  return transientSet(toArray(self));
+}
 
 function seq(self){
   return count(self) ? self : null;
@@ -58,6 +63,7 @@ function reduce(self, xf, init){
 
 export default does(
   implement(ISequential),
+  implement(ITransient, {transient}),
   implement(IReduce, {reduce}),
   implement(IArray, {toArray}),
   implement(ISeqable, {seq}),

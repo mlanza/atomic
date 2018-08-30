@@ -80,12 +80,12 @@ function matches(self, re){
   return rePattern(re).test(self);
 }
 
-function check(self, text){
-  return isString(text);
+function check(self, value){
+  return isString(value);
 }
 
 function complaint(self){
-  return "must be text";
+  return "not text";
 }
 
 export default does(

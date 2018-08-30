@@ -1,31 +1,26 @@
-import {does, doto} from "../../core";
+import {does, doto, partial} from "../../core";
 import {implement, specify} from '../protocol';
-import {detect} from "../lazy-seq/concrete";
-import {IMatch, IDispatch, IAppendable, IPrependable, IEvented} from '../../protocols';
+import {handler} from "./concrete";
+import {filter} from "../lazy-seq/concrete";
+import {concat} from "../concatenated/construct";
+import {IMatch, IDispatch, IAppendable, IPrependable, IEvented, ISeqable} from '../../protocols';
 import {_ as v} from "param.macro";
 
 function on(self, pred, callback){
-  function matches(self, message){
-    return pred(message);
-  }
-  return append(self,
-    doto(function(...args){
-      return callback(...args);
-    },
-      specify(IMatch, {matches})));
+  return append(self, handler(pred, callback));
 }
 
 function dispatch(self, message){
-  const receiver = matches(self, message);
-  if (receiver) {
-    return IDispatch.dispatch(receiver, message);
-  } else {
+  const receiver = self.receives(matches(self, message));
+  if (!receiver) {
     throw new Error("No receiver for message.");
   }
+  return IDispatch.dispatch(receiver, message);
 }
 
 function matches(self, message){
-  return detect(IMatch.matches(v, message), self.handlers) || self.fallback;
+  const xs = filter(IMatch.matches(v, message), self.handlers);
+  return ISeqable.seq(xs) ? xs : self.fallback ? [self.fallback] : [];
 }
 
 function append(self, handler){

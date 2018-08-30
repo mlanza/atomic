@@ -1,7 +1,7 @@
 import {overload, identity, obj, partly, doto, constantly} from "./core/core";
-import {IEventProvider, IAppendable, IHash, ITemplate, IMiddleware, IDispatch, IYank, IArray, IAssociative, IBounds, IInverse, ICloneable, ICollection, IComparable, IContent, ICounted, IDecode, IDeref, IDisposable, IEmptyableCollection, IEncode, IEquiv, IEvented, IFind, IFn, IFork, IFunctor, IHideable, IHierarchy, IHtml, IInclusive, IIndexed, IInsertable, IKVReduce, ILookup, IMap, IMapEntry, IMatch, INext, IObject, IOtherwise, IPrependable, IPublish, IReduce, IReset, IReversible, ISeq, ISeqable, ISet, ISteppable, ISubscribe, ISwap, IText} from "./core/protocols";
-import {specify, maybe, each, see, props, classes, isEmpty, duration, compact, remove, flatten, map, fragment, element, sort, set, flip, realized, comp, isNumber, observable, detect, mapSomeVals, isFunction, apply} from "./core/types";
-import {mounts, get, assoc, yank, conj, hash, otherwise, fmap, reducing, reducekv, includes, excludes} from "./core/protocols/concrete";
+import {IDecorated, IEventProvider, IAppendable, IHash, ITemplate, IMiddleware, IDispatch, IYank, IArray, IAssociative, IBounds, IInverse, ICloneable, ICollection, IComparable, IContent, ICounted, IDecode, IDeref, IDisposable, IEmptyableCollection, IEncode, IEquiv, IEvented, IFind, IFn, IFork, IFunctor, IHideable, IHierarchy, IHtml, IInclusive, IIndexed, IInsertable, IKVReduce, ILookup, IMap, IMapEntry, IMatch, INext, IObject, IOtherwise, IPrependable, IPublish, IReduce, IReset, IReversible, ISeq, ISeqable, ISet, ISteppable, ISubscribe, ISwap, IText} from "./core/protocols";
+import {spread, specify, maybe, each, see, props, classes, isEmpty, duration, compact, remove, flatten, map, fragment, element, sort, set, flip, realized, comp, isNumber, observable, detect, mapSomeVals, isFunction, apply} from "./core/types";
+import {transient, persistent, mounts, deref, get, assoc, yank, conj, hash, otherwise, fmap, reducing, reducekv, includes, excludes} from "./core/protocols/concrete";
 import {toggles} from "./core/types/element/behave";
 import {resolve} from "./core/types/promise/concrete";
 import {and, unless} from "./core/predicates";
@@ -123,10 +123,6 @@ export function elapsed(self){
   return duration(end(self) - start(self));
 }
 
-export function leaves(self){
-  return remove(comp(ICounted.count, IHierarchy.children), IHierarchy.descendants(self));
-}
-
 export function envelop(before, after){
   return unless(isEmpty, comp(IPrependable.prepend(v, before), IAppendable.append(v, after)));
 }
@@ -136,10 +132,9 @@ function isNotConstructor(text){
 }
 
 //convenience for wrapping batches of functions.
-export function impart(self, f){
+export function impart(self, f){ //set retraction to identity to curb retraction overhead
   return reducekv(function(memo, key, value){
-    const g = isFunction(value) && isNotConstructor(value) ? f : identity;
-    return assoc(memo, key, g(value));
+    return assoc(memo, key, isFunction(value) && isNotConstructor(value) ? f(value) : value);
   }, {}, self);
 }
 
@@ -157,12 +152,6 @@ export function opt(value, ...fs){
   return otherwise(fmap(maybe(value), ...fs), null);
 }
 
-export function signed(f, signature){
-  function matches(self, args){
-    return signature(...args);
-  }
-  return doto(function(){
-      return f.apply(this, arguments);
-    },
-    specify(IMatch, {matches}));
+export function withMutations(self, f){
+  return persistent(f(transient(self)));
 }

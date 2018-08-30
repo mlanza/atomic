@@ -1,4 +1,4 @@
-import {IFn, IReduce, IKVReduce, ILookup, IAssociative, IEmptyableCollection} from "../../protocols";
+import {IFn, ISeq, IReduce, IKVReduce, ILookup, IAssociative, IEmptyableCollection, IDescriptive} from "../../protocols";
 import {apply, isFunction} from "../function";
 import {reducing} from "../../protocols/ireduce/concrete";
 import {overload, constantly, branch} from "../../core";
@@ -7,10 +7,10 @@ import {emptyObject} from "./construct";
 
 const emptied = branch(satisfies(IEmptyableCollection), IEmptyableCollection.empty, emptyObject);
 
-export function juxtVals(self, template){
-  return IKVReduce.reducekv(template, function(memo, key, f){
-    return IAssociative.assoc(memo, key, isFunction(f) ? f(self) : f);
-  }, emptied(self));
+export function mapKeysWith(self, value){
+  return satisfies(IDescriptive, self) ? IKVReduce.reducekv(self, function(memo, key, f){
+    return IAssociative.assoc(memo, key, isFunction(f) ? f(value) : mapKeysWith(f, value));
+  }, emptied(self)) : self;
 }
 
 export function selectKeys(self, keys){

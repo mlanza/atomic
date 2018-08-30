@@ -2,7 +2,7 @@ import {IEquiv, IMap, IArray, IAssociative, ILookup, IInclusive, IIndexed, IColl
 import {identity, constantly, overload} from '../../core';
 import EmptyList, {emptyList} from '../empty-list/construct';
 import Array, {emptyArray} from '../array/construct';
-import {set} from '../immutable-set/construct';
+import {set} from '../set/construct';
 import {inc, randInt} from '../number/concrete';
 import {reduced} from '../reduced/construct';
 import {not} from '../boolean';
@@ -11,11 +11,12 @@ import {cons} from '../list/construct';
 import {range} from '../range/construct';
 import {str} from '../string/concrete';
 import {juxt, complement, comp, apply, partial} from '../function/concrete';
+import {get, getIn} from "../../protocols/ilookup/concrete";
 import {lazySeq} from '../lazy-seq/construct';
 import {concat, concatenated} from "../concatenated/construct";
 import {satisfies} from '../protocol/concrete';
 import Symbol from '../symbol/construct';
-import {update} from "../../protocols/iassociative/concrete";
+import {update, assocIn} from "../../protocols/iassociative/concrete";
 import {reducekv} from "../../protocols/ikvreduce/concrete";
 
 function transduce3(xform, f, coll){

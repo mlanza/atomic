@@ -1,26 +1,35 @@
 import {IFn, IEvented} from "../../protocols";
-import {doto} from "../../core";
-import {specify} from "../../types/protocol";
+import {doto, partial, overload} from "../../core";
+import {specify, forwardTo} from "../../types/protocol";
+import {router} from "../../types/router/construct";
+import {_ as v} from "param.macro";
 
-export function Multimethod(fallback, handlers){
-  this.fallback = fallback;
-  this.handlers = handlers;
+function surrogate(f, substitute){
+  return function(self, ...args){
+    f.apply(null, [substitute].concat(args));
+    return self;
+  }
 }
 
-export function multimethod(fallback){
-  const instance = new Multimethod(fallback, []);
-  function fn(...args) {
-    return IFn.invoke(instance, ...args);
-  }
-  function on(self, pred, callback){
-    return IEvented.on(instance, pred, callback);
-  }
-  function off(self, pred, callback){
-    return IEvented.off(instance, pred, callback);
-  }
-  doto(fn,
+export default function Multimethod(router){
+  this.router = router; //persistent
+}
+
+function multimethod0(){
+  return multimethod1(null);
+}
+
+function multimethod1(fallback){
+  return multimethod2(fallback, router);
+}
+
+function multimethod2(fallback, router){
+  const instance = new Multimethod(router(fallback)),
+        fn = partial(IFn.invoke, instance),
+        on = surrogate(IEvented.on, instance),
+        off = surrogate(IEvented.off, instance);
+  return doto(fn,
     specify(IEvented, {on, off}));
-  return fn;
 }
 
-export default Multimethod;
+export const multimethod = overload(multimethod0, multimethod1, multimethod2);

@@ -1,6 +1,6 @@
 import {implement} from '../protocol';
 import {does} from '../../core';
-import {IPublish, ISubscribe, IReset, ISwap, IDeref, IDisposable, IDispatch, ICounted} from '../../protocols';
+import {IPath, IPublish, ISubscribe, IReset, ISwap, IDeref, IDisposable, IDispatch, ICounted} from '../../protocols';
 import {apply} from "../../types/function/concrete";
 import * as icollection from "../../protocols/icollection/concrete";
 import * as ideref from '../../protocols/ideref/concrete';
@@ -8,6 +8,10 @@ import * as ilookup from '../../protocols/ilookup/concrete';
 import * as iassociative from '../../protocols/iassociative/concrete';
 import * as isubscribe from '../../protocols/isubscribe/concrete';
 import * as iswap from '../../protocols/iswap/concrete';
+
+function path(self){
+  return self.path;
+}
 
 function deref(self){
   return ilookup.getIn(ideref.deref(self.source), self.path);
@@ -51,6 +55,7 @@ function dispatch(self, command){
 
 export default does(
   //implement(IDisposable, {dispose}), TODO
+  implement(IPath, {path}),
   implement(IDispatch, {dispatch}),
   implement(IDeref, {deref}),
   implement(ISubscribe, {sub, unsub, subscribed}),

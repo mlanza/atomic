@@ -1,9 +1,10 @@
 import {does, overload, constantly, identity} from '../../core';
-import {implement} from '../protocol';
-import {IReduce, IKVReduce, ISeqable, IEncode, IBounds, IMap, IDeref, ISeq, IComparable, IEquiv, ICloneable, ILookup, IAssociative, ICollection} from '../../protocols';
+import {implement, specify} from '../protocol';
+import {ICheckable, IReduce, IKVReduce, ISeqable, IEncode, IBounds, IMap, IDeref, ISeq, IComparable, IEquiv, ICloneable, ILookup, IAssociative, ICollection} from '../../protocols';
 import {isNumber} from '../number';
 import {lazySeq} from '../lazy-seq';
 import {days} from '../duration';
+import {isDate} from "./concrete";
 import Symbol from '../symbol/construct';
 
 function lookup(self, key){
@@ -121,8 +122,17 @@ function deref(self){
   return self.valueOf();
 }
 
+function check(self, value){
+  return isDate(value);
+}
+
+function complaint(self){
+  return "not a date";
+}
+
 export default does(
   implement(IDeref, {deref}),
+  specify(ICheckable, {check, complaint, terminal: constantly(true)}),
   implement(IBounds, {start: identity, end: identity}),
   implement(ISeqable, {seq: identity}),
   implement(IReduce, {reduce}),

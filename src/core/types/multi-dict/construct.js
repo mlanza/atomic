@@ -1,5 +1,5 @@
 import {constantly, overload} from '../../core';
-import {set} from '../immutable-set/construct';
+import {set} from '../set/construct';
 
 export default function MultiDict(attrs, empty){
   this.attrs = attrs;

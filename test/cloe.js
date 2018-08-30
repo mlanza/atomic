@@ -8,27 +8,44 @@ const stooges = ["Larry","Curly","Moe"],
       court   = {jack: 11, queen: 12, king: 13},
       worth   = {pieces: pieces, court: court};
 
-QUnit.test("validation", function(assert){
-  function validPostalCode(code){
-    return _.mapa(_.complaint, _.validate(code, [_.required(), String, _.complaint(/^\d{5}$/, "invalid postal code")]));
-  }
-  assert.deepEqual(validPostalCode("17055"), []);
-  assert.deepEqual(validPostalCode(17055), ["must be text"]);
-  assert.deepEqual(validPostalCode(null), ["is required"]);
-  assert.deepEqual(validPostalCode(" "), ["is required"]);
-  assert.deepEqual(validPostalCode(""), ["is required"]);
-  assert.deepEqual(validPostalCode("1705"), ["invalid postal code"]);
-})
-
-QUnit.test("dispatchable", function(assert){ //not just for fns!
-  var f = _.piped(_.dispatchable(null, [
-    //_.signed(_.str(v, "!"), _.signature(_.isString)),
-    //_.signed(_.multiply(v, 2), _.signature(_.isNumber))
-  ]),
-    _.on(v, _.spread(_.signature(_.isString)), _.str(v, "!")),
-    _.on(v, _.spread(_.signature(_.isNumber)), _.multiply(v, 2)));
+QUnit.test("router & multimethod", function(assert){ //not just for fns!
+  const f =
+    _.router() //router handlers need not be (but can be) fns
+      |> _.append(v, _.handler(_.signature(_.isString), _.str(v, "!"), _.apply)) //use apply to spread the message against the pred and callback
+      |> _.append(v, _.handler(_.signature(_.isNumber), _.multiply(v, 2), _.apply));
+  const g =
+    _.multimethod() //multimethod handlers must be fns
+      |> _.on(v, _.signature(_.isString), _.str(v, "!")) //as a multimethod always dispatches to fns, apply is a given and need not be specified.
+      |> _.on(v, _.signature(_.isNumber), _.multiply(v, 2));
   assert.equal(_.dispatch(f, [1]), 2);
   assert.equal(_.dispatch(f, ["timber"]), "timber!");
+  assert.equal(_.dispatch(g, [1]), 2);
+  assert.equal(_.dispatch(g, ["timber"]), "timber!");
+  assert.equal(g(1), 2);
+  assert.equal(g("timber"), "timber!");
+});
+
+QUnit.test("validation", function(assert){
+  const complaints = _.mapa(_.complaint, v); //resolves lazy result for deep equality test
+  const validPostalCode = _.comp(complaints, _.validate(v, [_.required(), String, _.terminal(/^\d{5}(-\d{1,4})?$/, "not a postal code")]));
+  const validNumber = _.comp(complaints, _.validate(v, parseInt, [Number]));
+  const validDate = _.comp(complaints, _.validate(v, _.parseDate, [Date]));
+  const validAdult = _.comp(_.mapa(_.update(v, 2, complaints), v), _.validateIn(v, _.comp(_.either(v, []), _.getIn({
+    age: [_.complaint(_.gte(v, 18), "not an adult")]
+  }, v))));
+  assert.deepEqual(validAdult({age: 11, name: "Eddie", surname: "Munster"}), [[["age"], 11, ["not an adult"]]]);
+  assert.deepEqual(validAdult({age: 203, name: "Herman", surname: "Munster"}), []);
+  assert.deepEqual(validPostalCode("17055"), []);
+  assert.deepEqual(validPostalCode("17055-0001"), []);
+  assert.deepEqual(validPostalCode(17055), ["not text"]);
+  assert.deepEqual(validPostalCode(null), ["required"]);
+  assert.deepEqual(validPostalCode(" "), ["required"]);
+  assert.deepEqual(validPostalCode(""), ["required"]);
+  assert.deepEqual(validPostalCode("1705"), ["not a postal code"]);
+  assert.deepEqual(validNumber("diamond"), ["not a number"]);
+  assert.deepEqual(validNumber("8"), []);
+  assert.deepEqual(validDate("11/10/2019 5:45 am"), []);
+  assert.deepEqual(validDate("d11/10/2019 5:45 am"), ["not a date"]);
 });
 
 QUnit.test("component", function(assert){
@@ -103,13 +120,13 @@ QUnit.test("ilookup", function(assert){
   assert.equal(stooges |> _.get(v, 2), "Moe");
   assert.equal(pieces |> _.get(v, "pawn"), 1);
   assert.equal(worth |> _.getIn(v, ["pieces", "queen"]), 10);
-  var boris = {givenName: "Boris", surname: "Lasky", address: {
+  const boris = {givenName: "Boris", surname: "Lasky", address: {
     lines: ["401 Mayor Ave.", "Suite 401"],
     city: "Mechanicsburg", state: "PA", zip: "17055"
   }};
-  var moe = {givenName: "Moe", surname: "Howard"};
-  var givenName = _.overload(null, _.get(v, "givenName"), _.assoc(v, "givenName", v)); //lens
-  var getAddressLine1 = _.pipe(_.maybe, _.fmap(v, _.get(v, "address"), _.get(v, "lines"), _.get(v, 1)), _.otherwise(v, ""));
+  const moe = {givenName: "Moe", surname: "Howard"};
+  const givenName = _.overload(null, _.get(v, "givenName"), _.assoc(v, "givenName", v)); //lens
+  const getAddressLine1 = _.pipe(_.maybe, _.fmap(v, _.get(v, "address"), _.get(v, "lines"), _.get(v, 1)), _.otherwise(v, ""));
   assert.equal(moe   |> getAddressLine1, "");
   assert.equal(boris |> getAddressLine1, "Suite 401");
   assert.equal(boris |> _.maybe |> _.fmap(v, _.get(v, "address"), _.get(v, "lines"), _.get(v, 1)) |> _.otherwise(v, ""), "Suite 401");
