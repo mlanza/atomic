@@ -65,7 +65,7 @@ export const toggleClass = overload(null, null, toggleClass2, toggleClass3);
 function install5(defaults, create, render, config, parent){
   config = absorb({changed: [], commands: []}, defaults || {}, config || {});
   var bus = create(config);
-  IAppendable.append(parent, mounts(render(bus), bus));
+  IAppendable.append(parent, render(bus));
   each(ISubscribe.sub(bus, v), config.changed);
   each(IDispatch.dispatch(bus, v), config.commands);
 }
