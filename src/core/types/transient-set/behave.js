@@ -13,10 +13,8 @@ function seq(self){
   return count(self) ? self : null;
 }
 
-const union = apply(ICollection.conj, v, v);
-
-function intersection(self, other){
-  return transientSet(filter(has(self, v), v));
+function disj(self, value){
+  return self.delete(value);
 }
 
 function includes(self, value){
@@ -85,7 +83,7 @@ export default does(
   implement(IArray, {toArray}),
   implement(ISeqable, {seq}),
   implement(IInclusive, {includes}),
-  implement(ISet, {union, intersection}),
+  implement(ISet, {disj, unite: conj}),
   implement(ICloneable, {clone}),
   implement(IEmptyableCollection, {empty: emptyTransientSet}),
   implement(ICollection, {conj}),

@@ -2,6 +2,7 @@ import {overload, unbind} from "../../core";
 import {reducing} from "../../protocols/ireduce/concrete";
 import {IKVReduce, ITemplate} from "../../protocols";
 import String, {emptyString} from "./construct";
+import {_ as v} from "param.macro";
 
 export function isBlank(str){
   return str == null || typeof str === "string" && str.trim().length === 0;
@@ -57,3 +58,4 @@ export const trim       = unbind(String.prototype.trim);
 export const rtrim      = unbind(String.prototype.trimRight);
 export const ltrim      = unbind(String.prototype.trimLeft);
 export const str        = overload(emptyString, str1, str2, reducing(str2));
+export const zeros      = lpad(v, v, "0");

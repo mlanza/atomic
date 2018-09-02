@@ -23,6 +23,7 @@ function from({seq, start}){
 }
 
 IndexedSeq.prototype[Symbol.toStringTag] = "IndexedSeq";
+IndexedSeq.create = indexedSeq;
 IndexedSeq.from = from;
 
 export default IndexedSeq;

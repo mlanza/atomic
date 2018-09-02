@@ -33,6 +33,7 @@ function from({colls}){
 }
 
 Concatenated.prototype[Symbol.toStringTag] = "Concatenated";
+Concatenated.create = concatenated;
 Concatenated.from = from;
 
 export const concat = overload(emptyList, ISeqable.seq, unspread(concatenated));

@@ -11,9 +11,6 @@ function from({milliseconds}){
   return duration(milliseconds);
 }
 
-Duration.prototype[Symbol.toStringTag] = "Duration";
-Duration.from = from;
-
 function duration1(milliseconds){
   return new Duration(milliseconds);
 }
@@ -27,6 +24,10 @@ function duration2(n, unit, options){
 }
 
 export const duration = overload(null, duration1, duration2);
+
+Duration.prototype[Symbol.toStringTag] = "Duration";
+Duration.create = duration;
+Duration.from = from;
 
 export const milliseconds = duration1;
 

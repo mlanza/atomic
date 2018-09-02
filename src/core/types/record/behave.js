@@ -1,8 +1,7 @@
-import {does, overload, constantly} from '../../core';
+import {does, overload, constantly, constructs} from '../../core';
 import {implement} from '../protocol';
 import {reduced} from "../reduced/construct";
 import {IReduce, IKVReduce, IEquiv, IEncode, IObject, IDescriptive, IAssociative, ISeqable, ILookup, ICounted, IMap, ISeq, IRecord, IEmptyableCollection} from '../../protocols';
-import {constructs} from '../function';
 import Symbol from '../symbol/construct';
 
 function toObject(self){

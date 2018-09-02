@@ -6,7 +6,7 @@ export function fragment(...contents){
   return IReduce.reduce(contents, ICollection.conj, document.createDocumentFragment());
 }
 
-DocumentFragment.from = fragment;
+DocumentFragment.create = fragment;
 
 export function isDocumentFragment(self){
   return self && self instanceof DocumentFragment;

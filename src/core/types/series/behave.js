@@ -1,8 +1,7 @@
-import {does} from "../../core";
+import {does, constructs} from "../../core";
 import {implement} from '../protocol';
 import {IArray, IReduce, IIndexed, ISeqable, ISeq, INext, IInclusive, IAppendable, IPrependable, ICounted, ILookup, IFn, ISequential, IEmptyableCollection} from '../../protocols';
 import {iterable} from '../lazy-seq/behave';
-import {constructs} from '../function';
 
 function seq(self){
   return ISeqable.seq(self.items);

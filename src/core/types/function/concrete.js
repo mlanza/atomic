@@ -171,9 +171,3 @@ export function nary(f, length){
 export function arity(f, length){
   return ([nullary, unary, binary, ternary, quaternary][length] || nary)(f, length);
 }
-
-export function constructs(Type) {
-  return function(...args){
-    return new (Function.prototype.bind.apply(Type, [null].concat(args)));
-  }
-}

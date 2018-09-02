@@ -29,7 +29,7 @@ function conj(self, value){
 }
 
 function lookup(self, key){
-  return self.constructor.from(self.root, icollection.conj(self.path, key));
+  return self.constructor.create(self.root, icollection.conj(self.path, key));
 }
 
 function assoc(self, key, value){
@@ -45,20 +45,20 @@ function dissoc(self, key){
 }
 
 function reset(self, value){
-  return self.constructor.from(assocIn(self.root, self.path, value), self.path);
+  return self.constructor.create(assocIn(self.root, self.path, value), self.path);
 }
 
 function swap(self, f){
-  return self.constructor.from(updateIn(self.root, self.path, f), self.path);
+  return self.constructor.create(updateIn(self.root, self.path, f), self.path);
 }
 
 function root(self){
-  return self.constructor.from(self.root);
+  return self.constructor.create(self.root);
 }
 
 function children(self){
   return map(function(key){
-    return self.constructor.from(self.root, icollection.conj(self.path, key));
+    return self.constructor.create(self.root, icollection.conj(self.path, key));
   }, keys(self));
 }
 
@@ -77,7 +77,7 @@ function siblings(self){
         ctx = toArray(butlast(self.path)),
         key = last(self.path);
   return map(function(key){
-    return self.constructor.from(self.root, icollection.conj(ctx, key));
+    return self.constructor.create(self.root, icollection.conj(ctx, key));
   }, remove(function(k){
     return k === key;
   }, p ? keys(p) : []));
@@ -88,7 +88,7 @@ function prevSiblings(self){
         ctx = toArray(butlast(self.path)),
         key = last(self.path);
   return map(function(key){
-    return self.constructor.from(self.root, icollection.conj(ctx, key));
+    return self.constructor.create(self.root, icollection.conj(ctx, key));
   }, reverse(toArray(take(1, takeWhile(function(k){
     return k !== key;
   }, p ? keys(p) : [])))));
@@ -99,7 +99,7 @@ function nextSiblings(self){
         ctx = toArray(butlast(self.path)),
         key = last(self.path);
   return map(function(key){
-    return self.constructor.from(self.root, icollection.conj(ctx, key));
+    return self.constructor.create(self.root, icollection.conj(ctx, key));
   }, drop(1, dropWhile(function(k){
     return k !== key;
   }, p ? keys(p) : [])));
@@ -109,7 +109,7 @@ const prevSibling = comp(first, prevSiblings);
 const nextSibling = comp(first, nextSiblings);
 
 function parent(self){
-  return seq(self.path) ? self.constructor.from(self.root, butlast(self.path)) : null;
+  return seq(self.path) ? self.constructor.create(self.root, butlast(self.path)) : null;
 }
 
 function parents(self){
