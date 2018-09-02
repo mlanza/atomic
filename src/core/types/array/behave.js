@@ -91,30 +91,6 @@ function reverse(self){
   return c > 0 ? revSeq(self, c - 1) : null;
 }
 
-function union(xs, ys){
-  return set([...xs, ...ys]);
-}
-
-function intersection(xs, ys){
-  ys = set(ys);
-  return xs.filter(function(x){
-    return ys.has(x);
-  });
-}
-
-function difference(xs, ys){
-  ys = set(ys);
-  return xs.filter(function(x){
-    return !ys.has(x);
-  });
-}
-
-function superset(self, subset){
-  return IReduce.reduce(subset, function(memo, value){
-    return memo ? IInclusive.includes(self, value) : reduced(memo);
-  }, true);
-}
-
 function disj(self, value){
   return self.filter(function(x){
     return value !== value;
@@ -252,7 +228,7 @@ export default does(
   implement(IObject, {toObject}),
   implement(IYank, {yank}),
   implement(IReversible, {reverse}),
-  implement(ISet, {union, intersection, difference, disj, superset}),
+  implement(ISet, {disj}),
   implement(IFind, {find}),
   implement(IMap, {dissoc, keys, vals: identity}),
   implement(IMapEntry, {key, val}),

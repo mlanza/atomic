@@ -7,5 +7,6 @@ export function emptyList(){
   return new EmptyList();
 }
 EmptyList.prototype[Symbol.toStringTag] = "EmptyList";
-EmptyList.from = emptyList;
+EmptyList.create = emptyList;
+
 export {EmptyList};

@@ -1,9 +1,10 @@
-import {overload, identity, obj, partly, doto, constantly} from "./core/core";
+import {overload, identity, obj, partly, doto, constantly, branch, unspread, applying} from "./core/core";
 import {IDecorated, IEventProvider, IAppendable, IHash, ITemplate, IMiddleware, IDispatch, IYank, IArray, IAssociative, IBounds, IInverse, ICloneable, ICollection, IComparable, IContent, ICounted, IDecode, IDeref, IDisposable, IEmptyableCollection, IEncode, IEquiv, IEvented, IFind, IFn, IFork, IFunctor, IHideable, IHierarchy, IHtml, IInclusive, IIndexed, IInsertable, IKVReduce, ILookup, IMap, IMapEntry, IMatch, INext, IObject, IOtherwise, IPrependable, IPublish, IReduce, IReset, IReversible, ISeq, ISeqable, ISet, ISteppable, ISubscribe, ISwap, IText} from "./core/protocols";
 import {spread, specify, maybe, each, see, props, classes, isEmpty, duration, compact, remove, flatten, map, fragment, element, sort, set, flip, realized, comp, isNumber, observable, detect, mapSomeVals, isFunction, apply} from "./core/types";
 import {transient, persistent, mounts, deref, get, assoc, yank, conj, hash, otherwise, fmap, reducing, reducekv, includes, excludes} from "./core/protocols/concrete";
 import {toggles} from "./core/types/element/behave";
 import {resolve} from "./core/types/promise/concrete";
+import {str} from "./core/types/string/concrete";
 import {and, unless} from "./core/predicates";
 import {absorb} from "./core/associatives";
 import {_ as v} from "param.macro";
@@ -85,26 +86,24 @@ function install4(defaults, render, config, parent){
 
 export const install = overload(null, null, null, null, install4, install5);
 
+export function argumented(f, g){
+  return comp(spread(f), unspread(g));
+}
+
 export function expansive(f){
-  function expand(...xs){
-    const contents = IArray.toArray(compact(flatten(xs)));
-    return detect(function(content){
-      return typeof content === "function";
-    }, contents) ? step(contents) : f(...contents);
-  }
-  function step(contents){
+  const expand = argumented(
+    branch(unspread(detect(isFunction, v)), postpone, f),
+    comp(IArray.toArray, compact, flatten));
+  function postpone(...contents){
     return function(value){
-      const resolve = typeof value === "function" ? partial(comp, value) : function(f){
-        return f(value);
-      }
-      return expand(...map(function(content){
-        return typeof content === "function" ? resolve(content) : content;
-      }, contents));
+      const resolve = isFunction(value) ? comp(value, v) : applying(value);
+      return expand(...map(branch(isFunction, resolve, identity), contents));
     }
   }
   return expand;
 }
 
+export const fmt = expansive(str);
 export const tag = obj(expansive(element), Infinity);
 export const frag = expansive(fragment);
 

@@ -1,9 +1,11 @@
 import {protocol} from "../../types/protocol";
+import {includes} from "../iinclusive/concrete";
+import {conj} from "../icollection/concrete";
+function unite(self, value){
+  return includes(self, value) ? self : conj(self, value);
+}
 export const ISet = protocol({
-  union: null,
-  intersection: null,
-  difference: null,
-  superset: null,
+  unite,
   disj: null
 });
 export default ISet;

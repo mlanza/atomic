@@ -1,4 +1,4 @@
-import {overload} from '../../core';
+import {overload, constructs} from '../../core';
 import Symbol from '../symbol/construct';
 
 export default Date;
@@ -7,13 +7,11 @@ function date7(year, month, day, hours, minutes, seconds, milliseconds){
   return new Date(year, month - 1, day, hours || 0, minutes || 0, seconds || 0, milliseconds || 0);
 }
 
-function from(timestamp){
-  return new Date(timestamp);
-}
+const create = constructs(Date);
 
-export const date = overload(Date.now, from, date7);
+export const date = overload(Date.now, create, date7);
 
 Date.prototype[Symbol.toStringTag] = "Date";
-Date.from = from;
+Date.create = create;
 
 export {Date};

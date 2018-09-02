@@ -5,6 +5,7 @@ import {lazySeq} from '../../types/lazy-seq/construct';
 import {remove, into} from '../../types/lazy-seq/concrete';
 import Object, {emptyObject} from '../../types/object/construct';
 import {iequiv, itemplate} from '../../types/array/behave';
+import {iset} from '../../types/object/behave';
 
 function toObject(self){
   return into({}, self);
@@ -63,6 +64,7 @@ function reducekv(self, xf, init){
 }
 
 export default does(
+  iset,
   iequiv,
   itemplate,
   implement(IDescriptive),

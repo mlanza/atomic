@@ -13,14 +13,6 @@ function seq(self){
   return count(self) ? self : null;
 }
 
-function union(self, other){
-  return Set.union([self, other]);
-}
-
-function intersection(self, other){
-  return Set.intersect([self, other]);
-}
-
 function toArray(self){
   return self.toArray();
 }
@@ -31,6 +23,10 @@ function includes(self, value){
 
 function conj(self, value){
   return self.add(value);
+}
+
+function disj(self, value){
+  return self.delete(value);
 }
 
 function first(self){
@@ -68,7 +64,7 @@ export default does(
   implement(IArray, {toArray}),
   implement(ISeqable, {seq}),
   implement(IInclusive, {includes}),
-  implement(ISet, {union, intersection}),
+  implement(ISet, {disj, unite: conj}),
   implement(ICloneable, {clone: identity}),
   implement(IEmptyableCollection, {empty: emptySet}),
   implement(ICollection, {conj}),

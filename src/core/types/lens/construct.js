@@ -7,4 +7,9 @@ export function lens(root, path){
   return new Lens(root, path || []);
 }
 
-Lens.from = lens;
+function from({root, path}){
+  return lens(root, path);
+}
+
+Lens.create = lens;
+Lens.from = from;

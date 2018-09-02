@@ -256,6 +256,14 @@ QUnit.test("sequences", function(assert){
 
 QUnit.test("step, add, subtract", function(assert){
   const christmas = _.date(2017, 12, 25);
+  const newYears  = _.date(2018, 1, 1);
+  const mmddyyyy  =
+    _.fmt(
+      _.comp(_.zeros(_, 2), _.get(_, "month")), "/",
+      _.comp(_.zeros(_, 2), _.get(_, "day")), "/",
+      _.comp(_.zeros(_, 4), _.get(_, "year")));
+  assert.equal(christmas |> mmddyyyy, "12/25/2017");
+  assert.equal(newYears  |> mmddyyyy, "01/01/2018");
   assert.equal(christmas |> _.add(v, _.days(1)) |> _.deref, christmas |> _.step(_.days(1), v) |> _.deref);
   assert.equal(christmas |> _.add(v, _.days(1)) |> _.deref, 1514264400000);
   assert.equal(christmas |> _.add(v, _.weeks(1)) |> _.deref, 1514782800000);

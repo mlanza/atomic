@@ -63,14 +63,6 @@ function includes(self, entry){
   return self[key] === val;
 }
 
-/*
-function superset(self, subset){
-  return IKVReduce.reducekv(subset, function(memo, key, value){
-    return memo ? IEquiv.equiv(get(self, key), value) : reduced(memo);
-  }, true);
-}
-*/
-
 function lookup(self, key){
   return self[key];
 }
@@ -97,6 +89,12 @@ function next2(self, keys){
 
 function next(self){
   return next2(self, INext.next(keys(self)));
+}
+
+function disj(self, entry){
+  const key = IMapEntry.key(entry),
+        val = IMapEntry.val(entry);
+  return ILookup.lookup(self, key) === val ? IMap.dissoc(self, key) : self;
 }
 
 function dissoc(self, key){
@@ -179,7 +177,9 @@ function decode(self, label, constructors){
   }
 }
 
+export const iset = implement(ISet, {disj});
 export default does(
+  iset,
   iequiv,
   itemplate,
   implement(IDescriptive),
@@ -192,7 +192,7 @@ export default does(
   implement(IFind, {find}),
   implement(IYank, {yank}),
   implement(IMatch, {matches}),
-  //implement(ISet, {superset}),
+  implement(ISet, {disj}),
   implement(IInclusive, {includes}),
   implement(ICollection, {conj}),
   implement(ICloneable, {clone}),

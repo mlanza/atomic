@@ -163,6 +163,12 @@ export function applying(...args){
   }
 }
 
+export function constructs(Type) {
+  return function(...args){
+    return new (Function.prototype.bind.apply(Type, [null].concat(args)));
+  }
+}
+
 function branch1(pred){
   return branch2(pred, identity);
 }
