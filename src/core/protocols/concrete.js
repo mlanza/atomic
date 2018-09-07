@@ -47,6 +47,7 @@ export * from "./ipath/concrete";
 export * from "./ipersistent/concrete";
 export * from "./iprependable/concrete";
 export * from "./ipublish/concrete";
+export * from "./iquery/concrete";
 export * from "./irecord/concrete";
 export * from "./ireduce/concrete";
 export * from "./ireset/concrete";

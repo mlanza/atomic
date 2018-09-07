@@ -10,7 +10,7 @@ import {each, detect, filtera, doall, mapa, mapIndexed} from "./core/types/lazy-
 import {comp, apply, partial, spread} from "./core/types/function/concrete";
 import {mappedSignal} from "./core/types/mapped-signal/construct";
 export {mappedSignal as map} from "./core/types/mapped-signal/construct";
-import Promise from "./core/types/promise/construct";
+import {resolve} from "./core/types/promise/concrete";
 import LazyPub, {lazyPub, conduit} from "./core/types/lazy-pub";
 import Publisher, {publisher} from "./core/types/publisher/construct";
 import Observable, {observable} from "./core/types/observable/construct";
@@ -168,8 +168,8 @@ function hist2(size, source){
 
 export const hist = overload(null, partial(hist2, 2), hist2);
 
-export function fromPromise(promise){
-  const sink = observable(null);
-  Promise.resolve(promise).then(partial(IPublish.pub, sink));
+export function fromPromise(promise, init){
+  const sink = observable(init || null);
+  IFunctor.fmap(resolve(promise), IPublish.pub(sink, v));
   return sink;
 }

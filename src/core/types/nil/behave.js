@@ -1,9 +1,9 @@
-import {IFunctor, ILog, IAssociative, IOtherwise, IEncode, IDecode, IFork, IArray, IEquiv, ICollection, INext, ISeq, ISeqable, IIndexed, ICounted, ILookup, IReduce, IEmptyableCollection, ISequential} from '../../protocols';
+import {IFunctor, IMap, ILog, IAssociative, IOtherwise, IEncode, IDecode, IFork, IArray, IEquiv, ICollection, INext, ISeq, ISeqable, IIndexed, ICounted, ILookup, IReduce, IEmptyableCollection, ISequential} from '../../protocols';
 import {emptyList} from '../../types/empty-list/construct';
 import {identity, constantly, does, overload, noop} from '../../core';
 import {implement} from '../protocol';
 import {emptyArray} from '../../types/array/construct';
-import Nil from './construct';
+import Nil, {nil} from './construct';
 
 function assoc(self, key, value){
   const obj = {};
@@ -29,6 +29,7 @@ function fork(self, reject, resolve){
 
 export default does(
   implement(ILog, {log: noop}),
+  implement(IMap, {keys: nil, vals: nil, dissoc: nil}),
   implement(IEncode, {encode: identity}),
   implement(IDecode, {decode: identity}),
   implement(IFork, {fork}),

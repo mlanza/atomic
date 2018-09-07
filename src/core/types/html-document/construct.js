@@ -1,4 +1,4 @@
-const HTMLDocument = window.HTMLDocument || window.Document;
+const HTMLDocument = window.HTMLDocument || window.Document; //IE fallback
 
 export default HTMLDocument;
 

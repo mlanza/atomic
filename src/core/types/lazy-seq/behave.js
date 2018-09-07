@@ -1,8 +1,9 @@
 import {implement} from '../protocol';
-import {IFunctor, IYank, IMatch, IArray, IInclusive, IFind, IEquiv, ICollection, INext, ISeq, IReduce, IKVReduce, ISeqable, ISequential, IIndexed, IEmptyableCollection, ICounted, IAppendable, IPrependable} from '../../protocols';
+import {IFunctor, IReversible, IYank, IMatch, IArray, IInclusive, IFind, IEquiv, ICollection, INext, ISeq, IReduce, IKVReduce, ISeqable, ISequential, IIndexed, IEmptyableCollection, ICounted, IAppendable, IPrependable} from '../../protocols';
 import {overload, identity, constantly, does} from '../../core';
 import Reduced, {isReduced, reduced, unreduced} from "../reduced";
 import {concat} from "../concatenated/construct";
+import {comp} from "../function/concrete";
 import {cons} from "../list/construct";
 import {map, detect} from "./concrete";
 import {emptyList} from '../empty-list/construct';
@@ -129,6 +130,8 @@ function includes(self, value){
   }, self);
 }
 
+const reverse = comp(IReversible.reverse, toArray);
+
 export const ireduce = does(
   implement(IReduce, {reduce}),
   implement(IKVReduce, {reducekv}));
@@ -137,6 +140,7 @@ export default does(
   iterable,
   ireduce,
   implement(ISequential),
+  implement(IReversible, {reverse}),
   implement(IInclusive, {includes}),
   implement(IYank, {yank}),
   implement(IFunctor, {fmap}),

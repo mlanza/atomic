@@ -11,6 +11,8 @@ export default {
       "jquery": "jQuery",
       "qunit": "QUnit",
       "fetch": "fetch",
+      "map": "Map",
+      "set": "Set",
       "weak-map": "WeakMap",
       "symbol": "Symbol",
       "promise": "Promise",

@@ -21,36 +21,36 @@ import Task, {task} from "./core/types/task";
 import fetch from "fetch";
 import {_ as v} from "param.macro";
 
-const wants = reSeq(/\{[a-z0-9]+\}/gi, v);
+const wants = reSeq(/\{([a-z0-9]+)\}/gi, v);
 const isNotDescriptive = comp(not, satisfies(IDescriptive));
 
 export function url(url){
   return fmap(v, function(options){
-    return absorb(options, {url});
+    return absorb({url}, options);
   });
 }
 
 export function method(method){
   return fmap(v, function(options){
-    return absorb(options, {method});
+    return absorb({method}, options);
   });
 }
 
 export function credentials(credentials){
   return fmap(v, function(options){
-    return absorb(options, {credentials});
+    return absorb({credentials}, options);
   });
 }
 
 export function headers(headers){
   return fmap(v, function(options){
-    return absorb(options, {headers});
+    return absorb({headers}, options);
   });
 }
 
 export function context(context){
   return fmap(v, function(options){
-    return absorb(options, {context});
+    return absorb({context}, options);
   });
 }
 
@@ -88,7 +88,8 @@ export function addQueryString(pred){
 export function selectUrl(templates){
   return function(options){
     const url = count(templates) === 1 ? first(templates) : detect(function(template){
-      return every(contains(options.context, v), wants(template));
+      return every(contains(options.context, v),
+        map(get(v, 1), wants(template)));
     }, templates);
     return assoc(options, "url", url);
   }

@@ -1,6 +1,6 @@
 import {identity, constantly, does, overload} from '../../core';
 import {implement} from '../protocol';
-import {IReduce, ISeqable, ISeq, INext, IMatch, IHierarchy, IMountable, IEvented} from '../../protocols';
+import {IReduce, ISeqable, ISeq, INext, IMatch, IHierarchy, IMountable, IEvented, IArray} from '../../protocols';
 import {lazySeq} from "../lazy-seq/construct";
 import {each, map, filter} from "../lazy-seq/concrete";
 import {cons} from "../list/construct";
@@ -15,7 +15,7 @@ function mountable(self){
 
 function mount(self, parent){
   IEvented.trigger(self, "mounting", {bubbles: false, detail: {parent}});
-  each(IMountable.mount(v, parent), IHierarchy.children(self));
+  each(IMountable.mount(v, parent), IArray.toArray(IHierarchy.children(self)));
   IEvented.trigger(self, "mounted" , {bubbles: false, detail: {parent}});
   return self;
 }
