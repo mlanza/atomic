@@ -65,4 +65,5 @@ export * from "./types/transient-object";
 export * from "./types/transient-set";
 export * from "./types/weak-map";
 export * from "./types/years";
+export * from "./types/xml-document";
 export * from "./types/lazy-pub";

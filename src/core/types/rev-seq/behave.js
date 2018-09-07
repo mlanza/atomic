@@ -2,17 +2,32 @@ import {constantly, identity, does, overload} from '../../core';
 import {implement} from '../protocol';
 import EmptyList, {emptyList} from '../../types/empty-list/construct';
 import {cons} from '../../types/list/construct';
+import {range} from '../../types/range/construct';
 import {Reduced, unreduced} from '../../types/reduced';
-import {ISequential, IArray, ICloneable, IReduce, ICollection, IEmptyableCollection, INext, ISeq, ICounted, ISeqable, IIndexed} from '../../protocols';
+import {ISequential, IArray, ILookup, IMap, ICloneable, IReduce, ICollection, IEmptyableCollection, INext, ISeq, ICounted, ISeqable, IIndexed} from '../../protocols';
 import {revSeq} from './construct';
 import {iterable} from '../lazy-seq/behave';
+import {map} from '../lazy-seq/concrete';
+import {_ as v} from "param.macro";
 
 function clone(self){
   return new revSeq(self.coll, self.idx);
 }
 
 function count(self){
-  return self.idx + 1;
+  return ICounted.count(self.coll);
+}
+
+function keys(self){
+  return range(count(self));
+}
+
+function vals(self){
+  return map(nth(self, v), keys(self));
+}
+
+function nth(self, idx){
+  return IIndexed.nth(self.coll, count(self) - 1 - idx);
 }
 
 function first(self){
@@ -54,6 +69,10 @@ const reduce = overload(null, null, reduce2, reduce3);
 export default does(
   iterable,
   implement(ISequential),
+  implement(ICounted, {count}),
+  implement(IIndexed, {nth}),
+  implement(ILookup, {lookup: nth}),
+  implement(IMap, {keys, vals}),
   implement(IArray, {toArray: Array.from}),
   implement(IEmptyableCollection, {empty: emptyList}),
   implement(IReduce, {reduce}),
