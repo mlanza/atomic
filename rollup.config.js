@@ -19,7 +19,7 @@ export default {
       "immutable": "Immutable"
     }
   },
-  external: ["immutable", "promise", "fetch", "symbol", "weak-map"],
+  external: ["immutable", "promise", "fetch", "symbol", "weak-map", "map", "set"],
   plugins: [
     babel({
       exclude: 'node_modules/**'
