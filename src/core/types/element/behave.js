@@ -1,17 +1,16 @@
 import {identity, constantly, does, overload, partial, doto, noop} from '../../core';
-import {implement, satisfies} from '../protocol';
-import {IValue, IMountable, ISequential, IText, IHtml, IHideable, IMatch, IYank, IInclusive, IInsertable, IArray, IAppendable, IPrependable, IEvented, IAssociative, IMap, IEquiv, ICloneable, ICollection, INext, ISeq, ISeqable, IIndexed, ICounted, ILookup, IReduce, IEmptyableCollection, IHierarchy, IContent} from '../../protocols';
+import {implement, specify, satisfies} from '../protocol';
+import {IValue, ILocate, IQuery, IMountable, ISequential, IText, IHtml, IHideable, IMatch, IYank, IInclusive, IInsertable, IArray, IAppendable, IPrependable, IEvented, IAssociative, IMap, IEquiv, ICloneable, ICollection, INext, ISeq, ISeqable, IIndexed, ICounted, ILookup, IReduce, IEmptyableCollection, IHierarchy, IContent} from '../../protocols';
 import {transpose} from '../../protocols/iinclusive/concrete';
 import * as imountable from '../../protocols/imountable/concrete';
 import * as iassociative from '../../protocols/iassociative/concrete';
 import * as ilookup from '../../protocols/ilookup/concrete';
 import {downward, upward} from '../../protocols/ihierarchy/concrete';
-import {each} from '../lazy-seq/concrete';
 import EmptyList, {emptyList} from '../empty-list/construct';
 import {concat} from '../concatenated/construct';
 import {cons} from '../list/construct';
 import {lazySeq} from '../lazy-seq/construct';
-import {mapa, detect, compact, distinct, filter, last} from '../lazy-seq/concrete';
+import {each, mapa, compact, distinct, filter, last} from '../lazy-seq/concrete';
 import {comp} from '../function/concrete';
 import {isObject} from '../object/construct';
 import {isString} from '../string/construct';
@@ -70,10 +69,11 @@ function isAttrs(self){
   return !isDocumentFragment(self) && !isElement(self) && satisfies(IAssociative, self);
 }
 
-
 function eventContext(catalog){
   function on3(self, key, callback){
-    self.addEventListener(key, callback);
+    isString(key) ? each(function(key){
+      self.addEventListener(key, callback);
+    }, compact(key.split(" "))) : self.addEventListener(key, callback);
     return self;
   }
 
@@ -137,19 +137,21 @@ function contents(self){
   return ISeqable.seq(self.childNodes);
 }
 
+function mounts(self){
+  return doto(self,
+    specify(IMountable, {mountable}));
+}
+
 function mountable(self){
   return !parent(self);
 }
 
 function mount(self, parent){
-  IEvented.trigger(self, "mounting", {bubbles: false, detail: {parent}});
   parent.appendChild(self);
-  IEvented.trigger(self, "mounted", {bubbles: false, detail: {parent}});
-  return self;
 }
 
 function conj(self, other){
-  if (satisfies(IMountable, other)) {
+  if (imountable.mountable(other)) {
     imountable.mount(other, self);
   } else if (isFunction(other)){
     return conj(self, other());
@@ -171,7 +173,14 @@ function prepend(self, other){
       assoc(self, key, value);
     }, other);
   } else {
-    self.prepend(isString(other) ? document.createTextNode(other) : other);
+    const content = isString(other) ? document.createTextNode(other) : other;
+    if (self.prepend) {
+      self.prepend(content);
+    } else if (self.childNodes.length) {
+      self.insertBefore(content, self.childNodes[0]);
+    } else {
+      self.appendChild(content);
+    }
   }
   return self;
 }
@@ -232,14 +241,14 @@ export function closest(self, selector){
   }
 }
 
-function sel(self, selector){
+function query(self, selector, options){
   return isFunction(selector) ? filter(function(node){
     return IMatch.matches(node, selector);
   }, IHierarchy.descendants(self)) : self.querySelectorAll(selector);
 }
 
-function sel1(self, selector){
-  return isFunction(selector) ? ISeq.first(IHierarchy.sel(self, selector)) : self.querySelector(selector);
+function locate(self, selector){
+  return isFunction(selector) ? ISeq.first(IQuery.query(self, selector)) : self.querySelector(selector);
 }
 
 function children(self){
@@ -295,7 +304,7 @@ export const yank = overload(null, yank1, yank2);
 
 function includes(self, target){
   if (isElement(target)) {
-    return detect(isIdentical(target, v), children(self));
+    return ILocate.locate(children(self), isIdentical(target, v));
   } else if (satisfies(ISequential, target)){
     const keys = target;
     return IReduce.reduce(keys, function(memo, key){
@@ -306,11 +315,11 @@ function includes(self, target){
       return memo ? lookup(self, key) == value : reduced(memo);
     }, true);
   } else {
-    return detect(isString(target) ? function(node){
+    return ILocate.locate(contents(self), isString(target) ? function(node){
       return node.nodeType === Node.TEXT_NODE && node.data === target;
     } : function(node){
       return node === target;
-    }, contents(self));
+    });
   }
 }
 
@@ -362,20 +371,24 @@ function reduce(self, xf, init){
   return IReduce.reduce(IHierarchy.descendants(self), xf, init);
 }
 
-export const ihierarchy = implement(IHierarchy, {root, parent, parents, closest, children, descendants, sel, sel1, nextSibling, nextSiblings, prevSibling, prevSiblings, siblings});
+export const ihierarchy = implement(IHierarchy, {root, parent, parents, closest, children, descendants, nextSibling, nextSiblings, prevSibling, prevSiblings, siblings});
 export const icontents = implement(IContent, {contents});
 export const ireduce = implement(IReduce, {reduce});
 export const ievented = implement(IEvented, {on, off, trigger});
+export const ilocate = implement(ILocate, {locate});
+export const iquery = implement(IQuery, {query});
 
 export default does(
   ihierarchy,
   icontents,
   ireduce,
   ievented,
+  iquery,
+  ilocate,
   implement(IText, {text}),
   implement(IHtml, {html}),
   implement(IValue, {value}),
-  implement(IMountable, {mountable, mount}),
+  implement(IMountable, {mountable: constantly(false), mount, mounts}),
   implement(IEmptyableCollection, {empty}),
   implement(IInsertable, {before, after}),
   implement(IInclusive, {includes}),

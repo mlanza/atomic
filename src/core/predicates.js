@@ -1,11 +1,10 @@
-import {overload, constantly, identity, type, branch} from "./core";
+import {overload, constantly, identity, type, branch, slice} from "./core";
 import {IReduce, IKVReduce, ICounted, IComparable, IEquiv} from "./protocols";
 import {reduced} from "./types/reduced";
 import {comp, partial, apply} from "./types/function/concrete";
 import {reducing} from "./protocols/ireduce/concrete";
 import {compare} from "./protocols/icomparable/concrete";
 import {isNil} from "./types/nil/construct";
-import {slice} from "./types/array/concrete";
 
 export function both(memo, value){
   return memo && value;

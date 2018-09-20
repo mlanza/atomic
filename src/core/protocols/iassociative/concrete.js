@@ -1,5 +1,5 @@
 import IAssociative from "./instance";
-import {overload} from "../../core";
+import {overload, slice} from "../../core";
 import {ISeq} from "../iseq";
 import {IEquiv} from "../iequiv";
 import IArray from "../iarray/instance";

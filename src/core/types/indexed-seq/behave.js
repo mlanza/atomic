@@ -4,9 +4,10 @@ import {indexedSeq} from './construct';
 import {revSeq} from '../../types/rev-seq/construct';
 import {reduced, isReduced, unreduced} from '../../types/reduced';
 import {IArray, IEquiv, IReversible, IMapEntry, IFind, IInclusive, IAssociative, IAppendable, IPrependable, ICollection, INext, ICounted, IReduce, IKVReduce, ISeq, ISeqable, ISequential, IIndexed, ILookup, IFn, IEmptyableCollection} from '../../protocols';
+import {locate} from '../../protocols/ilocate/concrete';
 import {concat} from '../../types/concatenated/construct';
 import {iterable} from '../lazy-seq/behave';
-import {detect, drop} from '../lazy-seq/concrete';
+import {drop} from '../lazy-seq/concrete';
 import {encodeable} from '../record/behave';
 import {emptyArray} from '../../types/array/construct';
 
@@ -91,9 +92,9 @@ function reducekv(self, xf, init){
 }
 
 function includes(self, x){
-  return detect(function(y){
+  return locate(drop(self.start, self.seq), function(y){
     return IEquiv.equiv(x, y);
-  }, drop(self.start, self.seq));
+  });
 }
 
 export default does(

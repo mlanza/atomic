@@ -2,11 +2,10 @@ import {IArray}  from "../../protocols/iarray";
 import {IReduce}  from "../../protocols/ireduce";
 import {overload, identity, constantly, partial} from "../../core";
 import {isNil}  from "../nil";
-import {slice}  from "../array/concrete";
 import {satisfies}  from "../protocol";
 import {reduced}  from "../reduced/construct";
 import {isFunction}  from "./construct";
-export {complement, partial} from "../../core";
+export {complement, partial, slice} from "../../core";
 
 export function spread(f){
   return function(args){

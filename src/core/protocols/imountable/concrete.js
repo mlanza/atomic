@@ -9,13 +9,15 @@ import {partial, comp} from "../../types/function/concrete";
 import {doto, overload, noop} from '../../../core/core';
 import {_ as v} from "param.macro";
 
-export const mountable = IMountable.mountable;
+export function mountable(self){
+  return satisfies(IMountable, self) && IMountable.mountable(self);
+}
 
 export function mount(self, parent){
-  if (!mountable(self)) {
-    throw new Error("Item is not mountable.");
-  }
-  return IMountable.mount(self, parent);
+  IEvented.trigger(self, "mounting", {bubbles: false, detail: {parent}});
+  IMountable.mount(self, parent);
+  IEvented.trigger(self, "mounted" , {bubbles: false, detail: {parent}});
+  return self;
 }
 
 function mounts1(self){
@@ -33,9 +35,6 @@ function mounts3(self, pred, attached){
 }
 
 function mounts4(self, pred, attached, context){
-  if (!mountable(self)) {
-    throw new Error("Item is not mountable.");
-  }
   function attach(parent, event, callback){
     const ancestor = root(parent);
     if (pred(ancestor)) {
@@ -45,6 +44,7 @@ function mounts4(self, pred, attached, context){
     }
   }
   return self |>
+    IMountable.mounts |>
     one(v, "mounting",
       comp(
         attach(v, "attaching", mounts(v, pred, attached, context)),

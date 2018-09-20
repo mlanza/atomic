@@ -45,7 +45,7 @@ function split3(str, pattern, n){
   return parts;
 }
 
-export const split      = overload(split1, unbind(String.prototype.split), split3)
+export const split      = overload(null, split1, unbind(String.prototype.split), split3)
 export const startsWith = unbind(String.prototype.startsWith);
 export const endsWith   = unbind(String.prototype.endsWith);
 export const replace    = unbind(String.prototype.replace);

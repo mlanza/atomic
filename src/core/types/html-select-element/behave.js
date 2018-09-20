@@ -1,21 +1,21 @@
 import {implement} from '../protocol';
 import {IText} from '../../protocols';
-import {detect} from "../lazy-seq/concrete";
-import * as ihierarchy from "../../protocols/ihierarchy/concrete";
+import {locate} from "../../protocols/ilocate/concrete";
+import {query} from "../../protocols/iquery/concrete";
 import * as ivalue from "../../protocols/ivalue/concrete";
 import {overload, does} from '../../core';
 
 function text1(self){
-  const option = ihierarchy.sel1(function(el){
+  const option = locate(query(self, "option"), function(el){
     return el.selected;
-  }, ihierarchy.sel("option", self));
+  });
   return option && IText.text(option);
 }
 
 function text2(self, value){
-  const option = detect(function(el){
+  const option = locate(query(self, "option"), function(el){
     return IText.text(el) == value;
-  }, ihierarchy.sel("option", self));
+  });
   option && ivalue.value(self, ivalue.value(option));
 }
 

@@ -172,7 +172,7 @@ export function distinct(coll){
 }
 
 export function compact(coll){
-  return filter(isSome, coll);
+  return filter(identity, coll);
 }
 
 export function cycle(coll){
@@ -451,7 +451,6 @@ function sortBy3(keyFn, compare, coll){
 
 export const sortBy = overload(null, null, sortBy2, sortBy3);
 
-export const detect      = comp(ISeq.first, filter);
 export const mapa        = comp(IArray.toArray, map);
 export const butlast     = partial(dropLast, 1);
 export const initial     = butlast;

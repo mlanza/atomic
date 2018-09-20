@@ -29,6 +29,7 @@ export * from "./types/issue";
 export * from "./types/just";
 export * from "./types/lens";
 export * from "./types/list";
+export * from "./types/location";
 export * from "./types/mapped-signal";
 export * from "./types/members";
 export * from "./types/middleware";

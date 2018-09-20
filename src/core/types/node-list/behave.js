@@ -1,6 +1,6 @@
 import {does} from '../../core';
 import {implement} from '../protocol';
-import {ISeq, INext, ISeqable, ISequential, IContent, IHierarchy, IReduce} from '../../protocols';
+import {ISeq, INext, ISeqable, ISequential, IContent, IHierarchy, IQuery, IReduce} from '../../protocols';
 import {lazySeq, filter} from '../lazy-seq';
 import {comp, isFunction} from '../function';
 import {iterable} from '../lazy-seq/behave';
@@ -30,12 +30,10 @@ const parent = comp(IHierarchy.parent, seq);
 const parents = comp(IHierarchy.parents, seq);
 const contents = comp(IContent.contents, seq);
 
-function sel(self, selector){
+function query(self, selector){
   const match = isFunction(selector) ? selector : matches(v, selector);
   return filter(match, seq(self));
 }
-
-const sel1 = comp(ISeq.first, sel);
 
 function closest(self, selector){
   return IHierarchy.closest(seq(self), selector);
@@ -51,6 +49,7 @@ export default does(
   implement(IReduce, {reduce}),
   implement(INext, {next}),
   implement(IContent, {contents}),
-  implement(IHierarchy, {sel, sel1, parent, parent, closest, nextSiblings, nextSibling, prevSiblings, prevSibling, siblings, children, descendants}),
+  implement(IQuery, {query}),
+  implement(IHierarchy, {parent, parent, closest, nextSiblings, nextSibling, prevSiblings, prevSibling, siblings, children, descendants}),
   implement(ISequential),
   implement(ISeqable, {seq}));

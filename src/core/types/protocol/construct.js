@@ -42,13 +42,17 @@ Protocol.prototype.generate = function(){
   }
 }
 
-function application(target, key, value){
-  Object.defineProperty(target, key, {
-    configurable: true,
-    enumerable: false,
-    writable: true,
-    value: value
-  });
+function addMeta(target, key, value){
+  try {
+    Object.defineProperty(target, key, { //unsupported on some objects like Location
+      configurable: true,
+      enumerable: false,
+      writable: true,
+      value: value
+    });
+  } catch (ex) {
+    target[key] = value;
+  }
 }
 
 function specify1(behavior){
@@ -60,9 +64,9 @@ function specify1(behavior){
 
 function specify2(behavior, target){
   const keys = this.generate();
-  application(target, keys("__marker__"), this);
+  addMeta(target, keys("__marker__"), this);
   for(var method in behavior){
-    application(target, keys(method), behavior[method])
+    addMeta(target, keys(method), behavior[method])
   }
 }
 

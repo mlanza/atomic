@@ -1,4 +1,4 @@
-import {IPublish, IEvented, ICollection, IYank, IHierarchy} from '../../protocols';
+import {IPublish, IEvented, ICollection, IYank, IMatch, IHierarchy} from '../../protocols';
 import {lazyPub} from "../lazy-pub/construct";
 import {publisher} from "../publisher/construct";
 import {identity, overload, partial} from "../../core";
@@ -35,10 +35,6 @@ export function click(el){
 
 export function isVisible(el){
   return !!(el.offsetWidth || el.offsetHeight || el.getClientRects().length);
-}
-
-export function isInput(el){
-  return el.matches("input,textarea,select");
 }
 
 export function enable(self, enabled){

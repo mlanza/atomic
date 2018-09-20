@@ -32,6 +32,7 @@ export * from "./iindexed/concrete";
 export * from "./iinclusive/concrete";
 export * from "./iinsertable/concrete";
 export * from "./ikvreduce/concrete";
+export * from "./ilocate/concrete";
 export * from "./ilookup/concrete";
 export * from "./ilog/concrete";
 export * from "./imap/concrete";

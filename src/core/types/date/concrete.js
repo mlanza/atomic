@@ -12,12 +12,12 @@ export function isDate(self){
 }
 
 function trim(obj){ //TODO protocol, compact on sequence, trim on string?
-  return IKVReduce.reduce(obj, function(memo, key, value){
+  return IKVReduce.reducekv(obj, function(memo, key, value){
     return value == null ? memo : IAssociative.assoc(memo, key, value);
   }, {});
 }
 
-export function when(year, month, day, hours, minutes, seconds, milliseconds){
+export function dated(year, month, day, hours, minutes, seconds, milliseconds){
   return trim({year, month, day, hours, minutes, seconds, milliseconds});
 }
 

@@ -1,8 +1,9 @@
 import {does} from "../../core";
 import {implement, satisfies} from '../protocol';
 import {comp} from '../function/concrete';
-import {butlast, last, map, lazySeq, detect, remove, drop, dropWhile, take, takeWhile} from "../lazy-seq";
+import {butlast, last, map, lazySeq, remove, drop, dropWhile, take, takeWhile} from "../lazy-seq";
 import {seq} from '../../protocols/iseqable/concrete';
+import {locate} from '../../protocols/ilocate/concrete';
 import {get, getIn} from '../../protocols/ilookup/concrete';
 import {includes} from '../../protocols/iinclusive/concrete';
 import {first} from '../../protocols/iseq/concrete';
@@ -120,7 +121,7 @@ function parents(self){
 }
 
 function closest(self, pred){
-  return detect(comp(pred, deref), parents(self));
+  return locate(parents(self), comp(pred, deref));
 }
 
 const descendants = downward(children);

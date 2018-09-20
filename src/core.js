@@ -1,7 +1,7 @@
 import {overload, identity, obj, partly, doto, constantly, branch, unspread, applying} from "./core/core";
 import {IDecorated, IEventProvider, IAppendable, IHash, ITemplate, IMiddleware, IDispatch, IYank, IArray, IAssociative, IBounds, IInverse, ICloneable, ICollection, IComparable, IContent, ICounted, IDecode, IDeref, IDisposable, IEmptyableCollection, IEncode, IEquiv, IEvented, IFind, IFn, IFork, IFunctor, IHideable, IHierarchy, IHtml, IInclusive, IIndexed, IInsertable, IKVReduce, ILookup, IMap, IMapEntry, IMatch, INext, IObject, IOtherwise, IPrependable, IPublish, IReduce, IReset, IReversible, ISeq, ISeqable, ISet, ISteppable, ISubscribe, ISwap, IText} from "./core/protocols";
-import {spread, specify, maybe, each, see, props, classes, isEmpty, duration, compact, remove, flatten, map, fragment, element, sort, set, flip, realized, comp, isNumber, observable, detect, mapSomeVals, isFunction, apply} from "./core/types";
-import {transient, persistent, mounts, deref, get, assoc, yank, conj, hash, otherwise, fmap, reducing, reducekv, includes, excludes} from "./core/protocols/concrete";
+import {filter, spread, specify, maybe, each, see, props, classes, isEmpty, duration, compact, remove, flatten, map, fragment, element, sort, set, flip, realized, comp, isNumber, observable, mapSomeVals, isFunction, apply} from "./core/types";
+import {descendants, query, locate, transient, persistent, mounts, deref, get, assoc, yank, conj, hash, otherwise, fmap, reducing, reducekv, includes, excludes} from "./core/protocols/concrete";
 import {toggles} from "./core/types/element/behave";
 import {resolve} from "./core/types/promise/concrete";
 import {str} from "./core/types/string/concrete";
@@ -63,28 +63,43 @@ function toggleClass3(self, name, want){
 
 export const toggleClass = overload(null, null, toggleClass2, toggleClass3);
 
-function install5(defaults, create, render, config, parent){
-  config = absorb({changed: [], commands: []}, defaults || {}, config || {});
-  var bus = create(config);
-  IAppendable.append(parent, render(bus));
-  each(ISubscribe.sub(bus, v), config.changed);
-  each(IDispatch.dispatch(bus, v), config.commands);
+function fire(parent, event, what, detail){
+  what && IEvented.trigger(parent, what + ":" + event, {bubbles: true, detail});
+  IEvented.trigger(parent, event, {bubbles: true, detail});
+}
+
+function install3(render, config, parent){
+  var img = tag('img'),
+      loading = config.spinner ? img(config.spinner) : null;
+  loading && IAppendable.append(parent, loading);
+  fire(parent, "loading", config.what, {config});
+  fmap(resolve(render()),
+    mounts,
+    function(child){
+      IAppendable.append(parent, child);
+      loading && IYank.yank(loading);
+      fire(parent, "loaded", config.what, {config, child});
+    });
 }
 
 function install4(defaults, render, config, parent){
   config = absorb({}, defaults || {}, config || {});
-  var img = tag('img'),
-      loading = img({src: config.spinner, alt: "Loading..."});
-  IAppendable.append(parent, loading);
-  fmap(resolve(render(config)),
-    mounts,
-    IAppendable.append(parent, v),
-    function(){
-      IYank.yank(loading);
-    });
+  install3(function(){
+    return render(config);
+  }, config, parent);
 }
 
-export const install = overload(null, null, null, null, install4, install5);
+function install5(defaults, create, render, config, parent){
+  config = absorb({changed: [], commands: []}, defaults || {}, config || {});
+  install3(function(){
+    const bus = create(config);
+    each(ISubscribe.sub(bus, v), config.changed);
+    each(IDispatch.dispatch(bus, v), config.commands);
+    return render(bus);
+  }, config, parent);
+}
+
+export const install = overload(null, null, null, install3, install4, install5);
 
 export function argumented(f, g){
   return comp(spread(f), unspread(g));
@@ -92,7 +107,7 @@ export function argumented(f, g){
 
 export function expansive(f){
   const expand = argumented(
-    branch(unspread(detect(isFunction, v)), postpone, f),
+    branch(unspread(locate(v, isFunction)), postpone, f),
     comp(IArray.toArray, compact, flatten));
   function postpone(...contents){
     return function(value){
@@ -154,3 +169,31 @@ export function opt(value, ...fs){
 export function withMutations(self, f){
   return persistent(f(transient(self)));
 }
+
+function sel2(selector, context){
+  return query(context, selector);
+}
+
+function sel1(selector){
+  return sel2(selector, document);
+}
+
+function sel0(){
+  return descendants(document);
+}
+
+export const sel = overload(sel0, sel1, sel2);
+
+function sel12(selector, context){
+  return locate(context, selector);
+}
+
+function sel11(selector){
+  return sel12(selector, document);
+}
+
+function sel10(){
+  return ISeq.first(descendants(document));
+}
+
+export const sel1 = overload(sel10, sel11, sel12);

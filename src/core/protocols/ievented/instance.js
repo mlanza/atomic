@@ -1,6 +1,7 @@
 import {protocol} from "../../types/protocol";
+import {when} from "../../core";
 export const IEvented = protocol({
-  on: null,
+  on: when,
   off: null,
   trigger: null
 });

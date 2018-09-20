@@ -5,8 +5,8 @@
 */
 
 import {IDeref, IEvented, IPublish, ISubscribe, ICollection, IDisposable, IReset, ISwap, IAssociative, IFunctor} from "./core/protocols";
-import {doto, does, overload, identity, constantly} from "./core/core";
-import {each, detect, filtera, doall, mapa, mapIndexed} from "./core/types/lazy-seq/concrete";
+import {doto, does, overload, identity, constantly, memoize} from "./core/core";
+import {each, filtera, doall, mapa, mapIndexed} from "./core/types/lazy-seq/concrete";
 import {comp, apply, partial, spread} from "./core/types/function/concrete";
 import {mappedSignal} from "./core/types/mapped-signal/construct";
 export {mappedSignal as map} from "./core/types/mapped-signal/construct";
@@ -18,7 +18,6 @@ import {event} from "./core/types/element/concrete";
 import {str} from "./core/types/string/concrete";
 import {notEq, eq} from "./core/predicates";
 import {implement, specify} from "./core/types/protocol";
-import {memoize} from "./core/protocols/ihash/concrete";
 import {value} from "./core/protocols/ivalue/concrete";
 import * as t from "./transducers";
 import {_ as v} from "param.macro";
@@ -36,6 +35,21 @@ function signal3(xf, init, source){
 }
 
 export const signal = overload(null, signal1, signal2, signal3);
+
+function touched2(xf, source){
+  const sink = conduit(publisher(), xf, source);
+  function pub(self, value){
+    IPublish.pub(source, value);
+  }
+  return doto(sink,
+    specify(IPublish, {pub}));
+}
+
+function touched1(source){
+  return touched2(identity, source);
+}
+
+export const touched = overload(null, touched1, touched2);
 
 export function computed(f, source){
   const obs = observable(f());
