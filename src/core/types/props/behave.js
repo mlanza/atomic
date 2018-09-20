@@ -1,7 +1,5 @@
 import {constantly, identity, does, overload} from '../../core';
 import {implement} from '../protocol';
-import {mapa, detect, compact} from '../../types/lazy-seq/concrete';
-import {trim, split, str} from '../../types/string/concrete';
 import {IDescriptive, ISeqable, IMap, IAssociative, ILookup, IDeref, IObject, IArray, ICounted, ICollection, IReduce, IInclusive, IYank} from '../../protocols';
 
 function lookup(self, key){

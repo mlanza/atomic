@@ -1,6 +1,7 @@
 import {constantly, identity, does, overload} from '../../core';
 import {implement} from '../protocol';
-import {filtera, detect} from '../../types/lazy-seq/concrete';
+import {filtera} from '../../types/lazy-seq/concrete';
+import {locate} from '../../protocols/ilocate/concrete';
 import {ISequential, IDeref, IArray, ICounted, ICollection, IInclusive, IYank} from '../../protocols';
 
 function seq(self){
@@ -9,9 +10,9 @@ function seq(self){
 }
 
 function includes(self, text){
-  return detect(function(t){
+  return locate(seq(self), function(t){
     return t == text;
-  }, seq(self));
+  });
 }
 
 function conj(self, text){

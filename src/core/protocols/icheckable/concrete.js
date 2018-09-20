@@ -5,11 +5,12 @@ import {seq} from "../iseqable/concrete";
 import {leaves} from "../ihierarchy/concrete";
 import {otherwise} from "../iotherwise/concrete";
 import {deref} from "../ideref/concrete";
+import {locate} from "../ilocate/concrete";
 import {path} from "../ipath/concrete";
 import {reduce} from "../ireduce/concrete";
 import {reduced} from "../../types/reduced";
 import {lens} from "../../types/lens/construct";
-import {lazySeq, detect, map, mapa, compact, take, drop, takeWhile, dropWhile} from "../../types/lazy-seq";
+import {lazySeq, map, mapa, compact, take, drop, takeWhile, dropWhile} from "../../types/lazy-seq";
 import {just} from "../../types/just/construct";
 import {specify} from "../../types/protocol/concrete";
 import {comp, isFunction, juxt} from "../../types/function";
@@ -27,7 +28,7 @@ function batch(self, preds){
     });
   }, preds);
   //checks may be either synchronous or asynchronous
-  const f = detect(isPromise, failures) ? comp(fmap(v, compact, toArray, seq), all) : comp(just, seq, toArray, compact);
+  const f = locate(failures, isPromise) ? comp(fmap(v, compact, toArray, seq), all) : comp(just, seq, toArray, compact);
   return f(failures);
 }
 

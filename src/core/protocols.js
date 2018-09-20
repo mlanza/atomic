@@ -33,6 +33,7 @@ export * from "./protocols/iinclusive/instance";
 export * from "./protocols/iindexed/instance";
 export * from "./protocols/iinsertable/instance";
 export * from "./protocols/ikvreduce/instance";
+export * from "./protocols/ilocate/instance";
 export * from "./protocols/ilog/instance";
 export * from "./protocols/ilookup/instance";
 export * from "./protocols/imap/instance";

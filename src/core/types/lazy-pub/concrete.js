@@ -1,5 +1,5 @@
 import {IPublish, ISubscribe} from "../../protocols";
-import {partial, overload} from "../../core";
+import {partial, overload, identity} from "../../core";
 import {lazyPub} from "./construct";
 
 function conduit2(sink, source){

@@ -1,4 +1,5 @@
 export const unbind = Function.call.bind(Function.bind, Function.call);
+export const slice = unbind(Array.prototype.slice);
 
 export function noop(){
 }
@@ -52,26 +53,17 @@ export function obj(f, len){ //objective
 
 export const placeholder = {};
 
-export function part(f, ...xs){
-  return xs.indexOf(placeholder) > -1 ? function(...ys){
-    const args = [f], xl = xs.length, yl = ys.length;
-    let a = 0, b = 0;
-    while(a < xl && b < yl){
-      if (xs[a] === placeholder) {
-        a++;
-        args.push(ys[b++]);
-      } else {
-        args.push(xs[a++]);
-      }
+export function part(f){
+  const xs = slice(arguments, 1), n = xs.length;
+  return xs.indexOf(placeholder) < 0 ? f.apply(null, xs) : function() {
+    const ys = slice(arguments),
+          zs = [];
+    for (let i = 0; i < n; i++) {
+      let x = xs[i];
+      zs.push(x === placeholder && ys.length ? ys.shift() : x);
     }
-    while(a < xl){
-      args.push(xs[a++]);
-    }
-    while(b < yl){
-      args.push(ys[b++]);
-    }
-    return part.apply(null, args);
-  } : f.apply(null, xs);
+    return part.apply(null, [f].concat(zs).concat(ys));
+  }
 }
 
 export function partial(f, ...applied){
@@ -184,3 +176,43 @@ function branch3(pred, yes, no){
 }
 
 export const branch = overload(null, branch1, branch2, branch3);
+
+function memoize1(f){
+  return memoize2(f, function(...args){
+    return JSON.stringify(args);
+  });
+}
+
+function memoize2(f, hash){
+  const cache = {};
+  return function(){
+    const key = hash.apply(this, arguments);
+    if (cache.hasOwnProperty(key)) {
+      return cache[key];
+    } else {
+      const result = f.apply(this, arguments);
+      cache[key] = result;
+      return result;
+    }
+  }
+}
+
+export const memoize = overload(null, memoize1, memoize2);
+
+function when2(some, f){
+  if (some) {
+    f(some);
+  }
+}
+
+function when3(some, pred, f){
+  if (pred(some)) {
+    f(some);
+  }
+}
+
+export const when = overload(null, null, when2, when3);
+
+export function isNative(f) {
+  return (/\{\s*\[native code\]\s*\}/).test('' + f);
+}

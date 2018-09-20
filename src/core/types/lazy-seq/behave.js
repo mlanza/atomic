@@ -1,13 +1,18 @@
 import {implement} from '../protocol';
-import {IFunctor, IReversible, IYank, IMatch, IArray, IInclusive, IFind, IEquiv, ICollection, INext, ISeq, IReduce, IKVReduce, ISeqable, ISequential, IIndexed, IEmptyableCollection, ICounted, IAppendable, IPrependable} from '../../protocols';
+import {IQuery, IFunctor, IReversible, IYank, IMatch, IArray, IInclusive, IFind, IEquiv, ICollection, INext, ISeq, IReduce, IKVReduce, ISeqable, ISequential, IIndexed, IEmptyableCollection, ICounted, IAppendable, IPrependable} from '../../protocols';
 import {overload, identity, constantly, does} from '../../core';
 import Reduced, {isReduced, reduced, unreduced} from "../reduced";
 import {concat} from "../concatenated/construct";
 import {comp} from "../function/concrete";
 import {cons} from "../list/construct";
-import {map, detect} from "./concrete";
+import {map, filter} from "./concrete";
+import {lazySeq} from "./construct";
 import {emptyList} from '../empty-list/construct';
 import Symbol from '../symbol/construct';
+
+function query(self, pred){
+  return filter(pred, self);
+}
 
 function fmap(self, f){
   return map(f, self);
@@ -125,9 +130,9 @@ function yank(self, value){
 }
 
 function includes(self, value){
-  return detect(function(x){
+  return ILocate.locate(self, function(x){
     return x === value;
-  }, self);
+  });
 }
 
 const reverse = comp(IReversible.reverse, toArray);
@@ -142,6 +147,7 @@ export default does(
   implement(ISequential),
   implement(IReversible, {reverse}),
   implement(IInclusive, {includes}),
+  implement(IQuery, {query}),
   implement(IYank, {yank}),
   implement(IFunctor, {fmap}),
   implement(ICollection, {conj}),

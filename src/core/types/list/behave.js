@@ -1,6 +1,6 @@
 import {does, identity} from '../../core';
 import {implement} from '../protocol';
-import {ISeq, ISeqable, IEncode, IAssociative, IArray} from '../../protocols';
+import {ISeq, ISeqable, IEncode, IAssociative, IArray, IMatch} from '../../protocols';
 import behave from '../lazy-seq/behave';
 import Symbol from '../symbol/construct';
 
@@ -15,6 +15,7 @@ function rest(self){
 function encode(self, label, refstore, seed){
   return IEncode.encode(IAssociative.assoc(IEncode.encode({data: Object.assign({}, self)}, label, refstore, seed), label, self[Symbol.toStringTag]), label, refstore, seed);
 }
+
 
 export default does(
   behave,

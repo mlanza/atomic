@@ -10,13 +10,14 @@ import {reducekv} from "./core/protocols/ikvreduce/concrete";
 import {keys} from "./core/protocols/imap/concrete";
 import {includes} from "./core/protocols/iinclusive/concrete";
 import {assoc, update, assocIn, contains} from "./core/protocols/iassociative/concrete";
-import {filter, mapa, map, every, detect, dropWhile, takeWhile} from "./core/types/lazy-seq/concrete";
+import {filter, mapa, map, every, dropWhile, takeWhile} from "./core/types/lazy-seq/concrete";
 import {emptyObject} from "./core/types/object/construct";
 import {not} from "./core/types/boolean";
 import {reSeq} from "./core/types/reg-exp/concrete";
 import {comp} from "./core/types/function/concrete";
 import {IDescriptive} from "./core/protocols/idescriptive/instance";
 import {fork} from "./core/protocols/ifork/concrete";
+import {locate} from "./core/protocols/ilocate/concrete";
 import Task, {task} from "./core/types/task";
 import fetch from "fetch";
 import {_ as v} from "param.macro";
@@ -87,10 +88,10 @@ export function addQueryString(pred){
 
 export function selectUrl(templates){
   return function(options){
-    const url = count(templates) === 1 ? first(templates) : detect(function(template){
+    const url = count(templates) === 1 ? first(templates) : locate(templates, function(template){
       return every(contains(options.context, v),
         map(get(v, 1), wants(template)));
-    }, templates);
+    });
     return assoc(options, "url", url);
   }
 }
