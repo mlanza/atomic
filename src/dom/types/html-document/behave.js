@@ -1,8 +1,5 @@
-import {implement} from '../protocol';
-import {IHierarchy} from '../../protocols';
-import {constantly, does} from '../../core';
+import {implement, IHierarchy, constantly, does, emptyList} from 'cloe/core';
 import behave from "../element/behave";
-import {emptyList} from "../empty-list/construct";
 
 export default does(
   behave,

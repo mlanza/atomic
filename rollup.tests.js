@@ -25,6 +25,7 @@ export default {
     "cloe/immutables",
     "cloe/requests",
     "cloe/reactives",
-    "cloe/transducers"
+    "cloe/transducers",
+    "cloe/dom"
   ]
 };

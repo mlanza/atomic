@@ -1,9 +1,4 @@
-import {does} from '../../core';
-import {implement} from '../protocol';
-import {ISeq, INext, ISeqable, ISequential, IContent, IHierarchy, IQuery, IReduce} from '../../protocols';
-import {lazySeq} from '../lazy-seq';
-import {comp} from '../function';
-import {iterable} from '../lazy-seq/behave';
+import {does, implement, lazySeq, comp, iterable, ISeq, INext, ISeqable, ISequential, IContent, IHierarchy, IQuery, IReduce} from 'cloe/core';
 import {_ as v} from "param.macro";
 
 function seq2(self, idx){
@@ -49,6 +44,6 @@ export default does(
   implement(INext, {next}),
   implement(IContent, {contents}),
   implement(IQuery, {query}),
-  implement(IHierarchy, {parent, parent, closest, nextSiblings, nextSibling, prevSiblings, prevSibling, siblings, children, descendants}),
+  implement(IHierarchy, {parent, parents, closest, nextSiblings, nextSibling, prevSiblings, prevSibling, siblings, children, descendants}),
   implement(ISequential),
   implement(ISeqable, {seq}));

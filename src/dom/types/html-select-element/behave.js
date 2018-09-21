@@ -1,9 +1,5 @@
-import {implement} from '../protocol';
-import {IText} from '../../protocols';
-import {locate} from "../../protocols/ilocate/concrete";
-import {query} from "../../protocols/iquery/concrete";
-import * as ivalue from "../../protocols/ivalue/concrete";
-import {overload, does} from '../../core';
+import {overload, does, implement, IText, locate, query} from 'cloe/core';
+import * as _ from 'cloe/core';
 
 function text1(self){
   const option = locate(query(self, "option"), function(el){
@@ -16,7 +12,7 @@ function text2(self, value){
   const option = locate(query(self, "option"), function(el){
     return IText.text(el) == value;
   });
-  option && ivalue.value(self, ivalue.value(option));
+  option && _.value(self, _.value(option));
 }
 
 const text = overload(null, text1, text2);

@@ -1,9 +1,4 @@
-import {identity, constantly, does, doto, overload} from '../../core';
-import {implement, specify} from '../protocol';
-import {IReduce, ISeqable, ISeq, INext, IMatch, IHierarchy, IMountable, IArray} from '../../protocols';
-import {each} from "../lazy-seq/concrete";
-import {cons} from "../list/construct";
-import {emptyList} from "../empty-list/construct";
+import {identity, constantly, does, doto, overload, implement, specify, each, cons, emptyList, IReduce, ISeqable, ISeq, INext, IMatch, IHierarchy, IMountable, IArray} from 'cloe/core';
 import behave from "../element/behave";
 import {_ as v} from "param.macro";
 

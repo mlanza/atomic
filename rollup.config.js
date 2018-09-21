@@ -4,6 +4,7 @@ import json  from 'rollup-plugin-json';
 export default {
   input: [
     'src/core.js',
+    'src/dom.js',
     'src/immutables.js',
     'src/reactives.js',
     'src/transducers.js',
@@ -41,7 +42,8 @@ export default {
     "cloe/immutables",
     "cloe/reactives",
     "cloe/transducers",
-    "cloe/requests"
+    "cloe/requests",
+    "cloe/dom"
   ],
   plugins: [
     babel({

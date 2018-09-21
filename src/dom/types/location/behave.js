@@ -1,8 +1,4 @@
-import {specify} from '../protocol';
-import {IMatch, IEvented} from '../../protocols';
-import {isRegExp, test} from '../reg-exp';
-import {isString} from '../string/construct';
-import {does, when} from '../../core';
+import {specify, IMatch, IEvented, isRegExp, isString, test, does, when} from 'cloe/core';
 
 function matches(self, pattern){
   if (isRegExp(pattern)){
