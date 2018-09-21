@@ -1,4 +1,4 @@
-import {weakMap} from "../weak-map/construct";
+import {weakMap} from "cloe/core";
 
 export default function Cursor(source, path, callbacks){
   this.source = source;
