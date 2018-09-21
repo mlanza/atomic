@@ -10,7 +10,7 @@ import EmptyList, {emptyList} from '../empty-list/construct';
 import {concat} from '../concatenated/construct';
 import {cons} from '../list/construct';
 import {lazySeq} from '../lazy-seq/construct';
-import {each, mapa, compact, distinct, filter, last} from '../lazy-seq/concrete';
+import {each, mapa, compact, filter, last} from '../lazy-seq/concrete';
 import {comp} from '../function/concrete';
 import {isObject} from '../object/construct';
 import {isString} from '../string/construct';

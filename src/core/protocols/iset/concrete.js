@@ -3,7 +3,6 @@ import {reduce, reducing} from "../ireduce/concrete";
 import {conj} from "../icollection/concrete";
 import {includes} from "../iinclusive/concrete";
 import {empty} from "../iemptyablecollection/concrete"
-import {set} from "../../types/set/construct";
 import {concat} from "../../types/concatenated/construct";
 import {every} from "../../types/lazy-seq/concrete";
 import ISet from "./instance";
@@ -34,6 +33,6 @@ export function superset(self, other){
 }
 
 export const unite = overload(null, null, ISet.unite, reducing(ISet.unite));
-export const union = overload(set, identity, union2, reducing(union2));
+export const union = overload(null, identity, union2, reducing(union2));
 export const intersection = overload(null, null, intersection2, reducing(intersection2));
 export const difference = overload(null, null, difference2, reducing(difference2));
