@@ -9,7 +9,7 @@ import {
   noop,
   get,
   implement,
-  specify, satisfies, tranpose, downward, upward,
+  specify, satisfies, downward, upward,
   concat, cons, lazySeq, each, map, compact, filter, last,
   comp, isObject, isString, isFunction, trim, split, str,
   emptyList,
