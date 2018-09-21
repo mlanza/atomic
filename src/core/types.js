@@ -9,7 +9,6 @@ export * from "./types/bus";
 export * from "./types/message-handler";
 export * from "./types/message-processor";
 export * from "./types/concatenated";
-export * from "./types/cursor";
 export * from "./types/date";
 export * from "./types/duration";
 export * from "./types/events";
