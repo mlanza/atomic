@@ -1,5 +1,5 @@
 import {ISteppable, IInverse, ICloneable} from '../../protocols';
-import {identity, constantly, does} from '../../core';
+import {does} from '../../core';
 import {implement} from '../protocol';
 import {min} from '../number/concrete';
 import * as w from '../date/concrete';

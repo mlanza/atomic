@@ -1,7 +1,7 @@
 import {IFn, ISeq, IReduce, IKVReduce, ILookup, IAssociative, IEmptyableCollection, IDescriptive} from "../../protocols";
 import {apply, isFunction} from "../function";
 import {reducing} from "../../protocols/ireduce/concrete";
-import {overload, constantly, branch} from "../../core";
+import {overload, branch} from "../../core";
 import {satisfies} from "../protocol/concrete";
 import {emptyObject} from "./construct";
 

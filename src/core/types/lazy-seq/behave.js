@@ -1,6 +1,6 @@
 import {implement} from '../protocol';
-import {IQuery, IFunctor, IReversible, IYank, IMatch, IArray, IInclusive, IFind, IEquiv, ICollection, INext, ISeq, IReduce, IKVReduce, ISeqable, ISequential, IIndexed, IEmptyableCollection, ICounted, IAppendable, IPrependable} from '../../protocols';
-import {overload, identity, constantly, does} from '../../core';
+import {ILocate, IQuery, IFunctor, IReversible, IYank, IMatch, IArray, IInclusive, IFind, IEquiv, ICollection, INext, ISeq, IReduce, IKVReduce, ISeqable, ISequential, IIndexed, IEmptyableCollection, ICounted, IAppendable, IPrependable} from '../../protocols';
+import {overload, identity, does} from '../../core';
 import Reduced, {isReduced, reduced, unreduced} from "../reduced";
 import {concat} from "../concatenated/construct";
 import {comp} from "../function/concrete";

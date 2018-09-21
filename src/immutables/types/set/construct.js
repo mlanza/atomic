@@ -1,5 +1,5 @@
 import Immutable from "immutable";
-import {IArray} from "../../protocols/iarray";
+import {IArray} from "cloe/core";
 
 export const Set = Immutable.Set;
 

@@ -1,9 +1,24 @@
-import {does, identity, constantly} from '../../core';
-import {implement} from '../protocol';
-import {Set, emptySet} from './construct';
-import {transientSet} from "../transient-set/construct";
-import {unreduced} from '../../types/reduced/concrete';
-import {IArray, ITransient, ISeq, IReduce, ISeqable, ISet, INext, ISequential, ICounted, ICollection, IEmptyableCollection, IInclusive, ICloneable} from '../../protocols';
+import {
+  does,
+  identity,
+  implement,
+  emptySet,
+  transientSet,
+  unreduced,
+  IArray,
+  ITransient,
+  ISeq,
+  IReduce,
+  ISeqable,
+  ISet,
+  INext,
+  ISequential,
+  ICounted,
+  ICollection,
+  IEmptyableCollection,
+  IInclusive,
+  ICloneable
+} from 'cloe/core';
 
 function transient(self){
   return transientSet(toArray(self));

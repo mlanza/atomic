@@ -1,4 +1,4 @@
-import {does, overload, constantly, identity, doto, noop} from '../../core';
+import {does, doto, noop} from '../../core';
 import {reverse} from "../../protocols/ireversible/concrete";
 import {reduce} from "../../protocols/ireduce/concrete";
 import {IMiddleware, ICollection} from '../../protocols';

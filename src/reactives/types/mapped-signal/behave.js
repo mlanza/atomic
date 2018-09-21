@@ -1,6 +1,4 @@
-import {does, constantly} from '../../core';
-import {implement} from '../protocol';
-import {ISubscribe, IDeref, ICounted} from '../../protocols';
+import {does, constantly, implement, ISubscribe, IDeref, ICounted} from 'cloe/core';
 
 function deref(self){
   return self.f(IDeref.deref(self.source))

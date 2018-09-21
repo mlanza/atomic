@@ -1,8 +1,8 @@
 import {does} from '../../core';
 import {implement} from '../protocol';
 import {ISeq, INext, ISeqable, ISequential, IContent, IHierarchy, IQuery, IReduce} from '../../protocols';
-import {lazySeq, filter} from '../lazy-seq';
-import {comp, isFunction} from '../function';
+import {lazySeq} from '../lazy-seq';
+import {comp} from '../function';
 import {iterable} from '../lazy-seq/behave';
 import {_ as v} from "param.macro";
 
@@ -31,8 +31,7 @@ const parents = comp(IHierarchy.parents, seq);
 const contents = comp(IContent.contents, seq);
 
 function query(self, selector){
-  const match = isFunction(selector) ? selector : matches(v, selector);
-  return filter(match, seq(self));
+  return IQuery.query(seq(self), criteria);
 }
 
 function closest(self, selector){

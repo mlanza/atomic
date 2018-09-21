@@ -8,7 +8,6 @@ import {deref} from "../ideref/concrete";
 import {locate} from "../ilocate/concrete";
 import {path} from "../ipath/concrete";
 import {reduce} from "../ireduce/concrete";
-import {reduced} from "../../types/reduced";
 import {lens} from "../../types/lens/construct";
 import {lazySeq, map, mapa, compact, take, drop, takeWhile, dropWhile} from "../../types/lazy-seq";
 import {just} from "../../types/just/construct";

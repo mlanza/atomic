@@ -1,4 +1,4 @@
-import {constantly, does, identity} from '../../core';
+import {does, identity} from '../../core';
 import {implement} from '../protocol';
 import {IEncode, IDecode, IInverse, IComparable} from '../../protocols';
 

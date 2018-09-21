@@ -1,8 +1,8 @@
-import {overload, constantly, does} from '../../core';
+import {does} from '../../core';
 import {implement} from '../protocol';
 import {IArray, IBounds, IInverse, IEncode, ISteppable, ISequential, ICollection, IComparable, INext, IEquiv, IReduce, IKVReduce, ISeqable, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, ISeq, IInclusive} from '../../protocols';
 import {between} from '../../protocols/ibounds/concrete';
-import {reduced, unreduced, isReduced} from '../reduced';
+import {unreduced, isReduced} from '../reduced';
 import {lazySeq} from '../lazy-seq';
 import {iterable} from '../lazy-seq/behave';
 import {encodeable, emptyable} from "../record/behave";

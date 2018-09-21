@@ -1,4 +1,4 @@
-import {constantly, identity, does, overload} from '../../core';
+import {identity, does} from '../../core';
 import {implement} from '../protocol';
 import {IDescriptive, ISeqable, IMap, IAssociative, ILookup, IDeref, IObject, IArray, ICounted, ICollection, IReduce, IInclusive, IYank} from '../../protocols';
 

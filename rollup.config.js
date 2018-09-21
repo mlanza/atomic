@@ -2,11 +2,17 @@ import babel from 'rollup-plugin-babel';
 import json  from 'rollup-plugin-json';
 
 export default {
-  input: 'src/cloe.js',
+  input: [
+    'src/core.js',
+    'src/immutables.js',
+    'src/reactives.js',
+    'src/transducers.js',
+    'src/requests.js',
+    'src/index.js'
+  ],
   output: {
-    file: 'dist/cloe.js',
+    dir: 'dist/cloe',
     format: 'amd',
-    name: "Cloe",
     globals: {
       "jquery": "jQuery",
       "qunit": "QUnit",
@@ -19,7 +25,24 @@ export default {
       "immutable": "Immutable"
     }
   },
-  external: ["immutable", "promise", "fetch", "symbol", "weak-map", "set", "map", "qunit", "jquery"],
+  experimentalCodeSplitting: true,
+  external: [
+    "immutable",
+    "promise",
+    "fetch",
+    "symbol",
+    "weak-map",
+    "set",
+    "map",
+    "qunit",
+    "jquery",
+    "cloe",
+    "cloe/core",
+    "cloe/immutables",
+    "cloe/reactives",
+    "cloe/transducers",
+    "cloe/requests"
+  ],
   plugins: [
     babel({
       exclude: 'node_modules/**'

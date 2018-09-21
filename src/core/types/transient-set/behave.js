@@ -1,8 +1,7 @@
-import {does, identity, constantly} from '../../core';
+import {does, identity} from '../../core';
 import {implement} from '../protocol';
 import {emptyTransientSet, transientSet} from './construct';
 import {filter, lazySeq} from '../lazy-seq';
-import {set} from '../set/construct';
 import {emptyList} from '../empty-list/construct';
 import {apply} from "../function/concrete";
 import {unreduced} from '../reduced/concrete';
@@ -72,14 +71,9 @@ function reduce(self, xf, init){
   return unreduced(memo);
 }
 
-function persistent(self){
-  return set(toArray(self));
-}
-
 export default does(
   implement(ISequential),
   implement(IReduce, {reduce}),
-  implement(IPersistent, {persistent}),
   implement(IArray, {toArray}),
   implement(ISeqable, {seq}),
   implement(IInclusive, {includes}),

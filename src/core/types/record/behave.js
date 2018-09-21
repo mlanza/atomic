@@ -1,4 +1,4 @@
-import {does, overload, constantly, constructs} from '../../core';
+import {does, constructs} from '../../core';
 import {implement} from '../protocol';
 import {reduced} from "../reduced/construct";
 import {IReduce, IKVReduce, IEquiv, IEncode, IObject, IDescriptive, IAssociative, ISeqable, ILookup, ICounted, IMap, ISeq, IRecord, IEmptyableCollection} from '../../protocols';

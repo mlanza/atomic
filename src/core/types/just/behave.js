@@ -1,5 +1,5 @@
 import {implement} from '../protocol';
-import {identity, constantly, does} from '../../core';
+import {identity, does} from '../../core';
 import {maybe} from './construct';
 import {IFunctor, IOtherwise, IFork} from '../../protocols';
 

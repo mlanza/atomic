@@ -2,15 +2,12 @@ import babel from 'rollup-plugin-babel';
 import json  from 'rollup-plugin-json';
 
 export default {
-  input: 'test/cloe.js',
+  input: ['test/core.js'],
   output: {
-    file: 'dist/tests.js',
-    format: 'amd',
-    name: "_",
-    globals: {
-      "cloe": "Cloe"
-    }
+    dir: 'dist/test',
+    format: 'amd'
   },
+  experimentalCodeSplitting: true,
   plugins: [
     babel({
       exclude: 'node_modules/**'
@@ -21,5 +18,13 @@ export default {
       indent: '  '
     })
   ],
-  external: ["cloe"]
+  external: [
+    "fetch",
+    "cloe",
+    "cloe/core",
+    "cloe/immutables",
+    "cloe/requests",
+    "cloe/reactives",
+    "cloe/transducers"
+  ]
 };

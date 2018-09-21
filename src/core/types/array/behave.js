@@ -1,12 +1,12 @@
-import {does, identity, overload, constantly, doto} from '../../core';
+import {does, identity, overload, doto} from '../../core';
 import {implement, specify, satisfies} from '../protocol';
-import {IMap, ITransient, IPersistent, IWrite, ITemplate, IArray, IObject, IFunctor, IInsertable, IYank, IEncode, IDecode, IReversible, ISet, IMapEntry, IEquiv, IReduce, IKVReduce, IAppendable, IPrependable, IInclusive, ICollection, INext, ISeq, IFind, ISeqable, IIndexed, IAssociative, ISequential, IEmptyableCollection, IFn, ICounted, ILookup, ICloneable} from '../../protocols';
+import {IMap, IQuery, ITransient, IPersistent, IWrite, ITemplate, IArray, IObject, IFunctor, IInsertable, IYank, IEncode, IDecode, IReversible, ISet, IMapEntry, IEquiv, IReduce, IKVReduce, IAppendable, IPrependable, IInclusive, ICollection, INext, ISeq, IFind, ISeqable, IIndexed, IAssociative, ISequential, IEmptyableCollection, IFn, ICounted, ILookup, ICloneable} from '../../protocols';
 import {reduced, unreduced, isReduced} from '../reduced';
 import {indexedSeq} from '../indexed-seq';
 import {replace} from '../string/concrete';
 import {range} from '../range/construct';
 import {revSeq} from '../rev-seq';
-import {filter, mapa} from '../lazy-seq/concrete';
+import {filter, mapa} from '../lazy-seq';
 import {transientArray} from '../transient-array/construct';
 import Array, {emptyArray} from './construct';
 import {_ as v} from "param.macro";
@@ -206,6 +206,10 @@ function write(self, message){
   self.push(message);
 }
 
+function query(self, pred){
+  return filter(pred, self);
+}
+
 export const iindexed = does(
   implement(IIndexed, {nth}),
   implement(ICounted, {count: length}));
@@ -217,6 +221,7 @@ export default does(
   iindexed,
   iequiv,
   itemplate,
+  implement(IQuery, {query}),
   implement(ITransient, {transient}),
   implement(ISequential),
   implement(IInsertable, {before, after}),

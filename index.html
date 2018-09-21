@@ -37,7 +37,10 @@
     define('set', function(){
       return Set;
     });
-    require(['cloe', 'tests'], function(Cloe){
+    define('cloe', ['cloe/index'], function(index){
+      return index;
+    });
+    require(['cloe', 'test/core'], function(Cloe){
       window._ = Cloe;
       QUnit.config.autostart = false;
       QUnit.start();

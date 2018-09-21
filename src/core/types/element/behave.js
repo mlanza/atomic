@@ -1,6 +1,6 @@
 import {identity, constantly, does, overload, partial, doto, noop} from '../../core';
 import {implement, specify, satisfies} from '../protocol';
-import {IValue, ILocate, IQuery, IMountable, ISequential, IText, IHtml, IHideable, IMatch, IYank, IInclusive, IInsertable, IArray, IAppendable, IPrependable, IEvented, IAssociative, IMap, IEquiv, ICloneable, ICollection, INext, ISeq, ISeqable, IIndexed, ICounted, ILookup, IReduce, IEmptyableCollection, IHierarchy, IContent} from '../../protocols';
+import {IValue, ILocate, IQuery, IMountable, ISequential, IText, IHtml, IHideable, IMatch, IYank, IInclusive, IInsertable, IArray, IAppendable, IPrependable, IEvented, IAssociative, IMap, ICloneable, ICollection, INext, ISeq, ISeqable, IIndexed, ICounted, ILookup, IReduce, IEmptyableCollection, IHierarchy, IContent} from '../../protocols';
 import {transpose} from '../../protocols/iinclusive/concrete';
 import * as imountable from '../../protocols/imountable/concrete';
 import * as iassociative from '../../protocols/iassociative/concrete';
@@ -241,10 +241,8 @@ export function closest(self, selector){
   }
 }
 
-function query(self, selector, options){
-  return isFunction(selector) ? filter(function(node){
-    return IMatch.matches(node, selector);
-  }, IHierarchy.descendants(self)) : self.querySelectorAll(selector);
+function query(self, selector){
+  return self.querySelectorAll && isString(selector) ? self.querySelectorAll(selector) : filter(IMatch.matches(v, selector), IHierarchy.descendants(self));
 }
 
 function locate(self, selector){

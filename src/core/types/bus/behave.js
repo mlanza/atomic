@@ -1,4 +1,4 @@
-import {does, overload, constantly, identity} from '../../core';
+import {does, identity} from '../../core';
 import {implement, forwardTo} from '../protocol';
 import {IDispatch, ISubscribe, IMiddleware, ILookup, ISwap, IReset, IDeref, IDisposable, IConfigured} from '../../protocols';
 

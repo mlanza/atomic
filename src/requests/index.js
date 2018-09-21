@@ -1,25 +1,33 @@
-import {satisfies} from "./core/types/protocol/concrete";
-import {getIn, get} from "./core/protocols/ilookup/concrete";
-import {absorb} from "./core/associatives";
-import {dissoc} from "./core/protocols/imap/concrete";
-import {fmap} from "./core/protocols/ifunctor/concrete";
-import {count} from "./core/protocols/icounted/concrete";
-import {fill} from "./core/protocols/itemplate/concrete";
-import {first} from "./core/protocols/iseq/concrete";
-import {reducekv} from "./core/protocols/ikvreduce/concrete";
-import {keys} from "./core/protocols/imap/concrete";
-import {includes} from "./core/protocols/iinclusive/concrete";
-import {assoc, update, assocIn, contains} from "./core/protocols/iassociative/concrete";
-import {filter, mapa, map, every, dropWhile, takeWhile} from "./core/types/lazy-seq/concrete";
-import {emptyObject} from "./core/types/object/construct";
-import {not} from "./core/types/boolean";
-import {reSeq} from "./core/types/reg-exp/concrete";
-import {comp} from "./core/types/function/concrete";
-import {IDescriptive} from "./core/protocols/idescriptive/instance";
-import {fork} from "./core/protocols/ifork/concrete";
-import {locate} from "./core/protocols/ilocate/concrete";
-import Task, {task} from "./core/types/task";
 import fetch from "fetch";
+import {
+  satisfies,
+  get,
+  absorb,
+  fmap,
+  count,
+  fill,
+  first,
+  reducekv,
+  keys,
+  includes,
+  assoc,
+  update,
+  contains,
+  filter,
+  mapa,
+  map,
+  every,
+  dropWhile,
+  takeWhile,
+  not,
+  reSeq,
+  comp,
+  IDescriptive,
+  fork,
+  locate,
+  Task,
+  task
+} from "cloe/core";
 import {_ as v} from "param.macro";
 
 const wants = reSeq(/\{([a-z0-9]+)\}/gi, v);
