@@ -12,15 +12,16 @@ const _requests = core.impart(requests, core.partly);
 const _reactives = core.impart(reactives, core.partly);
 const _transducers = core.impart(transducers, core.partly);
 
-export default Object.assign(
-  core.placeholder,
-  _core,
-  _dom,
-  _immutables, {
-    observable: _reactives.observable,
-    click: _reactives.click,
-    dom: _dom,
-    requests: _requests,
-    reactives: _reactives,
-    transducers: _transducers
-  });
+const placeholder = Object.assign(_core.placeholder, _core, _dom, _immutables, {
+  observable: _reactives.observable,
+  click: _reactives.click
+});
+
+export default Object.assign(placeholder, {
+  core: _core,
+  dom: _dom,
+  immutables: _immutables,
+  requests: _requests,
+  reactives: _reactives,
+  transducers: _transducers
+});
