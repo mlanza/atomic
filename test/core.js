@@ -1,6 +1,5 @@
 import {_ as v} from "param.macro";
 import * as _ from "cloe";
-import jQuery from "qunit";
 import QUnit from "qunit";
 
 const stooges = ["Larry","Curly","Moe"],
@@ -301,7 +300,7 @@ QUnit.test("observable", function(assert){
   _.dispose(tallied);
   tally.click();
   const source = _.observable(0);
-  const sink   = _.signals.signal(_.transducers.map(_.inc), source);
+  const sink   = _.reactives.signal(_.transducers.map(_.inc), source);
   const msink  = _.fmap(source, _.inc);
   source |> _.swap(v, _.inc);
   assert.equal(clicks |> _.deref, 1);

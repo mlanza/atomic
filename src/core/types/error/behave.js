@@ -1,5 +1,5 @@
 import {IFunctor, IFork} from '../../protocols';
-import {identity, constantly, does, overload} from '../../core';
+import {identity, does} from '../../core';
 import {implement} from '../protocol';
 import Error from './construct';
 

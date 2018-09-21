@@ -1,4 +1,4 @@
-import {constantly, identity, does, overload} from '../../core';
+import {identity, does, overload} from '../../core';
 import {implement} from '../protocol';
 import EmptyList, {emptyList} from '../../types/empty-list/construct';
 import {cons} from '../../types/list/construct';

@@ -1,7 +1,5 @@
-import {ISequential} from '../../protocols';
-import {distinct, compact} from "../lazy-seq/concrete";
-import {cons} from "../list/construct";
-import {satisfies} from "../protocol/concrete";
+import {ISequential, cons, satisfies} from 'cloe/core';
+import {distinct} from "../set/concrete";
 
 export default function Members(items){
   this.items = items;

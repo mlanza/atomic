@@ -1,8 +1,4 @@
-import {implement} from '../protocol';
-import {does, noop} from '../../core';
-import {IStateMachine, ISubscribe, IDisposable, ICounted, IDeref} from '../../protocols';
-import {transition} from "../../protocols/istatemachine/concrete";
-import {swap} from "../../protocols/iswap/concrete";
+import {implement, does, noop, IStateMachine, ISubscribe, IDisposable, ICounted, IDeref, transition, swap} from 'cloe/core';
 import {_ as v} from "param.macro";
 
 function sub(self, callback){

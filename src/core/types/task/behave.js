@@ -1,5 +1,5 @@
 import {IFunctor, IFork, ISubscribe, IChainable} from '../../protocols';
-import {identity, constantly, does, overload, noop} from '../../core';
+import {identity, does, overload, noop} from '../../core';
 import {implement} from '../protocol';
 import {task} from './construct';
 import {comp} from "../function/concrete";

@@ -1,13 +1,13 @@
-import {constantly, identity, does} from '../../core';
+import {identity, does} from '../../core';
 import {implement} from '../protocol';
 import {indexedSeq} from './construct';
 import {revSeq} from '../../types/rev-seq/construct';
-import {reduced, isReduced, unreduced} from '../../types/reduced';
-import {IArray, IEquiv, IReversible, IMapEntry, IFind, IInclusive, IAssociative, IAppendable, IPrependable, ICollection, INext, ICounted, IReduce, IKVReduce, ISeq, ISeqable, ISequential, IIndexed, ILookup, IFn, IEmptyableCollection} from '../../protocols';
+import {isReduced, unreduced} from '../../types/reduced';
+import {IArray, IQuery, IEquiv, IReversible, IMapEntry, IFind, IInclusive, IAssociative, IAppendable, IPrependable, ICollection, INext, ICounted, IReduce, IKVReduce, ISeq, ISeqable, ISequential, IIndexed, ILookup, IFn, IEmptyableCollection} from '../../protocols';
 import {locate} from '../../protocols/ilocate/concrete';
 import {concat} from '../../types/concatenated/construct';
 import {iterable} from '../lazy-seq/behave';
-import {drop} from '../lazy-seq/concrete';
+import {drop, filter} from '../lazy-seq/concrete';
 import {encodeable} from '../record/behave';
 import {emptyArray} from '../../types/array/construct';
 
@@ -97,9 +97,14 @@ function includes(self, x){
   });
 }
 
+function query(self, pred){
+  return filter(pred, self);
+}
+
 export default does(
   iterable,
   encodeable,
+  implement(IQuery, {query}),
   implement(ISequential),
   implement(IIndexed, {nth}),
   implement(IReversible, {reverse}),

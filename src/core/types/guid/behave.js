@@ -1,4 +1,4 @@
-import {does, overload, constantly, identity} from '../../core';
+import {does} from '../../core';
 import {implement} from '../protocol';
 import {IEncode, IAssociative} from '../../protocols';
 import Symbol from '../symbol/construct';

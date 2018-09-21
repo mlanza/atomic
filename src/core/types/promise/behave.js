@@ -1,5 +1,5 @@
 import {IFunctor, IFork, IOtherwise} from '../../protocols';
-import {identity, constantly, does, overload} from '../../core';
+import {identity, does, overload} from '../../core';
 import {implement} from '../protocol';
 import Promise from './construct';
 

@@ -1,7 +1,6 @@
 import {does, overload} from "../../core";
 import {apply} from "../../types/function/concrete";
 import {isString} from "../../types/string/construct";
-import {compact} from "../../types/lazy-seq/concrete";
 import {count} from "../../protocols/icounted/concrete";
 import {reduce} from "../../protocols/ireduce/concrete";
 import IEvented from "./instance";

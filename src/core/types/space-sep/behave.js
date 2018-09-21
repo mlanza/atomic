@@ -1,4 +1,4 @@
-import {constantly, identity, does, overload} from '../../core';
+import {identity, does} from '../../core';
 import {implement} from '../protocol';
 import {filtera} from '../../types/lazy-seq/concrete';
 import {locate} from '../../protocols/ilocate/concrete';

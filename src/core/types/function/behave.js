@@ -1,7 +1,8 @@
 import {does, partial} from '../../core';
 import {implement} from '../protocol';
 import {apply} from './concrete';
-import {IFn, ICheckable, IAssociative, ILookup, IEncode, IAppendable, IPrependable, IDispatch} from '../../protocols';
+import {get} from "../../protocols/ilookup/concrete";
+import {INamed, IFn, ICheckable, IAssociative, ILookup, IEncode, IAppendable, IPrependable, IDispatch} from '../../protocols';
 import Symbol from '../symbol/construct';
 
 export function append(f, ...applied){
@@ -28,7 +29,12 @@ function check(self, text){
   return self(text);
 }
 
+function name(self){
+  return self.name ? self.name : get(/function (.+)\s?\(/.exec(self.toString()), 1); //latter is for IE
+}
+
 export default does(
+  implement(INamed, {name}),
   implement(ICheckable, {check}),
   implement(IDispatch, {dispatch}),
   implement(IAppendable, {append}),

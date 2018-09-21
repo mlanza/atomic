@@ -2,7 +2,6 @@ import {IEquiv, IMap, IArray, IAssociative, ILookup, IInclusive, IIndexed, IColl
 import {identity, constantly, overload} from '../../core';
 import EmptyList, {emptyList} from '../empty-list/construct';
 import Array, {emptyArray} from '../array/construct';
-import {set} from '../set/construct';
 import {inc, randInt} from '../number/concrete';
 import {reduced} from '../reduced/construct';
 import {not} from '../boolean';
@@ -18,6 +17,7 @@ import {satisfies} from '../protocol/concrete';
 import Symbol from '../symbol/construct';
 import {update, assocIn} from "../../protocols/iassociative/concrete";
 import {reducekv} from "../../protocols/ikvreduce/concrete";
+import {first} from "../../protocols/iseq/concrete";
 
 function transduce3(xform, f, coll){
   return transduce4(xform, f, f(), coll);
@@ -152,24 +152,7 @@ export function filter(pred, xs){
   }) : filter(pred, ISeq.rest(coll));
 }
 
-function distinct2(coll, seen){
-  if (ISeqable.seq(coll)) {
-    let fst = ISeq.first(coll);
-    if (IInclusive.includes(seen, fst)) {
-      return distinct2(ISeq.rest(coll), seen);
-    } else {
-      return lazySeq(fst, function(){
-        return distinct2(ISeq.rest(coll), ICollection.conj(seen, fst));
-      });
-    }
-  } else {
-    return emptyList();
-  }
-}
-
-export function distinct(coll){
-  return distinct2(coll, set());
-}
+export const detect = comp(first, filter);
 
 export function compact(coll){
   return filter(identity, coll);

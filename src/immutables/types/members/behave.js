@@ -1,10 +1,15 @@
-import {overload, identity, does} from "../../core";
-import {implement, satisfies} from '../protocol';
-import {IFunctor, ISeq, INext, ISequential} from '../../protocols';
-import {mapcat} from "../lazy-seq/concrete";
-import {reduced} from "../reduced/construct";
-import Members, {members, emptyMembers} from "./construct";
-import behave from "../series/behave";
+import {
+  serieslike as behave,
+  does,
+  implement,
+  satisfies,
+  mapcat,
+  IFunctor,
+  ISeq,
+  INext,
+  ISequential
+} from "cloe/core";
+import {members, emptyMembers} from "./construct";
 
 function fmap(self, f){
   return members(mapcat(function(item){

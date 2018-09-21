@@ -18,3 +18,5 @@ export function fromTask(task){
     fork(task, reject, resolve);
   });
 }
+
+Promise.fromTask = fromTask;

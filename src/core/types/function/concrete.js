@@ -1,9 +1,8 @@
 import {IArray}  from "../../protocols/iarray";
 import {IReduce}  from "../../protocols/ireduce";
-import {overload, identity, constantly, partial} from "../../core";
+import {overload, identity, partial} from "../../core";
 import {isNil}  from "../nil";
 import {satisfies}  from "../protocol";
-import {reduced}  from "../reduced/construct";
 import {isFunction}  from "./construct";
 export {complement, partial, slice} from "../../core";
 

@@ -1,6 +1,6 @@
 import {identity, constantly, does, doto, overload} from '../../core';
 import {implement, specify} from '../protocol';
-import {IReduce, ISeqable, ISeq, INext, IMatch, IHierarchy, IMountable, IEvented, IArray} from '../../protocols';
+import {IReduce, ISeqable, ISeq, INext, IMatch, IHierarchy, IMountable, IArray} from '../../protocols';
 import {each} from "../lazy-seq/concrete";
 import {cons} from "../list/construct";
 import {emptyList} from "../empty-list/construct";
