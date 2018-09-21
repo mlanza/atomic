@@ -1,6 +1,4 @@
-import {identity, does} from '../../core';
-import {implement} from '../protocol';
-import {IDescriptive, ISeqable, IMap, IAssociative, ILookup, IDeref, IObject, IArray, ICounted, ICollection, IReduce, IInclusive, IYank} from '../../protocols';
+import {identity, does, implement, IDescriptive, ISeqable, IMap, IAssociative, ILookup, IDeref, IObject, IArray, ICounted, ICollection, IReduce, IInclusive, IYank} from 'cloe/core';
 
 function lookup(self, key){
   return self.node[key];
@@ -20,16 +18,19 @@ function dissoc(self, key){
   return self;
 }
 
-function includes(self, [key, value]){
+function includes(self, entry){
+  const key = entry[0], value = entry[1];
   return self.node[key] === value;
 }
 
-function yank(self, [key, value]){
+function yank(self, entry){
+  const key = entry[0], value = entry[1];
   includes(self, [key, value]) && dissoc(self, key);
   return self;
 }
 
-function conj(self, [key, value]){
+function conj(self, entry){
+  const key = entry[0], value = entry[1];
   return assoc(self, key, value);
   return self;
 }

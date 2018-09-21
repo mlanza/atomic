@@ -1,11 +1,8 @@
-import {constantly, identity, does, overload} from '../../core';
-import {implement} from '../protocol';
-import {mapa, compact} from '../../types/lazy-seq/concrete';
-import {trim, split, str} from '../../types/string/concrete';
-import {IDescriptive, ISeqable, IMap, IAssociative, ILookup, IDeref, IObject, IArray, ICounted, ICollection, IReduce, IInclusive, IYank} from '../../protocols';
+import {constantly, identity, does, overload, implement, mapa, compact, trim, split, str, IDescriptive, ISeqable, IMap, IAssociative, ILookup, IDeref, IObject, IArray, ICounted, ICollection, IReduce, IInclusive, IYank} from 'cloe/core';
 
 function asText(obj){
-  return mapa(function([key, value]){
+  return mapa(function(entry){
+    const key = entry[0], value = entry[1];
     return str(key, ": ", value, ";");
   }, ISeqable.seq(obj)).join(" ");
 }

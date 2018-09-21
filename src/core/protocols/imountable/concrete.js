@@ -4,7 +4,6 @@ import {root} from "../../protocols/ihierarchy/concrete";
 import {getIn} from "../../protocols/ilookup/concrete";
 import {trigger, one} from "../../protocols/ievented/concrete";
 import {specify, satisfies} from "../../types/protocol";
-import {isHTMLDocument} from "../../types/html-document/construct";
 import {partial, comp} from "../../types/function/concrete";
 import {doto, overload, noop} from '../../../core/core';
 import {_ as v} from "param.macro";
@@ -21,7 +20,9 @@ export function mount(self, parent){
 }
 
 function mounts1(self){
-  return mounts2(self, isHTMLDocument);
+  return mounts2(self, function(el){
+    return el instanceof HTMLDocument;
+  });
 }
 
 function mounts2(self, pred){

@@ -1,4 +1,4 @@
-import {IReduce, ICollection} from '../../protocols';
+import {IReduce, ICollection} from 'cloe/core';
 
 export default Element;
 

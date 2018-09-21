@@ -1,8 +1,4 @@
-import {identity, does} from '../../core';
-import {implement} from '../protocol';
-import {filtera} from '../../types/lazy-seq/concrete';
-import {locate} from '../../protocols/ilocate/concrete';
-import {ISequential, IDeref, IArray, ICounted, ICollection, IInclusive, IYank} from '../../protocols';
+import {identity, does, implement, filtera, locate, ISequential, IDeref, IArray, ICounted, ICollection, IInclusive, IYank} from 'cloe/core';
 
 function seq(self){
   const text = self.element.getAttribute(self.key);
