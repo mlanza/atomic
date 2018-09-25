@@ -1,4 +1,5 @@
-import {identity, constantly, does, doto, overload, implement, specify, each, cons, emptyList, IReduce, ISeqable, ISeq, INext, IMatch, IHierarchy, IMountable, IArray} from 'cloe/core';
+import {identity, constantly, does, doto, overload, implement, specify, each, cons, emptyList, IReduce, ISeqable, ISeq, INext, IMatch, IHierarchy, IArray} from 'cloe/core';
+import {IMountable} from "../../protocols";
 import behave from "../element/behave";
 import {_ as v} from "param.macro";
 

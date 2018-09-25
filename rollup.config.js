@@ -9,7 +9,7 @@ export default {
     'src/reactives.js',
     'src/transducers.js',
     'src/requests.js',
-    'src/index.js'
+    'src/validates.js'
   ],
   output: {
     dir: 'dist/cloe',
@@ -43,6 +43,7 @@ export default {
     "cloe/reactives",
     "cloe/transducers",
     "cloe/requests",
+    "cloe/validates",
     "cloe/dom"
   ],
   plugins: [

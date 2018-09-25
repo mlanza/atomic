@@ -1,16 +1,16 @@
 import {
   IDeref,
-  IPublish,
-  ISubscribe,
   ICollection,
   IDisposable,
   IReset,
   ISwap,
   IAssociative,
   IFunctor,
+  Function,
   doto,
   does,
   overload,
+  apply,
   identity,
   constantly,
   memoize,
@@ -22,28 +22,29 @@ import {
   comp,
   partial,
   spread,
-  resolve,
-  Publisher,
-  publisher,
   str,
   notEq,
   implement,
   specify,
   value,
-  slice,
-  on,
-  off,
-  transducers as t
+  slice
 } from "cloe/core";
+import {on, off} from "./protocols/concrete";
+import {IDispatch, IPublish, ISubscribe} from "./protocols";
 import LazyPub from "./types/lazy-pub/construct";
 import Observable from "./types/observable/construct";
+import Publisher from "./types/publisher/construct";
 import {
-  map,
+  mapped,
   conduit,
   lazyPub,
-  observable
+  observable,
+  publisher
 } from "./types";
+import * as t from "cloe/transducers";
 export * from "./types";
+export * from "./protocols";
+export * from "./protocols/concrete";
 import {_ as v} from "param.macro";
 
 function signal1(source){
@@ -91,7 +92,7 @@ export function computed(f, source){
 }
 
 function fmap(source, f){
-  return map(f, source); //signal3(comp(t.map(f), t.dedupe()), f(IDeref.deref(source)), source);
+  return mapped(f, source); //signal3(comp(t.map(f), t.dedupe()), f(IDeref.deref(source)), source);
 }
 
 const fmappable = implement(IFunctor, {fmap});
@@ -159,8 +160,8 @@ export const input = partial(control, "input");
 
 export function focus(el){
   return join(observable(el === document.activeElement),
-    map(constantly(true), event(el, "focus")),
-    map(constantly(false), event(el, "blur")));
+    mapped(constantly(true), event(el, "focus")),
+    mapped(constantly(false), event(el, "blur")));
 }
 
 export function join(sink, ...sources){
@@ -172,7 +173,7 @@ export function join(sink, ...sources){
 }
 
 export function calc(f, ...sources){
-  return map(spread(f), latest(sources));
+  return mapped(spread(f), latest(sources));
 }
 
 export function latest(sources){
@@ -208,7 +209,7 @@ export const hist = overload(null, partial(hist2, 2), hist2);
 
 export function fromPromise(promise, init){
   const sink = observable(init || null);
-  IFunctor.fmap(resolve(promise), IPublish.pub(sink, v));
+  IFunctor.fmap(promise, IPublish.pub(sink, v));
   return sink;
 }
 
@@ -236,3 +237,25 @@ export const event = overload(null, null, event2, event3);
 export function click(el){
   return event(el, "click");
 }
+
+function mutate3(self, state, f){
+  ISubscribe.sub(state, partial(f, self));
+  return self;
+}
+
+function mutate2(state, f){
+  return mutate3(v, state, f);
+}
+
+export const mutate = overload(null, null, mutate2, mutate3);
+
+(function(){
+
+  function dispatch(self, args){
+    return apply(self, args);
+  }
+
+  doto(Function,
+    implement(IDispatch, {dispatch}));
+
+})();

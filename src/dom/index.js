@@ -1,10 +1,15 @@
-import {assoc, str, overload, conj, yank, transpose, trigger, append, absorb, fmap, sub, dispatch, each, expansive, obj, IReduce, first, query, locate, descendants, matches} from "cloe/core";
+import {assoc, str, include, overload, conj, yank, transpose, append, absorb, fmap, each, expansive, obj, IReduce, first, query, locate, descendants, matches} from "cloe/core";
+import {sub, trigger, dispatch} from "cloe/reactives";
 import {props} from "./types/props/construct";
 import {classes} from "./types/space-sep/construct";
 import {fragment} from "./types/document-fragment/construct";
 import {element} from "./types/element/construct";
+import {mounts} from "./protocols/imountable/concrete";
+import Promise from "promise";
 import {_ as v} from "param.macro";
 export * from "./types";
+export * from "./protocols";
+export * from "./protocols/concrete";
 
 function prop3(self, key, value){
   return assoc(props(self), key, value);
@@ -43,12 +48,12 @@ function fire(parent, event, what, detail){
   trigger(parent, event, {bubbles: true, detail});
 }
 
-function install3(render, config, parent){
+function load3(render, config, parent){
   var img = tag('img'),
       loading = config.spinner ? img(config.spinner) : null;
   loading && append(parent, loading);
   fire(parent, "loading", config.what, {config});
-  fmap(resolve(render()),
+  fmap(Promise.resolve(render()),
     mounts,
     function(child){
       append(parent, child);
@@ -57,27 +62,26 @@ function install3(render, config, parent){
     });
 }
 
-function install4(defaults, render, config, parent){
+function load4(defaults, render, config, parent){
   config = absorb({}, defaults || {}, config || {});
-  install3(function(){
+  load3(function(){
     return render(config);
   }, config, parent);
 }
 
-function install5(defaults, create, render, config, parent){
+function load5(defaults, create, render, config, parent){
   config = absorb({changed: [], commands: []}, defaults || {}, config || {});
-  install3(function(){
+  load3(function(){
     const bus = create(config);
     each(sub(bus, v), config.changed);
     each(dispatch(bus, v), config.commands);
+    fire(parent, "bus", config.what, bus);
     return render(bus);
   }, config, parent);
 }
 
-export const install = overload(null, null, null, install3, install4, install5);
-
-export const fmt = expansive(str);
-export const tag = obj(expansive(element), Infinity);
+export const load = overload(null, null, null, load3, load4, load5);
+export const tag  = obj(expansive(element), Infinity);
 export const frag = expansive(fragment);
 
 function tagged(f, keys){

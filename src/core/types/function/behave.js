@@ -2,7 +2,7 @@ import {does, partial} from '../../core';
 import {implement} from '../protocol';
 import {apply} from './concrete';
 import {get} from "../../protocols/ilookup/concrete";
-import {INamed, IFn, ICheckable, IAssociative, ILookup, IEncode, IAppendable, IPrependable, IDispatch} from '../../protocols';
+import {INamed, IFn, IAssociative, ILookup, IEncode, IAppendable, IPrependable} from '../../protocols';
 import Symbol from '../symbol/construct';
 
 export function append(f, ...applied){
@@ -21,22 +21,12 @@ function encode(self, label, refstore, seed){
   return IAssociative.assoc({id: id}, label, self[Symbol.toStringTag]);
 }
 
-function dispatch(self, args){
-  return apply(self, args);
-}
-
-function check(self, text){
-  return self(text);
-}
-
 function name(self){
   return self.name ? self.name : get(/function (.+)\s?\(/.exec(self.toString()), 1); //latter is for IE
 }
 
 export default does(
   implement(INamed, {name}),
-  implement(ICheckable, {check}),
-  implement(IDispatch, {dispatch}),
   implement(IAppendable, {append}),
   implement(IPrependable, {prepend: partial}),
   implement(IEncode, {encode}),

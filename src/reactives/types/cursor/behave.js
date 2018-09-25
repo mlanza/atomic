@@ -1,4 +1,6 @@
-import {implement, does, apply, IPath, IPublish, ISubscribe, IReset, ISwap, IDeref, IDisposable, IDispatch, ICounted} from 'cloe/core';
+import {implement, does, apply, IPath, IReset, ISwap, IDeref, IDisposable, ICounted} from 'cloe/core';
+import {IPublish, ISubscribe, IDispatch} from "../../protocols";
+import {sub as _sub, unsub as _unsub} from "../../protocols/concrete";
 import * as _ from "cloe/core";
 
 function path(self){
@@ -26,12 +28,12 @@ function sub(self, callback){
     callback(_.getIn(state, self.path));
   }
   self.callbacks.set(callback, cb);
-  _.sub(self.source, cb);
+  _sub(self.source, cb);
 }
 
 function unsub(self, callback){
   const cb = self.callbacks.get(callback);
-  _.unsub(self.source, cb);
+  _unsub(self.source, cb);
   cb && self.callbacks.delete(callback);
 }
 

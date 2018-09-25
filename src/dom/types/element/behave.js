@@ -1,4 +1,5 @@
 import {
+  assoc as _assoc,
   identity,
   toggles,
   constantly,
@@ -9,14 +10,54 @@ import {
   noop,
   get,
   implement,
-  specify, satisfies, downward, upward,
-  concat, cons, lazySeq, each, map, compact, filter, last,
-  comp, isObject, isString, isFunction, trim, split, str,
+  specify,
+  satisfies,
+  downward,
+  upward,
+  concat,
+  cons,
+  lazySeq,
+  each,
+  map,
+  compact,
+  filter,
+  last,
+  comp,
+  isObject,
+  isString,
+  isFunction,
+  trim,
+  split,
+  str,
   emptyList,
-  weakMap, isIdentical,
-  IValue, ILocate, IQuery, IMountable, ISequential, IText, IHtml, IHideable, IMatch, IYank, IInclusive, IInsertable, IArray, IAppendable, IPrependable, IEvented, IAssociative, IMap, ICloneable, ICollection, INext, ISeq, ISeqable, ICounted, ILookup, IReduce, IEmptyableCollection, IHierarchy, IContent
+  weakMap,
+  isIdentical,
+  ILocate,
+  IQuery,
+  ISequential,
+  IMatch,
+  IYank,
+  IInclusive,
+  IInsertable,
+  IArray,
+  IAppendable,
+  IPrependable,
+  IAssociative,
+  IMap,
+  ICloneable,
+  ICollection,
+  INext,
+  ISeq,
+  ISeqable,
+  ICounted,
+  ILookup,
+  IReduce,
+  IEmptyableCollection,
+  IHierarchy
 } from 'cloe/core';
-import * as _ from "cloe/core";
+import {IEvented} from "cloe/reactives";
+import * as m from "../../protocols/imountable/concrete"
+import {IHtml, IText, IValue, IContent, IHideable, IMountable} from "../../protocols";
 import {nestedAttrs} from "../nested-attrs/construct";
 import {isDocumentFragment} from "../document-fragment/construct";
 import {isElement} from "../element/construct";
@@ -74,7 +115,7 @@ function eventContext(catalog){
           callback.call(found, e);
         }
       }
-    }, _.assoc(catalog, callback, v)));
+    }, _assoc(catalog, callback, v)));
     return self;
   }
 
@@ -138,8 +179,8 @@ function mount(self, parent){
 }
 
 function conj(self, other){
-  if (_.mountable(other)) {
-    _.mount(other, self);
+  if (m.mountable(other)) {
+    m.mount(other, self);
   } else if (isFunction(other)){
     return conj(self, other());
   } else if (isAttrs(other)){

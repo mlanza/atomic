@@ -1,29 +1,32 @@
 import {does} from "../../core";
+import {matches} from "../../protocols/imatch/concrete";
 import {implement} from '../protocol';
-import {apply} from '../function/concrete';
-import {handler} from '../router/concrete';
-import {IFn, IAppendable, IPrependable, IEvented, IDispatch} from '../../protocols';
+import {detect} from "../lazy-seq/concrete";
+import {IFn, IAppendable, IPrependable} from '../../protocols';
+import {_ as v} from "param.macro";
 
-function append(self, handler){
-  self.router = IAppendable.append(self.router, handler);
+function append(self, method){
+  self.methods.push(method);
   return self;
 }
 
-function prepend(self, handler){
-  self.router = IPrependable.prepend(self.router, handler);
+function prepend(self, method){
+  self.methods.unshift(method);
   return self;
-}
-
-function on(self, pred, callback){
-  return append(self, handler(pred, callback, apply));
 }
 
 function invoke(self, ...args){
-  return IDispatch.dispatch(self.router, args);
+  const method = detect(matches(v, args), self.methods);
+  if (method) {
+    return IFn.invoke(method, args);
+  } else if (self.fallback) {
+    return self.fallback(...args);
+  } else {
+    throw new Error("No handler for these args.");
+  }
 }
 
 export default does(
   implement(IFn, {invoke}),
-  implement(IEvented, {on}),
   implement(IPrependable, {prepend}),
   implement(IAppendable, {append}));

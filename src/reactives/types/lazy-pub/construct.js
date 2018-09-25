@@ -1,4 +1,5 @@
-import {fsm, sub, state, comp} from "cloe/core";
+import {fsm, state, comp} from "cloe/core";
+import {sub} from "../../protocols/isubscribe/concrete";
 import {observable, unprimed} from "../observable";
 
 export default function LazyPub(sink, toggle){

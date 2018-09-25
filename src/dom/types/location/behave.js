@@ -1,10 +1,11 @@
-import {specify, IMatch, IEvented, isRegExp, isString, test, does, when} from 'cloe/core';
+import {specify, IMatch, isRegExp, isString, test, does, when} from 'cloe/core';
+import {IEvented} from "cloe/reactives";
 
 function matches(self, pattern){
   if (isRegExp(pattern)){
     return test(pattern, decodeURI(self.href));
   } else if (isString(pattern)) {
-    return decodeURI(self.href).indexOf(pattern) > -1;
+    return matches(self, new RegExp(pattern, "i"));
   }
 }
 

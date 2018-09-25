@@ -1,4 +1,5 @@
-import {pub, sub, unsub, partial, overload, identity} from "cloe/core";
+import {partial, overload, identity} from "cloe/core";
+import {pub, sub, unsub} from "../../protocols/concrete";
 import {lazyPub} from "../lazy-pub/construct";
 
 function conduit2(sink, source){
