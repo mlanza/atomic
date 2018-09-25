@@ -1,4 +1,5 @@
-import {overload, does, implement, IText, locate, query} from 'cloe/core';
+import {overload, does, implement, locate, query} from 'cloe/core';
+import {IText} from "../../protocols";
 import * as _ from 'cloe/core';
 
 function text1(self){

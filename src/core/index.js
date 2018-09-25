@@ -1,8 +1,7 @@
 import {overload, toggles, identity, obj, partly, doto, branch, unspread, applying} from "./core";
-import {IDecorated, IEventProvider, IAppendable, IHash, ITemplate, IMiddleware, IDispatch, IYank, IArray, IAssociative, IBounds, IInverse, ICloneable, ICollection, IComparable, IContent, ICounted, IDecode, IDeref, IDisposable, IEmptyableCollection, IEncode, IEquiv, IEvented, IFind, IFn, IFork, IFunctor, IHideable, IHierarchy, IHtml, IInclusive, IIndexed, IInsertable, IKVReduce, ILookup, IMap, IMapEntry, IMatch, INext, IObject, IOtherwise, IPrependable, IPublish, IReduce, IReset, IReversible, ISeq, ISeqable, ISet, ISteppable, ISubscribe, ISwap, IText} from "./protocols";
+import {IDecorated, IAppendable, IHash, ITemplate, IYank, IArray, IAssociative, IBounds, IInverse, ICloneable, ICollection, IComparable, ICounted, IDecode, IDeref, IDisposable, IEmptyableCollection, IEncode, IEquiv, IFind, IFn, IFork, IFunctor, IHierarchy, IInclusive, IIndexed, IInsertable, IKVReduce, ILookup, IMap, IMapEntry, IMatch, INext, IObject, IOtherwise, IPrependable, IReduce, IReset, IReversible, ISeq, ISeqable, ISet, ISteppable, ISwap} from "./protocols";
 import {satisfies, filter, spread, specify, maybe, each, see, isEmpty, duration, compact, remove, flatten, map, sort, flip, realized, comp, isNumber, mapSomeVals, isFunction, apply} from "./types";
-import {matches, name, descendants, query, locate, transient, persistent, mounts, deref, get, assoc, yank, conj, hash, otherwise, fmap, reducing, reducekv, includes, excludes} from "./protocols/concrete";
-import {resolve} from "./types/promise/concrete";
+import {matches, name, descendants, query, locate, transient, persistent, deref, get, assoc, yank, conj, hash, otherwise, fmap, reducing, reducekv, includes, excludes} from "./protocols/concrete";
 import {isString, str} from "./types/string";
 import {and, unless} from "./predicates";
 import {absorb} from "./associatives";
@@ -85,3 +84,5 @@ export function opt(value, ...fs){
 export function withMutations(self, f){
   return persistent(f(transient(self)));
 }
+
+export const fmt = expansive(str);

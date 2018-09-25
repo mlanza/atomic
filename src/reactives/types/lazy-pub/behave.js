@@ -1,4 +1,5 @@
-import {implement, does, noop, IStateMachine, ISubscribe, IDisposable, ICounted, IDeref, transition, swap} from 'cloe/core';
+import {implement, does, noop, IStateMachine, IDisposable, ICounted, IDeref, transition, swap} from 'cloe/core';
+import {ISubscribe} from "../../protocols/isubscribe/instance";
 import {_ as v} from "param.macro";
 
 function sub(self, callback){

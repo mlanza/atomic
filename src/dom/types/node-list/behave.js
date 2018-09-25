@@ -1,4 +1,5 @@
-import {does, implement, lazySeq, comp, iterable, ISeq, INext, ISeqable, ISequential, IContent, IHierarchy, IQuery, IReduce} from 'cloe/core';
+import {does, implement, lazySeq, comp, iterable, ISeq, INext, ISeqable, ISequential, IHierarchy, IQuery, IReduce} from 'cloe/core';
+import {IContent} from "../../protocols";
 import {_ as v} from "param.macro";
 
 function seq2(self, idx){

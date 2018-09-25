@@ -1,6 +1,11 @@
-import {_ as v} from "param.macro";
-import * as _ from "cloe";
+import * as _ from "cloe/core";
+import * as I from "cloe/immutables";
+import * as dom from "cloe/dom";
+import * as $ from "cloe/reactives";
+import * as vd from "cloe/validates";
+import * as t from "cloe/transducers";
 import QUnit from "qunit";
+import {_ as v} from "param.macro";
 
 const stooges = ["Larry","Curly","Moe"],
       pieces  = {pawn: 1, knight: 3, bishop: 3, rook: 5, queen: 10, king: Infinity},
@@ -9,28 +14,28 @@ const stooges = ["Larry","Curly","Moe"],
 
 QUnit.test("router & multimethod", function(assert){ //not just for fns!
   const f =
-    _.router() //router handlers need not be (but can be) fns
-      |> _.append(v, _.handler(_.signature(_.isString), _.str(v, "!"), _.apply)) //use apply to spread the message against the pred and callback
-      |> _.append(v, _.handler(_.signature(_.isNumber), _.multiply(v, 2), _.apply));
+    $.router() //router handlers need not be (but can be) fns
+      |> _.append(v, $.handler(_.signature(_.isString), _.str(v, "!"), _.apply)) //use apply to spread the message against the pred and callback
+      |> _.append(v, $.handler(_.signature(_.isNumber), _.multiply(v, 2), _.apply));
   const g =
     _.multimethod() //multimethod handlers must be fns
-      |> _.on(v, _.signature(_.isString), _.str(v, "!")) //as a multimethod always dispatches to fns, apply is a given and need not be specified.
-      |> _.on(v, _.signature(_.isNumber), _.multiply(v, 2));
-  assert.equal(_.dispatch(f, [1]), 2);
-  assert.equal(_.dispatch(f, ["timber"]), "timber!");
-  assert.equal(_.dispatch(g, [1]), 2);
-  assert.equal(_.dispatch(g, ["timber"]), "timber!");
+      |> _.append(v, _.method(_.signature(_.isString), _.str(v, "!"))) //as a multimethod always dispatches to fns, apply is a given and need not be specified.
+      |> _.append(v, _.method(_.signature(_.isNumber), _.multiply(v, 2)));
+  assert.equal($.dispatch(f, [1]), 2);
+  assert.equal($.dispatch(f, ["timber"]), "timber!");
+  assert.equal($.dispatch(g, [1]), 2);
+  assert.equal($.dispatch(g, ["timber"]), "timber!");
   assert.equal(g(1), 2);
   assert.equal(g("timber"), "timber!");
 });
 
 QUnit.test("validation", function(assert){
-  const complaints = _.mapa(_.complaint, v); //resolves lazy result for deep equality test
-  const validPostalCode = _.comp(complaints, _.validate(v, [_.required(), String, _.terminal(/^\d{5}(-\d{1,4})?$/, "not a postal code")]));
-  const validNumber = _.comp(complaints, _.validate(v, parseInt, [Number]));
-  const validDate = _.comp(complaints, _.validate(v, _.parseDate, [Date]));
-  const validAdult = _.comp(_.mapa(_.update(v, 2, complaints), v), _.validateIn(v, _.comp(_.either(v, []), _.getIn({
-    age: [_.complaint(_.gte(v, 18), "not an adult")]
+  const complaints = _.mapa(vd.complaint, v); //resolves lazy result for deep equality test
+  const validPostalCode = _.comp(complaints, vd.validate(v, [vd.required(), String, vd.terminal(/^\d{5}(-\d{1,4})?$/, "not a postal code")]));
+  const validNumber = _.comp(complaints, vd.validate(v, parseInt, [Number]));
+  const validDate = _.comp(complaints, vd.validate(v, _.parseDate, [Date]));
+  const validAdult = _.comp(_.mapa(_.update(v, 2, complaints), v), vd.validateIn(v, _.comp(_.either(v, []), _.getIn({
+    age: [vd.complaint(_.gte(v, 18), "not an adult")]
   }, v))));
   assert.deepEqual(validAdult({age: 11, name: "Eddie", surname: "Munster"}), [[["age"], 11, ["not an adult"]]]);
   assert.deepEqual(validAdult({age: 203, name: "Herman", surname: "Munster"}), []);
@@ -50,25 +55,25 @@ QUnit.test("validation", function(assert){
 QUnit.test("component", function(assert){
   const people =
     _.doto(
-      _.component({}, _.observable([]), function(accepts, raises, affects){
+      $.component({}, $.observable([]), function(accepts, raises, affects){
         return [{
           "add": accepts("added")
         }, {
           "added": affects(_.conj)
         }]
       }),
-    _.dispatch(v, {type: "add", args: [{name: "Moe"}]}),
-    _.dispatch(v, {type: "add", args: [{name: "Curly"}]}),
-    _.dispatch(v, {type: "add", args: [{name: "Shemp"}]}));
+    $.dispatch(v, {type: "add", args: [{name: "Moe"}]}),
+    $.dispatch(v, {type: "add", args: [{name: "Curly"}]}),
+    $.dispatch(v, {type: "add", args: [{name: "Shemp"}]}));
 
   assert.equal(_.count(_.deref(people)), 3);
 });
 
 QUnit.test("dom", function(assert){
-  const {ul, li, div, span} = _.tags("ul", "li", "div", "span");
-  const duo = _.frag() |> _.append(v, div("Abbott")) |> _.append(v, _.tag("div", "Costello"));
+  const {ul, li, div, span} = dom.tags("ul", "li", "div", "span");
+  const duo = dom.frag() |> _.append(v, div("Abbott")) |> _.append(v, dom.tag("div", "Costello"));
   const who = div(_.get(v, "givenName"), " ", _.get(v, "surname"));
-  const template = _.frag(
+  const template = dom.frag(
     ul(
       _.map(function([id, person]){
         return li({id: id}, who(person));
@@ -78,35 +83,35 @@ QUnit.test("dom", function(assert){
     curly: {givenName: "Curly", surname: "Howard"},
     larry: {givenName: "Larry", surname: "Fine"}
   });
-  const moe = stooges |> _.sel("li", v) |> _.first;
+  const moe = stooges |> dom.sel("li", v) |> _.first;
 
-  assert.equal(duo |> _.children |> _.first  |> _.text, "Abbott");
-  assert.equal(duo |> _.children |> _.second |> _.text, "Costello");
-  assert.equal(stooges |> _.members |>_.fpipe(_.children, _.children) |> _.ftap(_.also(_.parent, v)) |> _.count, 4);
+  assert.equal(duo |> _.children |> _.first  |> dom.text, "Abbott");
+  assert.equal(duo |> _.children |> _.second |> dom.text, "Costello");
+  assert.equal(stooges |> I.members |>_.fpipe(_.children, _.children) |> _.ftap(_.also(_.parent, v)) |> _.count, 4);
   assert.equal(stooges |> _.leaves |> _.count, 3);
-  assert.equal(moe |> _.text, "Moe Howard", "Found by tag");
-  assert.deepEqual(stooges |> _.sel("li", v) |> _.map(_.get(v, "id"), v) |> _.toArray, ["moe", "curly", "larry"], "Extracted ids");
-  assert.equal({givenName: "Curly", surname: "Howard"} |> who |> _.text, "Curly Howard");
-  assert.deepEqual(moe |> _.classes |> _.conj(v, "main") |> _.deref, ["main"]);
+  assert.equal(moe |> dom.text, "Moe Howard", "Found by tag");
+  assert.deepEqual(stooges |> dom.sel("li", v) |> _.map(_.get(v, "id"), v) |> _.toArray, ["moe", "curly", "larry"], "Extracted ids");
+  assert.equal({givenName: "Curly", surname: "Howard"} |> who |> dom.text, "Curly Howard");
+  assert.deepEqual(moe |> dom.classes |> _.conj(v, "main") |> _.deref, ["main"]);
   assert.equal(moe |> _.assoc(v, "data-tagged", "tests") |> _.get(v, "data-tagged"), "tests");
   stooges |> _.append(v, div({id: 'branding'}, span("Three Blind Mice")));
-  assert.ok(stooges |> _.sel("#branding", v) |> _.first |> (el => el instanceof HTMLDivElement), "Found by id");
-  assert.deepEqual(stooges |> _.sel("#branding span", v) |> _.map(_.text, v) |> _.first, "Three Blind Mice", "Read text content");
-  const greeting = stooges |> _.sel("#branding span", v) |> _.first;
-  _.hide(greeting);
-  assert.deepEqual(greeting |> _.style |> _.deref, {display: "none"}, "Hidden");
-  assert.equal(greeting |> _.style |> _.get(v, "display"), "none");
-  _.show(greeting);
-  assert.deepEqual(greeting |> _.style |> _.deref, {}, "Shown");
-  const branding = stooges |> _.sel("#branding", v) |> _.first;
+  assert.ok(stooges |> dom.sel("#branding", v) |> _.first |> (el => el instanceof HTMLDivElement), "Found by id");
+  assert.deepEqual(stooges |> dom.sel("#branding span", v) |> _.map(dom.text, v) |> _.first, "Three Blind Mice", "Read text content");
+  const greeting = stooges |> dom.sel("#branding span", v) |> _.first;
+  dom.hide(greeting);
+  assert.deepEqual(greeting |> dom.style |> _.deref, {display: "none"}, "Hidden");
+  assert.equal(greeting |> dom.style |> _.get(v, "display"), "none");
+  dom.show(greeting);
+  assert.deepEqual(greeting |> dom.style |> _.deref, {}, "Shown");
+  const branding = stooges |> dom.sel("#branding", v) |> _.first;
   _.yank(branding);
   assert.equal(branding |> _.parent |> _.first, null, "Removed");
 });
 
 QUnit.test("transducers", function(assert){
-  assert.deepEqual([1,2,3] |> _.cycle |> _.into([], _.comp(_.transducers.take(4), _.transducers.map(_.inc)), v), [2,3,4,2]);
-  assert.deepEqual([1, 3, 2, 2, 3] |> _.into([], _.transducers.dedupe(), v), [1,3,2,3]);
-  assert.deepEqual([1, 3, 2, 2, 3] |> _.into([], _.transducers.filter(_.isEven), v), [2,2]);
+  assert.deepEqual([1,2,3] |> _.cycle |> _.into([], _.comp(t.take(4), t.map(_.inc)), v), [2,3,4,2]);
+  assert.deepEqual([1, 3, 2, 2, 3] |> _.into([], t.dedupe(), v), [1,3,2,3]);
+  assert.deepEqual([1, 3, 2, 2, 3] |> _.into([], t.filter(_.isEven), v), [2,2]);
 });
 
 QUnit.test("iinclusive", function(assert){
@@ -231,7 +236,7 @@ QUnit.test("sequences", function(assert){
   assert.deepEqual("Polo" |> _.toArray, ["P", "o", "l", "o"]);
   assert.deepEqual([1, 2, 3] |> _.cycle |> _.take(7, v) |> _.toArray, [1, 2, 3, 1, 2, 3, 1]);
   assert.deepEqual([1, 2, 3, 3, 4, 4, 4, 5, 6, 6, 7] |> _.dedupe |> _.toArray, [1, 2, 3, 4, 5, 6, 7]);
-  assert.deepEqual([1, 2, 3, 1, 4, 3, 4, 3, 2, 2] |> _.distinct |> _.toArray, [1, 2, 3, 4]);
+  assert.deepEqual([1, 2, 3, 1, 4, 3, 4, 3, 2, 2] |> I.distinct |> _.toArray, [1, 2, 3, 4]);
   assert.deepEqual(_.range(10) |> _.takeNth(2, v) |> _.toArray, [0, 2, 4, 6, 8]);
   assert.deepEqual(_.constantly(1) |> _.repeatedly |> _.take(0, v) |> _.toArray, []);
   assert.deepEqual(_.constantly(2) |> _.repeatedly |> _.take(10, v) |> _.toArray, [2, 2, 2, 2, 2, 2, 2, 2, 2, 2]);
@@ -258,9 +263,9 @@ QUnit.test("step, add, subtract", function(assert){
   const newYears  = _.date(2018, 1, 1);
   const mmddyyyy  =
     _.fmt(
-      _.comp(_.zeros(_, 2), _.get(_, "month")), "/",
-      _.comp(_.zeros(_, 2), _.get(_, "day")), "/",
-      _.comp(_.zeros(_, 4), _.get(_, "year")));
+      _.comp(_.zeros(v, 2), _.get(v, "month")), "/",
+      _.comp(_.zeros(v, 2), _.get(v, "day")), "/",
+      _.comp(_.zeros(v, 4), _.get(v, "year")));
   assert.equal(christmas |> mmddyyyy, "12/25/2017");
   assert.equal(newYears  |> mmddyyyy, "01/01/2018");
   assert.equal(christmas |> _.add(v, _.days(1)) |> _.deref, christmas |> _.step(_.days(1), v) |> _.deref);
@@ -286,30 +291,30 @@ QUnit.test("record", function(assert){
 });
 
 QUnit.test("observable", function(assert){
-  const button = _.tag('button');
+  const button = dom.tag('button');
   const tally = button("Tally");
-  const clicks = _.observable(0);
+  const clicks = $.observable(0);
   tally.click();
   assert.equal(clicks |> _.deref, 0);
-  const tallied = _.click(tally);
-  _.sub(tallied, function(){
+  const tallied = $.click(tally);
+  $.sub(tallied, function(){
     _.swap(clicks, _.inc);
   });
-  _.sub(tallied, _.noop);
+  $.sub(tallied, _.noop);
   tally.click();
   _.dispose(tallied);
   tally.click();
-  const source = _.observable(0);
-  const sink   = _.reactives.signal(_.transducers.map(_.inc), source);
+  const source = $.observable(0);
+  const sink   = $.signal(t.map(_.inc), source);
   const msink  = _.fmap(source, _.inc);
   source |> _.swap(v, _.inc);
   assert.equal(clicks |> _.deref, 1);
   assert.equal(source |> _.deref, 1);
   assert.equal(sink   |> _.deref, 2);
   assert.equal(msink  |> _.deref, 2);
-  const bucket = _.observable([], null, _.pipe(_.get(v, 'length'), _.lt(v, 3))),
-        states = _.observable([]);
-  bucket |> _.sub(v, state => states |> _.swap(v, _.conj(v, state)));
+  const bucket = $.observable([], null, _.pipe(_.get(v, 'length'), _.lt(v, 3))),
+        states = $.observable([]);
+  bucket |> $.sub(v, state => states |> _.swap(v, _.conj(v, state)));
   bucket |> _.swap(v, _.conj(v, "ice"));
   bucket |> _.swap(v, _.conj(v, "champagne"));
   assert.throws(function(){
@@ -321,19 +326,19 @@ QUnit.test("observable", function(assert){
 });
 
 QUnit.test("immutable updates", function(assert){
-  const duos = _.observable([["Hall", "Oates"], ["Laurel", "Hardy"]]),
+  const duos = $.observable([["Hall", "Oates"], ["Laurel", "Hardy"]]),
         get0 = _.pipe(_.deref, _.nth(v, 0)),
         get1 = _.pipe(_.deref, _.nth(v, 1)),
         get2 = _.pipe(_.deref, _.nth(v, 2)),
         d0 = get0(duos),
         d1 = get1(duos),
         d2 = get2(duos),
-        states = _.observable([]),
+        states = $.observable([]),
         txn = _.pipe(
           _.conj(v, ["Andrew Ridgeley", "George Michaels"]),
           _.assocIn(v, [0, 0], "Daryl"),
           _.assocIn(v, [0, 1], "John"));
-  duos |> _.sub(v, state => states |> _.swap(v, _.conj(v, state)));
+  duos |> $.sub(v, state => states |> _.swap(v, _.conj(v, state)));
   duos |> _.swap(v, txn);
   assert.equal(states |> _.deref |> _.count, 2, "original + transaction");
   assert.deepEqual(duos |> _.deref, [["Daryl", "John"], ["Laurel", "Hardy"], ["Andrew Ridgeley", "George Michaels"]]);

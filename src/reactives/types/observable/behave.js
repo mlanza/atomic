@@ -1,4 +1,5 @@
-import {does, implement, satisfies, IPublish, ISubscribe, IReset, ISwap, IDeref, IDisposable} from 'cloe/core';
+import {does, implement, satisfies, IReset, ISwap, IDeref, IDisposable} from 'cloe/core';
+import {IPublish, ISubscribe} from "../../protocols";
 
 function deref(self){
   return self.state;

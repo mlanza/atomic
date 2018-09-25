@@ -8,18 +8,18 @@ export default function MappedSignal(pred, f, source, callbacks){
 }
 
 //you might do this to create a readonly signal from an observable
-function map1(source){
-  return map2(identity, source);
+function mapped1(source){
+  return mapped2(identity, source);
 }
 
-function map2(f, source){
-  return map3(function(a, b){
+function mapped2(f, source){
+  return mapped3(function(a, b){
     return a !== b;
   }, f, source);
 }
 
-function map3(pred, f, source){
+function mapped3(pred, f, source){
   return new MappedSignal(pred, f, source, weakMap());
 }
 
-export const map = overload(null, map1, map2, map3);
+export const mapped = overload(null, mapped1, mapped2, mapped3);

@@ -1,4 +1,5 @@
-import {specify, doto, ISubscribe} from 'cloe/core';
+import {specify, doto} from 'cloe/core';
+import {ISubscribe} from "../../protocols/isubscribe/instance";
 
 function sub(self, callback){
   ISubscribe.sub(self.publisher, callback);

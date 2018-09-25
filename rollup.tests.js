@@ -26,6 +26,7 @@ export default {
     "cloe/requests",
     "cloe/reactives",
     "cloe/transducers",
+    "cloe/validates",
     "cloe/dom"
   ]
 };
