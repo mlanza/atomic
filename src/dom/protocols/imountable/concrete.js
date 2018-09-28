@@ -1,6 +1,7 @@
 import {root, getIn, specify, satisfies, partial, comp, doto, overload, noop, IDeref} from 'cloe/core';
 import {trigger, one, ISubscribe, IEvented} from "cloe/reactives";
 import IMountable from "./instance";
+import {isHTMLDocument} from "../../types/html-document/construct";
 import {_ as v} from "param.macro";
 
 export function mountable(self){
@@ -15,9 +16,7 @@ export function mount(self, parent){
 }
 
 function mounts1(self){
-  return mounts2(self, function(el){
-    return el instanceof HTMLDocument;
-  });
+  return mounts2(self, isHTMLDocument);
 }
 
 function mounts2(self, pred){

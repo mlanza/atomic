@@ -53,7 +53,7 @@ function load3(render, config, parent){
       loading = config.spinner ? img(config.spinner) : null;
   loading && append(parent, loading);
   fire(parent, "loading", config.what, {config});
-  fmap(Promise.resolve(render()),
+  fmap(Promise.resolve(render(config)),
     mounts,
     function(child){
       append(parent, child);
@@ -63,21 +63,17 @@ function load3(render, config, parent){
 }
 
 function load4(defaults, render, config, parent){
-  config = absorb({}, defaults || {}, config || {});
-  load3(function(){
-    return render(config);
-  }, config, parent);
+  load3(render, absorb({}, defaults || {}, config || {}), parent);
 }
 
 function load5(defaults, create, render, config, parent){
-  config = absorb({changed: [], commands: []}, defaults || {}, config || {});
-  load3(function(){
+  load4(absorb({changed: [], commands: []}, defaults || {}), function(config){
     const bus = create(config);
     each(sub(bus, v), config.changed);
     each(dispatch(bus, v), config.commands);
     fire(parent, "bus", config.what, bus);
     return render(bus);
-  }, config, parent);
+  }, config || {}, parent);
 }
 
 export const load = overload(null, null, null, load3, load4, load5);
