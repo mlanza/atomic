@@ -107,7 +107,7 @@ function eventContext(catalog){
 
   function on4(self, key, selector, callback){
     on3(self, key, doto(function(e){
-      if (e.target.matches(selector)) {
+      if (IMatch.matches(e.target, selector)) {
         callback.call(e.target, e);
       } else {
         var found = closest(e.target, selector);
@@ -264,7 +264,7 @@ const root = comp(last, parents);
 export function closest(self, selector){
   let target = IHierarchy.parent(self);
   while(target){
-    if (matches(target, selector)){
+    if (IMatch.matches(target, selector)){
       return target;
     }
     target = IHierarchy.parent(target);
@@ -280,7 +280,7 @@ function locate(self, selector){
 }
 
 function children(self){
-  return ISeqable.seq(self.children);
+  return ISeqable.seq(self.children || filter(isElement, self.childNodes)); //IE has no children on document fragment
 }
 
 const descendants = downward(IHierarchy.children);
