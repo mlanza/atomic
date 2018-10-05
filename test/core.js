@@ -70,7 +70,7 @@ QUnit.test("component", function(assert){
 });
 
 QUnit.test("dom", function(assert){
-  const {ul, li, div, span} = dom.tags("ul", "li", "div", "span");
+  const {ul, li, div, span} = _.keyed(dom.tag, ["ul", "li", "div", "span"]);
   const duo = dom.frag() |> _.append(v, div("Abbott")) |> _.append(v, dom.tag("div", "Costello"));
   const who = div(_.get(v, "givenName"), " ", _.get(v, "surname"));
   const template = dom.frag(

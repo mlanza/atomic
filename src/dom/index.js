@@ -1,10 +1,11 @@
-import {assoc, str, include, overload, conj, yank, transpose, append, absorb, fmap, each, expansive, obj, IReduce, first, query, locate, descendants, matches} from "cloe/core";
+import {specify, doto, assoc, str, include, overload, conj, yank, transpose, append, absorb, fmap, each, expansive, obj, IReduce, first, query, locate, descendants, matches, reducekv} from "cloe/core";
 import {sub, trigger, dispatch} from "cloe/reactives";
 import {props} from "./types/props/construct";
 import {classes} from "./types/space-sep/construct";
 import {fragment} from "./types/document-fragment/construct";
 import {element} from "./types/element/construct";
 import {mounts} from "./protocols/imountable/concrete";
+import IValue from "./protocols/ivalue/instance";
 import Promise from "promise";
 import {_ as v} from "param.macro";
 export * from "./types";
@@ -80,17 +81,6 @@ export const load = overload(null, null, null, load3, load4, load5);
 export const tag  = obj(expansive(element), Infinity);
 export const frag = expansive(fragment);
 
-function tagged(f, keys){
-  return IReduce.reduce(keys, function(memo, key){
-    memo[key] = f(key);
-    return memo;
-  }, {});
-}
-
-export function tags(...names){
-  return tagged(tag, names);
-}
-
 function sel2(selector, context){
   return query(context, context.querySelectorAll ? selector : matches(v, selector));
 }
@@ -118,3 +108,26 @@ function sel10(){
 }
 
 export const sel1 = overload(sel10, sel11, sel12);
+
+export function checkbox(...args){
+  const checkbox = tag('input', {type: "checkbox"});
+  function value1(el){
+    return el.checked;
+  }
+  function value2(el, checked){
+    el.checked = checked;
+  }
+  var value = overload(null, value1, value2);
+  return doto(checkbox(...args),
+    specify(IValue, {value: value}));
+}
+
+export function select(options, ...args){
+  const select = tag('select'),
+        option = tag('option');
+  return reducekv(function(memo, key, value){
+    return append(memo, option({value: key}, value));
+  }, select(...args), options);
+}
+
+export const textbox = tag('input', {type: "text"});

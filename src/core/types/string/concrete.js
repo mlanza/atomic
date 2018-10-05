@@ -58,4 +58,6 @@ export const trim       = unbind(String.prototype.trim);
 export const rtrim      = unbind(String.prototype.trimRight);
 export const ltrim      = unbind(String.prototype.trimLeft);
 export const str        = overload(emptyString, str1, str2, reducing(str2));
-export const zeros      = lpad(v, v, "0");
+export function zeros(value, n){
+  return lpad(str(value), n, "0");
+}

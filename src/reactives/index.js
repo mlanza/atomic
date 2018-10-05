@@ -23,6 +23,7 @@ import {
   partial,
   spread,
   str,
+  first,
   notEq,
   implement,
   specify,
@@ -238,8 +239,29 @@ export function click(el){
   return event(el, "click");
 }
 
+//enforce sequential nature of operations
+function isolate(f){
+  const queue = [];
+  return function(){
+    const ready = queue.length === 0;
+    queue.push(arguments);
+    if (ready) {
+      while (queue.length) {
+        const args = first(queue);
+        try {
+          f.apply(null, args);
+        } catch (ex) {
+          throw ex;
+        } finally {
+          queue.shift();
+        }
+      }
+    }
+  }
+}
+
 function mutate3(self, state, f){
-  ISubscribe.sub(state, partial(f, self));
+  ISubscribe.sub(state, partial(isolate(f), self));
   return self;
 }
 
