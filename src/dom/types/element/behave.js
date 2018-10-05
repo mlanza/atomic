@@ -76,16 +76,18 @@ function show(self){
 }
 
 function before(self, inserted){
-  inserted = isFunction(inserted) ? inserted() : inserted;
   const parent = IHierarchy.parent(self);
   parent.insertBefore(inserted, self);
   return self;
 }
 
 function after(self, inserted){
-  inserted = isFunction(inserted) ? inserted() : inserted;
   const relative = IHierarchy.nextSibling(self), parent = IHierarchy.parent(self);
-  relative ? parent.insertBefore(inserted, relative) : parent.prependChild(inserted);
+  if (relative) {
+    parent.insertBefore(inserted, relative);
+  } else {
+    IAppendable.append(parent, inserted);
+  }
   return self;
 }
 
@@ -292,7 +294,7 @@ function nextSibling(self){
 const nextSiblings = upward(IHierarchy.nextSibling);
 
 function prevSibling(self){
-  return self.prevElementSibling;
+  return self.previousElementSibling;
 }
 
 const prevSiblings = upward(IHierarchy.prevSibling);

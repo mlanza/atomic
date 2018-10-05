@@ -19,6 +19,12 @@ import {update, assocIn} from "../../protocols/iassociative/concrete";
 import {reducekv} from "../../protocols/ikvreduce/concrete";
 import {first} from "../../protocols/iseq/concrete";
 
+export function keyed(f, keys){
+  return IReduce.reduce(keys, function(memo, key){
+    return IAssociative.assoc(memo, key, f(key));
+  }, {});
+}
+
 function transduce3(xform, f, coll){
   return transduce4(xform, f, f(), coll);
 }
