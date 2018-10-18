@@ -1,6 +1,6 @@
 import {does, identity} from '../../core';
 import {implement} from '../protocol';
-import {ITransient, IComparable, IYank, IMatch, IArray, IDecode, ISet, INext, ICollection, IEncode, IEquiv, IMapEntry, IReduce, IKVReduce, ISeqable, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, IFn, IMap, ISeq, IDescriptive, IObject, ICloneable, IInclusive} from '../../protocols';
+import {ICompact, ITransient, IComparable, IYank, IMatch, IArray, IDecode, ISet, INext, ICollection, IEncode, IEquiv, IMapEntry, IReduce, IKVReduce, ISeqable, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, IFn, IMap, ISeq, IDescriptive, IObject, ICloneable, IInclusive} from '../../protocols';
 import {reduced} from '../reduced';
 import {transientObject} from '../transient-object/construct';
 import {lazySeq, into, map} from '../lazy-seq';
@@ -13,6 +13,12 @@ const vals = Object.values;
 
 function transient(self){
   return transientObject(clone(self));
+}
+
+function compact(self){
+  return IKVReduce.reducekv(self, function(memo, key, value){
+    return value == null ? memo : IAssociative.assoc(memo, key, value);
+  }, {});
 }
 
 function matches(self, template){
@@ -184,6 +190,7 @@ export default does(
   itemplate,
   implement(IDescriptive),
   implement(ITransient, {transient}),
+  implement(ICompact, {compact}),
   implement(IEquiv, {equiv}),
   implement(IDecode, {decode}),
   implement(IEncode, {encode}),
