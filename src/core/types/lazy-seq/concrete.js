@@ -1,4 +1,4 @@
-import {IEquiv, IMap, IArray, IAssociative, ILookup, IInclusive, IIndexed, ICollection, IComparable, ICounted, ISeq, ISeqable, INext, IHierarchy, IReduce, ISequential} from '../../protocols';
+import {ICompact, IEquiv, IMap, IArray, IAssociative, ILookup, IInclusive, IIndexed, ICollection, IComparable, ICounted, ISeq, ISeqable, INext, IHierarchy, IReduce, ISequential} from '../../protocols';
 import {identity, constantly, overload} from '../../core';
 import EmptyList, {emptyList} from '../empty-list/construct';
 import Array, {emptyArray} from '../array/construct';
@@ -16,7 +16,6 @@ import {concat, concatenated} from "../concatenated/construct";
 import {satisfies} from '../protocol/concrete';
 import Symbol from '../symbol/construct';
 import {update, assocIn} from "../../protocols/iassociative/concrete";
-import {reducekv} from "../../protocols/ikvreduce/concrete";
 import {first} from "../../protocols/iseq/concrete";
 
 export function keyed(f, keys){
@@ -159,10 +158,6 @@ export function filter(pred, xs){
 }
 
 export const detect = comp(first, filter);
-
-export function compact(coll){
-  return filter(identity, coll);
-}
 
 export function cycle(coll){
   return ISeqable.seq(coll) ? lazySeq(ISeq.first(coll), function(){
@@ -345,7 +340,7 @@ export function indexed(iter){
   }
 }
 
-export const coalesce = comp(ISeq.first, compact);
+export const coalesce = comp(ISeq.first, ICompact.compact);
 
 function repeatedly1(f){
   return lazySeq(f(), function(){

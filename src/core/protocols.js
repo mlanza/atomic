@@ -6,6 +6,7 @@ export * from "./protocols/ichainable/instance";
 export * from "./protocols/icloneable/instance";
 export * from "./protocols/icollection/instance";
 export * from "./protocols/iconfigured/instance";
+export * from "./protocols/icompact/instance";
 export * from "./protocols/icomparable/instance";
 export * from "./protocols/iinverse/instance";
 export * from "./protocols/icounted/instance";

@@ -1,5 +1,4 @@
-import {specify, doto, assoc, str, include, overload, conj, yank, transpose, append, absorb, fmap, each, expansive, obj, IReduce, first, query, locate, descendants, matches, reducekv} from "cloe/core";
-import {sub, trigger, dispatch} from "cloe/reactives";
+import {specify, doto, assoc, str, include, includes, overload, conj, yank, transpose, append, absorb, fmap, each, expansive, obj, IReduce, first, query, locate, descendants, matches, reducekv} from "cloe/core";
 import {props} from "./types/props/construct";
 import {classes} from "./types/space-sep/construct";
 import {fragment} from "./types/document-fragment/construct";
@@ -8,6 +7,7 @@ import {mounts} from "./protocols/imountable/concrete";
 import IValue from "./protocols/ivalue/instance";
 import Promise from "promise";
 import {_ as v} from "param.macro";
+import * as $ from "cloe/reactives";
 export * from "./types";
 export * from "./protocols";
 export * from "./protocols/concrete";
@@ -44,9 +44,13 @@ function toggleClass3(self, name, want){
 
 export const toggleClass = overload(null, null, toggleClass2, toggleClass3);
 
+export function hasClass(self, name){
+  return includes(classes(self), name);
+}
+
 function fire(parent, event, what, detail){
-  what && trigger(parent, what + ":" + event, {bubbles: true, detail});
-  trigger(parent, event, {bubbles: true, detail});
+  what && $.trigger(parent, what + ":" + event, {bubbles: true, detail});
+  $.trigger(parent, event, {bubbles: true, detail});
 }
 
 function load3(render, config, parent){
@@ -63,21 +67,19 @@ function load3(render, config, parent){
     });
 }
 
-function load4(defaults, render, config, parent){
-  load3(render, absorb({}, defaults || {}, config || {}), parent);
-}
-
-function load5(defaults, create, render, config, parent){
-  load4(absorb({changed: [], commands: []}, defaults || {}), function(config){
+function load4(create, render, config, parent){
+  load3(function(config){
     const bus = create(config);
-    each(sub(bus, v), config.changed);
-    each(dispatch(bus, v), config.commands);
-    fire(parent, "bus", config.what, bus);
-    return render(bus);
-  }, config || {}, parent);
+    each($.sub(bus, v), config.changed);
+    each($.dispatch(bus, v), config.commands);
+    return doto(render(bus),
+      $.on(v, "mounting mounted", function(e){
+        e.detail.bus = bus;
+      }));
+  }, absorb({changed: [], commands: []}, config || {}), parent);
 }
 
-export const load = overload(null, null, null, load3, load4, load5);
+export const load = overload(null, null, null, load3, load4);
 export const tag  = obj(expansive(element), Infinity);
 export const frag = expansive(fragment);
 

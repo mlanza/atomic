@@ -6,6 +6,7 @@ export * from "./ichainable/concrete";
 export * from "./icloneable/concrete";
 export * from "./icollection/concrete";
 export * from "./iconfigured/concrete";
+export * from "./icompact/concrete";
 export * from "./icomparable/concrete";
 export * from "./iinverse/concrete";
 export * from "./icounted/concrete";

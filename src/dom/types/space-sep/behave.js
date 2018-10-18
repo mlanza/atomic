@@ -1,4 +1,4 @@
-import {identity, does, implement, filtera, locate, ISequential, IDeref, IArray, ICounted, ICollection, IInclusive, IYank} from 'cloe/core';
+import {identity, does, implement, filtera, locate, ISequential, ISeq, IDeref, IArray, ICounted, ICollection, IInclusive, IYank} from 'cloe/core';
 
 function seq(self){
   const text = self.element.getAttribute(self.key);
@@ -6,7 +6,8 @@ function seq(self){
 }
 
 function includes(self, text){
-  return locate(seq(self), function(t){
+  const xs = seq(self);
+  return xs && locate(xs, function(t){
     return t == text;
   });
 }
@@ -33,6 +34,7 @@ function count(self){
 
 export default does(
   implement(ISequential),
+  implement(ISeq, {seq}),
   implement(IDeref, {deref}),
   implement(IInclusive, {includes}),
   implement(IYank, {yank}),

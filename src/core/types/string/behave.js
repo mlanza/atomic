@@ -1,4 +1,4 @@
-import {IArray, IMatch, IReduce, ICollection, IHash, IEncode, IDecode, IIndexed, ISeqable, INext, ISeq, IInclusive, IAppendable, IPrependable, ICounted, ILookup, IFn, IComparable, IEmptyableCollection} from '../../protocols';
+import {ICompact, IArray, IMatch, IReduce, ICollection, IHash, IEncode, IDecode, IIndexed, ISeqable, INext, ISeq, IInclusive, IAppendable, IPrependable, ICounted, ILookup, IFn, IComparable, IEmptyableCollection} from '../../protocols';
 import {does, identity, constantly} from "../../core";
 import {implement, specify} from '../protocol';
 import {isReduced, unreduced} from '../reduced';
@@ -6,6 +6,10 @@ import {lazySeq} from '../lazy-seq/construct';
 import {iindexed} from '../array/behave';
 import {rePattern} from '../reg-exp/concrete';
 import {emptyString, isString} from "./construct";
+
+function compact(self){
+  return self.trim();
+}
 
 function compare(self, other){
   return self === other ? 0 : self > other ? 1 : -1;
@@ -82,6 +86,7 @@ function matches(self, re){
 
 export default does(
   iindexed,
+  implement(ICompact, {compact}),
   implement(IHash, {hash}),
   implement(IMatch, {matches}),
   implement(ICollection, {conj}),

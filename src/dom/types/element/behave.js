@@ -26,6 +26,7 @@ import {
   isObject,
   isString,
   isFunction,
+  isNumber,
   trim,
   split,
   str,
@@ -192,6 +193,8 @@ function conj(self, other){
     }, other);
   } else if (isString(other)) {
     self.appendChild(document.createTextNode(other));
+  } else if (isNumber(other)) {
+    self.appendChild(document.createTextNode(str(other)));
   } else {
     self.appendChild(other);
   }
@@ -380,7 +383,12 @@ function html1(self){
 }
 
 function html2(self, html){
-  self.innerHTML = html;
+  if (isString(html)){
+    self.innerHTML = html;
+  } else {
+    empty(self);
+    conj(self, html);
+  }
   return self;
 }
 
@@ -391,8 +399,12 @@ function value1(self){
 }
 
 function value2(self, value){
-  if (self.value != null) {
+  if (!("value" in self)) {
+    throw new TypeError("Type does not support value property.");
+  }
+  if (self.value != value) {
     self.value = value;
+    //IEvented.trigger(self, "change", {bubbles: true});
   }
 }
 

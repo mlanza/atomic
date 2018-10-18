@@ -1,6 +1,6 @@
 import {implement} from '../protocol';
-import {ILocate, IQuery, IFunctor, IReversible, IYank, IMatch, IArray, IInclusive, IFind, IEquiv, ICollection, INext, ISeq, IReduce, IKVReduce, ISeqable, ISequential, IIndexed, IEmptyableCollection, ICounted, IAppendable, IPrependable} from '../../protocols';
-import {overload, identity, does} from '../../core';
+import {ICompact, ILocate, IQuery, IFunctor, IReversible, IYank, IMatch, IArray, IInclusive, IFind, IEquiv, ICollection, INext, ISeq, IReduce, IKVReduce, ISeqable, ISequential, IIndexed, IEmptyableCollection, ICounted, IAppendable, IPrependable} from '../../protocols';
+import {overload, identity, does, partial} from '../../core';
 import Reduced, {isReduced, reduced, unreduced} from "../reduced";
 import {concat} from "../concatenated/construct";
 import {comp} from "../function/concrete";
@@ -9,6 +9,8 @@ import {map, filter} from "./concrete";
 import {lazySeq} from "./construct";
 import {emptyList} from '../empty-list/construct';
 import Symbol from '../symbol/construct';
+
+const compact = partial(filter, identity);
 
 function query(self, pred){
   return filter(pred, self);
@@ -146,6 +148,7 @@ export default does(
   ireduce,
   implement(ISequential),
   implement(IReversible, {reverse}),
+  implement(ICompact, {compact}),
   implement(IInclusive, {includes}),
   implement(IQuery, {query}),
   implement(IYank, {yank}),
