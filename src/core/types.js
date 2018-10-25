@@ -8,6 +8,7 @@ export * from "./types/benchmark";
 export * from "./types/boolean";
 export * from "./types/concatenated";
 export * from "./types/date";
+export * from "./types/days";
 export * from "./types/duration";
 export * from "./types/error";
 export * from "./types/fluent";

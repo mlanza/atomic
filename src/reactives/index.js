@@ -31,7 +31,7 @@ import {
   slice
 } from "cloe/core";
 import {on, off} from "./protocols/concrete";
-import {IDispatch, IPublish, ISubscribe} from "./protocols";
+import {IDispatch, IPublish, ISubscribe, IEvented} from "./protocols";
 import LazyPub from "./types/lazy-pub/construct";
 import Observable from "./types/observable/construct";
 import Publisher from "./types/publisher/construct";
@@ -240,7 +240,7 @@ export function click(el){
 }
 
 //enforce sequential nature of operations
-function isolate(f){
+function isolate(f){ //TODO treat operations as promises
   const queue = [];
   return function(){
     const ready = queue.length === 0;
@@ -250,6 +250,7 @@ function isolate(f){
         const args = first(queue);
         try {
           f.apply(null, args);
+          IEvented.trigger(args[0], "mutated", {bubbles: true});
         } catch (ex) {
           throw ex;
         } finally {

@@ -3,7 +3,7 @@ import {implement, specify} from '../protocol';
 import {IReduce, IKVReduce, ISeqable, IEncode, IBounds, IMap, IDeref, ISeq, IComparable, IEquiv, ICloneable, ILookup, IAssociative, ICollection} from '../../protocols';
 import {isNumber} from '../number';
 import {lazySeq} from '../lazy-seq';
-import {days} from '../duration';
+import {days} from '../days';
 import {isDate} from "./concrete";
 import Symbol from '../symbol/construct';
 

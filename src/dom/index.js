@@ -69,12 +69,10 @@ function load3(render, config, parent){
 
 function load4(create, render, config, parent){
   load3(function(config){
-    const bus = create(config);
-    each($.sub(bus, v), config.changed);
-    each($.dispatch(bus, v), config.commands);
-    return doto(render(bus),
+    const $bus = create(config);
+    return doto(render($bus),
       $.on(v, "mounting mounted", function(e){
-        e.detail.bus = bus;
+        e.detail.bus = $bus;
       }));
   }, absorb({changed: [], commands: []}, config || {}), parent);
 }

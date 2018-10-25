@@ -1,7 +1,7 @@
 import {overload, toggles, identity, obj, partly, doto, branch, unspread, applying} from "./core";
 import {IDecorated, IAppendable, IHash, ITemplate, IYank, IArray, IAssociative, IBounds, IInverse, ICloneable, ICollection, IComparable, ICounted, IDecode, IDeref, IDisposable, IEmptyableCollection, IEncode, IEquiv, IFind, IFn, IFork, IFunctor, IHierarchy, IInclusive, IIndexed, IInsertable, IKVReduce, ILookup, IMap, IMapEntry, IMatch, INext, IObject, IOtherwise, IPrependable, IReduce, IReset, IReversible, ISeq, ISeqable, ISet, ISteppable, ISwap} from "./protocols";
 import {satisfies, filter, spread, specify, maybe, each, see, isEmpty, duration, remove, flatten, map, sort, flip, realized, comp, isNumber, mapSomeVals, isFunction, apply} from "./types";
-import {compact, matches, name, descendants, query, locate, transient, persistent, deref, get, assoc, yank, conj, hash, otherwise, fmap, reducing, reducekv, includes, excludes} from "./protocols/concrete";
+import {add, subtract, compact, matches, name, descendants, query, locate, transient, persistent, deref, get, assoc, yank, conj, hash, otherwise, fmap, reducing, reducekv, includes, excludes} from "./protocols/concrete";
 import {isString, str} from "./types/string";
 import {and, unless} from "./predicates";
 import {absorb} from "./associatives";
@@ -18,18 +18,6 @@ export * from "./associatives";
 export * from "./multimethods";
 
 export const second = comp(ISeq.first, INext.next);
-
-function add2(self, n){
-  return ISteppable.step(n, self);
-}
-
-export const add = overload(null, null, add2, reducing(add2));
-
-function subtract2(self, n){
-  return ISteppable.step(IInverse.inverse(n), self);
-}
-
-export const subtract = overload(null, null, subtract2, reducing(subtract2));
 
 export function argumented(f, g){
   return comp(spread(f), unspread(g));

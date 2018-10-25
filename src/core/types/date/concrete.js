@@ -49,12 +49,14 @@ export function som(){
 
 export function eom(){
   return {
+    day: 1,
     month: function(n){
       return n + 1;
     },
-    milliseconds: function(n){
-      return n - 1;
-    }
+    hours: 0,
+    minutes: 0,
+    seconds: 0,
+    milliseconds: -1
   }
 }
 

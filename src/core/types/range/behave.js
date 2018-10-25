@@ -1,9 +1,10 @@
 import {does} from '../../core';
 import {implement} from '../protocol';
-import {IArray, IBounds, IInverse, IEncode, ISteppable, ISequential, ICollection, IComparable, INext, IEquiv, IReduce, IKVReduce, ISeqable, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, ISeq, IInclusive} from '../../protocols';
+import {IArray, IBounds, IInverse, IEncode, ISteppable, ISequential, ICollection, IComparable, INext, IEquiv, IReduce, IKVReduce, ISeqable, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, ISeq, IInclusive, IIndexed} from '../../protocols';
 import {between} from '../../protocols/ibounds/concrete';
 import {unreduced, isReduced} from '../reduced';
-import {lazySeq} from '../lazy-seq';
+import {lazySeq, drop} from '../lazy-seq';
+import {comp} from '../function';
 import {iterable} from '../lazy-seq/behave';
 import {encodeable, emptyable} from "../record/behave";
 import {emptyRange} from "./construct";
@@ -59,12 +60,28 @@ function inverse(self){
   return self.constructor.create(self.end, self.start, IInverse.inverse(self.step));
 }
 
+function nth(self, idx){
+  return first(drop(idx, self));
+}
+
+function count(self){
+  var n  = 0,
+      xs = self;
+  while(first(xs)) {
+    n++;
+    xs = rest(xs);
+  }
+  return n;
+}
+
 export default does(
   iterable,
   emptyable,
   encodeable,
   implement(ISequential),
   implement(IInverse, {inverse}),
+  implement(IIndexed, {nth}),
+  implement(ICounted, {count}),
   implement(IInclusive, {includes: between}),
   implement(ISeqable, {seq}),
   implement(IBounds, {start, end}),

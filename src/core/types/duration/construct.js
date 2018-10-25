@@ -1,4 +1,5 @@
 import {overload} from "../../core";
+import {days, weeks} from "../days/construct";
 import {months} from "../months/construct";
 import {years} from "../years/construct";
 import Symbol from '../symbol/construct';
@@ -41,14 +42,6 @@ export function minutes(n){
 
 export function hours(n){
   return duration1(n * 1000 * 60 * 60);
-}
-
-export function days(n){
-  return duration1(n * 1000 * 60 * 60 * 24);
-}
-
-export function weeks(n){
-  return duration1(n * 1000 * 60 * 60 * 24 * 7);
 }
 
 const units = {

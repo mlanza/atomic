@@ -627,6 +627,15 @@ export function also(f, xs){
   }, xs));
 }
 
+export function countBy(f, coll){
+  return IReduce.reduce(coll, function(memo, value){
+    var by = f(value),
+        n  = memo[by];
+    memo[by] = n ? inc(n) : 1;
+    return memo;
+  }, {});
+}
+
 function groupBy3(init, f, coll){
   return IReduce.reduce(coll, function(memo, value){
     return update(memo, f(value), function(group){
