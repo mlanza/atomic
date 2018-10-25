@@ -1,4 +1,4 @@
-import {apply, comp, specify, conj, updateIn, assoc, get, getIn, deref, doto, partial, overload, noop, identity, reset} from "cloe/core";
+import {apply, comp, specify, conj, updateIn, assoc, get, getIn, deref, doto, partial, overload, noop, identity, reset, each} from "cloe/core";
 import {middleware} from "./construct";
 import {eventDispatcher} from "../event-dispatcher/construct";
 import {messageProcessor} from "../message-processor/construct";
@@ -6,8 +6,10 @@ import {messageHandler} from "../message-handler/construct";
 import {bus} from "../bus/construct";
 import {events} from "../events/construct";
 import {publisher} from "../publisher/construct";
-import {IMiddleware} from "../../protocols/imiddleware/instance"
-import {IEventProvider} from "../../protocols/ieventprovider/instance"
+import {IMiddleware} from "../../protocols/imiddleware/instance";
+import {IEventProvider} from "../../protocols/ieventprovider/instance";
+import {sub} from "../../protocols/isubscribe/concrete";
+import {dispatch} from "../../protocols/idispatch/concrete";
 import {_ as v} from "param.macro";
 
 export function handles(handle){
@@ -51,12 +53,14 @@ function component3(config, state, callback){
   const evts = events(),
         ware = middleware(),
         publ = publisher();
-  return doto(bus(config, state, ware), function(bus){
-    const maps = callback(partial(accepts, evts), partial(raises, evts, bus), partial(affects, bus));
+  return doto(bus(config, state, ware), function($bus){
+    const maps = callback(partial(accepts, evts), partial(raises, evts, $bus), partial(affects, $bus));
     const commandMap = maps[0], eventMap = maps[1];
     conj(ware,
       messageHandler(commandMap),
       eventDispatcher(evts, messageHandler(eventMap), publ));
+    each(sub($bus, v), config.changed);
+    each(dispatch($bus, v), config.commands);
   });
 }
 

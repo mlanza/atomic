@@ -1,6 +1,6 @@
 import {overload} from '../../core';
-import {days} from '../duration/construct';
-import {midnight, isDate} from '../date/concrete';
+import {days} from '../days/construct';
+import {midnight, eod, isDate} from '../date/concrete';
 import {steps} from '../../protocols/isteppable/concrete';
 import {patch} from '../../associatives';
 import Symbol from '../symbol/construct';
@@ -21,15 +21,15 @@ export function emptyPeriod(){
 }
 
 function period0(){
-  return period1(Infinity);
+  return period1(null);
 }
 
-function period1(end){
-  return period2(patch(new Date, midnight()), end);
+function period1(dt){
+  return period2(patch(dt, midnight()), patch(dt, eod()));
 }
 
 function period2(start, end){
-  return period3(start, end, days(1));
+  return period3(start, end, days(start <= end ? 1 : -1));
 }
 
 const period3 = steps(Period, isDate);
