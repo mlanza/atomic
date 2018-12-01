@@ -1,6 +1,6 @@
 import {identity, constantly, does} from '../../core';
 import {implement} from '../protocol';
-import {IArray, IInclusive, IReversible, IEncode, ICollection, INext, ISeq, ISeqable, ISequential, IAssociative, IIndexed, IEmptyableCollection, IKVReduce, IReduce, ICounted} from '../../protocols';
+import {IBlottable, IArray, IInclusive, IReversible, IEncode, ICollection, INext, ISeq, ISeqable, ISequential, IAssociative, IIndexed, IEmptyableCollection, IKVReduce, IReduce, ICounted} from '../../protocols';
 import {emptyList} from '../../types/empty-list/construct';
 import {emptyArray} from '../../types/array/construct';
 import Symbol from '../symbol/construct';
@@ -16,6 +16,7 @@ function reduce(self, f, init){
 export default does(
   implement(ISequential),
   implement(IEncode, {encode}),
+  implement(IBlottable, {blot: constantly(null)}),
   implement(IReversible, {reverse: emptyList}),
   implement(ICounted, {count: constantly(0)}),
   implement(IEmptyableCollection, {empty: identity}),

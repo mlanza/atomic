@@ -30,6 +30,7 @@ import {
   trim,
   split,
   str,
+  apply,
   emptyList,
   weakMap,
   isIdentical,
@@ -262,9 +263,11 @@ function parent(self){
   return self && self.parentNode;
 }
 
-const parents = upward(parent);
+const parents = upward(function(self){
+  return self && self.parentElement;
+});
 
-const root = comp(last, parents);
+const root = comp(last, upward(parent));
 
 export function closest(self, selector){
   let target = IHierarchy.parent(self);
@@ -387,7 +390,11 @@ function html2(self, html){
     self.innerHTML = html;
   } else {
     empty(self);
-    conj(self, html);
+    if (satisfies(ISequential, html)) {
+      apply(conj, self, html);
+    } else {
+      conj(self, html);
+    }
   }
   return self;
 }

@@ -29,7 +29,7 @@ function period1(dt){
 }
 
 function period2(start, end){
-  return period3(start, end, days(start <= end ? 1 : -1));
+  return period3(start, end, days(end == null || start <= end ? 1 : -1));
 }
 
 const period3 = steps(Period, isDate);

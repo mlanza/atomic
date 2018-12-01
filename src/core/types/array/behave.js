@@ -1,6 +1,6 @@
 import {does, identity, overload, doto} from '../../core';
 import {implement, specify, satisfies} from '../protocol';
-import {IMap, IQuery, ITransient, IPersistent, IWrite, ITemplate, IArray, IObject, IFunctor, IInsertable, IYank, IEncode, IDecode, IReversible, ISet, IMapEntry, IEquiv, IReduce, IKVReduce, IAppendable, IPrependable, IInclusive, ICollection, INext, ISeq, IFind, ISeqable, IIndexed, IAssociative, ISequential, IEmptyableCollection, IFn, ICounted, ILookup, ICloneable} from '../../protocols';
+import {IBlottable, IMap, IQuery, ITransient, IPersistent, IWrite, ITemplate, IArray, IObject, IFunctor, IInsertable, IYank, IEncode, IDecode, IReversible, ISet, IMapEntry, IEquiv, IReduce, IKVReduce, IAppendable, IPrependable, IInclusive, ICollection, INext, ISeq, IFind, ISeqable, IIndexed, IAssociative, ISequential, IEmptyableCollection, IFn, ICounted, ILookup, ICloneable} from '../../protocols';
 import {reduced, unreduced, isReduced} from '../reduced';
 import {indexedSeq} from '../indexed-seq';
 import {replace} from '../string/concrete';
@@ -246,6 +246,7 @@ export default does(
   implement(IKVReduce, {reducekv}),
   implement(ILookup, {lookup}),
   implement(IAssociative, {assoc, contains}),
+  implement(IBlottable, {blot: seq}),
   implement(ISeqable, {seq}),
   implement(ICollection, {conj: append}),
   implement(INext, {next}),

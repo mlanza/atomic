@@ -1,6 +1,6 @@
 import {does, identity} from '../../core';
 import {implement} from '../protocol';
-import {ICompact, ITransient, IComparable, IYank, IMatch, IArray, IDecode, ISet, INext, ICollection, IEncode, IEquiv, IMapEntry, IReduce, IKVReduce, ISeqable, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, IFn, IMap, ISeq, IDescriptive, IObject, ICloneable, IInclusive} from '../../protocols';
+import {IBlottable, ICompact, ITransient, IComparable, IYank, IMatch, IArray, IDecode, ISet, INext, ICollection, IEncode, IEquiv, IMapEntry, IReduce, IKVReduce, ISeqable, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, IFn, IMap, ISeq, IDescriptive, IObject, ICloneable, IInclusive} from '../../protocols';
 import {reduced} from '../reduced';
 import {transientObject} from '../transient-object/construct';
 import {lazySeq, into, map} from '../lazy-seq';
@@ -10,6 +10,10 @@ import Object, {emptyObject} from '../object/construct';
 
 const keys = Object.keys;
 const vals = Object.values;
+
+function blot(self){
+  return keys(self).length ? self : null;
+}
 
 function transient(self){
   return transientObject(clone(self));
@@ -189,6 +193,7 @@ export default does(
   iequiv,
   itemplate,
   implement(IDescriptive),
+  implement(IBlottable, {blot}),
   implement(ITransient, {transient}),
   implement(ICompact, {compact}),
   implement(IEquiv, {equiv}),
