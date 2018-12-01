@@ -1,4 +1,5 @@
 import {specify, doto, assoc, str, include, includes, overload, conj, yank, transpose, append, absorb, fmap, each, expansive, obj, IReduce, first, query, locate, descendants, matches, reducekv} from "cloe/core";
+import * as _ from "cloe/core";
 import {props} from "./types/props/construct";
 import {classes} from "./types/space-sep/construct";
 import {fragment} from "./types/document-fragment/construct";
@@ -23,7 +24,10 @@ function prop2(self, key){
 export const prop = overload(null, null, prop2, prop3);
 
 export function addClass(self, name){
-  conj(classes(self), name);
+  const clss = classes(self);
+  if (!includes(clss, name)) {
+    conj(clss, name);
+  }
   return self;
 }
 
@@ -53,9 +57,27 @@ function fire(parent, event, what, detail){
   $.trigger(parent, event, {bubbles: true, detail});
 }
 
+function view2(render, config){
+  return doto(render(config),
+    _.config(v, config),
+    mounts);
+}
+
+function view3(create, render, config){
+  const $bus = create(config);
+  return doto(render(config, $bus),
+    _.config(v, config),
+    mounts,
+    $.on(v, "mounting mounted", function(e){
+      e.detail.bus = $bus;
+    }));
+}
+
+export const view = overload(null, null, view2, view3);
+
 function load3(render, config, parent){
-  var img = tag('img'),
-      loading = config.spinner ? img(config.spinner) : null;
+  const img = tag('img'),
+        loading = config.spinner ? img(config.spinner) : null;
   loading && append(parent, loading);
   fire(parent, "loading", config.what, {config});
   fmap(Promise.resolve(render(config)),

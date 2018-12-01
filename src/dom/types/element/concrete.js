@@ -1,8 +1,9 @@
-import {IHierarchy} from 'cloe/core';
+import {IHierarchy, isString} from 'cloe/core';
 
 export function replaceWith(self, other){
-  const parent = IHierarchy.parent(self);
-  parent.replaceChild(other, self);
+  const parent = IHierarchy.parent(self),
+        replacement = isString(other) ? document.createTextNode(other) : other;
+  parent.replaceChild(replacement, self);
 }
 
 export function isVisible(el){

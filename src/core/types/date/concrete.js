@@ -34,7 +34,7 @@ export function sod(){
 }
 
 export function eod(){
-  return time(11, 59, 59, 999);
+  return time(23, 59, 59, 999);
 }
 
 export function noon(){

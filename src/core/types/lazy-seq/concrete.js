@@ -444,6 +444,38 @@ export const keepIndexed = indexed(keep);
 export const splitAt     = juxt(take, drop);
 export const splitWith   = juxt(takeWhile, dropWhile);
 
+function forEvery3(f, xs, ys){
+  return mapcat(function(x){
+    return map(function(y){
+      return f(x, y);
+    }, ys);
+  }, xs);
+}
+
+function forEvery4(f, xs, ys, zs){
+  return mapcat(function(x){
+    return mapcat(function(y){
+      return map(function(z){
+        return f(x, y, z);
+      }, zs);
+    }, ys);
+  }, xs);
+}
+
+function forEveryN(f, xs, ...colls){
+  if (ISeqable.seq(colls)) {
+    return mapcat(function(x){
+      return apply(forEvery, function(...args){
+        apply(f, x, args);
+      }, colls);
+    }, xs);
+  } else {
+    return map(f, xs || []);
+  }
+}
+
+export const forEvery = overload(null, null, map, forEvery3, forEvery4, forEveryN);
+
 function doseq3(f, xs, ys){
   each(function(x){
     each(function(y){
@@ -462,7 +494,7 @@ function doseq4(f, xs, ys, zs){
   }, xs);
 }
 
-export function doseqN(f, xs, ...colls){
+function doseqN(f, xs, ...colls){
   each(function(x){
     if (ISeqable.seq(colls)) {
       apply(doseq, function(...args){

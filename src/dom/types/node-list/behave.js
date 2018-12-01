@@ -1,4 +1,4 @@
-import {does, implement, lazySeq, comp, iterable, ISeq, INext, ISeqable, ISequential, IHierarchy, IQuery, IReduce} from 'cloe/core';
+import {does, implement, lazySeq, comp, iterable, ICounted, ISeq, INext, ISeqable, ISequential, IHierarchy, IQuery, IReduce} from 'cloe/core';
 import {IContent} from "../../protocols";
 import {_ as v} from "param.macro";
 
@@ -38,8 +38,13 @@ function reduce(self, f, init){
   return IReduce.reduce(seq(self), f, init);
 }
 
+function count(self){
+  return self.length;
+}
+
 export default does(
   iterable,
+  implement(ICounted, {count}),
   implement(ISeq, {first, rest}),
   implement(IReduce, {reduce}),
   implement(INext, {next}),

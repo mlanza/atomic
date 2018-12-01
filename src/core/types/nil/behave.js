@@ -1,4 +1,4 @@
-import {IFunctor, IMap, ILog, IAssociative, IOtherwise, IEncode, IDecode, IFork, IArray, IEquiv, ICollection, INext, ISeq, ISeqable, IIndexed, ICounted, ILookup, IReduce, IEmptyableCollection, ISequential} from '../../protocols';
+import {IBlottable, ICompact, IFunctor, IMap, ILog, IAssociative, IInclusive, IOtherwise, IEncode, IDecode, IFork, IArray, IEquiv, ICollection, INext, ISeq, ISeqable, IIndexed, ICounted, ILookup, IReduce, IEmptyableCollection, ISequential} from '../../protocols';
 import {emptyList} from '../../types/empty-list/construct';
 import {identity, constantly, does, overload, noop} from '../../core';
 import {implement} from '../protocol';
@@ -29,6 +29,8 @@ function fork(self, reject, resolve){
 
 export default does(
   implement(ILog, {log: noop}),
+  implement(ICompact, {compact: identity}),
+  implement(IBlottable, {blot: identity}),
   implement(IMap, {keys: nil, vals: nil, dissoc: nil}),
   implement(IEncode, {encode: identity}),
   implement(IDecode, {decode: identity}),
@@ -38,6 +40,7 @@ export default does(
   implement(IEquiv, {equiv}),
   implement(IFunctor, {fmap: identity}),
   implement(ILookup, {lookup: identity}),
+  implement(IInclusive, {includes: constantly(false)}),
   implement(IAssociative, {assoc: assoc, contains: constantly(false)}),
   implement(INext, {next: identity}),
   implement(IArray, {toArray: emptyArray}),

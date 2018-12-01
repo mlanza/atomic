@@ -42,7 +42,7 @@ function mounts4(self, pred, attached, context){
     IMountable.mounts |>
     one(v, "mounting",
       comp(
-        attach(v, "attaching", mounts(v, pred, attached, context)),
+        attach(v, "attaching", mounts4(v, pred, attached, context)),
         getIn(v, ["detail", "parent"]))) |>
     one(v, "mounted" ,
       comp(

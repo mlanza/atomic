@@ -250,7 +250,7 @@ function isolate(f){ //TODO treat operations as promises
         const args = first(queue);
         try {
           f.apply(null, args);
-          IEvented.trigger(args[0], "mutated", {bubbles: true});
+          IEvented.trigger(args[0], "mutate", {bubbles: true});
         } catch (ex) {
           throw ex;
         } finally {
