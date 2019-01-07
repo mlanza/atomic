@@ -1,4 +1,4 @@
-import {ICompact, IEquiv, IMap, IArray, IAssociative, ILookup, IInclusive, IIndexed, ICollection, IComparable, ICounted, ISeq, ISeqable, INext, IHierarchy, IReduce, ISequential} from '../../protocols';
+import {ICompact, IEquiv, IMap, ICoerce, IAssociative, ILookup, IInclusive, IIndexed, ICollection, IComparable, ICounted, ISeq, ISeqable, INext, IHierarchy, IReduce, ISequential} from '../../protocols';
 import {identity, constantly, overload} from '../../core';
 import EmptyList, {emptyList} from '../empty-list/construct';
 import Array, {emptyArray} from '../array/construct';
@@ -180,7 +180,7 @@ export function zip(...colls){
   return mapcat(identity, map(ISeqable.seq, ...colls));
 }
 
-export const filtera = comp(IArray.toArray, filter);
+export const filtera = comp(ICoerce.toArray, filter);
 
 export function remove(pred, xs){
   return filter(complement(pred), xs);
@@ -331,15 +331,6 @@ function dedupe2(f, coll){
 
 export const dedupe = overload(null, dedupe1, dedupe2);
 
-export function indexed(iter){
-  return function(f, xs){
-    var idx = -1;
-    return iter(function(x){
-      return f(++idx, x);
-    }, xs);
-  }
-}
-
 export const coalesce = comp(ISeq.first, ICompact.compact);
 
 function repeatedly1(f){
@@ -435,12 +426,21 @@ function sortBy3(keyFn, compare, coll){
 
 export const sortBy = overload(null, null, sortBy2, sortBy3);
 
-export const mapa        = comp(IArray.toArray, map);
+export function withIndex(iter){
+  return function(f, xs){
+    var idx = -1;
+    return iter(function(x){
+      return f(++idx, x);
+    }, xs);
+  }
+}
+
+export const mapa        = comp(ICoerce.toArray, map);
 export const butlast     = partial(dropLast, 1);
 export const initial     = butlast;
-export const eachIndexed = indexed(each);
-export const mapIndexed  = indexed(map);
-export const keepIndexed = indexed(keep);
+export const eachIndexed = withIndex(each);
+export const mapIndexed  = withIndex(map);
+export const keepIndexed = withIndex(keep);
 export const splitAt     = juxt(take, drop);
 export const splitWith   = juxt(takeWhile, dropWhile);
 

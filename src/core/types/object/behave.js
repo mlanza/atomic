@@ -1,6 +1,6 @@
 import {does, identity} from '../../core';
 import {implement} from '../protocol';
-import {IBlottable, ICompact, ITransient, IComparable, IYank, IMatch, IArray, IDecode, ISet, INext, ICollection, IEncode, IEquiv, IMapEntry, IReduce, IKVReduce, ISeqable, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, IFn, IMap, ISeq, IDescriptive, IObject, ICloneable, IInclusive} from '../../protocols';
+import {IBlottable, ICompact, ITransient, IComparable, IYank, IMatch, IDecode, ISet, INext, ICollection, IEncode, IEquiv, IMapEntry, IReduce, IKVReduce, ISeqable, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, IFn, IMap, ISeq, IDescriptive, ICoerce, ICloneable, IInclusive} from '../../protocols';
 import {reduced} from '../reduced';
 import {transientObject} from '../transient-object/construct';
 import {lazySeq, into, map} from '../lazy-seq';
@@ -199,8 +199,7 @@ export default does(
   implement(IEquiv, {equiv}),
   implement(IDecode, {decode}),
   implement(IEncode, {encode}),
-  implement(IArray, {toArray: toArray}),
-  implement(IObject, {toObject: identity}),
+  implement(ICoerce, {toArray: toArray, toObject: identity}),
   implement(IFind, {find}),
   implement(IYank, {yank}),
   implement(IMatch, {matches}),

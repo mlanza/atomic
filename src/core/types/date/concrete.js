@@ -22,7 +22,7 @@ export function dated(year, month, day, hours, minutes, seconds, milliseconds){
 }
 
 export function at(date, keys){
-  return selectKeys(_.into({}, date), keys);
+  return selectKeys(into({}, date), keys);
 }
 
 export function time(hours, minutes, seconds, milliseconds){

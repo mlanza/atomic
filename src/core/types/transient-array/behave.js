@@ -1,7 +1,7 @@
 import {does, overload, doto} from '../../core';
 import {implement, forwardTo} from '../../types/protocol';
 import {transientArray} from "./construct";
-import {IObject, IInsertable, IFunctor, ILookup, IAssociative, IFind, IMapEntry, IYank, ISeq, INext, ISeqable, ICounted, IInclusive, IReversible, IEmptyableCollection, IMap, IPersistent, IReduce, IKVReduce, ICloneable, IAppendable, IPrependable, ITemplate, ISequential, ICollection} from '../../protocols';
+import {ICoerce, IInsertable, IFunctor, ILookup, IAssociative, IFind, IMapEntry, IYank, ISeq, INext, ISeqable, ICounted, IInclusive, IReversible, IEmptyableCollection, IMap, IPersistent, IReduce, IKVReduce, ICloneable, IAppendable, IPrependable, ITemplate, ISequential, ICollection} from '../../protocols';
 
 function before(self, reference, inserted){
   const pos = self.arr.indexOf(reference);
@@ -69,7 +69,7 @@ const val = forward(IMapEntry.val);
 const contains = forward(IAssociative.contains);
 const keys = forward(IMap.keys);
 const vals = forward(IMap.vals);
-const toObject = forward(IObject.toObject);
+const toObject = forward(ICoerce.toObject);
 const lookup = forward(ILookup.lookup);
 const reduce = forward(IReduce.reduce);
 const reducekv = forward(IKVReduce.reducekv);
@@ -98,7 +98,7 @@ export default does(
   implement(IAssociative, {contains, assoc}),
   implement(IReversible, {reverse}),
   implement(IMap, {dissoc, keys, vals}),
-  implement(IObject, {toObject}),
+  implement(ICoerce, {toObject}),
   implement(IReduce, {reduce}),
   implement(IKVReduce, {reducekv}),
   implement(IAppendable, {append}),

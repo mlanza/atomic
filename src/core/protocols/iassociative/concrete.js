@@ -1,7 +1,7 @@
 import IAssociative from "./instance";
 import {overload, slice} from "../../core";
 import {ISeq} from "../iseq";
-import IArray from "../iarray/instance";
+import ICoerce from "../icoerce/instance";
 import {ILookup} from "../ilookup";
 
 export const contains = IAssociative.contains;
@@ -21,7 +21,7 @@ export function assocIn(self, keys, value){
     case 1:
       return IAssociative.assoc(self, key, value);
     default:
-      return IAssociative.assoc(self, key, assocIn(ILookup.lookup(self, key), IArray.toArray(ISeq.rest(keys)), value));
+      return IAssociative.assoc(self, key, assocIn(ILookup.lookup(self, key), ICoerce.toArray(ISeq.rest(keys)), value));
   }
 }
 
@@ -50,22 +50,22 @@ function updateN(self, key, f){
 export const update = overload(null, null, null, update3, update4, update5, update6, updateN);
 
 function updateIn3(self, keys, f){
-  var k = keys[0], ks = IArray.toArray(ISeq.rest(keys));
+  var k = keys[0], ks = ICoerce.toArray(ISeq.rest(keys));
   return ks.length ? IAssociative.assoc(self, k, updateIn3(ILookup.lookup(self, k), ks, f)) : update3(self, k, f);
 }
 
 function updateIn4(self, keys, f, a){
-  var k = keys[0], ks = IArray.toArray(ISeq.rest(keys));
+  var k = keys[0], ks = ICoerce.toArray(ISeq.rest(keys));
   return ks.length ? IAssociative.assoc(self, k, updateIn4(ILookup.lookup(self, k), ks, f, a)) : update4(self, k, f, a);
 }
 
 function updateIn5(self, keys, f, a, b){
-  var k = keys[0], ks = IArray.toArray(ISeq.rest(keys));
+  var k = keys[0], ks = ICoerce.toArray(ISeq.rest(keys));
   return ks.length ? IAssociative.assoc(self, k, updateIn5(ILookup.lookup(self, k), ks, f, a, b)) : update5(self, k, f, a, b);
 }
 
 function updateIn6(self, key, f, a, b, c){
-  var k = keys[0], ks = IArray.toArray(ISeq.rest(keys));
+  var k = keys[0], ks = ICoerce.toArray(ISeq.rest(keys));
   return ks.length ? IAssociative.assoc(self, k, updateIn6(ILookup.lookup(self, k), ks, f, a, b, c)) : update6(self, k, f, a, b, c);
 }
 

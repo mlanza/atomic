@@ -1,5 +1,6 @@
 import {protocol} from "../../types/protocol";
+import {constantly} from "../../core";
 export const IConfigured = protocol({
-  config: null
+  config: constantly(null)
 });
 export default IConfigured;

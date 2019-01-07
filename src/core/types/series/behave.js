@@ -1,6 +1,6 @@
 import {does, constructs} from "../../core";
 import {implement} from '../protocol';
-import {IArray, IReduce, IIndexed, ISeqable, ISeq, INext, IInclusive, IAppendable, IPrependable, ICounted, ILookup, IFn, ISequential, IEmptyableCollection} from '../../protocols';
+import {ICoerce, IReduce, IIndexed, ISeqable, ISeq, INext, IInclusive, IAppendable, IPrependable, ICounted, ILookup, IFn, ISequential, IEmptyableCollection} from '../../protocols';
 import {iterable} from '../lazy-seq/behave';
 
 function seq(self){
@@ -8,7 +8,7 @@ function seq(self){
 }
 
 function toArray(self){
-  return IArray.toArray(self.items);
+  return ICoerce.toArray(self.items);
 }
 
 function first(self){
@@ -64,7 +64,7 @@ export default does(
   implement(IAppendable, {append}),
   implement(IPrependable, {prepend}),
   implement(IEmptyableCollection, {empty}),
-  implement(IArray, {toArray}),
+  implement(ICoerce, {toArray}),
   implement(ISeqable, {seq}),
   implement(INext, {next}),
   implement(IReduce, {reduce}),

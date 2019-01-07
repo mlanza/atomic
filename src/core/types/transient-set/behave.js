@@ -5,7 +5,7 @@ import {filter, lazySeq} from '../lazy-seq';
 import {emptyList} from '../empty-list/construct';
 import {apply} from "../function/concrete";
 import {unreduced} from '../reduced/concrete';
-import {IArray, IPersistent, ISeq, IReduce, ISeqable, ISet, INext, ISequential, ICounted, ICollection, IEmptyableCollection, IInclusive, ICloneable} from '../../protocols';
+import {ICoerce, IPersistent, ISeq, IReduce, ISeqable, ISet, INext, ISequential, ICounted, ICollection, IEmptyableCollection, IInclusive, ICloneable} from '../../protocols';
 import {_ as v} from "param.macro";
 
 function seq(self){
@@ -74,7 +74,7 @@ function reduce(self, xf, init){
 export default does(
   implement(ISequential),
   implement(IReduce, {reduce}),
-  implement(IArray, {toArray}),
+  implement(ICoerce, {toArray}),
   implement(ISeqable, {seq}),
   implement(IInclusive, {includes}),
   implement(ISet, {disj, unite: conj}),

@@ -1,4 +1,4 @@
-import {IBlottable, ICompact, IArray, IMatch, IReduce, ICollection, IHash, IEncode, IDecode, IIndexed, ISeqable, INext, ISeq, IInclusive, IAppendable, IPrependable, ICounted, ILookup, IFn, IComparable, IEmptyableCollection} from '../../protocols';
+import {IBlottable, ICompact, ICoerce, IMatch, IReduce, ICollection, IHash, IEncode, IDecode, IIndexed, ISeqable, INext, ISeq, IInclusive, IAppendable, IPrependable, ICounted, ILookup, IFn, IComparable, IEmptyableCollection} from '../../protocols';
 import {does, identity, constantly} from "../../core";
 import {implement, specify} from '../protocol';
 import {isReduced, unreduced} from '../reduced';
@@ -98,7 +98,7 @@ export default does(
   implement(IReduce, {reduce}),
   implement(IEncode, {encode: identity}),
   implement(IDecode, {decode: identity}),
-  implement(IArray, {toArray}),
+  implement(ICoerce, {toArray}),
   implement(IComparable, {compare}),
   implement(IInclusive, {includes}),
   implement(IAppendable, {append: conj}),

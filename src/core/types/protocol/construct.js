@@ -26,9 +26,10 @@ Protocol.prototype.extend = function(behavior){
 Protocol.prototype.dispatch = function(method){
   const protocol = this;
   return function(self, ...args){
-    const f = satisfies2.call(protocol, method, self) || function(){
+    const f = satisfies2.call(protocol, method, self);
+    if (!f) {
       throw protocolLookupError(protocol, method, self, args);
-    };
+    }
     return f.apply(null, [self].concat(args));
   }
 }

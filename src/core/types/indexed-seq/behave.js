@@ -1,9 +1,9 @@
-import {identity, does} from '../../core';
+import {identity, does, overload} from '../../core';
 import {implement} from '../protocol';
 import {indexedSeq} from './construct';
 import {revSeq} from '../../types/rev-seq/construct';
 import {isReduced, unreduced} from '../../types/reduced';
-import {IArray, IQuery, IEquiv, IReversible, IMapEntry, IFind, IInclusive, IAssociative, IAppendable, IPrependable, ICollection, INext, ICounted, IReduce, IKVReduce, ISeq, ISeqable, ISequential, IIndexed, ILookup, IFn, IEmptyableCollection} from '../../protocols';
+import {ICoerce, IQuery, IEquiv, IReversible, IMapEntry, IFind, IInclusive, IAssociative, IAppendable, IPrependable, ICollection, INext, ICounted, IReduce, IKVReduce, ISeq, ISeqable, ISequential, IIndexed, ILookup, IFn, IEmptyableCollection} from '../../protocols';
 import {locate} from '../../protocols/ilocate/concrete';
 import {concat} from '../../types/concatenated/construct';
 import {iterable} from '../lazy-seq/behave';
@@ -52,6 +52,20 @@ function next(self){
 function nth(self, idx){
   return IIndexed.nth(self.seq, idx + self.start);
 }
+
+function idx2(self, x){
+  return idx3(self, x, 0);
+}
+
+function idx3(self, x, idx){
+  if (first(self) === x) {
+    return idx;
+  }
+  const nxt = next(self);
+  return nxt ? idx3(nxt, x, idx + 1) : null;
+}
+
+const idx = overload(null, null, idx2, idx3);
 
 function first(self){
   return nth(self, 0);
@@ -106,7 +120,7 @@ export default does(
   encodeable,
   implement(IQuery, {query}),
   implement(ISequential),
-  implement(IIndexed, {nth}),
+  implement(IIndexed, {nth, idx}),
   implement(IReversible, {reverse}),
   implement(IMapEntry, {key, val}),
   implement(IInclusive, {includes}),
@@ -121,7 +135,7 @@ export default does(
   implement(ILookup, {lookup}),
   implement(ICollection, {conj: append}),
   implement(INext, {next}),
-  implement(IArray, {toArray}),
+  implement(ICoerce, {toArray}),
   implement(ISeq, {first, rest}),
   implement(ISeqable, {seq: identity}),
   implement(ICounted, {count}));

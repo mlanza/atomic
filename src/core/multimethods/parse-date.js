@@ -5,7 +5,7 @@ import {comp, spread, see} from "../types/function/concrete";
 import {split} from "../types/string/concrete";
 import {mapSomeVals} from "../types/object/concrete";
 import {date} from "../types/date/construct";
-import {toArray} from "../protocols/iarray/concrete";
+import {toArray} from "../protocols/icoerce/concrete";
 import {get} from "../protocols/ilookup/concrete";
 import {method} from "../types/method/construct";
 import {append} from "../protocols/iappendable/concrete";

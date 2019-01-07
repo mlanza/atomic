@@ -16,6 +16,7 @@ export * from "./types/fsm";
 export * from "./types/function";
 export * from "./types/guid";
 export * from "./types/indexed-seq";
+export * from "./types/indexed";
 export * from "./types/just";
 export * from "./types/lens";
 export * from "./types/list";

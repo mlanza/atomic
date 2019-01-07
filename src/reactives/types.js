@@ -10,3 +10,4 @@ export * from "./types/middleware";
 export * from "./types/observable";
 export * from "./types/publisher";
 export * from "./types/router";
+export * from "./types/then";

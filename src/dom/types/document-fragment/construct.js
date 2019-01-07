@@ -1,9 +1,9 @@
-import {IReduce, ICollection} from 'cloe/core';
+import {conj, reduce} from 'cloe/core';
 
 export default DocumentFragment;
 
 export function fragment(...contents){
-  return IReduce.reduce(contents, ICollection.conj, document.createDocumentFragment());
+  return reduce(conj, document.createDocumentFragment(), contents);
 }
 
 DocumentFragment.create = fragment;

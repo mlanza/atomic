@@ -1,11 +1,11 @@
 import {implement} from '../protocol';
-import {IBlottable, ICompact, ILocate, IQuery, IFunctor, IReversible, IYank, IMatch, IArray, IInclusive, IFind, IEquiv, ICollection, INext, ISeq, IReduce, IKVReduce, ISeqable, ISequential, IIndexed, IEmptyableCollection, ICounted, IAppendable, IPrependable} from '../../protocols';
+import {IBlottable, ICompact, ILocate, IQuery, IFunctor, IReversible, IYank, IMatch, ICoerce, IInclusive, IFind, IEquiv, ICollection, INext, ISeq, IReduce, IKVReduce, ISeqable, ISequential, IIndexed, IEmptyableCollection, ICounted, IAppendable, IPrependable} from '../../protocols';
 import {overload, identity, does, partial} from '../../core';
 import Reduced, {isReduced, reduced, unreduced} from "../reduced";
 import {concat} from "../concatenated/construct";
 import {comp} from "../function/concrete";
 import {cons} from "../list/construct";
-import {map, filter} from "./concrete";
+import {map, filter, detect} from "./concrete";
 import {lazySeq} from "./construct";
 import {emptyList} from '../empty-list/construct';
 import Symbol from '../symbol/construct';
@@ -14,6 +14,10 @@ const compact = partial(filter, identity);
 
 function query(self, pred){
   return filter(pred, self);
+}
+
+function locate(self, pred){
+  return detect(pred, self);
 }
 
 function fmap(self, f){
@@ -78,6 +82,33 @@ function rest(self){
 
 function next(self){
   return ISeqable.seq(ISeq.rest(self));
+}
+
+function nth(self, n){
+  var xs  = self,
+      idx = 0;
+  while(xs){
+    var x = first(xs);
+    if (idx === n) {
+      return x;
+    }
+    idx++;
+    xs = next(xs);
+  }
+  return null;
+}
+
+function idx(self, x){
+  var xs = ISeqable.seq(self),
+      n  = 0;
+  while(xs){
+    if (x === ISeq.first(xs)) {
+      return n;
+    }
+    n++;
+    xs = INext.next(xs);
+  }
+  return null;
 }
 
 function reduce(xs, xf, init){
@@ -147,15 +178,17 @@ export default does(
   iterable,
   ireduce,
   implement(ISequential),
+  implement(IIndexed, {nth, idx}),
   implement(IReversible, {reverse}),
   implement(IBlottable, {blot: identity}),
   implement(ICompact, {compact}),
   implement(IInclusive, {includes}),
   implement(IQuery, {query}),
+  implement(ILocate, {locate}),
   implement(IYank, {yank}),
   implement(IFunctor, {fmap}),
   implement(ICollection, {conj}),
-  implement(IArray, {toArray}),
+  implement(ICoerce, {toArray}),
   implement(IAppendable, {append}),
   implement(IPrependable, {prepend: conj}),
   implement(IReduce, {reduce}),

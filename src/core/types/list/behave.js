@@ -1,6 +1,6 @@
 import {does, identity} from '../../core';
 import {implement} from '../protocol';
-import {ISeq, ISeqable, IEncode, IAssociative, IArray, IMatch} from '../../protocols';
+import {ISeq, ISeqable, IEncode, IAssociative, IMatch} from '../../protocols';
 import behave from '../lazy-seq/behave';
 import Symbol from '../symbol/construct';
 

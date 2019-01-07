@@ -1,4 +1,4 @@
-import {identity, does, implement, IDescriptive, ISeqable, IMap, IAssociative, ILookup, IDeref, IObject, IArray, ICounted, ICollection, IReduce, IInclusive, IYank} from 'cloe/core';
+import {identity, does, implement, key, val, IDescriptive, ISeqable, IMap, IAssociative, ILookup, IDeref, ICounted, ICollection, IReduce, IInclusive, IYank} from 'cloe/core';
 
 function lookup(self, key){
   return self.node[key];
@@ -19,20 +19,16 @@ function dissoc(self, key){
 }
 
 function includes(self, entry){
-  const key = entry[0], value = entry[1];
-  return self.node[key] === value;
+  return self.node[key(entry)] === val(entry);
 }
 
 function yank(self, entry){
-  const key = entry[0], value = entry[1];
-  includes(self, [key, value]) && dissoc(self, key);
+  includes(self, entry) && dissoc(self, key(entry));
   return self;
 }
 
 function conj(self, entry){
-  const key = entry[0], value = entry[1];
-  return assoc(self, key, value);
-  return self;
+  return assoc(self, key(entry), val(entry));
 }
 
 export default does(

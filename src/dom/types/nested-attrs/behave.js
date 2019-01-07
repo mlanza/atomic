@@ -1,4 +1,4 @@
-import {constantly, identity, does, overload, implement, mapa, compact, trim, split, str, IDescriptive, ISeqable, IMap, IAssociative, ILookup, IDeref, IObject, IArray, ICounted, ICollection, IReduce, IInclusive, IYank} from 'cloe/core';
+import {constantly, identity, does, overload, implement, mapa, compact, trim, split, str, ICoerce, IDescriptive, ISeqable, IMap, IAssociative, ILookup, IDeref, ICounted, ICollection, IReduce, IInclusive, IYank} from 'cloe/core';
 
 function asText(obj){
   return mapa(function(entry){
@@ -65,4 +65,4 @@ export default does(
   implement(ILookup, {lookup}),
   implement(IYank, {yank}),
   implement(ICollection, {conj}),
-  implement(IObject, {toObject: deref}));
+  implement(ICoerce, {toObject: deref}));
