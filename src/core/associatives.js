@@ -1,5 +1,5 @@
 import {overload, identity, partial, constantly, slice} from "./core";
-import {IDescriptive, ISeqable, ISequential, IObject, IAssociative, ILookup, IReduce, IKVReduce, IEmptyableCollection} from "./protocols";
+import {IDescriptive, ISeqable, ISequential, IAssociative, ILookup, IReduce, IKVReduce, IEmptyableCollection} from "./protocols";
 import {some, into, best} from "./types/lazy-seq/concrete";
 import {apply} from "./types/function/concrete";
 import {isFunction} from "./types/function/construct";

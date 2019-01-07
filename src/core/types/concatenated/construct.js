@@ -1,6 +1,6 @@
 import {ISeqable} from '../../protocols/iseqable';
 import {ISeq} from '../../protocols/iseq';
-import IArray from '../../protocols/iarray/instance';
+import ICoerce from '../../protocols/icoerce/instance';
 import {identity, overload, unspread} from "../../core";
 import {lazySeq} from "../../types/lazy-seq/construct";
 import {emptyList} from '../empty-list/construct';
@@ -20,7 +20,7 @@ export function Concatenated(colls){
 }
 
 export function concatenated(colls){
-  colls = IArray.toArray(filter(ISeqable.seq, colls));
+  colls = ICoerce.toArray(filter(ISeqable.seq, colls));
   return ISeqable.seq(colls) ? new Concatenated(colls) : emptyList();
 }
 

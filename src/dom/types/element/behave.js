@@ -9,6 +9,8 @@ import {
   doto,
   noop,
   get,
+  key,
+  val,
   implement,
   specify,
   satisfies,
@@ -41,10 +43,11 @@ import {
   IYank,
   IInclusive,
   IInsertable,
-  IArray,
+  ICoerce,
   IAppendable,
   IPrependable,
   IAssociative,
+  IDescriptive,
   IMap,
   ICloneable,
   ICollection,
@@ -58,8 +61,8 @@ import {
   IHierarchy
 } from 'cloe/core';
 import {IEvented} from "cloe/reactives";
-import * as m from "../../protocols/imountable/concrete"
-import {IHtml, IText, IValue, IContent, IHideable, IMountable} from "../../protocols";
+import {isMountable} from "../../protocols/imountable/concrete"
+import {IHtml, IText, IValue, IContent, IHideable, IEmbeddable} from "../../protocols";
 import {nestedAttrs} from "../nested-attrs/construct";
 import {isDocumentFragment} from "../document-fragment/construct";
 import {isElement} from "../element/construct";
@@ -77,19 +80,44 @@ function show(self){
   IYank.yank(nestedAttrs(self, "style"), hides);
 }
 
-function before(self, inserted){
-  const parent = IHierarchy.parent(self);
-  parent.insertBefore(inserted, self);
+function embed(self, parent, referenceNode) {
+  if (isMountable(self)) {
+    IEvented.trigger(self, "mounting", {bubbles: true, detail: {parent}});
+    if (referenceNode) {
+      parent.insertBefore(self, referenceNode);
+    } else {
+      parent.appendChild(self);
+    }
+    IEvented.trigger(self, "mounted" , {bubbles: true, detail: {parent}});
+  } else {
+    if (referenceNode) {
+      parent.insertBefore(self, referenceNode);
+    } else {
+      parent.appendChild(self);
+    }
+  }
   return self;
 }
 
-function after(self, inserted){
-  const relative = IHierarchy.nextSibling(self), parent = IHierarchy.parent(self);
-  if (relative) {
-    parent.insertBefore(inserted, relative);
-  } else {
-    IAppendable.append(parent, inserted);
-  }
+function append(self, content){
+  IEmbeddable.embed(content, self);
+  return self;
+}
+
+const conj = append;
+
+function prepend(self, content){
+  IEmbeddable.embed(content, self, self.childNodes[0]);
+  return self;
+}
+
+function before(self, content){
+  IEmbeddable.embed(content, IHierarchy.parent(self), self);
+  return self;
+}
+
+function after(self, content){
+  IEmbeddable.embed(content, IHierarchy.parent(self), IHierarchy.nextSibling(self));
   return self;
 }
 
@@ -97,8 +125,12 @@ function matches(self, selector){
   return (isString(selector) && self.matches(selector)) || (isFunction(selector) && selector(self));
 }
 
+function isText(self){
+  return self && self.constructor === Text;
+}
+
 function isAttrs(self){
-  return !isDocumentFragment(self) && !isElement(self) && satisfies(IAssociative, self);
+  return !(self instanceof Node) && satisfies(IDescriptive, self);
 }
 
 function eventContext(catalog){
@@ -166,59 +198,7 @@ function trigger(self, key, options){
 }
 
 function contents(self){
-  return ISeqable.seq(self.childNodes);
-}
-
-function mounts(self){
-  return doto(self,
-    specify(IMountable, {mountable}));
-}
-
-function mountable(self){
-  return !parent(self);
-}
-
-function mount(self, parent){
-  parent.appendChild(self);
-}
-
-function conj(self, other){
-  if (m.mountable(other)) {
-    m.mount(other, self);
-  } else if (isFunction(other)){
-    return conj(self, other());
-  } else if (isAttrs(other)){
-    each(function(entry){
-      const key = entry[0], value = entry[1];
-      assoc(self, key, value);
-    }, other);
-  } else if (isString(other)) {
-    self.appendChild(document.createTextNode(other));
-  } else if (isNumber(other)) {
-    self.appendChild(document.createTextNode(str(other)));
-  } else {
-    self.appendChild(other);
-  }
-  return self;
-}
-
-function prepend(self, other){
-  if (isAttrs(other)){
-    each(function(entry){
-      const key = entry[0], value = entry[1];
-      assoc(self, key, value);
-    }, other);
-  } else {
-    const content = isString(other) ? document.createTextNode(other) : other;
-    if (self.prepend) {
-      self.prepend(content);
-    } else if (self.childNodes.length) {
-      self.insertBefore(content, self.childNodes[0]);
-    } else {
-      self.appendChild(content);
-    }
-  }
-  return self;
+  return self.contentDocument || ISeqable.seq(self.childNodes);
 }
 
 function lookup(self, key){
@@ -327,7 +307,7 @@ function yank2(self, node){
       if (isObject(curr)){
         curr = mapa(function(pair){
           return pair.join(": ") + "; ";
-        }, IArray.toArray(curr)).join("").trim();
+        }, ICoerce.toArray(curr)).join("").trim();
       }
       curr == value && dissoc(self, key);
     }, attrs);
@@ -372,11 +352,11 @@ function clone(self){
 }
 
 function text1(self){
-  return self.innerText;
+  return self.textContent;
 }
 
 function text2(self, text){
-  self.innerText = text;
+  self.textContent = text == null ? "" : text;
 }
 
 export const text = overload(null, text1, text2);
@@ -391,9 +371,9 @@ function html2(self, html){
   } else {
     empty(self);
     if (satisfies(ISequential, html)) {
-      apply(conj, self, html);
+      apply(append, self, html);
     } else {
-      conj(self, html);
+      append(self, html);
     }
   }
   return self;
@@ -402,16 +382,17 @@ function html2(self, html){
 export const html = overload(null, html1, html2);
 
 function value1(self){
-  return self.value != null ? self.value : null;
+  return "value" in self ? self.value : null;
 }
 
 function value2(self, value){
-  if (!("value" in self)) {
+  if ("value" in self) {
+    value = value == null ? "" : value;
+    if (self.value != value) {
+      self.value = value;
+    }
+  } else {
     throw new TypeError("Type does not support value property.");
-  }
-  if (self.value != value) {
-    self.value = value;
-    //IEvented.trigger(self, "change", {bubbles: true});
   }
 }
 
@@ -438,7 +419,7 @@ export default does(
   implement(IText, {text}),
   implement(IHtml, {html}),
   implement(IValue, {value}),
-  implement(IMountable, {mountable: constantly(false), mount, mounts}),
+  implement(IEmbeddable, {embed}),
   implement(IEmptyableCollection, {empty}),
   implement(IInsertable, {before, after}),
   implement(IInclusive, {includes}),
@@ -446,7 +427,7 @@ export default does(
   implement(IYank, {yank}),
   implement(IMatch, {matches}),
   implement(ICloneable, {clone}),
-  implement(IAppendable, {append: conj}),
+  implement(IAppendable, {append}),
   implement(IPrependable, {prepend}),
   implement(ICollection, {conj}),
   implement(ILookup, {lookup}),

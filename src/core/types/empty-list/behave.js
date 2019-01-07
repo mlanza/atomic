@@ -1,6 +1,6 @@
 import {identity, constantly, does} from '../../core';
 import {implement} from '../protocol';
-import {IBlottable, IArray, IInclusive, IReversible, IEncode, ICollection, INext, ISeq, ISeqable, ISequential, IAssociative, IIndexed, IEmptyableCollection, IKVReduce, IReduce, ICounted} from '../../protocols';
+import {IBlottable, ICoerce, IInclusive, IReversible, IEncode, ICollection, INext, ISeq, ISeqable, ISequential, IAssociative, IIndexed, IEmptyableCollection, IKVReduce, IReduce, ICounted} from '../../protocols';
 import {emptyList} from '../../types/empty-list/construct';
 import {emptyArray} from '../../types/array/construct';
 import Symbol from '../symbol/construct';
@@ -23,7 +23,7 @@ export default does(
   implement(IInclusive, {includes: constantly(false)}),
   implement(IKVReduce, {reducekv: reduce}),
   implement(IReduce, {reduce}),
-  implement(IArray, {toArray: emptyArray}),
+  implement(ICoerce, {toArray: emptyArray}),
   implement(ISeq, {first: constantly(null), rest: emptyList}),
   implement(INext, {next: constantly(null)}),
   implement(ISeqable, {seq: constantly(null)}));

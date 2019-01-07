@@ -149,6 +149,10 @@ export function once(f){
   }
 }
 
+export function execute(f, ...args){
+  return f.apply(this, args);
+}
+
 export function applying(...args){
   return function(f){
     return f.apply(this, args);

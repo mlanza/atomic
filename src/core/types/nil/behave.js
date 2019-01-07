@@ -1,4 +1,4 @@
-import {IBlottable, ICompact, IFunctor, IMap, ILog, IAssociative, IInclusive, IOtherwise, IEncode, IDecode, IFork, IArray, IEquiv, ICollection, INext, ISeq, ISeqable, IIndexed, ICounted, ILookup, IReduce, IEmptyableCollection, ISequential} from '../../protocols';
+import {IBlottable, ICompact, IFunctor, IMap, ILog, IAssociative, IInclusive, IOtherwise, IEncode, IDecode, IFork, ICoerce, IEquiv, ICollection, INext, ISeq, ISeqable, IIndexed, ICounted, ILookup, IReduce, IEmptyableCollection, ISequential} from '../../protocols';
 import {emptyList} from '../../types/empty-list/construct';
 import {identity, constantly, does, overload, noop} from '../../core';
 import {implement} from '../protocol';
@@ -43,7 +43,7 @@ export default does(
   implement(IInclusive, {includes: constantly(false)}),
   implement(IAssociative, {assoc: assoc, contains: constantly(false)}),
   implement(INext, {next: identity}),
-  implement(IArray, {toArray: emptyArray}),
+  implement(ICoerce, {toArray: emptyArray}),
   implement(ISeq, {first: identity, rest: emptyList}),
   implement(ISeqable, {seq: identity}),
   implement(IIndexed, {nth: identity}),

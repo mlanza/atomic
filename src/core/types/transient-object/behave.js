@@ -1,7 +1,7 @@
 import {does, overload, doto} from '../../core';
 import {implement, forwardTo} from '../../types/protocol';
 import {transientObject} from "./construct";
-import {IObject, IArray, IEquiv, IFn, IComparable, IDescriptive, IInsertable, IMatch, IFunctor, ILookup, IAssociative, IFind, IMapEntry, IYank, ISeq, INext, ISeqable, ICounted, IInclusive, IReversible, IEmptyableCollection, IMap, IPersistent, IReduce, IKVReduce, ICloneable, IAppendable, IPrependable, ITemplate, ISequential, ICollection} from '../../protocols';
+import {ICoerce, IEquiv, IFn, IComparable, IDescriptive, IInsertable, IMatch, IFunctor, ILookup, IAssociative, IFind, IMapEntry, IYank, ISeq, INext, ISeqable, ICounted, IInclusive, IReversible, IEmptyableCollection, IMap, IPersistent, IReduce, IKVReduce, ICloneable, IAppendable, IPrependable, ITemplate, ISequential, ICollection} from '../../protocols';
 
 function yank(self, entry){
   const key = IMapEntry.key(entry);
@@ -74,7 +74,7 @@ const seq = forward(ISeqable.seq);
 const count = forward(ICounted.count);
 const reduce = forward(IReduce.reduce);
 const reducekv = forward(IKVReduce.reducekv);
-const toArray = forward(IArray.toArray);
+const toArray = forward(ICoerce.toArray);
 
 export default does(
   implement(IDescriptive),
@@ -82,8 +82,7 @@ export default does(
   implement(ICollection, {conj}),
   implement(IComparable, {compare}),
   implement(IEmptyableCollection, {empty}),
-  implement(IArray, {toArray}),
-  implement(IObject, {toObject}),
+  implement(ICoerce, {toArray, toObject}),
   implement(IFn, {invoke: lookup}),
   implement(IReduce, {reduce}),
   implement(IKVReduce, {reducekv}),

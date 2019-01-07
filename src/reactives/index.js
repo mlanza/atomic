@@ -6,6 +6,7 @@ import {
   ISwap,
   IAssociative,
   IFunctor,
+  ICounted,
   Function,
   doto,
   does,
@@ -27,9 +28,10 @@ import {
   notEq,
   implement,
   specify,
-  value,
   slice
 } from "cloe/core";
+import * as _ from "cloe/core";
+import {weakMap} from "cloe/core";
 import {on, off} from "./protocols/concrete";
 import {IDispatch, IPublish, ISubscribe, IEvented} from "./protocols";
 import LazyPub from "./types/lazy-pub/construct";
@@ -78,9 +80,9 @@ function touched1(source){
 export const touched = overload(null, touched1, touched2);
 
 export function computed(f, source){
-  const obs = observable(f());
+  const obs = observable(f(source));
   function callback(){
-    IReset.reset(obs, f());
+    IReset.reset(obs, f(source));
   }
   function pub(self, value){
     IPublish.pub(source, value);
@@ -140,24 +142,22 @@ export function pressed(el){
 }
 
 export function hashchange(window){
-  return signal(t.map(function(e){
+  return signal(t.map(function(){
     return location.hash;
-  }), "", event(window, "hashchange"));
+  }), location.hash, event(window, "hashchange"));
 }
 
-function control3(events, f, el){
+export function fromPromise(promise, init){
+  const sink = observable(init || null);
+  IFunctor.fmap(promise, IPublish.pub(sink, v));
+  return sink;
+}
+
+export function fromElement(events, f, el){
   return signal(t.map(function(){
     return f(el);
   }), f(el), event(el, events));
 }
-
-function control2(events, el){
-  return control3(events, value, el);
-}
-
-export const control = overload(null, null, control2, control3);
-export const change = partial(control, "change");
-export const input = partial(control, "input");
 
 export function focus(el){
   return join(observable(el === document.activeElement),
@@ -207,12 +207,6 @@ function hist2(size, source){
 }
 
 export const hist = overload(null, partial(hist2, 2), hist2);
-
-export function fromPromise(promise, init){
-  const sink = observable(init || null);
-  IFunctor.fmap(promise, IPublish.pub(sink, v));
-  return sink;
-}
 
 function event2(el, key){
   const sink = publisher(), callback = partial(IPublish.pub, sink);

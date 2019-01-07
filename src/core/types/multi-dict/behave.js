@@ -1,6 +1,6 @@
 import {does} from '../../core';
 import {implement} from '../protocol';
-import {ISeq, IArray, IReduce, IKVReduce, ICounted, ISeqable, ICollection, ILookup, IMap, IAssociative} from '../../protocols';
+import {ISeq, ICoerce, IReduce, IKVReduce, ICounted, ISeqable, ICollection, ILookup, IMap, IAssociative} from '../../protocols';
 import {lazySeq, map} from '../lazy-seq';
 import {comp} from '../function/concrete';
 import {emptyList} from '../empty-list/construct';
@@ -59,7 +59,7 @@ function reducekv(self, xf, init){
 export default does(
   record,
   implement(IMap, {keys}),
-  implement(IArray, {toArray: comp(Array.from, seq)}),
+  implement(ICoerce, {toArray: comp(Array.from, seq)}),
   implement(IReduce, {reduce}),
   implement(IKVReduce, {reducekv}),
   implement(ICounted, {count}),

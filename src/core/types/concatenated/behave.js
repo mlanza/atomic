@@ -2,7 +2,7 @@ import {identity, does} from '../../core';
 import {implement} from '../protocol';
 import {concatenated, concat} from '../../types/concatenated/construct';
 import {isReduced, unreduced} from '../../types/reduced';
-import {IArray, ICollection, INext, ISeq, ICounted, ISeqable, IIndexed, IReduce, IKVReduce, ISequential, IEmptyableCollection} from '../../protocols';
+import {ICoerce, ICollection, INext, ISeq, ICounted, ISeqable, IIndexed, IReduce, IKVReduce, ISequential, IEmptyableCollection} from '../../protocols';
 import {apply} from '../../types/function/concrete';
 import EmptyList, {emptyList} from '../empty-list';
 import {ireduce, iterable} from '../lazy-seq/behave';
@@ -71,6 +71,6 @@ export default does(
   implement(ICollection, {conj}),
   implement(INext, {next}),
   implement(ISeq, {first, rest}),
-  implement(IArray, {toArray}),
+  implement(ICoerce, {toArray}),
   implement(ISeqable, {seq: identity}),
   implement(ICounted, {count}));

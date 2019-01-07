@@ -4,7 +4,7 @@ import EmptyList, {emptyList} from '../../types/empty-list/construct';
 import {cons} from '../../types/list/construct';
 import {range} from '../../types/range/construct';
 import {Reduced, unreduced} from '../../types/reduced';
-import {ISequential, IArray, ILookup, IMap, ICloneable, IReduce, ICollection, IEmptyableCollection, INext, ISeq, ICounted, ISeqable, IIndexed} from '../../protocols';
+import {ISequential, ICoerce, ILookup, IMap, ICloneable, IReduce, ICollection, IEmptyableCollection, INext, ISeq, ICounted, ISeqable, IIndexed} from '../../protocols';
 import {revSeq} from './construct';
 import {iterable} from '../lazy-seq/behave';
 import {map} from '../lazy-seq/concrete';
@@ -73,7 +73,7 @@ export default does(
   implement(IIndexed, {nth}),
   implement(ILookup, {lookup: nth}),
   implement(IMap, {keys, vals}),
-  implement(IArray, {toArray: Array.from}),
+  implement(ICoerce, {toArray: Array.from}),
   implement(IEmptyableCollection, {empty: emptyList}),
   implement(IReduce, {reduce}),
   implement(ICollection, {conj}),

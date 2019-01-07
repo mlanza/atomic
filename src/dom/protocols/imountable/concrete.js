@@ -1,19 +1,10 @@
-import {root, getIn, specify, satisfies, partial, comp, doto, overload, noop, IDeref} from 'cloe/core';
-import {trigger, one, ISubscribe, IEvented} from "cloe/reactives";
+import {root, getIn, specify, satisfies, partial, comp, doto, overload, noop} from 'cloe/core';
+import {trigger, one} from "cloe/reactives";
 import IMountable from "./instance";
 import {isHTMLDocument} from "../../types/html-document/construct";
 import {_ as v} from "param.macro";
 
-export function mountable(self){
-  return satisfies(IMountable, self) && IMountable.mountable(self);
-}
-
-export function mount(self, parent){
-  IEvented.trigger(self, "mounting", {bubbles: true, detail: {parent}});
-  IMountable.mount(self, parent);
-  IEvented.trigger(self, "mounted" , {bubbles: true, detail: {parent}});
-  return self;
-}
+export const isMountable = satisfies(IMountable, v);
 
 function mounts1(self){
   return mounts2(self, isHTMLDocument);
@@ -30,6 +21,7 @@ function mounts3(self, pred, attached){
 }
 
 function mounts4(self, pred, attached, context){
+  specify(IMountable, {}, self);
   function attach(parent, event, callback){
     const ancestor = root(parent);
     if (pred(ancestor)) {
@@ -39,7 +31,6 @@ function mounts4(self, pred, attached, context){
     }
   }
   return self |>
-    IMountable.mounts |>
     one(v, "mounting",
       comp(
         attach(v, "attaching", mounts4(v, pred, attached, context)),

@@ -1,6 +1,6 @@
 import {implement} from '../protocol';
 import {identity, does} from '../../core';
-import {IObject, IDescriptive, IFind, ICollection, IReduce, IKVReduce, INext, IArray, ISeq, ISeqable, IIndexed, ICounted, ILookup, IFn, IMap, ICloneable, IEmptyableCollection} from '../../protocols';
+import {ICoerce, IDescriptive, IFind, ICollection, IReduce, IKVReduce, INext, ISeq, ISeqable, IIndexed, ICounted, ILookup, IFn, IMap, ICloneable, IEmptyableCollection} from '../../protocols';
 import {lazySeq} from '../../types/lazy-seq/construct';
 import {remove, into} from '../../types/lazy-seq/concrete';
 import Object, {emptyObject} from '../../types/object/construct';
@@ -68,7 +68,7 @@ export default does(
   iequiv,
   itemplate,
   implement(IDescriptive),
-  implement(IObject, {toObject}),
+  implement(ICoerce, {toObject}),
   implement(IFind, {find}),
   implement(IMap, {dissoc, keys, vals}),
   implement(IReduce, {reduce}),

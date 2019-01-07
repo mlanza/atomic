@@ -3,7 +3,7 @@ import {IEvented} from "cloe/reactives";
 
 function matches(self, pattern){
   if (isRegExp(pattern)){
-    return test(pattern, decodeURI(self.href));
+    return test(pattern, decodeURI(self.pathname));
   } else if (isString(pattern)) {
     return matches(self, new RegExp(pattern, "i"));
   }

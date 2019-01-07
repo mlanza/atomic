@@ -1,4 +1,3 @@
-import {IArray} from "../../protocols";
 import Set from "set";
 
 export const TransientSet = Set;

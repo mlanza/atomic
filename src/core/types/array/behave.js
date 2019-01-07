@@ -1,6 +1,6 @@
 import {does, identity, overload, doto} from '../../core';
 import {implement, specify, satisfies} from '../protocol';
-import {IBlottable, IMap, IQuery, ITransient, IPersistent, IWrite, ITemplate, IArray, IObject, IFunctor, IInsertable, IYank, IEncode, IDecode, IReversible, ISet, IMapEntry, IEquiv, IReduce, IKVReduce, IAppendable, IPrependable, IInclusive, ICollection, INext, ISeq, IFind, ISeqable, IIndexed, IAssociative, ISequential, IEmptyableCollection, IFn, ICounted, ILookup, ICloneable} from '../../protocols';
+import {IBlottable, IMap, IQuery, ITransient, IPersistent, IWrite, ITemplate, ICoerce, IFunctor, IInsertable, IYank, IEncode, IDecode, IReversible, ISet, IMapEntry, IEquiv, IReduce, IKVReduce, IAppendable, IPrependable, IInclusive, ICollection, INext, ISeq, IFind, ISeqable, IIndexed, IAssociative, ISequential, IEmptyableCollection, IFn, ICounted, ILookup, ICloneable} from '../../protocols';
 import {reduced, unreduced, isReduced} from '../reduced';
 import {indexedSeq} from '../indexed-seq';
 import {replace} from '../string/concrete';
@@ -125,7 +125,7 @@ function find(self, key){
 }
 
 function lookup(self, key){
-  return self[key];
+  return key in self ? self[key] : null;
 }
 
 function assoc(self, key, value){
@@ -173,8 +173,11 @@ function length(self){
   return self.length;
 }
 
-function nth(coll, idx){
-  return coll[idx];
+const nth = lookup;
+
+function idx(self, x){
+  var n = self.indexOf(x);
+  return n === -1 ? null : n;
 }
 
 function encode(self, label, refstore, seed){
@@ -211,7 +214,7 @@ function query(self, pred){
 }
 
 export const iindexed = does(
-  implement(IIndexed, {nth}),
+  implement(IIndexed, {nth, idx}),
   implement(ICounted, {count: length}));
 
 export const iequiv = implement(IEquiv, {equiv});
@@ -229,7 +232,7 @@ export default does(
   implement(IFunctor, {fmap}),
   implement(IEncode, {encode}),
   implement(IDecode, {decode}),
-  implement(IObject, {toObject}),
+  implement(ICoerce, {toObject}),
   implement(IYank, {yank}),
   implement(IReversible, {reverse}),
   implement(ISet, {disj}),
@@ -250,5 +253,5 @@ export default does(
   implement(ISeqable, {seq}),
   implement(ICollection, {conj: append}),
   implement(INext, {next}),
-  implement(IArray, {toArray: identity}),
+  implement(ICoerce, {toArray: identity}),
   implement(ISeq, {first, rest}));
