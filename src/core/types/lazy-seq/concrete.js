@@ -52,7 +52,13 @@ export function each(f, xs){
   }
 }
 
-export function eachWithKey(f, xs){
+export function eachkv(f, xs){
+  each(function([key, value]){
+    return f(key, value);
+  }, entries(xs));
+}
+
+export function eachvk(f, xs){
   each(function([key, value]){
     return f(value, key);
   }, entries(xs));
@@ -70,7 +76,13 @@ function entries1(xs){
 
 export const entries = overload(null, entries1, entries2);
 
-export function mapWithKey(f, xs){
+export function mapkv(f, xs){
+  return map(function([key, value]){
+    return f(key, value);
+  }, entries(xs));
+}
+
+export function mapvk(f, xs){
   return map(function([key, value]){
     return f(value, key);
   }, entries(xs));
@@ -330,8 +342,6 @@ function dedupe2(f, coll){
 }
 
 export const dedupe = overload(null, dedupe1, dedupe2);
-
-export const coalesce = comp(ISeq.first, ICompact.compact);
 
 function repeatedly1(f){
   return lazySeq(f(), function(){

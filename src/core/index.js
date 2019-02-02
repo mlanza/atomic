@@ -1,11 +1,11 @@
-import {overload, toggles, identity, obj, partly, doto, branch, unspread, applying} from "./core";
+import {overload, toggles, identity, obj, partly, doto, branch, unspread, applying, execute} from "./core";
 import {IDecorated, IAppendable, IHash, ITemplate, IYank, ICoerce, IAssociative, IBounds, IInverse, ICloneable, ICollection, IComparable, ICounted, IDecode, IDeref, IDisposable, IEmptyableCollection, IEncode, IEquiv, IFind, IFn, IFork, IFunctor, IHierarchy, IInclusive, IIndexed, IInsertable, IKVReduce, ILookup, IMap, IMapEntry, IMatch, INext, IOtherwise, IPrependable, IReduce, IReset, IReversible, ISeq, ISeqable, ISet, ISteppable, ISwap} from "./protocols";
-import {satisfies, filter, spread, specify, maybe, each, see, isEmpty, duration, remove, flatten, mapa, sort, flip, realized, comp, isNumber, mapSomeVals, isFunction, apply} from "./types";
-import {add, subtract, compact, matches, name, descendants, query, locate, transient, persistent, deref, get, assoc, yank, conj, hash, otherwise, fmap, reducing, toArray, reducekv, includes, excludes} from "./protocols/concrete";
-import {isString, str} from "./types/string";
-import {into} from "./types/lazy-seq";
+import {satisfies, filter, spread, specify, maybe, each, duration, remove, sort, flip, realized, comp, isNumber, isFunction, apply} from "./types";
+import {add, subtract, compact, matches, name, descendants, query, locate, transient, persistent, deref, get, assoc, yank, conj, hash, reducing, toArray, reducekv, includes, excludes} from "./protocols/concrete";
+import {isString, isBlank, str} from "./types/string";
+import {isSome} from "./types/nil";
+import {into, detect, map, drop, join, some} from "./types/lazy-seq";
 import {emptyTransientSet} from "./types/transient-set/construct";
-import {and, unless} from "./predicates";
 import {absorb} from "./associatives";
 import {_ as v} from "param.macro";
 import _serieslike from "./types/series/behave";
@@ -27,31 +27,28 @@ export function expands(f){
   }
   function postpone(...contents){
     return function(value){
-      return expand(...mapa(function(content){
+      const expanded = map(function(content){
         return isFunction(content) ? content(value) : content;
-      }, contents));
+      }, contents);
+      return apply(expand, expanded);
     }
   }
   return expand;
+}
+
+export function xargs(f, ...fs){
+  return function(...args){
+    return apply(f, map(execute, fs, args));
+  }
 }
 
 export function elapsed(self){
   return duration(end(self) - start(self));
 }
 
-function envelop1(wrapper){
-  return envelop2(wrapper, wrapper);
+export function collapse(...args){
+  return some(isBlank, args) ? "" : join("", args);
 }
-
-function envelop2(before, after){
-  return envelop3(before, after, v);
-}
-
-function envelop3(before, after, content){
-  return isEmpty(content) ? content : str(before, content, after);
-}
-
-export const envelop = overload(null, envelop1, envelop2, envelop3);
 
 function isNotConstructor(f){
   return isFunction(f) && !/^[A-Z]./.test(name(f));
@@ -74,10 +71,6 @@ function include3(self, value, want){
 
 export const include = overload(null, null, include2, include3);
 
-export function opt(value, ...fs){
-  return otherwise(fmap(maybe(value), ...fs), null);
-}
-
 export function withMutations(self, f){
   return persistent(f(transient(self)));
 }
@@ -86,4 +79,10 @@ export const fmt = expands(str);
 
 export function unique(xs){
   return toArray(into(emptyTransientSet(), xs));
+}
+
+export function coalesce(...fs){
+  return function(...args){
+    return detect(isSome, map(applying(...args), fs));
+  }
 }

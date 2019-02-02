@@ -1,9 +1,13 @@
-import {conj, reduce} from 'cloe/core';
+import {each} from 'cloe/core';
+import {embed} from "../../protocols/iembeddable/concrete";
+import {_ as v} from "param.macro";
 
 export default DocumentFragment;
 
 export function fragment(...contents){
-  return reduce(conj, document.createDocumentFragment(), contents);
+  const frag = document.createDocumentFragment();
+  each(embed(v, frag), contents);
+  return frag;
 }
 
 DocumentFragment.create = fragment;

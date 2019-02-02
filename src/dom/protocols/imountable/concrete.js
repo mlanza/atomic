@@ -1,4 +1,4 @@
-import {root, getIn, specify, satisfies, partial, comp, doto, overload, noop} from 'cloe/core';
+import {root, getIn, specify, satisfies, partial, comp, doto, overload, noop, each, parent as _parent} from 'cloe/core';
 import {trigger, one} from "cloe/reactives";
 import IMountable from "./instance";
 import {isHTMLDocument} from "../../types/html-document/construct";
@@ -22,6 +22,7 @@ function mounts3(self, pred, attached){
 
 function mounts4(self, pred, attached, context){
   specify(IMountable, {}, self);
+
   function attach(parent, event, callback){
     const ancestor = root(parent);
     if (pred(ancestor)) {
@@ -30,15 +31,26 @@ function mounts4(self, pred, attached, context){
       callback(parent);
     }
   }
-  return self |>
-    one(v, "mounting",
-      comp(
-        attach(v, "attaching", mounts4(v, pred, attached, context)),
-        getIn(v, ["detail", "parent"]))) |>
-    one(v, "mounted" ,
-      comp(
-        attach(v, "attached" , noop),
-        getIn(v, ["detail", "parent"])));
+
+  one(self, "mounting",
+    comp(
+      attach(v, "attaching", mounts4(v, pred, attached, context)),
+      getIn(v, ["detail", "parent"])));
+
+  one(self, "mounted" ,
+    comp(
+      attach(v, "attached" , noop),
+      getIn(v, ["detail", "parent"])));
+
+  const parent = _parent(self);
+
+  if (parent) { // either already mounted or will be mounted
+    each(function(key){
+      trigger(self, key, {bubbles: true, detail: {parent}});
+    }, ["mounting", "mounted"]); //ensure hooks trigger even if already mounted
+  }
+
+  return self;
 }
 
 export const mounts = overload(null, mounts1, mounts2, mounts3, mounts4);

@@ -49,25 +49,23 @@ function affects2(bus, f){
 
 export const affects = overload(null, null, affects2, affects3);
 
-function component3(config, state, callback){
+function component2(state, callback){
   const evts = events(),
         ware = middleware(),
         publ = publisher();
-  return doto(bus(config, state, ware), function($bus){
+  return doto(bus(state, ware), function($bus){
     const maps = callback(partial(accepts, evts), partial(raises, evts, $bus), partial(affects, $bus));
     const commandMap = maps[0], eventMap = maps[1];
     conj(ware,
       messageHandler(commandMap),
       eventDispatcher(evts, messageHandler(eventMap), publ));
-    each(sub($bus, v), config.changed);
-    each(dispatch($bus, v), config.commands);
   });
 }
 
-function component2(config, state){
-  return component3(config, state, function(){
+function component1(state){
+  return component2(state, function(){
     return [{}, {}]; //static components may lack commands that drive state change.
   });
 }
 
-export const component = overload(null, null, component2, component3);
+export const component = overload(null, component1, component2);

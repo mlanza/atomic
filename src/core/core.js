@@ -1,5 +1,7 @@
 export const unbind = Function.call.bind(Function.bind, Function.call);
 export const slice = unbind(Array.prototype.slice);
+export const indexOf = unbind(Array.prototype.indexOf);
+export const log = console.log.bind(console);
 
 export function noop(){
 }
@@ -165,21 +167,21 @@ export function constructs(Type) {
   }
 }
 
-function branch1(pred){
-  return branch2(pred, identity);
+function guard1(pred){
+  return guard2(pred, identity);
 }
 
-function branch2(pred, yes){
-  return branch3(pred, yes, constantly(null));
+function guard2(pred, f){
+  return branch(pred, f, noop);
 }
 
-function branch3(pred, yes, no){
+export const guard = overload(null, guard1, guard2);
+
+export function branch(pred, yes, no){
   return function(...args){
     return pred(...args) ? yes(...args) : no(...args);
   }
 }
-
-export const branch = overload(null, branch1, branch2, branch3);
 
 function memoize1(f){
   return memoize2(f, function(...args){
@@ -203,20 +205,6 @@ function memoize2(f, hash){
 
 export const memoize = overload(null, memoize1, memoize2);
 
-function when2(some, f){
-  if (some) {
-    f(some);
-  }
-}
-
-function when3(some, pred, f){
-  if (pred(some)) {
-    f(some);
-  }
-}
-
-export const when = overload(null, null, when2, when3);
-
 export function isNative(f) {
   return (/\{\s*\[native code\]\s*\}/).test('' + f);
 }
@@ -230,3 +218,20 @@ function toggles5(on, off, _, self, want){
 }
 
 export const toggles = overload(null, null, null, null, toggles4, toggles5);
+
+export function detach(method){
+  return function(obj, ...args){
+    return obj[method](...args);
+  }
+}
+
+export function veer(n, f, g){
+  let skips = n;
+  return n > 0 ? function(){
+    return (skips-- <= 0 ? f : g).apply(this, arguments);
+  } : identity;
+}
+
+export function ignore(n, f){
+  return veer(n, f, noop);
+}

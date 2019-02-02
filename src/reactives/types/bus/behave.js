@@ -1,4 +1,4 @@
-import {does, identity, implement, forwardTo, ILookup, ISwap, IReset, IDeref, IDisposable, IConfigured} from 'cloe/core';
+import {does, identity, implement, forwardTo, ILookup, ISwap, IReset, IDeref, IDisposable} from 'cloe/core';
 import {IMiddleware, ISubscribe, IDispatch} from "../../protocols"
 
 function dispatch(self, command){
@@ -8,10 +8,6 @@ function dispatch(self, command){
 function dispose(self){
   satisfies(IDisposable, self.state) && IDisposable.dispose(self.state);
   satisfies(IDisposable, self.handler) && IDisposable.dispose(self.handler);
-}
-
-function config(self){
-  return self.config;
 }
 
 const forward = forwardTo("state");
@@ -26,7 +22,6 @@ export default does(
   implement(IDeref, {deref}),
   implement(IReset, {reset}),
   implement(ISwap, {swap}),
-  implement(IConfigured, {config}),
   implement(ISubscribe, {sub, unsub, subscribed}),
   implement(IDispatch, {dispatch}),
   implement(IDisposable, {dispose}));

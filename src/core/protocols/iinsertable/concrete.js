@@ -1,3 +1,26 @@
 import IInsertable from "./instance";
-export const before = IInsertable.before;
-export const after = IInsertable.after;
+import {overload, identity} from "../../core";
+
+function afterN(self, ...els) {
+  let ref = self;
+  while (els.length) {
+    let el = els.shift();
+    IInsertable.after(ref, el);
+    ref = el;
+  }
+  return self;
+}
+
+export const after = overload(null, identity, IInsertable.after, afterN);
+
+function beforeN(self, ...els) {
+  let ref = self;
+  while (els.length) {
+    let el = els.pop();
+    IInsertable.before(ref, el);
+    ref = el;
+  }
+  return self;
+}
+
+export const before = overload(null, identity, IInsertable.before, beforeN);

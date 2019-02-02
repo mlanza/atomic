@@ -1,4 +1,4 @@
-import {does, opt, implement, lazySeq, comp, iterable, ICounted, ISeq, INext, ISeqable, ISequential, IHierarchy, IQuery, ILocate, IReduce} from 'cloe/core';
+import {does, opted, implement, lazySeq, comp, iterable, ILookup, IIndexed, ICounted, ISeq, INext, ISeqable, ISequential, IHierarchy, IQuery, ILocate, IReduce} from 'cloe/core';
 import {IContent} from "../../protocols";
 import {_ as v} from "param.macro";
 
@@ -10,6 +10,10 @@ function seq2(self, idx){
 
 function seq(self){
   return seq2(self, 0);
+}
+
+function lookup(self, idx) {
+  return self[idx];
 }
 
 const first = comp(ISeq.first, seq);
@@ -27,15 +31,15 @@ const parents = comp(IHierarchy.parents, seq);
 const contents = comp(IContent.contents, seq);
 
 function query(self, selector){
-  return opt(self, seq, IQuery.query(v, selector)) || [];
+  return opted(self, seq, IQuery.query(v, selector)) || [];
 }
 
 function locate(self, selector){
-  return opt(self, seq, ILocate.locate(v, selector));
+  return opted(self, seq, ILocate.locate(v, selector));
 }
 
 function closest(self, selector){
-  return opt(self, seq, IHierarchy.closest(v, selector));
+  return opted(self, seq, IHierarchy.closest(v, selector));
 }
 
 function reduce(self, f, init){
@@ -48,6 +52,8 @@ function count(self){
 
 export default does(
   iterable,
+  implement(ILookup, {lookup}),
+  implement(IIndexed, {nth: lookup}),
   implement(ICounted, {count}),
   implement(ISeq, {first, rest}),
   implement(IReduce, {reduce}),

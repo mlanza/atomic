@@ -2,25 +2,32 @@ import fetch from "fetch";
 import {
   satisfies,
   get,
+  each,
+  into,
+  slice,
   absorb,
   fmap,
   count,
   fill,
   first,
+  join,
   reducekv,
   keys,
   includes,
   assoc,
   update,
   contains,
+  remove,
   filter,
   mapa,
   map,
+  last,
   every,
   dropWhile,
   takeWhile,
   not,
   reSeq,
+  isSome,
   comp,
   IDescriptive,
   fork,
@@ -31,7 +38,7 @@ import {
 import {_ as v} from "param.macro";
 
 const wants = reSeq(/\{([a-z0-9]+)\}/gi, v);
-const isNotDescriptive = comp(not, satisfies(IDescriptive));
+const isDescriptive = satisfies(IDescriptive);
 
 export function url(url){
   return fmap(v, function(options){
@@ -108,16 +115,44 @@ export function loadUrl(options){
   return update(options, "url", fill(v, options.context));
 }
 
+//a IDescriptive source may not be an object thus `inject` and not `Object.assign`.
+function inject(target, source) { //mutating!
+  return reducekv(function(memo, key, value){
+    if (isSome(value)) {
+      memo[key] = value;
+    }
+    return memo;
+  }, target, source || {});
+}
+
 export function mandatory(keys){
-  return function(...vals){
-    const xs = takeWhile(isNotDescriptive, vals),
-          x  = first(dropWhile(isNotDescriptive, vals)) || {};
-    return reducekv(assoc, x, map(function(key, value){
-      return [key, value];
-    }, keys, xs));
+  return function(...args){
+
+    const options = {},
+          ks = slice(keys);
+
+    while(args.length && ks.length) {
+      var arg = args.shift(),
+          key = ks.shift();
+      if (isDescriptive(arg) && contains(arg, key)) {
+        inject(options, arg); // the remaining options
+      } else if (isSome(arg)) {
+        options[key] = arg;
+      }
+    }
+
+    inject(options, args[0]); //maybe the remaining options
+
+    const missing = remove(contains(options, v), keys);
+
+    if (count(missing)) {
+      throw new Error("Missing mandatory keys: " + join(", ", missing));
+    }
+
+    return options;
   }
 }
 
 export function requests(keys){
-  return comp(Task.of, assoc({}, "context", v), mandatory(keys));
+  return comp(Task.of, assoc(null, "context", v), mandatory(keys));
 }

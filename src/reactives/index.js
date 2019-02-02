@@ -27,12 +27,14 @@ import {
   first,
   notEq,
   implement,
+  applying,
   specify,
   slice
 } from "cloe/core";
 import * as _ from "cloe/core";
+import Symbol from "symbol";
 import {weakMap} from "cloe/core";
-import {on, off} from "./protocols/concrete";
+import {on, off, one} from "./protocols/concrete";
 import {IDispatch, IPublish, ISubscribe, IEvented} from "./protocols";
 import LazyPub from "./types/lazy-pub/construct";
 import Observable from "./types/observable/construct";
@@ -276,3 +278,11 @@ export const mutate = overload(null, null, mutate2, mutate3);
     implement(IDispatch, {dispatch}));
 
 })();
+
+export function install(self, ...callbacks){
+  return _.fmap(self,
+    function(pair){
+      const detail = pair[1];
+      each(applying(detail.bus), callbacks);
+    });
+}

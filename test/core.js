@@ -55,7 +55,7 @@ QUnit.test("validation", function(assert){
 QUnit.test("component", function(assert){
   const people =
     _.doto(
-      $.component({}, $.observable([]), function(accepts, raises, affects){
+      $.component($.observable([]), function(accepts, raises, affects){
         return [{
           "add": accepts("added")
         }, {
@@ -406,10 +406,4 @@ QUnit.test("predicates", function(assert){
   assert.equal(_.any(null, 1), 1);
   assert.equal(_.all(3, 1), 1);
   assert.equal(_.all(null, 1), null);
-});
-
-QUnit.test("unless", function(assert){
-  const odd = _.unless(_.isOdd, _.inc);
-  assert.equal(odd(1), 1);
-  assert.equal(odd(2), 3);
 });

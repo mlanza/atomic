@@ -1,4 +1,4 @@
-import {specify, IMatch, isRegExp, isString, test, does, when} from 'cloe/core';
+import {specify, IMatch, isRegExp, isString, test, does} from 'cloe/core';
 import {IEvented} from "cloe/reactives";
 
 function matches(self, pattern){
@@ -10,7 +10,10 @@ function matches(self, pattern){
 }
 
 function on(self, pattern, callback){
-  when(matches(self, pattern), callback);
+  const matched = matches(self, pattern);
+  if (matched) {
+    callback(matched);
+  }
 }
 
 export default does(

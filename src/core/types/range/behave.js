@@ -10,7 +10,7 @@ import {encodeable, emptyable} from "../record/behave";
 import {emptyRange} from "./construct";
 
 function seq(self){
-  return self.step == null && self.direction == null && self.start == null && self.end == null ? null : self;
+  return IEquiv.equiv(self.start, self.end) || (self.step == null && self.direction == null && self.start == null && self.end == null) ? null : self;
 }
 
 function start(self){
@@ -41,7 +41,7 @@ function equiv(self, other){
 
 function reduce(self, xf, init){
   let memo = init,
-      coll = self;
+      coll = seq(self);
   while(!isReduced(memo) && coll){
     memo = xf(memo, ISeq.first(coll));
     coll = INext.next(coll);

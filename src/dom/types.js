@@ -4,6 +4,7 @@ export * from "./types/element";
 export * from "./types/html-collection";
 export * from "./types/html-document";
 export * from "./types/html-select-element";
+export * from "./types/invalid-host-element-error";
 export * from "./types/location";
 export * from "./types/nested-attrs";
 export * from "./types/node-list";
