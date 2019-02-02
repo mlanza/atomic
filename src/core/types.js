@@ -20,6 +20,7 @@ export * from "./types/indexed";
 export * from "./types/just";
 export * from "./types/lens";
 export * from "./types/list";
+export * from "./types/listed";
 export * from "./types/months";
 export * from "./types/nil";
 export * from "./types/number";

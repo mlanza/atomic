@@ -1,12 +1,9 @@
-import {identity, apply, noop, slice, partial, replace, concat, template, key, val, join, mashup, filter, map, remove, isObject, specify, implement, doto, assoc, dissoc, get, str, include, includes, overload, conj, yank, transpose, append, absorb, fmap, each, obj, IReduce, first, query, locate, descendants, matches, reducekv, Number, String, Nil} from "cloe/core";
+import {constantly, identity, apply, noop, slice, partial, replace, concat, template, key, val, join, mashup, filter, map, remove, isObject, specify, implement, doto, assoc, get, str, includes, overload, conj, yank, append, absorb, fmap, each, obj, IReduce, first, query, locate, descendants, matches, reducekv, Number, String, Nil} from "cloe/core";
 import * as _ from "cloe/core";
-import {attrs} from "./types/attrs/construct";
-import {props} from "./types/props/construct";
-import {classes} from "./types/space-sep/construct";
-import {style} from "./types/nested-attrs/construct";
 import {fragment} from "./types/document-fragment/construct";
 import {element} from "./types/element/construct";
 import {mounts} from "./protocols/imountable/concrete";
+import InvalidHostElementError from "./types/invalid-host-element-error";
 import IValue from "./protocols/ivalue/instance";
 import IEmbeddable from "./protocols/iembeddable/instance";
 import Promise from "promise";
@@ -17,32 +14,29 @@ export * from "./protocols";
 export * from "./protocols/concrete";
 
 function prop3(self, key, value){
-  return assoc(props(self), key, value);
+  self[key] = value;
+  return self;
 }
 
 function prop2(self, key){
-  return get(props(self), key);
+  return self[key];
 }
 
 export const prop = overload(null, null, prop2, prop3);
 
 export function addStyle(self, key, value) {
-  const s = style(self);
-  if (!includes(s, [key, value])) {
-    assoc(s, key, value);
-  }
+  self.style[key] = value;
   return self;
 }
 
 function removeStyle2(self, key) {
-  dissoc(style(self), key);
+  self.style.removeProperty(key);
   return self;
 }
 
 function removeStyle3(self, key, value) {
-  const s = style(self);
-  if (includes(s, [key, value])) {
-    dissoc(s, key);
+  if (self.style[key] === value) {
+    self.style.removeProperty(key);
   }
   return self;
 }
@@ -50,25 +44,21 @@ function removeStyle3(self, key, value) {
 export const removeStyle = overload(null, null, removeStyle2, removeStyle3);
 
 export function addClass(self, name){
-  const clss = classes(self);
-  if (!includes(clss, name)) {
-    conj(clss, name);
-  }
+  self.classList.add(name);
   return self;
 }
 
 export function removeClass(self, name){
-  yank(classes(self), name);
+  self.classList.remove(name);
   return self;
 }
 
 function toggleClass2(self, name){
-  transpose(classes(self), name);
-  return self;
+  return toggleClass3(self, name, !self.classList.contains(name));
 }
 
 function toggleClass3(self, name, want){
-  include(classes(self), name, want);
+  self.classList[want ? "add" : "remove"](name);
   return self;
 }
 
@@ -83,50 +73,85 @@ function fire(parent, event, what, detail){
   $.trigger(parent, event, {bubbles: true, detail});
 }
 
-function view2(render, config){
-  return doto(render(config),
-    _.config(v, config),
+export function assert(el, selector){
+  if (!matches(el, selector)) {
+    throw new InvalidHostElementError(el, selector);
+  }
+}
+
+function component3(render, config, el){
+  return component4(constantly(null), render, config, el);
+}
+
+function component4(create, render, config, el){
+  $.trigger(el, "installing", {bubbles: true, detail: {config}});
+  const bus = create(config),
+        detail = {config, bus};
+  doto(el,
+    $.on(v, "mounting mounted", function(e){
+      Object.assign(e.detail, detail);
+    }),
+    render(v, config, bus),
     mounts);
+  $.trigger(el, "installed", {bubbles: true, detail});
+  return bus;
+}
+
+export const component = overload(null, null, null, component3, component4);
+
+function view2(render, config){
+  return view3(constantly(null), render, config);
 }
 
 function view3(create, render, config){
-  const $bus = create(config);
-  return doto(render(config, $bus),
-    _.config(v, config),
-    mounts,
+  const bus = create(config),
+        detail = {config, bus};
+  return doto(render(config, bus),
     $.on(v, "mounting mounted", function(e){
-      e.detail.bus = $bus;
-    }));
+      Object.assign(e.detail, detail);
+    }),
+    mounts);
 }
 
 export const view = overload(null, null, view2, view3);
 
-function mount3(render, config, parent){
-  const img = tag('img'),
-        loading = config.spinner ? img(config.spinner) : null;
-  loading && append(parent, loading);
-  fire(parent, "loading", config.what, {config});
-  fmap(Promise.resolve(render(config)),
-    mounts,
-    function(child){
-      append(parent, child);
-      loading && yank(loading);
-      fire(parent, "loaded", config.what, {config, child});
-    });
+function load(config, parent, promise) {
+  return config.spinner ? new Promise(function(resolve, reject){
+    const loading = element('img', config.spinner);
+    append(parent, loading);
+    fire(parent, "loading", config.what, {config});
+    fmap(promise,
+      doto(v, resolve),
+      function(child){
+        yank(loading);
+        fire(parent, "loaded", config.what, {config, child});
+      });
+  }) : promise;
+}
+
+function mount3(render, config, parent, bus){
+  const detail = {config, bus};
+  return load(config, parent, new Promise(function(resolve, reject){
+    fmap(Promise.resolve(render(config, bus)),
+      doto(v,
+        $.on(v, "mounting mounted", function(e){
+          Object.assign(e.detail, detail);
+        }),
+        mounts,
+        append(parent, v),
+        function(el){
+          resolve([el, detail]);
+        }));
+  }));
 }
 
 function mount4(create, render, config, parent){
-  mount3(function(config){
-    const $bus = create(config);
-    return doto(render($bus),
-      $.on(v, "mounting mounted", function(e){
-        e.detail.bus = $bus;
-      }));
-  }, absorb({changed: [], commands: []}, config || {}), parent);
+  return mount3(render, config, parent, create(config));
 }
 
 export const mount = overload(null, null, null, mount3, mount4);
-export const tagged = obj(function(name, ...contents){
+
+export const markup = obj(function(name, ...contents){
   const attrs = map(function(entry){
     return template("{0}=\"{1}\"", key(entry), replace(val(entry), /"/g, '&quot;'));
   }, apply(mashup, filter(isObject, contents)));
@@ -189,12 +214,13 @@ export function select(options, ...args){
 
 export const textbox = tag('input', {type: "text"});
 
-function attr3(node, key, value) {
-  return assoc(attrs(node), key, value);
+function attr3(self, key, value) {
+  self.setAttribute(key, value);
+  return self;
 }
 
-function attr2(node, key) {
-  return get(attrs(node), key);
+function attr2(self, key) {
+  return self.getAttribute(key);
 }
 
 export const attr = overload(null, null, attr2, attr3);

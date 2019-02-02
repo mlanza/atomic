@@ -12,6 +12,7 @@ import {reverse} from '../../protocols/ireversible/concrete';
 import {downward} from "../../protocols/ihierarchy/concrete";
 import * as icollection from "../../protocols/icollection/concrete";
 import {emptyList} from "../../types/empty-list/construct";
+import {cons} from "../../types/list/construct";
 import {concat} from "../../types/concatenated/construct";
 import {updateIn, assocIn} from "../../protocols/iassociative/concrete";
 import {IFn, IPath, ISwap, IReset, IDeref, IMap, IHierarchy, ILookup, IAssociative, ICollection} from '../../protocols';
@@ -121,7 +122,7 @@ function parents(self){
 }
 
 function closest(self, pred){
-  return locate(parents(self), comp(pred, deref));
+  return locate(cons(self, parents(self)), comp(pred, deref));
 }
 
 const descendants = downward(children);

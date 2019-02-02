@@ -1,4 +1,4 @@
-import {IBlottable, ICompact, IFunctor, IMap, ILog, IAssociative, IInclusive, IOtherwise, IEncode, IDecode, IFork, ICoerce, IEquiv, ICollection, INext, ISeq, ISeqable, IIndexed, ICounted, ILookup, IReduce, IEmptyableCollection, ISequential} from '../../protocols';
+import {IBlottable, ICompact, IFunctor, IMap, IAssociative, IInclusive, IOtherwise, IEncode, IDecode, IFork, ICoerce, IEquiv, ICollection, INext, ISeq, ISeqable, IIndexed, ICounted, ILookup, IReduce, IEmptyableCollection, ISequential} from '../../protocols';
 import {emptyList} from '../../types/empty-list/construct';
 import {identity, constantly, does, overload, noop} from '../../core';
 import {implement} from '../protocol';
@@ -28,7 +28,6 @@ function fork(self, reject, resolve){
 }
 
 export default does(
-  implement(ILog, {log: noop}),
   implement(ICompact, {compact: identity}),
   implement(IBlottable, {blot: identity}),
   implement(IMap, {keys: nil, vals: nil, dissoc: nil}),

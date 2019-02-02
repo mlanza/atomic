@@ -9,6 +9,7 @@ import {
   doto,
   noop,
   get,
+  getIn,
   key,
   val,
   implement,
@@ -63,6 +64,7 @@ import {
 import {IEvented} from "cloe/reactives";
 import {isMountable} from "../../protocols/imountable/concrete"
 import {IHtml, IText, IValue, IContent, IHideable, IEmbeddable} from "../../protocols";
+import {embed as _embed} from "../../protocols/iembeddable/concrete";
 import {nestedAttrs} from "../nested-attrs/construct";
 import {isDocumentFragment} from "../document-fragment/construct";
 import {isElement} from "../element/construct";
@@ -82,13 +84,14 @@ function show(self){
 
 function embed(self, parent, referenceNode) {
   if (isMountable(self)) {
-    IEvented.trigger(self, "mounting", {bubbles: true, detail: {parent}});
+    const detail = {parent};
+    IEvented.trigger(self, "mounting", {bubbles: true, detail});
     if (referenceNode) {
       parent.insertBefore(self, referenceNode);
     } else {
       parent.appendChild(self);
     }
-    IEvented.trigger(self, "mounted" , {bubbles: true, detail: {parent}});
+    IEvented.trigger(self, "mounted" , {bubbles: true, detail});
   } else {
     if (referenceNode) {
       parent.insertBefore(self, referenceNode);
@@ -250,7 +253,7 @@ const parents = upward(function(self){
 const root = comp(last, upward(parent));
 
 export function closest(self, selector){
-  let target = IHierarchy.parent(self);
+  let target = self;
   while(target){
     if (IMatch.matches(target, selector)){
       return target;
@@ -370,11 +373,7 @@ function html2(self, html){
     self.innerHTML = html;
   } else {
     empty(self);
-    if (satisfies(ISequential, html)) {
-      apply(append, self, html);
-    } else {
-      append(self, html);
-    }
+    _embed(html, self);
   }
   return self;
 }

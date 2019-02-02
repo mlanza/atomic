@@ -1,6 +1,7 @@
 import {ICoerce}  from "../../protocols/icoerce";
 import {IReduce}  from "../../protocols/ireduce";
-import {overload, identity, partial} from "../../core";
+import {reduced} from "../../types/reduced/construct";
+import {overload, identity, partial, log, applying, slice} from "../../core";
 import {isNil}  from "../nil";
 import {satisfies}  from "../protocol";
 import {isFunction}  from "./construct";
@@ -33,11 +34,23 @@ export function juxt(...fs){
   }
 }
 
+export function opt(f, ...fs){
+  return function(obj){
+    return obj == null ? null : IReduce.reduce(fs, function(memo, f){
+      return memo == null ? reduced(memo) : f(memo);
+    }, f.apply(null, arguments));
+  }
+}
+
+export function opted(init, ...fs){
+  return opt(...fs)(init);
+}
+
 export function pipe(f, ...fs){
-  return function(...args){
+  return function(){
     return IReduce.reduce(fs, function(memo, f){
       return f(memo);
-    }, f.apply(null, args));
+    }, f.apply(null, arguments));
   }
 }
 
@@ -81,12 +94,13 @@ function curry1(f){
 }
 
 function curry2(f, minimum){
-  return function(...applied){
+  return function(){
+    const applied = arguments.length ? slice(arguments) : [undefined]; //each invocation assumes advancement
     if (applied.length >= minimum) {
       return f.apply(this, applied);
     } else {
-      return curry2(function(...args){
-        return f.apply(this, applied.concat(args));
+      return curry2(function(){
+        return f.apply(this, applied.concat(slice(arguments)));
       }, minimum - applied.length);
     }
   }
@@ -112,7 +126,7 @@ export function tap(f){
 }
 
 export function see(about){
-  return tap(partial(console.log.bind(console), about));
+  return tap(partial(log, about));
 }
 
 export function flip(f){

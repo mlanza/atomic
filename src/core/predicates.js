@@ -41,16 +41,6 @@ export function signature(...preds){
   }
 }
 
-export function guard(pred, value){
-  return function(...args){
-    return pred(...args) ? value : null;
-  }
-}
-
-export function unless(pred, f){
-  return branch(pred, identity, f);
-}
-
 export function everyPair(pred, xs){
   var every = xs.length > 0;
   while(every && xs.length > 1){

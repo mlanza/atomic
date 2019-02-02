@@ -16,3 +16,11 @@ export function ftap(...fs){
     return init.constructor.from(piped(init, ...fs));
   }
 }
+
+export function thru(enter, exit) {
+  return function(...fs){
+    return function(...args){
+      return exit(fmap(enter(...args), ...fs));
+    }
+  }
+}

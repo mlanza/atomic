@@ -3,7 +3,7 @@ import {test, reMatches} from "../types/reg-exp/concrete";
 import {mapa, drop, splice} from "../types/lazy-seq/concrete";
 import {comp, spread, see} from "../types/function/concrete";
 import {split} from "../types/string/concrete";
-import {mapSomeVals} from "../types/object/concrete";
+import {mapVals} from "../types/object/concrete";
 import {date} from "../types/date/construct";
 import {toArray} from "../protocols/icoerce/concrete";
 import {get} from "../protocols/ilookup/concrete";
@@ -24,7 +24,7 @@ export const parseTimeStamp  = comp(date, parseInt, get(v, 1), reMatches(reTimeS
 export const parseMDY = comp(spread(function(M, d, y, h, m, ampm){
   const mh = h != null ? h + (ampm == "pm" ? 12 : 0) : null;
   return new Date((y < 99 ? 2000 : 0) + y, M - 1, d, mh || 0, m || 0);
-}), toArray, mapSomeVals(v, parseInt, test(reNumber, v)), toArray, splice(v, 3, 1, []), drop(1, v), reMatches(reMDY, v));
+}), toArray, mapVals(v, parseInt, test(reNumber, v)), toArray, splice(v, 3, 1, []), drop(1, v), reMatches(reMDY, v));
 
 export const parseDate = multimethod(date);
 

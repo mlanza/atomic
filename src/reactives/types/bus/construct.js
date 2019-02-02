@@ -1,9 +1,8 @@
-export default function Bus(config, state, handler){
-  this.config = config;
+export default function Bus(state, handler){
   this.state = state;
   this.handler = handler;
 }
 
-export function bus(config, state, handler){
-  return new Bus(config, state, handler);
+export function bus(state, handler){
+  return new Bus(state, handler);
 }
