@@ -1,5 +1,5 @@
 import {ICompact, IEquiv, IMap, ICoerce, IAssociative, ILookup, IInclusive, IIndexed, ICollection, IComparable, ICounted, ISeq, ISeqable, INext, IHierarchy, IReduce, ISequential} from '../../protocols';
-import {identity, constantly, overload} from '../../core';
+import {trampoline, identity, constantly, overload} from '../../core';
 import EmptyList, {emptyList} from '../empty-list/construct';
 import Array, {emptyArray} from '../array/construct';
 import {inc, randInt} from '../number/concrete';
@@ -161,12 +161,18 @@ export function mapcat(f, colls){
 }
 
 export function filter(pred, xs){
-  const coll = ISeqable.seq(xs);
-  if (!coll) return emptyList();
-  const head = ISeq.first(coll);
-  return pred(head) ? lazySeq(head, function(){
-    return filter(pred, ISeq.rest(coll));
-  }) : filter(pred, ISeq.rest(coll));
+  let ys = xs;
+  while (ISeqable.seq(ys)) {
+    const head = ISeq.first(ys),
+          tail = ISeq.rest(ys);
+    if (pred(head)) {
+      return lazySeq(head, function(){
+        return filter(pred, tail);
+      });
+    }
+    ys = tail;
+  }
+  return emptyList();
 }
 
 export const detect = comp(first, filter);
@@ -302,7 +308,7 @@ export function partitionAll2(n, xs){
 export function partitionAll3(n, step, xs){
   const coll = ISeqable.seq(xs);
   if (!coll) return xs;
-  return cons(take(n, coll), partition3(n, step, drop(step, coll)));
+  return cons(take(n, coll), partitionAll3(n, step, drop(step, coll)));
 }
 
 export const partitionAll = overload(null, partitionAll1, partitionAll2, partitionAll3);

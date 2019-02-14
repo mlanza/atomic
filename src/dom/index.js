@@ -1,4 +1,4 @@
-import {constantly, identity, apply, noop, slice, partial, replace, concat, template, key, val, join, mashup, filter, map, remove, isObject, specify, implement, doto, assoc, get, str, includes, overload, conj, yank, append, absorb, fmap, each, obj, IReduce, first, query, locate, descendants, matches, reducekv, Number, String, Nil} from "cloe/core";
+import {constantly, identity, apply, noop, slice, partial, replace, concat, template, key, val, join, merge, filter, map, remove, isObject, specify, implement, doto, assoc, get, str, includes, overload, conj, yank, append, absorb, fmap, each, obj, IReduce, first, query, locate, descendants, matches, reducekv, Number, String, Nil} from "cloe/core";
 import * as _ from "cloe/core";
 import {fragment} from "./types/document-fragment/construct";
 import {element} from "./types/element/construct";
@@ -154,7 +154,7 @@ export const mount = overload(null, null, null, mount3, mount4);
 export const markup = obj(function(name, ...contents){
   const attrs = map(function(entry){
     return template("{0}=\"{1}\"", key(entry), replace(val(entry), /"/g, '&quot;'));
-  }, apply(mashup, filter(isObject, contents)));
+  }, apply(merge, filter(isObject, contents)));
   const content = map(str, remove(isObject, contents));
   return join("", concat(["<" + name + " " + join(" ", attrs) + ">"], content, "</" + name + ">"));
 }, Infinity);

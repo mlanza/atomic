@@ -87,7 +87,6 @@ QUnit.test("dom", function(assert){
 
   assert.equal(duo |> _.children |> _.first  |> dom.text, "Abbott");
   assert.equal(duo |> _.children |> _.second |> dom.text, "Costello");
-  assert.equal(stooges |> I.members |>_.fpipe(_.children, _.children) |> _.ftap(_.also(_.parent, v)) |> _.count, 4);
   assert.equal(stooges |> _.leaves |> _.count, 3);
   assert.equal(moe |> dom.text, "Moe Howard", "Found by tag");
   assert.deepEqual(stooges |> dom.sel("li", v) |> _.map(_.get(v, "id"), v) |> _.toArray, ["moe", "curly", "larry"], "Extracted ids");

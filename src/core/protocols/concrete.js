@@ -1,6 +1,6 @@
 export * from "./iappendable/concrete";
 export * from "./iassociative/concrete";
-export * from "./iblottable/concrete";
+export * from "./iblankable/concrete";
 export * from "./ibounds/concrete";
 export * from "./ichainable/concrete";
 export * from "./icloneable/concrete";
@@ -42,6 +42,7 @@ export * from "./irecord/concrete";
 export * from "./ireduce/concrete";
 export * from "./ireset/concrete";
 export * from "./ireversible/concrete";
+export * from "./isend/concrete";
 export * from "./iseq/concrete";
 export * from "./iseqable/concrete";
 export * from "./isequential/concrete";

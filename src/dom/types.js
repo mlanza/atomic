@@ -1,4 +1,5 @@
 export * from "./types/attrs";
+export * from "./types/console";
 export * from "./types/document-fragment";
 export * from "./types/element";
 export * from "./types/html-collection";

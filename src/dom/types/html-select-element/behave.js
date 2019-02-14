@@ -4,13 +4,13 @@ import * as _ from 'cloe/core';
 import {_ as v} from "param.macro";
 
 function text1(self){
-  return _.opted(query(self, "option"), locate(v, function(option){
+  return _.maybe(query(self, "option"), locate(v, function(option){
     return option.selected;
   }), IText.text) || "";
 }
 
 function text2(self, value){
-  _.opted(query(self, "option"), locate(v, function(option){
+  _.maybe(query(self, "option"), locate(v, function(option){
     return IText.text(option) == value;
   }), function(option){
     option.selected = true;
@@ -20,13 +20,13 @@ function text2(self, value){
 const text = overload(null, text1, text2);
 
 function value1(self){
-  return _.opted(query(self, "option"), locate(v, function(option){
+  return _.maybe(query(self, "option"), locate(v, function(option){
     return option.selected;
   }), IValue.value);
 }
 
 function value2(self, value){
-  _.opted(query(self, "option"), locate(v, function(option){
+  _.maybe(query(self, "option"), locate(v, function(option){
     return IValue.value(option) == value;
   }), function(option){
     option.selected = true;

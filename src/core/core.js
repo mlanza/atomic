@@ -229,9 +229,25 @@ export function veer(n, f, g){
   let skips = n;
   return n > 0 ? function(){
     return (skips-- <= 0 ? f : g).apply(this, arguments);
-  } : identity;
+  } : f;
 }
 
 export function ignore(n, f){
   return veer(n, f, noop);
 }
+
+function trampoline1(f){
+  let g = f();
+  while(typeof g === "function") {
+    g = g();
+  }
+  return g;
+}
+
+function trampolineN(f, ...args){
+  return trampoline1(function(){
+    return f(...args);
+  });
+}
+
+export const trampoline = overload(null, trampoline1, trampolineN);

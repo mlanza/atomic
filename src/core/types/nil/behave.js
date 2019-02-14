@@ -1,9 +1,9 @@
-import {IBlottable, ICompact, IFunctor, IMap, IAssociative, IInclusive, IOtherwise, IEncode, IDecode, IFork, ICoerce, IEquiv, ICollection, INext, ISeq, ISeqable, IIndexed, ICounted, ILookup, IReduce, IEmptyableCollection, ISequential} from '../../protocols';
+import {IBlankable, ICompact, IMap, IAssociative, IInclusive, IOtherwise, IEncode, IDecode, IFork, ICoerce, IEquiv, ICollection, INext, ISeq, ISeqable, IIndexed, ICounted, ILookup, IReduce, IEmptyableCollection, ISequential} from '../../protocols';
 import {emptyList} from '../../types/empty-list/construct';
 import {identity, constantly, does, overload, noop} from '../../core';
 import {implement} from '../protocol';
 import {emptyArray} from '../../types/array/construct';
-import Nil, {nil} from './construct';
+import {nil} from './construct';
 
 function assoc(self, key, value){
   const obj = {};
@@ -29,7 +29,7 @@ function fork(self, reject, resolve){
 
 export default does(
   implement(ICompact, {compact: identity}),
-  implement(IBlottable, {blot: identity}),
+  implement(IBlankable, {blank: constantly(true)}),
   implement(IMap, {keys: nil, vals: nil, dissoc: nil}),
   implement(IEncode, {encode: identity}),
   implement(IDecode, {decode: identity}),
@@ -37,7 +37,6 @@ export default does(
   implement(IEmptyableCollection, {empty: identity}),
   implement(IOtherwise, {otherwise}),
   implement(IEquiv, {equiv}),
-  implement(IFunctor, {fmap: identity}),
   implement(ILookup, {lookup: identity}),
   implement(IInclusive, {includes: constantly(false)}),
   implement(IAssociative, {assoc: assoc, contains: constantly(false)}),

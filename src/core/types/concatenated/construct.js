@@ -6,13 +6,20 @@ import {lazySeq} from "../../types/lazy-seq/construct";
 import {emptyList} from '../empty-list/construct';
 import Symbol from '../symbol/construct';
 
-function filter(pred, xs){ //duplicated to break dependencies
-  const coll = ISeqable.seq(xs);
-  if (!coll) return xs;
-  const head = ISeq.first(coll);
-  return pred(head) ? lazySeq(head, function(){
-    return filter(pred, ISeq.rest(coll));
-  }) : filter(pred, ISeq.rest(coll));
+//duplicated to break dependencies
+function filter(pred, xs){
+  let ys = xs;
+  while (ISeqable.seq(ys)) {
+    const head = ISeq.first(ys),
+          tail = ISeq.rest(ys);
+    if (pred(head)) {
+      return lazySeq(head, function(){
+        return filter(pred, tail);
+      });
+    }
+    ys = tail;
+  }
+  return emptyList();
 }
 
 export function Concatenated(colls){

@@ -1,4 +1,4 @@
-import {IBlottable, ICompact, ICoerce, IMatch, IReduce, ICollection, IHash, IEncode, IDecode, IIndexed, ISeqable, INext, ISeq, IInclusive, IAppendable, IPrependable, ICounted, ILookup, IFn, IComparable, IEmptyableCollection} from '../../protocols';
+import {IBlankable, ICompact, ICoerce, IMatch, IReduce, ICollection, IHash, IEncode, IDecode, IIndexed, ISeqable, INext, ISeq, IInclusive, IAppendable, IPrependable, ICounted, ILookup, IFn, IComparable, IEmptyableCollection} from '../../protocols';
 import {does, identity, constantly} from "../../core";
 import {implement, specify} from '../protocol';
 import {isReduced, unreduced} from '../reduced';
@@ -7,8 +7,8 @@ import {iindexed} from '../array/behave';
 import {rePattern} from '../reg-exp/concrete';
 import {emptyString, isString} from "./construct";
 
-function blot(str){
-  return str.trim().length === 0 ? null : str;
+function blank(self){
+  return self.trim().length === 0;
 }
 
 function compact(self){
@@ -91,7 +91,7 @@ function matches(self, re){
 export default does(
   iindexed,
   implement(ICompact, {compact}),
-  implement(IBlottable, {blot}),
+  implement(IBlankable, {blank}),
   implement(IHash, {hash}),
   implement(IMatch, {matches}),
   implement(ICollection, {conj}),

@@ -50,7 +50,3 @@ export function compile(self){
     return apply(IFn.invoke, self, args);
   }
 }
-
-export function mashup(...objs){
-  return Object.assign({}, ...objs);
-}

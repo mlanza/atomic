@@ -1,6 +1,6 @@
-import {does, identity, overload, doto} from '../../core';
+import {does, identity, overload, doto, complement} from '../../core';
 import {implement, specify, satisfies} from '../protocol';
-import {IBlottable, IMap, IQuery, ITransient, IPersistent, IWrite, ITemplate, ICoerce, IFunctor, IInsertable, IYank, IEncode, IDecode, IReversible, ISet, IMapEntry, IEquiv, IReduce, IKVReduce, IAppendable, IPrependable, IInclusive, ICollection, INext, ISeq, IFind, ISeqable, IIndexed, IAssociative, ISequential, IEmptyableCollection, IFn, ICounted, ILookup, ICloneable} from '../../protocols';
+import {IBlankable, IMap, IQuery, ITransient, IPersistent, IWrite, ITemplate, ICoerce, IFunctor, IInsertable, IYank, IEncode, IDecode, IReversible, ISet, IMapEntry, IEquiv, IReduce, IKVReduce, IAppendable, IPrependable, IInclusive, ICollection, INext, ISeq, IFind, ISeqable, IIndexed, IAssociative, ISequential, IEmptyableCollection, IFn, ICounted, ILookup, ICloneable} from '../../protocols';
 import {reduced, unreduced, isReduced} from '../reduced';
 import {indexedSeq} from '../indexed-seq';
 import {replace} from '../string/concrete';
@@ -213,6 +213,8 @@ function query(self, pred){
   return filter(pred, self);
 }
 
+const blank = complement(seq);
+
 export const iindexed = does(
   implement(IIndexed, {nth, idx}),
   implement(ICounted, {count: length}));
@@ -249,7 +251,7 @@ export default does(
   implement(IKVReduce, {reducekv}),
   implement(ILookup, {lookup}),
   implement(IAssociative, {assoc, contains}),
-  implement(IBlottable, {blot: seq}),
+  implement(IBlankable, {blank}),
   implement(ISeqable, {seq}),
   implement(ICollection, {conj: append}),
   implement(INext, {next}),

@@ -1,10 +1,10 @@
 import {overload, toggles, identity, obj, partly, doto, branch, unspread, applying, execute} from "./core";
 import {IDecorated, IAppendable, IHash, ITemplate, IYank, ICoerce, IAssociative, IBounds, IInverse, ICloneable, ICollection, IComparable, ICounted, IDecode, IDeref, IDisposable, IEmptyableCollection, IEncode, IEquiv, IFind, IFn, IFork, IFunctor, IHierarchy, IInclusive, IIndexed, IInsertable, IKVReduce, ILookup, IMap, IMapEntry, IMatch, INext, IOtherwise, IPrependable, IReduce, IReset, IReversible, ISeq, ISeqable, ISet, ISteppable, ISwap} from "./protocols";
-import {satisfies, filter, spread, specify, maybe, each, duration, remove, sort, flip, realized, comp, isNumber, isFunction, apply} from "./types";
+import {satisfies, filter, spread, specify, maybe, each, duration, remove, sort, flip, realized, comp, isNumber, isFunction, apply, realize} from "./types";
 import {add, subtract, compact, matches, name, descendants, query, locate, transient, persistent, deref, get, assoc, yank, conj, hash, reducing, toArray, reducekv, includes, excludes} from "./protocols/concrete";
 import {isString, isBlank, str} from "./types/string";
 import {isSome} from "./types/nil";
-import {into, detect, map, drop, join, some} from "./types/lazy-seq";
+import {into, detect, map, drop, join, some, last} from "./types/lazy-seq";
 import {emptyTransientSet} from "./types/transient-set/construct";
 import {absorb} from "./associatives";
 import {_ as v} from "param.macro";
@@ -85,4 +85,8 @@ export function coalesce(...fs){
   return function(...args){
     return detect(isSome, map(applying(...args), fs));
   }
+}
+
+export function when(pred, ...xs) {
+  return last(map(realize, pred ? xs : null));
 }
