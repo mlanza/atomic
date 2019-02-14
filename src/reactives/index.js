@@ -40,7 +40,7 @@ import LazyPub from "./types/lazy-pub/construct";
 import Observable from "./types/observable/construct";
 import Publisher from "./types/publisher/construct";
 import {
-  mapped,
+  map,
   conduit,
   lazyPub,
   observable,
@@ -66,21 +66,6 @@ function signal3(xf, init, source){
 
 export const signal = overload(null, signal1, signal2, signal3);
 
-function touched2(xf, source){
-  const sink = conduit(publisher(), xf, source);
-  function pub(self, value){
-    IPublish.pub(source, value);
-  }
-  return doto(sink,
-    specify(IPublish, {pub}));
-}
-
-function touched1(source){
-  return touched2(identity, source);
-}
-
-export const touched = overload(null, touched1, touched2);
-
 export function computed(f, source){
   const obs = observable(f(source));
   function callback(){
@@ -97,14 +82,10 @@ export function computed(f, source){
 }
 
 function fmap(source, f){
-  return mapped(f, source); //signal3(comp(t.map(f), t.dedupe()), f(IDeref.deref(source)), source);
+  return map(f, source); //signal3(comp(t.map(f), t.dedupe()), f(IDeref.deref(source)), source);
 }
 
-const fmappable = implement(IFunctor, {fmap});
-
-fmappable(LazyPub);
-fmappable(Observable);
-fmappable(Publisher);
+each(implement(IFunctor, {fmap}), [LazyPub, Observable, Publisher]);
 
 export function mousemove(el){
   return signal(t.map(function(e){
@@ -163,8 +144,8 @@ export function fromElement(events, f, el){
 
 export function focus(el){
   return join(observable(el === document.activeElement),
-    mapped(constantly(true), event(el, "focus")),
-    mapped(constantly(false), event(el, "blur")));
+    map(constantly(true), event(el, "focus")),
+    map(constantly(false), event(el, "blur")));
 }
 
 export function join(sink, ...sources){
@@ -176,7 +157,7 @@ export function join(sink, ...sources){
 }
 
 export function calc(f, ...sources){
-  return mapped(spread(f), latest(sources));
+  return map(spread(f), latest(sources));
 }
 
 export function latest(sources){
@@ -247,8 +228,6 @@ function isolate(f){ //TODO treat operations as promises
         try {
           f.apply(null, args);
           IEvented.trigger(args[0], "mutate", {bubbles: true});
-        } catch (ex) {
-          throw ex;
         } finally {
           queue.shift();
         }

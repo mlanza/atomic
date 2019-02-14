@@ -34,18 +34,6 @@ export function juxt(...fs){
   }
 }
 
-export function opt(f, ...fs){
-  return function(obj){
-    return obj == null ? null : IReduce.reduce(fs, function(memo, f){
-      return memo == null ? reduced(memo) : f(memo);
-    }, f.apply(null, arguments));
-  }
-}
-
-export function opted(init, ...fs){
-  return opt(...fs)(init);
-}
-
 export function pipe(f, ...fs){
   return function(){
     return IReduce.reduce(fs, function(memo, f){
@@ -54,16 +42,12 @@ export function pipe(f, ...fs){
   }
 }
 
-export function piped(init, ...fs){
-  return pipe(...fs)(init);
-}
-
 export function comp(...fs){
-  var last = fs.length - 1, init = fs[last];
-  return function(...args){
+  const last = fs.length - 1, f = fs[last];
+  return function(){
     return IReduce.reduce(fs, function(memo, f){
       return f(memo);
-    }, init.apply(null, args), last - 1, 0);
+    }, f.apply(null, arguments), last - 1, 0);
   }
 }
 
@@ -118,7 +102,7 @@ export function multi(dispatch){
   }
 }
 
-export function tap(f){
+export function tee(f){
   return function(value){
     f(value);
     return value;
@@ -126,7 +110,7 @@ export function tap(f){
 }
 
 export function see(about){
-  return tap(partial(log, about));
+  return tee(partial(log, about));
 }
 
 export function flip(f){

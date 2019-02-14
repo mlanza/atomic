@@ -67,9 +67,9 @@ function nth(self, idx){
 function count(self){
   var n  = 0,
       xs = self;
-  while(first(xs)) {
+  while (ISeqable.seq(xs)) {
     n++;
-    xs = rest(xs);
+    xs = ISeq.rest(xs);
   }
   return n;
 }

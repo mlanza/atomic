@@ -1,17 +1,15 @@
-import {overload} from '../../core';
-import {IReduce, IFunctor} from '../../protocols';
+import {overload, partial} from '../../core';
+import {thrush, pipeline} from '../../protocols/ifunctor/concrete';
 
 export default function Just(value){
   this.value = value;
 }
 
-export function just(value){
+function just1(value){
   return new Just(value);
 }
 
-export function maybe(x){
-  return x == null ? x : just(x);
-}
+export const just = overload(null, just1, partial(thrush, just1));
 
 export function isJust(self){
   return self instanceof Just;

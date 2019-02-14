@@ -1,6 +1,6 @@
 export * from "./protocols/iappendable/instance";
 export * from "./protocols/iassociative/instance";
-export * from "./protocols/iblottable/instance";
+export * from "./protocols/iblankable/instance";
 export * from "./protocols/ibounds/instance";
 export * from "./protocols/ichainable/instance";
 export * from "./protocols/icloneable/instance";
@@ -43,6 +43,7 @@ export * from "./protocols/irecord/instance";
 export * from "./protocols/ireduce/instance";
 export * from "./protocols/ireset/instance";
 export * from "./protocols/ireversible/instance";
+export * from "./protocols/isend/instance";
 export * from "./protocols/iseq/instance";
 export * from "./protocols/iseqable/instance";
 export * from "./protocols/isequential/instance";

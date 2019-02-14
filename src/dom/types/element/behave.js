@@ -209,7 +209,7 @@ function lookup(self, key){
 }
 
 function assoc(self, key, value){
-  self.setAttribute(key, value);
+  self.setAttribute(key, str(value));
   return self;
 }
 

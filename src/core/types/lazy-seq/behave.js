@@ -1,6 +1,6 @@
 import {implement} from '../protocol';
-import {IBlottable, ICompact, ILocate, IQuery, IFunctor, IReversible, IYank, IMatch, ICoerce, IInclusive, IFind, IEquiv, ICollection, INext, ISeq, IReduce, IKVReduce, ISeqable, ISequential, IIndexed, IEmptyableCollection, ICounted, IAppendable, IPrependable} from '../../protocols';
-import {overload, identity, does, partial} from '../../core';
+import {IBlankable, ICompact, ILocate, IQuery, IFunctor, IReversible, IYank, IMatch, ICoerce, IInclusive, IFind, IEquiv, ICollection, INext, ISeq, IReduce, IKVReduce, ISeqable, ISequential, IIndexed, IEmptyableCollection, ICounted, IAppendable, IPrependable} from '../../protocols';
+import {overload, identity, constantly, does, partial} from '../../core';
 import Reduced, {isReduced, reduced, unreduced} from "../reduced";
 import {concat} from "../concatenated/construct";
 import {comp} from "../function/concrete";
@@ -132,16 +132,14 @@ function reducekv(xs, xf, init){
   return memo instanceof Reduced ? memo.valueOf() : memo;
 }
 
-function toArray2(xs, ys){
-  if (ISeqable.seq(xs) != null) {
-    ys.push(ISeq.first(xs));
-    return toArray2(ISeq.rest(xs), ys);
+function toArray(xs){
+  let ys = xs;
+  const zs = [];
+  while (ISeqable.seq(ys) != null) {
+    zs.push(ISeq.first(ys));
+    ys = ISeq.rest(ys);
   }
-  return ys;
-}
-
-function toArray1(xs){
-  return toArray2(xs, []);
+  return zs;
 }
 
 function count(self){
@@ -153,8 +151,6 @@ function count(self){
 function append(self, other){
   return concat(self, [other]);
 }
-
-const toArray = overload(null, toArray1, toArray2);
 
 function yank(self, value){
   return remove(function(x){
@@ -180,7 +176,7 @@ export default does(
   implement(ISequential),
   implement(IIndexed, {nth, idx}),
   implement(IReversible, {reverse}),
-  implement(IBlottable, {blot: identity}),
+  implement(IBlankable, {blank: constantly(false)}),
   implement(ICompact, {compact}),
   implement(IInclusive, {includes}),
   implement(IQuery, {query}),

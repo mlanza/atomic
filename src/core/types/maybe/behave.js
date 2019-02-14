@@ -1,22 +1,22 @@
 import {implement} from '../protocol';
 import {identity, does} from '../../core';
-import {just} from './construct';
+import {maybe} from './construct';
 import {IFunctor, IOtherwise, IFork, IDeref} from '../../protocols';
 
 function fmap(self, f){
-  return just(f(self.value));
+  return self.value == null ? self : maybe(f(self.value));
 }
 
 function otherwise(self, other){
-  return self.value;
+  return self.value == null ? other : self.value;
 }
 
 function fork(self, reject, resolve){
-  return resolve(self.value);
+  return resolve(self.value == null ? null : self.value);
 }
 
 function deref(self){
-  return self.value;
+  return self.value == null ? null : self.value;
 }
 
 export default does(
