@@ -1,4 +1,4 @@
-import {overload, identity, complement, comp, partial, isSome, reduced, seq, equiv, IReduce} from "cloe/core";
+import {overload, identity, complement, comp, first, rest, partial, isSome, reduced, seq, equiv, IReduce} from "cloe/core";
 
 export function map(f){
   return function(xf){
@@ -56,6 +56,10 @@ function dedupe0(){
 }
 
 function dedupe1(f){
+  return dedupe2(f, equiv);
+}
+
+function dedupe2(f, equiv){
   return function(xf){
     var last;
     return overload(xf, xf, function(memo, value){
@@ -66,7 +70,7 @@ function dedupe1(f){
   }
 }
 
-export const dedupe = overload(dedupe0, dedupe1);
+export const dedupe = overload(dedupe0, dedupe1, dedupe2);
 
 export function take(n){
   return function(xf){

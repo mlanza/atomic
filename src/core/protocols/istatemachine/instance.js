@@ -1,6 +1,7 @@
 import {protocol} from "../../types/protocol";
 export const IStateMachine = protocol({
   state: null,
-  transition: null
+  transition: null,
+  transitions: null
 });
 export default IStateMachine;

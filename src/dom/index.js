@@ -1,6 +1,5 @@
-import {constantly, identity, apply, noop, slice, partial, replace, concat, template, key, val, join, merge, filter, map, remove, isObject, specify, implement, doto, assoc, get, str, includes, overload, conj, yank, append, absorb, fmap, each, obj, IReduce, first, query, locate, descendants, matches, reducekv, Number, String, Nil} from "cloe/core";
+import {constantly, identity, apply, noop, slice, partial, replace, concat, template, key, val, join, merge, filter, map, remove, isObject, specify, implement, doto, assoc, get, str, includes, overload, conj, append, absorb, fmap, each, obj, IReduce, first, query, locate, descendants, matches, reducekv, Number, String, Nil, ICoerce, extend} from "cloe/core";
 import * as _ from "cloe/core";
-import {fragment} from "./types/document-fragment/construct";
 import {element} from "./types/element/construct";
 import {mounts} from "./protocols/imountable/concrete";
 import InvalidHostElementError from "./types/invalid-host-element-error";
@@ -68,85 +67,33 @@ export function hasClass(self, name){
   return self.classList.contains(name);
 }
 
-function fire(parent, event, what, detail){
-  what && $.trigger(parent, what + ":" + event, {bubbles: true, detail});
-  $.trigger(parent, event, {bubbles: true, detail});
-}
-
 export function assert(el, selector){
   if (!matches(el, selector)) {
     throw new InvalidHostElementError(el, selector);
   }
 }
 
-function component3(render, config, el){
-  return component4(constantly(null), render, config, el);
+function mount3(render, config, el){
+  return mount4(constantly(null), render, config, el);
 }
 
-function component4(create, render, config, el){
+function mount4(create, render, config, el){
+  config.what && $.trigger(el, config.what + ":installing", {bubbles: true, detail: {config}});
   $.trigger(el, "installing", {bubbles: true, detail: {config}});
+
   const bus = create(config),
         detail = {config, bus};
+
   doto(el,
     $.on(v, "mounting mounted", function(e){
       Object.assign(e.detail, detail);
     }),
     render(v, config, bus),
     mounts);
+
+  config.what && $.trigger(el, config.what + ":installed", {bubbles: true, detail});
   $.trigger(el, "installed", {bubbles: true, detail});
   return bus;
-}
-
-export const component = overload(null, null, null, component3, component4);
-
-function view2(render, config){
-  return view3(constantly(null), render, config);
-}
-
-function view3(create, render, config){
-  const bus = create(config),
-        detail = {config, bus};
-  return doto(render(config, bus),
-    $.on(v, "mounting mounted", function(e){
-      Object.assign(e.detail, detail);
-    }),
-    mounts);
-}
-
-export const view = overload(null, null, view2, view3);
-
-function load(config, parent, promise) {
-  return config.spinner ? new Promise(function(resolve, reject){
-    const loading = element('img', config.spinner);
-    append(parent, loading);
-    fire(parent, "loading", config.what, {config});
-    fmap(promise,
-      doto(v, resolve),
-      function(child){
-        yank(loading);
-        fire(parent, "loaded", config.what, {config, child});
-      });
-  }) : promise;
-}
-
-function mount3(render, config, parent, bus){
-  const detail = {config, bus};
-  return load(config, parent, new Promise(function(resolve, reject){
-    fmap(Promise.resolve(render(config, bus)),
-      doto(v,
-        $.on(v, "mounting mounted", function(e){
-          Object.assign(e.detail, detail);
-        }),
-        mounts,
-        append(parent, v),
-        function(el){
-          resolve([el, detail]);
-        }));
-  }));
-}
-
-function mount4(create, render, config, parent){
-  return mount3(render, config, parent, create(config));
 }
 
 export const mount = overload(null, null, null, mount3, mount4);
@@ -225,13 +172,23 @@ function attr2(self, key) {
 
 export const attr = overload(null, null, attr2, attr3);
 
+extend(ICoerce, {toFragment: null});
+
+export const toFragment = ICoerce.toFragment;
+
 (function(){
 
   function embed(self, parent, nextSibling) {
     IEmbeddable.embed(document.createTextNode(self), parent, nextSibling);
   }
 
-  doto(String, implement(IEmbeddable, {embed}));
+  function toFragment(self){
+    return document.createRange().createContextualFragment(self);
+  }
+
+  doto(String,
+    implement(ICoerce, {toFragment}),
+    implement(IEmbeddable, {embed}));
 
 })();
 
@@ -257,9 +214,14 @@ export const attr = overload(null, null, attr2, attr3);
 
 })();
 
-
 (function(){
 
-  doto(Nil, implement(IEmbeddable, {embed: identity}));
+  function toFragment(_){
+    return document.createRange().createContextualFragment("");
+  }
+
+  doto(Nil,
+    implement(ICoerce, {toFragment}),
+    implement(IEmbeddable, {embed: identity}));
 
 })();

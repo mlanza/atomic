@@ -7,20 +7,22 @@ const TEMPLATE = Symbol("@protocol-template"),
       INDEX    = Symbol("@protocol-index"),
       MISSING  = Symbol("@protocol-missing");
 
-export default function Protocol(template){
-  this[INDEX] = {};
+export default function Protocol(template, index){
+  this[INDEX] = index;
   this[TEMPLATE] = template;
-  this.extend(template);
 }
 
 export function protocol(template){
-  return new Protocol(template);
+  const p = new Protocol({}, {});
+  p.extend(template);
+  return p;
 }
 
-Protocol.prototype.extend = function(behavior){
-  for(var method in behavior){
+Protocol.prototype.extend = function(template){
+  for(let method in template){
     this[method] = this.dispatch(method);
   }
+  Object.assign(this[TEMPLATE], template);
 }
 
 Protocol.prototype.dispatch = function(method){
@@ -67,11 +69,28 @@ function specify2(behavior, target){
   const keys = this.generate();
   addMeta(target, keys("__marker__"), this);
   for(var method in behavior){
-    addMeta(target, keys(method), behavior[method])
+    addMeta(target, keys(method), behavior[method]);
   }
 }
 
 Protocol.prototype.specify = overload(null, specify1, specify2);
+
+function unspecify1(behavior){
+  const protocol = this;
+  return function(target){
+    unspecify2.call(protocol, behavior, target);
+  }
+}
+
+function unspecify2(behavior, target){
+  const keys = this.generate();
+  addMeta(target, keys("__marker__"), undefined);
+  for(var method in behavior){
+    addMeta(target, keys(method), undefined);
+  }
+}
+
+Protocol.prototype.unspecify = overload(null, unspecify1, unspecify2);
 
 export function implement0(){
   return implement1.call(this, {}); //marker interface

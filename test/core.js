@@ -55,7 +55,7 @@ QUnit.test("validation", function(assert){
 QUnit.test("component", function(assert){
   const people =
     _.doto(
-      $.component($.observable([]), function(accepts, raises, affects){
+      $.component($.cell([]), function(accepts, raises, affects){
         return [{
           "add": accepts("added")
         }, {
@@ -289,10 +289,10 @@ QUnit.test("record", function(assert){
   assert.equal(_.count(robin), 3);
 });
 
-QUnit.test("observable", function(assert){
+QUnit.test("cell", function(assert){
   const button = dom.tag('button');
   const tally = button("Tally");
-  const clicks = $.observable(0);
+  const clicks = $.cell(0);
   tally.click();
   assert.equal(clicks |> _.deref, 0);
   const tallied = $.click(tally);
@@ -303,7 +303,7 @@ QUnit.test("observable", function(assert){
   tally.click();
   _.dispose(tallied);
   tally.click();
-  const source = $.observable(0);
+  const source = $.cell(0);
   const sink   = $.signal(t.map(_.inc), source);
   const msink  = _.fmap(source, _.inc);
   source |> _.swap(v, _.inc);
@@ -311,8 +311,8 @@ QUnit.test("observable", function(assert){
   assert.equal(source |> _.deref, 1);
   assert.equal(sink   |> _.deref, 2);
   assert.equal(msink  |> _.deref, 2);
-  const bucket = $.observable([], null, _.pipe(_.get(v, 'length'), _.lt(v, 3))),
-        states = $.observable([]);
+  const bucket = $.cell([], null, _.pipe(_.get(v, 'length'), _.lt(v, 3))),
+        states = $.cell([]);
   bucket |> $.sub(v, state => states |> _.swap(v, _.conj(v, state)));
   bucket |> _.swap(v, _.conj(v, "ice"));
   bucket |> _.swap(v, _.conj(v, "champagne"));
@@ -325,14 +325,14 @@ QUnit.test("observable", function(assert){
 });
 
 QUnit.test("immutable updates", function(assert){
-  const duos = $.observable([["Hall", "Oates"], ["Laurel", "Hardy"]]),
+  const duos = $.cell([["Hall", "Oates"], ["Laurel", "Hardy"]]),
         get0 = _.pipe(_.deref, _.nth(v, 0)),
         get1 = _.pipe(_.deref, _.nth(v, 1)),
         get2 = _.pipe(_.deref, _.nth(v, 2)),
         d0 = get0(duos),
         d1 = get1(duos),
         d2 = get2(duos),
-        states = $.observable([]),
+        states = $.cell([]),
         txn = _.pipe(
           _.conj(v, ["Andrew Ridgeley", "George Michaels"]),
           _.assocIn(v, [0, 0], "Daryl"),

@@ -9,9 +9,9 @@ function reset(self, value){
   if (value !== self.state){
     if (!self.validate || self.validate(value)) {
       self.state = value;
-      IPublish.pub(self.publisher, value);
+      IPublish.pub(self.observer, value);
     } else {
-      throw new Error("Observable update failed - invalid value.");
+      throw new Error("Cell update failed - invalid value.");
     }
   }
 }
@@ -22,19 +22,19 @@ function swap(self, f){
 
 function sub(self, callback){
   callback(self.state); //to prime subscriber state
-  ISubscribe.sub(self.publisher, callback);
+  ISubscribe.sub(self.observer, callback);
 }
 
 function unsub(self, callback){
-  ISubscribe.unsub(self.publisher, callback);
+  ISubscribe.unsub(self.observer, callback);
 }
 
 function subscribed(self){
-  return ISubscribe.subscribed(self.publisher);
+  return ISubscribe.subscribed(self.observer);
 }
 
 function dispose(self){
-  satisfies(IDisposable, self.publisher) && IDisposable.dispose(self.publisher);
+  satisfies(IDisposable, self.observer) && IDisposable.dispose(self.observer);
 }
 
 export default does(

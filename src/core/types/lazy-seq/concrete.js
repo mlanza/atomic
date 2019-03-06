@@ -337,17 +337,21 @@ function dedupe1(coll){
 }
 
 function dedupe2(f, coll){
+  return dedupe3(f, IEquiv.equiv, coll);
+}
+
+function dedupe3(f, equiv, coll){
   var xs = ISeqable.seq(coll);
   const last = ISeq.first(xs);
   return xs ? lazySeq(last, function(){
-    while(INext.next(xs) && IEquiv.equiv(f(ISeq.first(INext.next(xs))), f(last))) {
+    while(INext.next(xs) && equiv(f(ISeq.first(INext.next(xs))), f(last))) {
       xs = INext.next(xs);
     }
     return dedupe2(f, INext.next(xs));
   }) : coll;
 }
 
-export const dedupe = overload(null, dedupe1, dedupe2);
+export const dedupe = overload(null, dedupe1, dedupe2, dedupe3);
 
 function repeatedly1(f){
   return lazySeq(f(), function(){

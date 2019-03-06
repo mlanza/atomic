@@ -8,8 +8,10 @@ import {
   IFunctor,
   ICounted,
   Function,
+  Promise,
   doto,
   does,
+  deref,
   overload,
   apply,
   identity,
@@ -27,30 +29,73 @@ import {
   first,
   notEq,
   implement,
-  applying,
+  satisfies,
   specify,
   slice
 } from "cloe/core";
 import * as _ from "cloe/core";
 import Symbol from "symbol";
 import {weakMap} from "cloe/core";
-import {on, off, one} from "./protocols/concrete";
+import {pub, sub, unsub, on, off, one} from "./protocols/concrete";
 import {IDispatch, IPublish, ISubscribe, IEvented} from "./protocols";
-import LazyPub from "./types/lazy-pub/construct";
-import Observable from "./types/observable/construct";
-import Publisher from "./types/publisher/construct";
+import AudienceDetector from "./types/audience-detector/construct";
+import Broadcast from "./types/broadcast/construct";
+import Cell from "./types/cell/construct";
 import {
-  map,
-  conduit,
-  lazyPub,
-  observable,
-  publisher
+  cell,
+  readonly,
+  audienceDetector,
+  broadcast
 } from "./types";
 import * as t from "cloe/transducers";
 export * from "./types";
 export * from "./protocols";
 export * from "./protocols/concrete";
 import {_ as v} from "param.macro";
+
+function into2(sink, source){
+  return into3(sink, identity, source);
+}
+
+function into3(sink, xf, source){
+  return into4(readonly, sink, xf, source);
+}
+
+function into4(decorate, sink, xf, source){
+  const callback = partial(xf(pub), sink);
+  sub(source, callback);
+  function dispose(_){
+    unsub(source, callback)
+  }
+  return doto(decorate(sink),
+    specify(IDisposable, {dispose}));
+}
+
+export const into = overload(null, null, into2, into3, into4);
+
+export function touched(source){
+  return into(broadcast(), source);
+}
+
+//TODO that promises could potentially return out of order is a problem!
+export function then2(f, source){
+  const sink = cell(null);
+  function callback(value){
+    IFunctor.fmap(Promise.resolve(f(value)), partial(pub, sink));
+  }
+  function dispose(self){
+    ISubscribe.unsub(source, callback);
+  }
+  ISubscribe.sub(source, callback);
+  return doto(readonly(sink),
+    specify(IDisposable, {dispose}));
+}
+
+function thenN(f, ...sources){
+  return then2(spread(f), latest(sources));
+}
+
+export const then = overload(null, null, then2, thenN);
 
 function signal1(source){
   return signal2(t.map(identity), source);
@@ -61,36 +106,65 @@ function signal2(xf, source){
 }
 
 function signal3(xf, init, source){
-  return conduit(observable(init), xf, source);
+  return signal4(audienceDetector, xf, init, source);
 }
 
-export const signal = overload(null, signal1, signal2, signal3);
+function signal4(into, xf, init, source){
+  return into(cell(init), xf, source);
+}
+
+export const signal = overload(null, signal1, signal2, signal3, signal4);
+
+function sink(source){
+  return satisfies(IDeref, source) ? cell() : broadcast();
+}
+
+function via2(xf, source){
+  return into(sink(source), xf, source);
+}
+
+function viaN(xf, ...sources){
+  return via2(spread(xf), latest(sources));
+}
+
+export const via = overload(null, null, via2, viaN);
+
+function map1(source){
+  return map2(identity, source);
+}
+
+function map2(f, source){
+  return via2(comp(t.map(f), t.dedupe()), source);
+}
+
+function mapN(f, ...sources){
+  return map2(spread(f), latest(sources));
+}
+
+export const map = overload(null, null, map2, mapN);
 
 export function computed(f, source){
-  const obs = observable(f(source));
+  const sink = cell(f(source));
   function callback(){
-    IReset.reset(obs, f(source));
+    IReset.reset(sink, f(source));
   }
   function pub(self, value){
     IPublish.pub(source, value);
   }
-  return doto(lazyPub(obs, function(state){
-    const f = state == "active" ? ISubscribe.sub : ISubscribe.unsub;
-    f(source, callback);
-  }),
+  return doto(audienceDetector(sink, t.map(f), source),
     specify(IPublish, {pub}));
 }
 
 function fmap(source, f){
-  return map(f, source); //signal3(comp(t.map(f), t.dedupe()), f(IDeref.deref(source)), source);
+  return map(f, source);
 }
 
-each(implement(IFunctor, {fmap}), [LazyPub, Observable, Publisher]);
+each(implement(IFunctor, {fmap}), [AudienceDetector, Cell, Broadcast]);
 
 export function mousemove(el){
   return signal(t.map(function(e){
     return [e.clientX, e.clientY];
-  }), [], event(el, "mousemove"));
+  }), [], event(el, "mouseenter mousemove"));
 }
 
 export function keydown(el){
@@ -121,7 +195,7 @@ export function pressed(el){
       memo = ICollection.conj(memo, value.key);
     }
     return memo;
-  }, [], join(publisher(), keydown(el), keyup(el))));
+  }, [], join(broadcast(), keydown(el), keyup(el))));
 }
 
 export function hashchange(window){
@@ -130,11 +204,17 @@ export function hashchange(window){
   }), location.hash, event(window, "hashchange"));
 }
 
-export function fromPromise(promise, init){
-  const sink = observable(init || null);
+function fromPromise1(promise){
+  return fromPromise2(promise, null);
+}
+
+function fromPromise2(promise, init){
+  const sink = cell(init);
   IFunctor.fmap(promise, IPublish.pub(sink, v));
   return sink;
 }
+
+export const fromPromise = overload(null, fromPromise1, fromPromise2);
 
 export function fromElement(events, f, el){
   return signal(t.map(function(){
@@ -143,31 +223,29 @@ export function fromElement(events, f, el){
 }
 
 export function focus(el){
-  return join(observable(el === document.activeElement),
-    map(constantly(true), event(el, "focus")),
-    map(constantly(false), event(el, "blur")));
+  return join(cell(el === document.activeElement),
+    via(t.map(constantly(true)), event(el, "focus")),
+    via(t.map(constantly(false)), event(el, "blur")));
 }
 
 export function join(sink, ...sources){
   const callback = IPublish.pub(sink, v);
-  return lazyPub(sink, function(state){
+  return audienceDetector(sink, function(state){
     const f = state === "active" ? ISubscribe.sub : ISubscribe.unsub;
     each(f(v, callback), sources);
   });
 }
 
-export function calc(f, ...sources){
-  return map(spread(f), latest(sources));
-}
+export const fixed = comp(readonly, cell);
 
 export function latest(sources){
-  const sink = observable(mapa(constantly(null), sources));
+  const sink = cell(mapa(constantly(null), sources));
   const fs = memoize(function(idx){
     return function(value){
       ISwap.swap(sink, IAssociative.assoc(v, idx, value));
     }
   }, str);
-  return lazyPub(sink, function(state){
+  return audienceDetector(sink, function(state){
     const f = state === "active" ? ISubscribe.sub : ISubscribe.unsub;
     doall(mapIndexed(function(idx, source){
       f(source, fs(idx));
@@ -176,7 +254,7 @@ export function latest(sources){
 }
 
 function hist2(size, source){
-  const sink = observable([]);
+  const sink = cell([]);
   let history = [];
   ISubscribe.sub(source, function(value){
     history = slice(history);
@@ -192,17 +270,17 @@ function hist2(size, source){
 export const hist = overload(null, partial(hist2, 2), hist2);
 
 function event2(el, key){
-  const sink = publisher(), callback = partial(IPublish.pub, sink);
-  return lazyPub(sink, function(state){
-    const f = state === "active" ? on : off;
+  const sink = broadcast(), callback = partial(IPublish.pub, sink);
+  return audienceDetector(sink, function(status){
+    const f = status === "active" ? on : off;
     f(el, key, callback);
   });
 }
 
 function event3(el, key, selector){
-  const sink = publisher(), callback = partial(IPublish.pub, sink);
-  return lazyPub(sink, function(state){
-    if (state === "active") {
+  const sink = broadcast(), callback = partial(IPublish.pub, sink);
+  return audienceDetector(sink, function(status){
+    if (status === "active") {
       on(el, key, selector, callback);
     } else {
       off(el, key, callback);
@@ -257,11 +335,3 @@ export const mutate = overload(null, null, mutate2, mutate3);
     implement(IDispatch, {dispatch}));
 
 })();
-
-export function install(self, ...callbacks){
-  return _.fmap(self,
-    function(pair){
-      const detail = pair[1];
-      each(applying(detail.bus), callbacks);
-    });
-}
