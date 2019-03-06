@@ -115,7 +115,7 @@ function val(self){
 }
 
 function equiv(self, other){
-  return self === other ? true : IKVReduce.reducekv(self, function(memo, key, value){
+  return other != null && self !== other && IKVReduce.reducekv(self, function(memo, key, value){
     return memo ? IEquiv.equiv(value, ILookup.lookup(other, key)) : reduced(memo);
   }, ICounted.count(self) === ICounted.count(other));
 }

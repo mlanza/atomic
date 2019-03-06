@@ -36,7 +36,7 @@ function next(self){
 }
 
 function equiv(self, other){
-  return IEquiv.equiv(self.start, other.start) && IEquiv.equiv(self.end, other.end) && IEquiv.equiv(self.step, other.step);
+  return other != null && IEquiv.equiv(self.start, other.start) && IEquiv.equiv(self.end, other.end) && IEquiv.equiv(self.step, other.step);
 }
 
 function reduce(self, xf, init){

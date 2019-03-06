@@ -1,6 +1,6 @@
 export default Error;
 
-function error(message){
+export function error(message){
   return new Error(message);
 }
 

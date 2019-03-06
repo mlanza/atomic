@@ -1,10 +1,10 @@
-import {implement, does, noop, IStateMachine, IDisposable, ICounted, IDeref, transition, swap} from 'cloe/core';
+import {implement, does, noop, transition, satisfies, swap, IStateMachine, IDisposable} from 'cloe/core';
 import {ISubscribe} from "../../protocols/isubscribe/instance";
 import {_ as v} from "param.macro";
 
 function sub(self, callback){
   if (subscribed(self) === 0) {
-    swap(self.toggle, transition(v, "active"));
+    swap(self.state, transition(v, "activate"));
   }
   ISubscribe.sub(self.sink, callback);
 }
@@ -12,7 +12,7 @@ function sub(self, callback){
 function unsub(self, callback){
   ISubscribe.unsub(self.sink, callback);
   if (subscribed(self) === 0) {
-    swap(self.toggle, transition(v, "idle"));
+    swap(self.state, transition(v, "deactivate"));
   }
 }
 
@@ -21,23 +21,14 @@ function subscribed(self){
 }
 
 function dispose(self){
-  swap(self.toggle, transition(v, "idle"));
-}
-
-function deref(self){
-  if (subscribed(self) === 0) { //force refresh of sink state
-    sub(self, noop);
-    unsub(self, noop);
-  }
-  return IDeref.deref(self.sink);
+  swap(self.state, transition(v, "deactivate"));
 }
 
 function state(self){
-  return IStateMachine.state(IDeref.deref(self.toggle));
+  return IStateMachine.state(IDeref.deref(self.state));
 }
 
 export default does(
-  implement(IDeref, {deref}),
   implement(IDisposable, {dispose}),
   implement(IStateMachine, {state}),
   implement(ISubscribe, {sub, unsub, subscribed}));

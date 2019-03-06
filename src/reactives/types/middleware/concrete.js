@@ -5,7 +5,7 @@ import {messageProcessor} from "../message-processor/construct";
 import {messageHandler} from "../message-handler/construct";
 import {bus} from "../bus/construct";
 import {events} from "../events/construct";
-import {publisher} from "../publisher/construct";
+import {broadcast} from "../broadcast/construct";
 import {IMiddleware} from "../../protocols/imiddleware/instance";
 import {IEventProvider} from "../../protocols/ieventprovider/instance";
 import {sub} from "../../protocols/isubscribe/concrete";
@@ -52,13 +52,13 @@ export const affects = overload(null, null, affects2, affects3);
 function component2(state, callback){
   const evts = events(),
         ware = middleware(),
-        publ = publisher();
+        observer = broadcast();
   return doto(bus(state, ware), function($bus){
     const maps = callback(partial(accepts, evts), partial(raises, evts, $bus), partial(affects, $bus));
     const commandMap = maps[0], eventMap = maps[1];
     conj(ware,
       messageHandler(commandMap),
-      eventDispatcher(evts, messageHandler(eventMap), publ));
+      eventDispatcher(evts, messageHandler(eventMap), observer));
   });
 }
 

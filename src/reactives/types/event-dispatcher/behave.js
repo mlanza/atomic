@@ -7,7 +7,7 @@ function handle(self, command, next){
   next(command);
   each(function(event){
     _handle(self.bus, event);
-    pub(self.publisher, event);
+    pub(self.observer, event);
   }, release(self.events));
 }
 

@@ -6,17 +6,21 @@ export const off = IEvented.off;
 export const trigger = IEvented.trigger;
 
 function one3(self, key, callback){
-  return on(self, key, function cb(e){
-    off(self, key, cb);
+  function cb(e){
+    off(self, key, ctx.cb);
     callback.call(this, e);
-  });
+  }
+  const ctx = {cb: cb};
+  return on(self, key, cb);
 }
 
 function one4(self, key, selector, callback){
-  return on(self, key, selector, function cb(e){
-    off(self, key, cb);
+  function cb(e){
+    off(self, key, ctx.cb);
     callback.call(this, e);
-  });
+  }
+  const ctx = {cb: cb};
+  return on(self, key, selector, cb);
 }
 
 export const one = overload(null, null, null, one3, one4);

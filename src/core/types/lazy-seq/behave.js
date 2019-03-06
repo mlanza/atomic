@@ -44,7 +44,7 @@ function reduce(self, xf, init){
 function equiv(as, bs){
   const xs = ISeqable.seq(as),
         ys = ISeqable.seq(bs);
-  return ys == null ? false : xs === ys || (IEquiv.equiv(first(xs), first(ys)) && IEquiv.equiv(rest(xs), rest(ys)));
+  return ys == null ? false : xs === ys || (IEquiv.equiv(ISeq.first(xs), ISeq.first(ys)) && IEquiv.equiv(ISeq.rest(xs), ISeq.rest(ys)));
 }
 
 function iterate(self){

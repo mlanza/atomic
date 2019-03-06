@@ -1,9 +1,9 @@
-export default function EventDispatcher(events, bus, publisher){
+export default function EventDispatcher(events, bus, observer){
   this.events = events;
   this.bus = bus;
-  this.publisher = publisher;
+  this.observer = observer;
 }
 
-export function eventDispatcher(events, bus, publisher){
-  return new EventDispatcher(events, bus, publisher);
+export function eventDispatcher(events, bus, observer){
+  return new EventDispatcher(events, bus, observer);
 }
