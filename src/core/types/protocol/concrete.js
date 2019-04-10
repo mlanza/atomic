@@ -13,11 +13,3 @@ export function reifiable(properties){
   }
   return new Reifiable(properties || {});
 }
-
-export function forwardTo(key){
-  return function forward(f){
-    return function(self, ...args){
-      return f.apply(null, [self[key], ...args]);
-    }
-  }
-}

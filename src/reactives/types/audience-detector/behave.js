@@ -2,15 +2,15 @@ import {implement, does, noop, transition, satisfies, swap, IStateMachine, IDisp
 import {ISubscribe} from "../../protocols/isubscribe/instance";
 import {_ as v} from "param.macro";
 
-function sub(self, callback){
+function sub(self, observer){
   if (subscribed(self) === 0) {
     swap(self.state, transition(v, "activate"));
   }
-  ISubscribe.sub(self.sink, callback);
+  ISubscribe.sub(self.sink, observer);
 }
 
-function unsub(self, callback){
-  ISubscribe.unsub(self.sink, callback);
+function unsub(self, observer){
+  ISubscribe.unsub(self.sink, observer);
   if (subscribed(self) === 0) {
     swap(self.state, transition(v, "deactivate"));
   }

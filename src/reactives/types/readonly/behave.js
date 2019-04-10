@@ -1,12 +1,12 @@
 import {does, implement} from 'cloe/core';
 import {ISubscribe} from "../../protocols";
 
-function sub(self, callback){
-  ISubscribe.sub(self.source, callback);
+function sub(self, observer){
+  ISubscribe.sub(self.source, observer);
 }
 
-function unsub(self, callback){
-  ISubscribe.unsub(self.source, callback);
+function unsub(self, observer){
+  ISubscribe.unsub(self.source, observer);
 }
 
 function subscribed(self){

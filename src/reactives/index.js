@@ -36,7 +36,7 @@ import {
 import * as _ from "cloe/core";
 import Symbol from "symbol";
 import {weakMap} from "cloe/core";
-import {pub, sub, unsub, on, off, one} from "./protocols/concrete";
+import {pub, sub, unsub, on, off, one, into} from "./protocols/concrete";
 import {IDispatch, IPublish, ISubscribe, IEvented} from "./protocols";
 import AudienceDetector from "./types/audience-detector/construct";
 import Broadcast from "./types/broadcast/construct";
@@ -53,40 +53,16 @@ export * from "./protocols";
 export * from "./protocols/concrete";
 import {_ as v} from "param.macro";
 
-function into2(sink, source){
-  return into3(sink, identity, source);
-}
-
-function into3(sink, xf, source){
-  return into4(readonly, sink, xf, source);
-}
-
-function into4(decorate, sink, xf, source){
-  const callback = partial(xf(pub), sink);
-  sub(source, callback);
-  function dispose(_){
-    unsub(source, callback)
-  }
-  return doto(decorate(sink),
-    specify(IDisposable, {dispose}));
-}
-
-export const into = overload(null, null, into2, into3, into4);
-
-export function touched(source){
-  return into(broadcast(), source);
-}
-
 //TODO that promises could potentially return out of order is a problem!
 export function then2(f, source){
   const sink = cell(null);
-  function callback(value){
+  function observe(value){
     IFunctor.fmap(Promise.resolve(f(value)), partial(pub, sink));
   }
   function dispose(self){
-    ISubscribe.unsub(source, callback);
+    ISubscribe.unsub(source, observe);
   }
-  ISubscribe.sub(source, callback);
+  ISubscribe.sub(source, observe);
   return doto(readonly(sink),
     specify(IDisposable, {dispose}));
 }
@@ -151,7 +127,10 @@ export function computed(f, source){
   function pub(self, value){
     IPublish.pub(source, value);
   }
-  return doto(audienceDetector(sink, t.map(f), source),
+  return doto(audienceDetector(sink, function(state){
+    const f = state == "active" ? ISubscribe.sub : ISubscribe.unsub;
+    f(source, callback);
+  }),
     specify(IPublish, {pub}));
 }
 
@@ -331,7 +310,12 @@ export const mutate = overload(null, null, mutate2, mutate3);
     return apply(self, args);
   }
 
+  function pub(self, msg){
+    self(msg);
+  }
+
   doto(Function,
+    implement(IPublish, {pub}),
     implement(IDispatch, {dispatch}));
 
 })();

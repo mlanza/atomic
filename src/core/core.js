@@ -225,17 +225,6 @@ export function detach(method){
   }
 }
 
-export function veer(n, f, g){
-  let skips = n;
-  return n > 0 ? function(){
-    return (skips-- <= 0 ? f : g).apply(this, arguments);
-  } : f;
-}
-
-export function ignore(n, f){
-  return veer(n, f, noop);
-}
-
 function trampoline1(f){
   let g = f();
   while(typeof g === "function") {
@@ -251,3 +240,11 @@ function trampolineN(f, ...args){
 }
 
 export const trampoline = overload(null, trampoline1, trampolineN);
+
+export function forwardTo(key){
+  return function forward(f){
+    return function(self, ...args){
+      return f.apply(null, [self[key], ...args]);
+    }
+  }
+}
