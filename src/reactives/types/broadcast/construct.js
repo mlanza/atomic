@@ -1,7 +1,7 @@
-export default function Broadcast(subscribers){
-  this.subscribers = subscribers;
+export default function Broadcast(observers){
+  this.observers = observers;
 }
 
-export function broadcast(subscribers){
-  return new Broadcast(subscribers || []);
+export function broadcast(observers){
+  return new Broadcast(observers || []);
 }

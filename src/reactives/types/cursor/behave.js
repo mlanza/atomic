@@ -23,18 +23,18 @@ function swap(self, f){
   });
 }
 
-function sub(self, callback){
-  function cb(state){
-    callback(_.getIn(state, self.path));
+function sub(self, observer){
+  function observe(state){
+    IPublish.pub(observer, _.getIn(state, self.path));
   }
-  self.callbacks.set(callback, cb);
-  _sub(self.source, cb);
+  self.callbacks.set(observer, observe);
+  _sub(self.source, observe);
 }
 
-function unsub(self, callback){
-  const cb = self.callbacks.get(callback);
-  _unsub(self.source, cb);
-  cb && self.callbacks.delete(callback);
+function unsub(self, observer){
+  const observe = self.callbacks.get(observer);
+  _unsub(self.source, observe);
+  observe && self.callbacks.delete(observer);
 }
 
 function subscribed(self){

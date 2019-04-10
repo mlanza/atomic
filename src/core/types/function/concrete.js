@@ -1,7 +1,7 @@
 import {ICoerce}  from "../../protocols/icoerce";
 import {IReduce}  from "../../protocols/ireduce";
 import {reduced} from "../../types/reduced/construct";
-import {overload, identity, partial, log, applying, slice} from "../../core";
+import {overload, identity, partial, log, slice} from "../../core";
 import {isNil}  from "../nil";
 import {satisfies}  from "../protocol";
 import {isFunction}  from "./construct";

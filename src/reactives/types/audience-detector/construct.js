@@ -16,10 +16,10 @@ export default function AudienceDetector(sink, state){
   this.state = state;
 }
 
-function audienceDetector2(sink, changed){
+function audienceDetector2(sink, detected){
   const init = subscribed(sink) === 0 ? "idle" : "active";
   const $state = cell(fsm(init, {idle: {activate: "active"}, active: {deactivate: "idle"}}));
-  sub($state, comp(changed, state));
+  sub($state, comp(detected, state));
   const result = new AudienceDetector(sink, $state);
   if (satisfies(IDeref, sink)) {
     specify(IDeref, {deref}, result);
@@ -28,10 +28,10 @@ function audienceDetector2(sink, changed){
 }
 
 function audienceDetector3(sink, xf, source){
-  const callback = partial(xf(pub), sink);
+  const observer = partial(xf(pub), sink);
   return audienceDetector2(sink, function(state) {
     const f = state === "active" ? sub : unsub;
-    f(source, callback);
+    f(source, observer);
   });
 }
 

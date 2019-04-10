@@ -1,5 +1,5 @@
-import {does, overload, doto} from '../../core';
-import {implement, forwardTo} from '../../types/protocol';
+import {does, overload, doto, forwardTo} from '../../core';
+import {implement} from '../../types/protocol';
 import {transientArray} from "./construct";
 import {ICoerce, IInsertable, IFunctor, ILookup, IAssociative, IFind, IMapEntry, IYank, ISeq, INext, ISeqable, ICounted, IInclusive, IReversible, IEmptyableCollection, IMap, IPersistent, IReduce, IKVReduce, ICloneable, IAppendable, IPrependable, ITemplate, ISequential, ICollection} from '../../protocols';
 

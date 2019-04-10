@@ -1,5 +1,14 @@
 import {overload, identity, complement, comp, first, rest, partial, isSome, reduced, seq, equiv, IReduce} from "cloe/core";
 
+export function tee(f){
+  return function(xf){
+    return overload(xf, xf, function(memo, value){
+      f(value);
+      return xf(memo, value);
+    });
+  }
+}
+
 export function map(f){
   return function(xf){
     return overload(xf, xf, function(memo, value){

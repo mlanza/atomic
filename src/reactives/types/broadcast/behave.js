@@ -1,21 +1,22 @@
-import {implement, does, applying, each} from 'cloe/core';
+import {implement, does, each} from 'cloe/core';
 import {IPublish, ISubscribe} from "../../protocols";
+import {_ as v} from "param.macro";
 
-function sub(self, callback){
-  self.subscribers.push(callback);
+function sub(self, observer){
+  self.observers.push(observer);
 }
 
-function unsub(self, callback){
-  const pos = self.subscribers.indexOf(callback);
-  pos === -1 || self.subscribers.splice(pos, 1);
+function unsub(self, observer){
+  const pos = self.observers.indexOf(observer);
+  pos === -1 || self.observers.splice(pos, 1);
 }
 
 function subscribed(self){
-  return self.subscribers.length;
+  return self.observers.length;
 }
 
 function pub(self, message){
-  each(applying(message), self.subscribers);
+  each(IPublish.pub(v, message), self.observers);
 }
 
 export default does(

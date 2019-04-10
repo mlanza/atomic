@@ -20,13 +20,13 @@ function swap(self, f){
   reset(self, f(self.state));
 }
 
-function sub(self, callback){
-  callback(self.state); //to prime subscriber state
-  ISubscribe.sub(self.observer, callback);
+function sub(self, observer){
+  IPublish.pub(observer, self.state); //to prime subscriber state
+  ISubscribe.sub(self.observer, observer);
 }
 
-function unsub(self, callback){
-  ISubscribe.unsub(self.observer, callback);
+function unsub(self, observer){
+  ISubscribe.unsub(self.observer, observer);
 }
 
 function subscribed(self){
