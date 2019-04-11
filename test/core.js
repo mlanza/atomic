@@ -70,14 +70,14 @@ QUnit.test("component", function(assert){
 });
 
 QUnit.test("dom", function(assert){
-  const {ul, li, div, span} = _.keyed(dom.tag, ["ul", "li", "div", "span"]);
-  const duo = dom.frag() |> _.append(v, div("Abbott")) |> _.append(v, dom.tag("div", "Costello"));
+  const [ul, li, div, span] = _.mapa(_.comp(_.expands, dom.tag), ["ul", "li", "div", "span"]);
+  const duo = dom.fragment() |> _.append(v, div("Abbott")) |> _.append(v, dom.element("div", "Costello"));
   const who = div(_.get(v, "givenName"), " ", _.get(v, "surname"));
-  const template = dom.frag(
+  const template =
     ul(
       _.map(function([id, person]){
         return li({id: id}, who(person));
-      }, v)));
+      }, v));
   const stooges = template({
     moe: {givenName: "Moe", surname: "Howard"},
     curly: {givenName: "Curly", surname: "Howard"},
@@ -311,7 +311,7 @@ QUnit.test("cell", function(assert){
   assert.equal(source |> _.deref, 1);
   assert.equal(sink   |> _.deref, 2);
   assert.equal(msink  |> _.deref, 2);
-  const bucket = $.cell([], null, _.pipe(_.get(v, 'length'), _.lt(v, 3))),
+  const bucket = $.cell([], $.broadcast(), _.pipe(_.get(v, 'length'), _.lt(v, 3))),
         states = $.cell([]);
   bucket |> $.sub(v, state => states |> _.swap(v, _.conj(v, state)));
   bucket |> _.swap(v, _.conj(v, "ice"));
@@ -372,7 +372,7 @@ QUnit.test("min/max", function(assert){
 
 QUnit.test("indexed-seq", function(assert){
   const nums = _.indexedSeq([11,12,13,14], 1);
-  const letters = _.indexedSeq("grace");
+  const letters = _.indexedSeq(_.split("grace", ""));
   assert.equal(letters |> _.first, "g");
   assert.equal(letters |> _.nth(v, 2), "a");
   assert.equal(nums |> _.first, 12);

@@ -45,6 +45,7 @@
       var _requests = core.impart(requests, core.partly);
       var _reactives = core.impart(reactives, core.partly);
       var _transducers = core.impart(transducers, core.partly);
+      var _validates = core.impart(validates, core.partly);
 
       window._ = Object.assign(Object.assign(_core.placeholder, _core, _dom, _immutables), {
         core: _core,
@@ -52,7 +53,8 @@
         immutables: _immutables,
         requests: _requests,
         reactives: _reactives,
-        transducers: _transducers
+        transducers: _transducers,
+        validates: _validates
       });
 
       QUnit.config.autostart = false;

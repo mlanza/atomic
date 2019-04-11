@@ -1,4 +1,4 @@
-import {satisfies, fsm, state, comp, partial, overload, specify, identity, IDeref} from "cloe/core";
+import {satisfies, fsm, state, comp, partial, overload, specify, identity, noop, IDeref} from "cloe/core";
 import {sub, unsub, subscribed} from "../../protocols/isubscribe/concrete";
 import {pub} from "../../protocols/ipublish/concrete";
 import {cell} from "../cell";
