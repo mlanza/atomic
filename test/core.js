@@ -41,6 +41,9 @@ QUnit.test("validation", function(assert){
   assert.ok(vd.check(Number, parseInt, "7") == null);
   assert.ok(vd.check(Date, _.parseDate, "11/10/2019 5:45 am") == null);
   assert.ok(vd.check(Date, _.parseDate, "d11/10/2019 5:45 am") != null);
+  //vd.check(vd.parse(_.parseDate, Date), "11/10/2019 5:45 am");
+  //TODO add cardinality validation for sequences
+  //TODO add `when` to validate conditiontionally or allow condition to be checked before registering the validation?
   assert.ok(vd.check(vd.required(["children"], Number), {name: "Herman", children: 1}) == null);
   assert.ok(vd.check(vd.required(["children"], Number), {name: "Herman", children: "1"}) != null);
   assert.ok(vd.check(vd.optional(["children"], Number), {name: "Herman", children: 1}) == null);
