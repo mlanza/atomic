@@ -30,26 +30,22 @@ QUnit.test("router & multimethod", function(assert){ //not just for fns!
 });
 
 QUnit.test("validation", function(assert){
-  const complaints = _.mapa(vd.complaint, v); //resolves lazy result for deep equality test
-  const validPostalCode = _.comp(complaints, vd.validate(v, [vd.required(), String, vd.terminal(/^\d{5}(-\d{1,4})?$/, "not a postal code")]));
-  const validNumber = _.comp(complaints, vd.validate(v, parseInt, [Number]));
-  const validDate = _.comp(complaints, vd.validate(v, _.parseDate, [Date]));
-  const validAdult = _.comp(_.mapa(_.update(v, 2, complaints), v), vd.validateIn(v, _.comp(_.either(v, []), _.getIn({
-    age: [vd.complaint(_.gte(v, 18), "not an adult")]
-  }, v))));
-  assert.deepEqual(validAdult({age: 11, name: "Eddie", surname: "Munster"}), [[["age"], 11, ["not an adult"]]]);
-  assert.deepEqual(validAdult({age: 203, name: "Herman", surname: "Munster"}), []);
-  assert.deepEqual(validPostalCode("17055"), []);
-  assert.deepEqual(validPostalCode("17055-0001"), []);
-  assert.deepEqual(validPostalCode(17055), ["not text"]);
-  assert.deepEqual(validPostalCode(null), ["required"]);
-  assert.deepEqual(validPostalCode(" "), ["required"]);
-  assert.deepEqual(validPostalCode(""), ["required"]);
-  assert.deepEqual(validPostalCode("1705"), ["not a postal code"]);
-  assert.deepEqual(validNumber("diamond"), ["not a number"]);
-  assert.deepEqual(validNumber("8"), []);
-  assert.deepEqual(validDate("11/10/2019 5:45 am"), []);
-  assert.deepEqual(validDate("d11/10/2019 5:45 am"), ["not a date"]);
+  var zipCode = /^\d{5}(-\d{1,4})?$/;
+  assert.ok(vd.check(zipCode, "17055") == null);
+  assert.ok(vd.check(zipCode, 17055) == null);
+  assert.ok(vd.check(zipCode, "17055-0001") == null);
+  assert.ok(vd.check(zipCode, "") != null);
+  assert.ok(vd.check(zipCode, null) != null);
+  assert.ok(vd.check(zipCode, "1705x-0001") != null);
+  assert.ok(vd.check(Number, "7") != null);
+  assert.ok(vd.check(Number, parseInt, "7") == null);
+  assert.ok(vd.check(Date, _.parseDate, "11/10/2019 5:45 am") == null);
+  assert.ok(vd.check(Date, _.parseDate, "d11/10/2019 5:45 am") != null);
+  assert.ok(vd.check(vd.required(["children"], Number), {name: "Herman", children: 1}) == null);
+  assert.ok(vd.check(vd.required(["children"], Number), {name: "Herman", children: "1"}) != null);
+  assert.ok(vd.check(vd.optional(["children"], Number), {name: "Herman", children: 1}) == null);
+  assert.ok(vd.check(vd.required(["children"], Number), {name: "Herman", children: "1"}) != null);
+  assert.ok(vd.check(vd.optional(["children"], Number), {name: "Herman"}) == null);
 });
 
 QUnit.test("component", function(assert){

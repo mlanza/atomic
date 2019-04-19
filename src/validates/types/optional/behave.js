@@ -6,7 +6,7 @@ import {_ as v} from "param.macro";
 function check(self, obj){
   var found = getIn(obj, self.path);
   if (found == null) {
-    return [issue(self, self.path)];
+    return null;
   } else {
     return maybe(ICheckable.check(self.test, found), _.mapa(function(f){
       return issue(f.what, self.path);
