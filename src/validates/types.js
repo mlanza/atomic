@@ -5,3 +5,8 @@ export * from "./types/required";
 export * from "./types/optional";
 export * from "./types/choice";
 export * from "./types/pattern";
+export * from "./types/coll-of";
+export * from "./types/at-least";
+export * from "./types/at-most";
+export * from "./types/exactly";
+export * from "./types/pred";
