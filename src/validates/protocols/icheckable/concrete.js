@@ -8,7 +8,7 @@ function check3(self, parse, value){
       value = parse(value);
     }
   } catch (ex) {
-    return [issue(ex)];
+    return [issue(self)];
   }
   return ICheckable.check(self, value);
 }
