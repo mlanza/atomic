@@ -1,7 +1,8 @@
-export default function Issue(message){
-  this.message = message;
+export default function Issue(constraint, path){
+  this.constraint = constraint;
+  this.path = path;
 }
 
-export function issue(message){
-  return new Issue(message || "invalid");
+export function issue(constraint, path){
+  return new Issue(constraint, path || null);
 }

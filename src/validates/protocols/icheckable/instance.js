@@ -1,8 +1,5 @@
-import {constantly, protocol} from "cloe/core";
-const terminal = constantly(false);
+import {protocol} from "cloe/core";
 export const ICheckable = protocol({
-  check: null,
-  complaint: null,
-  terminal
+  check: null
 });
 export default ICheckable;
