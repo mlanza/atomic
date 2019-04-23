@@ -1,16 +1,9 @@
-import {isString, overload} from 'cloe/core';
+import {overload} from 'cloe/core';
 import ICheckable from "./instance";
-import {issue} from '../../types/issue';
+import {parses} from '../../types/parses';
 
 function check3(self, parse, value){
-  try{
-    if (isString(value)) {
-      value = parse(value);
-    }
-  } catch (ex) {
-    return [issue(self)];
-  }
-  return ICheckable.check(self, value);
+  return ICheckable.check(parses(parse, self), value);
 }
 
 export const check = overload(null, null, ICheckable.check, check3);

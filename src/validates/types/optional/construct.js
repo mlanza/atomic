@@ -1,8 +1,10 @@
-export default function Optional(path, test){
+export default function Optional(path, constraint){
   this.path = path;
-  this.test = test;
+  this.constraint = constraint;
 }
 
-export function optional(path, test){
-  return new Optional(path, test);
+export function optional(path, constraint){
+  return new Optional(path, constraint);
 }
+
+export {Optional}

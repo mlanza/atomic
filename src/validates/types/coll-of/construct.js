@@ -5,3 +5,7 @@ export default function CollOf(constraint){
 export function collOf(constraint){
   return new CollOf(constraint);
 }
+
+CollOf.prototype.toString = function(){
+  return `invalid ${this.constraint} collection`;
+}

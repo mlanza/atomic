@@ -6,3 +6,5 @@ export default function Issue(constraint, path){
 export function issue(constraint, path){
   return new Issue(constraint, path || null);
 }
+
+export {Issue}
