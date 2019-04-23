@@ -10,3 +10,4 @@ export * from "./types/at-least";
 export * from "./types/at-most";
 export * from "./types/exactly";
 export * from "./types/pred";
+export * from "./types/parses";

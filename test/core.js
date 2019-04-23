@@ -30,7 +30,20 @@ QUnit.test("router & multimethod", function(assert){ //not just for fns!
 });
 
 QUnit.test("validation", function(assert){
-  var zipCode = /^\d{5}(-\d{1,4})?$/;
+  const zipCode = /^\d{5}(-\d{1,4})?$/;
+  const birth = "7/10/1926";
+  const past = vd.parses(_.parseDate, vd.and(Date, vd.pred(_.lt(v, new Date()))));
+  const herman = {name: ["Herman", "Munster"], status: "married", dob: new Date(birth)};
+  const person = vd.and(
+    vd.required(['name'], vd.and(vd.collOf(String), vd.cardinality(2, 2))),
+    vd.optional(['status'], vd.and(String, vd.choice(["single", "married", "divorced"]))),
+    vd.optional(['dob'], Date));
+
+  const [dob] = vd.check(person, _.assoc(herman, "dob", birth));
+  const [name, names] = vd.check(person, _.assoc(herman, "name", [1]));
+  const [anon] = vd.check(person, _.dissoc(herman, "name"));
+  const [status] = vd.check(person, _.assoc(herman, "status", "separated"));
+
   assert.ok(vd.check(zipCode, "17055") == null);
   assert.ok(vd.check(zipCode, 17055) == null);
   assert.ok(vd.check(zipCode, "17055-0001") == null);
@@ -41,14 +54,15 @@ QUnit.test("validation", function(assert){
   assert.ok(vd.check(Number, parseInt, "7") == null);
   assert.ok(vd.check(Date, _.parseDate, "11/10/2019 5:45 am") == null);
   assert.ok(vd.check(Date, _.parseDate, "d11/10/2019 5:45 am") != null);
-  //vd.check(vd.parse(_.parseDate, Date), "11/10/2019 5:45 am");
-  //TODO add cardinality validation for sequences
+  assert.ok(vd.check(past, "1/1/3000") != null);
+  assert.ok(vd.check(past, birth) == null);
+  assert.ok(vd.check(past, `d${birth}`) != null);
+  assert.ok(dob.constraint === Date);
+  assert.ok(name.constraint === String);
+  assert.ok(names.constraint instanceof vd.Exactly);
+  assert.ok(anon.constraint instanceof vd.Required);
+  assert.ok(status.constraint instanceof vd.Choice);
   //TODO add `when` to validate conditiontionally or allow condition to be checked before registering the validation?
-  assert.ok(vd.check(vd.required(["children"], Number), {name: "Herman", children: 1}) == null);
-  assert.ok(vd.check(vd.required(["children"], Number), {name: "Herman", children: "1"}) != null);
-  assert.ok(vd.check(vd.optional(["children"], Number), {name: "Herman", children: 1}) == null);
-  assert.ok(vd.check(vd.required(["children"], Number), {name: "Herman", children: "1"}) != null);
-  assert.ok(vd.check(vd.optional(["children"], Number), {name: "Herman"}) == null);
 });
 
 QUnit.test("component", function(assert){

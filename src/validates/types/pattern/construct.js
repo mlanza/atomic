@@ -1,8 +1,14 @@
-export default function Pattern(regex, description){
+export default function Pattern(regex, desc){
   this.regex = regex;
-  this.description = description;
+  this.desc = desc;
 }
 
-export function pattern(regex, description){
-  return new Pattern(regex, description || null);
+export function pattern(regex, desc){
+  return new Pattern(regex, desc || "format");
 }
+
+Pattern.prototype.toString = function(){
+  return `invalid ${this.desc}`;
+}
+
+export {Pattern}
