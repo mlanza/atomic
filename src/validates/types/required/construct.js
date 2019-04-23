@@ -1,10 +1,10 @@
-export default function Required(path, constraint){
-  this.path = path;
+export default function Required(key, constraint){
+  this.key = key;
   this.constraint = constraint;
 }
 
-export function required(path, constraint){
-  return new Required(path, constraint);
+export function required(key, constraint){
+  return new Required(key, constraint);
 }
 
 Required.prototype.toString = function(){
