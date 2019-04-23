@@ -1,7 +1,7 @@
 import {does} from '../../core';
 import {implement} from '../protocol';
 import {ISeq, ICoerce, IReduce, IKVReduce, ICounted, ISeqable, ICollection, ILookup, IMap, IAssociative} from '../../protocols';
-import {lazySeq, map} from '../lazy-seq';
+import {map} from '../lazy-seq';
 import {comp} from '../function/concrete';
 import {emptyList} from '../empty-list/construct';
 import {concatenated} from '../concatenated/construct';
