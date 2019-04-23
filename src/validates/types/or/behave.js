@@ -1,11 +1,9 @@
-import {implement, does, mapcat, first, compact, maybe, Array} from 'cloe/core';
+import {implement, does, map, first, filter, isSome} from 'cloe/core';
 import {ICheckable} from '../../protocols';
-import {issue} from '../issue';
+import {_ as v} from "param.macro";
 
 function check(self, value){
-  return maybe(mapcat(function(constraint){
-    return ICheckable.check(constraint, value);
-  }, self.constraints), compact, first, issue, Array);
+  return first(filter(isSome, map(ICheckable.check(v, value), self.constraints)));
 }
 
 export default does(

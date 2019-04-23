@@ -3,7 +3,7 @@ import {implement} from '../protocol';
 import {ICoerce, IBounds, IInverse, IEncode, ISteppable, ISequential, ICollection, IComparable, INext, IEquiv, IReduce, IKVReduce, ISeqable, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, ISeq, IInclusive, IIndexed} from '../../protocols';
 import {between} from '../../protocols/ibounds/concrete';
 import {unreduced, isReduced} from '../reduced';
-import {lazySeq, drop} from '../lazy-seq';
+import {drop} from '../lazy-seq';
 import {comp} from '../function';
 import {iterable} from '../lazy-seq/behave';
 import {encodeable, emptyable} from "../record/behave";

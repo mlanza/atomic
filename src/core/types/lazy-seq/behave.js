@@ -6,7 +6,6 @@ import {concat} from "../concatenated/construct";
 import {comp} from "../function/concrete";
 import {cons} from "../list/construct";
 import {map, filter, detect} from "./concrete";
-import {lazySeq} from "./construct";
 import {emptyList} from '../empty-list/construct';
 import Symbol from '../symbol/construct';
 
