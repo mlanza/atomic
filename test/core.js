@@ -54,7 +54,7 @@ QUnit.test("validation", function(assert){
   assert.ok(vd.check(Number, parseInt, "7") == null);
   assert.ok(vd.check(Date, _.parseDate, "11/10/2019 5:45 am") == null);
   assert.ok(vd.check(Date, _.parseDate, "d11/10/2019 5:45 am") != null);
-  //assert.ok(vd.check(vd.parses(_.parseDate, past), "1/1/3000") != null);
+  assert.ok(vd.check(vd.parses(_.parseDate, past), "1/1/3000") != null);
   assert.ok(vd.check(vd.parses(_.parseDate, past), birth) == null);
   assert.ok(vd.check(vd.parses(_.parseDate, past), `d${birth}`) != null);
   assert.ok(dob.constraint === Date);
