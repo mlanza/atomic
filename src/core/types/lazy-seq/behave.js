@@ -27,6 +27,10 @@ function conj(self, value){
   return cons(value, self);
 }
 
+function seq(self){
+  return ISeqable.seq(self.perform());
+}
+
 function reduce(self, xf, init){
   let memo = init,
       coll = ISeqable.seq(self);
@@ -72,11 +76,11 @@ export function find(coll, key){
 }
 
 function first(self){
-  return self.head;
+  return ISeq.first(self.perform());
 }
 
 function rest(self){
-  return self.tail();
+  return ISeq.rest(self.perform());
 }
 
 function next(self){
@@ -192,5 +196,5 @@ export default does(
   implement(IFind, {find}),
   implement(IEmptyableCollection, {empty: emptyList}),
   implement(ISeq, {first, rest}),
-  implement(ISeqable, {seq: identity}),
+  implement(ISeqable, {seq}),
   implement(INext, {next}));

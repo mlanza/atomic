@@ -1,19 +1,18 @@
-import {seq, first, rest, conj, includes, lazySeq, emptyList} from "cloe/core";
+import {seq, first, rest, cons, conj, includes, lazySeq, emptyList} from "cloe/core";
 import {set} from "./construct";
 
 function distinct2(coll, seen){
-  if (seq(coll)) {
-    let fst = first(coll);
-    if (includes(seen, fst)) {
-      return distinct2(rest(coll), seen);
-    } else {
-      return lazySeq(fst, function(){
-        return distinct2(rest(coll), conj(seen, fst));
-      });
+  return seq(coll) ? lazySeq(function(){
+    let xs = coll;
+    while (seq(xs)) {
+      let x = first(xs);
+      xs = rest(xs);
+      if (!includes(seen, x)) {
+        return cons(x, distinct2(xs, cons(x, seen)));
+      }
     }
-  } else {
     return emptyList();
-  }
+  }) : emptyList();
 }
 
 export function distinct(coll){

@@ -2,7 +2,6 @@ import {
   does,
   identity,
   implement,
-  emptySet,
   transientSet,
   unreduced,
   ICoerce,
@@ -19,6 +18,8 @@ import {
   IInclusive,
   ICloneable
 } from 'cloe/core';
+
+import {emptySet} from "./construct";
 
 function transient(self){
   return transientSet(toArray(self));

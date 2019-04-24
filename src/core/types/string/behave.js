@@ -3,6 +3,7 @@ import {does, identity, constantly} from "../../core";
 import {implement, specify} from '../protocol';
 import {isReduced, unreduced} from '../reduced';
 import {lazySeq} from '../lazy-seq/construct';
+import {cons} from '../list/construct';
 import {iindexed} from '../array/behave';
 import {rePattern} from '../reg-exp/concrete';
 import {emptyString, isString} from "./construct";
@@ -24,8 +25,8 @@ function conj(self, other){
 }
 
 function seq2(self, idx){
-  return idx < self.length ? lazySeq(self[idx], function(){
-    return seq2(self, idx + 1);
+  return idx < self.length ? lazySeq(function(){
+    return cons(self[idx], seq2(self, idx + 1));
   }) : null;
 }
 

@@ -2,6 +2,7 @@ import {implement} from '../protocol';
 import {identity, does} from '../../core';
 import {ICoerce, IDescriptive, IFind, ICollection, IReduce, IKVReduce, INext, ISeq, ISeqable, IIndexed, ICounted, ILookup, IFn, IMap, ICloneable, IEmptyableCollection} from '../../protocols';
 import {lazySeq} from '../../types/lazy-seq/construct';
+import {cons} from '../../types/list/construct';
 import {remove, into} from '../../types/lazy-seq/concrete';
 import Object, {emptyObject} from '../../types/object/construct';
 import {iequiv, itemplate} from '../../types/array/behave';
@@ -31,15 +32,15 @@ function keys(self){
 
 function vals(self){
   const key = ISeq.first(self.keys);
-  return lazySeq(lookup(self, key), function(){
-    return vals(new self.constructor(self.obj, ISeq.rest(self.keys)));
+  return lazySeq(function(){
+    return cons(lookup(self, key), vals(new self.constructor(self.obj, ISeq.rest(self.keys))));
   });
 }
 
 function seq(self){
   const key = ISeq.first(self.keys);
-  return lazySeq([key, lookup(self, key)], function(){
-    return new self.constructor(self.obj, ISeq.rest(self.keys));
+  return lazySeq(function(){
+    return cons([key, lookup(self, key)], new self.constructor(self.obj, ISeq.rest(self.keys)));
   });
 }
 

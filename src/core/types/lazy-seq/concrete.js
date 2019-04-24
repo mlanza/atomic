@@ -18,6 +18,33 @@ import Symbol from '../symbol/construct';
 import {update, assocIn} from "../../protocols/iassociative/concrete";
 import {first} from "../../protocols/iseq/concrete";
 
+function map2(f, xs){
+  return ISeqable.seq(xs) ? lazySeq(function(){
+    return cons(f(ISeq.first(xs)), map2(f, ISeq.rest(xs)));
+  }) : emptyList();
+}
+
+function map3(f, c1, c2){
+  var s1 = ISeqable.seq(c1),
+      s2 = ISeqable.seq(c2);
+  return s1 && s2 ? cons(f(ISeq.first(s1), ISeq.first(s2)), map3(f, ISeq.rest(s1), ISeq.rest(s2))) : emptyList();
+}
+
+function map4(f, c1, c2, c3){
+  var s1 = ISeqable.seq(c1),
+      s2 = ISeqable.seq(c2),
+      s3 = ISeqable.seq(c3);
+  return s1 && s2 && s3 ? cons(f(ISeq.first(s1), ISeq.first(s2), ISeq.first(s3)), map4(f, ISeq.rest(s1), ISeq.rest(s2), ISeq.rest(s3))) : emptyList();
+}
+
+function mapN(f, ...tail){
+  var seqs = mapa(ISeqable.seq, tail);
+  return notAny(isNil, seqs) ? cons(apply(f, mapa(ISeq.first, seqs)), apply(mapN, f, mapa(ISeq.rest, seqs))) : emptyList();
+}
+
+export const map  = overload(null, null, map2, map3, mapN);
+export const mapa = comp(ICoerce.toArray, map);
+
 export function keyed(f, keys){
   return IReduce.reduce(keys, function(memo, key){
     return IAssociative.assoc(memo, key, f(key));
@@ -65,8 +92,8 @@ export function eachvk(f, xs){
 }
 
 function entries2(xs, keys){
-  return ISeqable.seq(keys) ? lazySeq([ISeq.first(keys), ILookup.lookup(xs, ISeq.first(keys))], function(){
-    return entries2(xs, ISeq.rest(keys));
+  return ISeqable.seq(keys) ? lazyilySeq(function(){
+    return cons([ISeq.first(keys), ILookup.lookup(xs, ISeq.first(keys))], entries2(xs, ISeq.rest(keys)));
   }) : emptyList();
 }
 
@@ -124,32 +151,6 @@ export function every(pred, coll){
 
 export const notEvery = comp(not, every);
 
-function map2(f, xs){
-  return ISeqable.seq(xs) ? lazySeq(f(ISeq.first(xs)), function(){
-    return map2(f, ISeq.rest(xs));
-  }) : emptyList();
-}
-
-function map3(f, c1, c2){
-  var s1 = ISeqable.seq(c1),
-      s2 = ISeqable.seq(c2);
-  return s1 && s2 ? cons(f(ISeq.first(s1), ISeq.first(s2)), map3(f, ISeq.rest(s1), ISeq.rest(s2))) : emptyList();
-}
-
-function map4(f, c1, c2, c3){
-  var s1 = ISeqable.seq(c1),
-      s2 = ISeqable.seq(c2),
-      s3 = ISeqable.seq(c3);
-  return s1 && s2 && s3 ? cons(f(ISeq.first(s1), ISeq.first(s2), ISeq.first(s3)), map4(f, ISeq.rest(s1), ISeq.rest(s2), ISeq.rest(s3))) : emptyList();
-}
-
-function mapN(f, ...tail){
-  var seqs = mapa(ISeqable.seq, tail);
-  return notAny(isNil, seqs) ? cons(apply(f, mapa(ISeq.first, seqs)), apply(mapN, f, mapa(ISeq.rest, seqs))) : emptyList();
-}
-
-export const map  = overload(null, null, map2, map3, mapN);
-
 export function mapSome(f, pred, coll){
   return IReduce.reduce(self, function(memo, value){
     return pred(value) ? f(value) : value;
@@ -161,25 +162,27 @@ export function mapcat(f, colls){
 }
 
 export function filter(pred, xs){
-  let ys = xs;
-  while (ISeqable.seq(ys)) {
-    const head = ISeq.first(ys),
-          tail = ISeq.rest(ys);
-    if (pred(head)) {
-      return lazySeq(head, function(){
-        return filter(pred, tail);
-      });
+  return ISeqable.seq(xs) ? lazySeq(function(){
+    let ys = xs;
+    while (ISeqable.seq(ys)) {
+      const head = ISeq.first(ys),
+            tail = ISeq.rest(ys);
+      if (pred(head)) {
+        return cons(head, lazySeq(function(){
+          return filter(pred, tail);
+        }));
+      }
+      ys = tail;
     }
-    ys = tail;
-  }
-  return emptyList();
+    return emptyList();
+  }) : emptyList();
 }
 
 export const detect = comp(first, filter);
 
 export function cycle(coll){
-  return ISeqable.seq(coll) ? lazySeq(ISeq.first(coll), function(){
-    return concat(ISeq.rest(coll), cycle(coll));
+  return ISeqable.seq(coll) ? lazySeq(function(){
+    return cons(ISeq.first(coll), concat(ISeq.rest(coll), cycle(coll)));
   }) : emptyList();
 }
 
@@ -230,22 +233,23 @@ export function dropLast(n, coll){
 
 export function take(n, coll){
   const xs = ISeqable.seq(coll);
-  return n > 0 && xs ? lazySeq(ISeq.first(xs), function(){
-    return take(n - 1, ISeq.rest(xs));
+  return n > 0 && xs ? lazySeq(function(){
+    return cons(ISeq.first(xs), take(n - 1, ISeq.rest(xs)));
   }) : emptyList();
 }
 
 export function takeWhile(pred, xs){
-  if (!ISeqable.seq(xs)) return emptyList();
-  const item = ISeq.first(xs);
-  return pred(item) ? lazySeq(item, function(){
-    return takeWhile(pred, ISeq.rest(xs));
+  return ISeqable.seq(xs) ? lazySeq(function(){
+    const item = ISeq.first(xs);
+    return pred(item) ? cons(item, lazySeq(function(){
+      return takeWhile(pred, ISeq.rest(xs));
+    })) : emptyList();
   }) : emptyList();
 }
 
 export function takeNth(n, xs){
-  return ISeqable.seq(xs) ? lazySeq(ISeq.first(xs), function(){
-    return takeNth(n, drop(n, xs));
+  return ISeqable.seq(xs) ? lazySeq(function(){
+    return cons(ISeq.first(xs), takeNth(n, drop(n, xs)));
   }) : emptyList();
 }
 
@@ -256,8 +260,8 @@ export function takeLast(n, coll){
 function interleave2(xs, ys){
   const as = ISeqable.seq(xs),
         bs = ISeqable.seq(ys);
-  return as != null && bs != null ? cons(ISeq.first(as), lazySeq(ISeq.first(bs), function(){
-    return interleave2(ISeq.rest(as), ISeq.rest(bs));
+  return as != null && bs != null ? cons(ISeq.first(as), lazySeq(function(){
+    return cons(ISeq.first(bs), interleave2(ISeq.rest(as), ISeq.rest(bs)));
   })) : emptyList();
 }
 
@@ -266,8 +270,8 @@ function interleaveN(...colls){
 }
 
 export function interleaved(colls){
-  return ISeqable.seq(filter(isNil, colls)) ? emptyList() : lazySeq(map(ISeq.first, colls), function(){
-    return interleaved(map(INext.next, colls));
+  return ISeqable.seq(filter(isNil, colls)) ? emptyList() : lazySeq(function(){
+    return cons(map(ISeq.first, colls), interleaved(map(INext.next, colls)));
   });
 }
 
@@ -341,23 +345,24 @@ function dedupe2(f, coll){
 }
 
 function dedupe3(f, equiv, coll){
-  var xs = ISeqable.seq(coll);
-  const last = ISeq.first(xs);
-  return xs ? lazySeq(last, function(){
+  return ISeqable.seq(coll) ? lazySeq(function(){
+    let xs = ISeqable.seq(coll);
+    const last = ISeq.first(xs);
     while(INext.next(xs) && equiv(f(ISeq.first(INext.next(xs))), f(last))) {
       xs = INext.next(xs);
     }
-    return dedupe2(f, INext.next(xs));
+    return cons(last, dedupe2(f, INext.next(xs)));
   }) : coll;
 }
 
 export const dedupe = overload(null, dedupe1, dedupe2, dedupe3);
 
 function repeatedly1(f){
-  return lazySeq(f(), function(){
-    return repeatedly1(f);
+  return lazySeq(function(){
+    return cons(f(), repeatedly1(f));
   });
 }
+
 
 function repeatedly2(n, f){
   return take(n, repeatedly1(f));
@@ -455,7 +460,6 @@ export function withIndex(iter){
   }
 }
 
-export const mapa        = comp(ICoerce.toArray, map);
 export const butlast     = partial(dropLast, 1);
 export const initial     = butlast;
 export const eachIndexed = withIndex(each);
@@ -549,10 +553,10 @@ function scan1(xs){
 }
 
 function scan2(n, xs){
-  const ys = take(n, xs);
-  return ICounted.count(ys) === n ? lazySeq(ys, function(){
-    return scan2(n, ISeq.rest(xs));
-  }) : emptyList();
+  return lazySeq(function(){
+    const ys = take(n, xs);
+    return ICounted.count(ys) === n ? cons(ys, scan2(n, ISeq.rest(xs))) : emptyList();
+  });
 }
 
 export const scan = overload(null, scan1, scan2);
@@ -606,8 +610,8 @@ function doall2(n, coll){
 export const doall = overload(null, doall1, doall2);
 
 export function iterate(f, x){
-  return lazySeq(x, function(){
-    return iterate(f, f(x));
+  return lazySeq(function(){
+    return cons(x, iterate(f, f(x)));
   });
 }
 

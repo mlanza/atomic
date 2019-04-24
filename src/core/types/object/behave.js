@@ -4,6 +4,7 @@ import {IBlankable, ICompact, ITransient, IComparable, IYank, IMatch, IDecode, I
 import {reduced} from '../reduced';
 import {transientObject} from '../transient-object/construct';
 import {lazySeq, into, map} from '../lazy-seq';
+import {cons} from '../list';
 import {iequiv, itemplate} from '../array/behave';
 import {satisfies} from "../protocol/concrete";
 import Object, {emptyObject} from '../object/construct';
@@ -88,9 +89,9 @@ function rest(self){
 
 function next2(self, keys){
   if (ISeqable.seq(keys)) {
-    const key = ISeq.first(keys);
-    return lazySeq([key, lookup(self, key)], function(){
-      return next2(self, INext.next(keys));
+    return lazySeq(function(){
+      const key = ISeq.first(keys);
+      return cons([key, lookup(self, key)], next2(self, INext.next(keys)));
     });
   } else {
     return null;

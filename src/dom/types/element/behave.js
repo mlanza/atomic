@@ -219,8 +219,8 @@ function dissoc(self, key){
 }
 
 function keys2(self, idx){
-  return idx < self.attributes.length ? lazySeq(self.attributes[idx].name, function(){
-    return keys2(self, idx + 1);
+  return idx < self.attributes.length ? lazySeq(function(){
+    return cons(self.attributes[idx].name, keys2(self, idx + 1));
   }) : emptyList();
 }
 
@@ -229,8 +229,8 @@ function keys(self){
 }
 
 function vals2(self, idx){
-  return idx < self.attributes.length ? lazySeq(self.attributes[idx].value, function(){
-    return keys2(self, idx + 1);
+  return idx < self.attributes.length ? lazySeq(function(){
+    return cons(self.attributes[idx].value, keys2(self, idx + 1));
   }) : emptyList();
 }
 
