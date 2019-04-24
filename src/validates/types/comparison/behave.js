@@ -1,9 +1,9 @@
-import {implement, does, count, maybe, Array} from 'cloe/core';
+import {implement, does} from 'cloe/core';
 import {ICheckable} from '../../protocols';
 import {issue} from '../issue';
 
 function check(self, value){
-  return self.pred(value) ? null : [issue(self)];
+  return self.f(value, self.other) ? null : [issue(self)];
 }
 
 export default does(

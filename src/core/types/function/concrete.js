@@ -1,5 +1,6 @@
 import {ICoerce}  from "../../protocols/icoerce";
 import {IReduce}  from "../../protocols/ireduce";
+import {conj}  from "../../protocols/icollection";
 import {reduced} from "../../types/reduced/construct";
 import {overload, identity, partial, log, slice} from "../../core";
 import {isNil}  from "../nil";
@@ -109,8 +110,10 @@ export function tee(f){
   }
 }
 
-export function see(about){
-  return tee(partial(log, about));
+export function see(...args){
+  return tee(function(obj){
+    apply(log, conj(args, obj));
+  });
 }
 
 export function flip(f){

@@ -32,7 +32,7 @@ QUnit.test("router & multimethod", function(assert){ //not just for fns!
 QUnit.test("validation", function(assert){
   const zipCode = /^\d{5}(-\d{1,4})?$/;
   const birth = "7/10/1926";
-  const past = vd.or(Date, vd.pred(_.lt(v, new Date())));
+  const past = vd.or(Date, vd.want("past date", _.lt(v, new Date())));
   const herman = {name: ["Herman", "Munster"], status: "married", dob: new Date(birth)};
   const person = vd.and(
     vd.required('name', vd.and(vd.collOf(String), vd.cardinality(2, 2))),

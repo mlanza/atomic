@@ -2,9 +2,13 @@ import {overload, constantly, identity, type, branch, slice} from "./core";
 import {IReduce, IKVReduce, ICounted, IComparable, IEquiv} from "./protocols";
 import {reduced} from "./types/reduced";
 import {comp, partial, apply} from "./types/function/concrete";
+import {mapa} from "./types/lazy-seq/concrete";
 import {reducing} from "./protocols/ireduce/concrete";
 import {compare} from "./protocols/icomparable/concrete";
 import {isNil} from "./types/nil/construct";
+import {indexed} from "./types/indexed/construct";
+import {maybe} from './types/maybe/construct';
+import {_ as v} from "param.macro";
 
 export function both(memo, value){
   return memo && value;
@@ -132,6 +136,14 @@ export const eq = overload(constantly(true), constantly(true), eq2, eqN);
 export function notEq(...args){
   return !eq(...args);
 }
+
+function mapArgs2(f, xf){
+  return function(){
+    return apply(f, mapa(maybe(v, xf), indexed(arguments)));
+  }
+}
+
+export const mapArgs = overload(null, identity, mapArgs2);
 
 export function everyPred(...preds){
   return function(){

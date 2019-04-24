@@ -7,7 +7,7 @@ export function atLeast(n){
 }
 
 AtLeast.prototype.toString = function(){
-  return `cannot have fewer than ${this.n}`
+  return `cannot have fewer than ${this.n}`;
 }
 
 export {AtLeast}

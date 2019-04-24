@@ -1,6 +1,6 @@
 import {implement} from '../protocol';
 import {IBlankable, ICompact, ILocate, IQuery, IFunctor, IReversible, IYank, IMatch, ICoerce, IInclusive, IFind, IEquiv, ICollection, INext, ISeq, IReduce, IKVReduce, ISeqable, ISequential, IIndexed, IEmptyableCollection, ICounted, IAppendable, IPrependable} from '../../protocols';
-import {overload, identity, constantly, does, partial} from '../../core';
+import {overload, identity, does, partial} from '../../core';
 import Reduced, {isReduced, reduced, unreduced} from "../reduced";
 import {concat} from "../concatenated/construct";
 import {comp} from "../function/concrete";
@@ -29,6 +29,10 @@ function conj(self, value){
 
 function seq(self){
   return ISeqable.seq(self.perform());
+}
+
+function blank(self){
+  return seq(self) == null;
 }
 
 function reduce(self, xf, init){
@@ -179,7 +183,7 @@ export default does(
   implement(ISequential),
   implement(IIndexed, {nth, idx}),
   implement(IReversible, {reverse}),
-  implement(IBlankable, {blank: constantly(false)}),
+  implement(IBlankable, {blank}),
   implement(ICompact, {compact}),
   implement(IInclusive, {includes}),
   implement(IQuery, {query}),
