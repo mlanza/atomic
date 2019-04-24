@@ -8,7 +8,7 @@ function distinct2(coll, seen){
       let x = first(xs);
       xs = rest(xs);
       if (!includes(seen, x)) {
-        return cons(x, distinct2(xs, cons(x, seen)));
+        return cons(x, distinct2(xs, conj(seen, x)));
       }
     }
     return emptyList();

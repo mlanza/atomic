@@ -7,7 +7,7 @@ export function atMost(n){
 }
 
 AtMost.prototype.toString = function(){
-  return `cannot have more than ${this.n}`
+  return `cannot have more than ${this.n}`;
 }
 
 export {AtMost}
