@@ -1,4 +1,4 @@
-import {does, implement, IEmptyableCollection, ICoerce, INext, ISeq, ISeqable, IMap, IAssociative, ILookup, ICounted, IInclusive} from 'cloe/core';
+import {does, implement, cons, IEmptyableCollection, ICoerce, INext, ISeq, ISeqable, IMap, IAssociative, ILookup, ICounted, IInclusive} from 'cloe/core';
 import * as _ from 'cloe/core';
 
 function toArray(self){
@@ -36,8 +36,8 @@ function rest(self) {
 }
 
 function next2(self, idx) {
-  return idx < count(self) ? _.lazySeq([self.node.attributes[idx].name, self.node.attributes[idx].value], function(){
-    return next2(self, idx + 1);
+  return idx < count(self) ? _.lazySeq(function(){
+    return cons([self.node.attributes[idx].name, self.node.attributes[idx].value], next2(self, idx + 1));
   }) : null;
 }
 

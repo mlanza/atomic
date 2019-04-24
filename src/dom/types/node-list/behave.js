@@ -1,10 +1,10 @@
-import {does, maybe, implement, lazySeq, comp, iterable, ILookup, IIndexed, ICounted, ISeq, INext, ISeqable, ISequential, IHierarchy, IQuery, ILocate, IReduce} from 'cloe/core';
+import {does, maybe, cons, implement, lazySeq, comp, iterable, ILookup, IIndexed, ICounted, ISeq, INext, ISeqable, ISequential, IHierarchy, IQuery, ILocate, IReduce} from 'cloe/core';
 import {IContent} from "../../protocols";
 import {_ as v} from "param.macro";
 
 function seq2(self, idx){
-  return idx < self.length ? lazySeq(self.item(idx), function(){
-    return seq2(self, idx + 1);
+  return idx < self.length ? lazySeq(function(){
+    return cons(self.item(idx), seq2(self, idx + 1));
   }) : null;
 }
 

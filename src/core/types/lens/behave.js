@@ -115,10 +115,10 @@ function parent(self){
 }
 
 function parents(self){
-  const p = parent(self);
-  return p ? lazySeq(p, function(){
-    return parents(p);
-  }) : emptyList();
+  return lazySeq(function(){
+    const p = parent(self);
+    return p ? cons(p, parents(p)) : emptyList();
+  });
 }
 
 function closest(self, pred){

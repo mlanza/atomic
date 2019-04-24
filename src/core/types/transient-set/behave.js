@@ -2,6 +2,7 @@ import {does, identity} from '../../core';
 import {implement} from '../protocol';
 import {emptyTransientSet, transientSet} from './construct';
 import {filter, lazySeq} from '../lazy-seq';
+import {cons} from '../list/construct';
 import {emptyList} from '../empty-list/construct';
 import {apply} from "../function/concrete";
 import {unreduced} from '../reduced/concrete';
@@ -34,8 +35,8 @@ function seqVals1(iter){
 
 function seqVals2(iter, done){
   const res = iter.next();
-  return res.done ? done : lazySeq(res.value, function(){
-    return seqVals1(iter);
+  return res.done ? done : lazySeq(function(){
+    return cons(res.value, seqVals1(iter));
   });
 }
 
