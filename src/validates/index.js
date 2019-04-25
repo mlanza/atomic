@@ -1,38 +1,47 @@
-import {mapa, first, doto, specify, includes, implement, constantly, juxt, count, filled, get, eq, gte, lte, maybe, spread, compact, apply, Nil, isNumber, Number, isString, String, isDate, Date, Function} from "cloe/core";
-import {ICheckable} from "./protocols/icheckable/instance";
-import {map, scoped, issue, describe, pred, or, and, want} from "./types";
+import {mapa, test, first, doto, specify, includes, identity, implement, constantly, branch, juxt, count, filled, get, eq, gte, lte, maybe, spread, compact, apply, Nil, isNumber, Number, isString, String, isDate, Date, Function} from "cloe/core";
+import {ICheckable, IExplains} from "./protocols";
+import {anno, map, scoped, issue, catches, pred, or, and} from "./types";
 import {_ as v} from "param.macro";
 
 export * from "./types";
 export * from "./protocols";
 export * from "./protocols/concrete";
 
+export function toPred(constraint){
+  return function(obj){
+    const issues = ICheckable.check(constraint, obj);
+    return !issues;
+  }
+}
+
 export function choice(options){
-  return describe(`invalid choice`,
+  return anno({type: 'choice', options},
     pred(includes, options, null));
 }
 
 export function atLeast(n){
-  return describe(`cannot have fewer than ${n}`,
+  return anno({type: 'at-least', n},
     map(count, pred(gte, null, n)));
 }
 
 export function atMost(n){
-  return describe(`cannot have more than ${n}`,
+  return anno({type: 'at-most', n},
     map(count, pred(lte, null, n)));
 }
 
 export function exactly(n){
-  return describe(`must have exactly ${n}`,
+  return anno({type: 'exactly', n},
     map(count, pred(eq, null, n)));
 }
 
 export function between(min, max){
-  return min == max ? describe(`must be ${min}`, pred(eq, null, min)) :
-    describe(`must be between ${min} and ${max}`,
+  return min == max ?
+    anno({type: 'equal', value: min},
+      pred(eq, null, min)) :
+    anno({type: 'between', min, man},
       or(
-        describe(`must be greater than or equal to ${min}`, pred(gte, null, min)),
-        describe(`must be less than or equal to ${max}`   , pred(lte, null, max))));
+        anno({type: 'min', min}, pred(gte, null, min)),
+        anno({type: 'max', max}, pred(lte, null, max))));
 }
 
 export function cardinality(min, max){
@@ -54,14 +63,25 @@ export function supplied(cond, keys){
 }
 
 export function range(start, end){
-  return describe(`${start} must come before ${end}.`,
+  return anno({type: 'range', start, end},
     supplied(lte, [start, end]));
 }
 
-export const email = want("e-mail address", /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i);
-export const phoneNumber = want("phone number", /^(\d{3}-|\(\d{3}\) )\d{3}-\d{4}$/);
-export const stateCode = want("state code", choice(['AL','AK','AS','AZ','AR','CA','CO','CT','DE','DC','FM','FL','GA','GU','HI','ID','IL','IN','IA','KS','KY','LA','ME','MH','MD','MA','MI','MN','MS','MO','MT','NE','NV','NH','NJ','NM','NY','NC','ND','MP','OH','OK','OR','PW','PA','PR','RI','SC','SD','TN','TX','UT','VT','VI','VA','WA','WV','WI','WY']));
-export const zipCode = want("zip code", /^\d{5}(-\d{4})?$/);
+export const email =
+  anno({type: "email"},
+    /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i);
+
+export const phone =
+  anno({type: "phone"},
+    /^(\d{3}-|\(\d{3}\) )\d{3}-\d{4}$/);
+
+export const stateCode =
+  anno({type: "state-code"},
+    choice(['AL','AK','AS','AZ','AR','CA','CO','CT','DE','DC','FM','FL','GA','GU','HI','ID','IL','IN','IA','KS','KY','LA','ME','MH','MD','MA','MI','MN','MS','MO','MT','NE','NV','NH','NJ','NM','NY','NC','ND','MP','OH','OK','OR','PW','PA','PR','RI','SC','SD','TN','TX','UT','VT','VI','VA','WA','WV','WI','WY']));
+
+export const zipCode =
+  anno({type: "zip-code"},
+    /^\d{5}(-\d{4})?$/);
 
 (function(){
 
@@ -79,6 +99,7 @@ export const zipCode = want("zip code", /^\d{5}(-\d{4})?$/);
   }
 
   doto(Number,
+    specify(IExplains, {explain: constantly({type: "number"})}),
     specify(ICheckable, {check}));
 
 })();
@@ -90,6 +111,7 @@ export const zipCode = want("zip code", /^\d{5}(-\d{4})?$/);
   }
 
   doto(Date,
+    specify(IExplains, {explain: constantly({type: "date"})}),
     specify(ICheckable, {check}));
 
 })();
@@ -101,6 +123,7 @@ export const zipCode = want("zip code", /^\d{5}(-\d{4})?$/);
   }
 
   doto(String,
+    specify(IExplains, {explain: constantly({type: "string"})}),
     specify(ICheckable, {check}));
 
 })();
@@ -112,7 +135,20 @@ export const zipCode = want("zip code", /^\d{5}(-\d{4})?$/);
   }
 
   doto(RegExp,
+    implement(IExplains, {explain: constantly({type: "pattern"})}),
     implement(ICheckable, {check}));
+
+})();
+
+(function(){
+
+  function check(self, value){
+    return value instanceof self ? null : [issue(self)];
+  }
+
+  doto(RegExp,
+    specify(IExplains, {explain: constantly({type: "regex"})}),
+    specify(ICheckable, {check}));
 
 })();
 
@@ -123,6 +159,19 @@ export const zipCode = want("zip code", /^\d{5}(-\d{4})?$/);
   }
 
   doto(Function,
+    implement(IExplains, {explain: constantly({type: "predicate"})}),
+    implement(ICheckable, {check}));
+
+})();
+
+(function(){
+
+  function check(self, value){
+    return typeof value == "function" ? null : [issue(self)];
+  }
+
+  doto(Function,
+    specify(IExplains, {explain: constantly({type: "function"})}),
     specify(ICheckable, {check}));
 
 })();
