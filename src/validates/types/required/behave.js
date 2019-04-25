@@ -1,4 +1,4 @@
-import {implement, get, maybe, does} from 'cloe/core';
+import {implement, get, maybe, map, does} from 'cloe/core';
 import {ICheckable, IScope} from '../../protocols';
 import {issue} from '../issue';
 import {_ as v} from "param.macro";
@@ -8,7 +8,7 @@ function check(self, obj){
   if (found == null) {
     return [issue(self, [self.key])];
   } else {
-    return maybe(ICheckable.check(self.constraint, found), _.mapa(function(issue){
+    return maybe(ICheckable.check(self.constraint, found), map(function(issue){
       return IScope.scope(issue, self.key);
     }, v));
   }

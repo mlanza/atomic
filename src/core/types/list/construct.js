@@ -1,5 +1,4 @@
 import {overload} from "../../core";
-import {apply} from "../../types/function/concrete";
 import {reducing} from "../../protocols/ireduce/concrete";
 import EmptyList, {emptyList} from '../../types/empty-list';
 import {IReduce} from '../../protocols/ireduce';
