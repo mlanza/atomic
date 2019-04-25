@@ -57,11 +57,14 @@ QUnit.test("validation", function(assert){
   assert.ok(vd.check(vd.parses(_.parseDate, past), "1/1/3000") != null);
   assert.ok(vd.check(vd.parses(_.parseDate, past), birth) == null);
   assert.ok(vd.check(vd.parses(_.parseDate, past), `d${birth}`) != null);
+  assert.ok(vd.check(vd.range("start", "end"), {start: 1, end: 5}) == null);
+  assert.ok(vd.check(vd.range("start", "end"), {start: 1, end: 1}) == null);
+  assert.ok(vd.check(vd.range("start", "end"), {start: 5, end: 1}) != null);
   assert.ok(dob.constraint === Date);
   assert.ok(name.constraint === String);
-  assert.ok(names.constraint instanceof vd.Exactly);
+  assert.ok(names != null);
   assert.ok(anon.constraint instanceof vd.Required);
-  assert.ok(status.constraint instanceof vd.Choice);
+  assert.ok(status != null);
   //TODO add `when` to validate conditiontionally or allow condition to be checked before registering the validation?
 });
 
