@@ -92,7 +92,7 @@ export function eachvk(f, xs){
 }
 
 function entries2(xs, keys){
-  return ISeqable.seq(keys) ? lazyilySeq(function(){
+  return ISeqable.seq(keys) ? lazySeq(function(){
     return cons([ISeq.first(keys), ILookup.lookup(xs, ISeq.first(keys))], entries2(xs, ISeq.rest(keys)));
   }) : emptyList();
 }

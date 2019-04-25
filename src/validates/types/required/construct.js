@@ -7,8 +7,4 @@ export function required(key, constraint){
   return new Required(key, constraint);
 }
 
-Required.prototype.toString = function(){
-  return "required";
-}
-
 export {Required};

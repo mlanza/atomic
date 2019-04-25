@@ -137,13 +137,11 @@ export function notEq(...args){
   return !eq(...args);
 }
 
-function mapArgs2(f, xf){
+export function mapArgs(xf, f){
   return function(){
     return apply(f, mapa(maybe(v, xf), indexed(arguments)));
   }
 }
-
-export const mapArgs = overload(null, identity, mapArgs2);
 
 export function everyPred(...preds){
   return function(){

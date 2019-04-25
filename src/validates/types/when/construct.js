@@ -1,0 +1,10 @@
+export default function When(pred, constraint){
+  this.pred = pred;
+  this.constraint = constraint;
+}
+
+export function when(pred, constraint){
+  return new When(pred, constraint);
+}
+
+export {When}

@@ -95,12 +95,12 @@ function nth(self, n){
   var xs  = self,
       idx = 0;
   while(xs){
-    var x = first(xs);
+    var x = ISeq.first(xs);
     if (idx === n) {
       return x;
     }
     idx++;
-    xs = next(xs);
+    xs = INext.next(xs);
   }
   return null;
 }
@@ -123,7 +123,7 @@ function reduce(xs, xf, init){
       ys = ISeqable.seq(xs);
   while(ys && !(memo instanceof Reduced)){
     memo = xf(memo, ISeq.first(ys));
-    ys = next(ys);
+    ys = INext.next(ys);
   }
   return memo instanceof Reduced ? memo.valueOf() : memo;
 }
@@ -134,7 +134,7 @@ function reducekv(xs, xf, init){
   while(ys && !(memo instanceof Reduced)){
     let pair = ISeq.first(ys);
     memo = xf(memo, pair[0], pair[1]);
-    ys = next(ys);
+    ys = INext.next(ys);
   }
   return memo instanceof Reduced ? memo.valueOf() : memo;
 }

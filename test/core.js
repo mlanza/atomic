@@ -32,7 +32,7 @@ QUnit.test("router & multimethod", function(assert){ //not just for fns!
 QUnit.test("validation", function(assert){
   const zipCode = /^\d{5}(-\d{1,4})?$/;
   const birth = "7/10/1926";
-  const past = vd.or(Date, vd.want("past date", _.lt(v, new Date())));
+  const past = vd.or(Date, vd.anno({type: "past"}, _.lt(v, new Date())));
   const herman = {name: ["Herman", "Munster"], status: "married", dob: new Date(birth)};
   const person = vd.and(
     vd.required('name', vd.and(vd.collOf(String), vd.cardinality(2, 2))),
@@ -121,6 +121,32 @@ QUnit.test("dom", function(assert){
   const branding = stooges |> dom.sel("#branding", v) |> _.first;
   _.yank(branding);
   assert.equal(branding |> _.parent |> _.first, null, "Removed");
+});
+
+QUnit.test("lazy-seq", function(assert){
+  const effects = [],
+        push    = effects.push.bind(effects),
+        xs      = _.map(push, _.range(10)),
+        nums    = _.map(_.identity, _.range(3)),
+        blank   = _.map(_.identity, _.range(0)),
+        tail    = _.rest(nums);
+  assert.ok(effects.length === 0);
+  _.first(xs)
+  assert.ok(effects.length === 1);
+  _.first(xs)
+  assert.ok(effects.length === 1);
+  _.second(xs);
+  assert.ok(effects.length === 2);
+  _.doall(xs);
+  assert.ok(effects.length === 10);
+  assert.ok(_.blank(blank));
+  assert.ok(!_.blank(nums));
+  assert.ok(_.rest(blank) instanceof _.EmptyList);
+  assert.ok(_.rest(nums) instanceof _.LazySeq);
+  assert.ok(_.seq(blank) == null);
+  assert.ok(_.seq(nums) != null);
+  assert.deepEqual(_.toArray(nums), [0,1,2]);
+  assert.deepEqual(_.toArray(blank), []);
 });
 
 QUnit.test("transducers", function(assert){
