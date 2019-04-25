@@ -1,18 +1,38 @@
-import {mapa, first, doto, specify, implement, constantly, juxt, filled, get, eq, gte, lte, maybe, spread, compact, apply, Nil, isNumber, Number, isString, String, isDate, Date, Function} from "cloe/core";
+import {mapa, first, doto, specify, includes, implement, constantly, juxt, count, filled, get, eq, gte, lte, maybe, spread, compact, apply, Nil, isNumber, Number, isString, String, isDate, Date, Function} from "cloe/core";
 import {ICheckable} from "./protocols/icheckable/instance";
-import {map, scoped, issue, choice, describe, comparison, atLeast, atMost, exactly, or, and, want} from "./types";
+import {map, scoped, issue, describe, pred, or, and, want} from "./types";
 import {_ as v} from "param.macro";
 
 export * from "./types";
 export * from "./protocols";
 export * from "./protocols/concrete";
 
+export function choice(options){
+  return describe(`invalid choice`,
+    pred(includes, options, null));
+}
+
+export function atLeast(n){
+  return describe(`cannot have fewer than ${n}`,
+    map(count, pred(gte, null, n)));
+}
+
+export function atMost(n){
+  return describe(`cannot have more than ${n}`,
+    map(count, pred(lte, null, n)));
+}
+
+export function exactly(n){
+  return describe(`must have exactly ${n}`,
+    map(count, pred(eq, null, n)));
+}
+
 export function between(min, max){
-  return min == max ? describe(`must be ${min}`, comparison(eq, min)) :
+  return min == max ? describe(`must be ${min}`, pred(eq, null, min)) :
     describe(`must be between ${min} and ${max}`,
       or(
-        describe(`must be greater than or equal to ${min}`, comparison(gte, min)),
-        describe(`must be less than or equal to ${max}`   , comparison(lte, max))));
+        describe(`must be greater than or equal to ${min}`, pred(gte, null, min)),
+        describe(`must be less than or equal to ${max}`   , pred(lte, null, max))));
 }
 
 export function cardinality(min, max){
