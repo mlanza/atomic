@@ -1,6 +1,6 @@
-import {overload, toggles, identity, obj, partly, doto, branch, unspread, applying, execute} from "./core";
+import {overload, toggles, identity, obj, partly, doto, branch, unspread, applying, execute, noop} from "./core";
 import {IDecorated, IAppendable, IHash, ITemplate, IYank, ICoerce, IAssociative, IBounds, IInverse, ICloneable, ICollection, IComparable, ICounted, IDecode, IDeref, IDisposable, IEmptyableCollection, IEncode, IEquiv, IFind, IFn, IFork, IFunctor, IHierarchy, IInclusive, IIndexed, IInsertable, IKVReduce, ILookup, IMap, IMapEntry, IMatch, INext, IOtherwise, IPrependable, IReduce, IReset, IReversible, ISeq, ISeqable, ISet, ISteppable, ISwap} from "./protocols";
-import {satisfies, filter, spread, specify, maybe, each, duration, remove, sort, flip, realized, comp, isNumber, isFunction, apply, realize} from "./types";
+import {satisfies, filter, spread, specify, maybe, each, duration, remove, sort, flip, realized, comp, isNumber, isFunction, apply, realize, isNil} from "./types";
 import {add, subtract, compact, matches, name, descendants, query, locate, transient, persistent, deref, get, assoc, yank, conj, hash, reducing, toArray, reducekv, includes, excludes} from "./protocols/concrete";
 import {isString, isBlank, str} from "./types/string";
 import {isSome} from "./types/nil";
@@ -41,6 +41,18 @@ export function xargs(f, ...fs){
     return apply(f, map(execute, fs, args));
   }
 }
+
+function filled2(f, g){
+  return function(...args){
+    return ISeqable.seq(filter(isNil, args)) ? g(...args) : f(...args);
+  }
+}
+
+function filled1(f){
+  return filled2(f, noop);
+}
+
+export const filled = overload(null, filled1, filled2);
 
 export function elapsed(self){
   return duration(end(self) - start(self));
