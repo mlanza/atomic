@@ -4,7 +4,7 @@ export default function Required(key, constraint){
 }
 
 export function required(key, constraint){
-  return new Required(key, constraint);
+  return new Required(key, constraint || null);
 }
 
 export {Required};
