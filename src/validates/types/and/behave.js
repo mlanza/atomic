@@ -1,12 +1,11 @@
-import {implement, does, maybe, mapcat, blot, toArray, compact, conj, apply, IAppendable} from 'cloe/core';
+import {implement, does, map, blot, compact, conj, apply, IAppendable} from 'cloe/core';
 import {ICheckable} from '../../protocols';
 import {and} from "./construct";
-import {issue} from '../issue';
+import {issue, issues} from '../issue';
+import {_ as v} from "param.macro";
 
 function check(self, value){
-  return maybe(mapcat(function(constraint){
-    return ICheckable.check(constraint, value);
-  }, self.constraints), compact, toArray, blot);
+  return issues(self.constraints, ICheckable.check(v, value));
 }
 
 function append(self, constraint){

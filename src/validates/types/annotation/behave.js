@@ -1,6 +1,6 @@
-import {implement, does, map, compact, blot, IDeref} from 'cloe/core';
+import {implement, does, IDeref, IAppendable} from 'cloe/core';
 import {ICheckable, IExplains} from '../../protocols';
-import {issue} from '../issue';
+import {issue, issues} from '../issue';
 import {anno} from './construct';
 import {_ as v} from "param.macro";
 
@@ -13,12 +13,17 @@ function explain(self){
 }
 
 function check(self, value){
-  return blot(map(function(iss){
+  return issues(ICheckable.check(self.constraint, value), function(iss){
     return issue(anno(self.note, iss.constraint), iss.path);
-  }, compact(ICheckable.check(self.constraint, value))));
+  });
+}
+
+function append(self, constraint){
+  return anno(self.note, IAppendable.append(self.constraint, constraint));
 }
 
 export default does(
   implement(IDeref, {deref}),
   implement(IExplains, {explain}),
+  implement(IAppendable, {append}),
   implement(ICheckable, {check}));
