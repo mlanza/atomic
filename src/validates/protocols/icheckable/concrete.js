@@ -1,4 +1,4 @@
-import {overload, branch, isString, identity} from 'cloe/core';
+import {overload, branch, isString, identity, awaits} from 'cloe/core';
 import {anno} from "../../types/annotation/construct";
 import {catches} from "../../types/catches/construct";
 import {map} from "../../types/map/construct";
@@ -13,4 +13,4 @@ function check3(self, parse, value){
   return ICheckable.check(parses(parse, self), value);
 }
 
-export const check = overload(null, null, ICheckable.check, check3);
+export const check = awaits(overload(null, null, ICheckable.check, check3));

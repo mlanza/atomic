@@ -1,4 +1,4 @@
-import {implement, does, conj, assoc, IDeref} from 'cloe/core';
+import {implement, does, cons, toArray, assoc, IDeref} from 'cloe/core';
 import {IScope} from '../../protocols';
 import {issue} from './construct';
 
@@ -7,7 +7,7 @@ function deref(self){
 }
 
 function scope(self, key) {
-  return issue(self.constraint, conj(self.path || [], key));
+  return issue(self.constraint, toArray(cons(key, self.path)));
 }
 
 function at(self, path){

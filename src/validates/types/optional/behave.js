@@ -1,18 +1,16 @@
-import {implement, get, maybe, mapa, does, IAppendable} from 'cloe/core';
+import {implement, get, blank, does, IAppendable} from 'cloe/core';
 import {ICheckable, IScope} from '../../protocols';
+import {issue, issues} from '../issue';
 import {and} from '../and/construct';
 import {optional} from './construct';
-
 import {_ as v} from "param.macro";
 
 function check(self, obj){
   var found = get(obj, self.key);
-  if (found == null) {
+  if (blank(found)) {
     return null;
   } else {
-    return maybe(ICheckable.check(self.constraint, found), mapa(function(issue){
-      return IScope.scope(issue, self.key);
-    }, v));
+    return issues(ICheckable.check(self.constraint, found), IScope.scope(v, self.key));
   }
 }
 

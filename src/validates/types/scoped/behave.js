@@ -1,12 +1,12 @@
-import {implement, blot, compact, map, conj, does} from 'cloe/core';
+import {implement, cons, toArray, does} from 'cloe/core';
 import {ICheckable} from '../../protocols';
-import {issue} from '../issue';
+import {issue, issues} from '../issue';
 import {_ as v} from "param.macro";
 
 function check(self, value){
-  return blot(map(function(iss){
-    return issue(self.constraint, conj(iss.path || [], self.key));
-  }, compact(ICheckable.check(self.constraint, value))));
+  return issues(ICheckable.check(self.constraint, value), function(iss){
+    return issue(self.constraint, toArray(cons(self.key, iss.path)));
+  })
 }
 
 export default does(

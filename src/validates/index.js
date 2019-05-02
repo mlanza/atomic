@@ -1,6 +1,6 @@
-import {mapa, test, first, doto, specify, includes, identity, implement, constantly, branch, juxt, count, filled, get, eq, gte, lte, maybe, spread, compact, apply, Nil, isNumber, Number, isString, String, isDate, Date, Function} from "cloe/core";
+import {mapa, test, first, doto, specify, includes, identity, implement, constantly, branch, juxt, count, filled, get, eq, gte, lte, maybe, spread, compact, apply, isNil, Nil, isNumber, Number, isString, String, isDate, Date, isFunction, Function, isRegExp, RegExp} from "cloe/core";
 import {ICheckable, IExplains} from "./protocols";
-import {anno, map, scoped, issue, catches, pred, or, and} from "./types";
+import {anno, map, scoped, issue, issuing, catches, pred, or, and} from "./types";
 import {_ as v} from "param.macro";
 
 export * from "./types";
@@ -12,6 +12,10 @@ export function toPred(constraint){
     const issues = ICheckable.check(constraint, obj);
     return !issues;
   }
+}
+
+export function present(constraint){
+  return or(isNil, constraint);
 }
 
 export function choice(options){
@@ -92,41 +96,26 @@ export const zipCode =
 
 })();
 
-(function(){
+export function datatype(Type, pred, type){
 
   function check(self, value){
-    return isNumber(value) ? null : [issue(Number)];
+    return pred(value) ? null : [issue(Type)];
   }
 
-  doto(Number,
-    specify(IExplains, {explain: constantly({type: "number"})}),
+  const explain = constantly({type});
+
+  doto(Type,
+    specify(IExplains, {explain}),
     specify(ICheckable, {check}));
 
-})();
+}
 
-(function(){
-
-  function check(self, value){
-    return isDate(value) ? null : [issue(Date)];
-  }
-
-  doto(Date,
-    specify(IExplains, {explain: constantly({type: "date"})}),
-    specify(ICheckable, {check}));
-
-})();
-
-(function(){
-
-  function check(self, value){
-    return isString(value) ? null : [issue(String)];
-  }
-
-  doto(String,
-    specify(IExplains, {explain: constantly({type: "string"})}),
-    specify(ICheckable, {check}));
-
-})();
+datatype(Function, isFunction, "function");
+datatype(Number, isNumber, "number");
+datatype(Date, isDate, "date");
+datatype(String, isString, "string");
+datatype(RegExp, isRegExp, "regexp");
+datatype(Nil, isNil, "nil");
 
 (function(){
 
@@ -140,38 +129,15 @@ export const zipCode =
 
 })();
 
-(function(){
-
-  function check(self, value){
-    return value instanceof self ? null : [issue(self)];
-  }
-
-  doto(RegExp,
-    specify(IExplains, {explain: constantly({type: "regex"})}),
-    specify(ICheckable, {check}));
-
-})();
 
 (function(){
 
   function check(self, value){
-    return self(value) ? null : [issue(self)];
+    return issuing(self(value), issue(self));
   }
 
   doto(Function,
     implement(IExplains, {explain: constantly({type: "predicate"})}),
     implement(ICheckable, {check}));
-
-})();
-
-(function(){
-
-  function check(self, value){
-    return typeof value == "function" ? null : [issue(self)];
-  }
-
-  doto(Function,
-    specify(IExplains, {explain: constantly({type: "function"})}),
-    specify(ICheckable, {check}));
 
 })();
