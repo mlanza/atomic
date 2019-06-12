@@ -1,5 +1,5 @@
-import {constantly, identity, apply, noop, slice, partial, replace, concat, template, key, val, join, merge, filter, map, remove, isObject, specify, implement, doto, assoc, get, str, includes, overload, conj, append, absorb, fmap, each, obj, IReduce, first, query, locate, descendants, matches, reducekv, Number, String, Nil, ICoerce, extend} from "cloe/core";
-import * as _ from "cloe/core";
+import {constantly, identity, apply, noop, slice, partial, replace, concat, template, key, val, join, merge, filter, map, remove, isObject, specify, implement, doto, assoc, get, str, includes, overload, conj, append, absorb, fmap, each, obj, IReduce, first, query, locate, descendants, matches, reducekv, Number, String, Nil, ICoerce, extend} from "atomic/core";
+import * as _ from "atomic/core";
 import {element} from "./types/element/construct";
 import {mounts} from "./protocols/imountable/concrete";
 import InvalidHostElementError from "./types/invalid-host-element-error";
@@ -7,7 +7,7 @@ import IValue from "./protocols/ivalue/instance";
 import IEmbeddable from "./protocols/iembeddable/instance";
 import Promise from "promise";
 import {_ as v} from "param.macro";
-import * as $ from "cloe/reactives";
+import * as $ from "atomic/reactives";
 export * from "./types";
 export * from "./protocols";
 export * from "./protocols/concrete";

@@ -1,4 +1,4 @@
-import {implement, does, map, detect, isSome, conj, IAppendable} from 'cloe/core';
+import {implement, does, map, detect, isSome, conj, IAppendable} from 'atomic/core';
 import {ICheckable} from '../../protocols';
 import {or} from './construct';
 import {_ as v} from "param.macro";

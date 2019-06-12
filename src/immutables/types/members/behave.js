@@ -8,7 +8,7 @@ import {
   ISeq,
   INext,
   ISequential
-} from "cloe/core";
+} from "atomic/core";
 import {members, emptyMembers} from "./construct";
 
 function fmap(self, f){

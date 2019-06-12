@@ -1,4 +1,4 @@
-import {constantly, identity, does, overload, implement, mapa, compact, trim, split, str, ICoerce, IDescriptive, ISeqable, IMap, IAssociative, ILookup, IDeref, ICounted, ICollection, IReduce, IInclusive, IYank} from 'cloe/core';
+import {constantly, identity, does, overload, implement, mapa, compact, trim, split, str, ICoerce, IDescriptive, ISeqable, IMap, IAssociative, ILookup, IDeref, ICounted, ICollection, IReduce, IInclusive, IYank} from 'atomic/core';
 
 function asText(obj){
   return mapa(function(entry){

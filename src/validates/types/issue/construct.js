@@ -1,4 +1,4 @@
-import {overload, identity, fmap, map, blot, compact, flatten, toArray, satisfies, isPromise, Promise, detect, ISeq} from 'cloe/core';
+import {overload, identity, fmap, map, blot, compact, flatten, toArray, satisfies, isPromise, Promise, detect, ISeq} from 'atomic/core';
 import {_ as v} from "param.macro";
 
 export default function Issue(constraint, path){

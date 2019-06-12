@@ -1,4 +1,4 @@
-import {implement, does, IDeref, IAppendable} from 'cloe/core';
+import {implement, does, IDeref, IAppendable} from 'atomic/core';
 import {ICheckable, IExplains} from '../../protocols';
 import {issue, issues} from '../issue';
 import {anno} from './construct';

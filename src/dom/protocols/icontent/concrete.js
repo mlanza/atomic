@@ -1,4 +1,4 @@
-import {overload, filter} from "cloe/core";
+import {overload, filter} from "atomic/core";
 import IContent from "./instance";
 
 function contents2(self, type){

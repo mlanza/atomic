@@ -1,4 +1,4 @@
-import {does, implement, satisfies, IReset, ISwap, IDeref, IDisposable} from 'cloe/core';
+import {does, implement, satisfies, IReset, ISwap, IDeref, IDisposable} from 'atomic/core';
 import {IPublish, ISubscribe} from "../../protocols";
 
 function deref(self){

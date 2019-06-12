@@ -32,10 +32,10 @@ import {
   satisfies,
   specify,
   slice
-} from "cloe/core";
-import * as _ from "cloe/core";
+} from "atomic/core";
+import * as _ from "atomic/core";
 import Symbol from "symbol";
-import {weakMap} from "cloe/core";
+import {weakMap} from "atomic/core";
 import {pub, sub, unsub, on, off, one, into} from "./protocols/concrete";
 import {IDispatch, IPublish, ISubscribe, IEvented} from "./protocols";
 import AudienceDetector from "./types/audience-detector/construct";
@@ -47,7 +47,7 @@ import {
   audienceDetector,
   broadcast
 } from "./types";
-import * as t from "cloe/transducers";
+import * as t from "atomic/transducers";
 export * from "./types";
 export * from "./protocols";
 export * from "./protocols/concrete";

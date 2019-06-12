@@ -1,4 +1,4 @@
-import {identity, constantly, does, doto, overload, implement, specify, each, cons, emptyList, IReduce, ISeqable, ISeq, INext, IMatch, IHierarchy, ICoerce} from 'cloe/core';
+import {identity, constantly, does, doto, overload, implement, specify, each, cons, emptyList, IReduce, ISeqable, ISeq, INext, IMatch, IHierarchy, ICoerce} from 'atomic/core';
 import behave from "../element/behave";
 import {_ as v} from "param.macro";
 

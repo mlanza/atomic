@@ -1,4 +1,4 @@
-import {implement, does, each} from 'cloe/core';
+import {implement, does, each} from 'atomic/core';
 import {IPublish, ISubscribe} from "../../protocols";
 import {_ as v} from "param.macro";
 

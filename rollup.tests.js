@@ -20,13 +20,13 @@ export default {
   ],
   external: [
     "fetch",
-    "cloe",
-    "cloe/core",
-    "cloe/immutables",
-    "cloe/requests",
-    "cloe/reactives",
-    "cloe/transducers",
-    "cloe/validates",
-    "cloe/dom"
+    "atomic",
+    "atomic/core",
+    "atomic/immutables",
+    "atomic/requests",
+    "atomic/reactives",
+    "atomic/transducers",
+    "atomic/validates",
+    "atomic/dom"
   ]
 };

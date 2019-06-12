@@ -1,4 +1,4 @@
-import {does, implement} from 'cloe/core';
+import {does, implement} from 'atomic/core';
 import {IEmbeddable} from "../../protocols";
 
 function embed(self, parent) {

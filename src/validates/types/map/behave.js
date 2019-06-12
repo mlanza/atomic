@@ -1,4 +1,4 @@
-import {implement, does, invoke} from 'cloe/core';
+import {implement, does, invoke} from 'atomic/core';
 import {ICheckable} from '../../protocols';
 import {issue} from '../issue';
 

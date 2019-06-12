@@ -1,7 +1,7 @@
-import {implement, does, apply, IPath, IReset, ISwap, IDeref, IDisposable, ICounted} from 'cloe/core';
+import {implement, does, apply, IPath, IReset, ISwap, IDeref, IDisposable, ICounted} from 'atomic/core';
 import {IPublish, ISubscribe, IDispatch} from "../../protocols";
 import {sub as _sub, unsub as _unsub} from "../../protocols/concrete";
-import * as _ from "cloe/core";
+import * as _ from "atomic/core";
 
 function path(self){
   return self.path;

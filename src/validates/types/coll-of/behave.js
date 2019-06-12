@@ -1,4 +1,4 @@
-import {implement, does, constantly, conj, maybe, concatenated, map, mapIndexed, compact, blot, toArray} from 'cloe/core';
+import {implement, does, constantly, conj, maybe, concatenated, map, mapIndexed, compact, blot, toArray} from 'atomic/core';
 import {ICheckable, IScope} from '../../protocols';
 import {issue} from '../issue';
 import {_ as v} from "param.macro";

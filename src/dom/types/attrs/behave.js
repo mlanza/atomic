@@ -1,5 +1,5 @@
-import {does, implement, cons, IEmptyableCollection, ICoerce, INext, ISeq, ISeqable, IMap, IAssociative, ILookup, ICounted, IInclusive} from 'cloe/core';
-import * as _ from 'cloe/core';
+import {does, implement, cons, IEmptyableCollection, ICoerce, INext, ISeq, ISeqable, IMap, IAssociative, ILookup, ICounted, IInclusive} from 'atomic/core';
+import * as _ from 'atomic/core';
 
 function toArray(self){
   return ICoerce.toArray(next2(self, 0));

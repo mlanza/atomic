@@ -1,4 +1,4 @@
-import {implement, IHierarchy, IMatch, constantly, does, emptyList} from 'cloe/core';
+import {implement, IHierarchy, IMatch, constantly, does, emptyList} from 'atomic/core';
 import behave from "../element/behave";
 
 export default does(

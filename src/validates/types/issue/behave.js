@@ -1,4 +1,4 @@
-import {implement, does, cons, toArray, assoc, IDeref} from 'cloe/core';
+import {implement, does, cons, toArray, assoc, IDeref} from 'atomic/core';
 import {IScope} from '../../protocols';
 import {issue} from './construct';
 

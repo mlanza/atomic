@@ -1,4 +1,4 @@
-import {implement, does, noop, transition, satisfies, swap, IStateMachine, IDisposable} from 'cloe/core';
+import {implement, does, noop, transition, satisfies, swap, IStateMachine, IDisposable} from 'atomic/core';
 import {ISubscribe} from "../../protocols/isubscribe/instance";
 import {_ as v} from "param.macro";
 

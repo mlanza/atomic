@@ -1,4 +1,4 @@
-import {overload, partial, doto, specify, identity, IDisposable} from "cloe/core";
+import {overload, partial, doto, specify, identity, IDisposable} from "atomic/core";
 import {pub} from "../../protocols/ipublish/concrete";
 import {readonly} from "../../types/readonly/construct";
 import ISubscribe from "./instance";

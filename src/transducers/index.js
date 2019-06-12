@@ -1,4 +1,4 @@
-import {overload, identity, complement, comp, first, rest, partial, isSome, reduced, seq, equiv, IReduce} from "cloe/core";
+import {overload, identity, complement, comp, first, rest, partial, isSome, reduced, seq, equiv, IReduce} from "atomic/core";
 
 export function tee(f){
   return function(xf){

@@ -1,6 +1,6 @@
-import {overload, does, implement, locate, query} from 'cloe/core';
+import {overload, does, implement, locate, query} from 'atomic/core';
 import {IValue, IText} from "../../protocols";
-import * as _ from 'cloe/core';
+import * as _ from 'atomic/core';
 import {_ as v} from "param.macro";
 
 function text1(self){

@@ -1,5 +1,5 @@
-import {specify, IMatch, isRegExp, isString, test, does} from 'cloe/core';
-import {IEvented} from "cloe/reactives";
+import {specify, IMatch, isRegExp, isString, test, does} from 'atomic/core';
+import {IEvented} from "atomic/reactives";
 
 function matches(self, pattern){
   if (isRegExp(pattern)){

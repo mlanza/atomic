@@ -34,7 +34,7 @@ import {
   locate,
   Task,
   task
-} from "cloe/core";
+} from "atomic/core";
 import {_ as v} from "param.macro";
 
 const wants = reSeq(/\{([a-z0-9]+)\}/gi, v);

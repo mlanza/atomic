@@ -1,4 +1,4 @@
-import {overload} from "cloe/core";
+import {overload} from "atomic/core";
 import IEvented from "./instance";
 
 export const on = IEvented.on;

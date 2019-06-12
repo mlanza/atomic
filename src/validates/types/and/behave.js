@@ -1,4 +1,4 @@
-import {implement, does, map, blot, compact, conj, apply, IAppendable} from 'cloe/core';
+import {implement, does, map, blot, compact, conj, apply, IAppendable} from 'atomic/core';
 import {ICheckable} from '../../protocols';
 import {and} from "./construct";
 import {issue, issues} from '../issue';

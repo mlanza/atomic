@@ -1,4 +1,4 @@
-import {seq, first, rest, cons, conj, includes, lazySeq, emptyList} from "cloe/core";
+import {seq, first, rest, cons, conj, includes, lazySeq, emptyList} from "atomic/core";
 import {set} from "./construct";
 
 function distinct2(coll, seen){

@@ -1,4 +1,4 @@
-import {apply, comp, specify, conj, updateIn, assoc, get, getIn, deref, doto, partial, overload, noop, identity, reset, each} from "cloe/core";
+import {apply, comp, specify, conj, updateIn, assoc, get, getIn, deref, doto, partial, overload, noop, identity, reset, each} from "atomic/core";
 import {middleware} from "./construct";
 import {eventDispatcher} from "../event-dispatcher/construct";
 import {messageProcessor} from "../message-processor/construct";

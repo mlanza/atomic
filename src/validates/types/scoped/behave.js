@@ -1,4 +1,4 @@
-import {implement, cons, toArray, does} from 'cloe/core';
+import {implement, cons, toArray, does} from 'atomic/core';
 import {ICheckable} from '../../protocols';
 import {issue, issues} from '../issue';
 import {_ as v} from "param.macro";

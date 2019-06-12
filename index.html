@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>Cloe</title>
-  <meta name="description" content="Cloe">
+  <title>Atomic</title>
+  <meta name="description" content="Atomic">
   <meta name="author" content="Mario T. Lanza">
   <link rel="stylesheet" href="dist/qunit.css">
   <script src="dist/require.js"></script>
@@ -37,7 +37,7 @@
     define('set', function(){
       return Set;
     });
-    require(['cloe/core', 'cloe/dom', 'cloe/reactives', 'cloe/requests', 'cloe/validates', 'cloe/transducers', 'cloe/immutables', 'test/core'], function(core, dom, reactives, requests, validates, transducers, immutables){
+    require(['atomic/core', 'atomic/dom', 'atomic/reactives', 'atomic/requests', 'atomic/validates', 'atomic/transducers', 'atomic/immutables', 'test/core'], function(core, dom, reactives, requests, validates, transducers, immutables){
 
       var _core = core.impart(core, core.partly);
       var _dom = core.impart(dom, core.partly);
