@@ -1,6 +1,6 @@
 import {overload} from '../../core';
 import {days} from '../days/construct';
-import {midnight, eod, isDate} from '../date/concrete';
+import {sod, eod, isDate} from '../date/concrete';
 import {steps} from '../../protocols/isteppable/concrete';
 import {patch} from '../../associatives';
 import Symbol from '../symbol/construct';
@@ -16,16 +16,16 @@ function from({start, end, step, direction}){
   return new Period(start, end, step, direction);
 }
 
+export function period1(obj){
+  return period2(patch(obj, sod()), patch(obj, eod()));
+}
+
 export function emptyPeriod(){
   return new Period();
 }
 
 function period0(){
   return period1(null);
-}
-
-function period1(dt){
-  return period2(patch(dt, midnight()), patch(dt, eod()));
 }
 
 function period2(start, end){
