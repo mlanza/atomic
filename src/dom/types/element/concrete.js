@@ -1,4 +1,4 @@
-import {IHierarchy, isString, append} from 'cloe/core';
+import {IHierarchy, isString, append} from 'atomic/core';
 
 export function replaceWith(self, other){
   const parent = IHierarchy.parent(self),

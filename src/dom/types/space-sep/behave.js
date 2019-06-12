@@ -1,4 +1,4 @@
-import {identity, does, implement, filtera, locate, ISequential, ISeq, IDeref, ICoerce, ICounted, ICollection, IInclusive, IYank} from 'cloe/core';
+import {identity, does, implement, filtera, locate, ISequential, ISeq, IDeref, ICoerce, ICounted, ICollection, IInclusive, IYank} from 'atomic/core';
 
 function seq(self){
   const text = self.element.getAttribute(self.key);

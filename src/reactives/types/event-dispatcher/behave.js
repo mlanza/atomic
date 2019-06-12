@@ -1,4 +1,4 @@
-import {does, partial, implement, each} from 'cloe/core';
+import {does, partial, implement, each} from 'atomic/core';
 import {pub} from "../../protocols/ipublish/concrete";
 import {release} from "../../protocols/ieventprovider/concrete";
 import {handle as _handle, IMiddleware} from "../../protocols/imiddleware"

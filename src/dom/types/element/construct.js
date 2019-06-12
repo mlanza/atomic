@@ -1,4 +1,4 @@
-import {each} from 'cloe/core';
+import {each} from 'atomic/core';
 import {embed} from "../../protocols/iembeddable/concrete";
 import {_ as v} from "param.macro";
 

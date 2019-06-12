@@ -1,4 +1,4 @@
-import {protocol, overload, identity} from "cloe/core";
+import {protocol, overload, identity} from "atomic/core";
 
 function on2(self, f){
   on3(self, identity, f);

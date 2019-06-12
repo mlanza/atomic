@@ -1,4 +1,4 @@
-import {identity, does, implement, key, val, IDescriptive, ISeqable, IMap, IAssociative, ILookup, IDeref, ICounted, ICollection, IReduce, IInclusive, IYank} from 'cloe/core';
+import {identity, does, implement, key, val, IDescriptive, ISeqable, IMap, IAssociative, ILookup, IDeref, ICounted, ICollection, IReduce, IInclusive, IYank} from 'atomic/core';
 
 function lookup(self, key){
   return self.node[key];

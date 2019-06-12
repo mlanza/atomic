@@ -60,8 +60,8 @@ import {
   IReduce,
   IEmptyableCollection,
   IHierarchy
-} from 'cloe/core';
-import {IEvented} from "cloe/reactives";
+} from 'atomic/core';
+import {IEvented} from "atomic/reactives";
 import {isMountable} from "../../protocols/imountable/concrete"
 import {IHtml, IText, IValue, IContent, IHideable, IEmbeddable} from "../../protocols";
 import {embed as _embed} from "../../protocols/iembeddable/concrete";

@@ -1,4 +1,4 @@
-import {does, identity, implement, forwardTo, ILookup, ISwap, IReset, IDeref, IDisposable} from 'cloe/core';
+import {does, identity, implement, forwardTo, ILookup, ISwap, IReset, IDeref, IDisposable} from 'atomic/core';
 import {IMiddleware, ISubscribe, IDispatch} from "../../protocols"
 
 function dispatch(self, command){

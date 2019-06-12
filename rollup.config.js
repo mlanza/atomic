@@ -12,7 +12,7 @@ export default {
     'src/validates.js'
   ],
   output: {
-    dir: 'dist/cloe',
+    dir: 'dist/atomic',
     format: 'amd',
     globals: {
       "jquery": "jQuery",
@@ -37,14 +37,14 @@ export default {
     "map",
     "qunit",
     "jquery",
-    "cloe",
-    "cloe/core",
-    "cloe/immutables",
-    "cloe/reactives",
-    "cloe/transducers",
-    "cloe/requests",
-    "cloe/validates",
-    "cloe/dom"
+    "atomic",
+    "atomic/core",
+    "atomic/immutables",
+    "atomic/reactives",
+    "atomic/transducers",
+    "atomic/requests",
+    "atomic/validates",
+    "atomic/dom"
   ],
   plugins: [
     babel({

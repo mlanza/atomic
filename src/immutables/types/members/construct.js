@@ -1,4 +1,4 @@
-import {ISequential, cons, satisfies} from 'cloe/core';
+import {ISequential, cons, satisfies} from 'atomic/core';
 import {distinct} from "../set/concrete";
 
 export default function Members(items){

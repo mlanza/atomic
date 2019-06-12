@@ -1,4 +1,4 @@
-import {overload} from "cloe/core";
+import {overload} from "atomic/core";
 import {broadcast} from "../broadcast/construct";
 
 export default function Cell(state, observer, validate){

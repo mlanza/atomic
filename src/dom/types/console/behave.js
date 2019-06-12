@@ -1,4 +1,4 @@
-import {specify, ISend, overload, does} from 'cloe/core';
+import {specify, ISend, overload, does} from 'atomic/core';
 
 function send2(self, message){
   send3(self, message, "log");

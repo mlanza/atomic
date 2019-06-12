@@ -1,4 +1,4 @@
-import {protocol} from "cloe/core";
+import {protocol} from "atomic/core";
 export const IMiddleware = protocol({
   handle: null
 });

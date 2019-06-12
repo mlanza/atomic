@@ -1,4 +1,4 @@
-import {doto, implement, IPersistent, TransientSet, toArray} from "cloe/core";
+import {doto, implement, IPersistent, TransientSet, toArray} from "atomic/core";
 import {set} from "./types/set/construct";
 export * from "./types";
 

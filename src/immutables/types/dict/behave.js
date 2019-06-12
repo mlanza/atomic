@@ -1,4 +1,4 @@
-import {does, identity, implement, ICounted, IAssociative, ILookup, ICloneable} from "cloe/core";
+import {does, identity, implement, ICounted, IAssociative, ILookup, ICloneable} from "atomic/core";
 
 function assoc(self, key, value){
   return self.set(key, value);

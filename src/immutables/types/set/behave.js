@@ -17,7 +17,7 @@ import {
   IEmptyableCollection,
   IInclusive,
   ICloneable
-} from 'cloe/core';
+} from 'atomic/core';
 
 import {emptySet} from "./construct";
 

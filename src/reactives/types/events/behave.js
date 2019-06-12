@@ -1,4 +1,4 @@
-import {does, implement} from 'cloe/core';
+import {does, implement} from 'atomic/core';
 import {IEventProvider} from "../../protocols/ieventprovider/instance"
 
 function raise(self, event){

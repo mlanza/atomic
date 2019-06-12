@@ -1,4 +1,4 @@
-import {does, implement, ILookup} from 'cloe/core';
+import {does, implement, ILookup} from 'atomic/core';
 import {IMiddleware} from "../../protocols/imiddleware/instance"
 
 function handle(self, command, next){

@@ -1,4 +1,4 @@
-import {doto, conj, apply} from 'cloe/core';
+import {doto, conj, apply} from 'atomic/core';
 import {_ as v} from "param.macro";
 
 export default function Middleware(handlers){

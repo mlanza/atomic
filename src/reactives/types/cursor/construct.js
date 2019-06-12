@@ -1,4 +1,4 @@
-import {weakMap} from "cloe/core";
+import {weakMap} from "atomic/core";
 
 export default function Cursor(source, path, callbacks){
   this.source = source;

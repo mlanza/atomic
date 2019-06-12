@@ -1,7 +1,7 @@
-import {overload} from "cloe/core";
-import * as t from "cloe/transducers";
-import * as T from "cloe/core";
-import * as I from "cloe/immutables";
+import {overload} from "atomic/core";
+import * as t from "atomic/transducers";
+import * as T from "atomic/core";
+import * as I from "atomic/immutables";
 
 export const map = overload(null, t.map, T.map);
 export const mapcat = overload(null, t.mapcat, T.mapcat);

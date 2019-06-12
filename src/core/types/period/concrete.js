@@ -17,17 +17,12 @@ export function year(obj){ //TODO optional arg: first month of year
   return day(period(patch(start(obj), soy()), patch(end(obj), eoy())));
 }
 
-function week1(period){
-  return week2(period, 0);
-}
-
-function week2(pd, firstDayOfWeek){
-  var lastDayOfWeek = 6 - firstDayOfWeek,
+export function week(pd, fdow){
+  var firstDayOfWeek = fdow || 0,
+      lastDayOfWeek = 6 - firstDayOfWeek,
       s       = start(pd),
       e       = end(pd),
       soffset = Math.abs(firstDayOfWeek - s.getDay()),
       eoffset = Math.abs(lastDayOfWeek  - e.getDay());
   return period(add(s, days(-soffset)), add(e, days(eoffset)));
 }
-
-export const week = overload(null, week1, week2);

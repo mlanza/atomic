@@ -1,4 +1,4 @@
-import {first, overload} from "cloe/core";
+import {first, overload} from "atomic/core";
 
 export default function Router(fallback, handlers, receives){
   this.fallback = fallback;

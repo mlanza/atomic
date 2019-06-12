@@ -1,4 +1,4 @@
-import {overload} from 'cloe/core';
+import {overload} from 'atomic/core';
 
 export default function NestedAttrs(element, key){
   this.element = element;

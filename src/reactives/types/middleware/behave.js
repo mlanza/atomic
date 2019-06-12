@@ -1,4 +1,4 @@
-import {does, doto, noop, reverse, reduce, specify, implement, ICollection} from 'cloe/core';
+import {does, doto, noop, reverse, reduce, specify, implement, ICollection} from 'atomic/core';
 import {IMiddleware} from "../../protocols/imiddleware/instance"
 
 function conj(self, handler){

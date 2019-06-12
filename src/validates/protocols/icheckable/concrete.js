@@ -1,4 +1,4 @@
-import {overload, branch, isString, identity, awaits} from 'cloe/core';
+import {overload, branch, isString, identity, awaits} from 'atomic/core';
 import {anno} from "../../types/annotation/construct";
 import {catches} from "../../types/catches/construct";
 import {map} from "../../types/map/construct";

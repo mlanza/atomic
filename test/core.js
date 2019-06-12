@@ -1,9 +1,9 @@
-import * as _ from "cloe/core";
-import * as I from "cloe/immutables";
-import * as dom from "cloe/dom";
-import * as $ from "cloe/reactives";
-import * as vd from "cloe/validates";
-import * as t from "cloe/transducers";
+import * as _ from "atomic/core";
+import * as I from "atomic/immutables";
+import * as dom from "atomic/dom";
+import * as $ from "atomic/reactives";
+import * as vd from "atomic/validates";
+import * as t from "atomic/transducers";
 import QUnit from "qunit";
 import {_ as v} from "param.macro";
 

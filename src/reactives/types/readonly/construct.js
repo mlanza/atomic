@@ -1,4 +1,4 @@
-import {does, satisfies, specify, IDeref} from 'cloe/core';
+import {does, satisfies, specify, IDeref} from 'atomic/core';
 
 function deref(self){
   return IDeref.deref(self.source);

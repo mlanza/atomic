@@ -1,4 +1,4 @@
-import {does, doto, partial, implement, specify, handler, filter, concat, IMatch, IAppendable, IPrependable, ISeqable} from "cloe/core";
+import {does, doto, partial, implement, specify, handler, filter, concat, IMatch, IAppendable, IPrependable, ISeqable} from "atomic/core";
 import {IDispatch, IEvented} from '../../protocols';
 import {_ as v} from "param.macro";
 

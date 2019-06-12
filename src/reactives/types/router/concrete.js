@@ -1,4 +1,4 @@
-import {doto, overload, specify, IMatch} from "cloe/core";
+import {doto, overload, specify, IMatch} from "atomic/core";
 import {IDispatch} from '../../protocols';
 import {_ as v} from "param.macro";
 

@@ -1,2 +1,9 @@
-# Cloe
-An immutable-first, protocol-oriented library inspired by ClojureScript and which integrates with native types like objects and arrays.  Transducers included.
+# Atomic
+An wholemeal approach for building up programs which treats native JavaScript objects and arrays as immutables.
+
+* composable
+* immutable-first
+* protocol-oriented
+* Clojure-inspired
+* functional reactive programming
+* transducers

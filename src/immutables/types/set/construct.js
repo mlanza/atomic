@@ -1,5 +1,5 @@
 import Immutable from "immutable";
-import {ICoerce} from "cloe/core";
+import {ICoerce} from "atomic/core";
 
 export const Set = Immutable.Set;
 

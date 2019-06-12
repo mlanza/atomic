@@ -1,5 +1,5 @@
-import {specify, satisfies, each, parent as _parent} from 'cloe/core';
-import {trigger} from "cloe/reactives";
+import {specify, satisfies, each, parent as _parent} from 'atomic/core';
+import {trigger} from "atomic/reactives";
 import IMountable from "./instance";
 import {_ as v} from "param.macro";
 

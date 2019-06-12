@@ -1,4 +1,4 @@
-import {protocol} from "cloe/core";
+import {protocol} from "atomic/core";
 export const IHtml = protocol({
   html: null
 });
