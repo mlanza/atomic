@@ -42,7 +42,7 @@ export function between(min, max){
   return min == max ?
     anno({type: 'equal', value: min},
       pred(eq, null, min)) :
-    anno({type: 'between', min, man},
+    anno({type: 'between', min, max},
       or(
         anno({type: 'min', min}, pred(gte, null, min)),
         anno({type: 'max', max}, pred(lte, null, max))));

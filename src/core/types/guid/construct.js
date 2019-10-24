@@ -25,3 +25,5 @@ function guid0(){
 }
 
 export const guid = overload(guid0, guid1);
+
+export {GUID};

@@ -1,39 +1,32 @@
-import {overload, does, implement, locate, query} from 'atomic/core';
+import {overload, does, implement, locate, query, each, maybe, comp, either} from 'atomic/core';
 import {IValue, IText} from "../../protocols";
-import * as _ from 'atomic/core';
 import {_ as v} from "param.macro";
 
-function text1(self){
-  return _.maybe(query(self, "option"), locate(v, function(option){
-    return option.selected;
-  }), IText.text) || "";
+function access(f, g){
+
+  function _value1(self){
+    return maybe(query(self, "option"), locate(v, function(option){
+      return option.selected;
+    }), f);
+  }
+
+  const value1 = g ? comp(g, _value1) : _value1;
+
+  function value2(self, value){
+    each(function(option){
+      const selected = f(option) == value;
+      if (option.selected != selected) {
+        option.selected = selected;
+      }
+    }, query(self, "option"));
+  }
+
+  return overload(null, value1, value2);
+
 }
 
-function text2(self, value){
-  _.maybe(query(self, "option"), locate(v, function(option){
-    return IText.text(option) == value;
-  }), function(option){
-    option.selected = true;
-  });
-}
-
-const text = overload(null, text1, text2);
-
-function value1(self){
-  return _.maybe(query(self, "option"), locate(v, function(option){
-    return option.selected;
-  }), IValue.value);
-}
-
-function value2(self, value){
-  _.maybe(query(self, "option"), locate(v, function(option){
-    return IValue.value(option) == value;
-  }), function(option){
-    option.selected = true;
-  });
-}
-
-const value = overload(null, value1, value2);
+const text  = access(IText.text, either(v, "")),
+      value = access(IValue.value);
 
 export default does(
   implement(IValue, {value}),

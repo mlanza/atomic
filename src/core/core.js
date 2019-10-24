@@ -16,13 +16,6 @@ export function invokes(self, method, ...args){
   return self[method].apply(self, args);
 }
 
-export function counter(init){
-  let memo = init || 0;
-  return function(){
-    return memo++;
-  }
-}
-
 export function type(self){
   return self == null ? null : self.constructor;
 }
@@ -222,6 +215,12 @@ export const toggles = overload(null, null, null, null, toggles4, toggles5);
 export function detach(method){
   return function(obj, ...args){
     return obj[method](...args);
+  }
+}
+
+export function attach(f){
+  return function(...args){
+    return f.apply(null, [this].concat(args));
   }
 }
 
