@@ -615,9 +615,9 @@ export function iterate(f, x){
   });
 }
 
-export function integers(){
-  return iterate(inc, 1);
-}
+export const integers  = range(Number.MIN_SAFE_INTEGER, Number.MAX_SAFE_INTEGER, 1);
+export const positives = range(1, Number.MAX_SAFE_INTEGER, 1);
+export const negatives = range(-1, Number.MIN_SAFE_INTEGER, -1);
 
 export function dotimes(n, f){
   each(f, range(n))
@@ -658,8 +658,7 @@ export function shuffle(coll) {
   return a;
 }
 
-//e.g. counter: generate(iterate(inc, 0)) or partial(generate, iterate(inc, 0))) for a counter factory;
-export function generate(iterable){
+export function generate(iterable){ //e.g. counter: generate(iterate(inc, 0)) or partial(generate, iterate(inc, 0))) for a counter factory;
   let iter = iterable[Symbol.iterator]();
   return function(){
     return iter.done ? null : iter.next().value;

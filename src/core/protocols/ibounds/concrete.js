@@ -4,6 +4,11 @@ import {IComparable} from "../../protocols/icomparable";
 export const start = IBounds.start;
 export const end = IBounds.end;
 
+function chronology(item){
+  const s = start(item), e = end(item);
+  return s == null || e == null ? [s, e] : [s, e].sort(IComparable.compare);
+}
+
 export function inside(sr, er, b){
   if (b == null) {
     return false;
@@ -15,14 +20,14 @@ export function inside(sr, er, b){
 }
 
 export function between(a, b){
-  const [sa, ea] = [start(a), end(a)].sort(IComparable.compare),
-        [sb, eb] = [start(b), end(b)].sort(IComparable.compare);
+  const [sa, ea] = chronology(a),
+        [sb, eb] = chronology(b);
   return inside(sa, ea, sb) && inside(sa, ea, eb);
 }
 
 export function overlap(a, b){
-  const [sa, ea] = [start(a), end(a)].sort(IComparable.compare),
-        [sb, eb] = [start(b), end(b)].sort(IComparable.compare);
+  const [sa, ea] = chronology(a),
+        [sb, eb] = chronology(b);
   return (
     inside(sa, ea, sb) ||
     inside(sa, ea, eb) ||

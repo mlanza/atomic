@@ -1,4 +1,5 @@
 export * from "./types/empty-list";
+export * from "./types/number";
 export * from "./types/lazy-seq";
 export * from "./types/method";
 export * from "./types/multimethod";
@@ -24,7 +25,6 @@ export * from "./types/per";
 export * from "./types/maybe";
 export * from "./types/months";
 export * from "./types/nil";
-export * from "./types/number";
 export * from "./types/object";
 export * from "./types/okay";
 export * from "./types/associative-subset";

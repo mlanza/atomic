@@ -1,10 +1,11 @@
-import {overload, counter} from "../../core";
+import {overload} from "../../core";
 import IEncode from "./instance";
 import {IHash} from "../ihash";
 import {weakMap} from "../../types/weak-map/construct";
+import {generate, positives} from "../../types/lazy-seq/concrete";
 
 const encodedRefs   = weakMap();
-const encodedRefIds = counter();
+const encodedRefIds = generate(positives);
 
 function encode1(self){
   return encode2(self, "@type");

@@ -122,10 +122,12 @@ export function flip(f){
   }
 }
 
-function fnil(f, ...substitutes){
+export function fnil(f, ...substitutes){
   return function(...args){
-    for(var x = 0; x < args.length; x++){
-      if (isNil(args[x])) { args[x] = substitutes[x] };
+    for(var x = 0; x < substitutes.length; x++){
+      if (isNil(args[x])) {
+        args[x] = substitutes[x]
+      };
     }
     return f(...args);
   }

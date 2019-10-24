@@ -235,7 +235,7 @@ QUnit.test("iappendable, iprependable", function(assert){
 
 QUnit.test("sequences", function(assert){
   assert.deepEqual(["A","B","C"] |> _.cycle |> _.take(5, v) |> _.toArray, ["A","B","C","A","B"])
-  assert.deepEqual(_.integers() |> _.take(5, v) |> _.toArray, [1,2,3,4,5]);
+  assert.deepEqual(_.positives |> _.take(5, v) |> _.toArray, [1,2,3,4,5]);
   assert.deepEqual(["A","B","C"] |> _.rest |> _.toArray, ["B", "C"]);
   assert.deepEqual(_.repeatedly(3, _.constantly(4)) |> _.toArray, [4,4,4]);
   assert.deepEqual(stooges |> _.concat(v, ["Shemp","Corey"]) |> _.toArray, ["Larry","Curly","Moe","Shemp","Corey"]);
@@ -249,7 +249,7 @@ QUnit.test("sequences", function(assert){
   assert.deepEqual(["A","B",["C","D"],["E", ["F", "G"]]] |> _.flatten |> _.toArray, ["A","B","C","D","E","F","G"]);
   assert.deepEqual([null, ""] |> _.flatten |> _.toArray, [null, ""]);
   assert.deepEqual(pieces |> _.selectKeys(v, ["pawn", "knight"]), {pawn: 1, knight: 3});
-  assert.deepEqual(["A","B","C","D","E"] |> _.interleave(v, _.repeat("="), _.integers()) |> _.toArray, ["A","=",1,"B","=",2,"C","=",3,"D","=",4,"E","=",5]);
+  assert.deepEqual(["A","B","C","D","E"] |> _.interleave(v, _.repeat("="), _.positives) |> _.toArray, ["A","=",1,"B","=",2,"C","=",3,"D","=",4,"E","=",5]);
   assert.deepEqual([1,2,3] |> _.interleave(v, [10,11,12]) |> _.toArray, [1,10,2,11,3,12]);
   assert.equal([false, true] |> _.some(_.isTrue, v), true);
   assert.equal([false, true] |> _.some(_.isFalse, v), true);
