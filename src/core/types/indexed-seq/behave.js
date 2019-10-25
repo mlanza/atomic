@@ -3,7 +3,7 @@ import {implement} from '../protocol';
 import {indexedSeq} from './construct';
 import {revSeq} from '../../types/rev-seq/construct';
 import {isReduced, unreduced} from '../../types/reduced';
-import {ICoerce, IQuery, IEquiv, IReversible, IMapEntry, IFind, IInclusive, IAssociative, IAppendable, IPrependable, ICollection, INext, ICounted, IReduce, IKVReduce, ISeq, ISeqable, ISequential, IIndexed, ILookup, IFn, IEmptyableCollection} from '../../protocols';
+import {ICoerce, IQueryable, IEquiv, IReversible, IMapEntry, IFind, IInclusive, IAssociative, IAppendable, IPrependable, ICollection, INext, ICounted, IReduce, IKVReduce, ISeq, ISeqable, ISequential, IIndexed, ILookup, IFn, IEmptyableCollection} from '../../protocols';
 import {locate} from '../../protocols/ilocate/concrete';
 import {concat} from '../../types/concatenated/construct';
 import {iterable} from '../lazy-seq/behave';
@@ -118,7 +118,7 @@ function query(self, pred){
 export default does(
   iterable,
   encodeable,
-  implement(IQuery, {query}),
+  implement(IQueryable, {query}),
   implement(ISequential),
   implement(IIndexed, {nth, idx}),
   implement(IReversible, {reverse}),

@@ -1,5 +1,5 @@
 import {implement} from '../protocol';
-import {IBlankable, ICompact, ILocate, IQuery, IFunctor, IReversible, IYank, IMatch, ICoerce, IInclusive, IFind, IEquiv, ICollection, INext, ISeq, IReduce, IKVReduce, ISeqable, ISequential, IIndexed, IEmptyableCollection, ICounted, IAppendable, IPrependable} from '../../protocols';
+import {IBlankable, ICompact, ILocate, IQueryable, IFunctor, IReversible, IYank, IMatch, ICoerce, IInclusive, IFind, IEquiv, ICollection, INext, ISeq, IReduce, IKVReduce, ISeqable, ISequential, IIndexed, IEmptyableCollection, ICounted, IAppendable, IPrependable} from '../../protocols';
 import {overload, identity, does, partial} from '../../core';
 import Reduced, {isReduced, reduced, unreduced} from "../reduced";
 import {concat} from "../concatenated/construct";
@@ -186,7 +186,7 @@ export default does(
   implement(IBlankable, {blank}),
   implement(ICompact, {compact}),
   implement(IInclusive, {includes}),
-  implement(IQuery, {query}),
+  implement(IQueryable, {query}),
   implement(ILocate, {locate}),
   implement(IYank, {yank}),
   implement(IFunctor, {fmap}),

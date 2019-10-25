@@ -1,5 +1,5 @@
 import {protocol} from "../../types/protocol";
-export const IQuery = protocol({
+export const IQueryable = protocol({
   query: null
 });
-export default IQuery;
+export default IQueryable;

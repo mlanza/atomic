@@ -23,6 +23,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/reactives', 'atomic/validates', 'at
       IAppendable = _.IAppendable,
       IPrependable = _.IPrependable,
       ISubscribe = _.ISubscribe,
+      IQueryable = _.IQueryable,
       INext = _.INext,
       ISeq = _.ISeq,
       IDeref = _.IDeref,
@@ -41,6 +42,10 @@ define(['atomic/core', 'atomic/dom', 'atomic/reactives', 'atomic/validates', 'at
 
   function create(){ //USE What.create = create; What.create(1);
     return _.apply(_.constructs(this), _.slice(arguments));  //universal `new-less` create function
+  }
+
+  function createable(Type){ //TODO consider
+    Type.create = create;
   }
 
   function path(){
@@ -137,10 +142,6 @@ define(['atomic/core', 'atomic/dom', 'atomic/reactives', 'atomic/validates', 'at
     resolve: null //TODO returns both resolved and unresolved values
   });
 
-  var IQueryable = _.protocol({
-    query: null
-  });
-
   var IFactory = _.protocol({
     make: null
   });
@@ -206,7 +207,6 @@ define(['atomic/core', 'atomic/dom', 'atomic/reactives', 'atomic/validates', 'at
     ITransaction: ITransaction,
     IEntitySelector: IEntitySelector,
     IMount: IMount,
-    IMiddleware: IMiddleware,
     IMiddleware: IMiddleware,
     IWorkspace: IWorkspace
   }
@@ -1455,21 +1455,30 @@ define(['atomic/core', 'atomic/dom', 'atomic/reactives', 'atomic/validates', 'at
     }
   }
 
-  var CommandBus = (function(){
+  var Bus = (function(){
 
-    function CommandBus(handlers){
-      this.handlers = handlers;
+    function Bus(middlewares){
+      this.middlewares = middlewares;
     }
 
-    function handle(self, command){
-      var handler = _.get(self.handlers, ents.identifier(command));
-      IMiddleware.handle(handler, command);
+    function conj(self, middleware){
+      return new self.constructor(_.conj(self.middlewares, middleware));
     }
 
-    return _.doto(CommandBus,
+    function handle(self, message, next){
+      var f = _.reduce(function(memo, middleware){
+        return $.handle(middleware, _, memo);
+      }, next || _.noop, _.reverse(self.middlewares));
+      return f(message);
+    }
+
+    return _.doto(Bus,
+      _.implement(ICollection, {conj: conj}),
       _.implement(IMiddleware, {handle: handle}));
 
   })();
+
+  var bus = _.constructs(Bus);
 
   var LoadCommand = (function(){
 
@@ -1480,18 +1489,33 @@ define(['atomic/core', 'atomic/dom', 'atomic/reactives', 'atomic/validates', 'at
     return _.doto(LoadCommand,
       _.implement(IIdentifiable, {identifier: _.constantly("load")}))
 
-  })()
+  })();
 
-  LoadCommand.create = create;
+  var loadCommand = _.constructs(LoadCommand);
+
+  var LoadedEvent = (function(){
+
+    function LoadedEvent(entities){
+      this.entities = entities;
+    }
+
+    return _.doto(LoadedEvent,
+      _.implement(IIdentifiable, {identifier: _.constantly("loaded")}))
+
+  })();
+
+  var loadedEvent = _.constructs(LoadedEvent);
 
   var LoadHandler = (function(){
 
-    function LoadHandler(subject){
-      this.subject = subject; //any subject that abides the `IWorkspace.load` protocol.
+    function LoadHandler(subject, provider){
+      this.subject = subject;
+      this.provider = provider;
     }
 
-    function handle(self, command){
-      ents.load(self.subject, command.entities);
+    function handle(self, command, next){
+      $.raise(self.provider, loadedEvent(command.entities));
+      return next(command);
     }
 
     return _.doto(LoadHandler,
@@ -1499,7 +1523,25 @@ define(['atomic/core', 'atomic/dom', 'atomic/reactives', 'atomic/validates', 'at
 
   })();
 
-  LoadHandler.create = create;
+  var loadHandler = _.constructs(LoadHandler);
+
+  var LoadedHandler = (function(){
+
+    function LoadedHandler(subject){
+      this.subject = subject;
+    }
+
+    function handle(self, event, next){
+      ents.load(self.subject, event.entities);
+      return next(event);
+    }
+
+    return _.doto(LoadedHandler,
+      _.implement(IMiddleware, {handle: handle}));
+
+  })();
+
+  var loadedHandler = _.constructs(LoadedHandler);
 
   var QueryCommand = (function(){
 
@@ -1508,20 +1550,37 @@ define(['atomic/core', 'atomic/dom', 'atomic/reactives', 'atomic/validates', 'at
     }
 
     return _.doto(QueryCommand,
-      _.implement(IIdentifiable, {identifier: _.constantly("query")}))
+      _.implement(IIdentifiable, {identifier: _.constantly("query")}));
 
-  })()
+  })();
 
-  QueryCommand.create = create;
+  var queryCommand = _.constructs(QueryCommand);
+
+  var QueriedEvent = (function(){
+
+    function QueriedEvent(plan){
+      this.plan = plan;
+    }
+
+    return _.doto(QueriedEvent,
+      _.implement(IIdentifiable, {identifier: _.constantly("queried")}));
+
+  })();
+
+  var queriedEvent = _.constructs(QueriedEvent);
 
   var QueryHandler = (function(){
 
-    function QueryHandler(subject){
-      this.subject = subject; //any subject that abides the `IWorkspace.load` protocol.
+    function QueryHandler(subject, provider){
+      this.subject = subject;
+      this.provider = provider;
     }
 
-    function handle(self, command){
-      ents.query(self.subject, command.plan);
+    function handle(self, command, next){
+      return _.fmap(ents.query(self.subject, command.plan), function(entities){
+        $.raise(self.provider, loadedEvent(entities));
+        return next(command);
+      });
     }
 
     return _.doto(QueryHandler,
@@ -1529,7 +1588,24 @@ define(['atomic/core', 'atomic/dom', 'atomic/reactives', 'atomic/validates', 'at
 
   })();
 
-  QueryHandler.create = create;
+  var queryHandler = _.constructs(QueryHandler);
+
+  var QueriedHandler = (function(){
+
+    function QueriedHandler(subject){
+      this.subject = subject;
+    }
+
+    function handle(self, event, next){
+      _.log('x', self, event, next)
+    }
+
+    return _.doto(QueriedHandler,
+      _.implement(IMiddleware, {handle: handle}));
+
+  })();
+
+  var queriedHandler = _.constructs(QueriedHandler);
 
   var SelectCommand = (function(){
 
@@ -1540,18 +1616,33 @@ define(['atomic/core', 'atomic/dom', 'atomic/reactives', 'atomic/validates', 'at
     return _.doto(SelectCommand,
       _.implement(IIdentifiable, {identifier: _.constantly("select")}))
 
-  })()
+  })();
 
-  SelectCommand.create = create;
+  var selectCommand = _.constructs(SelectCommand);
+
+  var SelectedEvent = (function(){
+
+    function SelectedEvent(id){
+      this.id = id;
+    }
+
+    return _.doto(SelectedEvent,
+      _.implement(IIdentifiable, {identifier: _.constantly("selected")}))
+
+  })();
+
+  var selectedEvent = _.constructs(SelectedEvent);
 
   var SelectHandler = (function(){
 
-    function SelectHandler(subject){
-      this.subject = subject; //any subject that abides the `IWorkspace.load` protocol.
+    function SelectHandler(subject, provider){
+      this.subject = subject;
+      this.provider = provider;
     }
 
-    function handle(self, command){
-      ents.select(self.subject, command.id);
+    function handle(self, command, next){
+      $.raise(self.provider, selectedEvent(command.id));
+      return next(command);
     }
 
     return _.doto(SelectHandler,
@@ -1559,7 +1650,25 @@ define(['atomic/core', 'atomic/dom', 'atomic/reactives', 'atomic/validates', 'at
 
   })();
 
-  SelectHandler.create = create;
+  var selectHandler = _.constructs(SelectHandler);
+
+  var SelectedHandler = (function(){
+
+    function SelectedHandler(subject){
+      this.subject = subject;
+    }
+
+    function handle(self, event, next){
+      ents.select(self.subject, event.id);
+      return next(event);
+    }
+
+    return _.doto(SelectedHandler,
+      _.implement(IMiddleware, {handle: handle}));
+
+  })();
+
+  var selectedHandler = _.constructs(SelectedHandler);
 
   var DeselectCommand = (function(){
 
@@ -1568,20 +1677,35 @@ define(['atomic/core', 'atomic/dom', 'atomic/reactives', 'atomic/validates', 'at
     }
 
     return _.doto(DeselectCommand,
-      _.implement(IIdentifiable, {identifier: _.constantly("select")}))
+      _.implement(IIdentifiable, {identifier: _.constantly("deselect")}))
 
-  })()
+  })();
 
-  DeselectCommand.create = create;
+  var deselectCommand = _.constructs(DeselectCommand);
+
+  var DeselectedEvent = (function(){
+
+    function DeselectedEvent(id){
+      this.id = id;
+    }
+
+    return _.doto(DeselectedEvent,
+      _.implement(IIdentifiable, {identifier: _.constantly("deselected")}))
+
+  })();
+
+  var deselectedEvent = _.constructs(DeselectedEvent);
 
   var DeselectHandler = (function(){
 
-    function DeselectHandler(subject){
-      this.subject = subject; //any subject that abides the `IWorkspace.load` protocol.
+    function DeselectHandler(subject, provider){
+      this.subject = subject;
+      this.provider = provider;
     }
 
-    function handle(self, command){
-      ents.deselect(self.subject, command.id);
+    function handle(self, command, next){
+      $.raise(self.provider, deselectedEvent(command.id));
+      return next(command);
     }
 
     return _.doto(DeselectHandler,
@@ -1589,7 +1713,143 @@ define(['atomic/core', 'atomic/dom', 'atomic/reactives', 'atomic/validates', 'at
 
   })();
 
-  DeselectHandler.create = create;
+  var deselectHandler = _.constructs(DeselectHandler);
+
+  var DeselectedHandler = (function(){
+
+    function DeselectedHandler(subject){
+      this.subject = subject;
+    }
+
+    function handle(self, event, next){
+      ents.deselect(self.subject, command.id);
+      return next(event);
+    }
+
+    return _.doto(DeselectedHandler,
+      _.implement(IMiddleware, {handle: handle}));
+
+  })();
+
+  var deselectedHandler = _.constructs(DeselectedHandler);
+
+  var LockingMiddleware = (function(){
+
+    function LockingMiddleware(wip){
+      this.wip = wip;
+    }
+
+    function handle(self, message, next){
+      return (self.wip = _.fmap(Promise.resolve(self.wip), function(result){
+        return next(message);
+      }));
+    }
+
+    return _.doto(LockingMiddleware,
+      _.implement(IMiddleware, {handle: handle}));
+
+  })();
+
+  function lockingMiddleware(){
+    return new LockingMiddleware([]);
+  }
+
+  var LoggerMiddleware = (function(){
+
+    function LoggerMiddleware(label){
+      this.label = label;
+    }
+
+    function handle(self, message, next){
+      _.log(self.label, message);
+      return next(message);
+    }
+
+    return _.doto(LoggerMiddleware,
+      _.implement(IMiddleware, {handle: handle}));
+
+  })();
+
+  var loggerMiddleware = _.constructs(LoggerMiddleware);
+
+  var DrainEventsMiddleware = (function(){
+
+    function DrainEventsMiddleware(provider, eventBus){
+      this.provider = provider;
+      this.eventBus = eventBus;
+    }
+
+    function handle(self, command, next){
+      var result = next(command);
+      _.each(function(event){
+        $.handle(self.eventBus, event);
+      }, $.release(self.provider));
+      return result;
+    }
+
+    return _.doto(DrainEventsMiddleware,
+      _.implement(IMiddleware, {handle: handle}));
+
+  })();
+
+  var drainEventsMiddleware = _.constructs(DrainEventsMiddleware);
+
+
+  var BroadcastMiddleware = (function(){
+
+    function BroadcastMiddleware(publisher){
+      this.publisher = publisher;
+    }
+
+    function handle(self, event, next){
+      $.pub(self.publisher, event);
+      return next(event);
+    }
+
+    return _.doto(BroadcastMiddleware,
+      _.implement(IMiddleware, {handle: handle}));
+
+  })()
+
+  var broadcastMiddleware = _.constructs(BroadcastMiddleware);
+
+
+  var HandlerMiddleware = (function(){
+
+    function HandlerMiddleware(handlers, identify){
+      this.handlers = handlers;
+      this.identify = identify;
+    }
+
+    function assoc(self, key, handler){
+      return new self.constructor(_.assoc(self.handlers, key, handler), self.identify);
+    }
+
+    function handle(self, message, next){
+      var handler = _.get(self.handlers, self.identify(message)),
+          result  = $.handle(handler, message);
+      next(message);
+      return result;
+    }
+
+    return _.doto(HandlerMiddleware,
+      _.implement(IAssociative, {assoc: assoc}),
+      _.implement(IMiddleware, {handle: handle}));
+
+  })();
+
+  var handlerMiddleware2 = _.constructs(HandlerMiddleware);
+
+  function handlerMiddleware1(identify){
+    return handlerMiddleware2({}, identify);
+  }
+
+  function handlerMiddleware0(){
+    return handlerMiddleware1(IIdentifiable.identifier);
+  }
+
+  var handlerMiddleware = _.overload(handlerMiddleware0, handlerMiddleware1, handlerMiddleware2);
+
 
   //RULE it must be possible to interact with a component even if it never gets mounted.
   var Outline = (function(){
@@ -1616,20 +1876,15 @@ define(['atomic/core', 'atomic/dom', 'atomic/reactives', 'atomic/validates', 'at
     }
 
     function load(self, entities){
-      _.log("load", self, entities);
       _.swap(self.$buffer, ents.load(_, entities));
     }
 
     function query(self, plan){ //NOTE cmd because it eventually (in `load`) mutates state
-      _.log("query", self, plan);
-      return _.fmap(ents.query(self.domain, plan), function(entities){
-        IWorkspace.load(self, entities);
-      });
+      return ents.query(self.domain, plan);
     }
 
     //TODO commands must return a promise when the outcome of an async opertion is needed.
     function select(self, guid){
-      _.log("select", self, guid);
       //currently implemented as an event because it is accepted outright
       //TODO implement command validation/rejection model
       _.swap(self.$model,
@@ -1638,7 +1893,6 @@ define(['atomic/core', 'atomic/dom', 'atomic/reactives', 'atomic/validates', 'at
     }
 
     function deselect(self, guid){
-      _.log("deselect", self, guid);
       _.swap(self.$model,
         _.update(_, "selected",
           _.disj(_, _.str(guid))));
@@ -1741,19 +1995,40 @@ define(['atomic/core', 'atomic/dom', 'atomic/reactives', 'atomic/validates', 'at
     var domain = ents.domain([tasks]);
     var root = _.guid("a");
     var leaf = _.guid("b");
-    var $outline = window.$outline = outline(domain, $.cell(ents.typedEntityBuffer()), {root: root});
+    var $events = $.events();
+    var $outline = outline(domain, $.cell(ents.typedEntityBuffer()), {root: root});
+
     //RULE the development strategy proposes apps be built up in layers of option features. (e.g. how the CommandBus feature adds to Outline)
-    var bus = new CommandBus({ //TODO what is the best way for a bus to be provided to the app?  From the component itself (e.g. `ICommander.cmdbus`)? Via a factory?  The bus becomes the keeper of command metadata against which the user can see what he can do.
-      load: LoadHandler.create($outline),
-      query: QueryHandler.create($outline),
-      select: SelectHandler.create($outline),
-      deselect: DeselectHandler.create($outline)
-    });
+    //TODO what is the best way for a bus to be provided to the app?  From the component itself (e.g. `ICommander.cmdbus`)? Via a factory?  The bus becomes the keeper of command metadata against which the user can see what he can do.
+
+    var $ebus = new Bus([
+      loggerMiddleware("event in"),
+      _.just(handlerMiddleware(),
+        _.assoc(_, "loaded", loadedHandler($outline)),
+        _.assoc(_, "queried", queriedHandler($outline)),
+        _.assoc(_, "selected", selectedHandler($outline)),
+        _.assoc(_, "deselected", deselectedHandler($outline))),
+      loggerMiddleware("event out")
+    ]);
+
+    var $cbus = new Bus([
+      loggerMiddleware("command in"),
+      lockingMiddleware(),
+      _.just(handlerMiddleware(),
+        _.assoc(_, "load", loadHandler($outline, $events)),
+        _.assoc(_, "query", queryHandler($outline, $events)),
+        _.assoc(_, "select", selectHandler($outline, $events)),
+        _.assoc(_, "deselect", deselectHandler($outline, $events))),
+      drainEventsMiddleware($events, $ebus),
+      loggerMiddleware("command out")
+    ]);
+
+    Object.assign(window, {$events: $events, $cbus: $cbus, $ebus: $ebus, $outline: $outline});
+
     ents.mount($outline, el);
-    _.each(ents.handle(bus, _), [
-      QueryCommand.create({$type: "tasks"}),
-      QueryCommand.create({$type: "tasks", $filter: _.str("GUID eq '", root, "'")}),
-      SelectCommand.create(root)
+    _.each(ents.handle($cbus, _), [
+      queryCommand({$type: "tasks"}),
+      selectCommand(root)
     ])
     /*_.each(_.applying($outline), [
       ents.query(_, {$type: "SP.Data.TasksListItem", $filter: _.str("GUID eq '", root, "'")}),
