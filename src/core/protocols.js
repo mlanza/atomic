@@ -38,7 +38,7 @@ export * from "./protocols/iotherwise/instance";
 export * from "./protocols/ipath/instance";
 export * from "./protocols/ipersistent/instance";
 export * from "./protocols/iprependable/instance";
-export * from "./protocols/iquery/instance";
+export * from "./protocols/iqueryable/instance";
 export * from "./protocols/irecord/instance";
 export * from "./protocols/ireduce/instance";
 export * from "./protocols/ireset/instance";

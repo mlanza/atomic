@@ -38,7 +38,7 @@ import {
   weakMap,
   isIdentical,
   ILocate,
-  IQuery,
+  IQueryable,
   ISequential,
   IMatch,
   IYank,
@@ -267,7 +267,7 @@ function query(self, selector){
 }
 
 function locate(self, selector){
-  return isFunction(selector) ? ISeq.first(IQuery.query(self, selector)) : self.querySelector(selector);
+  return isFunction(selector) ? ISeq.first(IQueryable.query(self, selector)) : self.querySelector(selector);
 }
 
 function children(self){
@@ -406,7 +406,7 @@ export const icontents = implement(IContent, {contents});
 export const ireduce = implement(IReduce, {reduce});
 export const ievented = implement(IEvented, {on, off, trigger});
 export const ilocate = implement(ILocate, {locate});
-export const iquery = implement(IQuery, {query});
+export const iquery = implement(IQueryable, {query});
 
 export default does(
   ihierarchy,

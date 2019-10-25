@@ -1,4 +1,4 @@
-import {does, maybe, cons, implement, lazySeq, comp, iterable, ILookup, IIndexed, ICounted, ISeq, INext, ISeqable, ISequential, IHierarchy, IQuery, ILocate, IReduce} from 'atomic/core';
+import {does, maybe, cons, implement, lazySeq, comp, iterable, ILookup, IIndexed, ICounted, ISeq, INext, ISeqable, ISequential, IHierarchy, IQueryable, ILocate, IReduce} from 'atomic/core';
 import {IContent} from "../../protocols";
 import {_ as v} from "param.macro";
 
@@ -31,7 +31,7 @@ const parents = comp(IHierarchy.parents, seq);
 const contents = comp(IContent.contents, seq);
 
 function query(self, selector){
-  return maybe(self, seq, IQuery.query(v, selector)) || [];
+  return maybe(self, seq, IQueryable.query(v, selector)) || [];
 }
 
 function locate(self, selector){
@@ -59,7 +59,7 @@ export default does(
   implement(IReduce, {reduce}),
   implement(INext, {next}),
   implement(IContent, {contents}),
-  implement(IQuery, {query}),
+  implement(IQueryable, {query}),
   implement(ILocate, {locate}),
   implement(IHierarchy, {parent, parents, closest, nextSiblings, nextSibling, prevSiblings, prevSibling, siblings, children, descendants}),
   implement(ISequential),
