@@ -5,4 +5,4 @@ dist/*
 _src
 .DS_Store
 package-lock.json
-cloe.sublime-workspace
+atomic.sublime-workspace

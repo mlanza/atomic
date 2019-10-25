@@ -12,7 +12,7 @@ export default {
     'src/validates.js'
   ],
   output: {
-    dir: 'dist/atomic',
+    dir: 'dist/_atomic',
     format: 'amd',
     globals: {
       "jquery": "jQuery",
