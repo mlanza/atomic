@@ -1455,11 +1455,13 @@ define(['atomic/core', 'atomic/dom', 'atomic/reactives', 'atomic/validates', 'at
     }
   }
 
-  var Bus = (function(){
+  function Bus(middlewares){
+    this.middlewares = middlewares;
+  }
 
-    function Bus(middlewares){
-      this.middlewares = middlewares;
-    }
+  var bus = _.constructs(Bus);
+
+  (function(){
 
     function conj(self, middleware){
       return new self.constructor(_.conj(self.middlewares, middleware));
@@ -1478,40 +1480,39 @@ define(['atomic/core', 'atomic/dom', 'atomic/reactives', 'atomic/validates', 'at
 
   })();
 
-  var bus = _.constructs(Bus);
+  function LoadCommand(entities){
+    this.entities = entities;
+  }
 
-  var LoadCommand = (function(){
+  var loadCommand = _.constructs(LoadCommand);
 
-    function LoadCommand(entities){
-      this.entities = entities;
-    }
+  (function(){
 
     return _.doto(LoadCommand,
       _.implement(IIdentifiable, {identifier: _.constantly("load")}))
 
   })();
 
-  var loadCommand = _.constructs(LoadCommand);
+  function LoadedEvent(entities){
+    this.entities = entities;
+  }
 
-  var LoadedEvent = (function(){
+  var loadedEvent = _.constructs(LoadedEvent);
 
-    function LoadedEvent(entities){
-      this.entities = entities;
-    }
+  (function(){
 
     return _.doto(LoadedEvent,
       _.implement(IIdentifiable, {identifier: _.constantly("loaded")}))
 
   })();
 
-  var loadedEvent = _.constructs(LoadedEvent);
+  function LoadHandler(provider){
+    this.provider = provider;
+  }
 
-  var LoadHandler = (function(){
+  var loadHandler = _.constructs(LoadHandler);
 
-    function LoadHandler(subject, provider){
-      this.subject = subject;
-      this.provider = provider;
-    }
+  (function(){
 
     function handle(self, command, next){
       $.raise(self.provider, loadedEvent(command.entities));
@@ -1523,13 +1524,13 @@ define(['atomic/core', 'atomic/dom', 'atomic/reactives', 'atomic/validates', 'at
 
   })();
 
-  var loadHandler = _.constructs(LoadHandler);
+  function LoadedHandler(subject){
+    this.subject = subject;
+  }
 
-  var LoadedHandler = (function(){
+  var loadedHandler = _.constructs(LoadedHandler);
 
-    function LoadedHandler(subject){
-      this.subject = subject;
-    }
+  (function(){
 
     function handle(self, event, next){
       ents.load(self.subject, event.entities);
@@ -1541,40 +1542,40 @@ define(['atomic/core', 'atomic/dom', 'atomic/reactives', 'atomic/validates', 'at
 
   })();
 
-  var loadedHandler = _.constructs(LoadedHandler);
+  function QueryCommand(plan){
+    this.plan = plan;
+  }
 
-  var QueryCommand = (function(){
+  var queryCommand = _.constructs(QueryCommand);
 
-    function QueryCommand(plan){
-      this.plan = plan;
-    }
+  (function(){
 
     return _.doto(QueryCommand,
       _.implement(IIdentifiable, {identifier: _.constantly("query")}));
 
   })();
 
-  var queryCommand = _.constructs(QueryCommand);
+  function QueriedEvent(plan){
+    this.plan = plan;
+  }
 
-  var QueriedEvent = (function(){
+  var queriedEvent = _.constructs(QueriedEvent);
 
-    function QueriedEvent(plan){
-      this.plan = plan;
-    }
+  (function(){
 
     return _.doto(QueriedEvent,
       _.implement(IIdentifiable, {identifier: _.constantly("queried")}));
 
   })();
 
-  var queriedEvent = _.constructs(QueriedEvent);
+  function QueryHandler(subject, provider){
+    this.subject = subject;
+    this.provider = provider;
+  }
 
-  var QueryHandler = (function(){
+  var queryHandler = _.constructs(QueryHandler);
 
-    function QueryHandler(subject, provider){
-      this.subject = subject;
-      this.provider = provider;
-    }
+  (function(){
 
     function handle(self, command, next){
       return _.fmap(ents.query(self.subject, command.plan), function(entities){
@@ -1588,13 +1589,13 @@ define(['atomic/core', 'atomic/dom', 'atomic/reactives', 'atomic/validates', 'at
 
   })();
 
-  var queryHandler = _.constructs(QueryHandler);
+  function QueriedHandler(subject){
+    this.subject = subject;
+  }
 
-  var QueriedHandler = (function(){
+  var queriedHandler = _.constructs(QueriedHandler);
 
-    function QueriedHandler(subject){
-      this.subject = subject;
-    }
+  (function(){
 
     function handle(self, event, next){
       _.log('x', self, event, next)
@@ -1605,40 +1606,39 @@ define(['atomic/core', 'atomic/dom', 'atomic/reactives', 'atomic/validates', 'at
 
   })();
 
-  var queriedHandler = _.constructs(QueriedHandler);
+  function SelectCommand(id){
+    this.id = id;
+  }
 
-  var SelectCommand = (function(){
+  var selectCommand = _.constructs(SelectCommand);
 
-    function SelectCommand(id){
-      this.id = id;
-    }
+  (function(){
 
     return _.doto(SelectCommand,
       _.implement(IIdentifiable, {identifier: _.constantly("select")}))
 
   })();
 
-  var selectCommand = _.constructs(SelectCommand);
+  function SelectedEvent(id){
+    this.id = id;
+  }
 
-  var SelectedEvent = (function(){
+  var selectedEvent = _.constructs(SelectedEvent);
 
-    function SelectedEvent(id){
-      this.id = id;
-    }
+  (function(){
 
     return _.doto(SelectedEvent,
       _.implement(IIdentifiable, {identifier: _.constantly("selected")}))
 
   })();
 
-  var selectedEvent = _.constructs(SelectedEvent);
+  function SelectHandler(provider){
+    this.provider = provider;
+  }
 
-  var SelectHandler = (function(){
+  var selectHandler = _.constructs(SelectHandler);
 
-    function SelectHandler(subject, provider){
-      this.subject = subject;
-      this.provider = provider;
-    }
+  (function(){
 
     function handle(self, command, next){
       $.raise(self.provider, selectedEvent(command.id));
@@ -1650,13 +1650,13 @@ define(['atomic/core', 'atomic/dom', 'atomic/reactives', 'atomic/validates', 'at
 
   })();
 
-  var selectHandler = _.constructs(SelectHandler);
+  function SelectedHandler(subject){
+    this.subject = subject;
+  }
 
-  var SelectedHandler = (function(){
+  var selectedHandler = _.constructs(SelectedHandler);
 
-    function SelectedHandler(subject){
-      this.subject = subject;
-    }
+  (function(){
 
     function handle(self, event, next){
       ents.select(self.subject, event.id);
@@ -1668,40 +1668,39 @@ define(['atomic/core', 'atomic/dom', 'atomic/reactives', 'atomic/validates', 'at
 
   })();
 
-  var selectedHandler = _.constructs(SelectedHandler);
+  function DeselectCommand(id){
+    this.id = id;
+  }
 
-  var DeselectCommand = (function(){
+  var deselectCommand = _.constructs(DeselectCommand);
 
-    function DeselectCommand(id){
-      this.id = id;
-    }
+  (function(){
 
     return _.doto(DeselectCommand,
       _.implement(IIdentifiable, {identifier: _.constantly("deselect")}))
 
   })();
 
-  var deselectCommand = _.constructs(DeselectCommand);
+  function DeselectedEvent(id){
+    this.id = id;
+  }
 
-  var DeselectedEvent = (function(){
+  var deselectedEvent = _.constructs(DeselectedEvent);
 
-    function DeselectedEvent(id){
-      this.id = id;
-    }
+  (function(){
 
     return _.doto(DeselectedEvent,
       _.implement(IIdentifiable, {identifier: _.constantly("deselected")}))
 
   })();
 
-  var deselectedEvent = _.constructs(DeselectedEvent);
+  function DeselectHandler(provider){
+    this.provider = provider;
+  }
 
-  var DeselectHandler = (function(){
+  var deselectHandler = _.constructs(DeselectHandler);
 
-    function DeselectHandler(subject, provider){
-      this.subject = subject;
-      this.provider = provider;
-    }
+  (function(){
 
     function handle(self, command, next){
       $.raise(self.provider, deselectedEvent(command.id));
@@ -1713,13 +1712,13 @@ define(['atomic/core', 'atomic/dom', 'atomic/reactives', 'atomic/validates', 'at
 
   })();
 
-  var deselectHandler = _.constructs(DeselectHandler);
+  function DeselectedHandler(subject){
+    this.subject = subject;
+  }
 
-  var DeselectedHandler = (function(){
+  var deselectedHandler = _.constructs(DeselectedHandler);
 
-    function DeselectedHandler(subject){
-      this.subject = subject;
-    }
+  (function(){
 
     function handle(self, event, next){
       ents.deselect(self.subject, command.id);
@@ -1731,13 +1730,13 @@ define(['atomic/core', 'atomic/dom', 'atomic/reactives', 'atomic/validates', 'at
 
   })();
 
-  var deselectedHandler = _.constructs(DeselectedHandler);
+  function LockingMiddleware(){
+    this.wip = null;
+  }
 
-  var LockingMiddleware = (function(){
+  var lockingMiddleware = _.constructs(LockingMiddleware);
 
-    function LockingMiddleware(wip){
-      this.wip = wip;
-    }
+  (function(){
 
     function handle(self, message, next){
       return (self.wip = _.fmap(Promise.resolve(self.wip), function(result){
@@ -1750,15 +1749,13 @@ define(['atomic/core', 'atomic/dom', 'atomic/reactives', 'atomic/validates', 'at
 
   })();
 
-  function lockingMiddleware(){
-    return new LockingMiddleware([]);
+  function LoggerMiddleware(label){
+    this.label = label;
   }
 
-  var LoggerMiddleware = (function(){
+  var loggerMiddleware = _.constructs(LoggerMiddleware);
 
-    function LoggerMiddleware(label){
-      this.label = label;
-    }
+  (function(){
 
     function handle(self, message, next){
       _.log(self.label, message);
@@ -1770,14 +1767,14 @@ define(['atomic/core', 'atomic/dom', 'atomic/reactives', 'atomic/validates', 'at
 
   })();
 
-  var loggerMiddleware = _.constructs(LoggerMiddleware);
+  function DrainEventsMiddleware(provider, eventBus){
+    this.provider = provider;
+    this.eventBus = eventBus;
+  }
 
-  var DrainEventsMiddleware = (function(){
+  var drainEventsMiddleware = _.constructs(DrainEventsMiddleware);
 
-    function DrainEventsMiddleware(provider, eventBus){
-      this.provider = provider;
-      this.eventBus = eventBus;
-    }
+  (function(){
 
     function handle(self, command, next){
       var result = next(command);
@@ -1792,34 +1789,42 @@ define(['atomic/core', 'atomic/dom', 'atomic/reactives', 'atomic/validates', 'at
 
   })();
 
-  var drainEventsMiddleware = _.constructs(DrainEventsMiddleware);
+  function EventMiddleware(emitter){
+    this.emitter = emitter;
+  }
 
+  var eventMiddleware = _.constructs(EventMiddleware);
 
-  var BroadcastMiddleware = (function(){
-
-    function BroadcastMiddleware(publisher){
-      this.publisher = publisher;
-    }
+  (function(){
 
     function handle(self, event, next){
-      $.pub(self.publisher, event);
+      $.pub(self.emitter, event);
       return next(event);
     }
 
-    return _.doto(BroadcastMiddleware,
+    return _.doto(EventMiddleware,
       _.implement(IMiddleware, {handle: handle}));
 
   })()
 
-  var broadcastMiddleware = _.constructs(BroadcastMiddleware);
+  function HandlerMiddleware(handlers, identify){
+    this.handlers = handlers;
+    this.identify = identify;
+  }
 
+  var handlerMiddleware2 = _.constructs(HandlerMiddleware);
 
-  var HandlerMiddleware = (function(){
+  function handlerMiddleware1(identify){
+    return handlerMiddleware2({}, identify);
+  }
 
-    function HandlerMiddleware(handlers, identify){
-      this.handlers = handlers;
-      this.identify = identify;
-    }
+  function handlerMiddleware0(){
+    return handlerMiddleware1(IIdentifiable.identifier);
+  }
+
+  var handlerMiddleware = _.overload(handlerMiddleware0, handlerMiddleware1, handlerMiddleware2);
+
+  (function(){
 
     function assoc(self, key, handler){
       return new self.constructor(_.assoc(self.handlers, key, handler), self.identify);
@@ -1838,40 +1843,31 @@ define(['atomic/core', 'atomic/dom', 'atomic/reactives', 'atomic/validates', 'at
 
   })();
 
-  var handlerMiddleware2 = _.constructs(HandlerMiddleware);
-
-  function handlerMiddleware1(identify){
-    return handlerMiddleware2({}, identify);
+  //TODO add `expanded` model state to track which entities are open.
+  //TODO a component is an aggregate root that fully manages its dependencies and avoids coordinating subcomponents.
+  //NOTE the reusable part of the view would potentially involve making the full render and patch operations pure.
+  //NOTE the beauty of React is that view functions are pure, return a representation of the dom, and can be composed.  This approach emphasizes custom and optimized diffing/patching based on before/after snapshot of the model.  Once in an effectful context, it becomes hard to benefit from the reuse of pure commands (commands as queries).
+  //NOTE a concern with delegating to subcomponents was managing their creation/destruction
+  //NOTE assign guid as `data-key` and realize that the same entity could appear in multiple places of an outline.
+  //NOTE a view is capable of returning a seq of all possible `IView.interactions` each implementing `IIdentifiable` and `ISubject`.
+  //NOTE an interaction is a persistent, validatable object with field schema.  It will be flagged as command or query which will help with processing esp. pipelining.  When successfully validated it has all that it needs to be handled by the handler.  That it can be introspected allows for the UI to help will completing them.
+  function Outline(domain, $buffer, $model, options){
+    this.domain = domain;
+    this.$buffer = $buffer;
+    this.$model = $model;
+    this.options = options;
   }
 
-  function handlerMiddleware0(){
-    return handlerMiddleware1(IIdentifiable.identifier);
+  function outline($domain, $buffer, options){ //e.g. options -> {root: guid}
+    var $model = $.cell({selected: options.selected || imm.set()});
+    return new Outline($domain, $buffer, $model, options);
   }
-
-  var handlerMiddleware = _.overload(handlerMiddleware0, handlerMiddleware1, handlerMiddleware2);
-
 
   //RULE it must be possible to interact with a component even if it never gets mounted.
-  var Outline = (function(){
-
-    //TODO add `expanded` model state to track which entities are open.
-    //TODO a component is an aggregate root that fully manages its dependencies and avoids coordinating subcomponents.
-    //NOTE the reusable part of the view would potentially involve making the full render and patch operations pure.
-    //NOTE the beauty of React is that view functions are pure, return a representation of the dom, and can be composed.  This approach emphasizes custom and optimized diffing/patching based on before/after snapshot of the model.  Once in an effectful context, it becomes hard to benefit from the reuse of pure commands (commands as queries).
-    //NOTE a concern with delegating to subcomponents was managing their creation/destruction
-    //NOTE assign guid as `data-key` and realize that the same entity could appear in multiple places of an outline.
-    //NOTE a view is capable of returning a seq of all possible `IView.interactions` each implementing `IIdentifiable` and `ISubject`.
-    //NOTE an interaction is a persistent, validatable object with field schema.  It will be flagged as command or query which will help with processing esp. pipelining.  When successfully validated it has all that it needs to be handled by the handler.  That it can be introspected allows for the UI to help will completing them.
-    function Outline(domain, $buffer, $model, options){
-      this.domain = domain;
-      this.$buffer = $buffer;
-      this.$model = $model;
-      this.options = options;
-    }
-
+  (function(){
     //RULE a component delegates events once on mount and avoids having to continually add/remove listeners.
-    function mount(self, el){
-      _.log("mount", self, el);
+    function mount(self, el, $bus){
+      _.log("mount", self, el, $bus); //TODO bus is optional
       //TODO implement
     }
 
@@ -1905,11 +1901,6 @@ define(['atomic/core', 'atomic/dom', 'atomic/reactives', 'atomic/validates', 'at
       _.implement(IMount, {mount: mount}));
 
   })();
-
-  function outline($domain, $buffer, options){ //e.g. options -> {root: guid}
-    var $model = $.cell({selected: options.selected || imm.set()});
-    return new Outline($domain, $buffer, $model, options);
-  }
 
   var configs = {
     a: {
@@ -2015,10 +2006,10 @@ define(['atomic/core', 'atomic/dom', 'atomic/reactives', 'atomic/validates', 'at
       loggerMiddleware("command in"),
       lockingMiddleware(),
       _.just(handlerMiddleware(),
-        _.assoc(_, "load", loadHandler($outline, $events)),
+        _.assoc(_, "load", loadHandler($events)),
         _.assoc(_, "query", queryHandler($outline, $events)),
-        _.assoc(_, "select", selectHandler($outline, $events)),
-        _.assoc(_, "deselect", deselectHandler($outline, $events))),
+        _.assoc(_, "select", selectHandler($events)),
+        _.assoc(_, "deselect", deselectHandler($events))),
       drainEventsMiddleware($events, $ebus),
       loggerMiddleware("command out")
     ]);
@@ -2030,12 +2021,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/reactives', 'atomic/validates', 'at
       queryCommand({$type: "tasks"}),
       selectCommand(root)
     ])
-    /*_.each(_.applying($outline), [
-      ents.query(_, {$type: "SP.Data.TasksListItem", $filter: _.str("GUID eq '", root, "'")}),
-      ents.query(_, {$type: "SP.Data.TasksListItem"}),
-      ents.select(_, root),
-      ents.deselect(_, root)
-    ]);*/
+
   });
 
   return ents;
