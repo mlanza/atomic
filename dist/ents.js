@@ -1459,12 +1459,14 @@ define(['atomic/core', 'atomic/dom', 'atomic/reactives', 'atomic/validates', 'at
     this.middlewares = middlewares;
   }
 
-  var bus = _.constructs(Bus);
+  var bus1 = _.constructs(Bus);
+  var bus = _.overload(_.comp(bus1, _.array), bus1);
 
   (function(){
 
     function conj(self, middleware){
-      return new self.constructor(_.conj(self.middlewares, middleware));
+      self.middlewares = _.conj(self.middlewares, middleware);
+      return self;
     }
 
     function handle(self, message, next){
@@ -1506,7 +1508,8 @@ define(['atomic/core', 'atomic/dom', 'atomic/reactives', 'atomic/validates', 'at
 
   })();
 
-  function LoadHandler(provider){
+  function LoadHandler(subject, provider){
+    this.subject = subject;
     this.provider = provider;
   }
 
@@ -1515,6 +1518,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/reactives', 'atomic/validates', 'at
   (function(){
 
     function handle(self, command, next){
+      ents.load(self.subject, event.entities);
       $.raise(self.provider, loadedEvent(command.entities));
       return next(command);
     }
@@ -1524,20 +1528,18 @@ define(['atomic/core', 'atomic/dom', 'atomic/reactives', 'atomic/validates', 'at
 
   })();
 
-  function LoadedHandler(subject){
-    this.subject = subject;
+  function NullHandler(){
   }
 
-  var loadedHandler = _.constructs(LoadedHandler);
+  var nullHandler = _.constructs(NullHandler);
 
   (function(){
 
-    function handle(self, event, next){
-      ents.load(self.subject, event.entities);
-      return next(event);
+    function handle(self, message, next){
+      return next(message);
     }
 
-    return _.doto(LoadedHandler,
+    return _.doto(NullHandler,
       _.implement(IMiddleware, {handle: handle}));
 
   })();
@@ -1555,8 +1557,8 @@ define(['atomic/core', 'atomic/dom', 'atomic/reactives', 'atomic/validates', 'at
 
   })();
 
-  function QueriedEvent(plan){
-    this.plan = plan;
+  function QueriedEvent(entities){
+    this.entities = entities;
   }
 
   var queriedEvent = _.constructs(QueriedEvent);
@@ -1579,7 +1581,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/reactives', 'atomic/validates', 'at
 
     function handle(self, command, next){
       return _.fmap(ents.query(self.subject, command.plan), function(entities){
-        $.raise(self.provider, loadedEvent(entities));
+        $.raise(self.provider, queriedEvent(entities));
         return next(command);
       });
     }
@@ -1589,8 +1591,9 @@ define(['atomic/core', 'atomic/dom', 'atomic/reactives', 'atomic/validates', 'at
 
   })();
 
-  function QueriedHandler(subject){
+  function QueriedHandler(subject, commandBus){
     this.subject = subject;
+    this.commandBus = commandBus;
   }
 
   var queriedHandler = _.constructs(QueriedHandler);
@@ -1598,7 +1601,8 @@ define(['atomic/core', 'atomic/dom', 'atomic/reactives', 'atomic/validates', 'at
   (function(){
 
     function handle(self, event, next){
-      _.log('x', self, event, next)
+      IMiddleware.handle(self.commandBus, loadCommand(event.entities));
+      return next(event);
     }
 
     return _.doto(QueriedHandler,
@@ -1632,7 +1636,8 @@ define(['atomic/core', 'atomic/dom', 'atomic/reactives', 'atomic/validates', 'at
 
   })();
 
-  function SelectHandler(provider){
+  function SelectHandler(subject, provider){
+    this.subject = subject;
     this.provider = provider;
   }
 
@@ -1641,29 +1646,12 @@ define(['atomic/core', 'atomic/dom', 'atomic/reactives', 'atomic/validates', 'at
   (function(){
 
     function handle(self, command, next){
+      ents.select(self.subject, event.id);
       $.raise(self.provider, selectedEvent(command.id));
       return next(command);
     }
 
     return _.doto(SelectHandler,
-      _.implement(IMiddleware, {handle: handle}));
-
-  })();
-
-  function SelectedHandler(subject){
-    this.subject = subject;
-  }
-
-  var selectedHandler = _.constructs(SelectedHandler);
-
-  (function(){
-
-    function handle(self, event, next){
-      ents.select(self.subject, event.id);
-      return next(event);
-    }
-
-    return _.doto(SelectedHandler,
       _.implement(IMiddleware, {handle: handle}));
 
   })();
@@ -1694,7 +1682,8 @@ define(['atomic/core', 'atomic/dom', 'atomic/reactives', 'atomic/validates', 'at
 
   })();
 
-  function DeselectHandler(provider){
+  function DeselectHandler(subject, provider){
+    this.subject = subject;
     this.provider = provider;
   }
 
@@ -1703,6 +1692,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/reactives', 'atomic/validates', 'at
   (function(){
 
     function handle(self, command, next){
+      ents.deselect(self.subject, command.id);
       $.raise(self.provider, deselectedEvent(command.id));
       return next(command);
     }
@@ -1715,20 +1705,6 @@ define(['atomic/core', 'atomic/dom', 'atomic/reactives', 'atomic/validates', 'at
   function DeselectedHandler(subject){
     this.subject = subject;
   }
-
-  var deselectedHandler = _.constructs(DeselectedHandler);
-
-  (function(){
-
-    function handle(self, event, next){
-      ents.deselect(self.subject, command.id);
-      return next(event);
-    }
-
-    return _.doto(DeselectedHandler,
-      _.implement(IMiddleware, {handle: handle}));
-
-  })();
 
   function LockingMiddleware(){
     this.wip = null;
@@ -1988,31 +1964,33 @@ define(['atomic/core', 'atomic/dom', 'atomic/reactives', 'atomic/validates', 'at
     var leaf = _.guid("b");
     var $events = $.events();
     var $outline = outline(domain, $.cell(ents.typedEntityBuffer()), {root: root});
+    var nhandler = nullHandler();
+    var $ebus = bus(), $cbus = bus();
 
     //RULE the development strategy proposes apps be built up in layers of option features. (e.g. how the CommandBus feature adds to Outline)
     //TODO what is the best way for a bus to be provided to the app?  From the component itself (e.g. `ICommander.cmdbus`)? Via a factory?  The bus becomes the keeper of command metadata against which the user can see what he can do.
 
-    var $ebus = new Bus([
-      loggerMiddleware("event in"),
-      _.just(handlerMiddleware(),
-        _.assoc(_, "loaded", loadedHandler($outline)),
-        _.assoc(_, "queried", queriedHandler($outline)),
-        _.assoc(_, "selected", selectedHandler($outline)),
-        _.assoc(_, "deselected", deselectedHandler($outline))),
-      loggerMiddleware("event out")
-    ]);
+    _.doto($ebus,
+      _.conj(_,
+        loggerMiddleware("event in"),
+        _.just(handlerMiddleware(),
+          _.assoc(_, "loaded", nhandler),
+          _.assoc(_, "queried", queriedHandler($outline, $cbus)),
+          _.assoc(_, "selected", nhandler),
+          _.assoc(_, "deselected", nhandler)),
+        loggerMiddleware("event out")));
 
-    var $cbus = new Bus([
-      loggerMiddleware("command in"),
-      lockingMiddleware(),
-      _.just(handlerMiddleware(),
-        _.assoc(_, "load", loadHandler($events)),
-        _.assoc(_, "query", queryHandler($outline, $events)),
-        _.assoc(_, "select", selectHandler($events)),
-        _.assoc(_, "deselect", deselectHandler($events))),
-      drainEventsMiddleware($events, $ebus),
-      loggerMiddleware("command out")
-    ]);
+    _.doto($cbus,
+      _.conj(_,
+        loggerMiddleware("command in"),
+        lockingMiddleware(),
+        _.just(handlerMiddleware(),
+          _.assoc(_, "load", loadHandler($outline, $events)),
+          _.assoc(_, "query", queryHandler($outline, $events)),
+          _.assoc(_, "select", selectHandler($outline, $events)),
+          _.assoc(_, "deselect", deselectHandler($outline, $events))),
+        drainEventsMiddleware($events, $ebus),
+        loggerMiddleware("command out")));
 
     Object.assign(window, {$events: $events, $cbus: $cbus, $ebus: $ebus, $outline: $outline});
 
