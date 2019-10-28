@@ -1961,7 +1961,6 @@ define(['atomic/core', 'atomic/dom', 'atomic/reactives', 'atomic/validates', 'at
   _.per(dom.sel1("#outline"), function(el){
     var domain = ents.domain([tasks]);
     var root = _.guid("a");
-    var leaf = _.guid("b");
     var $events = $.events();
     var $outline = outline(domain, $.cell(ents.typedEntityBuffer()), {root: root});
     var nhandler = nullHandler();
@@ -1972,25 +1971,23 @@ define(['atomic/core', 'atomic/dom', 'atomic/reactives', 'atomic/validates', 'at
 
     _.doto($ebus,
       _.conj(_,
-        loggerMiddleware("event in"),
+        loggerMiddleware("event"),
         _.just(handlerMiddleware(),
           _.assoc(_, "loaded", nhandler),
           _.assoc(_, "queried", queriedHandler($outline, $cbus)),
           _.assoc(_, "selected", nhandler),
-          _.assoc(_, "deselected", nhandler)),
-        loggerMiddleware("event out")));
+          _.assoc(_, "deselected", nhandler))));
 
     _.doto($cbus,
       _.conj(_,
-        loggerMiddleware("command in"),
+        loggerMiddleware("command"),
         lockingMiddleware(),
         _.just(handlerMiddleware(),
           _.assoc(_, "load", loadHandler($outline, $events)),
           _.assoc(_, "query", queryHandler($outline, $events)),
           _.assoc(_, "select", selectHandler($outline, $events)),
           _.assoc(_, "deselect", deselectHandler($outline, $events))),
-        drainEventsMiddleware($events, $ebus),
-        loggerMiddleware("command out")));
+        drainEventsMiddleware($events, $ebus)));
 
     Object.assign(window, {$events: $events, $cbus: $cbus, $ebus: $ebus, $outline: $outline});
 
