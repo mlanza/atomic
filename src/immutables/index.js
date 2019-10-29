@@ -1,4 +1,5 @@
-import {doto, implement, IPersistent, TransientSet, toArray} from "atomic/core";
+import {doto, implement, toArray} from "atomic/core";
+import {IPersistent, TransientSet} from "atomic/transients";
 import {set} from "./types/set/construct";
 export * from "./types";
 

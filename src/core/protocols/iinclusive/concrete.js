@@ -1,6 +1,6 @@
 import IInclusive from "./instance";
 import {branch} from "../../core";
-import {yank} from "../iyank/concrete";
+import {yank} from "../iyankable/concrete";
 import {conj} from "../icollection/concrete";
 
 export const includes = IInclusive.includes;

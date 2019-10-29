@@ -1,11 +1,10 @@
 import {overload, toggles, identity, obj, partly, doto, branch, unspread, applying, execute, noop} from "./core";
-import {IDecorated, IAppendable, IHash, ITemplate, IYank, ICoerce, IAssociative, IBounds, IInverse, ICloneable, ICollection, IComparable, ICounted, IDecode, IDeref, IDisposable, IEmptyableCollection, IEncode, IEquiv, IFind, IFn, IFork, IFunctor, IHierarchy, IInclusive, IIndexed, IInsertable, IKVReduce, ILookup, IMap, IMapEntry, IMatch, INext, IOtherwise, IPrependable, IReduce, IReset, IReversible, ISeq, ISeqable, ISet, ISteppable, ISwap} from "./protocols";
+import {IDecorated, IAppendable, IHash, ITemplate, IYankable, ICoerce, IAssociative, IBounds, IInverse, ICloneable, ICollection, IComparable, ICounted, IDecode, IDeref, IDisposable, IEmptyableCollection, IEncode, IEquiv, IFind, IFn, IFork, IFunctor, IHierarchy, IInclusive, IIndexed, IInsertable, IKVReduce, ILookup, IMap, IMapEntry, IMatch, INext, IOtherwise, IPrependable, IReduce, IReset, IReversible, ISeq, ISeqable, ISet, ISteppable, ISwap} from "./protocols";
 import {satisfies, filter, spread, specify, maybe, each, duration, remove, sort, flip, realized, comp, isNumber, isFunction, apply, realize, isNil} from "./types";
-import {add, subtract, compact, matches, name, descendants, query, locate, transient, persistent, deref, get, assoc, yank, conj, hash, reducing, toArray, reducekv, includes, excludes} from "./protocols/concrete";
+import {add, subtract, compact, matches, name, descendants, query, locate, deref, get, assoc, yank, conj, hash, reducing, toArray, reducekv, includes, excludes} from "./protocols/concrete";
 import {isString, isBlank, str} from "./types/string";
 import {isSome} from "./types/nil";
 import {into, detect, map, drop, join, some, last} from "./types/lazy-seq";
-import {emptyTransientSet} from "./types/transient-set/construct";
 import {absorb} from "./associatives";
 import {_ as v} from "param.macro";
 import _serieslike from "./types/series/behave";
@@ -18,6 +17,11 @@ export * from "./protocols/concrete";
 export * from "./predicates";
 export * from "./associatives";
 export * from "./multimethods";
+import Set from 'set';
+
+export function unique(xs){
+  return toArray(new Set(toArray(xs)));
+}
 
 export const second = comp(ISeq.first, INext.next);
 
@@ -83,15 +87,7 @@ function include3(self, value, want){
 
 export const include = overload(null, null, include2, include3);
 
-export function withMutations(self, f){
-  return persistent(f(transient(self)));
-}
-
 export const fmt = expands(str);
-
-export function unique(xs){
-  return toArray(into(emptyTransientSet(), xs));
-}
 
 export function coalesce(...fs){
   return function(...args){

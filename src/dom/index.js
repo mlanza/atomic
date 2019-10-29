@@ -1,5 +1,6 @@
-import {constantly, identity, apply, noop, slice, partial, replace, concat, template, key, val, join, merge, filter, map, remove, isObject, specify, implement, doto, assoc, get, str, includes, overload, conj, append, absorb, fmap, each, obj, IReduce, first, query, locate, descendants, matches, reducekv, Number, String, Nil, ICoerce, extend} from "atomic/core";
+import {constantly, identity, apply, noop, slice, partial, replace, concat, template, key, val, join, merge, filter, map, remove, isObject, specify, implement, doto, get, str, includes, overload, absorb, fmap, each, obj, IReduce, first, query, locate, descendants, matches, reducekv, Number, String, Nil, ICoerce, extend, doing} from "atomic/core";
 import * as _ from "atomic/core";
+import * as mut from "atomic/transients";
 import {element} from "./types/element/construct";
 import {mounts} from "./protocols/imountable/concrete";
 import InvalidHostElementError from "./types/invalid-host-element-error";
@@ -11,10 +12,33 @@ import * as $ from "atomic/reactives";
 export * from "./types";
 export * from "./protocols";
 export * from "./protocols/concrete";
+export {append, prepend, before, after, yank, empty} from "atomic/transients";
+
+function attr2(self, key){
+  return self.getAttribute(key);
+}
+
+function attr3(self, key, value){
+  self.setAttribute(key, str(value));
+}
+
+function attrN(self, ...kvps){
+  const stop = kvps.length - 1;
+  for(let i = 0; i <= stop; i += 2){
+    attr3(self, kvps[i], kvps[i + 1]);
+  }
+}
+
+export const attr = overload(null, null, attr2, attr3, attrN);
+
+function removeAttr2(self, key){
+  self.removeAttribute(key);
+}
+
+export const removeAttr = overload(null, null, removeAttr2, doing(removeAttr2));
 
 function prop3(self, key, value){
   self[key] = value;
-  return self;
 }
 
 function prop2(self, key){
@@ -25,40 +49,34 @@ export const prop = overload(null, null, prop2, prop3);
 
 export function addStyle(self, key, value) {
   self.style[key] = value;
-  return self;
 }
 
 function removeStyle2(self, key) {
   self.style.removeProperty(key);
-  return self;
 }
 
 function removeStyle3(self, key, value) {
   if (self.style[key] === value) {
     self.style.removeProperty(key);
   }
-  return self;
 }
 
 export const removeStyle = overload(null, null, removeStyle2, removeStyle3);
 
 export function addClass(self, name){
   self.classList.add(name);
-  return self;
 }
 
 export function removeClass(self, name){
   self.classList.remove(name);
-  return self;
 }
 
 function toggleClass2(self, name){
-  return toggleClass3(self, name, !self.classList.contains(name));
+  toggleClass3(self, name, !self.classList.contains(name));
 }
 
 function toggleClass3(self, name, want){
   self.classList[want ? "add" : "remove"](name);
-  return self;
 }
 
 export const toggleClass = overload(null, null, toggleClass2, toggleClass3);
@@ -153,24 +171,15 @@ export function checkbox(...args){
 
 export function select(options, ...args){
   const select = tag('select'),
-        option = tag('option');
-  return reducekv(function(memo, key, value){
-    return append(memo, option({value: key}, value));
-  }, select(...args), options);
+        option = tag('option'),
+        el = select(...args);
+  each(function(entry){
+    mut.append(el, option({value: key(entry)}, val(entry)));
+  }, options);
+  return el;
 }
 
 export const textbox = tag('input', {type: "text"});
-
-function attr3(self, key, value) {
-  self.setAttribute(key, value);
-  return self;
-}
-
-function attr2(self, key) {
-  return self.getAttribute(key);
-}
-
-export const attr = overload(null, null, attr2, attr3);
 
 extend(ICoerce, {toFragment: null});
 
@@ -206,7 +215,7 @@ export const toFragment = ICoerce.toFragment;
 
   function embed(self, parent) {
     each(function(entry){
-      assoc(parent, key(entry), val(entry));
+      mut.assoc(parent, key(entry), val(entry));
     }, self);
   }
 

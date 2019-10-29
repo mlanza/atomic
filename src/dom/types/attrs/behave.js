@@ -1,5 +1,6 @@
-import {does, implement, cons, IEmptyableCollection, ICoerce, INext, ISeq, ISeqable, IMap, IAssociative, ILookup, ICounted, IInclusive} from 'atomic/core';
+import {deprecated, does, implement, cons, IEmptyableCollection, ICoerce, INext, ISeq, ISeqable, IMap, IAssociative, ILookup, ICounted, IInclusive} from 'atomic/core';
 import * as _ from 'atomic/core';
+import {ITransientAssociative, ITransientEmptyableCollection, ITransientMap} from 'atomic/transients';
 
 function toArray(self){
   return ICoerce.toArray(next2(self, 0));
@@ -13,13 +14,23 @@ function lookup(self, key){
   return self.node.getAttribute(key);
 }
 
-function assoc(self, key, value){
+function _assoc(self, key, value){
   self.node.setAttribute(key, value);
+}
+
+function assoc(self, key, value){
+  deprecated(self, "IAssociative.assoc deprecated. Use ITransientAssociative.assoc.");
+  _assoc(self, key, value);
   return self;
 }
 
-function dissoc(self, key){
+function _dissoc(self, key){
   self.node.removeAttribute(key);
+}
+
+function dissoc(self, key){
+  deprecated(self, "IMap.dissoc deprecated. Use ITransientMap.dissoc.");
+  _dissoc(self, key);
   return self;
 }
 
@@ -61,21 +72,29 @@ function includes(self, pair) {
   return lookup(self, _.key(pair)) == _.val(pair);
 }
 
-function empty(self){
+function _empty(self){
   while(self.node.attributes.length > 0) {
     self.node.removeAttribute(self.node.attributes[0].name);
   }
+}
+
+function empty(self){
+  deprecated(self, "IEmptyableCollection.empty deprecated. Use ITransientEmptyableCollection.empty.");
+  _empty(self);
   return self;
 }
 
 export default does(
   implement(IEmptyableCollection, {empty}),
+  implement(ITransientEmptyableCollection, {empty: _empty}),
   implement(ICoerce, {toArray}),
   implement(ICounted, {count}),
   implement(ISeqable, {seq}),
   implement(INext, {next}),
   implement(ISeq, {first, rest}),
   implement(IMap, {keys, vals, dissoc}),
+  implement(ITransientMap, {dissoc: _dissoc}),
   implement(IInclusive, {includes}),
   implement(IAssociative, {assoc, contains}),
+  implement(ITransientAssociative, {assoc: _assoc}),
   implement(ILookup, {lookup}));

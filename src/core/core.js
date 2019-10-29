@@ -247,3 +247,7 @@ export function forwardTo(key){
     }
   }
 }
+
+export function deprecated(){
+  console.warn.apply(null, arguments);
+}

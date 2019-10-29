@@ -4,6 +4,7 @@ import * as dom from "atomic/dom";
 import * as $ from "atomic/reactives";
 import * as vd from "atomic/validates";
 import * as t from "atomic/transducers";
+import * as mut from "atomic/transients";
 import QUnit from "qunit";
 import {_ as v} from "param.macro";
 

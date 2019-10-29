@@ -2,10 +2,8 @@ import {
   does,
   identity,
   implement,
-  transientSet,
   unreduced,
   ICoerce,
-  ITransient,
   ISeq,
   IReduce,
   ISeqable,
@@ -18,6 +16,10 @@ import {
   IInclusive,
   ICloneable
 } from 'atomic/core';
+import {
+  ITransient,
+  transientSet
+} from 'atomic/transients';
 
 import {emptySet} from "./construct";
 

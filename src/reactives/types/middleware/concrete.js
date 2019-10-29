@@ -1,4 +1,5 @@
-import {apply, comp, specify, conj, updateIn, assoc, get, getIn, deref, doto, partial, overload, noop, identity, reset, each} from "atomic/core";
+import {apply, comp, specify, updateIn, assoc, get, getIn, deref, doto, partial, overload, noop, identity, reset, each} from "atomic/core";
+import * as mut from 'atomic/transients';
 import {middleware} from "./construct";
 import {eventDispatcher} from "../event-dispatcher/construct";
 import {messageProcessor} from "../message-processor/construct";
@@ -56,7 +57,7 @@ function component2(state, callback){
   return doto(bus(state, ware), function($bus){
     const maps = callback(partial(accepts, evts), partial(raises, evts, $bus), partial(affects, $bus));
     const commandMap = maps[0], eventMap = maps[1];
-    conj(ware,
+    mut.conj(ware,
       messageHandler(commandMap),
       eventDispatcher(evts, messageHandler(eventMap), observer));
   });

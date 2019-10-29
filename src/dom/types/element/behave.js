@@ -1,5 +1,6 @@
 import {
   assoc as _assoc,
+  deprecated,
   identity,
   toggles,
   constantly,
@@ -41,7 +42,7 @@ import {
   IQueryable,
   ISequential,
   IMatch,
-  IYank,
+  IYankable,
   IInclusive,
   IInsertable,
   ICoerce,
@@ -61,6 +62,16 @@ import {
   IEmptyableCollection,
   IHierarchy
 } from 'atomic/core';
+import {
+  ITransientAssociative,
+  ITransientMap,
+  ITransientInsertable,
+  ITransientAppendable,
+  ITransientPrependable,
+  ITransientCollection,
+  ITransientEmptyableCollection,
+  ITransientYankable
+} from 'atomic/transients';
 import {IEvented} from "atomic/reactives";
 import {isMountable} from "../../protocols/imountable/concrete"
 import {IHtml, IText, IValue, IContent, IHideable, IEmbeddable} from "../../protocols";
@@ -75,11 +86,11 @@ export const hidden = comp(IInclusive.includes(v, hides), nestedAttrs(v, "style"
 const toggle = partial(toggles, show, hide, hidden);
 
 function hide(self){
-  ICollection.conj(nestedAttrs(self, "style"), hides);
+  ITransientCollection.conj(nestedAttrs(self, "style"), hides);
 }
 
 function show(self){
-  IYank.yank(nestedAttrs(self, "style"), hides);
+  ITransientYankable.yank(nestedAttrs(self, "style"), hides);
 }
 
 function embed(self, parent, referenceNode) {
@@ -102,25 +113,46 @@ function embed(self, parent, referenceNode) {
   return self;
 }
 
-function append(self, content){
+function _append(self, content){
   IEmbeddable.embed(content, self);
+}
+
+function append(self, content){
+  deprecated(self, "IAppendable.append deprecated.  Use ITransientAppendable.append.");
+  _append(self, content);
   return self;
 }
 
 const conj = append;
+const _conj = _append;
+
+function _prepend(self, content){
+  IEmbeddable.embed(content, self, self.childNodes[0]);
+}
 
 function prepend(self, content){
-  IEmbeddable.embed(content, self, self.childNodes[0]);
+  deprecated(self, "IPrependable.prepend deprecated.  Use ITransientPrependable.prepend.");
+  _prepend(self, content);
   return self;
+}
+
+function _before(self, content){
+  IEmbeddable.embed(content, IHierarchy.parent(self), self);
 }
 
 function before(self, content){
-  IEmbeddable.embed(content, IHierarchy.parent(self), self);
+  deprecated(self, "IInsertable.before deprecated.  Use ITransientInsertable.before.");
+  _before(self, content);
   return self;
 }
 
-function after(self, content){
+function _after(self, content){
   IEmbeddable.embed(content, IHierarchy.parent(self), IHierarchy.nextSibling(self));
+}
+
+function after(self, content){
+  deprecated(self, "IInsertable.after deprecated.  Use ITransientInsertable.after.");
+  _after(self, content);
   return self;
 }
 
@@ -204,17 +236,19 @@ function contents(self){
   return self.contentDocument || ISeqable.seq(self.childNodes);
 }
 
-function lookup(self, key){
-  return self.getAttribute(key);
-}
-
 function assoc(self, key, value){
-  self.setAttribute(key, str(value));
+  deprecated(self, "IAssociative.assoc deprecated.  Use ITransientAssociative.assoc.");
+  __assoc(self, key, value);
   return self;
 }
 
-function dissoc(self, key){
+function _dissoc(self, key){
   self.removeAttribute(key);
+}
+
+function dissoc(self, key){
+  deprecated(self, "IMap.dissoc deprecated.  Use ITransientMap.dissoc.");
+  _dissoc(self, key);
   return self;
 }
 
@@ -236,6 +270,14 @@ function vals2(self, idx){
 
 function vals(self){
   return vals2(self, 0);
+}
+
+function lookup(self, key){
+  return self.getAttribute(key);
+}
+
+function __assoc(self, key, value){
+  self.setAttribute(key, str(value));
 }
 
 function contains(self, key){
@@ -343,10 +385,15 @@ function includes(self, target){
   }
 }
 
-function empty(self){
+function _empty(self){
   while (self.firstChild) {
     self.removeChild(self.firstChild);
   }
+}
+
+function empty(self){
+  deprecated(self, "IEmptyableCollection.empty deprecated.  Use ITransientEmptyableCollection.empty.");
+  _empty(self);
   return self;
 }
 
@@ -372,7 +419,7 @@ function html2(self, html){
   if (isString(html)){
     self.innerHTML = html;
   } else {
-    empty(self);
+    _empty(self);
     _embed(html, self);
   }
   return self;
@@ -420,15 +467,23 @@ export default does(
   implement(IValue, {value}),
   implement(IEmbeddable, {embed}),
   implement(IEmptyableCollection, {empty}),
+  implement(ITransientEmptyableCollection, {empty: _empty}),
   implement(IInsertable, {before, after}),
+  implement(ITransientInsertable, {before: _before, after: _after}),
   implement(IInclusive, {includes}),
   implement(IHideable, {show, hide, toggle}),
-  implement(IYank, {yank}),
+  implement(IYankable, {yank}),
+  implement(ITransientYankable, {yank}),
   implement(IMatch, {matches}),
   implement(ICloneable, {clone}),
   implement(IAppendable, {append}),
+  implement(ITransientAppendable, {append: _append}),
   implement(IPrependable, {prepend}),
+  implement(ITransientPrependable, {prepend: _prepend}),
   implement(ICollection, {conj}),
+  implement(ITransientCollection, {conj: _conj}),
   implement(ILookup, {lookup}),
   implement(IMap, {dissoc, keys, vals}),
-  implement(IAssociative, {assoc, contains}));
+  implement(ITransientMap, {dissoc: _dissoc}),
+  implement(IAssociative, {assoc, contains}),
+  implement(ITransientAssociative, {assoc: __assoc}));
