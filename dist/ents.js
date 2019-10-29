@@ -1,4 +1,4 @@
-define(['atomic/core', 'atomic/dom', 'atomic/reactives', 'atomic/validates', 'atomic/immutables', 'context'], function(_, dom, $, vd, imm, context){
+define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'atomic/validates', 'atomic/immutables', 'context'], function(_, dom, mut, $, vd, imm, context){
 
   //TODO implement faux repo (no actual datastore) of tasks using non-SharePoint entities
   //GOAL Factor the SharePoint out of SharePoint (e.g. design against abstractions that are platform agnostic)!
@@ -15,10 +15,13 @@ define(['atomic/core', 'atomic/dom', 'atomic/reactives', 'atomic/validates', 'at
   //TODO #FUTURE Optimize like effects (destruction, modification, addition) into aggregate effects before applying them.
 
   var IAssociative = _.IAssociative,
+      ITransientAssociative = mut.ITransientAssociative,
       IMiddleware = $.IMiddleware,
+      IDispatch = $.IDispatch,
       IEmptyableCollection = _.IEmptyableCollection,
       ICheckable = vd.ICheckable,
       ICollection = _.ICollection,
+      ITransientCollection = mut.ITransientCollection,
       IReduce = _.IReduce,
       IAppendable = _.IAppendable,
       IPrependable = _.IPrependable,
@@ -1088,7 +1091,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/reactives', 'atomic/validates', 'at
     }
 
     function load(self, entities){
-      return entityBuffer(_.withMutations(self.loaded, function(loaded){
+      return entityBuffer(mut.withMutations(self.loaded, function(loaded){
         return _.reduce(function(memo, entity){
           var id = _.str(IEntity.eid(entity));
           return _.contains(memo, id) ? memo : _.assoc(memo, id, entity);
@@ -1097,7 +1100,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/reactives', 'atomic/validates', 'at
     }
 
     function add(self, entities){
-      return entityBuffer(self.loaded, _.withMutations(self.changed, function(changed){
+      return entityBuffer(self.loaded, mut.withMutations(self.changed, function(changed){
         return _.reduce(function(memo, entity){
           var id = _.str(IEntity.eid(entity));
           return _.contains(memo, id) ? memo : _.assoc(memo, id, entity);
@@ -1106,7 +1109,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/reactives', 'atomic/validates', 'at
     }
 
     function edit(self, entities){
-      return entityBuffer(self.loaded, _.withMutations(self.changed, function(changed){
+      return entityBuffer(self.loaded, mut.withMutations(self.changed, function(changed){
         return _.reduce(function(memo, entity){
           var id = _.str(IEntity.eid(entity));
           return _.contains(self.loaded, id) || _.contains(memo, id) ? _.assoc(memo, id, entity) : memo;
@@ -1115,7 +1118,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/reactives', 'atomic/validates', 'at
     }
 
     function destroy(self, entities){
-      return entityBuffer(self.loaded, _.withMutations(self.changed, function(changed){
+      return entityBuffer(self.loaded, mut.withMutations(self.changed, function(changed){
         return _.reduce(function(memo, entity){
           var id = _.str(IEntity.eid(entity));
           return _.contains(self.loaded, id) ? _.assoc(memo, id, null) : _.contains(memo, id) ? _.dissoc(memo, id) : memo;
@@ -1466,19 +1469,18 @@ define(['atomic/core', 'atomic/dom', 'atomic/reactives', 'atomic/validates', 'at
 
     function conj(self, middleware){
       self.middlewares = _.conj(self.middlewares, middleware);
-      return self;
     }
 
-    function handle(self, message, next){
+    function dispatch(self, message){
       var f = _.reduce(function(memo, middleware){
         return $.handle(middleware, _, memo);
-      }, next || _.noop, _.reverse(self.middlewares));
-      return f(message);
+      }, _.noop, _.reverse(self.middlewares));
+      f(message);
     }
 
     return _.doto(Bus,
-      _.implement(ICollection, {conj: conj}),
-      _.implement(IMiddleware, {handle: handle}));
+      _.implement(ITransientCollection, {conj: conj}),
+      _.implement(IDispatch, {dispatch: dispatch}));
 
   })();
 
@@ -1601,7 +1603,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/reactives', 'atomic/validates', 'at
   (function(){
 
     function handle(self, event, next){
-      IMiddleware.handle(self.commandBus, loadCommand(event.entities));
+      $.dispatch(self.commandBus, loadCommand(event.entities));
       return next(event);
     }
 
@@ -1755,7 +1757,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/reactives', 'atomic/validates', 'at
     function handle(self, command, next){
       var result = next(command);
       _.each(function(event){
-        $.handle(self.eventBus, event);
+        $.dispatch(self.eventBus, event);
       }, $.release(self.provider));
       return result;
     }
@@ -1803,7 +1805,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/reactives', 'atomic/validates', 'at
   (function(){
 
     function assoc(self, key, handler){
-      return new self.constructor(_.assoc(self.handlers, key, handler), self.identify);
+      self.handlers = _.assoc(self.handlers, key, handler);
     }
 
     function handle(self, message, next){
@@ -1814,7 +1816,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/reactives', 'atomic/validates', 'at
     }
 
     return _.doto(HandlerMiddleware,
-      _.implement(IAssociative, {assoc: assoc}),
+      _.implement(ITransientAssociative, {assoc: assoc}),
       _.implement(IMiddleware, {handle: handle}));
 
   })();
@@ -1970,29 +1972,29 @@ define(['atomic/core', 'atomic/dom', 'atomic/reactives', 'atomic/validates', 'at
     //TODO what is the best way for a bus to be provided to the app?  From the component itself (e.g. `ICommander.cmdbus`)? Via a factory?  The bus becomes the keeper of command metadata against which the user can see what he can do.
 
     _.doto($ebus,
-      _.conj(_,
+      mut.conj(_,
         loggerMiddleware("event"),
-        _.just(handlerMiddleware(),
-          _.assoc(_, "loaded", nhandler),
-          _.assoc(_, "queried", queriedHandler($outline, $cbus)),
-          _.assoc(_, "selected", nhandler),
-          _.assoc(_, "deselected", nhandler))));
+        _.doto(handlerMiddleware(),
+          mut.assoc(_, "loaded", nhandler),
+          mut.assoc(_, "queried", queriedHandler($outline, $cbus)),
+          mut.assoc(_, "selected", nhandler),
+          mut.assoc(_, "deselected", nhandler))));
 
     _.doto($cbus,
-      _.conj(_,
+      mut.conj(_,
         loggerMiddleware("command"),
         lockingMiddleware(),
-        _.just(handlerMiddleware(),
-          _.assoc(_, "load", loadHandler($outline, $events)),
-          _.assoc(_, "query", queryHandler($outline, $events)),
-          _.assoc(_, "select", selectHandler($outline, $events)),
-          _.assoc(_, "deselect", deselectHandler($outline, $events))),
+        _.doto(handlerMiddleware(),
+          mut.assoc(_, "load", loadHandler($outline, $events)),
+          mut.assoc(_, "query", queryHandler($outline, $events)),
+          mut.assoc(_, "select", selectHandler($outline, $events)),
+          mut.assoc(_, "deselect", deselectHandler($outline, $events))),
         drainEventsMiddleware($events, $ebus)));
 
     Object.assign(window, {$events: $events, $cbus: $cbus, $ebus: $ebus, $outline: $outline});
 
     ents.mount($outline, el);
-    _.each(ents.handle($cbus, _), [
+    _.each($.dispatch($cbus, _), [
       queryCommand({$type: "tasks"}),
       selectCommand(root)
     ])
