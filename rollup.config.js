@@ -8,6 +8,7 @@ export default {
     'src/immutables.js',
     'src/reactives.js',
     'src/transducers.js',
+    'src/transients.js',
     'src/requests.js',
     'src/validates.js'
   ],
@@ -42,6 +43,7 @@ export default {
     "atomic/immutables",
     "atomic/reactives",
     "atomic/transducers",
+    "atomic/transients",
     "atomic/requests",
     "atomic/validates",
     "atomic/dom"

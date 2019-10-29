@@ -1,5 +1,5 @@
 import {protocol} from "../../types/protocol";
-export const IYank = protocol({
+export const IYankable = protocol({
   yank: null
 });
-export default IYank;
+export default IYankable;

@@ -26,6 +26,7 @@ export default {
     "atomic/requests",
     "atomic/reactives",
     "atomic/transducers",
+    "atomic/transients",
     "atomic/validates",
     "atomic/dom"
   ]

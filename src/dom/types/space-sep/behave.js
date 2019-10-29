@@ -1,4 +1,5 @@
-import {identity, does, implement, filtera, locate, ISequential, ISeq, IDeref, ICoerce, ICounted, ICollection, IInclusive, IYank} from 'atomic/core';
+import {deprecated, identity, does, implement, filtera, locate, ISequential, ISeq, IDeref, ICoerce, ICounted, ICollection, IInclusive, IYankable} from 'atomic/core';
+import {ITransientCollection, ITransientYankable} from 'atomic/transients';
 
 function seq(self){
   const text = self.element.getAttribute(self.key);
@@ -12,15 +13,25 @@ function includes(self, text){
   });
 }
 
-function conj(self, text){
+function _conj(self, text){
   self.element.setAttribute(self.key, deref(self).concat(text).join(" "));
+}
+
+function conj(self, text){
+  deprecated(self, "ICollection.conj deprecated. Use ITransientCollection.conj.");
+  _conj(self, text);
   return self;
 }
 
-function yank(self, text){
+function _yank(self, text){
   self.element.setAttribute(self.key, filtera(function(t){
     return t !== text;
   }, seq(self)).join(" "));
+}
+
+function yank(self, text){
+  deprecated(self, "IYankable.yank deprecated. Use ITransientYankable.yank.");
+  _yank(self, text);
   return self;
 }
 
@@ -37,7 +48,9 @@ export default does(
   implement(ISeq, {seq}),
   implement(IDeref, {deref}),
   implement(IInclusive, {includes}),
-  implement(IYank, {yank}),
+  implement(IYankable, {yank}),
+  implement(ITransientYankable, {yank: _yank}),
   implement(ICounted, {count}),
+  implement(ITransientCollection, {conj: _conj}),
   implement(ICollection, {conj}),
   implement(ICoerce, {toArray: deref}));

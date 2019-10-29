@@ -1,8 +1,7 @@
 import {does, identity} from '../../core';
 import {implement} from '../protocol';
-import {IBlankable, ICompact, ITransient, IComparable, IYank, IMatch, IDecode, ISet, INext, ICollection, IEncode, IEquiv, IMapEntry, IReduce, IKVReduce, ISeqable, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, IFn, IMap, ISeq, IDescriptive, ICoerce, ICloneable, IInclusive} from '../../protocols';
+import {IBlankable, ICompact, IComparable, IYankable, IMatch, IDecode, ISet, INext, ICollection, IEncode, IEquiv, IMapEntry, IReduce, IKVReduce, ISeqable, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, IFn, IMap, ISeq, IDescriptive, ICoerce, ICloneable, IInclusive} from '../../protocols';
 import {reduced} from '../reduced';
-import {transientObject} from '../transient-object/construct';
 import {lazySeq, into, map} from '../lazy-seq';
 import {cons} from '../list';
 import {iequiv, itemplate} from '../array/behave';
@@ -14,10 +13,6 @@ const vals = Object.values;
 
 function blank(self){
   return keys(self).length === 0;
-}
-
-function transient(self){
-  return transientObject(clone(self));
 }
 
 function compact(self){
@@ -195,14 +190,13 @@ export default does(
   itemplate,
   implement(IDescriptive),
   implement(IBlankable, {blank}),
-  implement(ITransient, {transient}),
   implement(ICompact, {compact}),
   implement(IEquiv, {equiv}),
   implement(IDecode, {decode}),
   implement(IEncode, {encode}),
   implement(ICoerce, {toArray: toArray, toObject: identity}),
   implement(IFind, {find}),
-  implement(IYank, {yank}),
+  implement(IYankable, {yank}),
   implement(IMatch, {matches}),
   implement(ISet, {disj}),
   implement(IInclusive, {includes}),

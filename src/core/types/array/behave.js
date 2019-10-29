@@ -1,32 +1,50 @@
 import {does, identity, overload, doto, complement} from '../../core';
 import {implement, specify, satisfies} from '../protocol';
-import {IBlankable, IMap, IQueryable, ITransient, IPersistent, IWrite, ITemplate, ICoerce, IFunctor, IInsertable, IYank, IEncode, IDecode, IReversible, ISet, IMapEntry, IEquiv, IReduce, IKVReduce, IAppendable, IPrependable, IInclusive, ICollection, INext, ISeq, IFind, ISeqable, IIndexed, IAssociative, ISequential, IEmptyableCollection, IFn, ICounted, ILookup, ICloneable} from '../../protocols';
+import {IBlankable, IMap, IQueryable, IWrite, ITemplate, ICoerce, IFunctor, IInsertable, IYankable, IEncode, IDecode, IReversible, ISet, IMapEntry, IEquiv, IReduce, IKVReduce, IAppendable, IPrependable, IInclusive, ICollection, INext, ISeq, IFind, ISeqable, IIndexed, IAssociative, ISequential, IEmptyableCollection, IFn, ICounted, ILookup, ICloneable} from '../../protocols';
 import {reduced, unreduced, isReduced} from '../reduced';
 import {indexedSeq} from '../indexed-seq';
 import {replace} from '../string/concrete';
 import {range} from '../range/construct';
 import {revSeq} from '../rev-seq';
 import {filter, mapa} from '../lazy-seq';
-import {transientArray} from '../transient-array/construct';
 import Array, {emptyArray} from './construct';
-import {_ as v} from "param.macro";
 
 const clone = Array.from;
 
-function transient(self){
-  return transientArray(clone(self));
+function _before(self, reference, inserted){
+  const pos = self.indexOf(reference);
+  pos === -1 || self.splice(pos, 0, inserted);
 }
 
 function before(self, reference, inserted){
-  return IPersistent.persistent(
-    doto(transient(self),
-      IInsertable.before(v, reference, inserted)));
+  var arr = Array.from(self);
+  _before(arr, reference, inserted);
+  return arr;
+}
+
+function _after(self, reference, inserted){
+  const pos = self.indexOf(reference);
+  pos === -1 || self.splice(pos + 1, 0, inserted);
 }
 
 function after(self, reference, inserted){
-  return IPersistent.persistent(
-    doto(transient(self),
-      IInsertable.after(v, reference, inserted)));
+  var arr = Array.from(self);
+  _after(arr, reference, inserted);
+  return arr;
+}
+
+function keys(self){
+  return range(ICounted.count(self));
+}
+
+function _dissoc(self, idx){
+  self.splice(idx, 1);
+}
+
+function dissoc(self, idx){
+  var arr = Array.from(self);
+  _dissoc(arr, idx);
+  return arr;
 }
 
 function fill(self, template){
@@ -94,16 +112,6 @@ function disj(self, value){
   return self.filter(function(x){
     return value !== value;
   });
-}
-
-function keys(self){
-  return range(ICounted.count(self));
-}
-
-function dissoc(self, idx){
-  return IPersistent.persistent(
-    doto(transient(self),
-      IMap.dissoc(v, idx)));
 }
 
 function key(self){
@@ -227,19 +235,18 @@ export default does(
   iequiv,
   itemplate,
   implement(IQueryable, {query}),
-  implement(ITransient, {transient}),
   implement(ISequential),
+  implement(IMap, {dissoc, keys, vals: identity}),
   implement(IInsertable, {before, after}),
   implement(IWrite, {write}),
   implement(IFunctor, {fmap}),
   implement(IEncode, {encode}),
   implement(IDecode, {decode}),
   implement(ICoerce, {toObject}),
-  implement(IYank, {yank}),
+  implement(IYankable, {yank}),
   implement(IReversible, {reverse}),
   implement(ISet, {disj}),
   implement(IFind, {find}),
-  implement(IMap, {dissoc, keys, vals: identity}),
   implement(IMapEntry, {key, val}),
   implement(IInclusive, {includes}),
   implement(IAppendable, {append}),

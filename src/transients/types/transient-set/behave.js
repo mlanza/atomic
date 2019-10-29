@@ -1,12 +1,13 @@
-import {does, identity} from '../../core';
-import {implement} from '../protocol';
+import {deprecated, does, identity} from "atomic/core";
+import {implement} from "atomic/core";
 import {emptyTransientSet, transientSet} from './construct';
-import {filter, lazySeq} from '../lazy-seq';
-import {cons} from '../list/construct';
-import {emptyList} from '../empty-list/construct';
-import {apply} from "../function/concrete";
-import {unreduced} from '../reduced/concrete';
-import {ICoerce, IPersistent, ISeq, IReduce, ISeqable, ISet, INext, ISequential, ICounted, ICollection, IEmptyableCollection, IInclusive, ICloneable} from '../../protocols';
+import {filter, lazySeq} from "atomic/core";
+import {cons} from "atomic/core";
+import {emptyList} from "atomic/core";
+import {apply} from "atomic/core";
+import {unreduced} from "atomic/core";
+import {ICoerce, ISeq, IReduce, ISeqable, ISet, INext, ISequential, ICounted, ICollection, IEmptyableCollection, IInclusive, ICloneable} from "atomic/core";
+import {IPersistent, ITransientSet, ITransientCollection} from "../../protocols";
 import {_ as v} from "param.macro";
 
 function seq(self){
@@ -14,15 +15,27 @@ function seq(self){
 }
 
 function disj(self, value){
-  return self.delete(value);
+  deprecated(self, "ISet.disj deprecated.  Use ITransientSet.disj.");
+  _disj(self, value);
+  return self;
+}
+
+function _disj(self, value){
+  self.delete(value);
 }
 
 function includes(self, value){
   return self.has(value);
 }
 
+function _conj(self, value){
+  self.add(value);
+}
+
 function conj(self, value){
-  return self.add(value);
+  deprecated(self, "ICollection.conj deprecated.  Use ITransientCollection.conj.");
+  _conj(self, value);
+  return self;
 }
 
 function first(self){
@@ -74,11 +87,13 @@ function reduce(self, xf, init){
 
 export default does(
   implement(ISequential),
+  implement(ITransientCollection, {conj: _conj}),
+  implement(ITransientSet, {disj: _disj}),
   implement(IReduce, {reduce}),
   implement(ICoerce, {toArray}),
   implement(ISeqable, {seq}),
   implement(IInclusive, {includes}),
-  implement(ISet, {disj, unite: conj}),
+  implement(ISet, {disj}), //TODO unite
   implement(ICloneable, {clone}),
   implement(IEmptyableCollection, {empty: emptyTransientSet}),
   implement(ICollection, {conj}),

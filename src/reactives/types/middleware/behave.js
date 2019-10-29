@@ -1,9 +1,15 @@
-import {does, doto, noop, reverse, reduce, specify, implement, ICollection} from 'atomic/core';
+import {deprecated, does, doto, noop, reverse, reduce, specify, implement, ICollection} from 'atomic/core';
+import {ITransientCollection} from 'atomic/transients';
 import {IMiddleware} from "../../protocols/imiddleware/instance"
 
-function conj(self, handler){
+function _conj(self, handler){
   self.handlers = ICollection.conj(self.handlers, handler);
   self.handler = combine(self.handlers);
+}
+
+function conj(self, handler){
+  deprecated(self, "ICollection.conj deprecated. Use ITransientCollection.conj.");
+  _conj(self, handler);
   return self;
 }
 
@@ -26,4 +32,5 @@ function handle(self, command, next){
 
 export default does(
   implement(ICollection, {conj}),
+  implement(ITransientCollection, {conj: _conj}),
   implement(IMiddleware, {handle}));

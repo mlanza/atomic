@@ -41,8 +41,5 @@ export * from "./types/series";
 export * from "./types/symbol";
 export * from "./types/string";
 export * from "./types/task";
-export * from "./types/transient-array";
-export * from "./types/transient-object";
-export * from "./types/transient-set";
 export * from "./types/weak-map";
 export * from "./types/years";
