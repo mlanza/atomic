@@ -1533,7 +1533,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
   function NullHandler(){
   }
 
-  var nullHandler = _.constructs(NullHandler);
+  var nullHandler = new NullHandler();
 
   (function(){
 
@@ -1648,7 +1648,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
   (function(){
 
     function handle(self, command, next){
-      ents.select(self.subject, event.id);
+      ents.select(self.subject, command.id);
       $.raise(self.provider, selectedEvent(command.id));
       return next(command);
     }
@@ -1756,9 +1756,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
     function handle(self, command, next){
       var result = next(command);
-      _.each(function(event){
-        $.dispatch(self.eventBus, event);
-      }, $.release(self.provider));
+      _.each($.dispatch(self.eventBus, _), $.release(self.provider));
       return result;
     }
 
@@ -1785,22 +1783,27 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   })()
 
-  function HandlerMiddleware(handlers, identify){
+  function HandlerMiddleware(handlers, identify, fallback){
     this.handlers = handlers;
     this.identify = identify;
+    this.fallback = fallback;
   }
 
-  var handlerMiddleware2 = _.constructs(HandlerMiddleware);
+  var handlerMiddleware3 = _.constructs(HandlerMiddleware);
+
+  function handlerMiddleware2(identify, fallback){
+    return handlerMiddleware3({}, identify, fallback);
+  }
 
   function handlerMiddleware1(identify){
-    return handlerMiddleware2({}, identify);
+    return handlerMiddleware2(identify, nullHandler);
   }
 
   function handlerMiddleware0(){
     return handlerMiddleware1(IIdentifiable.identifier);
   }
 
-  var handlerMiddleware = _.overload(handlerMiddleware0, handlerMiddleware1, handlerMiddleware2);
+  var handlerMiddleware = _.overload(handlerMiddleware0, handlerMiddleware1, handlerMiddleware2, handlerMiddleware3);
 
   (function(){
 
@@ -1809,7 +1812,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     }
 
     function handle(self, message, next){
-      var handler = _.get(self.handlers, self.identify(message)),
+      var handler = _.get(self.handlers, self.identify(message), self.fallback),
           result  = $.handle(handler, message);
       next(message);
       return result;
@@ -1946,6 +1949,10 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     add: add,
     edit: edit,
     destroy: destroy,
+    loadCommand: loadCommand,
+    queryCommand: queryCommand,
+    selectCommand: selectCommand,
+    deselectCommand: deselectCommand,
     resource: resource,
     resources: resources,
     entityBuffer: entityBuffer,
@@ -1965,7 +1972,6 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     var root = _.guid("a");
     var $events = $.events();
     var $outline = outline(domain, $.cell(ents.typedEntityBuffer()), {root: root});
-    var nhandler = nullHandler();
     var $ebus = bus(), $cbus = bus();
 
     //RULE the development strategy proposes apps be built up in layers of option features. (e.g. how the CommandBus feature adds to Outline)
@@ -1975,10 +1981,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
       mut.conj(_,
         loggerMiddleware("event"),
         _.doto(handlerMiddleware(),
-          mut.assoc(_, "loaded", nhandler),
-          mut.assoc(_, "queried", queriedHandler($outline, $cbus)),
-          mut.assoc(_, "selected", nhandler),
-          mut.assoc(_, "deselected", nhandler))));
+          mut.assoc(_, "queried", queriedHandler($outline, $cbus)))));
 
     _.doto($cbus,
       mut.conj(_,
@@ -1997,7 +2000,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     _.each($.dispatch($cbus, _), [
       queryCommand({$type: "tasks"}),
       selectCommand(root)
-    ])
+    ]);
 
   });
 
