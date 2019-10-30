@@ -1,4 +1,4 @@
-import {deprecated, does, identity} from "atomic/core";
+import {does, identity} from "atomic/core";
 import {implement} from "atomic/core";
 import {emptyTransientSet, transientSet} from './construct';
 import {filter, lazySeq} from "atomic/core";
@@ -7,20 +7,18 @@ import {emptyList} from "atomic/core";
 import {apply} from "atomic/core";
 import {unreduced} from "atomic/core";
 import {ICoerce, ISeq, IReduce, ISeqable, ISet, INext, ISequential, ICounted, ICollection, IEmptyableCollection, IInclusive, ICloneable} from "atomic/core";
-import {IPersistent, ITransientSet, ITransientCollection} from "../../protocols";
+import {IPersistent, ITransientSet, ITransientEmptyableCollection, ITransientCollection} from "../../protocols";
 import {_ as v} from "param.macro";
 
 function seq(self){
   return count(self) ? self : null;
 }
 
-function disj(self, value){
-  deprecated(self, "ISet.disj deprecated.  Use ITransientSet.disj.");
-  _disj(self, value);
-  return self;
+function empty(self){
+  self.clear();
 }
 
-function _disj(self, value){
+function disj(self, value){
   self.delete(value);
 }
 
@@ -28,14 +26,8 @@ function includes(self, value){
   return self.has(value);
 }
 
-function _conj(self, value){
-  self.add(value);
-}
-
 function conj(self, value){
-  deprecated(self, "ICollection.conj deprecated.  Use ITransientCollection.conj.");
-  _conj(self, value);
-  return self;
+  self.add(value);
 }
 
 function first(self){
@@ -87,16 +79,14 @@ function reduce(self, xf, init){
 
 export default does(
   implement(ISequential),
-  implement(ITransientCollection, {conj: _conj}),
-  implement(ITransientSet, {disj: _disj}),
+  implement(ITransientCollection, {conj}),
+  implement(ITransientSet, {disj}), //TODO unite
   implement(IReduce, {reduce}),
   implement(ICoerce, {toArray}),
   implement(ISeqable, {seq}),
   implement(IInclusive, {includes}),
-  implement(ISet, {disj}), //TODO unite
   implement(ICloneable, {clone}),
-  implement(IEmptyableCollection, {empty: emptyTransientSet}),
-  implement(ICollection, {conj}),
+  implement(ITransientEmptyableCollection, {empty}),
   implement(ICounted, {count}),
   implement(INext, {next}),
   implement(ISeq, {first, rest}))

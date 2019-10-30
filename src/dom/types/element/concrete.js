@@ -1,4 +1,5 @@
-import {IHierarchy, isString, append} from 'atomic/core';
+import {IHierarchy, isString} from 'atomic/core';
+import {append} from 'atomic/transients';
 
 export function replaceWith(self, other){
   const parent = IHierarchy.parent(self),

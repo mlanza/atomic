@@ -1,56 +1,32 @@
 import {does, overload, doto, forwardTo} from "atomic/core";
 import {implement} from "atomic/core";
 import {transientObject} from "./construct";
-import {ICoerce, IEquiv, IFn, IComparable, IDescriptive, IInsertable, IMatch, IFunctor, ILookup, IAssociative, IFind, IMapEntry, IYankable, ISeq, INext, ISeqable, ICounted, IInclusive, IReversible, IEmptyableCollection, IMap, IReduce, IKVReduce, ICloneable, IAppendable, IPrependable, ITemplate, ISequential, ICollection} from "atomic/core";
-import {IPersistent, ITransientYankable, ITransientAssociative, ITransientCollection, ITransientMap} from "../../protocols";
+import {ICoerce, IEquiv, IFn, IComparable, IDescriptive, IMatch, IFunctor, ILookup, IAssociative, IFind, IMapEntry, IYankable, ISeq, INext, ISeqable, ICounted, IInclusive, IEmptyableCollection, IMap, IReduce, IKVReduce, ICloneable, IAppendable, IPrependable, ITemplate, ISequential, ICollection} from "atomic/core";
+import {IPersistent, ITransientYankable, ITransientAssociative, ITransientEmptyableCollection, ITransientCollection, ITransientMap} from "../../protocols";
 
-function _yank(self, entry){
+function yank(self, entry){
   const key = IMapEntry.key(entry);
   if (includes(self, entry)) {
     delete self.obj[key];
   }
 }
 
-function yank(self, entry){
-  deprecated(self, "IYankable.yank deprecated. Use ITransientYankable.yank.");
-  _yank(self, entry);
-  return self;
-}
-
-function _conj(self, entry){
+function conj(self, entry){
   const key = IMapEntry.key(entry),
         val = IMapEntry.val(entry);
   self.obj[key] = val;
 }
 
-function conj(self, entry){
-  deprecated(self, "ICollection.conj deprecated. Use ITransientCollection.conj.");
-  _conj(self, entry);
-  return self;
-}
-
-function _dissoc(self, key){
+function dissoc(self, key){
   if (contains(self, key)) {
     delete self.obj[key];
   }
 }
 
-function dissoc(self, key){
-  deprecated(self, "IMap.dissoc deprecated. Use ITransientMap.dissoc.");
-  _dissoc(self, key);
-  return self;
-}
-
-function _assoc(self, key, value){
+function assoc(self, key, value){
   if (!contains(self, key) || !IEquiv.equiv(lookup(self, key), value)) {
     self.obj[key] = value;
   }
-}
-
-function assoc(self, key, value){
-  deprecated(self, "IAssociative.assoc deprecated. Use ITransientAssociative.assoc.");
-  _assoc(self, key, value);
-  return self;
 }
 
 function clone(self){
@@ -71,7 +47,6 @@ function toObject(self){
 
 function empty(self){
   self.obj = {};
-  return self;
 }
 
 function persistent(self){
@@ -100,10 +75,9 @@ const toArray = forward(ICoerce.toArray);
 export default does(
   implement(IDescriptive),
   implement(IPersistent, {persistent}),
-  implement(ICollection, {conj}),
-  implement(ITransientCollection, {conj: _conj}),
+  implement(ITransientCollection, {conj}),
   implement(IComparable, {compare}),
-  implement(IEmptyableCollection, {empty}),
+  implement(ITransientEmptyableCollection, {empty}),
   implement(ICoerce, {toArray, toObject}),
   implement(IFn, {invoke: lookup}),
   implement(IReduce, {reduce}),
@@ -115,10 +89,10 @@ export default does(
   implement(INext, {next}),
   implement(IFind, {find}),
   implement(ILookup, {lookup}),
-  implement(IAssociative, {assoc, contains}),
-  implement(ITransientAssociative, {assoc: _assoc}),
+  implement(IAssociative, {contains}),
+  implement(ITransientAssociative, {assoc}),
   implement(IInclusive, {includes}),
   implement(IEquiv, {equiv}),
-  implement(IMap, {keys, vals, dissoc}),
-  implement(ITransientMap, {dissoc: _dissoc}),
+  implement(IMap, {keys, vals}),
+  implement(ITransientMap, {dissoc}),
   implement(IMatch, {matches}));

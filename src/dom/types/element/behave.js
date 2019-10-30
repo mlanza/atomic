@@ -1,6 +1,5 @@
 import {
   assoc as _assoc,
-  deprecated,
   identity,
   toggles,
   constantly,
@@ -44,7 +43,6 @@ import {
   IMatch,
   IYankable,
   IInclusive,
-  IInsertable,
   ICoerce,
   IAppendable,
   IPrependable,
@@ -65,11 +63,11 @@ import {
 import {
   ITransientAssociative,
   ITransientMap,
-  ITransientInsertable,
   ITransientAppendable,
   ITransientPrependable,
   ITransientCollection,
   ITransientEmptyableCollection,
+  ITransientInsertable,
   ITransientYankable
 } from 'atomic/transients';
 import {IEvented} from "atomic/reactives";
@@ -113,48 +111,23 @@ function embed(self, parent, referenceNode) {
   return self;
 }
 
-function _append(self, content){
+function append(self, content){
   IEmbeddable.embed(content, self);
 }
 
-function append(self, content){
-  deprecated(self, "IAppendable.append deprecated.  Use ITransientAppendable.append.");
-  _append(self, content);
-  return self;
-}
-
-const conj = append;
-const _conj = _append;
-
-function _prepend(self, content){
+function prepend(self, content){
   IEmbeddable.embed(content, self, self.childNodes[0]);
 }
 
-function prepend(self, content){
-  deprecated(self, "IPrependable.prepend deprecated.  Use ITransientPrependable.prepend.");
-  _prepend(self, content);
-  return self;
-}
-
-function _before(self, content){
+function before(self, content){
   IEmbeddable.embed(content, IHierarchy.parent(self), self);
 }
 
-function before(self, content){
-  deprecated(self, "IInsertable.before deprecated.  Use ITransientInsertable.before.");
-  _before(self, content);
-  return self;
-}
-
-function _after(self, content){
+function after(self, content){
   IEmbeddable.embed(content, IHierarchy.parent(self), IHierarchy.nextSibling(self));
 }
 
-function after(self, content){
-  deprecated(self, "IInsertable.after deprecated.  Use ITransientInsertable.after.");
-  _after(self, content);
-  return self;
-}
+const conj = append;
 
 function matches(self, selector){
   return (isString(selector) && self.matches(selector)) || (isFunction(selector) && selector(self));
@@ -237,19 +210,11 @@ function contents(self){
 }
 
 function assoc(self, key, value){
-  deprecated(self, "IAssociative.assoc deprecated.  Use ITransientAssociative.assoc.");
-  __assoc(self, key, value);
-  return self;
-}
-
-function _dissoc(self, key){
-  self.removeAttribute(key);
+  self.setAttribute(key, str(value));
 }
 
 function dissoc(self, key){
-  deprecated(self, "IMap.dissoc deprecated.  Use ITransientMap.dissoc.");
-  _dissoc(self, key);
-  return self;
+  self.removeAttribute(key);
 }
 
 function keys2(self, idx){
@@ -274,10 +239,6 @@ function vals(self){
 
 function lookup(self, key){
   return self.getAttribute(key);
-}
-
-function __assoc(self, key, value){
-  self.setAttribute(key, str(value));
 }
 
 function contains(self, key){
@@ -385,16 +346,10 @@ function includes(self, target){
   }
 }
 
-function _empty(self){
+function empty(self){
   while (self.firstChild) {
     self.removeChild(self.firstChild);
   }
-}
-
-function empty(self){
-  deprecated(self, "IEmptyableCollection.empty deprecated.  Use ITransientEmptyableCollection.empty.");
-  _empty(self);
-  return self;
 }
 
 function clone(self){
@@ -419,7 +374,7 @@ function html2(self, html){
   if (isString(html)){
     self.innerHTML = html;
   } else {
-    _empty(self);
+    ITransientEmptyableCollection.empty(self);
     _embed(html, self);
   }
   return self;
@@ -466,24 +421,18 @@ export default does(
   implement(IHtml, {html}),
   implement(IValue, {value}),
   implement(IEmbeddable, {embed}),
-  implement(IEmptyableCollection, {empty}),
-  implement(ITransientEmptyableCollection, {empty: _empty}),
-  implement(IInsertable, {before, after}),
-  implement(ITransientInsertable, {before: _before, after: _after}),
+  implement(ITransientEmptyableCollection, {empty}),
+  implement(ITransientInsertable, {before, after}),
   implement(IInclusive, {includes}),
   implement(IHideable, {show, hide, toggle}),
-  implement(IYankable, {yank}),
   implement(ITransientYankable, {yank}),
   implement(IMatch, {matches}),
   implement(ICloneable, {clone}),
-  implement(IAppendable, {append}),
-  implement(ITransientAppendable, {append: _append}),
-  implement(IPrependable, {prepend}),
-  implement(ITransientPrependable, {prepend: _prepend}),
-  implement(ICollection, {conj}),
-  implement(ITransientCollection, {conj: _conj}),
+  implement(ITransientAppendable, {append}),
+  implement(ITransientPrependable, {prepend}),
+  implement(ITransientCollection, {conj}),
   implement(ILookup, {lookup}),
-  implement(IMap, {dissoc, keys, vals}),
-  implement(ITransientMap, {dissoc: _dissoc}),
-  implement(IAssociative, {assoc, contains}),
-  implement(ITransientAssociative, {assoc: __assoc}));
+  implement(IMap, {keys, vals}),
+  implement(ITransientMap, {dissoc}),
+  implement(IAssociative, {contains}),
+  implement(ITransientAssociative, {assoc}));
