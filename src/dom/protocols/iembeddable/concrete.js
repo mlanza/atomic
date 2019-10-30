@@ -1,5 +1,6 @@
 import IEmbeddable from "./instance";
 import {satisfies, each, assoc, key, val, str, ISequential, IDescriptive} from 'atomic/core';
+import {assoc} from 'atomic/transients';
 import {_ as v} from "param.macro";
 
 export function embed(self, parent, referenceNode){
