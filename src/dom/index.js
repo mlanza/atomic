@@ -1,4 +1,4 @@
-import {constantly, identity, apply, noop, slice, partial, replace, concat, template, key, val, join, merge, filter, map, remove, isObject, specify, implement, doto, get, str, includes, overload, absorb, fmap, each, obj, IReduce, first, query, locate, descendants, matches, reducekv, Number, String, Nil, ICoerce, extend, doing} from "atomic/core";
+import {constantly, identity, isString, apply, noop, slice, partial, replace, concat, template, key, val, join, merge, filter, map, remove, isObject, specify, implement, doto, get, str, includes, overload, absorb, fmap, each, eachkv, obj, IReduce, first, query, locate, descendants, matches, reducekv, LazySeq, Array, Number, String, Nil, ICoerce, extend, doing} from "atomic/core";
 import * as _ from "atomic/core";
 import * as mut from "atomic/transients";
 import {element} from "./types/element/construct";
@@ -15,7 +15,12 @@ export * from "./protocols/concrete";
 export {append, prepend, before, after, yank, empty} from "atomic/transients";
 
 function attr2(self, key){
-  return self.getAttribute(key);
+  if (isString(key)) {
+    return self.getAttribute(key);
+  } else {
+    const pairs = key;
+    eachkv(attr3(self, v, v), pairs);
+  }
 }
 
 function attr3(self, key, value){
@@ -220,6 +225,27 @@ export const toFragment = ICoerce.toFragment;
   }
 
   doto(Object, implement(IEmbeddable, {embed}));
+
+})();
+
+(function(){
+
+  function embed(self, parent) {
+    each(IEmbeddable.embed(v, parent), self);
+  }
+
+  doto(Array, implement(IEmbeddable, {embed}));
+
+})();
+
+
+(function(){
+
+  function embed(self, parent) {
+    each(IEmbeddable.embed(v, parent), self);
+  }
+
+  doto(LazySeq, implement(IEmbeddable, {embed}));
 
 })();
 

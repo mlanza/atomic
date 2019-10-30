@@ -88,7 +88,7 @@ QUnit.test("component", function(assert){
 
 QUnit.test("dom", function(assert){
   const [ul, li, div, span] = _.mapa(_.comp(_.expands, dom.tag), ["ul", "li", "div", "span"]);
-  const duo = dom.fragment() |> _.append(v, div("Abbott")) |> _.append(v, dom.element("div", "Costello"));
+  const duo = _.doto(dom.fragment(), dom.append(v, div("Abbott")), dom.append(v, dom.element("div", "Costello")));
   const who = div(_.get(v, "givenName"), " ", _.get(v, "surname"));
   const template =
     ul(
