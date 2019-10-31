@@ -16,7 +16,6 @@ export * from "./protocols";
 export * from "./protocols/concrete";
 export * from "./predicates";
 export * from "./associatives";
-export * from "./multimethods";
 import Set from 'set';
 
 export function unique(xs){

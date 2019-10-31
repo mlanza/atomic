@@ -1,5 +1,5 @@
 import IEmbeddable from "./instance";
-import {satisfies, each, assoc, key, val, str, ISequential, IDescriptive} from 'atomic/core';
+import {satisfies, each, key, val, str, ISequential, IDescriptive} from 'atomic/core';
 import {assoc} from 'atomic/transients';
 import {_ as v} from "param.macro";
 

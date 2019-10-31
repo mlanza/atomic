@@ -243,7 +243,7 @@ export const trampoline = overload(null, trampoline1, trampolineN);
 export function forwardTo(key){
   return function forward(f){
     return function(self, ...args){
-      return f.apply(null, [self[key], ...args]);
+      return f.apply(this, [self[key], ...args]);
     }
   }
 }

@@ -14,14 +14,12 @@ const stooges = ["Larry","Curly","Moe"],
       worth   = {pieces: pieces, court: court};
 
 QUnit.test("router & multimethod", function(assert){ //not just for fns!
-  const f =
-    $.router() //router handlers need not be (but can be) fns
-      |> _.append(v, $.handler(_.signature(_.isString), _.str(v, "!"), _.apply)) //use apply to spread the message against the pred and callback
-      |> _.append(v, $.handler(_.signature(_.isNumber), _.multiply(v, 2), _.apply));
-  const g =
-    _.multimethod() //multimethod handlers must be fns
-      |> _.append(v, _.method(_.signature(_.isString), _.str(v, "!"))) //as a multimethod always dispatches to fns, apply is a given and need not be specified.
-      |> _.append(v, _.method(_.signature(_.isNumber), _.multiply(v, 2)));
+  const f = _.doto($.router(), //router handlers need not be (but can be) fns
+      mut.conj(v, $.handler(_.signature(_.isString), _.str(v, "!"), _.apply)), //use apply to spread the message against the pred and callback
+      mut.conj(v, $.handler(_.signature(_.isNumber), _.multiply(v, 2), _.apply)));
+  const g = _.doto(mut.multimethod(), //multimethod handlers must be fns
+      mut.conj(v, mut.method(_.signature(_.isString), _.str(v, "!"))), //as a multimethod always dispatches to fns, apply is a given and need not be specified.
+      mut.conj(v, mut.method(_.signature(_.isNumber), _.multiply(v, 2))));
   assert.equal($.dispatch(f, [1]), 2);
   assert.equal($.dispatch(f, ["timber"]), "timber!");
   assert.equal($.dispatch(g, [1]), 2);
@@ -53,11 +51,11 @@ QUnit.test("validation", function(assert){
   assert.ok(vd.check(zipCode, "1705x-0001") != null);
   assert.ok(vd.check(Number, "7") != null);
   assert.ok(vd.check(Number, parseInt, "7") == null);
-  assert.ok(vd.check(Date, _.parseDate, "11/10/2019 5:45 am") == null);
-  assert.ok(vd.check(Date, _.parseDate, "d11/10/2019 5:45 am") != null);
-  assert.ok(vd.check(vd.parses(_.parseDate, past), "1/1/3000") != null);
-  assert.ok(vd.check(vd.parses(_.parseDate, past), birth) == null);
-  assert.ok(vd.check(vd.parses(_.parseDate, past), `d${birth}`) != null);
+  assert.ok(vd.check(Date, mut.parseDate, "11/10/2019 5:45 am") == null);
+  assert.ok(vd.check(Date, mut.parseDate, "d11/10/2019 5:45 am") != null);
+  assert.ok(vd.check(vd.parses(mut.parseDate, past), "1/1/3000") != null);
+  assert.ok(vd.check(vd.parses(mut.parseDate, past), birth) == null);
+  assert.ok(vd.check(vd.parses(mut.parseDate, past), `d${birth}`) != null);
   assert.ok(vd.check(vd.range("start", "end"), {start: 1, end: 5}) == null);
   assert.ok(vd.check(vd.range("start", "end"), {start: 1, end: 1}) == null);
   assert.ok(vd.check(vd.range("start", "end"), {start: 5, end: 1}) != null);
@@ -108,9 +106,9 @@ QUnit.test("dom", function(assert){
   assert.equal(moe |> dom.text, "Moe Howard", "Found by tag");
   assert.deepEqual(stooges |> dom.sel("li", v) |> _.map(_.get(v, "id"), v) |> _.toArray, ["moe", "curly", "larry"], "Extracted ids");
   assert.equal({givenName: "Curly", surname: "Howard"} |> who |> dom.text, "Curly Howard");
-  assert.deepEqual(moe |> dom.classes |> _.conj(v, "main") |> _.deref, ["main"]);
-  assert.equal(moe |> _.assoc(v, "data-tagged", "tests") |> _.get(v, "data-tagged"), "tests");
-  stooges |> _.append(v, div({id: 'branding'}, span("Three Blind Mice")));
+  assert.deepEqual(_.fluent(moe, dom.classes, mut.conj(v, "main"), _.deref), ["main"]);
+  assert.equal(_.fluent(moe, dom.attr(v, "data-tagged", "tests"), _.get(v, "data-tagged")), "tests");
+  stooges |> dom.append(v, div({id: 'branding'}, span("Three Blind Mice")));
   assert.ok(stooges |> dom.sel("#branding", v) |> _.first |> (el => el instanceof HTMLDivElement), "Found by id");
   assert.deepEqual(stooges |> dom.sel("#branding span", v) |> _.map(dom.text, v) |> _.first, "Three Blind Mice", "Read text content");
   const greeting = stooges |> dom.sel("#branding span", v) |> _.first;
@@ -120,7 +118,7 @@ QUnit.test("dom", function(assert){
   dom.show(greeting);
   assert.deepEqual(greeting |> dom.style |> _.deref, {}, "Shown");
   const branding = stooges |> dom.sel("#branding", v) |> _.first;
-  _.yank(branding);
+  dom.yank(branding);
   assert.equal(branding |> _.parent |> _.first, null, "Removed");
 });
 

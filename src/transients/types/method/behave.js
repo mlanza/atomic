@@ -1,7 +1,4 @@
-import {does} from "../../core";
-import {implement} from '../protocol';
-import {apply} from '../function/concrete';
-import {IFn, IMatch} from '../../protocols';
+import {does, implement, apply, IFn, IMatch} from "atomic/core";
 
 function invoke(self, args){
   return apply(self.f, args);

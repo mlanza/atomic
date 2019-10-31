@@ -8,19 +8,35 @@ import {lazySeq} from "../../types/lazy-seq/construct";
 import {cons} from "../../types/list/construct";
 import {emptyList} from "../../types/empty-list/construct";
 import {isRegExp} from "./construct";
+import {_ as v} from "param.macro";
 
 export const test = unbind(RegExp.prototype.test);
 
 export function reFind(re, s){
-  if (!isString(s)) throw new TypeError("reFind must match against string.");
+  if (!isString(s)) {
+    throw new TypeError("reFind must match against string.");
+  }
   const matches = re.exec(s);
   if (matches){
     return count(matches) === 1 ? first(matches) : matches;
   }
 }
 
+function reFindAll2(text, find){
+  var found = find(text);
+  return found ? lazySeq(function(){
+    return cons(found, reFindAll2(text, find));
+  }) : emptyList();
+}
+
+export function reFindAll(re, text){
+  return reFindAll2(text, reFind(re, v));
+}
+
 export function reMatches(re, s){
-  if (!isString(s)) throw new TypeError("reMatches must match against string.");
+  if (!isString(s)) {
+    throw new TypeError("reMatches must match against string.");
+  }
   const matches = re.exec(s);
   if (first(matches) === s) {
     return count(matches) === 1 ? first(matches) : matches;
@@ -28,7 +44,9 @@ export function reMatches(re, s){
 }
 
 function reSeq(re, s){
-  if (!isString(s)) throw new TypeError("reSeq must match against string.");
+  if (!isString(s)) {
+    throw new TypeError("reSeq must match against string.");
+  }
   return lazySeq(function(){
     const matchData = reFind(re, s);
     return matchData ? cons(matchData, reSeq(re, s)) : emptyList();
