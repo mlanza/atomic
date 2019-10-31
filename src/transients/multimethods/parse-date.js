@@ -1,14 +1,7 @@
+import {test, reMatches, mapa, drop, splice, comp, spread, split, mapVals, date, toArray, get} from "atomic/core";
+import {conj} from "../protocols/itransientcollection/concrete";
 import {multimethod} from "../types/multimethod/construct";
-import {test, reMatches} from "../types/reg-exp/concrete";
-import {mapa, drop, splice} from "../types/lazy-seq/concrete";
-import {comp, spread, see} from "../types/function/concrete";
-import {split} from "../types/string/concrete";
-import {mapVals} from "../types/object/concrete";
-import {date} from "../types/date/construct";
-import {toArray} from "../protocols/icoerce/concrete";
-import {get} from "../protocols/ilookup/concrete";
 import {method} from "../types/method/construct";
-import {append} from "../protocols/iappendable/concrete";
 import {_ as v} from "param.macro";
 
 export const reDateString = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$/;
@@ -28,10 +21,11 @@ export const parseMDY = comp(spread(function(M, d, y, h, m, ampm){
 
 export const parseDate = multimethod(date);
 
-append(parseDate, method(test(reMDY       , v), parseMDY));
-append(parseDate, method(test(reDateString, v), date));
-append(parseDate, method(test(reSerialDate, v), parseSerialDate));
-append(parseDate, method(test(reLocalDate , v), parseLocalDate));
-append(parseDate, method(test(reTimeStamp , v), parseTimeStamp));
+conj(parseDate,
+  method(test(reMDY       , v), parseMDY),
+  method(test(reDateString, v), date),
+  method(test(reSerialDate, v), parseSerialDate),
+  method(test(reLocalDate , v), parseLocalDate),
+  method(test(reTimeStamp , v), parseTimeStamp));
 
 export default parseDate;

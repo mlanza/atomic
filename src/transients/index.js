@@ -1,6 +1,7 @@
 export * from "./protocols";
 export * from "./protocols/concrete";
 export * from "./types";
+export * from "./multimethods";
 import {IPersistent, ITransient} from "./protocols";
 import {transientObject, transientArray, transientSet} from "./types";
 import {Array, each, doto, clone, implement} from "atomic/core";

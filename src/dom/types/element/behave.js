@@ -44,8 +44,6 @@ import {
   IYankable,
   IInclusive,
   ICoerce,
-  IAppendable,
-  IPrependable,
   IAssociative,
   IDescriptive,
   IMap,
@@ -374,7 +372,7 @@ function html2(self, html){
   if (isString(html)){
     self.innerHTML = html;
   } else {
-    ITransientEmptyableCollection.empty(self);
+    empty(self);
     _embed(html, self);
   }
   return self;

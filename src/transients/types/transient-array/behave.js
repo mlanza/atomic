@@ -1,5 +1,5 @@
 import {does, overload, doto, forwardTo, implement} from "atomic/core";
-import {ICoerce, IFunctor, ILookup, IAssociative, IFind, IMapEntry, IYankable, ISeq, INext, ISeqable, ICounted, IInclusive, IEmptyableCollection, IMap, IReduce, IKVReduce, ICloneable, IAppendable, IPrependable, ITemplate, ISequential, ICollection} from "atomic/core";
+import {ICoerce, IFunctor, ILookup, IAssociative, IFind, IMapEntry, IYankable, ISeq, INext, ISeqable, ICounted, IInclusive, IEmptyableCollection, IMap, IReduce, IKVReduce, ICloneable, ITemplate, ISequential, ICollection} from "atomic/core";
 import {IPersistent, ITransientMap, ITransientInsertable, ITransientEmptyableCollection, ITransientReversible, ITransientYankable, ITransientAssociative, ITransientAppendable, ITransientPrependable, ITransientCollection} from "../../protocols";
 
 function before(self, reference, inserted){
