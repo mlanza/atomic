@@ -153,8 +153,8 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     commands: null //returns one or more commands that when executed effect the transaction in its entirety
   });
 
-  var IMount = _.protocol({ //TODO reconcile with IMountable
-    mount: null
+  var IView = _.protocol({
+    render: null
   });
 
   var IWorkspace = _.protocol({
@@ -209,7 +209,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     IPossession: IPossession,
     ITransaction: ITransaction,
     IEntitySelector: IEntitySelector,
-    IMount: IMount,
+    IView: IView,
     IMiddleware: IMiddleware,
     IWorkspace: IWorkspace
   }
@@ -1832,23 +1832,47 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
   //NOTE assign guid as `data-key` and realize that the same entity could appear in multiple places of an outline.
   //NOTE a view is capable of returning a seq of all possible `IView.interactions` each implementing `IIdentifiable` and `ISubject`.
   //NOTE an interaction is a persistent, validatable object with field schema.  It will be flagged as command or query which will help with processing esp. pipelining.  When successfully validated it has all that it needs to be handled by the handler.  That it can be introspected allows for the UI to help will completing them.
-  function Outline(domain, $buffer, $model, options){
+  function Outline(domain, $buffer, $model, $cbus, $ebus, options){
     this.domain = domain;
     this.$buffer = $buffer;
     this.$model = $model;
+    this.$cbus = $cbus;
+    this.$ebus = $ebus;
     this.options = options;
   }
 
   function outline($domain, $buffer, options){ //e.g. options -> {root: guid}
-    var $model = $.cell({selected: options.selected || imm.set()});
-    return new Outline($domain, $buffer, $model, options);
+    var $model = $.cell({selected: options.selected || imm.set()}),
+        $ebus = bus(),
+        $cbus = bus(),
+        $events = $.events(),
+        $outline = new Outline($domain, $buffer, $model, $cbus, $ebus, options);
+
+    _.doto($ebus,
+      mut.conj(_,
+        loggerMiddleware("event"),
+        _.doto(handlerMiddleware(),
+          mut.assoc(_, "queried", queriedHandler($outline, $cbus)))));
+
+    _.doto($cbus,
+      mut.conj(_,
+        loggerMiddleware("command"),
+        lockingMiddleware(),
+        _.doto(handlerMiddleware(),
+          mut.assoc(_, "load", loadHandler($outline, $events)),
+          mut.assoc(_, "query", queryHandler($outline, $events)),
+          mut.assoc(_, "select", selectHandler($outline, $events)),
+          mut.assoc(_, "deselect", deselectHandler($outline, $events))),
+        drainEventsMiddleware($events, $ebus)));
+
+    return $outline;
   }
 
   //RULE it must be possible to interact with a component even if it never gets mounted.
   (function(){
     //RULE a component delegates events once on mount and avoids having to continually add/remove listeners.
-    function mount(self, el, $bus){
-      _.log("mount", self, el, $bus); //TODO bus is optional
+    function render(self, el){
+      _.log("render", self, el);
       //TODO implement
     }
 
@@ -1875,11 +1899,16 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
           _.disj(_, _.str(guid))));
     }
 
+    function dispatch(self, command){
+      IDispatch.dispatch(self.$cbus, command);
+    }
+
     return _.doto(Outline,
+      _.implement(IDispatch, {dispatch: dispatch}),
       _.implement(IQueryable, {query: query}),
       _.implement(IWorkspace, {load: load}),
       _.implement(IEntitySelector, {select: select, deselect: deselect}),
-      _.implement(IMount, {mount: mount}));
+      _.implement(IView, {render: render}));
 
   })();
 
@@ -1967,42 +1996,18 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     }, {}, Object.keys(protocol));
   }, _.vals(protocols))), _.impart(_, _.partly));
 
-  _.per(dom.sel1("#outline"), function(el){
-    var domain = ents.domain([tasks]);
-    var root = _.guid("a");
-    var $events = $.events();
-    var $outline = outline(domain, $.cell(ents.typedEntityBuffer()), {root: root});
-    var $ebus = bus(), $cbus = bus();
+  var domain = ents.domain([tasks]),
+      $buffer = $.cell(ents.typedEntityBuffer());
 
-    //RULE the development strategy proposes apps be built up in layers of option features. (e.g. how the CommandBus feature adds to Outline)
-    //TODO what is the best way for a bus to be provided to the app?  From the component itself (e.g. `ICommander.cmdbus`)? Via a factory?  The bus becomes the keeper of command metadata against which the user can see what he can do.
-
-    _.doto($ebus,
-      mut.conj(_,
-        loggerMiddleware("event"),
-        _.doto(handlerMiddleware(),
-          mut.assoc(_, "queried", queriedHandler($outline, $cbus)))));
-
-    _.doto($cbus,
-      mut.conj(_,
-        loggerMiddleware("command"),
-        lockingMiddleware(),
-        _.doto(handlerMiddleware(),
-          mut.assoc(_, "load", loadHandler($outline, $events)),
-          mut.assoc(_, "query", queryHandler($outline, $events)),
-          mut.assoc(_, "select", selectHandler($outline, $events)),
-          mut.assoc(_, "deselect", deselectHandler($outline, $events))),
-        drainEventsMiddleware($events, $ebus)));
-
-    Object.assign(window, {$events: $events, $cbus: $cbus, $ebus: $ebus, $outline: $outline});
-
-    ents.mount($outline, el);
-    _.each($.dispatch($cbus, _), [
+  _.each(function(el){
+    var $outline = outline(domain, $buffer, {root: _.guid("a")});
+    ents.render($outline, el);
+    _.each($.dispatch($outline, _), [
       queryCommand({$type: "tasks"}),
-      selectCommand(root)
+      selectCommand(_.guid("a"))
     ]);
-
-  });
+    Object.assign(window, {$outline: $outline});
+  }, dom.sel("#outline"));
 
   return ents;
 
