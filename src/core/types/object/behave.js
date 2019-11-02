@@ -4,7 +4,7 @@ import {IBlankable, ICompact, IComparable, IYankable, IMatch, IDecode, ISet, INe
 import {reduced} from '../reduced';
 import {lazySeq, into, map} from '../lazy-seq';
 import {cons} from '../list';
-import {iequiv, itemplate} from '../array/behave';
+import {iequiv} from '../array/behave';
 import {satisfies} from "../protocol/concrete";
 import Object, {emptyObject} from '../object/construct';
 
@@ -187,7 +187,6 @@ export const iset = implement(ISet, {disj});
 export default does(
   iset,
   iequiv,
-  itemplate,
   implement(IDescriptive),
   implement(IBlankable, {blank}),
   implement(ICompact, {compact}),

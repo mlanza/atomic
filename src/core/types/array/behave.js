@@ -1,6 +1,6 @@
 import {does, identity, overload, doto, complement} from '../../core';
 import {implement, specify, satisfies} from '../protocol';
-import {IBlankable, IMap, IQueryable, IWrite, ITemplate, ICoerce, IFunctor, IInsertable, IYankable, IEncode, IDecode, IReversible, ISet, IMapEntry, IEquiv, IReduce, IKVReduce, IAppendable, IPrependable, IInclusive, ICollection, INext, ISeq, IFind, ISeqable, IIndexed, IAssociative, ISequential, IEmptyableCollection, IFn, ICounted, ILookup, ICloneable} from '../../protocols';
+import {IBlankable, IMap, IQueryable, IWrite, ICoerce, IFunctor, IInsertable, IYankable, IEncode, IDecode, IReversible, ISet, IMapEntry, IEquiv, IReduce, IKVReduce, IAppendable, IPrependable, IInclusive, ICollection, INext, ISeq, IFind, ISeqable, IIndexed, IAssociative, ISequential, IEmptyableCollection, IFn, ICounted, ILookup, ICloneable} from '../../protocols';
 import {reduced, unreduced, isReduced} from '../reduced';
 import {indexedSeq} from '../indexed-seq';
 import {replace} from '../string/concrete';
@@ -45,12 +45,6 @@ function dissoc(self, idx){
   var arr = Array.from(self);
   _dissoc(arr, idx);
   return arr;
-}
-
-function fill(self, template){
-  return IKVReduce.reducekv(self, function(text, key, value){
-    return replace(text, new RegExp("\\{" + key + "\\}", 'ig'), value);
-  }, template);
 }
 
 function reduce3(xs, xf, init){
@@ -228,12 +222,10 @@ export const iindexed = does(
   implement(ICounted, {count: length}));
 
 export const iequiv = implement(IEquiv, {equiv});
-export const itemplate = implement(ITemplate, {fill});
 
 export default does(
   iindexed,
   iequiv,
-  itemplate,
   implement(IQueryable, {query}),
   implement(ISequential),
   implement(IMap, {dissoc, keys, vals: identity}),
