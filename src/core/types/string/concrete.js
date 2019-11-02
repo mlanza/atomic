@@ -2,7 +2,16 @@ import {overload, unbind} from "../../core";
 import {reducing} from "../../protocols/ireduce/concrete";
 import {IKVReduce} from "../../protocols";
 import String, {emptyString} from "./construct";
-import {_ as v} from "param.macro";
+
+export function fill(self, params){
+  return IKVReduce.reducekv(params, function(text, key, value){
+    return replace(text, new RegExp("\\{" + key + "\\}", 'ig'), value);
+  }, self);
+}
+
+export function template(self, ...args){
+  return fill(self, args);
+}
 
 export function isBlank(str){
   return str == null || typeof str === "string" && str.trim().length === 0;
