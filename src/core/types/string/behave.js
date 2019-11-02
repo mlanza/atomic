@@ -89,13 +89,8 @@ function matches(self, re){
   return rePattern(re).test(self);
 }
 
-function assoc(self, key, value){
-  return self.replace(new RegExp("\\{" + key + "\\}", 'ig'), value);
-}
-
 export default does(
   iindexed,
-  implement(IAssociative, {assoc}),
   implement(ICompact, {compact}),
   implement(IBlankable, {blank}),
   implement(IHash, {hash}),
