@@ -50,7 +50,6 @@ export * from "./protocols/iset/instance";
 export * from "./protocols/istatemachine/instance";
 export * from "./protocols/isteppable/instance";
 export * from "./protocols/iswap/instance";
-export * from "./protocols/itemplate/instance";
 export * from "./protocols/idecorated/instance";
 export * from "./protocols/iwrite/instance";
 export * from "./protocols/iyankable/instance";

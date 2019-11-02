@@ -1,4 +1,4 @@
-import {IBlankable, ICompact, ICoerce, IMatch, IReduce, ICollection, IHash, IEncode, IDecode, IIndexed, ISeqable, INext, ISeq, IInclusive, IAppendable, IPrependable, ICounted, ILookup, IFn, IComparable, IEmptyableCollection} from '../../protocols';
+import {IBlankable, IAssociative, ICompact, ICoerce, IMatch, IReduce, ICollection, IHash, IEncode, IDecode, IIndexed, ISeqable, INext, ISeq, IInclusive, IAppendable, IPrependable, ICounted, ILookup, IFn, IComparable, IEmptyableCollection} from '../../protocols';
 import {does, identity, constantly} from "../../core";
 import {implement, specify} from '../protocol';
 import {isReduced, unreduced} from '../reduced';
@@ -89,8 +89,13 @@ function matches(self, re){
   return rePattern(re).test(self);
 }
 
+function assoc(self, key, value){
+  return self.replace(new RegExp("\\{" + key + "\\}", 'ig'), value);
+}
+
 export default does(
   iindexed,
+  implement(IAssociative, {assoc}),
   implement(ICompact, {compact}),
   implement(IBlankable, {blank}),
   implement(IHash, {hash}),

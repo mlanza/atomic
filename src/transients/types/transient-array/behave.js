@@ -1,5 +1,5 @@
 import {does, overload, doto, forwardTo, implement} from "atomic/core";
-import {ICoerce, IFunctor, ILookup, IAssociative, IFind, IMapEntry, IYankable, ISeq, INext, ISeqable, ICounted, IInclusive, IEmptyableCollection, IMap, IReduce, IKVReduce, ICloneable, ITemplate, ISequential, ICollection} from "atomic/core";
+import {ICoerce, IFunctor, ILookup, IAssociative, IFind, IMapEntry, IYankable, ISeq, INext, ISeqable, ICounted, IInclusive, IEmptyableCollection, IMap, IReduce, IKVReduce, ICloneable, ISequential, ICollection} from "atomic/core";
 import {IPersistent, ITransientMap, ITransientInsertable, ITransientEmptyableCollection, ITransientReversible, ITransientYankable, ITransientAssociative, ITransientAppendable, ITransientPrependable, ITransientCollection} from "../../protocols";
 
 function before(self, reference, inserted){
@@ -64,7 +64,6 @@ const toObject = forward(ICoerce.toObject);
 const lookup = forward(ILookup.lookup);
 const reduce = forward(IReduce.reduce);
 const reducekv = forward(IKVReduce.reducekv);
-const fill = forward(ITemplate.fill);
 const fmap = forward(IFunctor.fmap);
 const includes = forward(IInclusive.includes);
 const count = forward(ICounted.count);
@@ -96,5 +95,4 @@ export default does(
   implement(IKVReduce, {reducekv}),
   implement(ITransientAppendable, {append}),
   implement(ITransientPrependable, {prepend}),
-  implement(ITemplate, {fill}),
   implement(IFunctor, {fmap}));

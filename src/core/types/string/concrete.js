@@ -1,6 +1,6 @@
 import {overload, unbind} from "../../core";
 import {reducing} from "../../protocols/ireduce/concrete";
-import {IKVReduce, ITemplate} from "../../protocols";
+import {IKVReduce} from "../../protocols";
 import String, {emptyString} from "./construct";
 import {_ as v} from "param.macro";
 
@@ -14,10 +14,6 @@ function str1(x){
 
 function str2(x, y){
   return str1(x) + str1(y);
-}
-
-export function template(template, ...args){
-  return ITemplate.fill(args, template);
 }
 
 export function camelToDashed(str){
