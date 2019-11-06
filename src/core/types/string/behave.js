@@ -1,4 +1,4 @@
-import {IBlankable, IAssociative, ICompact, ICoerce, IMatch, IReduce, ICollection, IHash, IEncode, IDecode, IIndexed, ISeqable, INext, ISeq, IInclusive, IAppendable, IPrependable, ICounted, ILookup, IFn, IComparable, IEmptyableCollection} from '../../protocols';
+import {IBlankable, ITemplate, IKVReduce, IAssociative, ICompact, ICoerce, IMatch, IReduce, ICollection, IHash, IEncode, IDecode, IIndexed, ISeqable, INext, ISeq, IInclusive, IAppendable, IPrependable, ICounted, ILookup, IFn, IComparable, IEmptyableCollection} from '../../protocols';
 import {does, identity, constantly} from "../../core";
 import {implement, specify} from '../protocol';
 import {isReduced, unreduced} from '../reduced';
@@ -7,6 +7,13 @@ import {cons} from '../list/construct';
 import {iindexed} from '../array/behave';
 import {rePattern} from '../reg-exp/concrete';
 import {emptyString, isString} from "./construct";
+import {replace} from "./concrete";
+
+function fill(self, params){
+  return IKVReduce.reducekv(params, function(text, key, value){
+    return replace(text, new RegExp("\\{" + key + "\\}", 'ig'), value);
+  }, self);
+}
 
 function blank(self){
   return self.trim().length === 0;
@@ -93,6 +100,7 @@ export default does(
   iindexed,
   implement(ICompact, {compact}),
   implement(IBlankable, {blank}),
+  implement(ITemplate, {fill}),
   implement(IHash, {hash}),
   implement(IMatch, {matches}),
   implement(ICollection, {conj}),
