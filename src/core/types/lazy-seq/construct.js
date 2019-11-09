@@ -1,6 +1,6 @@
 import {once} from '../../core';
 
-export default function LazySeq(perform){
+export function LazySeq(perform){
   this.perform = perform;
 }
 
@@ -10,5 +10,3 @@ export function lazySeq(perform){
   }
   return new LazySeq(once(perform));
 }
-
-export {LazySeq};

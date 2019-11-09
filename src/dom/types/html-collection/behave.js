@@ -1,2 +1,2 @@
-import behave from "../node-list/behave";
-export default behave;
+//import {behaveAsNodeList} from "../node-list/behave";
+//export {behaveAsNodeList as behaveAsHTMLCollection};

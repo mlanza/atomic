@@ -6,5 +6,3 @@ export function RevSeq(coll, idx){
 export function revSeq(coll, idx){
   return new RevSeq(coll, idx);
 }
-
-export default RevSeq;

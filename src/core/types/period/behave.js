@@ -1,2 +1,2 @@
-import behave from '../range/behave';
-export default behave;
+import {behaveAsRange} from '../range/behave';
+export const behaveAsPeriod = behaveAsRange;

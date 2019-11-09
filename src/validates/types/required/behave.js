@@ -18,6 +18,6 @@ function append(self, constraint){
   return required(self.key, and(self.constraint, constraint));
 }
 
-export default does(
+export const behaveAsRequired = does(
   implement(IAppendable, {append}),
   implement(ICheckable, {check}));

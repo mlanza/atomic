@@ -1,4 +1,4 @@
-export default function InvalidHostElementError(el, selector){
+export function InvalidHostElementError(el, selector){
   this.el = el;
   this.selector = selector;
 }

@@ -4,4 +4,3 @@ export const IMap = protocol({
   keys: null,
   vals: null
 });
-export default IMap;

@@ -1,5 +1,4 @@
 export * from "./maybe/construct";
-export default Maybe;
-import Maybe from "./maybe/construct";
-import behave from "./maybe/behave";
-behave(Maybe);
+import {Maybe} from "./maybe/construct";
+import {behaveAsMaybe} from "./maybe/behave";
+behaveAsMaybe(Maybe);

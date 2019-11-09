@@ -5,7 +5,7 @@ import {includes} from "../iinclusive/concrete";
 import {empty} from "../iemptyablecollection/concrete"
 import {concat} from "../../types/concatenated/construct";
 import {every} from "../../types/lazy-seq/concrete";
-import ISet from "./instance";
+import {ISet} from "./instance";
 import {_ as v} from "param.macro";
 
 export const disj = ISet.disj;

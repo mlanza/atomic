@@ -2,7 +2,7 @@ import {does, constructs} from '../../core';
 import {implement} from '../protocol';
 import {reduced} from "../reduced/construct";
 import {IReduce, IKVReduce, IEquiv, IEncode, ICoerce, IDescriptive, IAssociative, ISeqable, ILookup, ICounted, IMap, ISeq, IRecord, IEmptyableCollection} from '../../protocols';
-import Symbol from '../symbol/construct';
+import {Symbol} from '../symbol/construct';
 
 function toObject(self){
   return self.attrs;
@@ -91,7 +91,7 @@ export function emptyable(Type){
   implement(IEmptyableCollection, {empty}, Type);
 }
 
-export default does(
+export const behaveAsRecord = does(
   construction,
   encodeable,
   emptyable,

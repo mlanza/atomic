@@ -1,4 +1,4 @@
-export default function Required(key, constraint){
+export function Required(key, constraint){
   this.key = key;
   this.constraint = constraint;
 }
@@ -6,5 +6,3 @@ export default function Required(key, constraint){
 export function required(key, constraint){
   return new Required(key, constraint || null);
 }
-
-export {Required};

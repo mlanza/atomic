@@ -1,2 +1,2 @@
-import IDisposable from "./instance";
+import {IDisposable} from "./instance";
 export const dispose = IDisposable.dispose;

@@ -1,7 +1,7 @@
 import {overload, partial, doto, specify, identity, IDisposable} from "atomic/core";
 import {pub} from "../../protocols/ipublish/concrete";
 import {readonly} from "../../types/readonly/construct";
-import ISubscribe from "./instance";
+import {ISubscribe} from "./instance";
 
 function into2(sink, source){
   return into3(sink, identity, source);

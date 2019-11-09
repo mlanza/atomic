@@ -1,6 +1,6 @@
 import {overload} from 'atomic/core';
 
-export default function NestedAttrs(element, key){
+export function NestedAttrs(element, key){
   this.element = element;
   this.key = key;
 }

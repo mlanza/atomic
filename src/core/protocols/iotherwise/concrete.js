@@ -1,2 +1,2 @@
-import IOtherwise from "./instance";
+import {IOtherwise} from "./instance";
 export const otherwise = IOtherwise.otherwise;

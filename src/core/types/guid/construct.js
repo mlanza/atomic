@@ -1,8 +1,8 @@
 import {overload} from '../../core';
-import Symbol from '../symbol/construct';
+import {Symbol} from '../symbol/construct';
 import {rand} from '../number/concrete';
 
-export default function GUID(id){
+export function GUID(id){
   this.id = id;
 }
 
@@ -25,5 +25,3 @@ function guid0(){
 }
 
 export const guid = overload(guid0, guid1);
-
-export {GUID};

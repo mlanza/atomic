@@ -1,13 +1,13 @@
 import {overload} from '../../core';
 import {protocolLookupError} from '../protocol-lookup-error/construct';
-import Nil from '../nil/construct';
-import Symbol from '../symbol/construct';
+import {Nil} from '../nil/construct';
+import {Symbol} from '../symbol/construct';
 
 const TEMPLATE = Symbol("@protocol-template"),
       INDEX    = Symbol("@protocol-index"),
       MISSING  = Symbol("@protocol-missing");
 
-export default function Protocol(template, index){
+export function Protocol(template, index){
   this[INDEX] = index;
   this[TEMPLATE] = template;
 }

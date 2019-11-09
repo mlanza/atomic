@@ -1,7 +1,7 @@
-import IAssociative from "./instance";
+import {IAssociative} from "./instance";
 import {overload, slice} from "../../core";
 import {ISeq} from "../iseq";
-import ICoerce from "../icoerce/instance";
+import {ICoerce} from "../icoerce/instance";
 import {ILookup} from "../ilookup";
 
 export const contains = IAssociative.contains;

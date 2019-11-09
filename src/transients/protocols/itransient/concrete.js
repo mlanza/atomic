@@ -1,2 +1,2 @@
-import ITransient from "./instance";
+import {ITransient} from "./instance";
 export const transient = ITransient.transient;

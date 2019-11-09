@@ -77,7 +77,7 @@ function reduce(self, xf, init){
   return unreduced(memo);
 }
 
-export default does(
+export const behaveAsTransientSet = does(
   implement(ISequential),
   implement(ITransientCollection, {conj}),
   implement(ITransientSet, {disj}), //TODO unite

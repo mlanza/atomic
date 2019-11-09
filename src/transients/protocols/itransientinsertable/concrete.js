@@ -1,4 +1,4 @@
-import ITransientInsertable from "./instance";
+import {ITransientInsertable} from "./instance";
 import {overload, noop} from "atomic/core";
 
 function afterN(self, ...els) {

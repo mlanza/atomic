@@ -4,7 +4,7 @@ import {IReduce, IKVReduce, ISeqable, IEncode, IBounds, IMap, IDeref, ISeq, ICom
 import {isNumber} from '../number';
 import {days} from '../days';
 import {isDate} from "./concrete";
-import Symbol from '../symbol/construct';
+import {Symbol} from '../symbol/construct';
 
 function lookup(self, key){
   switch(key){
@@ -121,7 +121,7 @@ function deref(self){
   return self.valueOf();
 }
 
-export default does(
+export const behaveAsDate = does(
   implement(IDeref, {deref}),
   implement(IBounds, {start: identity, end: identity}),
   implement(ISeqable, {seq: identity}),

@@ -1,5 +1,4 @@
 export * from "./guid/construct";
-import GUID from "./guid/construct";
-import behave from "./guid/behave";
-behave(GUID);
-export default GUID;
+import {GUID} from "./guid/construct";
+import {behaveAsGuid} from "./guid/behave";
+behaveAsGuid(GUID);

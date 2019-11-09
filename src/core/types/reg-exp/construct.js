@@ -1,4 +1,4 @@
-export default RegExp;
+export {RegExp};
 
 export function isRegExp(self){
   return self.constructor === RegExp;

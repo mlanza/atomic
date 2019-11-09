@@ -1,6 +1,6 @@
-import Symbol from '../symbol/construct';
+import {Symbol} from '../symbol/construct';
 
-export default function EmptyList(){
+export function EmptyList(){
 }
 
 export function emptyList(){
@@ -9,5 +9,3 @@ export function emptyList(){
 
 EmptyList.prototype[Symbol.toStringTag] = "EmptyList";
 EmptyList.create = emptyList;
-
-export {EmptyList};

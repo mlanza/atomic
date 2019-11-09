@@ -28,7 +28,7 @@ function state(self){
   return IStateMachine.state(IDeref.deref(self.state));
 }
 
-export default does(
+export const behaveAsAudienceDetector = does(
   implement(IDisposable, {dispose}),
   implement(IStateMachine, {state}),
   implement(ISubscribe, {sub, unsub, subscribed}));

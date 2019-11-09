@@ -1,2 +1,2 @@
-import INamed from "./instance";
+import {INamed} from "./instance";
 export const name = INamed.name;

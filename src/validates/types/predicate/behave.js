@@ -8,5 +8,5 @@ function check(self, obj){
   return apply(self.f, args) ? null : [issue(self)];
 }
 
-export default does(
+export const behaveAsPredicate = does(
   implement(ICheckable, {check}));

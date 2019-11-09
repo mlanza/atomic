@@ -1,2 +1,2 @@
-import IYankable from "./instance";
+import {IYankable} from "./instance";
 export const yank = IYankable.yank;

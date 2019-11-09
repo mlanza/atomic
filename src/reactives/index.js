@@ -38,9 +38,9 @@ import Symbol from "symbol";
 import {weakMap} from "atomic/core";
 import {pub, sub, unsub, on, off, one, into} from "./protocols/concrete";
 import {IDispatch, IPublish, ISubscribe, IEvented} from "./protocols";
-import AudienceDetector from "./types/audience-detector/construct";
-import Broadcast from "./types/broadcast/construct";
-import Cell from "./types/cell/construct";
+import {AudienceDetector} from "./types/audience-detector/construct";
+import {Broadcast} from "./types/broadcast/construct";
+import {Cell} from "./types/cell/construct";
 import {
   cell,
   readonly,

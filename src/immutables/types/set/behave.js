@@ -75,7 +75,7 @@ function reduce(self, xf, init){
   return unreduced(memo);
 }
 
-export default does(
+export const behaveAsSet = does(
   implement(ISequential),
   implement(ITransient, {transient}),
   implement(IReduce, {reduce}),

@@ -1,4 +1,4 @@
-export default Error;
+export {Error};
 
 export function error(message){
   return new Error(message);

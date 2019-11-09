@@ -1,4 +1,4 @@
-export default function FiniteStateMachine(state, transitions){
+export function FiniteStateMachine(state, transitions){
   this.state = state;
   this.transitions = transitions;
 }

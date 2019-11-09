@@ -4,4 +4,3 @@ export const IStateMachine = protocol({
   transition: null,
   transitions: null
 });
-export default IStateMachine;

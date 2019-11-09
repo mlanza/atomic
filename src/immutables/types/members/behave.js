@@ -32,7 +32,7 @@ function next(self){
   return result ? members(result) : null;
 }
 
-export default does(
+export const behaveAsMembers = does(
   behave,
   implement(INext, {next}),
   implement(ISeq, {first, rest}),

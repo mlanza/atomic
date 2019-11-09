@@ -74,7 +74,7 @@ function count(self){
   return n;
 }
 
-export default does(
+export const behaveAsRange = does(
   iterable,
   emptyable,
   encodeable,

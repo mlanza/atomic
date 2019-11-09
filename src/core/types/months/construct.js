@@ -1,4 +1,4 @@
-export default function Months(n, options){
+export function Months(n, options){
   this.n = n;
   this.options = options;
 }
@@ -12,5 +12,3 @@ function from({n, months}){
 }
 
 Months.from = from;
-
-export {Months};

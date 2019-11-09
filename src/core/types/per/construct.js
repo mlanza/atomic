@@ -4,7 +4,7 @@ import {ISequential} from '../../protocols';
 import {cons} from '../list';
 import {thrush} from '../../protocols/ifunctor/concrete';
 
-export default function Per(items){
+export function Per(items){
   this.items = items;
 }
 
@@ -19,5 +19,3 @@ export function emptyPer(){
 }
 
 Per.from = per;
-
-export {Per};

@@ -1,9 +1,7 @@
-import Symbol from '../symbol/construct';
+import {Symbol} from '../symbol/construct';
 
-export default function Nil(){
+export function Nil(){
 }
-
-export {Nil};
 
 export function isNil(x){
   return x == null;

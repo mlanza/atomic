@@ -1,4 +1,4 @@
-export default function TransientObject(obj){
+export function TransientObject(obj){
   this.obj = obj;
 }
 

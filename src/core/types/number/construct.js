@@ -1,1 +1,1 @@
-export default Number;
+export {Number};

@@ -1,4 +1,4 @@
-import IComparable from "./instance";
+import {IComparable} from "./instance";
 import {type} from "../../core";
 import {isNil} from "../../types/nil/construct";
 

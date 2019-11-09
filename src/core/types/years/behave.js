@@ -26,7 +26,7 @@ function step(self, dt){
   }
 }
 
-export default does(
+export const behaveAsYears = does(
   encodeable,
   implement(IInverse, {inverse}),
   implement(ISteppable, {step}));

@@ -9,7 +9,7 @@ function surrogate(f, substitute){
   }
 }
 
-export default function Multimethod(methods, fallback){
+export function Multimethod(methods, fallback){
   this.methods = methods;
   this.fallback = fallback;
 }

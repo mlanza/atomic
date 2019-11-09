@@ -4,7 +4,7 @@ import {concatenated, concat} from '../../types/concatenated/construct';
 import {isReduced, unreduced} from '../../types/reduced';
 import {ICoerce, ICollection, INext, ISeq, ICounted, ISeqable, IIndexed, IReduce, IKVReduce, ISequential, IEmptyableCollection} from '../../protocols';
 import {apply} from '../../types/function/concrete';
-import EmptyList, {emptyList} from '../empty-list';
+import {EmptyList, emptyList} from '../empty-list';
 import {ireduce, iterable} from '../lazy-seq/behave';
 import {encodeable} from '../record/behave';
 
@@ -60,7 +60,7 @@ function count(self){
   }, 0);
 }
 
-export default does(
+export const behaveAsConcatenated = does(
   iterable,
   ireduce,
   encodeable,

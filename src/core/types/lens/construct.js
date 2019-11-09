@@ -1,4 +1,4 @@
-export default function Lens(root, path){
+export function Lens(root, path){
   this.root = root;
   this.path = path;
 }

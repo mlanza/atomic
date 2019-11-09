@@ -6,4 +6,3 @@ function inverse(self){
 export const IInverse = protocol({
   inverse: inverse
 });
-export default IInverse;

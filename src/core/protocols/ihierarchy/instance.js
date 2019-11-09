@@ -12,4 +12,3 @@ export const IHierarchy = protocol({
   prevSibling: null,
   prevSiblings: null
 });
-export default IHierarchy;

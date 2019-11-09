@@ -5,5 +5,5 @@ function check(self, obj){
   return self.pred(obj) ? ICheckable.check(self.constraint, obj) : null;
 }
 
-export default does(
+export const behaveAsWhen = does(
   implement(ICheckable, {check}));

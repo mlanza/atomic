@@ -2,7 +2,7 @@ import {overload} from '../../core';
 import {IReduce, IFunctor} from '../../protocols';
 import {isError} from '../error/construct';
 
-export default function Okay(value){
+export function Okay(value){
   this.value = value;
 }
 

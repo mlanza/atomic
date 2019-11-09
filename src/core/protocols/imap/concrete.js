@@ -1,5 +1,5 @@
 import {overload, identity} from "../../core";
-import IMap from "./instance";
+import {IMap} from "./instance";
 import {IReduce} from "../ireduce";
 
 export const keys = IMap.keys;

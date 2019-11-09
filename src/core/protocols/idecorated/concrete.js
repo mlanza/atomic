@@ -1,6 +1,6 @@
 import {doto, constantly} from "../../core";
 import {specify} from "../../types/protocol/concrete";
-import IDecorated from "./instance";
+import {IDecorated} from "./instance";
 
 //designed primarily for reflection during development
 

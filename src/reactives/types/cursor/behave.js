@@ -47,7 +47,7 @@ function dispatch(self, command){
   }));
 }
 
-export default does(
+export const behaveAsCursor = does(
   //implement(IDisposable, {dispose}), TODO
   implement(IPath, {path}),
   implement(IDispatch, {dispatch}),

@@ -1,4 +1,4 @@
 export * from "./list/construct";
-import List from "./list/construct";
-import behave from "./list/behave";
-behave(List);
+import {List} from "./list/construct";
+import {behaveAsList} from "./list/behave";
+behaveAsList(List);

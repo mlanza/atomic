@@ -17,4 +17,3 @@ export const IEvented = protocol({
   off: null,
   trigger: null
 });
-export default IEvented;

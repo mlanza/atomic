@@ -1,4 +1,4 @@
-import IBounds from "./instance";
+import {IBounds} from "./instance";
 import {IComparable} from "../../protocols/icomparable";
 
 export const start = IBounds.start;

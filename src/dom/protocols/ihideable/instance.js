@@ -4,4 +4,3 @@ export const IHideable = protocol({
   show: null,
   toggle: null
 });
-export default IHideable;

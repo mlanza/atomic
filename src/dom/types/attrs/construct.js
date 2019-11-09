@@ -1,4 +1,4 @@
-export default function Attrs(node){
+export function Attrs(node){
   this.node = node;
 }
 

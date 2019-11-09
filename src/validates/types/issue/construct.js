@@ -1,7 +1,7 @@
 import {overload, identity, fmap, map, blot, compact, flatten, toArray, satisfies, isPromise, Promise, detect, ISeq} from 'atomic/core';
 import {_ as v} from "param.macro";
 
-export default function Issue(constraint, path){
+export function Issue(constraint, path){
   this.constraint = constraint;
   this.path = path;
 }
@@ -9,8 +9,6 @@ export default function Issue(constraint, path){
 export function issue(constraint, path){
   return new Issue(constraint, path || null);
 }
-
-export {Issue}
 
 export function issues(xs, f) {
   if (xs == null) {

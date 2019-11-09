@@ -1,6 +1,6 @@
 import {identity, does, overload} from '../../core';
 import {implement} from '../protocol';
-import EmptyList, {emptyList} from '../../types/empty-list/construct';
+import {EmptyList, emptyList} from '../../types/empty-list/construct';
 import {cons} from '../../types/list/construct';
 import {range} from '../../types/range/construct';
 import {Reduced, unreduced} from '../../types/reduced';
@@ -66,7 +66,7 @@ function reduce3(coll, f, init){
 
 const reduce = overload(null, null, reduce2, reduce3);
 
-export default does(
+export const behaveAsRevSeq = does(
   iterable,
   implement(ISequential),
   implement(ICounted, {count}),

@@ -1,4 +1,4 @@
-export default function EventDispatcher(events, bus, observer){
+export function EventDispatcher(events, bus, observer){
   this.events = events;
   this.bus = bus;
   this.observer = observer;

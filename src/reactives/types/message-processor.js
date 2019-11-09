@@ -1,5 +1,4 @@
 export * from "./message-processor/construct";
-import MessageProcessor from "./message-processor/construct";
-export default MessageProcessor;
-import behave from "./message-processor/behave";
-behave(MessageProcessor);
+import {MessageProcessor} from "./message-processor/construct";
+import {behaveAsMessageProcessor} from "./message-processor/behave";
+behaveAsMessageProcessor(MessageProcessor);

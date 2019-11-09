@@ -10,5 +10,5 @@ function end(self){
   return IBounds.start(self.period);
 }
 
-export default does(
+export const behaveAsBenchmark = does(
   implement(IBounds, {start, end}));

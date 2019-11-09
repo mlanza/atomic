@@ -9,5 +9,3 @@ export function transientSet(entries){
 export function emptyTransientSet(){
   return new TransientSet();
 }
-
-export default TransientSet;

@@ -1,4 +1,4 @@
-export default function MultiDict(attrs, empty){
+export function MultiDict(attrs, empty){
   this.attrs = attrs;
   this.empty = empty;
 }

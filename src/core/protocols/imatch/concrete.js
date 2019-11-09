@@ -1,2 +1,2 @@
-import IMatch from "./instance";
+import {IMatch} from "./instance";
 export const matches = IMatch.matches;

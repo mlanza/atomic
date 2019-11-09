@@ -4,7 +4,7 @@ function deref(self){
   return IDeref.deref(self.source);
 }
 
-export default function Readonly(source){
+export function Readonly(source){
   this.source = source;
 }
 

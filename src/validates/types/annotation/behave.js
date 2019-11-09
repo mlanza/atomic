@@ -22,7 +22,7 @@ function append(self, constraint){
   return anno(self.note, IAppendable.append(self.constraint, constraint));
 }
 
-export default does(
+export const behaveAsAnnotation = does(
   implement(IDeref, {deref}),
   implement(IExplains, {explain}),
   implement(IAppendable, {append}),

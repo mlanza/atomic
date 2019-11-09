@@ -8,4 +8,3 @@ export const ISet = protocol({
   unite,
   disj: null
 });
-export default ISet;

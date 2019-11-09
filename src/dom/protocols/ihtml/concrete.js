@@ -1,2 +1,2 @@
-import IHtml from "./instance";
+import {IHtml} from "./instance";
 export const html = IHtml.html;

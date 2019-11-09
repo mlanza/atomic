@@ -1,4 +1,4 @@
-export default function MessageHandler(handlers, fallback){
+export function MessageHandler(handlers, fallback){
   this.handlers = handlers;
   this.fallback = fallback;
 }

@@ -11,6 +11,6 @@ function append(self, constraint){
   return apply(or, conj(self.constraints, constraint));
 }
 
-export default does(
+export const behaveAsOr = does(
   implement(IAppendable, {append}),
   implement(ICheckable, {check}));

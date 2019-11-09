@@ -11,6 +11,6 @@ function deref(self){
   return self.value;
 }
 
-export default does(
+export const behaveAsFluent = does(
   implement(IDeref, {deref}),
   implement(IFunctor, {fmap}));

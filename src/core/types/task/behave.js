@@ -22,7 +22,7 @@ function fork(self, reject, resolve){
   self.fork(reject, resolve);
 }
 
-export default does(
+export const behaveAsTask = does(
   implement(IChainable, {chain}),
   implement(IFork, {fork}),
   implement(IFunctor, {fmap}));

@@ -1,5 +1,4 @@
 export * from "./bus/construct";
-import Bus from "./bus/construct";
-export default Bus;
-import behave from "./bus/behave";
-behave(Bus);
+import {Bus} from "./bus/construct";
+import {behaveAsBus} from "./bus/behave";
+behaveAsBus(Bus);

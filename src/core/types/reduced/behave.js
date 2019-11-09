@@ -6,5 +6,5 @@ function deref(self){
   return self.valueOf();
 }
 
-export default does(
+export const behaveAsReduced = does(
   implement(IDeref, {deref}));

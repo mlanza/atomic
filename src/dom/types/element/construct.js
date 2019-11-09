@@ -1,8 +1,8 @@
-import {each} from 'atomic/core';
+import {each, global} from 'atomic/core';
 import {embed} from "../../protocols/iembeddable/concrete";
 import {_ as v} from "param.macro";
 
-export default Element;
+export const Element = global.Element;
 
 export function element(name, ...contents){
   const el = document.createElement(name);

@@ -1,7 +1,7 @@
 import {ISequential, cons, satisfies} from 'atomic/core';
 import {distinct} from "../set/concrete";
 
-export default function Members(items){
+export function Members(items){
   this.items = items;
 }
 
@@ -14,5 +14,3 @@ export function emptyMembers(){
 }
 
 Members.from = members;
-
-export {Members};

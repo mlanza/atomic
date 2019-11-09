@@ -1,5 +1,5 @@
-import {overload} from "../../core";
-import IReduce from "./instance";
+import {overload, identity} from "../../core";
+import {IReduce} from "./instance";
 
 function reduce2(xf, coll){
   return IReduce.reduce(coll, xf, xf());
@@ -11,8 +11,14 @@ function reduce3(xf, init, coll){
 
 export const reduce = overload(null, null, reduce2, reduce3);
 
-export function reducing(rf){
+function reducing1(rf){
+  return reducing2(rf, identity);
+}
+
+function reducing2(rf, order){
   return function(x, ...xs){
-    return IReduce.reduce(xs, rf, x);
+    return IReduce.reduce(order(xs), rf, x);
   }
 }
+
+export const reducing = overload(null, reducing1, reducing2);

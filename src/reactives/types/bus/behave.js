@@ -18,7 +18,7 @@ const deref = forward(IDeref.deref);
 const reset = forward(IReset.reset);
 const swap = forward(ISwap.swap);
 
-export default does(
+export const behaveAsBus = does(
   implement(IDeref, {deref}),
   implement(IReset, {reset}),
   implement(ISwap, {swap}),

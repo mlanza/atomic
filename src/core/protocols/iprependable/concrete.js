@@ -1,4 +1,5 @@
-import IPrependable from "./instance";
+import {IPrependable} from "./instance";
 import {overload, identity} from "../../core";
 import {reducing} from "../ireduce/concrete";
-export const prepend = overload(null, identity, IPrependable.prepend, reducing(IPrependable.prepend));
+import {reverse} from "../ireversible";
+export const prepend = overload(null, identity, IPrependable.prepend, reducing(IPrependable.prepend, reverse));

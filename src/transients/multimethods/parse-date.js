@@ -27,5 +27,3 @@ conj(parseDate,
   method(test(reSerialDate, v), parseSerialDate),
   method(test(reLocalDate , v), parseLocalDate),
   method(test(reTimeStamp , v), parseTimeStamp));
-
-export default parseDate;

@@ -8,6 +8,6 @@ function matches(self, args){
   return apply(self.pred, args);
 }
 
-export default does(
+export const behaveAsMethod = does(
   implement(IMatch, {matches}),
   implement(IFn, {invoke}));

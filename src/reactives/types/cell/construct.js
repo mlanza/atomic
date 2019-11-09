@@ -1,7 +1,7 @@
 import {overload} from "atomic/core";
 import {broadcast} from "../broadcast/construct";
 
-export default function Cell(state, observer, validate){
+export function Cell(state, observer, validate){
   this.state = state;
   this.observer = observer;
   this.validate = validate;

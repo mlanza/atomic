@@ -1,5 +1,4 @@
 export * from "./cursor/construct";
-import Cursor from "./cursor/construct";
-export default Cursor;
-import behave from "./cursor/behave";
-behave(Cursor);
+import {Cursor} from "./cursor/construct";
+import {behaveAsCursor} from "./cursor/behave";
+behaveAsCursor(Cursor);

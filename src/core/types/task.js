@@ -1,5 +1,4 @@
 export * from "./task/construct";
-import Task from "./task/construct";
-export default Task;
-import behave from "./task/behave";
-behave(Task);
+import {Task} from "./task/construct";
+import {behaveAsTask} from "./task/behave";
+behaveAsTask(Task);

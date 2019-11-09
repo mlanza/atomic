@@ -7,7 +7,7 @@ import {isSome} from "./types/nil";
 import {into, detect, map, drop, join, some, last} from "./types/lazy-seq";
 import {absorb} from "./associatives";
 import {_ as v} from "param.macro";
-import _serieslike from "./types/series/behave";
+import {behaveAsSeries as _serieslike} from "./types/series/behave";
 export const serieslike = _serieslike;
 export {iterable} from "./types/lazy-seq/behave";
 export * from "./core";
@@ -17,6 +17,8 @@ export * from "./protocols/concrete";
 export * from "./predicates";
 export * from "./associatives";
 import Set from 'set';
+
+export const global = window;
 
 export function unique(xs){
   return toArray(new Set(toArray(xs)));

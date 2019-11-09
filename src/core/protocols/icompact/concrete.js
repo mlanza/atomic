@@ -1,4 +1,4 @@
-import ICompact from "./instance";
+import {ICompact} from "./instance";
 import {filter} from "../../types/lazy-seq/concrete";
 import {identity, unspread} from "../../core";
 import {satisfies} from "../../types/protocol/concrete";

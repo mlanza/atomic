@@ -3,4 +3,3 @@ export const IMapEntry = protocol({
   key: null,
   val: null
 });
-export default IMapEntry;

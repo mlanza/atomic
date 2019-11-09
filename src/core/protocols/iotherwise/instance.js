@@ -3,4 +3,3 @@ import {identity} from '../../core';
 export const IOtherwise = protocol({
   otherwise: identity
 });
-export default IOtherwise;

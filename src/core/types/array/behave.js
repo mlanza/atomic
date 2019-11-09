@@ -7,7 +7,7 @@ import {replace} from '../string/concrete';
 import {range} from '../range/construct';
 import {revSeq} from '../rev-seq';
 import {filter, mapa} from '../lazy-seq';
-import Array, {emptyArray} from './construct';
+import {Array, emptyArray} from './construct';
 
 const clone = Array.from;
 
@@ -223,7 +223,7 @@ export const iindexed = does(
 
 export const iequiv = implement(IEquiv, {equiv});
 
-export default does(
+export const behaveAsArray = does(
   iindexed,
   iequiv,
   implement(IQueryable, {query}),

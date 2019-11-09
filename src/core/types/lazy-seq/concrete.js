@@ -1,7 +1,7 @@
 import {ICompact, IEquiv, IMap, ICoerce, IAssociative, ILookup, IInclusive, IIndexed, ICollection, IComparable, ICounted, ISeq, ISeqable, INext, IHierarchy, IReduce, ISequential} from '../../protocols';
 import {trampoline, identity, constantly, overload} from '../../core';
-import EmptyList, {emptyList} from '../empty-list/construct';
-import Array, {emptyArray} from '../array/construct';
+import {EmptyList, emptyList} from '../empty-list/construct';
+import {Array, emptyArray} from '../array/construct';
 import {inc, randInt} from '../number/concrete';
 import {reduced} from '../reduced/construct';
 import {not} from '../boolean';
@@ -14,9 +14,10 @@ import {get, getIn} from "../../protocols/ilookup/concrete";
 import {lazySeq} from '../lazy-seq/construct';
 import {concat, concatenated} from "../concatenated/construct";
 import {satisfies} from '../protocol/concrete';
-import Symbol from '../symbol/construct';
+import {Symbol} from '../symbol/construct';
 import {update, assocIn} from "../../protocols/iassociative/concrete";
 import {first} from "../../protocols/iseq/concrete";
+import {_ as v} from "param.macro";
 
 function map2(f, xs){
   return ISeqable.seq(xs) ? lazySeq(function(){
@@ -70,6 +71,20 @@ function into3(to, xform, from){
 }
 
 export const into = overload(emptyArray, identity, into2, into3);
+
+
+//TODO unnecessary if CQS pattern is that commands return self
+function doing1(f){
+  return doing2(f, identity);
+}
+
+function doing2(f, order){
+  return function(self, ...xs){
+    each(f(self, v), order(xs));
+  }
+}
+
+export const doing = overload(null, doing1, doing2); //mutating counterpart to `reducing`
 
 export function each(f, xs){
   var ys = ISeqable.seq(xs);

@@ -1,5 +1,4 @@
 export * from "./per/construct";
-import Per from "./per/construct";
-export default Per;
-import behave from "./per/behave";
-behave(Per);
+import {Per} from "./per/construct";
+import {behaveAsPer} from "./per/behave";
+behaveAsPer(Per);

@@ -24,7 +24,7 @@ function conj(self, handler){
   self.handlers = IAppendable.append(self.handlers, handler);
 }
 
-export default does(
+export const behaveAsRouter = does(
   implement(IEvented, {on}),
   implement(IDispatch, {dispatch}),
   implement(IMatch, {matches}),

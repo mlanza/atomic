@@ -28,7 +28,7 @@ function dissoc(self, key){
   return self.remove(self, key);
 }
 
-export default does(
+export const behaveAsDict = does(
   implement(IMap, {keys, vals, dissoc}),
   implement(ICloneable, {clone: identity}),
   implement(ICounted, {count}),

@@ -1,6 +1,5 @@
 export * from "./reduced/construct";
 export * from "./reduced/concrete";
-import Reduced from "./reduced/construct";
-export default Reduced;
-import behave from "./reduced/behave";
-behave(Reduced);
+import {Reduced} from "./reduced/construct";
+import {behaveAsReduced} from "./reduced/behave";
+behaveAsReduced(Reduced);

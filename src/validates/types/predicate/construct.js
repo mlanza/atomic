@@ -1,4 +1,4 @@
-export default function Predicate(f, args){
+export function Predicate(f, args){
   this.f = f;
   this.args = args;
 }
@@ -6,5 +6,3 @@ export default function Predicate(f, args){
 export function pred(f, ...args){
   return new Predicate(f, args);
 }
-
-export {Predicate}

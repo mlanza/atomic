@@ -13,5 +13,3 @@ ProtocolLookupError.prototype.toString = function(){
 export function protocolLookupError(...args){
   return new ProtocolLookupError(...args);
 }
-
-export default ProtocolLookupError;

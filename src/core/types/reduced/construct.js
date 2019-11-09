@@ -13,5 +13,3 @@ export function reduced(value){
 export function isReduced(value){
   return value instanceof Reduced;
 }
-
-export default Reduced;

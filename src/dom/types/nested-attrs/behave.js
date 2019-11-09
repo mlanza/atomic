@@ -53,7 +53,7 @@ function conj(self, pair){
   self.element.setAttribute(self.key, asText(ICollection.conj(deref(self), pair)));
 }
 
-export default does(
+export const behaveAsNestedAttrs = does(
   implement(IDescriptive),
   implement(IDeref, {deref}),
   implement(IMap, {keys, vals}),

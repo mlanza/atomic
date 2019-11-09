@@ -1,6 +1,6 @@
 import {overload} from "../../core";
-import IHierarchy from "./instance";
-import ISeq, {first} from "../iseq";
+import {IHierarchy} from "./instance";
+import {ISeq, first} from "../iseq";
 import {count} from "../icounted/concrete";
 import {deref} from "../ideref/concrete";
 import {path} from "../ipath/concrete";

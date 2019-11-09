@@ -1,2 +1,2 @@
-import ICounted from "./instance";
+import {ICounted} from "./instance";
 export const count = ICounted.count;
