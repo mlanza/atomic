@@ -802,7 +802,91 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
       _.implement(IAssociative, {assoc: assoc, contains: contains}),
       _.implement(IKind, {field: field, kind: kind}));
 
-  })()
+  })();
+
+  var BinField = (function(){
+
+    function BinField(label, key, min, max, init, readonly, constraints, cast, uncast){
+      this.label = label;
+      this.key = key;
+      this.min = min;
+      this.max = max;
+      this.init = init;
+      this.readonly = readonly;
+      this.constraints = constraints;
+      this.cast = cast;
+      this.uncast = uncast;
+    }
+
+    function aget(self, entity){
+      return self.cast(_.get(entity.attrs, self.key));
+    }
+
+    function aset(self, entity, values){
+      if (self.readonly) {
+        throw new Error("Cannot set readonly field '" + self.key + "'.");
+      }
+      //TODO handle dissoc if no values
+      return new entity.constructor(entity.list, _.assoc(entity.attrs, self.key, self.uncast(values)));
+    }
+
+    function init(self){
+      return self.init;
+    }
+
+    function cardinality(self){ //TODO does not perhaps belong here but on SharePointValue/SharePointMultiValue.
+      return card(self.min, self.max);
+    }
+
+    function title(self){
+      return self.label;
+    }
+
+    function constraints(self){
+      return self.constraints;
+    }
+
+    return _.doto(BinField,
+      _.implement(ISubject, {title: title}),
+      _.implement(IField, {aget: aget, aset: aset, init: init}),
+      _.implement(IConstrained, {constraints: constraints}),
+      _.implement(ICardinality, {cardinality: cardinality}));
+
+  })();
+
+  function binField9(label, key, min, max, init, readonly, constraints, cast, uncast){
+    return new BinField(label, key, min, max, init, readonly, constraints, cast, uncast);
+  }
+
+  function binField8(label, key, min, max, init, readonly, constraints, cast){
+    return binField9(label, key, min, max, init, readonly, constraints, cast, _.idenitty);
+  }
+
+  function binField7(label, key, min, max, init, readonly, constraints){
+    return binField8(label, key, min, max, init, readonly, constraints, _.identity);
+  }
+
+  function binField6(label, key, min, max, init, readonly){
+    return binField7(label, key, min, max, init, readonly, []);
+  }
+
+  function binField5(label, key, min, max, init){
+    return binField6(label, key, min, max, init, false);
+  }
+
+  function binField4(label, key, min, max){
+    return binField5(label, key, min, max, null);
+  }
+
+  function binField3(label, key, min){
+    return binField4(label, key, min, Infinity);
+  }
+
+  function binField2(label, key){
+    return binField3(label, key, 0);
+  }
+
+  var binField = _.overload(null, null, binField2, binField3, binField4, binField5, binField6, binField7, binField8, binField9);
 
   var Bin = (function(){
 
@@ -852,13 +936,13 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
   var tasks = (function(){
 
     return _.doto(new Bin({
-      "id": null,
-      "summary": null,
-      "priority": null,
-      "detail": null,
-      "due": null,
-      "assignee": null,
-      "subtasks": null
+      "id": binField("ID", "id", 1, 1, null, true, [], _.array, _.last),
+      "summary": binField("Summary", "summary", 1, 1),
+      "priority": binField("Priority", "priority"),
+      "detail": binField("Detail", "detail"),
+      "due": binField("Due Date", "due"),
+      "assignee": binField("Assignee", "assignee"),
+      "subtasks": binField("Subtasks", "subtasks")
     }, [], "Tasks", "tasks"), function(bin){
 
       _.each(function(attrs){
@@ -1094,36 +1178,50 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
       return entityBuffer(mut.withMutations(self.loaded, function(loaded){
         return _.reduce(function(memo, entity){
           var id = _.str(IEntity.eid(entity));
-          return _.contains(memo, id) ? memo : _.assoc(memo, id, entity);
+          if (!_.contains(memo, id)) {
+            mut.assoc(memo, id, entity);
+          }
+          return memo;
         }, loaded, entities);
-      }), self.changed, _.map(IEntity.eid, entities));
+      }), self.changed, _.mapa(IEntity.eid, entities));
     }
 
     function add(self, entities){
       return entityBuffer(self.loaded, mut.withMutations(self.changed, function(changed){
         return _.reduce(function(memo, entity){
           var id = _.str(IEntity.eid(entity));
-          return _.contains(memo, id) ? memo : _.assoc(memo, id, entity);
+          if (!_.contains(memo, id)){
+            mut.assoc(memo, id, entity);
+          }
+          return memo;
         }, changed, entities);
-      }), _.map(IEntity.eid, entities));
+      }), _.mapa(IEntity.eid, entities));
     }
 
     function edit(self, entities){
       return entityBuffer(self.loaded, mut.withMutations(self.changed, function(changed){
         return _.reduce(function(memo, entity){
           var id = _.str(IEntity.eid(entity));
-          return _.contains(self.loaded, id) || _.contains(memo, id) ? _.assoc(memo, id, entity) : memo;
+          if (_.contains(self.loaded, id) || _.contains(memo, id)) {
+            mut.assoc(memo, id, entity);
+          }
+          return memo;
         }, changed, entities);
-      }), _.map(IEntity.eid, entities));
+      }), _.mapa(IEntity.eid, entities));
     }
 
     function destroy(self, entities){
       return entityBuffer(self.loaded, mut.withMutations(self.changed, function(changed){
         return _.reduce(function(memo, entity){
           var id = _.str(IEntity.eid(entity));
-          return _.contains(self.loaded, id) ? _.assoc(memo, id, null) : _.contains(memo, id) ? _.dissoc(memo, id) : memo;
+          if (_.contains(self.loaded, id)) {
+            mut.assoc(memo, id, null);
+          } else if (_.contains(memo, id)) {
+            mut.dissoc(memo, id);
+          }
+          return  memo;
         }, changed, entities);
-      }), _.map(IEntity.eid, entities));
+      }), _.mapa(IEntity.eid, entities));
     }
 
     function dirty(self, entity){
@@ -1520,7 +1618,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
   (function(){
 
     function handle(self, command, next){
-      ents.load(self.subject, event.entities);
+      ents.load(self.subject, command.entities);
       $.raise(self.provider, loadedEvent(command.entities));
       return next(command);
     }
