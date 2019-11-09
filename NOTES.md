@@ -1,53 +1,33 @@
-grep -R "some" --exclude-dir="*node*" .
-
 # PRINCIPLES
 
 * Avoid dependence on module organization.  The public api should be packaged under a single collective module in order to reduce the impact of reorganizations.  The organization is not yet firm.
-* Avoid `curry` except in the pointfree export where partial application takes center stage.
-* Avoid using type constructors (e.g. the keyword "new") directly.  Use the provided constructor functions.
-* Avoid virtual doms.  Use a model diff/patch strategy.
-* Avoid creating types where primitives will do.  A type should be introduced to vary protocol implementations.
-* Avoid recursion for potentially large stacks.
-* Avoid writing functions that care about `this` bindings, rather pass `self` as the first argument when required.
-* Avoid thinking in concrete types.  Prefer thinking in abstract types that provide behaviors.
+* Construct all objects with factory functions.
+* Prefer a diff/patch strategy to the use of virtual doms (e.g. the React way).
+* Avoid recursion which could result in stack overflows.
+* Write functions in that pass `self` as the first arg (FP) over those that rely on `this` (OOP).
+* Prefer abstractions and behavioral, protocol-centered thinking to caring about concrete types.
 * Avoid `Object.freeze` for immutability.  Rather avoid impure functions that mutate.
-* Avoid statically-typed code (i.e. TypeScript) as this library reflects the dynamic typing of Clojure/ClojureScript.
-* Avoid creating mutable types outright.  Prefer creating immutable types.  Put them in an atoms or create mutable types that wrap the immutable to expose a mutable api.  The latter is not the same as simply using an atom as it avoids the need to swap and deref.
-* Members type is similar to the list monad; however, it drops nulls and maintains distinctness.  Any operation that will potentially include unwanted duplicates should be wrapped in Members.  This is ideal for working with the DOM in similar fashion to jQuery.
+* Design around a functional core (functional objects and pure functions) and an imperative shell (imperative objects).
+* Use `members` to eliminate potential duplicates.  Consider that a jQuery object has this behavior.
 * Understand that protocols are non-native and as such using protocols pushes all requests through a protocol lookup channel that adds overhead to requests.  Pivoting on type will always add more overhead than a method that simply branches (via `if` or `switch`) on type using simple type checks (e.g. `typeof arg == "string"`).
-* In some cases, when dealing with collections (Seqs), we cannont know what concrete types it will contain.  HTMLDivElement and HTMLSpanElement are predictable HTML elements; however, developers can define their own custom elements via Web Components.  Unless the behavior/protocols for those components are defined, the api will break when it encounters these custom elements.  Protocol resolution, for performance, looks directly to the constructor and not the full inheritance chain because protocols are internally implemented using WeakMaps.  Traversing the inheritance chain on every protocol lookup would be too expensive.  That is why the dom traversal api assumes all items within the seq are elements.
+* In some cases, when dealing with collections (Seqs), we cannot know what concrete types it will contain.  HTMLDivElement and HTMLSpanElement are predictable HTML elements; however, developers can define their own custom elements via Web Components.  Unless the behavior/protocols for those components are defined, the api will break when it encounters these custom elements.  Protocol resolution, for performance, looks directly to the constructor and not the full inheritance chain because protocols are internally implemented using WeakMaps.  Traversing the inheritance chain on every protocol lookup would be too expensive.  That is why the dom traversal api assumes all items within the seq are elements.
 * The Law of Abstractions: When a invoking a function against an object that returns a different representation of it, the type may vary (e.g. an Array becoming an IndexedSeq).  The new representation should abide the same protocols to maintain the integrity of the abstract type.  Apart from this, one must think in concrete types.
-* A protocol is not just a set of named functions, but a contract.  The semantics of the protocol include the messages provided.  For example, it would not make sense to define an IQueryable protocol that in the dom takes a CSS selector string and against a repo takes a T-SQL string.  While the shape of the function call is identical, the semantics are not.  These would be two different protocols: ICSSQuery and ISQLQuery even if both offered an identically-named `query` verb.
-* A sum type is nothing but the set of types that implement a protocol.  With protocols ADTs are not necessary.
+* A protocol is a contract that involves its api (commands and queries) and also its operands.  That is, the `IQueryable.query` protocol should not receive a selector string to query, in one context, the dom and a T-SQL statement, in another context, to query a database.  The contract is a dialect which is the sum of the api and its operands.
+* A sum type is nothing but the set of types that abide the same protocols and a constructor that returns one of those types.  ADTs are unnecessary.
 * The first argument of a protocol function is the type.
-* In a `behave` module only behaviors (encapsulated effects) should be exported, not functions themselves.
-* Don't offer too many permutations as seen in ramda (e.g. map, mapAccum, mapAccumRight, max, maxBy, etc.).  Rather illustrate how to use simple idioms (compositions of up to 3 functions) in place of having occasionally used functions.  The library should include only bread and butter functions (ones used more frequently).
-* Consider using binary accum functions (e.g. both, either) from which to create reducing versions (and, or) of unlimited arity.
+* Types are defined in terms of behaviors which are exported and can be applied to one or more types.
+* Ramda offers too many slight permutations (e.g. `map`, `mapAccum`, `mapAccumRight`, `max`, `maxBy`).  Prefer a smaller api and allow permutation by simple combination.
+* Consider using binary accum functions (e.g. `both`, `either`) from which to create reducing versions (`and`, `or`) of unlimited arity.
 * The api documentation should offer practical examples showcasing the usefulness of a function.  I found that some popular libraries seem to include arbitrary examples that were of no help.
-* Prefer pure functions
-* JavaScript models structured data primarily with two constructs: Arrays and Objects.  Arrays provides a series of things (ISequential).  Objects provide descriptions of things and are like dictionaries except the keys are always strings (IDescriptive).  ISequential is a promise that a thing contains a series of other things.  Neither of protocol promises order.
-* One should avoid using the library api to act on Map and Set types.  In it's attempt to avoid mutation, it is grossly inefficient.  It exists only to allow interoperability.
-* Some protocols are superseded by a public api (like ICompare and IReduce).  While the protocol can be used directly, prefer the public api when unsure of differences in use.
-* It would seem that ICloneable is superfluous in a library espousing immutable values since you could simply pass everything by reference.  We should assume that any desire to clone, therefore, implies a desire to mutate, so unless the value itself (as in Immutable.js) is actually immutable, produce a clone.
+* Prefer JavaScripts native arrays and objects to their weightier counterparts (e.g. `Immutable Vector` and `Immutable Map`) as this also avoids importing an additional dependency.
+* Prefer the public api, which may be overloaded, (e.g. `_.reduce`) to the direct use of a protocol (e.g. `IReduce.reduce`) or at least understand their differences.
+* Use `ICloneable.clone` in preparation for a mutation when the need arises.
 * Both protocols and multimethods are just implementation details over programming interfaces.  This leaves room to change the details for performance reasons or otherwise without impacting consumers.  When possible prefer protocols to multimethods.  Furthermore, if the type provided to the second arg affects the result, either branch internally or use an exposed multimethod internally.
-* Presently there are no mutable variants of fn (e.g. `assoc` vs `assoc!`); rather, the all fns prefer the avoidance of mutation (e.g. even against arrays and objects) except where mutation is the point of the type.  You can always fallback to JavaScript itself to does a mutation that would not happen with library functions.  Alternately, I could create transient types (e.g. `TransientObject` and `TransientArray`) and constructors (`tobject` and `tarray`) to avoid having to fall out of the library and back to JavaScript itself.
-* When a protocol executes a command against a lazy collection, the command should be eagerly applied against all items.
-* `IDispatch` and `IPublish` have similiarities and differences.  Publishing is direct; you have a message and you send it off to all who care.  Dispatch indicates you're sending a message through a pipeline for processing and/or routing.  Things can happen to it including cancellation.  Dispatched messages may or may not be also published.
+* Clojure offers persistent and transient objects and different protocols to effect the same operation (e.g. `assoc` v. `assoc!`).  As bang, however, is not valid in method names the distinction falls to the namespace (e.g. `_.assoc` v. `mut.assoc`).
+* In observance of command-query separation, and contrary to what Clojure does, commands return void.  As an exception a command may return a (potentially promised) status signaling its outcome.
+* `IDispatch` and `IPublish` are similar in that both relay messages to receivers.  The difference, however, is that dispatch is for commands and always targets a single handler while publish is for events and targets an indefinite number of listeners.  Commands can be canceled, but events cannot.
+* Prefer autopartial to autocurry functions.
+* Prefer to write functions that execute when invoked as opposed to those that return a partial application.  This approach suits the writing of overloaded, variadic functions.
+* A variadic function that returns a partial application should generally receive only the primary operand and execute on the next call.
 
-# Rules for Function Design
-
-* A function ought to be executable outright; it may use partial application but generally only if it doesn't force it.  Factory functions are the exception (e.g. `tag`).
-* Start with a basic function before lifting it into a flavor of partial application.
-* A variadic function that partially applies on the initial call, should generally accept only the primary operand on the next call.
-* Avoid using both `overload` or `curry` on the same function.  Use one or the other to achieve partial application.
-* Observe command-query segregation so that commands return no results.
-
-# Components
-
-* Commands decide whether to produce additional side effects. `State -> Command -> [Events]`
-* Events are applied as is without decision.  Listeners, however, may react and produce new side effects (commands). `State -> Event -> State`
-* Commands may be aborted.  They are piped down a channel, oft intercepted by middleware that validate and augment the command.
-* Events cannot be aborted.  They are announced to all who care.
-* While events are immutable fact, it is reasonable to pare them down to hide sensitive information when propagated to listeners.
-* That components have a bus that separate command processing from event processing lends to event replay (e.g. omitting command processing) at a later time from an event store.
-*
+`grep -R "some" --exclude-dir="*node*"`
