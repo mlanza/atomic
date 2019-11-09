@@ -819,7 +819,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     }
 
     function aget(self, entity){
-      return self.cast(_.get(entity.attrs, self.key));
+      return self.cast(_.get(entity.attrs, self.key), self);
     }
 
     function aset(self, entity, values){
@@ -827,7 +827,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
         throw new Error("Cannot set readonly field '" + self.key + "'.");
       }
       //TODO handle dissoc if no values
-      return new entity.constructor(entity.list, _.assoc(entity.attrs, self.key, self.uncast(values)));
+      return new entity.constructor(entity.list, _.assoc(entity.attrs, self.key, self.uncast(values, self)));
     }
 
     function init(self){
@@ -854,12 +854,16 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   })();
 
+  function maintainCap(values, self){
+    return _.into([], _.drop(_.max(0, _.count(values) - self.max), values));
+  }
+
   function binField9(label, key, min, max, init, readonly, constraints, cast, uncast){
     return new BinField(label, key, min, max, init, readonly, constraints, cast, uncast);
   }
 
   function binField8(label, key, min, max, init, readonly, constraints, cast){
-    return binField9(label, key, min, max, init, readonly, constraints, cast, _.idenitty);
+    return binField9(label, key, min, max, init, readonly, constraints, cast, maintainCap);
   }
 
   function binField7(label, key, min, max, init, readonly, constraints){
