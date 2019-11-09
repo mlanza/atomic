@@ -858,39 +858,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     return _.into([], _.drop(_.max(0, _.count(values) - self.max), values));
   }
 
-  function binField9(label, key, min, max, init, readonly, constraints, cast, uncast){
-    return new BinField(label, key, min, max, init, readonly, constraints, cast, uncast);
-  }
-
-  function binField8(label, key, min, max, init, readonly, constraints, cast){
-    return binField9(label, key, min, max, init, readonly, constraints, cast, maintainCap);
-  }
-
-  function binField7(label, key, min, max, init, readonly, constraints){
-    return binField8(label, key, min, max, init, readonly, constraints, _.identity);
-  }
-
-  function binField6(label, key, min, max, init, readonly){
-    return binField7(label, key, min, max, init, readonly, []);
-  }
-
-  function binField5(label, key, min, max, init){
-    return binField6(label, key, min, max, init, false);
-  }
-
-  function binField4(label, key, min, max){
-    return binField5(label, key, min, max, null);
-  }
-
-  function binField3(label, key, min){
-    return binField4(label, key, min, Infinity);
-  }
-
-  function binField2(label, key){
-    return binField3(label, key, 0);
-  }
-
-  var binField = _.overload(null, null, binField2, binField3, binField4, binField5, binField6, binField7, binField8, binField9);
+  var binField = _.fnil(_.constructs(BinField), null, null, 0, Infinity, null, false, [], _.identity, maintainCap);
 
   var Bin = (function(){
 
