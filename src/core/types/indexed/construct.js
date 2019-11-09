@@ -1,4 +1,4 @@
-export default function Indexed(obj){
+export function Indexed(obj){
   this.obj = obj;
 }
 

@@ -1,6 +1,5 @@
 export * from "./lens/construct";
 //export * from "./lens/concrete";
-import Lens from "./lens/construct";
-export default Lens;
-import behave from "./lens/behave";
-behave(Lens);
+import {Lens} from "./lens/construct";
+import {behaveAsLens} from "./lens/behave";
+behaveAsLens(Lens);

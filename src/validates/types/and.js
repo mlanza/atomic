@@ -1,5 +1,4 @@
 export * from "./and/construct";
-import And from "./and/construct";
-import behave from "./and/behave";
-export default And;
-behave(And);
+import {And} from "./and/construct";
+import {behaveAsAnd} from "./and/behave";
+behaveAsAnd(And);

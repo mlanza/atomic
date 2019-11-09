@@ -71,7 +71,7 @@ const first = forward(ISeq.first);
 const rest = forward(ISeq.rest);
 const next = forward(INext.next);
 
-export default does(
+export const behaveAsTransientArray = does(
   implement(ISequential),
   implement(IPersistent, {persistent}),
   implement(ISeqable, {seq}),

@@ -3,7 +3,7 @@ import {days} from '../days/construct';
 import {sod, eod, isDate} from '../date/concrete';
 import {steps} from '../../protocols/isteppable/concrete';
 import {patch} from '../../associatives';
-import Symbol from '../symbol/construct';
+import {Symbol} from '../symbol/construct';
 
 export function Period(start, end, step, direction){
   this.start = start;
@@ -39,5 +39,3 @@ export const period = overload(period0, period1, period2, period3);
 Period.from = from;
 Period.create = period;
 Period.prototype[Symbol.toStringTag] = "Period";
-
-export default Period;

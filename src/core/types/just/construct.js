@@ -1,7 +1,7 @@
 import {overload, partial} from '../../core';
 import {thrush, pipeline} from '../../protocols/ifunctor/concrete';
 
-export default function Just(value){
+export function Just(value){
   this.value = value;
 }
 

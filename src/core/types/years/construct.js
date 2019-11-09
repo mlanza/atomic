@@ -1,4 +1,4 @@
-export default function Years(n, options){
+export function Years(n, options){
   this.n = n;
   this.options = options;
 }
@@ -12,5 +12,3 @@ function from({n, options}){
 }
 
 Years.from = from;
-
-export {Years};

@@ -1,4 +1,4 @@
-export default function Props(node){
+export function Props(node){
   this.node = node;
 }
 

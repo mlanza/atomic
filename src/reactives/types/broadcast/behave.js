@@ -19,6 +19,6 @@ function pub(self, message){
   each(IPublish.pub(v, message), self.observers);
 }
 
-export default does(
+export const behaveAsBroadcast = does(
   implement(ISubscribe, {sub, unsub, subscribed}),
   implement(IPublish, {pub}));

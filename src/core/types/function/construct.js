@@ -1,6 +1,6 @@
-import Symbol from '../symbol/construct';
+import {Symbol} from '../symbol/construct';
 
-export default Function;
+export {Function};
 
 Function.prototype[Symbol.toStringTag] = "Function";
 

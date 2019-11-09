@@ -72,7 +72,7 @@ const reduce = forward(IReduce.reduce);
 const reducekv = forward(IKVReduce.reducekv);
 const toArray = forward(ICoerce.toArray);
 
-export default does(
+export const behaveAsTransientObject = does(
   implement(IDescriptive),
   implement(IPersistent, {persistent}),
   implement(ITransientCollection, {conj}),

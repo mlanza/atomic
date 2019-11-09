@@ -1,4 +1,4 @@
-export default function CollOf(constraint){
+export function CollOf(constraint){
   this.constraint = constraint;
 }
 

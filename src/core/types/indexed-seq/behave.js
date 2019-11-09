@@ -115,7 +115,7 @@ function query(self, pred){
   return filter(pred, self);
 }
 
-export default does(
+export const behaveAsIndexedSeq = does(
   iterable,
   encodeable,
   implement(IQueryable, {query}),

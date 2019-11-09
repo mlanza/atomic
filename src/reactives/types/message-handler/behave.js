@@ -7,5 +7,5 @@ function handle(self, command, next){
   IMiddleware.handle(handler, command, next);
 }
 
-export default does(
+export const behaveAsMessageHandler = does(
   implement(IMiddleware, {handle}));

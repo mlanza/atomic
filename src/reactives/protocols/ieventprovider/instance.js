@@ -3,4 +3,3 @@ export const IEventProvider = protocol({
   raise: null,
   release: null
 });
-export default IEventProvider;

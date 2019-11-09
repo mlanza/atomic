@@ -1,3 +1,2 @@
-import behave from "./console/behave";
-behave(console);
-export default console;
+import {behaveAsConsole} from "./console/behave";
+behaveAsConsole(console);

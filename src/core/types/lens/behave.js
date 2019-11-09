@@ -127,7 +127,7 @@ function closest(self, pred){
 
 const descendants = downward(children);
 
-export default does(
+export const behaveAsLens = does(
   implement(IPath, {path}),
   implement(ICollection, {conj}),
   implement(ILookup, {lookup}),

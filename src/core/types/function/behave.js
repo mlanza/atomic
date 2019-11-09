@@ -3,7 +3,7 @@ import {implement} from '../protocol';
 import {apply} from './concrete';
 import {get} from "../../protocols/ilookup/concrete";
 import {INamed, IFn, IAssociative, ILookup, IEncode, IAppendable, IPrependable} from '../../protocols';
-import Symbol from '../symbol/construct';
+import {Symbol} from '../symbol/construct';
 
 export function append(f, ...applied){
   return function(...args){
@@ -25,7 +25,7 @@ function name(self){
   return self.name ? self.name : get(/function (.+)\s?\(/.exec(self.toString()), 1); //latter is for IE
 }
 
-export default does(
+export const behaveAsFunction = does(
   implement(INamed, {name}),
   implement(IAppendable, {append}),
   implement(IPrependable, {prepend: partial}),

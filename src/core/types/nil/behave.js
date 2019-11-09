@@ -32,7 +32,7 @@ function conj(self, value){
   return cons(value);
 }
 
-export default does(
+export const behaveAsNil = does(
   implement(ICompact, {compact: identity}),
   implement(ICollection, {conj}),
   implement(IBlankable, {blank: constantly(true)}),

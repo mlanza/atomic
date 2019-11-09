@@ -1,5 +1,4 @@
 export * from "./map/construct";
-import Map from "./map/construct";
-import behave from "./map/behave";
-export default Map;
-behave(Map);
+import {Map} from "./map/construct";
+import {behaveAsMap} from "./map/behave";
+behaveAsMap(Map);

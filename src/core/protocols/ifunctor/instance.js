@@ -5,4 +5,3 @@ function fmap(self, f){
 export const IFunctor = protocol({
   fmap: fmap
 });
-export default IFunctor;

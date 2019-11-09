@@ -1,4 +1,4 @@
-import {does, maybe, cons, implement, lazySeq, comp, iterable, ILookup, IIndexed, ICounted, ISeq, INext, ISeqable, ISequential, IHierarchy, IQueryable, ILocate, IReduce} from 'atomic/core';
+import {does, maybe, cons, implement, lazySeq, comp, iterable, ILookup, IIndexed, ICounted, ISeq, INext, ISeqable, ISequential, IHierarchy, IQueryable, ILocate, IReduce, ICoerce} from 'atomic/core';
 import {IContent} from "../../protocols";
 import {_ as v} from "param.macro";
 
@@ -50,7 +50,7 @@ function count(self){
   return self.length;
 }
 
-export default does(
+export const behaveAsNodeList = does(
   iterable,
   implement(ILookup, {lookup}),
   implement(IIndexed, {nth: lookup}),
@@ -59,6 +59,7 @@ export default does(
   implement(IReduce, {reduce}),
   implement(INext, {next}),
   implement(IContent, {contents}),
+  implement(ICoerce, {toArray: Array.from}),
   implement(IQueryable, {query}),
   implement(ILocate, {locate}),
   implement(IHierarchy, {parent, parents, closest, nextSiblings, nextSibling, prevSiblings, prevSibling, siblings, children, descendants}),

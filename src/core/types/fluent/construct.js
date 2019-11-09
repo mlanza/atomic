@@ -1,7 +1,7 @@
 import {overload, partial} from '../../core';
 import {thrush} from '../../protocols/ifunctor/concrete';
 
-export default function Fluent(value){
+export function Fluent(value){
   this.value = value;
 }
 

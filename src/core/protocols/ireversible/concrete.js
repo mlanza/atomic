@@ -1,2 +1,2 @@
-import IReversible from "./instance";
+import {IReversible} from "./instance";
 export const reverse = IReversible.reverse;

@@ -12,6 +12,6 @@ function append(self, constraint){
   return apply(and, conj(self.constraints, constraint));
 }
 
-export default does(
+export const behaveAsAnd = does(
   implement(IAppendable, {append}),
   implement(ICheckable, {check}));

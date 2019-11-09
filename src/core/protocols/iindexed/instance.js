@@ -3,4 +3,3 @@ export const IIndexed = protocol({
   nth: null,
   idx: null
 });
-export default IIndexed;

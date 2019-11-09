@@ -1,2 +1,2 @@
-import ITransientEmptyableCollection from "./instance";
+import {ITransientEmptyableCollection} from "./instance";
 export const empty = ITransientEmptyableCollection.empty;

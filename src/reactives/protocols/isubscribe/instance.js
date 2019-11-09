@@ -4,4 +4,3 @@ export const ISubscribe = protocol({
   unsub: null,
   subscribed: null
 });
-export default ISubscribe;

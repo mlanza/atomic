@@ -1,5 +1,5 @@
 import {overload} from "../../core";
-import IEncode from "./instance";
+import {IEncode} from "./instance";
 import {IHash} from "../ihash";
 import {weakMap} from "../../types/weak-map/construct";
 import {generate, positives} from "../../types/lazy-seq/concrete";

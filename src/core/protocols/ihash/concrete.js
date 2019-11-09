@@ -1,2 +1,1 @@
-import IHash from "./instance";
-export const hash = IHash.hash;
+import {IHash} from "./instance";

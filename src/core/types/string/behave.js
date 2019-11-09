@@ -96,7 +96,7 @@ function matches(self, re){
   return rePattern(re).test(self);
 }
 
-export default does(
+export const behaveAsString = does(
   iindexed,
   implement(ICompact, {compact}),
   implement(IBlankable, {blank}),

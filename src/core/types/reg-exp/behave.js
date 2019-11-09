@@ -6,5 +6,5 @@ function matches(self, text){
   return self.test(text);
 }
 
-export default does(
+export const behaveAsRegExp = does(
   implement(IMatch, {matches}));

@@ -1,6 +1,6 @@
 import {weakMap} from "atomic/core";
 
-export default function Cursor(source, path, callbacks){
+export function Cursor(source, path, callbacks){
   this.source = source;
   this.path = path;
   this.callbacks = callbacks;

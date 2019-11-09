@@ -1,4 +1,4 @@
-export default function Days(n, options){
+export function Days(n, options){
   this.n = n;
   this.options = options;
 }
@@ -16,5 +16,3 @@ function from({n, days}){
 }
 
 Days.from = from;
-
-export {Days};

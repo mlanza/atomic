@@ -11,7 +11,7 @@ function deref(self){
   return IDeref.deref(self.sink);
 }
 
-export default function AudienceDetector(sink, state){
+export function AudienceDetector(sink, state){
   this.sink = sink;
   this.state = state;
 }

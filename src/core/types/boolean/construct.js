@@ -1,4 +1,3 @@
-export default Boolean;
 export function boolean(...args){
   return Boolean(...args);
 }

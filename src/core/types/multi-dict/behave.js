@@ -5,7 +5,7 @@ import {map} from '../lazy-seq';
 import {comp} from '../function/concrete';
 import {emptyList} from '../empty-list/construct';
 import {concatenated} from '../concatenated/construct';
-import record from '../record/behave';
+import {behaveAsRecord} from '../record/behave';
 
 function keys(self){
   return Object.keys(self.attrs);
@@ -56,8 +56,8 @@ function reducekv(self, xf, init){
   }, init);
 }
 
-export default does(
-  record,
+export const behaveAsMultiDict = does(
+  behaveAsRecord,
   implement(IMap, {keys}),
   implement(ICoerce, {toArray: comp(Array.from, seq)}),
   implement(IReduce, {reduce}),

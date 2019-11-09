@@ -1,4 +1,4 @@
-import IInclusive from "./instance";
+import {IInclusive} from "./instance";
 import {branch} from "../../core";
 import {yank} from "../iyankable/concrete";
 import {conj} from "../icollection/concrete";

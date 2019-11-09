@@ -31,7 +31,7 @@ function count(self){
   return deref(self).length;
 }
 
-export default does(
+export const behaveAsSpaceSeparated = does(
   implement(ISequential),
   implement(ISeq, {seq}),
   implement(IDeref, {deref}),

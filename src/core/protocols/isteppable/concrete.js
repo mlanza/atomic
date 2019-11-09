@@ -1,5 +1,5 @@
-import ISteppable from "./instance";
-import IInverse from "../iinverse/instance";
+import {ISteppable} from "./instance";
+import {IInverse} from "../iinverse/instance";
 import {compare} from "../icomparable/concrete";
 import {reducing} from "../ireduce/concrete";
 import {overload} from "../../core";

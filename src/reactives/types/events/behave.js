@@ -11,5 +11,5 @@ function release(self){
   return released;
 }
 
-export default does(
+export const behaveAsEvents = does(
   implement(IEventProvider, {raise, release}));

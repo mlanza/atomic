@@ -2,9 +2,9 @@ import {overload} from "../../core";
 import {days, weeks} from "../days/construct";
 import {months} from "../months/construct";
 import {years} from "../years/construct";
-import Symbol from '../symbol/construct';
+import {Symbol} from '../symbol/construct';
 
-export default function Duration(milliseconds){
+export function Duration(milliseconds){
   this.milliseconds = milliseconds;
 }
 
@@ -58,5 +58,3 @@ const units = {
 export function isDuration(self){
   return self instanceof Duration;
 }
-
-export {Duration};

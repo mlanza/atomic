@@ -1,4 +1,4 @@
 export * from "./dict/construct";
-import Dict from "./dict/construct";
-import behave from "./dict/behave";
-behave(Dict);
+import {Dict} from "./dict/construct";
+import {behaveAsDict} from "./dict/behave";
+behaveAsDict(Dict);

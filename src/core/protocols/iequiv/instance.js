@@ -5,4 +5,3 @@ function equiv(x, y){
 export const IEquiv = protocol({
   equiv: equiv
 });
-export default IEquiv;

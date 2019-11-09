@@ -1,6 +1,6 @@
 import {first, overload} from "atomic/core";
 
-export default function Router(fallback, handlers, receives){
+export function Router(fallback, handlers, receives){
   this.fallback = fallback;
   this.handlers = handlers;
   this.receives = receives;

@@ -1,5 +1,4 @@
 export * from "./coll-of/construct";
-import CollOf from "./coll-of/construct";
-import behave from "./coll-of/behave";
-export default CollOf;
-behave(CollOf);
+import {CollOf} from "./coll-of/construct";
+import {behaveAsCollOf} from "./coll-of/behave";
+behaveAsCollOf(CollOf);

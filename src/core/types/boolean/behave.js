@@ -10,7 +10,7 @@ function inverse(self){
   return !self;
 }
 
-export default does(
+export const behaveAsBoolean = does(
   implement(IDecode, {decode: identity}),
   implement(IEncode, {encode: identity}),
   implement(IComparable, {compare}),

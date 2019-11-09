@@ -10,5 +10,3 @@ export function set(coll){
 export function emptySet(){
   return new Set();
 }
-
-export default Set;

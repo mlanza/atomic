@@ -18,8 +18,6 @@ function reject(value){
   });
 }
 
-export default Task;
-
 Task.of = resolve;
 Task.resolve = resolve;
 Task.reject = reject;

@@ -1,4 +1,4 @@
-export default function TransientArray(arr){
+export function TransientArray(arr){
   this.arr = arr;
 }
 

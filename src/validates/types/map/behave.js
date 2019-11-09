@@ -11,5 +11,5 @@ function check(self, obj){
   }
 }
 
-export default does(
+export const behaveAsMap = does(
   implement(ICheckable, {check}));

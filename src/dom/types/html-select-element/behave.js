@@ -28,6 +28,6 @@ function access(f, g){
 const text  = access(IText.text, either(v, "")),
       value = access(IValue.value);
 
-export default does(
+export const behaveAsHTMLSelectElement = does(
   implement(IValue, {value}),
   implement(IText, {text}));

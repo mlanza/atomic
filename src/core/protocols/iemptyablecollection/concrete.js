@@ -1,2 +1,2 @@
-import IEmptyableCollection from "./instance";
+import {IEmptyableCollection} from "./instance";
 export const empty = IEmptyableCollection.empty;

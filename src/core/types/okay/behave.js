@@ -2,7 +2,7 @@ import {IFunctor, IFork} from '../../protocols';
 import {does, overload} from '../../core';
 import {implement} from '../protocol';
 import {okay} from './construct';
-import Error, {isError} from '../error/construct';
+import {Error, isError} from '../error/construct';
 
 function fmap(self, f){
   try{
@@ -16,6 +16,6 @@ function fork(self, reject, resolve){
   return resolve(self);
 }
 
-export default does(
+export const behaveAsOkay = does(
   implement(IFork, {fork}),
   implement(IFunctor, {fmap}));

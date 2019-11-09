@@ -17,6 +17,6 @@ function invoke(self, ...args){
   }
 }
 
-export default does(
+export const behaveAsMultimethod = does(
   implement(IFn, {invoke}),
   implement(ITransientCollection, {conj}));

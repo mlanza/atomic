@@ -1,11 +1,11 @@
 import {ISeqable} from '../../protocols/iseqable';
 import {ISeq} from '../../protocols/iseq';
-import ICoerce from '../../protocols/icoerce/instance';
+import {ICoerce} from '../../protocols/icoerce/instance';
 import {identity, overload, unspread} from "../../core";
 import {lazySeq} from "../../types/lazy-seq/construct";
 import {cons} from "../../types/list/construct";
 import {emptyList} from '../empty-list/construct';
-import Symbol from '../symbol/construct';
+import {Symbol} from '../symbol/construct';
 
 //duplicated to break dependencies
 export function filter(pred, xs){
@@ -47,5 +47,3 @@ Concatenated.create = concatenated;
 Concatenated.from = from;
 
 export const concat = overload(emptyList, ISeqable.seq, unspread(concatenated));
-
-export default Concatenated;

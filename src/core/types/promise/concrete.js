@@ -1,4 +1,4 @@
-import Promise, {isPromise} from "./construct";
+import {Promise, isPromise} from "./construct";
 import {fmap} from "../../protocols/ifunctor/concrete";
 import {fork} from "../../protocols/ifork/concrete";
 import {detect} from "../lazy-seq/concrete"

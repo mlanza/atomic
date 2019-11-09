@@ -18,7 +18,7 @@ function count(self){
   return self.size;
 }
 
-export default does(
+export const behaveAsWeakMap = does(
   implement(ICloneable, {clone: identity}),
   implement(ICounted, {count}),
   implement(ILookup, {lookup}),

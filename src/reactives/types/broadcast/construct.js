@@ -1,4 +1,4 @@
-export default function Broadcast(observers){
+export function Broadcast(observers){
   this.observers = observers;
 }
 

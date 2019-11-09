@@ -1,5 +1,4 @@
 export * from "./issue/construct";
-import Issue from "./issue/construct";
-import behave from "./issue/behave";
-export default Issue;
-behave(Issue);
+import {Issue} from "./issue/construct";
+import {behaveAsIssue} from "./issue/behave";
+behaveAsIssue(Issue);

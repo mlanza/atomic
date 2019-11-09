@@ -1,4 +1,4 @@
-export default function Method(pred, f){
+export function Method(pred, f){
   this.pred = pred;
   this.f = f;
 }

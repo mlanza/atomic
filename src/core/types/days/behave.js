@@ -16,7 +16,7 @@ function inverse(self){
   return new self.construct(self.n * -1, self.options);
 }
 
-export default does(
+export const behaveAsDays = does(
   encodeable,
   implement(IInverse, {inverse}),
   implement(ISteppable, {step}));

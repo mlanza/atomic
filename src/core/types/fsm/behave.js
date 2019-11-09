@@ -23,6 +23,6 @@ function transition(self, event) {
   return maybe(self.transitions, getIn(v, [self.state, event]), fsm(v, self.transitions)) || self;
 }
 
-export default does(
+export const behaveAsFiniteStateMachine = does(
   implement(IEquiv, {equiv}),
   implement(IStateMachine, {state, transition, transitions}));

@@ -20,7 +20,7 @@ function unit2(self, amount){
 
 const unit = overload(null, constantly(1), unit2);
 
-export default does(
+export const behaveAsNumber = does(
   implement(IBounds, {start: identity, end: identity}),
   implement(IDecode, {decode: identity}),
   implement(IEncode, {encode: identity}),

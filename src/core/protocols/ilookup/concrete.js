@@ -1,4 +1,4 @@
-import ILookup from "./instance";
+import {ILookup} from "./instance";
 import {IReduce} from "../ireduce";
 
 export function get(self, key, notFound){

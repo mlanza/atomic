@@ -2,7 +2,7 @@ import {overload, branch, isString, identity, awaits} from 'atomic/core';
 import {anno} from "../../types/annotation/construct";
 import {catches} from "../../types/catches/construct";
 import {map} from "../../types/map/construct";
-import ICheckable from "./instance";
+import {ICheckable} from "./instance";
 
 export function parses(parse, constraint){
   return anno({type: 'parse', parse},

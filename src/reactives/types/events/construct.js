@@ -1,4 +1,4 @@
-export default function Events(queued){
+export function Events(queued){
   this.queued = queued;
 }
 

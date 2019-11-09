@@ -5,4 +5,3 @@ function fork(self, reject, resolve){
 export const IFork = protocol({
   fork: fork
 });
-export default IFork;

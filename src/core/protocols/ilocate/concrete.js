@@ -1,4 +1,4 @@
-import ILocate from "./instance";
+import {ILocate} from "./instance";
 import {satisfies} from "../../types/protocol/concrete";
 import {first} from "../../protocols/iseq/concrete";
 import {query} from "../../protocols/iqueryable/concrete";

@@ -1,7 +1,7 @@
 import {doto, conj, apply} from 'atomic/core';
 import {_ as v} from "param.macro";
 
-export default function Middleware(handlers){
+export function Middleware(handlers){
   this.handlers = handlers;
 }
 

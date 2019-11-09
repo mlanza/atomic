@@ -24,7 +24,7 @@ function seq(self){
   return first(self) ? self : null
 }
 
-export default does(
+export const behaveAsList = does(
   implement(IEmptyableCollection, {empty}),
   implement(ICloneable, {clone: identity}),
   implement(ISeqable, {seq}),

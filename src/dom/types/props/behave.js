@@ -29,7 +29,7 @@ function conj(self, entry){
   assoc(self, key(entry), val(entry));
 }
 
-export default does(
+export const behaveAsProps = does(
   implement(IDescriptive),
   implement(ITransientMap, {dissoc}),
   implement(IMap, {keys: Object.keys, vals: Object.values}),

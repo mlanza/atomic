@@ -5,4 +5,3 @@ function compare(x, y){
 export const IComparable = protocol({
   compare: compare
 });
-export default IComparable;

@@ -11,7 +11,7 @@ function step(self, dt){
   return new Date(dt.valueOf() + self.milliseconds);
 }
 
-export default does(
+export const behaveAsDuration = does(
   encodeable,
   implement(IDeref, {deref}),
   implement(ISteppable, {step}));

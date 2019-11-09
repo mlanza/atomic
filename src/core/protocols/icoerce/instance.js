@@ -4,4 +4,3 @@ export const ICoerce = protocol({
   toObject: null,
   toPromise: null
 });
-export default ICoerce;

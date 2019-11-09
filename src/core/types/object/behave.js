@@ -6,7 +6,7 @@ import {lazySeq, into, map} from '../lazy-seq';
 import {cons} from '../list';
 import {iequiv} from '../array/behave';
 import {satisfies} from "../protocol/concrete";
-import Object, {emptyObject} from '../object/construct';
+import {Object, emptyObject} from '../object/construct';
 
 const keys = Object.keys;
 const vals = Object.values;
@@ -184,7 +184,7 @@ function decode(self, label, constructors){
 }
 
 export const iset = implement(ISet, {disj});
-export default does(
+export const behaveAsObject = does(
   iset,
   iequiv,
   implement(IDescriptive),

@@ -1,2 +1,2 @@
-import ISeqable from "./instance";
+import {ISeqable} from "./instance";
 export const seq = ISeqable.seq;

@@ -1,2 +1,2 @@
-import IReset from "./instance";
+import {IReset} from "./instance";
 export const reset = IReset.reset;

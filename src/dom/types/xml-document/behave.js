@@ -1,2 +1,2 @@
-import behave from "../html-document/behave";
-export default behave;
+//import {behaveAsHTMLDocument} from "../html-document/behave";
+//export const behaveAsXMLDocument = behaveAsHTMLDocument;

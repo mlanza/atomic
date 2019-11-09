@@ -1,7 +1,7 @@
 import {overload} from '../../core';
 import {steps} from '../../protocols/isteppable/concrete';
 import {isNumber} from '../number/concrete';
-import Symbol from '../symbol/construct';
+import {Symbol} from '../symbol/construct';
 
 export function Range(start, end, step, direction){
   this.start = start;
@@ -37,5 +37,3 @@ export const range = overload(range0, range1, range2, range3);
 Range.from = from;
 Range.create = range;
 Range.prototype[Symbol.toStringTag] = "Range";
-
-export default Range;

@@ -4,7 +4,7 @@ import {implement, specify, satisfies} from '../protocol';
 import {IFunctor, ISeq, INext, ISequential, ICoerce, IDeref} from '../../protocols';
 import {mapcat} from '../lazy-seq';
 import {per, emptyPer} from "./construct";
-import behave from "../series/behave";
+import {behaveAsSeries} from "../series/behave";
 
 function fmap(self, f){
   return per(mapcat(function(x){
@@ -30,8 +30,8 @@ function next(self){
 const deref = Array.from;
 const toArray = Array.from;
 
-export default does(
-  behave,
+export const behaveAsPer = does(
+  behaveAsSeries,
   implement(IDeref, {deref}),
   implement(ICoerce, {toArray}),
   implement(INext, {next}),

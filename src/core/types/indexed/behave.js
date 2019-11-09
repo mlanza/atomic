@@ -36,7 +36,7 @@ function includes(self, value){
   }, self);
 }
 
-export default does(
+export const behaveAsIndexed = does(
   iterable,
   implement(ISequential),
   implement(IInclusive, {includes}),

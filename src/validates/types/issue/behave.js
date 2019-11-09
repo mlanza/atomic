@@ -14,6 +14,6 @@ function at(self, path){
   return issue(self.constraint, path);
 }
 
-export default does(
+export const behaveAsIssue = does(
   implement(IDeref, {deref}),
   implement(IScope, {scope, at}));

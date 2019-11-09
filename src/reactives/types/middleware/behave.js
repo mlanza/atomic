@@ -24,6 +24,6 @@ function handle(self, command, next){
   IMiddleware.handle(self.handler, command, next);
 }
 
-export default does(
+export const behaveAsMiddleware = does(
   implement(ITransientCollection, {conj}),
   implement(IMiddleware, {handle}));

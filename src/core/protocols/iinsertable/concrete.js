@@ -1,4 +1,4 @@
-import IInsertable from "./instance";
+import {IInsertable} from "./instance";
 import {overload, identity} from "../../core";
 
 function afterN(self, ...els) {

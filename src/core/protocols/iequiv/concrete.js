@@ -1,2 +1,2 @@
-import IEquiv from "./instance";
+import {IEquiv} from "./instance";
 export const equiv = IEquiv.equiv;
