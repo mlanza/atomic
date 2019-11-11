@@ -1276,7 +1276,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
   (function(){
 
     function handle(self, command, next){
-      return _.fmap(ents.query(self.buffer, command.plan), function(entities){
+      return _.fmap(IQueryable.query(self.buffer, command.plan), function(entities){
         $.raise(self.provider, queriedEvent(entities));
         return next(command);
       });
@@ -1379,8 +1379,8 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   })();
 
-  function DeselectHandler(subject, provider){
-    this.subject = subject;
+  function DeselectHandler(model, provider){
+    this.model = model;
     this.provider = provider;
   }
 
@@ -1401,8 +1401,8 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   })();
 
-  function DeselectedHandler(subject){
-    this.subject = subject;
+  function DeselectedHandler(model){
+    this.model = model;
   }
 
   function LockingMiddleware(){
@@ -1531,11 +1531,13 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
   (function(){
 
     function load(self, entities){
-      _.swap(self.catalog, ents.load(_, entities));
+      _.swap(self.catalog, function(catalog){
+        return IBuffer.load(catalog, entities);
+      });
     }
 
     function query(self, plan){ //NOTE cmd because it eventually (in `load`) mutates state
-      return ents.query(self.repo, plan);
+      return IQueryable.query(self.repo, plan);
     }
 
     _.doto(Buffer,
@@ -1561,10 +1563,10 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
   }
 
   function outline($buffer, options){ //e.g. options -> {root: guid}
-    var $model = $.cell({selected: options.selected || imm.set()}),
+    var $model = $.cell({selected: options.selected ||imm.set()}),
+        $events = $.events(),
         $ebus = bus(),
-        $cbus = bus(),
-        $events = $.events();
+        $cbus = bus();
 
     _.doto($ebus,
       mut.conj(_,
@@ -1604,7 +1606,21 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   })();
 
-  var ents = _.just({
+  var $buffer = buffer(domain([tasks]), $.cell(typedCatalog()));
+
+  _.each(function(el){
+    var $outline = outline($buffer, {root: _.guid("a")});
+    IView.render($outline, el);
+    _.each($.dispatch($outline, _), [
+      queryCommand({$type: "tasks"}),
+      selectCommand(_.guid("a")),
+      selectCommand(_.guid("b")),
+      deselectCommand(_.guid("b"))
+    ]);
+    Object.assign(window, {$outline: $outline});
+  }, dom.sel("#outline"));
+
+  return _.just({
     optional: optional,
     required: required,
     unlimited: unlimited,
@@ -1623,20 +1639,6 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
       return _.assoc(memo, key, protocol[key]);
     }, {}, Object.keys(protocol));
   }, _.vals(protocols))), _.impart(_, _.partly));
-
-  var $buffer = buffer(ents.domain([tasks]), $.cell(ents.typedCatalog()));
-
-  _.each(function(el){
-    var $outline = outline($buffer, {root: _.guid("a")});
-    ents.render($outline, el);
-    _.each($.dispatch($outline, _), [
-      queryCommand({$type: "tasks"}),
-      selectCommand(_.guid("a"))
-    ]);
-    Object.assign(window, {$outline: $outline});
-  }, dom.sel("#outline"));
-
-  return ents;
 
 });
 
