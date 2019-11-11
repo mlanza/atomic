@@ -372,7 +372,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     }
 
     function constraints(self){
-      return vd.optional(self.field.meta.StaticName, vd.and(ICardinality.cardinality(self), _.maybe(self.field.constraints, ck.collOf)));  //TODO demeter?
+      return vd.optional(self.field.meta.StaticName, vd.and(ICardinality.cardinality(self), _.maybe(self.field.constraints, vd.collOf)));  //TODO demeter?
     }
 
     return _.does(
@@ -533,9 +533,15 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
       return self.values;
     }
 
-    function constraints(self){
-      return vd.and(self.cardinality, _.maybe(self.constraints, ck.collOf));
+    function constraints1(self){
+      return vd.and(self.cardinality, _.maybe(self.constraints, vd.collOf));
     }
+
+    function constraints2(self, constraints){
+      return new self.constructor(self.cardinality, self.max, constraints, self.values);
+    }
+
+    var constraints = _.overload(null, constraints1, constraints2);
 
     _.doto(ConstrainedCollection,
       _.implement(IEmptyableCollection, {empty: empty}),
@@ -557,7 +563,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
   })();
 
   var constrainedCollection = _.fnil(_.constructs(ConstrainedCollection), card(0, 1), 1, [], []),
-      optional = constrainedCollection(),
+      optional = constrainedCollection(card(0, 1), 1),
       required = constrainedCollection(card(1, 1), 1),
       unlimited = constrainedCollection(card(0, Infinity), Infinity);
 
@@ -1267,7 +1273,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   })()
 
-  function EntityBuffer(id, loaded, changed, touched){
+  function EntityCatalog(id, loaded, changed, touched){
     this.id = id; //for idempotence checking
     this.loaded = loaded;
     this.changed = changed;
@@ -1358,7 +1364,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     }
 
     function load(self, entities){
-      return entityBuffer(mut.withMutations(self.loaded, function(loaded){
+      return entityCatalog(mut.withMutations(self.loaded, function(loaded){
         return _.reduce(function(memo, entity){
           var id = _.str(IEntity.eid(entity));
           if (!_.contains(memo, id)) {
@@ -1370,7 +1376,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     }
 
     function add(self, entities){
-      return entityBuffer(self.loaded, mut.withMutations(self.changed, function(changed){
+      return entityCatalog(self.loaded, mut.withMutations(self.changed, function(changed){
         return _.reduce(function(memo, entity){
           var id = _.str(IEntity.eid(entity));
           if (!_.contains(memo, id)){
@@ -1382,7 +1388,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     }
 
     function edit(self, entities){
-      return entityBuffer(self.loaded, mut.withMutations(self.changed, function(changed){
+      return entityCatalog(self.loaded, mut.withMutations(self.changed, function(changed){
         return _.reduce(function(memo, entity){
           var id = _.str(IEntity.eid(entity));
           if (_.contains(self.loaded, id) || _.contains(memo, id)) {
@@ -1394,7 +1400,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     }
 
     function destroy(self, entities){
-      return entityBuffer(self.loaded, mut.withMutations(self.changed, function(changed){
+      return entityCatalog(self.loaded, mut.withMutations(self.changed, function(changed){
         return _.reduce(function(memo, entity){
           var id = _.str(IEntity.eid(entity));
           if (_.contains(self.loaded, id)) {
@@ -1447,7 +1453,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     function dissoc(self, guid){
       var id = _.str(guid);
       return IAssociative.contains(self, id) ?
-        entityBuffer(
+        entityCatalog(
           IAssociative.contains(self.loaded, id) ? IMap.dissoc(self.loaded, id) : self.loaded,
           IAssociative.contains(self.changed, id) ? IMap.dissoc(self.changed, id) : self.changed, _.cons(guid)) : self;
     }
@@ -1512,7 +1518,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
     //RULE querying and filtering are inherently different as filters process all items and don't utilize indexes for performance
 
-    _.doto(EntityBuffer,
+    _.doto(EntityCatalog,
       _.implement(IResolver, {resolve: resolve}),
       _.implement(IIndexed, {nth: nth}),
       _.implement(IEntity, {eid: eid}),
@@ -1532,34 +1538,34 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   })();
 
-  function entityBuffer(loaded, changed, touched){
-    return new EntityBuffer(_.guid(), loaded, changed, touched);
+  function entityCatalog(loaded, changed, touched){
+    return new EntityCatalog(_.guid(), loaded, changed, touched);
   }
 
-  var _buffer = entityBuffer({}, {});
+  var _buffer = entityCatalog({}, {});
 
   function buffer(){
     return _buffer;
   }
 
-  function TypedEntityBuffer(buffer, types){
+  function TypedEntityCatalog(buffer, types){
     this.buffer = buffer;
     this.types = types;
   }
 
-  function typedBuffer2(buffer, types){
-    return new TypedEntityBuffer(buffer, types);
+  function typedCatalog2(buffer, types){
+    return new TypedEntityCatalog(buffer, types);
   }
 
-  function typedBuffer1(buffer){
-    return typedBuffer2(buffer, {});
+  function typedCatalog1(buffer){
+    return typedCatalog2(buffer, {});
   }
 
-  function typedBuffer0(){
-    return typedBuffer1(buffer());
+  function typedCatalog0(){
+    return typedCatalog1(buffer());
   }
 
-  var typedEntityBuffer = _.overload(typedBuffer0, typedBuffer1, typedBuffer2);
+  var typedCatalog = _.overload(typedCatalog0, typedCatalog1, typedCatalog2);
 
   (function(){
 
@@ -1568,7 +1574,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     }
 
     function load(self, entities){
-      return typedEntityBuffer(IWorkspace.load(self.buffer, entities), _.reducekv(function(memo, key, value){
+      return typedCatalog(IWorkspace.load(self.buffer, entities), _.reducekv(function(memo, key, value){
         return _.update(memo, key, function(b){
           return IWorkspace.load(b || buffer(), value);
         });
@@ -1578,7 +1584,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     }
 
     function add(self, entities){
-      return typedEntityBuffer(IWorkspace.add(self.buffer, entities), _.reducekv(function(memo, key, value){
+      return typedCatalog(IWorkspace.add(self.buffer, entities), _.reducekv(function(memo, key, value){
         return _.update(memo, key, function(b){
           return IWorkspace.add(b || buffer(), value);
         });
@@ -1588,7 +1594,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     }
 
     function edit(self, entities){
-      return typedEntityBuffer(IWorkspace.edit(self.buffer, entities), _.reducekv(function(memo, key, value){
+      return typedCatalog(IWorkspace.edit(self.buffer, entities), _.reducekv(function(memo, key, value){
         return _.update(memo, key, function(b){
           return IWorkspace.edit(b || buffer(), value);
         });
@@ -1598,7 +1604,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     }
 
     function destroy(self, entities){
-      return typedEntityBuffer(IWorkspace.destroy(self.buffer, entities), _.reducekv(function(memo, key, value){
+      return typedCatalog(IWorkspace.destroy(self.buffer, entities), _.reducekv(function(memo, key, value){
         return _.update(memo, key, function(b){
           return IWorkspace.destroy(b || buffer(), value);
         });
@@ -1679,7 +1685,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
       }, refs);
     }
 
-    _.doto(TypedEntityBuffer,
+    _.doto(TypedEntityCatalog,
       _.implement(IEntity, {eid: eid}),
       _.implement(IResolver, {resolve: resolve}),
       _.implement(IQueryable, {query: query}),
@@ -1694,7 +1700,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
       _.implement(INext, {next: next}),
       _.implement(ISeqable, {seq: seq}),
       _.implement(IInclusive, {includes: includes}),
-      _.implement(IEmptyableCollection, {empty: typedEntityBuffer}));
+      _.implement(IEmptyableCollection, {empty: typedCatalog}));
 
   })();
 
@@ -2113,21 +2119,21 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
   //NOTE assign guid as `data-key` and realize that the same entity could appear in multiple places of an outline.
   //NOTE a view is capable of returning a seq of all possible `IView.interactions` each implementing `IIdentifiable` and `ISubject`.
   //NOTE an interaction is a persistent, validatable object with field schema.  It will be flagged as command or query which will help with processing esp. pipelining.  When successfully validated it has all that it needs to be handled by the handler.  That it can be introspected allows for the UI to help will completing them.
-  function Outline(domain, $buffer, $model, $cbus, $ebus, options){
+  function Outline(domain, $catalog, $model, $cbus, $ebus, options){
     this.domain = domain;
-    this.$buffer = $buffer;
+    this.$catalog = $catalog;
     this.$model = $model;
     this.$cbus = $cbus;
     this.$ebus = $ebus;
     this.options = options;
   }
 
-  function outline($domain, $buffer, options){ //e.g. options -> {root: guid}
+  function outline($domain, $catalog, options){ //e.g. options -> {root: guid}
     var $model = $.cell({selected: options.selected || imm.set()}),
         $ebus = bus(),
         $cbus = bus(),
         $events = $.events(),
-        $outline = new Outline($domain, $buffer, $model, $cbus, $ebus, options);
+        $outline = new Outline($domain, $catalog, $model, $cbus, $ebus, options);
 
     _.doto($ebus,
       mut.conj(_,
@@ -2158,7 +2164,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     }
 
     function load(self, entities){
-      _.swap(self.$buffer, ents.load(_, entities));
+      _.swap(self.$catalog, ents.load(_, entities));
     }
 
     function query(self, plan){ //NOTE cmd because it eventually (in `load`) mutates state
@@ -2227,7 +2233,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
   function run1(options){
     _.fmap(Promise.all(_.mapa(ents.list, options.lists)), ents.domain, function(domain){
 
-      var $ents  = $.cell(ents.typedEntityBuffer()),
+      var $ents  = $.cell(ents.typedCatalog()),
           $items = $.map(ents.query(_, {$type: _.first(options.lists)}), $ents);
 
       _.fmap(Promise.all([
@@ -2259,14 +2265,17 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     add: add,
     edit: edit,
     destroy: destroy,
+    optional: optional,
+    required: required,
+    unlimited: unlimited,
     loadCommand: loadCommand,
     queryCommand: queryCommand,
     selectCommand: selectCommand,
     deselectCommand: deselectCommand,
     resource: resource,
     resources: resources,
-    entityBuffer: entityBuffer,
-    typedEntityBuffer: typedEntityBuffer,
+    entityCatalog: entityCatalog,
+    typedCatalog: typedCatalog,
     domain: domain,
     assert: assert,
     retract: retract,
@@ -2278,10 +2287,10 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
   }, _.vals(protocols))), _.impart(_, _.partly));
 
   var domain = ents.domain([tasks]),
-      $buffer = $.cell(ents.typedEntityBuffer());
+      $catalog = $.cell(ents.typedCatalog());
 
   _.each(function(el){
-    var $outline = outline(domain, $buffer, {root: _.guid("a")});
+    var $outline = outline(domain, $catalog, {root: _.guid("a")});
     ents.render($outline, el);
     _.each($.dispatch($outline, _), [
       queryCommand({$type: "tasks"}),
