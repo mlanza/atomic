@@ -1,13 +1,8 @@
 define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'atomic/validates', 'atomic/immutables', 'context'], function(_, dom, mut, $, vd, imm, context){
 
-  //TODO implement faux repo (no actual datastore) of tasks using non-SharePoint entities
-  //GOAL Factor the SharePoint out of SharePoint (e.g. design against abstractions that are platform agnostic)!
-  //GOAL Develop a comprehensive entity management model that also works in a non-SharePoint context and when stable port to Atomic.
   //GOAL Use an "always validatable" approach.
   //GOAL Mind "tell, don't ask" eliminating protocols that query and expose internal information and rather aim to keep that information hidden.
-  //TODO Create SharePointText with e-mail validation and test it.  How to communicate what SharePoint itself doesn't (e.g. that a certain field contains e-mail addresses and needs an appropriate regex)?
   //TODO Apply effects (destruction, modification, addition) to datastore.
-  //TODO Allow a SharePoint(Multi)Value to render a control independent of an entity.
   //TODO Improve efficiency (with an index decorator?) of looking up an entity in a buffer by pk rather than guid.
   //TODO Use `query` to access internal indexes rather than another protocol.
   //TODO Consider use cases for `init` (e.g. creating new entities or resetting an existing field to factory defaults).
@@ -96,26 +91,6 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   var card = _.fnil(_.pre(_.constructs(Cardinality), validCardinality), 0, Infinity);
 
-  var emptyCard = card();
-
-  function parseBoolean(val){
-    return _.isBoolean(val) ? val : val == 1;
-  }
-
-  function parseCalculated(val){ //TODO test
-    var type  = _.just(this.meta.SchemaXml, _.reFind(/ResultType="([^"]+)"/i, _), _.get(_, 1)),
-        parse = _.get(parsers, type, _.identity);
-    return _.maybe(val, _.blot, parse);
-  }
-
-  var parsers = {
-    //"DateTime": dates.parseDateTime,
-    "Boolean": parseBoolean,
-    "Number": parseFloat,
-    "Integer": parseInt,
-    "Guid": _.guid
-  }
-
   var IPossession = _.protocol({
     owner: null
   });
@@ -157,7 +132,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     render: null
   });
 
-  var IWorkspace = _.protocol({
+  var IBuffer = _.protocol({
     touched: null, //entities touched during the last operation - useful when diffing before/after model snapshots
     dirty: null,
     load: null, //add existing entity from domain to workspace
@@ -211,198 +186,8 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     IEntitySelector: IEntitySelector,
     IView: IView,
     IMiddleware: IMiddleware,
-    IWorkspace: IWorkspace
+    IBuffer: IBuffer
   }
-
-  function Resource(url){
-    this.url = url;
-  }
-
-  function resource(url){
-    return new Resource(url);
-  }
-
-  (function(){
-
-    function query(self, qs){
-      return _.fmap(fetch(self.url + (qs || ""), {headers: {
-        "Accept": "application/json;odata=verbose",
-        "Content-Type": "application/json;odata=verbose"
-      }, credentials: "same-origin"}), function(resp){
-        return resp.json();
-      }, _.coalesce(_.getIn(_, ["d", "results"]), _.getIn(_, ["d"])));
-    }
-
-    _.doto(Resource,
-      _.implement(IQueryable, {query: query}));
-
-  })();
-
-
-  function Resources(urls){
-    this.urls = urls;
-  }
-
-  function resources(urls){
-    return new Resources(urls);
-  }
-
-  (function(){
-
-    function query(self, qs){
-      function retrieve(urls){
-        return _.fmap(fetch(_.first(urls) + (qs || ""), {
-          headers: {
-            "Accept": "application/json;odata=verbose",
-            "Content-Type": "application/json;odata=verbose"
-          },
-          credentials: "same-origin"
-        }), function(resp){
-          return resp.json();
-        }, _.coalesce(_.getIn(_, ["d", "results"]), _.getIn(_, ["d"])), function(items){
-          return _.seq(_.rest(urls)) ? _.fmap(retrieve(_.rest(urls)), function(xs){
-            return _.toArray(_.concat(items, xs));
-          }) : items;
-        });
-      }
-      return retrieve(self.urls);
-    }
-
-    _.doto(Resources,
-      _.implement(IQueryable, {query: query}));
-
-  })();
-
-
-  var lists = resources([
-    location.origin + "/_api/web/lists",
-    context.webAbsoluteUrl + "/_api/web/lists"
-  ]);
-
-  var vbehave = (function(){
-
-    function deref(self){
-      return self.value;
-    }
-
-    function constraints(self){
-      return self.field.constraints;
-    }
-
-    function fmap(self, f){
-      return new self.constructor(f(self.value), self.field);
-    }
-
-    return _.does(
-      _.implement(IFunctor, {fmap: fmap}),
-      _.implement(IConstrained, {constraints: constraints}),
-      _.implement(IDeref, {deref: deref}));
-
-  })();
-
-  var cbehave = (function(){
-
-    //TODO init
-
-    function reduce(self, xf, init){
-      var memo = init,
-          ys = self;
-      while(ISeqable.seq(ys)){
-        var y = _.deref(_.first(ys));
-        memo = xf(memo, y);
-        ys = _.rest(ys);
-      }
-      return memo;
-    }
-
-    function first(self){
-      return ISeq.first(self.values);
-    }
-
-    function rest(self){
-      return ISeq.rest(self.values);
-    }
-
-    function next(self){
-      return INext.next(self.values);
-    }
-
-    function count(self){
-      return ICounted.count(self.values);
-    }
-
-    function conj(self, value){
-      return self.field.create(_.conj(_.deref(self), value));
-    }
-
-    function includes(self, value){
-      return _.detect(_.eq(value, _), self.values);
-    }
-
-    function equiv(self, other){
-      return self === other; //TODO self.constructor === other.constructor && _.every()
-    }
-
-    function nth(self, idx){
-      return IIndexed.nth(self.values, idx);
-    }
-
-    function assoc(self, idx, value){
-      return new self.constructor(IAssociative.assoc(self.values, idx, value), self.field.blank, self.field)
-    }
-
-    function contains(self, idx){
-      return IAssociative.contains(self.values, idx);
-    }
-
-    function seq(self){
-      return ISeqable.seq(self.values) ? self : null;
-    }
-
-    function empty(self){
-      return new self.constructor(self.field.blank, self.field);
-    }
-
-    function cardinality(self){
-      return card(self.field.meta.Required ? 1 : 0);
-    }
-
-    function deref(self){
-      return _.mapa(_.deref, self.values);
-    }
-
-    function constraints(self){
-      return vd.optional(self.field.meta.StaticName, vd.and(ICardinality.cardinality(self), _.maybe(self.field.constraints, vd.collOf)));  //TODO demeter?
-    }
-
-    return _.does(
-      _.implement(IEmptyableCollection, {empty: empty}),
-      _.implement(IConstrained, {constraints: constraints}),
-      _.implement(ILookup, {lookup: nth}),
-      _.implement(IAssociative, {assoc: assoc, contains: contains}),
-      _.implement(IDeref, {deref: deref}),
-      _.implement(ICounted, {count: count}),
-      _.implement(IReduce, {reduce: reduce}),
-      _.implement(ICardinality, {cardinality: cardinality}),
-      _.implement(ISeq, {first: first, rest: rest}),
-      _.implement(INext, {next: next}),
-      _.implement(IEquiv, {equiv: equiv}),
-      _.implement(IInclusive, {includes: includes}),
-      _.implement(ICollection, {conj: conj}),
-      _.implement(IIndexed, {nth: nth}),
-      _.implement(ISeqable, {seq: seq}));
-
-  })();
-
-  function SharePointMultiValue(values, field){
-    this.values = values;
-    this.field = field;
-  }
-
-  var defaults = _.merge({
-    parse: _.identity,
-    qual: _.array
-  }, _);
 
   function DerefCheck(check){
     this.check = check;
@@ -418,43 +203,6 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
       _.implement(ICheckable, {check: check}));
 
   })()
-
-  function betweenConstraint(meta){
-    return meta.MinimumValue ? vd.between(meta.MinimumValue, meta.MaximumValue) : null;
-  }
-
-  function emailConstraint(meta){
-    return _.test(/e[-]?mail/i, meta.StaticName) ? ck.email : null;
-  }
-
-  function choiceConstraint(meta){
-    return _.maybe(meta, _.getIn(_, ["Choices", "results"]), ck.choice);
-  }
-
-  function getConstraints(meta){
-    return _.just(meta,
-      _.juxt(emailConstraint, choiceConstraint, betweenConstraint),
-      _.compact,
-      _.seq,
-      _.apply(vd.and, _),
-      _.constructs(DerefCheck));
-  }
-
-  function multi(Type, opts){
-    var options = defaults(opts);
-    return function(meta){
-      var path = options.qual(meta.StaticName);
-      var field = new SharePointField(meta, Type, create, _.deref, create, [], path, getConstraints(meta));
-
-      function create(values){
-        return new SharePointMultiValue(_.mapa(function(value){
-          return new Type(options.parse(value), field);
-        }, values), field);
-      }
-
-      return field;
-    }
-  }
 
   function ConstrainedCollection(cardinality, max, constraints, values){
     this.cardinality = cardinality;
@@ -567,85 +315,6 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
       required = constrainedCollection(card(1, 1), 1),
       unlimited = constrainedCollection(card(0, Infinity), Infinity);
 
-  function SharePointValue(values, field){
-    this.values = values;
-    this.field = field;
-  }
-
-  _.each(cbehave, [
-    SharePointMultiValue,
-    SharePointValue
-  ]);
-
-  function uni(Type, opts){
-    var options = defaults(opts);
-    return function(meta){
-      var path = options.qual(meta.StaticName);
-      var field = new SharePointField(meta, Type, cast, _.comp(_.first, _.deref), create, [], path, getConstraints(meta));
-
-      function cast(value){
-        return create(_.isSome(value) ? [value] : []);
-      }
-
-      function create(values){
-        return new SharePointValue(_.mapa(function(value){
-          return new Type(options.parse(value), field);
-        }, _.drop(_.max(ICounted.count(values) - 1, 0), values)), field);
-      }
-
-      return field;
-    }
-  }
-
-  function SharePointField(meta, type, cast, uncast, create, blank, path, constraints){
-    this.meta = meta;
-    this.type = type;
-    this.cast = cast;
-    this.uncast = uncast;
-    this.create = create;
-    this.blank = blank;
-    this.path = path;
-    this.constraints = constraints;
-  }
-
-  (function(){
-
-    function aget(self, entity){
-      return self.cast(_.getIn(entity.attrs, self.path));
-    }
-
-    function aset(self, entity, values){
-      if (self.meta.ReadOnlyField) {
-        throw new Error("Cannot set readonly field '" + self.meta.StaticName + "'.");
-      }
-      //TODO handle dissoc if no values
-      return new entity.constructor(entity.list, _.assocIn(entity.attrs, self.path, self.uncast(values)));
-    }
-
-    function init(self){
-      return _.maybe(self.meta.DefaultValue, _.blot, self.cast);
-    }
-
-    function cardinality(self){ //TODO does not perhaps belong here but on SharePointValue/SharePointMultiValue.
-      return card(self.meta.Required ? 1 : 0, 1);
-    }
-
-    function title(self){
-      return self.meta.Title;
-    }
-
-    function constraints(self){
-      return self.constraints;
-    }
-
-    _.doto(SharePointField,
-      _.implement(ISubject, {title: title}),
-      _.implement(IField, {aget: aget, aset: aset, init: init}),
-      _.implement(IConstrained, {constraints: constraints}),
-      _.implement(ICardinality, {cardinality: cardinality}));
-
-  })();
-
   function reassign(self, key, f){
     var field = IKind.field(self, key),
         values = IField.aget(field, self),
@@ -687,173 +356,12 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   var asserts = _.overload(null, asserts1, asserts2, asserts3);
 
-  var field = (function(){
-
-    //TODO create the `items` function responsible for returning entities of a given type (e.g. SharePointListItem)
-
-    function pk(key){
-      return [key + "Id"];
-    }
-
-    function pks(key){
-      return [key + "Id", "results"];
-    }
-
-    function vals(key){
-      return [key, "results"];
-    }
-
-    function SharePointText(value, field){
-      this.value = value;
-      this.field = field;
-    }
-
-    function SharePointNote(value, field){
-      this.value = value;
-      this.field = field;
-    }
-
-    function SharePointGuid(value, field){
-      this.value = value;
-      this.field = field;
-    }
-
-    function SharePointURL(value, field){
-      this.value = value;
-      this.field = field;
-    }
-
-    function SharePointComputed(value, field){
-      this.value = value;
-      this.field = field;
-    }
-
-    function SharePointCalculated(value, field){
-      this.value = value;
-      this.field = field;
-    }
-
-    function SharePointBoolean(value, field){
-      this.value = value;
-      this.field = field;
-    }
-
-    function SharePointInteger(value, field){
-      this.value = value;
-      this.field = field;
-    }
-
-    function SharePointDateTime(value, field){
-      this.value = value;
-      this.field = field;
-    }
-
-    function SharePointChoice(value, field){
-      this.value = value;
-      this.field = field;
-    }
-
-    function SharePointLookup(value, field){
-      this.value = value;
-      this.field = field;
-    }
-
-    function SharePointUser(value, field){
-      this.value = value;
-      this.field = field;
-    }
-
-    _.each(vbehave, [
-      SharePointText,
-      SharePointNote,
-      SharePointGuid,
-      SharePointURL,
-      SharePointComputed,
-      SharePointCalculated,
-      SharePointBoolean,
-      SharePointInteger,
-      SharePointDateTime,
-      SharePointChoice,
-      SharePointLookup,
-      SharePointUser
-    ]);
-
-    var fields = {
-      "Text": uni(SharePointText),
-      "Note": uni(SharePointNote),
-      "Guid": uni(SharePointGuid, {parse: _.guid}),
-      "URL": uni(SharePointURL),
-      "Computed": uni(SharePointComputed),
-      "Calculated": uni(SharePointCalculated, {parse: parseCalculated}),
-      "Boolean": uni(SharePointBoolean, {parse: parseBoolean}),
-      "Integer": uni(SharePointInteger, {parse: parseInt}),
-      "DateTime": uni(SharePointDateTime, {parse: _.identity}), //TODO dates.parseDateTime
-      "Choice": uni(SharePointChoice),
-      "MultiChoice": multi(SharePointChoice, {qual: vals}),
-      "Lookup": uni(SharePointLookup, {qual: pk, parse: parseInt}),
-      "LookupMulti": multi(SharePointLookup, {qual: pks, parse: parseInt}),
-      "User": uni(SharePointUser, {qual: pk, parse: parseInt}),
-      "UserMulti": multi(SharePointUser, {qual: pks, parse: parseInt})
-    }
-
-    return function field(meta){ //TODO on no meta return a virtual field
-      var f = _.get(fields, meta.TypeAsString, fields.Text);
-      return f(meta);
-    }
-
-  })();
-
   function fields(metas){
     return _.reduce(function(memo, meta){
       memo[meta.StaticName] = field(meta);
       return memo;
     }, {}, metas);
   }
-
-  function SharePointList(meta, fields, title){
-    this.meta = meta;
-    this.fields = fields;
-    this.title = title;
-  }
-
-  (function(){
-
-    var make = spli;
-
-    function query(self, qs){
-      return _.fmap(IQueryable.query(resource(self.meta.__metadata.uri + "/items"), qs), _.mapa(_.partial(make, self), _));
-    }
-
-    function title(self){
-      return self.meta.Title;
-    }
-
-    function identifier(self){
-      return self.meta.ListItemEntityTypeFullName;
-    }
-
-    function field(self, key){
-      return self.fields[key];
-    }
-
-    function keys(self){
-      return _.keys(self.fields);
-    }
-
-    function commit(self, txn){  //TODO implement, how to determine success if a command has no return value? callback?
-      _.log('commit', self, txn);
-    }
-
-    _.doto(SharePointList,
-      _.implement(IKind, {field: field}),
-      _.implement(ISubject, {title: title}),
-      _.implement(IIdentifiable, {identifier: identifier}),
-      _.implement(IMap, {keys: keys}),
-      _.implement(IQueryable, {query: query}),
-      _.implement(IFactory, {make: make}),
-      _.implement(IStore, {commit: commit}));
-
-  })();
 
   var Item = (function(){
 
@@ -1141,6 +649,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
       }, [{
         id: _.guid("a"),
         summary: "Build backyard patio",
+        priority: "A",
         subtasks: [_.guid("b"), _.guid("c")]
       },{
         id: _.guid("b"),
@@ -1208,70 +717,6 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
       _.implement(IStore, {commit: commit}));
 
   })();
-
-  function SharePointListItem(list, attrs){
-    this.list = list;
-    this.attrs = attrs;
-  }
-
-  function spli(list, attrs){
-    return new SharePointListItem(list, _.merge({__metadata: {type: IIdentifiable.identifier(list)}, GUID: _.str(attrs.guid || _.guid())}, attrs));
-  }
-
-  (function(){
-
-    function identifier(self){
-      return IKind.field(self, "ContentType").meta.Scope;
-    }
-
-    function eid(self){
-      return _.maybe(self, _.get(_, "GUID"), _.first, _.deref);
-    }
-
-    function title(self){
-      return _.get(self, self.list.title, null);
-    }
-
-    function field(self, key){
-      return IKind.field(self.list, key);
-    }
-
-    function kind(self){
-      return self.attrs.__metadata.type;
-    }
-
-    //RULE expose attribute universally as a set of values.
-    function lookup(self, key){
-      return IField.aget(field(self, key), self);
-    }
-
-    function assoc(self, key, values){
-      return IField.aset(field(self, key), self, values);
-    }
-
-    function contains(self, key){
-      return IAssociative.contains(self.attrs, key);
-    }
-
-    function dissoc(self, key){
-      return assoc(self, key, null); //TODO test
-    }
-
-    function keys(self){
-      return _.keys(self.list);
-    }
-
-    _.doto(SharePointListItem,
-      _.implement(IMultiDictionary, {}),
-      _.implement(IIdentifiable, {identifier: identifier}),
-      _.implement(IEntity, {eid: eid}),
-      _.implement(ISubject, {title: title}),
-      _.implement(IMap, {keys: keys, dissoc: dissoc}),
-      _.implement(ILookup, {lookup: lookup}),
-      _.implement(IAssociative, {assoc: assoc, contains: contains}),
-      _.implement(IKind, {field: field, kind: kind}));
-
-  })()
 
   function EntityCatalog(id, loaded, changed, touched){
     this.id = id; //for idempotence checking
@@ -1524,7 +969,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
       _.implement(IEntity, {eid: eid}),
       _.implement(IQueryable, {query: query}),
       _.implement(ITransaction, {commands: commands}),
-      _.implement(IWorkspace, {dirty: dirty, load: load, add: add, edit: edit, destroy: destroy, changes: changes, touched: touched}),
+      _.implement(IBuffer, {dirty: dirty, load: load, add: add, edit: edit, destroy: destroy, changes: changes, touched: touched}),
       _.implement(ICounted, {count: count}),
       _.implement(IAssociative, {contains: contains}),
       _.implement(IMap, {keys: keys, vals: vals, dissoc: dissoc}),
@@ -1542,27 +987,27 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     return new EntityCatalog(_.guid(), loaded, changed, touched);
   }
 
-  var _buffer = entityCatalog({}, {});
+  var _catalog = entityCatalog({}, {});
 
-  function buffer(){
-    return _buffer;
+  function catalog(){
+    return _catalog;
   }
 
-  function TypedEntityCatalog(buffer, types){
-    this.buffer = buffer;
+  function TypedEntityCatalog(catalog, types){
+    this.catalog = catalog;
     this.types = types;
   }
 
-  function typedCatalog2(buffer, types){
-    return new TypedEntityCatalog(buffer, types);
+  function typedCatalog2(catalog, types){
+    return new TypedEntityCatalog(catalog, types);
   }
 
-  function typedCatalog1(buffer){
-    return typedCatalog2(buffer, {});
+  function typedCatalog1(catalog){
+    return typedCatalog2(catalog, {});
   }
 
   function typedCatalog0(){
-    return typedCatalog1(buffer());
+    return typedCatalog1(catalog());
   }
 
   var typedCatalog = _.overload(typedCatalog0, typedCatalog1, typedCatalog2);
@@ -1574,9 +1019,9 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     }
 
     function load(self, entities){
-      return typedCatalog(IWorkspace.load(self.buffer, entities), _.reducekv(function(memo, key, value){
+      return typedCatalog(IBuffer.load(self.catalog, entities), _.reducekv(function(memo, key, value){
         return _.update(memo, key, function(b){
-          return IWorkspace.load(b || buffer(), value);
+          return IBuffer.load(b || catalog(), value);
         });
       }, self.types, _.groupBy(function(entity){
         return IKind.kind(entity);
@@ -1584,9 +1029,9 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     }
 
     function add(self, entities){
-      return typedCatalog(IWorkspace.add(self.buffer, entities), _.reducekv(function(memo, key, value){
+      return typedCatalog(IBuffer.add(self.catalog, entities), _.reducekv(function(memo, key, value){
         return _.update(memo, key, function(b){
-          return IWorkspace.add(b || buffer(), value);
+          return IBuffer.add(b || catalog(), value);
         });
       }, self.types,  _.groupBy(function(entity){
         return IKind.kind(entity);
@@ -1594,9 +1039,9 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     }
 
     function edit(self, entities){
-      return typedCatalog(IWorkspace.edit(self.buffer, entities), _.reducekv(function(memo, key, value){
+      return typedCatalog(IBuffer.edit(self.catalog, entities), _.reducekv(function(memo, key, value){
         return _.update(memo, key, function(b){
-          return IWorkspace.edit(b || buffer(), value);
+          return IBuffer.edit(b || catalog(), value);
         });
       }, self.types, _.groupBy(function(entity){
         return entity.attrs.__metadata.type;
@@ -1604,9 +1049,9 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     }
 
     function destroy(self, entities){
-      return typedCatalog(IWorkspace.destroy(self.buffer, entities), _.reducekv(function(memo, key, value){
+      return typedCatalog(IBuffer.destroy(self.catalog, entities), _.reducekv(function(memo, key, value){
         return _.update(memo, key, function(b){
-          return IWorkspace.destroy(b || buffer(), value);
+          return IBuffer.destroy(b || catalog(), value);
         });
       }, self.types, _.groupBy(function(entity){
         return entity.attrs.__metadata.type;
@@ -1614,74 +1059,74 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     }
 
     function dirty(self, entity){
-      return IWorkspace.dirty(self.buffer, entity);
+      return IBuffer.dirty(self.catalog, entity);
     }
 
     function changes(self){
-      return IWorkspace.changes(self.buffer);
+      return IBuffer.changes(self.catalog);
     }
 
     function includes(self, entity){
-      return IInclusive.includes(self.buffer, entity);
+      return IInclusive.includes(self.catalog, entity);
     }
 
     function first(self){
-      return ISeq.first(self.buffer);
+      return ISeq.first(self.catalog);
     }
 
     function rest(self){
-      return ISeq.rest(self.buffer);
+      return ISeq.rest(self.catalog);
     }
 
     function next(self){
-      return INext.next(self.buffer);
+      return INext.next(self.catalog);
     }
 
     function seq(self){
-      return ISeqable.seq(self.buffer);
+      return ISeqable.seq(self.catalog);
     }
 
     function lookup(self, guid){
-      return ILookup.lookup(self.buffer, guid);
+      return ILookup.lookup(self.catalog, guid);
     }
 
     function reduce(self, xf, init){
-      return IReduce.reduce(self.buffer, xf, init);
+      return IReduce.reduce(self.catalog, xf, init);
     }
 
     function dissoc(self, guid){
     }
 
     function keys(self){
-      return IMap.keys(self.buffer);
+      return IMap.keys(self.catalog);
     }
 
     function count(self){
-      return ICount.count(self.buffer);
+      return ICount.count(self.catalog);
     }
 
     function vals(self){
-      return IMap.vals(self.buffer);
+      return IMap.vals(self.catalog);
     }
 
     function contains(self, guid){
-      return IAssociative.contains(self.buffer, guid);
+      return IAssociative.contains(self.catalog, guid);
     }
 
     function eid(self){
-      return IEntity.eid(self.buffer);
+      return IEntity.eid(self.catalog);
     }
 
     function commands(self){
-      return ITransaction.commands(self.buffer);
+      return ITransaction.commands(self.catalog);
     }
 
     function resolve(self, refs){
       return _.mapa(function(ref){
-        var buffer = IQueryable.query(self, {$type: ref.field.meta.List.ListItemEntityTypeFullName}); //TODO demeter
+        var catalog = IQueryable.query(self, {$type: ref.field.meta.List.ListItemEntityTypeFullName}); //TODO demeter
         return _.detect(function(entity){
           return entity.attrs.Id === ref.value;
-        }, buffer);
+        }, catalog);
       }, refs);
     }
 
@@ -1690,7 +1135,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
       _.implement(IResolver, {resolve: resolve}),
       _.implement(IQueryable, {query: query}),
       _.implement(ITransaction, {commands: commands}),
-      _.implement(IWorkspace, {dirty: dirty, load: load, add: add, edit: edit, destroy: destroy, changes: changes}),
+      _.implement(IBuffer, {dirty: dirty, load: load, add: add, edit: edit, destroy: destroy, changes: changes}),
       _.implement(ICounted, {count: count}),
       _.implement(IAssociative, {contains: contains}),
       _.implement(IMap, {keys: keys, vals: vals, dissoc: dissoc}),
@@ -1706,44 +1151,6 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   _.doto(_.Nil,
     _.implement(ITransaction, {commands: _.constantly(null)}));
-
-  function list(identifier){
-    return _.fmap(IQueryable.query(ents.lists, ""), function(lsts){
-      var meta = _.detect(_.matches(_, {ListItemEntityTypeFullName: identifier}), lsts),
-          ilists = _.index(_.get(_, "Id"), _.identity, lsts);
-      return _.fmap(IQueryable.query(resource(meta.__metadata.uri), "/fields"), _.mapa(function(fld){
-        return fld.LookupList ? _.merge(fld, {List: _.get(ilists, _.replace(fld.LookupList, /[{}]/g, ""))}) : fld;
-      }, _), fields, function(fields){
-        return new SharePointList(meta, fields, "Title");
-      });
-    });
-  }
-
-  function add(options){
-    return function(buffer){
-      var id = seed();
-      var item = ents.make(options.$domain, _.merge({ID: id, Id: id}, options));
-      return ents.add(buffer, _.cons(item));
-    }
-  }
-
-  function edit(options){
-    return function(buffer){
-      var items = ents.query(buffer, {$type: options.$type});
-      return ents.edit(buffer,
-        _.just(items,
-          _.nth(_, options.idx),
-          options.effect,
-          _.cons));
-    }
-  }
-
-  function destroy(options){
-    return function(buffer){
-      var items = ents.query(buffer, {$type: options.$type});
-      return ents.destroy(buffer, _.cons(_.nth(items, options.idx)))
-    }
-  }
 
   function Bus(middlewares){
     this.middlewares = middlewares;
@@ -2111,6 +1518,29 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   })();
 
+  function Buffer(repo, catalog){
+    this.repo = repo;
+    this.catalog = catalog;
+  }
+
+  var buffer = _.constructs(Buffer);
+
+  (function(){
+
+    function load(self, entities){
+      _.swap(self.catalog, ents.load(_, entities));
+    }
+
+    function query(self, plan){ //NOTE cmd because it eventually (in `load`) mutates state
+      return ents.query(self.repo, plan);
+    }
+
+    _.doto(Buffer,
+      _.implement(IBuffer, {load: load}),
+      _.implement(IQueryable, {query: query}));
+
+  })();
+
   //TODO add `expanded` model state to track which entities are open.
   //TODO a component is an aggregate root that fully manages its dependencies and avoids coordinating subcomponents.
   //NOTE the reusable part of the view would potentially involve making the full render and patch operations pure.
@@ -2119,21 +1549,20 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
   //NOTE assign guid as `data-key` and realize that the same entity could appear in multiple places of an outline.
   //NOTE a view is capable of returning a seq of all possible `IView.interactions` each implementing `IIdentifiable` and `ISubject`.
   //NOTE an interaction is a persistent, validatable object with field schema.  It will be flagged as command or query which will help with processing esp. pipelining.  When successfully validated it has all that it needs to be handled by the handler.  That it can be introspected allows for the UI to help will completing them.
-  function Outline(domain, $catalog, $model, $cbus, $ebus, options){
-    this.domain = domain;
-    this.$catalog = $catalog;
+  function Outline($buffer, $model, $cbus, $ebus, options){
+    this.$buffer = $buffer;
     this.$model = $model;
     this.$cbus = $cbus;
     this.$ebus = $ebus;
     this.options = options;
   }
 
-  function outline($domain, $catalog, options){ //e.g. options -> {root: guid}
+  function outline($buffer, options){ //e.g. options -> {root: guid}
     var $model = $.cell({selected: options.selected || imm.set()}),
         $ebus = bus(),
         $cbus = bus(),
         $events = $.events(),
-        $outline = new Outline($domain, $catalog, $model, $cbus, $ebus, options);
+        $outline = new Outline($buffer, $model, $cbus, $ebus, options);
 
     _.doto($ebus,
       mut.conj(_,
@@ -2164,11 +1593,11 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     }
 
     function load(self, entities){
-      _.swap(self.$catalog, ents.load(_, entities));
+      IBuffer.load(self.$buffer, entities);
     }
 
     function query(self, plan){ //NOTE cmd because it eventually (in `load`) mutates state
-      return ents.query(self.domain, plan);
+      return ents.query(self.$buffer, plan);
     }
 
     //TODO commands must return a promise when the outcome of an async opertion is needed.
@@ -2193,78 +1622,13 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     return _.doto(Outline,
       _.implement(IDispatch, {dispatch: dispatch}),
       _.implement(IQueryable, {query: query}),
-      _.implement(IWorkspace, {load: load}),
+      _.implement(IBuffer, {load: load}),
       _.implement(IEntitySelector, {select: select, deselect: deselect}),
       _.implement(IView, {render: render}));
 
   })();
 
-  var configs = {
-    a: {
-      lists: [
-        "SP.Data.ThreeMemberPanelAssignmentsListItem",
-        "SP.Data.UserInfoItem"
-      ],
-      ops: function($domain){
-        return _.pipe(
-          destroy({$type: "SP.Data.ThreeMemberPanelAssignmentsListItem", idx: 2}),
-          destroy({$type: "SP.Data.ThreeMemberPanelAssignmentsListItem", idx: 3}),
-          edit({$type: "SP.Data.ThreeMemberPanelAssignmentsListItem", idx: 1, effect: ents.assert(_, "Case_x0020_Number", "Foo")}),
-          edit({$type: "SP.Data.ThreeMemberPanelAssignmentsListItem", idx: 2, effect: _.pipe(ents.assert(_, "Title", "Bar"), ents.assert(_, "Panel_x0020_Members", 99), ents.assert(_, "Panel_x0020_Chair", 100))}),
-          add({$type: "SP.Data.ThreeMemberPanelAssignmentsListItem", $domain: $domain}),
-          add({$type: "SP.Data.ThreeMemberPanelAssignmentsListItem", $domain: $domain}));
-      }
-    },
-    b: {
-      lists: [
-        "SP.Data.TasksListItem",
-        "SP.Data.UserInfoItem"
-      ],
-      ops: function($domain){
-        return add({$type: "SP.Data.TasksListItem", $domain: $domain, Title: "Buy milk"});
-      }
-    }
-  }
-
-  function run0(){
-    return run1(configs[GetUrlKeyValue("usecase") || "b"]);
-  }
-
-  function run1(options){
-    _.fmap(Promise.all(_.mapa(ents.list, options.lists)), ents.domain, function(domain){
-
-      var $ents  = $.cell(ents.typedCatalog()),
-          $items = $.map(ents.query(_, {$type: _.first(options.lists)}), $ents);
-
-      _.fmap(Promise.all([
-        ents.query(domain, {$type: _.first(options.lists), $top: 5}),
-        ents.query(domain, {$type: "SP.Data.UserInfoItem", $top: 10000})
-      ]), _.spread(concat), function(xs){
-        _.swap($ents, //RULE each mutation should be as comprehensive as possible to minimize the number needed
-          _.pipe(
-            ents.load(_, xs), options.ops(domain)));
-        _.just($ents, _.deref, ents.changes, _.see("txn"), ents.commit(domain, _));
-      });
-
-      $.sub($ents, _.see("$ents"));
-      $.sub($items, _.see("$items"));
-
-      return {$domain: domain, $ents: $ents, $items: $items};
-
-    }, _.see("exported"), function(exported){
-      Object.assign(window, exported);
-    });
-  }
-
-  var run = _.overload(run0, run1);
-
   var ents = _.just({
-    run: run,
-    list: list,
-    lists: lists,
-    add: add,
-    edit: edit,
-    destroy: destroy,
     optional: optional,
     required: required,
     unlimited: unlimited,
@@ -2272,8 +1636,6 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     queryCommand: queryCommand,
     selectCommand: selectCommand,
     deselectCommand: deselectCommand,
-    resource: resource,
-    resources: resources,
     entityCatalog: entityCatalog,
     typedCatalog: typedCatalog,
     domain: domain,
@@ -2286,11 +1648,10 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     }, {}, Object.keys(protocol));
   }, _.vals(protocols))), _.impart(_, _.partly));
 
-  var domain = ents.domain([tasks]),
-      $catalog = $.cell(ents.typedCatalog());
+  var $buffer = buffer(ents.domain([tasks]), $.cell(ents.typedCatalog()));
 
   _.each(function(el){
-    var $outline = outline(domain, $catalog, {root: _.guid("a")});
+    var $outline = outline($buffer, {root: _.guid("a")});
     ents.render($outline, el);
     _.each($.dispatch($outline, _), [
       queryCommand({$type: "tasks"}),
