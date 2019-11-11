@@ -456,10 +456,11 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     }
   }
 
-  function ConstrainedCollection(values, cardinality, constraints){
-    this.values = values;
+  function ConstrainedCollection(cardinality, max, constraints, values){
     this.cardinality = cardinality;
+    this.max = max;
     this.constraints = constraints;
+    this.values = values;
   }
 
   (function(){
@@ -492,7 +493,8 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     }
 
     function conj(self, value){
-      return new self.constructor(_.conj(_.deref(self), value), self.cardinality, self.constraints);
+      var values = _.conj(self.values, value);
+      return new self.constructor(self.cardinality, self.max, self.constraints, _.drop(_.max(ICounted.count(values) - self.max, 0), values));
     }
 
     function includes(self, value){
@@ -508,7 +510,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     }
 
     function assoc(self, idx, value){
-      return new self.constructor(IAssociative.assoc(self.values, idx, value), self.blank, self.cardinality, self.constraints);
+      return new self.constructor(self.cardinality, self.max, self.constraints, IAssociative.assoc(self.values, idx, value));
     }
 
     function contains(self, idx){
@@ -520,7 +522,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     }
 
     function empty(self){
-      return new self.constructor(IEmptyableCollection.empty(self.values), self.cardinality, self.constraints);
+      return new self.constructor(self.cardinality, self.max, self.constraints, IEmptyableCollection.empty(self.values));
     }
 
     function cardinality(self){
@@ -528,7 +530,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     }
 
     function deref(self){
-      return _.into([], self.values);
+      return self.values;
     }
 
     function constraints(self){
@@ -554,7 +556,10 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   })();
 
-  var constrainedCollection = _.fnil(_.constructs(ConstrainedCollection), [], card(0, Infinity), []);
+  var constrainedCollection = _.fnil(_.constructs(ConstrainedCollection), card(0, 1), 1, [], []),
+      optional = constrainedCollection(),
+      required = constrainedCollection(card(1, 1), 1),
+      unlimited = constrainedCollection(card(0, Infinity), Infinity);
 
   function SharePointValue(values, field){
     this.values = values;
@@ -904,16 +909,103 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   })();
 
+  var ReadOnlyBinField = (function(){
+
+    function ReadOnlyBinField(field){
+      this.field = field;
+    }
+
+    function aget(self, entity){
+      return IField.aget(self.field, entity);
+    }
+
+    function aset(self, entity, values){
+      throw new Error("Cannot set readonly field '" + identifier(self) + "'.");
+    }
+
+    function init(self){
+      return IField.init(self.field);
+    }
+
+    function identifier(self){
+      return IIdentifiable.identifier(self.field);
+    }
+
+    return _.doto(ReadOnlyBinField,
+      _.implement(IIdentifiable, {identifier: identifier}),
+      _.implement(IField, {aget: aget, aset: aset, init: init}));
+
+  })();
+
+  var readOnlyBinField = _.constructs(ReadOnlyBinField);
+
+  var DefaultedBinField = (function(){
+
+    function DefaultedBinField(field, init){
+      this.field = field;
+      this.init = init;
+    }
+
+    function aget(self, entity){
+      return IField.aget(self.field, entity);
+    }
+
+    function aset(self, entity, values){
+      return IField.aset(self.field, entity, values);
+    }
+
+    function init(self){
+      return _.into(IField.init(self.field), self.init());
+    }
+
+    function identifier(self){
+      return IIdentifiable.identifier(self.field);
+    }
+
+    return _.doto(DefaultedBinField,
+      _.implement(IIdentifiable, {identifier: identifier}),
+      _.implement(IField, {aget: aget, aset: aset, init: init}));
+
+  })();
+
+  var defaultedBinField = _.fnil(_.constructs(DefaultedBinField), null, _.array);
+
   var BinField = (function(){
 
-    function BinField(label, key, emptyColl, init, readonly, cast, uncast){
-      this.label = label;
+    function BinField(key, emptyColl){
       this.key = key;
       this.emptyColl = emptyColl;
-      this.init = init;
-      this.readonly = readonly;
-      this.cast = cast;
-      this.uncast = uncast;
+    }
+
+    function aget(self, entity){
+      return _.into(self.emptyColl, _.array(_.get(entity.attrs, self.key)));
+    }
+
+    function aset(self, entity, values){
+      return new entity.constructor(entity.bin, _.assoc(entity.attrs, self.key, _.last(_.into(self.emptyColl, values))));
+    }
+
+    function init(self){
+      return self.emptyColl;
+    }
+
+    function identifier(self){
+      return self.key;
+    }
+
+    return _.doto(BinField,
+      _.implement(IIdentifiable, {identifier: identifier}),
+      _.implement(IField, {aget: aget, aset: aset, init: init}));
+
+  })();
+
+  var binField = _.fnil(_.constructs(BinField), null, optional);
+
+  var MultiBinField = (function(){
+
+    function MultiBinField(key, emptyColl){
+      this.key = key;
+      this.emptyColl = emptyColl;
     }
 
     function aget(self, entity){
@@ -921,32 +1013,60 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     }
 
     function aset(self, entity, values){
-      if (self.readonly) {
-        throw new Error("Cannot set readonly field '" + self.key + "'.");
-      }
-      //TODO handle dissoc if no values
-      return new entity.constructor(entity.list, _.assoc(entity.attrs, self.key, self.uncast(_.into(self.emptyColl, values))));
+      return new entity.constructor(entity.bin, _.assoc(entity.attrs, self.key, _.deref(_.into(self.emptyColl, values))));
     }
 
     function init(self){
-      return _.into(self.emptyColl, self.init);
+      return self.emptyColl;
+    }
+
+    function identifier(self){
+      return self.key;
+    }
+
+    return _.doto(MultiBinField,
+      _.implement(IIdentifiable, {identifier: identifier}),
+      _.implement(IField, {aget: aget, aset: aset, init: init}));
+
+  })();
+
+  var multiBinField = _.fnil(_.constructs(MultiBinField), null, unlimited);
+
+  var LabeledBinField = (function(){
+
+    function LabeledBinField(label, field){
+      this.label = label;
+      this.field = field;
+    }
+
+    function aget(self, entity){
+      return IField.aget(self.field, entity);
+    }
+
+    function aset(self, entity, values){
+      return IField.aset(self.field, entity, values);
+    }
+
+    function init(self){
+      return IField.init(self.field);
     }
 
     function title(self){
       return self.label;
     }
 
-    return _.doto(BinField,
+    function identifier(self){
+      return IIdentifiable.identifier(self.field);
+    }
+
+    return _.doto(LabeledBinField,
       _.implement(ISubject, {title: title}),
+      _.implement(IIdentifiable, {identifier: identifier}),
       _.implement(IField, {aget: aget, aset: aset, init: init}));
 
   })();
 
-  function maintainCap(values, self){
-    return _.into([], _.drop(_.max(0, _.count(values) - self.max), values));
-  }
-
-  var binField = _.fnil(_.constructs(BinField), null, null, constrainedCollection([], card(0, Infinity), []), [], false, _.identity, _.deref);
+  var labeledBinField = _.constructs(LabeledBinField);
 
   var Bin = (function(){
 
@@ -958,7 +1078,10 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     }
 
     function make(self, attrs){
-      return new Item(self, _.merge({id: _.guid()}, attrs))
+      return attrs ? new Item(self, attrs) : _.reduce(function(memo, key){
+        var fld = field(self, key);
+        return IField.aset(fld, memo, IField.init(fld));
+      }, new Item(self, {}), _.keys(self.fields));
     }
 
     function title(self){
@@ -966,7 +1089,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     }
 
     function identifier(self){
-      return self. identifier;
+      return self.identifier;
     }
 
     function field(self, key){
@@ -996,13 +1119,13 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
   var tasks = (function(){
 
     return _.doto(new Bin({
-      "id": binField("ID", "id", constrainedCollection([], card(1, 1), []), _.array, _.last),
-      "summary": binField("Summary", "summary", constrainedCollection([], card(1, 1), [])),
-      "priority": binField("Priority", "priority", constrainedCollection([], card(0, Infinity), [])),
-      "detail": binField("Detail", "detail", constrainedCollection([], card(0, Infinity), [])),
-      "due": binField("Due Date", "due", constrainedCollection([], card(0, Infinity), [])),
-      "assignee": binField("Assignee", "assignee", constrainedCollection([], card(0, Infinity), [])),
-      "subtasks": binField("Subtasks", "subtasks", constrainedCollection([], card(0, Infinity), []))
+      "id": labeledBinField("ID", defaultedBinField(binField("id", required), _.comp(_.array, _.guid))),
+      "summary": labeledBinField("Summary", binField("summary", required)),
+      "priority": labeledBinField("Priority", defaultedBinField(binField("priority", optional), _.constantly(["C"]))),
+      "detail": labeledBinField("Detail", binField("detail", optional)),
+      "due": labeledBinField("Due Date", binField("due", optional)),
+      "assignee": labeledBinField("Assignee", binField("assignee", optional)),
+      "subtasks": labeledBinField("Subtasks", multiBinField("subtasks"))
     }, [], "Tasks", "tasks"), function(bin){
 
       _.each(function(attrs){
@@ -1011,14 +1134,14 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
         return IFactory.make(bin, attrs);
       }, [{
         id: _.guid("a"),
-        summary: ["Build backyard patio"],
+        summary: "Build backyard patio",
         subtasks: [_.guid("b"), _.guid("c")]
       },{
         id: _.guid("b"),
-        summary: ["Choose 3 potential materials and price them"]
+        summary: "Choose 3 potential materials and price them"
       },{
         id: _.guid("c"),
-        summary: ["Get contractor quote"]
+        summary: "Get contractor quote"
       }]));
 
     });
