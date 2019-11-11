@@ -611,7 +611,12 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     }
 
     function query(self, plan){
-      return Promise.resolve(self.items); //TODO no plan!
+      return new Promise(function(resolve, reject){
+        setTimeout(function(){
+          resolve(self.items);
+        }, 500);
+      })
+      //return Promise.resolve(self.items); //TODO use plan
     }
 
     function keys(self){
@@ -1152,12 +1157,12 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
   _.doto(_.Nil,
     _.implement(ITransaction, {commands: _.constantly(null)}));
 
-  function Bus(middlewares){
+  function Bus(middlewares, exit){
     this.middlewares = middlewares;
+    this.exit = exit;
   }
 
-  var bus1 = _.constructs(Bus);
-  var bus = _.overload(_.comp(bus1, _.array), bus1);
+  var bus = _.fnil(_.constructs(Bus), [], _.noop);
 
   (function(){
 
@@ -1168,7 +1173,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     function dispatch(self, message){
       var f = _.reduce(function(memo, middleware){
         return $.handle(middleware, _, memo);
-      }, _.noop, _.reverse(self.middlewares));
+      }, self.exit, _.reverse(self.middlewares));
       f(message);
     }
 
@@ -1401,12 +1406,8 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   })();
 
-  function DeselectedHandler(model){
-    this.model = model;
-  }
-
   function LockingMiddleware(){
-    this.wip = null;
+    this.wip = Promise.resolve(null);
   }
 
   var lockingMiddleware = _.constructs(LockingMiddleware);
@@ -1414,9 +1415,10 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
   (function(){
 
     function handle(self, message, next){
-      return (self.wip = _.fmap(Promise.resolve(self.wip), function(result){
+      self.wip = _.fmap(self.wip, function(){
         return next(message);
-      }));
+      });
+      return self.wip;
     }
 
     return _.doto(LockingMiddleware,
@@ -1562,8 +1564,8 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     this.options = options;
   }
 
-  function outline($buffer, options){ //e.g. options -> {root: guid}
-    var $model = $.cell({selected: options.selected ||imm.set()}),
+  function outline($buffer, options){
+    var $model = $.cell({root: options.root, selected: _.into(imm.set(), options.selected || [])}),
         $events = $.events(),
         $ebus = bus(),
         $cbus = bus();
@@ -1600,9 +1602,9 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
       IDispatch.dispatch(self.$cbus, command);
     }
 
-    return _.doto(Outline,
-      _.implement(IDispatch, {dispatch: dispatch}),
-      _.implement(IView, {render: render}));
+    return _.doto(Outline, //standard component has an input and an output
+      _.implement(IDispatch, {dispatch: dispatch}), //input
+      _.implement(IView, {render: render})); //output
 
   })();
 
