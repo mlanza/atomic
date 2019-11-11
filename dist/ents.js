@@ -456,6 +456,106 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     }
   }
 
+  function ConstrainedCollection(values, cardinality, constraints){
+    this.values = values;
+    this.cardinality = cardinality;
+    this.constraints = constraints;
+  }
+
+  (function(){
+
+    //TODO eliminate field for type
+
+    function reduce(self, xf, init){
+      var memo = init,
+          ys = self;
+      while(ISeqable.seq(ys)){
+        var y = _.first(ys);
+        memo = xf(memo, y);
+        ys = _.rest(ys);
+      }
+      return memo;
+    }
+
+    function first(self){
+      return ISeq.first(self.values);
+    }
+
+    function rest(self){
+      return ISeq.rest(self.values);
+    }
+
+    var next = _.comp(seq, rest);
+
+    function count(self){
+      return ICounted.count(self.values);
+    }
+
+    function conj(self, value){
+      return new self.constructor(_.conj(_.deref(self), value), self.cardinality, self.constraints);
+    }
+
+    function includes(self, value){
+      return _.detect(_.eq(value, _), self.values);
+    }
+
+    function equiv(self, other){
+      return self === other; //TODO self.constructor === other.constructor && _.every()
+    }
+
+    function nth(self, idx){
+      return IIndexed.nth(self.values, idx);
+    }
+
+    function assoc(self, idx, value){
+      return new self.constructor(IAssociative.assoc(self.values, idx, value), self.blank, self.cardinality, self.constraints);
+    }
+
+    function contains(self, idx){
+      return IAssociative.contains(self.values, idx);
+    }
+
+    function seq(self){
+      return ISeqable.seq(self.values) ? self : null;
+    }
+
+    function empty(self){
+      return new self.constructor(IEmptyableCollection.empty(self.values), self.cardinality, self.constraints);
+    }
+
+    function cardinality(self){
+      return self.cardinality;
+    }
+
+    function deref(self){
+      return _.into([], self.values);
+    }
+
+    function constraints(self){
+      return vd.and(self.cardinality, _.maybe(self.constraints, ck.collOf));
+    }
+
+    _.doto(ConstrainedCollection,
+      _.implement(IEmptyableCollection, {empty: empty}),
+      _.implement(IConstrained, {constraints: constraints}),
+      _.implement(ILookup, {lookup: nth}),
+      _.implement(IAssociative, {assoc: assoc, contains: contains}),
+      _.implement(IDeref, {deref: deref}),
+      _.implement(ICounted, {count: count}),
+      _.implement(IReduce, {reduce: reduce}),
+      _.implement(ICardinality, {cardinality: cardinality}),
+      _.implement(ISeq, {first: first, rest: rest}),
+      _.implement(INext, {next: next}),
+      _.implement(IEquiv, {equiv: equiv}),
+      _.implement(IInclusive, {includes: includes}),
+      _.implement(ICollection, {conj: conj}),
+      _.implement(IIndexed, {nth: nth}),
+      _.implement(ISeqable, {seq: seq}));
+
+  })();
+
+  var constrainedCollection = _.fnil(_.constructs(ConstrainedCollection), [], card(0, Infinity), []);
+
   function SharePointValue(values, field){
     this.values = values;
     this.field = field;
@@ -806,20 +906,18 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   var BinField = (function(){
 
-    function BinField(label, key, min, max, init, readonly, constraints, cast, uncast){
+    function BinField(label, key, emptyColl, init, readonly, cast, uncast){
       this.label = label;
       this.key = key;
-      this.min = min;
-      this.max = max;
+      this.emptyColl = emptyColl;
       this.init = init;
       this.readonly = readonly;
-      this.constraints = constraints;
       this.cast = cast;
       this.uncast = uncast;
     }
 
     function aget(self, entity){
-      return self.cast(_.get(entity.attrs, self.key), self);
+      return _.into(self.emptyColl, _.get(entity.attrs, self.key));
     }
 
     function aset(self, entity, values){
@@ -827,30 +925,20 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
         throw new Error("Cannot set readonly field '" + self.key + "'.");
       }
       //TODO handle dissoc if no values
-      return new entity.constructor(entity.list, _.assoc(entity.attrs, self.key, self.uncast(values, self)));
+      return new entity.constructor(entity.list, _.assoc(entity.attrs, self.key, self.uncast(_.into(self.emptyColl, values))));
     }
 
     function init(self){
-      return self.init;
-    }
-
-    function cardinality(self){ //TODO does not perhaps belong here but on SharePointValue/SharePointMultiValue.
-      return card(self.min, self.max);
+      return _.into(self.emptyColl, self.init);
     }
 
     function title(self){
       return self.label;
     }
 
-    function constraints(self){
-      return self.constraints;
-    }
-
     return _.doto(BinField,
       _.implement(ISubject, {title: title}),
-      _.implement(IField, {aget: aget, aset: aset, init: init}),
-      _.implement(IConstrained, {constraints: constraints}),
-      _.implement(ICardinality, {cardinality: cardinality}));
+      _.implement(IField, {aget: aget, aset: aset, init: init}));
 
   })();
 
@@ -858,7 +946,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     return _.into([], _.drop(_.max(0, _.count(values) - self.max), values));
   }
 
-  var binField = _.fnil(_.constructs(BinField), null, null, 0, Infinity, null, false, [], _.identity, maintainCap);
+  var binField = _.fnil(_.constructs(BinField), null, null, constrainedCollection([], card(0, Infinity), []), [], false, _.identity, _.deref);
 
   var Bin = (function(){
 
@@ -908,13 +996,13 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
   var tasks = (function(){
 
     return _.doto(new Bin({
-      "id": binField("ID", "id", 1, 1, null, true, [], _.array, _.last),
-      "summary": binField("Summary", "summary", 1, 1),
-      "priority": binField("Priority", "priority"),
-      "detail": binField("Detail", "detail"),
-      "due": binField("Due Date", "due"),
-      "assignee": binField("Assignee", "assignee"),
-      "subtasks": binField("Subtasks", "subtasks")
+      "id": binField("ID", "id", constrainedCollection([], card(1, 1), []), _.array, _.last),
+      "summary": binField("Summary", "summary", constrainedCollection([], card(1, 1), [])),
+      "priority": binField("Priority", "priority", constrainedCollection([], card(0, Infinity), [])),
+      "detail": binField("Detail", "detail", constrainedCollection([], card(0, Infinity), [])),
+      "due": binField("Due Date", "due", constrainedCollection([], card(0, Infinity), [])),
+      "assignee": binField("Assignee", "assignee", constrainedCollection([], card(0, Infinity), [])),
+      "subtasks": binField("Subtasks", "subtasks", constrainedCollection([], card(0, Infinity), []))
     }, [], "Tasks", "tasks"), function(bin){
 
       _.each(function(attrs){
