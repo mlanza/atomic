@@ -1204,8 +1204,8 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   })();
 
-  function LoadHandler(subject, provider){
-    this.subject = subject;
+  function LoadHandler(buffer, provider){
+    this.buffer = buffer;
     this.provider = provider;
   }
 
@@ -1214,7 +1214,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
   (function(){
 
     function handle(self, command, next){
-      ents.load(self.subject, command.entities);
+      IBuffer.load(self.buffer, command.entities); //TODO ITransientBuffer.load
       $.raise(self.provider, loadedEvent(command.entities));
       return next(command);
     }
@@ -1266,8 +1266,8 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   })();
 
-  function QueryHandler(subject, provider){
-    this.subject = subject;
+  function QueryHandler(buffer, provider){
+    this.buffer = buffer;
     this.provider = provider;
   }
 
@@ -1276,7 +1276,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
   (function(){
 
     function handle(self, command, next){
-      return _.fmap(ents.query(self.subject, command.plan), function(entities){
+      return _.fmap(ents.query(self.buffer, command.plan), function(entities){
         $.raise(self.provider, queriedEvent(entities));
         return next(command);
       });
@@ -1287,8 +1287,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   })();
 
-  function QueriedHandler(subject, commandBus){
-    this.subject = subject;
+  function QueriedHandler(commandBus){
     this.commandBus = commandBus;
   }
 
@@ -1332,8 +1331,8 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   })();
 
-  function SelectHandler(subject, provider){
-    this.subject = subject;
+  function SelectHandler(model, provider){
+    this.model = model;
     this.provider = provider;
   }
 
@@ -1342,7 +1341,9 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
   (function(){
 
     function handle(self, command, next){
-      ents.select(self.subject, command.id);
+      _.swap(self.model,
+        _.update(_, "selected",
+          _.conj(_, _.str(command.id))));
       $.raise(self.provider, selectedEvent(command.id));
       return next(command);
     }
@@ -1388,7 +1389,9 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
   (function(){
 
     function handle(self, command, next){
-      ents.deselect(self.subject, command.id);
+      _.swap(self.model,
+        _.update(_, "selected",
+          _.disj(_, _.str(command.id))));
       $.raise(self.provider, deselectedEvent(command.id));
       return next(command);
     }
@@ -1536,7 +1539,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     }
 
     _.doto(Buffer,
-      _.implement(IBuffer, {load: load}),
+      _.implement(IBuffer, {load: load}), //TODO ITransientBuffer.load
       _.implement(IQueryable, {query: query}));
 
   })();
@@ -1561,27 +1564,26 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     var $model = $.cell({selected: options.selected || imm.set()}),
         $ebus = bus(),
         $cbus = bus(),
-        $events = $.events(),
-        $outline = new Outline($buffer, $model, $cbus, $ebus, options);
+        $events = $.events();
 
     _.doto($ebus,
       mut.conj(_,
         loggerMiddleware("event"),
         _.doto(handlerMiddleware(),
-          mut.assoc(_, "queried", queriedHandler($outline, $cbus)))));
+          mut.assoc(_, "queried", queriedHandler($cbus)))));
 
     _.doto($cbus,
       mut.conj(_,
         loggerMiddleware("command"),
         lockingMiddleware(),
         _.doto(handlerMiddleware(),
-          mut.assoc(_, "load", loadHandler($outline, $events)),
-          mut.assoc(_, "query", queryHandler($outline, $events)),
-          mut.assoc(_, "select", selectHandler($outline, $events)),
-          mut.assoc(_, "deselect", deselectHandler($outline, $events))),
+          mut.assoc(_, "load", loadHandler($buffer, $events)),
+          mut.assoc(_, "query", queryHandler($buffer, $events)),
+          mut.assoc(_, "select", selectHandler($model, $events)),
+          mut.assoc(_, "deselect", deselectHandler($model, $events))),
         drainEventsMiddleware($events, $ebus)));
 
-    return $outline;
+    return new Outline($buffer, $model, $cbus, $ebus, options);
   }
 
   //RULE it must be possible to interact with a component even if it never gets mounted.
@@ -1592,38 +1594,12 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
       //TODO implement
     }
 
-    function load(self, entities){
-      IBuffer.load(self.$buffer, entities);
-    }
-
-    function query(self, plan){ //NOTE cmd because it eventually (in `load`) mutates state
-      return ents.query(self.$buffer, plan);
-    }
-
-    //TODO commands must return a promise when the outcome of an async opertion is needed.
-    function select(self, guid){
-      //currently implemented as an event because it is accepted outright
-      //TODO implement command validation/rejection model
-      _.swap(self.$model,
-        _.update(_, "selected",
-          _.conj(_, _.str(guid))));
-    }
-
-    function deselect(self, guid){
-      _.swap(self.$model,
-        _.update(_, "selected",
-          _.disj(_, _.str(guid))));
-    }
-
     function dispatch(self, command){
       IDispatch.dispatch(self.$cbus, command);
     }
 
     return _.doto(Outline,
       _.implement(IDispatch, {dispatch: dispatch}),
-      _.implement(IQueryable, {query: query}),
-      _.implement(IBuffer, {load: load}),
-      _.implement(IEntitySelector, {select: select, deselect: deselect}),
       _.implement(IView, {render: render}));
 
   })();
