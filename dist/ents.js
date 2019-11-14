@@ -1261,7 +1261,21 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   (function(){
 
+    function assoc(self, key, value){
+      switch(key){
+        case "id":
+          return assertCommand(value, self.key, self.value);
+        case "key":
+          return assertCommand(self.id, value, self.value);
+        case "value":
+          return assertCommand(self.id, self.key, value);
+        default:
+          return self;
+      }
+    }
+
     return _.doto(AssertCommand,
+      _.implement(IAssociative, {assoc: assoc}),
       _.implement(IIdentifiable, {identifier: _.constantly("assert")}));
 
   })();
@@ -1277,14 +1291,41 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
     function handle(self, command, next){
       var entity = _.get(self.buffer, command.id);
-      _.swap(self.buffer, function(buffer){
-        return ICatalog.edit(buffer, [assert(entity, command.key, command.value)]);
-      });
-      $.raise(self.provider, assertedEvent(command.id, command.key, command.value));
+      if (entity) {
+        _.swap(self.buffer, function(buffer){
+          return ICatalog.edit(buffer, [assert(entity, command.key, command.value)]);
+        });
+        $.raise(self.provider, assertedEvent(command.id, command.key, command.value));
+      }
       next(command);
     }
 
     _.doto(AssertHandler,
+      _.implement(IMiddleware, {handle: handle}));
+
+  })();
+
+  function SelectionHandler(model, handler){
+    this.model = model;
+    this.handler = handler;
+  }
+
+  var selectionHandler = _.constructs(SelectionHandler);
+
+  (function(){
+
+    function handle(self, command, next){
+      if (command.id) {
+        $.handle(self.handler, command, next);
+      } else {
+        _.each(function(id){
+          $.handle(self.handler, _.assoc(command, "id", id));
+        }, _.just(self.model, _.deref, _.get(_, "selected")));
+      }
+      next(command);
+    }
+
+    _.doto(SelectionHandler,
       _.implement(IMiddleware, {handle: handle}));
 
   })();
@@ -1314,7 +1355,21 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   (function(){
 
+    function assoc(self, key, value){
+      switch(key){
+        case "id":
+          return retractCommand(value, self.key, self.value);
+        case "key":
+          return retractCommand(self.id, value, self.value);
+        case "value":
+          return retractCommand(self.id, self.key, value);
+        default:
+          return self;
+      }
+    }
+
     return _.doto(RetractCommand,
+      _.implement(IAssociative, {assoc: assoc}),
       _.implement(IIdentifiable, {identifier: _.constantly("retract")}));
 
   })();
@@ -1460,7 +1515,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     function handle(self, command, next){
       _.swap(self.model,
         _.update(_, "selected",
-          _.conj(_, _.str(command.id))));
+          _.conj(_, command.id)));
       $.raise(self.provider, selectedEvent(command.id));
       next(command);
     }
@@ -1508,7 +1563,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     function handle(self, command, next){
       _.swap(self.model,
         _.update(_, "selected",
-          _.disj(_, _.str(command.id))));
+          _.disj(_, command.id)));
       $.raise(self.provider, deselectedEvent(command.id));
       next(command);
     }
@@ -1724,8 +1779,8 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
         lockingMiddleware(
           _.doto(handlerMiddleware(),
             mut.assoc(_, "load", loadHandler(buffer, events)),
-            mut.assoc(_, "assert", assertHandler(buffer, events)),
-            mut.assoc(_, "retract", retractHandler(buffer, events)),
+            mut.assoc(_, "assert", selectionHandler(model, assertHandler(buffer, events))),
+            mut.assoc(_, "retract", selectionHandler(model, retractHandler(buffer, events))),
             mut.assoc(_, "query", queryHandler(buffer, events)),
             mut.assoc(_, "select", selectHandler(model, events)),
             mut.assoc(_, "deselect", deselectHandler(model, events)))),
@@ -1758,14 +1813,19 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
   var buf = buffer(domain([tasks]), $.cell(typedCatalog()));
 
   _.each(function(el){
-    var ol = outline(buf, {root: _.guid("a")});
+    var a = _.guid("a"), //TODO use memoize on fn with weakMap?
+        b = _.guid("b"),
+        c = _.guid("c");
+    var ol = outline(buf, {root: a});
     IView.render(ol, el);
     $.sub(ol, _.see("event"));
     _.each($.dispatch(ol, _), [
       queryCommand({$type: "tasks"}),
-      selectCommand(_.guid("a")),
-      selectCommand(_.guid("b")),
-      deselectCommand(_.guid("b"))
+      selectCommand(a),
+      selectCommand(b),
+      selectCommand(c),
+      deselectCommand(c)
+      //assertCommand(null, "priority", "C")
     ]);
     Object.assign(window, {ol: ol});
   }, dom.sel("#outline"));
