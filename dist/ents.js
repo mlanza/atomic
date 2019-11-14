@@ -7,6 +7,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
   //TODO #FUTURE Optimize like effects (destruction, modification, addition) into aggregate effects before applying them.
 
   var IAssociative = _.IAssociative,
+      ISwap = _.ISwap,
       ITransientAssociative = mut.ITransientAssociative,
       IMiddleware = $.IMiddleware,
       IDispatch = $.IDispatch,
@@ -1051,7 +1052,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
           return ICatalog.edit(b || catalog(), value);
         });
       }, self.types, _.groupBy(function(entity){
-        return entity.attrs.__metadata.type;
+        return IKind.kind(entity);
       }, entities)));
     }
 
@@ -1061,7 +1062,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
           return ICatalog.destroy(b || catalog(), value);
         });
       }, self.types, _.groupBy(function(entity){
-        return entity.attrs.__metadata.type;
+        return IKind.kind(entity);
       }, entities)));
     }
 
@@ -1247,6 +1248,112 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
     return _.doto(NullHandler,
       _.implement(IMiddleware, {handle: handle}));
+
+  })();
+
+  function AssertCommand(id, key, value){
+    this.id = id;
+    this.key = key;
+    this.value = value;
+  }
+
+  var assertCommand = _.constructs(AssertCommand);
+
+  (function(){
+
+    return _.doto(AssertCommand,
+      _.implement(IIdentifiable, {identifier: _.constantly("assert")}));
+
+  })();
+
+  function AssertHandler(buffer, provider){
+    this.buffer = buffer;
+    this.provider = provider;
+  }
+
+  var assertHandler = _.constructs(AssertHandler);
+
+  (function(){
+
+    function handle(self, command, next){
+      var entity = _.get(self.buffer, command.id);
+      _.swap(self.buffer, function(buffer){
+        return ICatalog.edit(buffer, [assert(entity, command.key, command.value)]);
+      });
+      $.raise(self.provider, assertedEvent(command.id, command.key, command.value));
+      next(command);
+    }
+
+    _.doto(AssertHandler,
+      _.implement(IMiddleware, {handle: handle}));
+
+  })();
+
+  function AssertedEvent(id, key, value){
+    this.id = id;
+    this.key = key;
+    this.value = value;
+  }
+
+  var assertedEvent = _.constructs(AssertedEvent);
+
+  (function(){
+
+    return _.doto(AssertedEvent,
+      _.implement(IIdentifiable, {identifier: _.constantly("asserted")}));
+
+  })();
+
+  function RetractCommand(id, key, value){
+    this.id = id;
+    this.key = key;
+    this.value = value;
+  }
+
+  var retractCommand = _.constructs(RetractCommand);
+
+  (function(){
+
+    return _.doto(RetractCommand,
+      _.implement(IIdentifiable, {identifier: _.constantly("retract")}));
+
+  })();
+
+  function RetractHandler(buffer, provider){
+    this.buffer = buffer;
+    this.provider = provider;
+  }
+
+  var retractHandler = _.constructs(RetractHandler);
+
+  (function(){
+
+    function handle(self, command, next){
+      var entity = _.get(self.buffer, command.id);
+      _.swap(self.buffer, function(buffer){
+        return ICatalog.edit(buffer, [_.isSome(command.value) ? retract(entity, command.key, command.value) : retract(entity, command.key)]);
+      });
+      $.raise(self.provider, retractedEvent(command.id, command.key, command.value));
+      next(command);
+    }
+
+    _.doto(RetractHandler,
+      _.implement(IMiddleware, {handle: handle}));
+
+  })();
+
+  function RetractedEvent(id, key, value){
+    this.id = id;
+    this.key = key;
+    this.value = value;
+  }
+
+  var retractedEvent = _.constructs(RetractedEvent);
+
+  (function(){
+
+    return _.doto(RetractedEvent,
+      _.implement(IIdentifiable, {identifier: _.constantly("retracted")}));
 
   })();
 
@@ -1551,6 +1658,16 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   (function(){
 
+    function edit(self, entities){
+      _.swap(self.catalog, function(catalog){
+        return ICatalog.edit(catalog, entities);
+      });
+    }
+
+    function lookup(self, id){
+      return _.just(self.catalog, _.deref, _.get(_, id));
+    }
+
     function load(self, entities){
       _.swap(self.catalog, function(catalog){
         return ICatalog.load(catalog, entities);
@@ -1561,8 +1678,14 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
       return IQueryable.query(self.repo, plan);
     }
 
+    function swap(self, f){
+      _.swap(self.catalog, f);
+    }
+
     _.doto(Buffer,
-      _.implement(ICatalog, {load: load}), //TODO ITransientBuffer.load
+      _.implement(ILookup, {lookup: lookup}),
+      _.implement(ISwap, {swap: swap}),
+      _.implement(ICatalog, {load: load, edit: edit}), //TODO ITransientBuffer.load
       _.implement(IQueryable, {query: query}));
 
   })();
@@ -1601,6 +1724,8 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
         lockingMiddleware(
           _.doto(handlerMiddleware(),
             mut.assoc(_, "load", loadHandler(buffer, events)),
+            mut.assoc(_, "assert", assertHandler(buffer, events)),
+            mut.assoc(_, "retract", retractHandler(buffer, events)),
             mut.assoc(_, "query", queryHandler(buffer, events)),
             mut.assoc(_, "select", selectHandler(model, events)),
             mut.assoc(_, "deselect", deselectHandler(model, events)))),
@@ -1650,6 +1775,8 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     required: required,
     unlimited: unlimited,
     loadCommand: loadCommand,
+    assertCommand: assertCommand,
+    retractCommand: retractCommand,
     queryCommand: queryCommand,
     selectCommand: selectCommand,
     deselectCommand: deselectCommand,
