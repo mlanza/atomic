@@ -1,10 +1,7 @@
 define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'atomic/validates', 'atomic/immutables', 'context'], function(_, dom, mut, $, vd, imm, context){
 
-  //GOAL Use an "always validatable" approach.
-  //GOAL Mind "tell, don't ask" eliminating protocols that query and expose internal information and rather aim to keep that information hidden.
   //TODO Apply effects (destruction, modification, addition) to datastore.
   //TODO Improve efficiency (with an index decorator?) of looking up an entity in a buffer by pk rather than guid.
-  //TODO Use `query` to access internal indexes rather than another protocol.
   //TODO Consider use cases for `init` (e.g. creating new entities or resetting an existing field to factory defaults).
   //TODO Render a form that can be persisted thereby replacing `dynaform`.
   //TODO #FUTURE Optimize like effects (destruction, modification, addition) into aggregate effects before applying them.
@@ -13,14 +10,15 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
       ITransientAssociative = mut.ITransientAssociative,
       IMiddleware = $.IMiddleware,
       IDispatch = $.IDispatch,
+      ISubscribe = $.ISubscribe,
       IEmptyableCollection = _.IEmptyableCollection,
       ICheckable = vd.ICheckable,
       ICollection = _.ICollection,
       ITransientCollection = mut.ITransientCollection,
       IReduce = _.IReduce,
+      IKVReduce = _.IKVReduce,
       IAppendable = _.IAppendable,
       IPrependable = _.IPrependable,
-      ISubscribe = _.ISubscribe,
       IQueryable = _.IQueryable,
       INext = _.INext,
       ISeq = _.ISeq,
@@ -128,11 +126,11 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     commands: null //returns one or more commands that when executed effect the transaction in its entirety
   });
 
-  var IView = _.protocol({
+  var IView = _.protocol({ //TODO rename to mount
     render: null
   });
 
-  var IBuffer = _.protocol({
+  var ICatalog = _.protocol({
     touched: null, //entities touched during the last operation - useful when diffing before/after model snapshots
     dirty: null,
     load: null, //add existing entity from domain to workspace
@@ -186,7 +184,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     IEntitySelector: IEntitySelector,
     IView: IView,
     IMiddleware: IMiddleware,
-    IBuffer: IBuffer
+    ICatalog: ICatalog
   }
 
   function DerefCheck(check){
@@ -204,9 +202,9 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   })()
 
-  function ConstrainedCollection(cardinality, max, constraints, values){
+  function ConstrainedCollection(cardinality, cap, constraints, values){
     this.cardinality = cardinality;
-    this.max = max;
+    this.cap = cap;
     this.constraints = constraints;
     this.values = values;
   }
@@ -226,6 +224,12 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
       return memo;
     }
 
+    function reducekv(self, xf, init){
+      return _.reduce(function(memo, idx){
+        return xf(memo, idx, _.nth(self, idx));
+      }, init, _.range(0, count(self)));
+    }
+
     function first(self){
       return ISeq.first(self.values);
     }
@@ -242,7 +246,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
     function conj(self, value){
       var values = _.conj(self.values, value);
-      return new self.constructor(self.cardinality, self.max, self.constraints, _.drop(_.max(ICounted.count(values) - self.max, 0), values));
+      return new self.constructor(self.cardinality, self.cap, self.constraints, _.drop(_.max(ICounted.count(values) - self.cap, 0), values));
     }
 
     function includes(self, value){
@@ -258,7 +262,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     }
 
     function assoc(self, idx, value){
-      return new self.constructor(self.cardinality, self.max, self.constraints, IAssociative.assoc(self.values, idx, value));
+      return new self.constructor(self.cardinality, self.cap, self.constraints, IAssociative.assoc(self.values, idx, value));
     }
 
     function contains(self, idx){
@@ -270,7 +274,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     }
 
     function empty(self){
-      return new self.constructor(self.cardinality, self.max, self.constraints, IEmptyableCollection.empty(self.values));
+      return new self.constructor(self.cardinality, self.cap, self.constraints, IEmptyableCollection.empty(self.values));
     }
 
     function cardinality(self){
@@ -286,7 +290,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     }
 
     function constraints2(self, constraints){
-      return new self.constructor(self.cardinality, self.max, constraints, self.values);
+      return new self.constructor(self.cardinality, self.cap, constraints, self.values);
     }
 
     var constraints = _.overload(null, constraints1, constraints2);
@@ -299,6 +303,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
       _.implement(IDeref, {deref: deref}),
       _.implement(ICounted, {count: count}),
       _.implement(IReduce, {reduce: reduce}),
+      _.implement(IKVReduce, {reducekv: reducekv}),
       _.implement(ICardinality, {cardinality: cardinality}),
       _.implement(ISeq, {first: first, rest: rest}),
       _.implement(INext, {next: next}),
@@ -390,7 +395,6 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
       return self.bin.identifier;
     }
 
-    //RULE expose attribute universally as a set of values.
     function lookup(self, key){
       return IField.aget(field(self, key), self);
     }
@@ -966,15 +970,13 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
       return _.first(_.drop(idx, self));
     }
 
-    //RULE querying and filtering are inherently different as filters process all items and don't utilize indexes for performance
-
     _.doto(EntityCatalog,
       _.implement(IResolver, {resolve: resolve}),
       _.implement(IIndexed, {nth: nth}),
       _.implement(IEntity, {eid: eid}),
       _.implement(IQueryable, {query: query}),
       _.implement(ITransaction, {commands: commands}),
-      _.implement(IBuffer, {dirty: dirty, load: load, add: add, edit: edit, destroy: destroy, changes: changes, touched: touched}),
+      _.implement(ICatalog, {dirty: dirty, load: load, add: add, edit: edit, destroy: destroy, changes: changes, touched: touched}),
       _.implement(ICounted, {count: count}),
       _.implement(IAssociative, {contains: contains}),
       _.implement(IMap, {keys: keys, vals: vals, dissoc: dissoc}),
@@ -1024,9 +1026,9 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     }
 
     function load(self, entities){
-      return typedCatalog(IBuffer.load(self.catalog, entities), _.reducekv(function(memo, key, value){
+      return typedCatalog(ICatalog.load(self.catalog, entities), _.reducekv(function(memo, key, value){
         return _.update(memo, key, function(b){
-          return IBuffer.load(b || catalog(), value);
+          return ICatalog.load(b || catalog(), value);
         });
       }, self.types, _.groupBy(function(entity){
         return IKind.kind(entity);
@@ -1034,9 +1036,9 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     }
 
     function add(self, entities){
-      return typedCatalog(IBuffer.add(self.catalog, entities), _.reducekv(function(memo, key, value){
+      return typedCatalog(ICatalog.add(self.catalog, entities), _.reducekv(function(memo, key, value){
         return _.update(memo, key, function(b){
-          return IBuffer.add(b || catalog(), value);
+          return ICatalog.add(b || catalog(), value);
         });
       }, self.types,  _.groupBy(function(entity){
         return IKind.kind(entity);
@@ -1044,9 +1046,9 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     }
 
     function edit(self, entities){
-      return typedCatalog(IBuffer.edit(self.catalog, entities), _.reducekv(function(memo, key, value){
+      return typedCatalog(ICatalog.edit(self.catalog, entities), _.reducekv(function(memo, key, value){
         return _.update(memo, key, function(b){
-          return IBuffer.edit(b || catalog(), value);
+          return ICatalog.edit(b || catalog(), value);
         });
       }, self.types, _.groupBy(function(entity){
         return entity.attrs.__metadata.type;
@@ -1054,9 +1056,9 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     }
 
     function destroy(self, entities){
-      return typedCatalog(IBuffer.destroy(self.catalog, entities), _.reducekv(function(memo, key, value){
+      return typedCatalog(ICatalog.destroy(self.catalog, entities), _.reducekv(function(memo, key, value){
         return _.update(memo, key, function(b){
-          return IBuffer.destroy(b || catalog(), value);
+          return ICatalog.destroy(b || catalog(), value);
         });
       }, self.types, _.groupBy(function(entity){
         return entity.attrs.__metadata.type;
@@ -1064,11 +1066,11 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     }
 
     function dirty(self, entity){
-      return IBuffer.dirty(self.catalog, entity);
+      return ICatalog.dirty(self.catalog, entity);
     }
 
     function changes(self){
-      return IBuffer.changes(self.catalog);
+      return ICatalog.changes(self.catalog);
     }
 
     function includes(self, entity){
@@ -1127,12 +1129,9 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     }
 
     function resolve(self, refs){
-      return _.mapa(function(ref){
-        var catalog = IQueryable.query(self, {$type: ref.field.meta.List.ListItemEntityTypeFullName}); //TODO demeter
-        return _.detect(function(entity){
-          return entity.attrs.Id === ref.value;
-        }, catalog);
-      }, refs);
+      return _.reducekv(function(memo, idx, ref){
+        return _.assoc(memo, idx, _.get(self, ref));
+      }, refs, refs);
     }
 
     _.doto(TypedEntityCatalog,
@@ -1140,7 +1139,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
       _.implement(IResolver, {resolve: resolve}),
       _.implement(IQueryable, {query: query}),
       _.implement(ITransaction, {commands: commands}),
-      _.implement(IBuffer, {dirty: dirty, load: load, add: add, edit: edit, destroy: destroy, changes: changes}),
+      _.implement(ICatalog, {dirty: dirty, load: load, add: add, edit: edit, destroy: destroy, changes: changes}),
       _.implement(ICounted, {count: count}),
       _.implement(IAssociative, {contains: contains}),
       _.implement(IMap, {keys: keys, vals: vals, dissoc: dissoc}),
@@ -1157,12 +1156,13 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
   _.doto(_.Nil,
     _.implement(ITransaction, {commands: _.constantly(null)}));
 
-  function Bus(middlewares, exit){
+  function Bus(middlewares){
     this.middlewares = middlewares;
-    this.exit = exit;
   }
 
-  var bus = _.fnil(_.constructs(Bus), [], _.noop);
+  function bus(middlewares){
+    return new Bus(middlewares || []);
+  }
 
   (function(){
 
@@ -1170,16 +1170,21 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
       self.middlewares = _.conj(self.middlewares, middleware);
     }
 
-    function dispatch(self, message){
+    function handle(self, message, next){
       var f = _.reduce(function(memo, middleware){
         return $.handle(middleware, _, memo);
-      }, self.exit, _.reverse(self.middlewares));
+      }, next || _.noop, _.reverse(self.middlewares));
       f(message);
+    }
+
+    function dispatch(self, message){
+      handle(self, message);
     }
 
     return _.doto(Bus,
       _.implement(ITransientCollection, {conj: conj}),
-      _.implement(IDispatch, {dispatch: dispatch}));
+      _.implement(IDispatch, {dispatch: dispatch}),
+      _.implement(IMiddleware, {handle: handle}));
 
   })();
 
@@ -1219,9 +1224,9 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
   (function(){
 
     function handle(self, command, next){
-      IBuffer.load(self.buffer, command.entities); //TODO ITransientBuffer.load
+      ICatalog.load(self.buffer, command.entities); //TODO ITransientBuffer.load
       $.raise(self.provider, loadedEvent(command.entities));
-      return next(command);
+      next(command);
     }
 
     return _.doto(LoadHandler,
@@ -1237,7 +1242,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
   (function(){
 
     function handle(self, message, next){
-      return next(message);
+      next(message);
     }
 
     return _.doto(NullHandler,
@@ -1283,7 +1288,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     function handle(self, command, next){
       return _.fmap(IQueryable.query(self.buffer, command.plan), function(entities){
         $.raise(self.provider, queriedEvent(entities));
-        return next(command);
+        next(command);
       });
     }
 
@@ -1302,7 +1307,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
     function handle(self, event, next){
       $.dispatch(self.commandBus, loadCommand(event.entities));
-      return next(event);
+      next(event);
     }
 
     return _.doto(QueriedHandler,
@@ -1350,7 +1355,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
         _.update(_, "selected",
           _.conj(_, _.str(command.id))));
       $.raise(self.provider, selectedEvent(command.id));
-      return next(command);
+      next(command);
     }
 
     return _.doto(SelectHandler,
@@ -1398,7 +1403,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
         _.update(_, "selected",
           _.disj(_, _.str(command.id))));
       $.raise(self.provider, deselectedEvent(command.id));
-      return next(command);
+      next(command);
     }
 
     return _.doto(DeselectHandler,
@@ -1406,19 +1411,31 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   })();
 
-  function LockingMiddleware(){
-    this.wip = Promise.resolve(null);
+  function LockingMiddleware(middleware, queued, handling){
+    this.middleware = middleware;
+    this.queued = queued;
+    this.handling = handling;
   }
 
-  var lockingMiddleware = _.constructs(LockingMiddleware);
+  function lockingMiddleware(middleware){
+    return new LockingMiddleware(middleware, [], false);
+  }
 
   (function(){
 
     function handle(self, message, next){
-      self.wip = _.fmap(self.wip, function(){
-        return next(message);
-      });
-      return self.wip;
+      if (self.handling) {
+        self.queued.push(message);
+      } else {
+        self.handling = true;
+        IMiddleware.handle(self.middleware, message, function(message){
+          self.handling = false;
+          next(message);
+          if (self.queued.length) {
+            handle(self, self.queued.unshift(), next);
+          }
+        });
+      }
     }
 
     return _.doto(LockingMiddleware,
@@ -1436,7 +1453,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
     function handle(self, message, next){
       _.log(self.label, message);
-      return next(message);
+      next(message);
     }
 
     return _.doto(LoggerMiddleware,
@@ -1454,9 +1471,10 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
   (function(){
 
     function handle(self, command, next){
-      var result = next(command);
-      _.each($.dispatch(self.eventBus, _), $.release(self.provider));
-      return result;
+      next(command);
+      _.each(function(message){
+        IMiddleware.handle(self.eventBus, message, next);
+      }, $.release(self.provider));
     }
 
     return _.doto(DrainEventsMiddleware,
@@ -1474,7 +1492,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
     function handle(self, event, next){
       $.pub(self.emitter, event);
-      return next(event);
+      next(event);
     }
 
     return _.doto(EventMiddleware,
@@ -1495,7 +1513,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
   }
 
   function handlerMiddleware1(identify){
-    return handlerMiddleware2(identify, nullHandler);
+    return handlerMiddleware2(identify, null);
   }
 
   function handlerMiddleware0(){
@@ -1511,10 +1529,11 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     }
 
     function handle(self, message, next){
-      var handler = _.get(self.handlers, self.identify(message), self.fallback),
-          result  = $.handle(handler, message);
+      var handler = _.get(self.handlers, self.identify(message), self.fallback);
+      if (handler){
+        $.handle(handler, message, next);
+      }
       next(message);
-      return result;
     }
 
     return _.doto(HandlerMiddleware,
@@ -1534,92 +1553,96 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
     function load(self, entities){
       _.swap(self.catalog, function(catalog){
-        return IBuffer.load(catalog, entities);
+        return ICatalog.load(catalog, entities);
       });
     }
 
-    function query(self, plan){ //NOTE cmd because it eventually (in `load`) mutates state
+    function query(self, plan){
       return IQueryable.query(self.repo, plan);
     }
 
     _.doto(Buffer,
-      _.implement(IBuffer, {load: load}), //TODO ITransientBuffer.load
+      _.implement(ICatalog, {load: load}), //TODO ITransientBuffer.load
       _.implement(IQueryable, {query: query}));
 
   })();
 
-  //TODO add `expanded` model state to track which entities are open.
-  //TODO a component is an aggregate root that fully manages its dependencies and avoids coordinating subcomponents.
-  //NOTE the reusable part of the view would potentially involve making the full render and patch operations pure.
-  //NOTE the beauty of React is that view functions are pure, return a representation of the dom, and can be composed.  This approach emphasizes custom and optimized diffing/patching based on before/after snapshot of the model.  Once in an effectful context, it becomes hard to benefit from the reuse of pure commands (commands as queries).
-  //NOTE a concern with delegating to subcomponents was managing their creation/destruction
-  //NOTE assign guid as `data-key` and realize that the same entity could appear in multiple places of an outline.
   //NOTE a view is capable of returning a seq of all possible `IView.interactions` each implementing `IIdentifiable` and `ISubject`.
   //NOTE an interaction is a persistent, validatable object with field schema.  It will be flagged as command or query which will help with processing esp. pipelining.  When successfully validated it has all that it needs to be handled by the handler.  That it can be introspected allows for the UI to help will completing them.
-  function Outline($buffer, $model, $cbus, $ebus, options){
-    this.$buffer = $buffer;
-    this.$model = $model;
-    this.$cbus = $cbus;
-    this.$ebus = $ebus;
+  function Outline(buffer, model, commandBus, eventBus, emitter, options){
+    this.buffer = buffer;
+    this.model = model;
+    this.commandBus = commandBus;
+    this.eventBus = eventBus;
+    this.emitter = emitter;
     this.options = options;
   }
 
-  function outline($buffer, options){
-    var $model = $.cell({root: options.root, selected: _.into(imm.set(), options.selected || [])}),
-        $events = $.events(),
-        $ebus = bus(),
-        $cbus = bus();
+  function outline(buffer, options){
+    var model = $.cell({
+          root: options.root, //identify the root entities from where rendering begins
+          selected: _.into(imm.set(), options.selected || []), //track which entities are selected
+          expanded: _.into(imm.set(), options.expanded || []) //track which entities are expanded vs collapsed
+        }),
+        events = $.events(),
+        eventBus = bus(),
+        commandBus = bus(),
+        emitter = $.broadcast();
 
-    _.doto($ebus,
+    _.doto(eventBus,
       mut.conj(_,
-        loggerMiddleware("event"),
+        eventMiddleware(emitter),
         _.doto(handlerMiddleware(),
-          mut.assoc(_, "queried", queriedHandler($cbus)))));
+          mut.assoc(_, "queried", queriedHandler(commandBus)))));
 
-    _.doto($cbus,
+    _.doto(commandBus,
       mut.conj(_,
         loggerMiddleware("command"),
-        lockingMiddleware(),
-        _.doto(handlerMiddleware(),
-          mut.assoc(_, "load", loadHandler($buffer, $events)),
-          mut.assoc(_, "query", queryHandler($buffer, $events)),
-          mut.assoc(_, "select", selectHandler($model, $events)),
-          mut.assoc(_, "deselect", deselectHandler($model, $events))),
-        drainEventsMiddleware($events, $ebus)));
+        lockingMiddleware(
+          _.doto(handlerMiddleware(),
+            mut.assoc(_, "load", loadHandler(buffer, events)),
+            mut.assoc(_, "query", queryHandler(buffer, events)),
+            mut.assoc(_, "select", selectHandler(model, events)),
+            mut.assoc(_, "deselect", deselectHandler(model, events)))),
+        drainEventsMiddleware(events, eventBus)));
 
-    return new Outline($buffer, $model, $cbus, $ebus, options);
+    return new Outline(buffer, model, commandBus, eventBus, emitter, options);
   }
 
-  //RULE it must be possible to interact with a component even if it never gets mounted.
   (function(){
-    //RULE a component delegates events once on mount and avoids having to continually add/remove listeners.
     function render(self, el){
       _.log("render", self, el);
       //TODO implement
     }
 
     function dispatch(self, command){
-      IDispatch.dispatch(self.$cbus, command);
+      $.dispatch(self.commandBus, command);
     }
 
-    return _.doto(Outline, //standard component has an input and an output
-      _.implement(IDispatch, {dispatch: dispatch}), //input
-      _.implement(IView, {render: render})); //output
+    function sub(self, observer){ //TODO consider keeping these events private
+      return ISubscribe.sub(self.emitter, observer);
+    }
+
+    return _.doto(Outline,
+      _.implement(IDispatch, {dispatch: dispatch}),
+      _.implement(ISubscribe, {sub: sub}),
+      _.implement(IView, {render: render}));
 
   })();
 
-  var $buffer = buffer(domain([tasks]), $.cell(typedCatalog()));
+  var buf = buffer(domain([tasks]), $.cell(typedCatalog()));
 
   _.each(function(el){
-    var $outline = outline($buffer, {root: _.guid("a")});
-    IView.render($outline, el);
-    _.each($.dispatch($outline, _), [
+    var ol = outline(buf, {root: _.guid("a")});
+    IView.render(ol, el);
+    $.sub(ol, _.see("event"));
+    _.each($.dispatch(ol, _), [
       queryCommand({$type: "tasks"}),
       selectCommand(_.guid("a")),
       selectCommand(_.guid("b")),
       deselectCommand(_.guid("b"))
     ]);
-    Object.assign(window, {$outline: $outline});
+    Object.assign(window, {ol: ol});
   }, dom.sel("#outline"));
 
   return _.just({
