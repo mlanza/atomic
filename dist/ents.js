@@ -108,7 +108,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
   });
 
   var IIdentifiable = _.protocol({
-    identifier: null //machine-friendly identifier offering reasonable uniqueness within a context
+    identifier: null //machine-friendly identifier (lowercase, no embedded spaces) offering reasonable uniqueness within a context
   });
 
   var ISubject = _.protocol({
@@ -435,22 +435,35 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   behaveAsEntity(Task);
 
-  (function(){
+  function Note(repo, attrs){
+    this.repo = repo;
+    this.attrs = attrs;
+  }
+
+  behaveAsEntity(Note);
+
+  function titleBehavior(key){
 
     function title1(self){
-      return _.just(self, _.get(_, "summary"), _.first);
+      return _.just(self, _.get(_, key), _.first);
     }
 
     function title2(self, text){
-      return assert(self, "summary", text);
+      return assert(self, key, text);
     }
 
     var title = _.overload(null, title1, title2);
 
-    _.doto(Task,
+    return _.does(
       _.implement(ISubject, {title: title}));
 
-  })();
+  }
+
+  _.doto(Task,
+    titleBehavior("summary"));
+
+  _.doto(Note,
+    titleBehavior("body"));
 
   var ReadOnlyBinField = (function(){
 
@@ -484,9 +497,9 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   var DefaultedBinField = (function(){
 
-    function DefaultedBinField(field, init){
-      this.field = field;
+    function DefaultedBinField(init, field){
       this.init = init;
+      this.field = field;
     }
 
     function aget(self, entity){
@@ -511,7 +524,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   })();
 
-  var defaultedBinField = _.fnil(_.constructs(DefaultedBinField), null, _.array);
+  var defaultedBinField = _.fnil(_.constructs(DefaultedBinField), _.array, null);
 
   var BinField = (function(){
 
@@ -670,35 +683,34 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
   var tasks = (function(){
 
     return _.doto(new Bin(Task, {
-      id: labeledField("ID", defaultedBinField(binField("id", required), _.comp(_.array, _.guid))),
+      id: labeledField("ID", defaultedBinField(_.comp(_.array, _.guid), binField("id", required))),
       summary: labeledField("Summary", binField("summary", required)),
-      priority: labeledField("Priority", defaultedBinField(binField("priority", optional), _.constantly(["C"]))),
+      priority: labeledField("Priority", defaultedBinField(_.constantly(["C"]), binField("priority", optional))),
       detail: labeledField("Detail", binField("detail", optional)),
       due: labeledField("Due Date", binField("due", optional)),
       assignee: labeledField("Assignee", binField("assignee", optional)),
       subtask: labeledField("Subtask", multiBinField("subtask")),
+      note: labeledField("Note", multiBinField("note")),
       expanded: labeledField("Expanded", binField("expanded", required)),
       tag: labeledField("Tag", multiBinField("tag"))
-    }, [], "Tasks", "tasks"), function(bin){
+    }, [], "Task", "task"), function(bin){
 
-      _.each(function(attrs){
-        bin.items.push(attrs);
+      _.each(function(item){
+        bin.items.push(item);
       }, _.map(function(attrs){
         return IFactory.make(bin, attrs);
       }, [{
-        $type: "task",
         id: _.guid("a"),
         summary: "Build backyard patio",
         priority: "A",
         expanded: true,
-        subtask: [_.guid("b"), _.guid("c")]
+        subtask: [_.guid("b"), _.guid("c")],
+        note: [_.guid("d")]
       },{
-        $type: "task",
         id: _.guid("b"),
         summary: "Choose 3 potential materials and price them",
         expanded: false
       },{
-        $type: "task",
         id: _.guid("c"),
         summary: "Get contractor quote",
         expanded: false
@@ -708,13 +720,32 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   })();
 
-  function Domain(repos, defaultType){
+  var notes = (function(){
+
+    return _.doto(new Bin(Note, {
+      id: labeledField("ID", defaultedBinField(_.comp(_.array, _.guid), binField("id", required))),
+      body: labeledField("Body", binField("body", required))
+    }, [], "Note", "note"), function(bin){
+
+      _.each(function(item){
+        bin.items.push(item);
+      }, _.map(function(attrs){
+        return IFactory.make(bin, attrs);
+      }, [{
+        id: _.guid("d"),
+        body: "My first note"
+      }]));
+
+    });
+
+  })();
+
+  function Domain(repos){
     this.repos = repos;
-    this.defaultType = defaultType;
   }
 
-  function domain(repos, defaultType){
-    return _.reduce(_.conj, new Domain({}, defaultType), repos || []);
+  function domain(repos){
+    return _.reduce(_.conj, new Domain({}), repos || []);
   }
 
   (function(){
@@ -738,11 +769,11 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     }
 
     function make(self, options){
-      return IFactory.make(_.get(self.repos, _.get(options, "$type", self.defaultType)), _.dissoc(options, "$type"));
+      return IFactory.make(_.get(self.repos, _.get(options, "$type")) || _.just(self.repos, _.keys, _.first, _.get(self.repos, _)), _.dissoc(options, "$type"));
     }
 
     function conj(self, repo){
-      return new Domain(_.assoc(self.repos, IIdentifiable.identifier(repo), repo), self.defaultType || IIdentifiable.identifier(repo));
+      return new Domain(_.assoc(self.repos, IIdentifiable.identifier(repo), repo));
     }
 
     function resolve(self, refs){ //TODO implement
@@ -967,23 +998,28 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
     function changed(before, after){
       if (before && after) {
-        return _.eq(before, after) ? null : modification(before, after);
+        if (_.eq(before, after)) {
+          return [];
+        } else if (before.constructor !== after.constructor) { //type changed
+          return [destruction(before), addition(after)];
+        } else {
+          return [modification(before, after)];
+        }
       } else if (before) {
-        return destruction(before);
+        return [destruction(before)];
       } else if (after) {
         return addition(after);
       } else {
-        return null;
+        return [];
       }
     }
 
     function commands(self){
       return _.just(self.changed,
         _.keys,
-        _.map(function(id){
+        _.mapcat(function(id){
           return changed(_.get(self.loaded, id), _.get(self.changed, id));
-        }, _),
-        _.compact);
+        }, _));
     }
 
     function resolve(self, refs){
@@ -1354,6 +1390,33 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   var addedEvent = _.constructs(AddedEvent);
 
+  function AddedHandler(model, commandBus){
+    this.model = model;
+    this.commandBus = commandBus;
+  }
+
+  var addedHandler = _.constructs(AddedHandler);
+
+  (function(){
+
+    function handle(self, event, next){
+      _.each(function(id){
+        $.dispatch(self.commandBus, deselectCommand(id));
+      }, _.get(_.deref(self.model), "selected"));
+      $.dispatch(self.commandBus, selectCommand(_.get(event, "id")));
+      next(event);
+    }
+
+    _.doto(AddedHandler,
+      _.implement(IMiddleware, {handle: handle}));
+
+  })();
+
+
+
+
+
+
   (function(){
 
     return _.doto(AddedEvent,
@@ -1553,6 +1616,87 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
     _.doto(UntagHandler,
       _.implement(IMiddleware, {handle: handle}));
+
+  })();
+
+  function CastCommand(type, options){
+    this.type = type;
+    this.options = options;
+  }
+
+  function castCommand(type, options){
+    return new CastCommand(type, options || {});
+  }
+
+  (function(){
+
+    function lookup(self, key){
+      switch(key){
+        case "id":
+          return self.options[key];
+        case "type":
+          return self.type;
+        default:
+          return null;
+      }
+    }
+
+    function assoc(self, key, value){
+      switch(key){
+        case "id":
+          return new self.constructor(self.type, _.assoc(self.options, key, value));
+        case "type":
+          return new self.constructor(value, self.options);
+        default:
+          return self;
+      }
+    }
+
+    return _.doto(CastCommand,
+      _.implement(IAssociative, {assoc: assoc}),
+      _.implement(ILookup, {lookup: lookup}),
+      _.implement(IIdentifiable, {identifier: _.constantly("cast")}));
+
+  })();
+
+  function CastHandler(buffer, provider){
+    this.buffer = buffer;
+    this.provider = provider;
+  }
+
+  var castHandler = _.constructs(CastHandler);
+
+  (function(){
+
+    //it's unavoidable that attributes may not line up on a cast, so cast wisely.
+    function handle(self, command, next){
+      var existing = _.get(self.buffer, _.get(command, "id"));
+      if (existing) {
+        var entity = IFactory.make(self.buffer, Object.assign({}, existing.attrs, {$type: _.get(command, "type")}));
+        _.swap(self.buffer, function(buffer){
+          return ICatalog.edit(buffer, [entity]);
+        });
+        $.raise(self.provider, castedEvent(_.get(command, "id"), _.get(command, "type")));
+      }
+      next(command);
+    }
+
+    _.doto(CastHandler,
+      _.implement(IMiddleware, {handle: handle}));
+
+  })();
+
+  function CastedEvent(id, type){
+    this.id = id;
+    this.type = type;
+  }
+
+  var castedEvent = _.constructs(CastedEvent);
+
+  (function(){
+
+    return _.doto(CastedEvent,
+      _.implement(IIdentifiable, {identifier: _.constantly("casted")}));
 
   })();
 
@@ -2172,6 +2316,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
       mut.conj(_,
         eventMiddleware(emitter),
         _.doto(handlerMiddleware(),
+          mut.assoc(_, "added", addedHandler(model, commandBus)),
           mut.assoc(_, "queried", queriedHandler(commandBus)))));
 
     _.doto(commandBus,
@@ -2181,6 +2326,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
           _.doto(handlerMiddleware(),
             mut.assoc(_, "load", loadHandler(buffer, events)),
             mut.assoc(_, "add", addHandler(buffer, events)),
+            mut.assoc(_, "cast", selectionHandler(model, castHandler(buffer, events))),
             mut.assoc(_, "tag", tagHandler(selectionHandler(model, assertHandler(buffer, events)))),
             mut.assoc(_, "untag", untagHandler(selectionHandler(model, retractHandler(buffer, events)))),
             mut.assoc(_, "toggle", selectionHandler(model, toggleHandler(buffer, events))),
@@ -2205,7 +2351,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
       $.dispatch(self.commandBus, command);
     }
 
-    function lookup(self, guid){ //NOTE for development purposes, not meant for permanent use
+    function lookup(self, guid){ //for development purposes, not meant for permanent use
       return _.get(self.buffer, guid);
     }
 
@@ -2221,7 +2367,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   })();
 
-  var buf = buffer(domain([tasks]), $.cell(typedCatalog()));
+  var buf = buffer(domain([tasks, notes]), $.cell(typedCatalog()));
 
   _.each(function(el){
     var a = _.guid("a"), //TODO use memoize on fn with weakMap?
@@ -2231,7 +2377,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     IView.render(ol, el);
     $.sub(ol, _.see("event"));
     _.each($.dispatch(ol, _), [
-      queryCommand({$type: "tasks"}),
+      queryCommand({$type: "task"}),
       selectCommand(a),
       selectCommand(b),
       selectCommand(c),
@@ -2247,6 +2393,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     unlimited: unlimited,
     loadCommand: loadCommand,
     addCommand: addCommand,
+    castCommand: castCommand,
     tagCommand: tagCommand,
     untagCommand: untagCommand,
     toggleCommand: toggleCommand,
