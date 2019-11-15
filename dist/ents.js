@@ -1305,6 +1305,67 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   })();
 
+  function DestroyCommand(id){
+    this.id = id;
+  }
+
+  var destroyCommand = _.constructs(DestroyCommand);
+
+  (function(){
+
+    function assoc(self, key, value){
+      switch(key){
+        case "id":
+          return destroyCommand(value, self.key, self.value);
+        default:
+          return self;
+      }
+    }
+
+    return _.doto(DestroyCommand,
+      _.implement(IAssociative, {assoc: assoc}),
+      _.implement(IIdentifiable, {identifier: _.constantly("destroy")}));
+
+  })();
+
+  function DestroyHandler(buffer, provider){
+    this.buffer = buffer;
+    this.provider = provider;
+  }
+
+  var destroyHandler = _.constructs(DestroyHandler);
+
+  (function(){
+
+    function handle(self, command, next){
+      var entity = _.get(self.buffer, command.id);
+      if (entity) {
+        _.swap(self.buffer, function(buffer){
+          return ICatalog.destroy(buffer, [entity]);
+        });
+        $.raise(self.provider, destroyedEvent(command.id));
+      }
+      next(command);
+    }
+
+    _.doto(DestroyHandler,
+      _.implement(IMiddleware, {handle: handle}));
+
+  })();
+
+  function DestroyedEvent(id){
+    this.id = id;
+  }
+
+  var destroyedEvent = _.constructs(DestroyedEvent);
+
+  (function(){
+
+    return _.doto(DestroyedEvent,
+      _.implement(IIdentifiable, {identifier: _.constantly("destroyed")}));
+
+  })();
+
   function SelectionHandler(model, handler){
     this.model = model;
     this.handler = handler;
@@ -1781,6 +1842,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
             mut.assoc(_, "load", loadHandler(buffer, events)),
             mut.assoc(_, "assert", selectionHandler(model, assertHandler(buffer, events))),
             mut.assoc(_, "retract", selectionHandler(model, retractHandler(buffer, events))),
+            mut.assoc(_, "destroy", selectionHandler(model, destroyHandler(buffer, events))),
             mut.assoc(_, "query", queryHandler(buffer, events)),
             mut.assoc(_, "select", selectHandler(model, events)),
             mut.assoc(_, "deselect", deselectHandler(model, events)))),
@@ -1837,6 +1899,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     loadCommand: loadCommand,
     assertCommand: assertCommand,
     retractCommand: retractCommand,
+    destroyCommand: destroyCommand,
     queryCommand: queryCommand,
     selectCommand: selectCommand,
     deselectCommand: deselectCommand,
