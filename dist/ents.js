@@ -376,8 +376,8 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
       this.attrs = attrs;
     }
 
-    function identifier(self){
-      return IKind.field(self, "ContentType").meta.Scope;
+    function identifier(self){ //TODO use?
+      return IIdentifiable.identifier(self.bin);
     }
 
     function eid(self){
@@ -392,7 +392,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
       return IKind.field(self.bin, key);
     }
 
-    function kind(self){
+    function kind(self){ //TODO use?
       return self.bin.identifier;
     }
 
@@ -501,7 +501,8 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     }
 
     function aset(self, entity, values){
-      return new entity.constructor(entity.bin, _.assoc(entity.attrs, self.key, _.last(_.into(self.emptyColl, values))));
+      var value = _.last(_.into(self.emptyColl, values));
+      return new entity.constructor(entity.bin, _.isSome(value) ? _.assoc(entity.attrs, self.key, value) : _.dissoc(entity.attrs, self.key));
     }
 
     function init(self){
@@ -1251,24 +1252,40 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   })();
 
-  function AssertCommand(id, key, value){
-    this.id = id;
+
+  function AssertCommand(key, value, options){
     this.key = key;
     this.value = value;
+    this.options = options;
   }
 
-  var assertCommand = _.constructs(AssertCommand);
+  function assertCommand(key, value, options){
+    return new AssertCommand(key, value, options || {});
+  }
 
   (function(){
+
+    function lookup(self, key){
+      switch(key){
+        case "id":
+          return self.options.id;
+        case "key":
+          return self.key;
+        case "value":
+          return self.value;
+        default:
+          return null;
+      }
+    }
 
     function assoc(self, key, value){
       switch(key){
         case "id":
-          return assertCommand(value, self.key, self.value);
+          return new self.constructor(self.key, self.value, _.assoc(self.options, key, value));
         case "key":
-          return assertCommand(self.id, value, self.value);
+          return new self.constructor(value, self.value, self.options);
         case "value":
-          return assertCommand(self.id, self.key, value);
+          return new self.constructor(self.key, value, self.options);
         default:
           return self;
       }
@@ -1276,6 +1293,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
     return _.doto(AssertCommand,
       _.implement(IAssociative, {assoc: assoc}),
+      _.implement(ILookup, {lookup: lookup}),
       _.implement(IIdentifiable, {identifier: _.constantly("assert")}));
 
   })();
@@ -1290,12 +1308,12 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
   (function(){
 
     function handle(self, command, next){
-      var entity = _.get(self.buffer, command.id);
+      var entity = _.get(self.buffer, _.get(command, "id"));
       if (entity) {
         _.swap(self.buffer, function(buffer){
-          return ICatalog.edit(buffer, [assert(entity, command.key, command.value)]);
+          return ICatalog.edit(buffer, [assert(entity, _.get(command, "key"), _.get(command, "value"))]);
         });
-        $.raise(self.provider, assertedEvent(command.id, command.key, command.value));
+        $.raise(self.provider, assertedEvent(_.get(command, "id"), _.get(command, "key"), _.get(command, "value")));
       }
       next(command);
     }
@@ -1376,7 +1394,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
   (function(){
 
     function handle(self, command, next){
-      if (command.id) {
+      if (_.get(command, "id")) {
         $.handle(self.handler, command, next);
       } else {
         _.each(function(id){
@@ -1406,24 +1424,37 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   })();
 
-  function RetractCommand(id, key, value){
-    this.id = id;
+  function RetractCommand(key, options){
     this.key = key;
-    this.value = value;
+    this.options = options;
   }
 
-  var retractCommand = _.constructs(RetractCommand);
+  function retractCommand(key, options){
+    return new RetractCommand(key, options || {});
+  }
 
   (function(){
+
+    function lookup(self, key){
+      switch(key){
+        case "id":
+          return self.options.id;
+        case "key":
+          return self.key;
+        case "value":
+          return self.options.value;
+        default:
+          return null;
+      }
+    }
 
     function assoc(self, key, value){
       switch(key){
         case "id":
-          return retractCommand(value, self.key, self.value);
-        case "key":
-          return retractCommand(self.id, value, self.value);
         case "value":
-          return retractCommand(self.id, self.key, value);
+          return new self.constructor(self.key, _.assoc(self.options, key, value));
+        case "key":
+          return new self.constructor(value, self.options);
         default:
           return self;
       }
@@ -1431,6 +1462,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
     return _.doto(RetractCommand,
       _.implement(IAssociative, {assoc: assoc}),
+      _.implement(ILookup, {lookup: lookup}),
       _.implement(IIdentifiable, {identifier: _.constantly("retract")}));
 
   })();
@@ -1445,11 +1477,11 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
   (function(){
 
     function handle(self, command, next){
-      var entity = _.get(self.buffer, command.id);
+      var entity = _.get(self.buffer, _.get(command, "id"));
       _.swap(self.buffer, function(buffer){
-        return ICatalog.edit(buffer, [_.isSome(command.value) ? retract(entity, command.key, command.value) : retract(entity, command.key)]);
+        return ICatalog.edit(buffer, [_.isSome(_.get(command, "value")) ? retract(entity, _.get(command, "key"), _.get(command, "value")) : retract(entity, _.get(command, "key"))]);
       });
-      $.raise(self.provider, retractedEvent(command.id, command.key, command.value));
+      $.raise(self.provider, retractedEvent(_.get(command, "id"), _.get(command, "key"), _.get(command, "value")));
       next(command);
     }
 
@@ -1667,7 +1699,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
   })();
 
   function LoggerMiddleware(label){
-    this.label = label;
+    this.label = label; //TODO use logger role/protocol here
   }
 
   var loggerMiddleware = _.constructs(LoggerMiddleware);
@@ -1861,11 +1893,16 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
       $.dispatch(self.commandBus, command);
     }
 
+    function lookup(self, guid){ //NOTE for development purposes, not meant for permanent use
+      return _.get(self.buffer, guid);
+    }
+
     function sub(self, observer){ //TODO consider keeping these events private
       return ISubscribe.sub(self.emitter, observer);
     }
 
     return _.doto(Outline,
+      _.implement(ILookup, {lookup: lookup}),
       _.implement(IDispatch, {dispatch: dispatch}),
       _.implement(ISubscribe, {sub: sub}),
       _.implement(IView, {render: render}));
