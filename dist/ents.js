@@ -286,6 +286,10 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
       return self.values;
     }
 
+    function fmap(self, f){
+      return new self.constructor(self.cardinality, self.cap, constraints, _.fmap(self.values, f));
+    }
+
     function constraints1(self){
       return vd.and(self.cardinality, _.maybe(self.constraints, vd.collOf));
     }
@@ -298,6 +302,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
     _.doto(ConstrainedCollection,
       _.implement(IEmptyableCollection, {empty: empty}),
+      _.implement(IFunctor, {fmap: fmap}),
       _.implement(IConstrained, {constraints: constraints}),
       _.implement(ILookup, {lookup: nth}),
       _.implement(IAssociative, {assoc: assoc, contains: contains}),
@@ -369,15 +374,10 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     }, {}, metas);
   }
 
-  var Item = (function(){
-
-    function Item(bin, attrs){
-      this.bin = bin;
-      this.attrs = attrs;
-    }
+  var behaveAsEntity = (function(){
 
     function identifier(self){ //TODO use?
-      return IIdentifiable.identifier(self.bin);
+      return IIdentifiable.identifier(self.repo);
     }
 
     function eid(self){
@@ -385,15 +385,15 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     }
 
     function title(self){
-      return _.get(self, self.bin.title, null);
+      return _.get(self, self.repo.title, null);
     }
 
     function field(self, key){
-      return IKind.field(self.bin, key);
+      return IKind.field(self.repo, key);
     }
 
     function kind(self){ //TODO use?
-      return self.bin.identifier;
+      return self.repo.identifier;
     }
 
     function lookup(self, key){
@@ -413,10 +413,10 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     }
 
     function keys(self){
-      return _.keys(self.bin);
+      return _.keys(self.repo);
     }
 
-    return _.doto(Item,
+    return _.does(
       _.implement(IMultiDictionary, {}),
       _.implement(IIdentifiable, {identifier: identifier}),
       _.implement(IEntity, {eid: eid}),
@@ -425,6 +425,30 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
       _.implement(ILookup, {lookup: lookup}),
       _.implement(IAssociative, {assoc: assoc, contains: contains}),
       _.implement(IKind, {field: field, kind: kind}));
+
+  })();
+
+  function Task(repo, attrs){
+    this.repo = repo;
+    this.attrs = attrs;
+  }
+
+  behaveAsEntity(Task);
+
+  (function(){
+
+    function title1(self){
+      return _.just(self, _.get(_, "summary"), _.first);
+    }
+
+    function title2(self, text){
+      return assert(self, "summary", text);
+    }
+
+    var title = _.overload(null, title1, title2);
+
+    _.doto(Task,
+      _.implement(ISubject, {title: title}));
 
   })();
 
@@ -502,7 +526,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
     function aset(self, entity, values){
       var value = _.last(_.into(self.emptyColl, values));
-      return new entity.constructor(entity.bin, _.isSome(value) ? _.assoc(entity.attrs, self.key, value) : _.dissoc(entity.attrs, self.key));
+      return new entity.constructor(entity.repo, _.isSome(value) ? _.assoc(entity.attrs, self.key, value) : _.dissoc(entity.attrs, self.key));
     }
 
     function init(self){
@@ -533,7 +557,8 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     }
 
     function aset(self, entity, values){
-      return new entity.constructor(entity.bin, _.assoc(entity.attrs, self.key, _.deref(_.into(self.emptyColl, values))));
+      var values = _.deref(_.into(self.emptyColl, values));
+      return new entity.constructor(entity.repo, _.seq(values) ? _.assoc(entity.attrs, self.key, values) : _.dissoc(entity.attrs, self.key));
     }
 
     function init(self){
@@ -552,9 +577,9 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   var multiBinField = _.fnil(_.constructs(MultiBinField), null, unlimited);
 
-  var LabeledBinField = (function(){
+  var LabeledField = (function(){
 
-    function LabeledBinField(label, field){
+    function LabeledField(label, field){
       this.label = label;
       this.field = field;
     }
@@ -579,18 +604,19 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
       return IIdentifiable.identifier(self.field);
     }
 
-    return _.doto(LabeledBinField,
+    return _.doto(LabeledField,
       _.implement(ISubject, {title: title}),
       _.implement(IIdentifiable, {identifier: identifier}),
       _.implement(IField, {aget: aget, aset: aset, init: init}));
 
   })();
 
-  var labeledBinField = _.constructs(LabeledBinField);
+  var labeledField = _.constructs(LabeledField);
 
   var Bin = (function(){
 
-    function Bin(fields, items, title, identifier){
+    function Bin(type, fields, items, title, identifier){
+      this.type = type;
       this.fields = fields;
       this.items = items;
       this.title = title;
@@ -598,10 +624,10 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     }
 
     function make(self, attrs){
-      return attrs ? new Item(self, attrs) : _.reduce(function(memo, key){
+      return attrs ? new self.type(self, attrs) : _.reduce(function(memo, key){
         var fld = field(self, key);
         return IField.aset(fld, memo, IField.init(fld));
-      }, new Item(self, {}), _.keys(self.fields));
+      }, new self.type(self, {}), _.keys(self.fields));
     }
 
     function title(self){
@@ -643,14 +669,16 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   var tasks = (function(){
 
-    return _.doto(new Bin({
-      "id": labeledBinField("ID", defaultedBinField(binField("id", required), _.comp(_.array, _.guid))),
-      "summary": labeledBinField("Summary", binField("summary", required)),
-      "priority": labeledBinField("Priority", defaultedBinField(binField("priority", optional), _.constantly(["C"]))),
-      "detail": labeledBinField("Detail", binField("detail", optional)),
-      "due": labeledBinField("Due Date", binField("due", optional)),
-      "assignee": labeledBinField("Assignee", binField("assignee", optional)),
-      "subtasks": labeledBinField("Subtasks", multiBinField("subtasks"))
+    return _.doto(new Bin(Task, {
+      id: labeledField("ID", defaultedBinField(binField("id", required), _.comp(_.array, _.guid))),
+      summary: labeledField("Summary", binField("summary", required)),
+      priority: labeledField("Priority", defaultedBinField(binField("priority", optional), _.constantly(["C"]))),
+      detail: labeledField("Detail", binField("detail", optional)),
+      due: labeledField("Due Date", binField("due", optional)),
+      assignee: labeledField("Assignee", binField("assignee", optional)),
+      subtask: labeledField("Subtask", multiBinField("subtask")),
+      expanded: labeledField("Expanded", binField("expanded", required)),
+      tag: labeledField("Tag", multiBinField("tag"))
     }, [], "Tasks", "tasks"), function(bin){
 
       _.each(function(attrs){
@@ -658,34 +686,36 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
       }, _.map(function(attrs){
         return IFactory.make(bin, attrs);
       }, [{
+        $type: "task",
         id: _.guid("a"),
         summary: "Build backyard patio",
         priority: "A",
-        subtasks: [_.guid("b"), _.guid("c")]
+        expanded: true,
+        subtask: [_.guid("b"), _.guid("c")]
       },{
+        $type: "task",
         id: _.guid("b"),
-        summary: "Choose 3 potential materials and price them"
+        summary: "Choose 3 potential materials and price them",
+        expanded: false
       },{
+        $type: "task",
         id: _.guid("c"),
-        summary: "Get contractor quote"
+        summary: "Get contractor quote",
+        expanded: false
       }]));
 
     });
 
   })();
 
-  function Domain(repos){
+  function Domain(repos, defaultType){
     this.repos = repos;
+    this.defaultType = defaultType;
   }
 
-  var _domain = new Domain({});
-  var domain0 = _.constantly(_domain);
-
-  function domain1(repos){
-    return _.reduce(_.conj, _domain, repos);
+  function domain(repos, defaultType){
+    return _.reduce(_.conj, new Domain({}, defaultType), repos || []);
   }
-
-  var domain = _.overload(domain0, domain1);
 
   (function(){
 
@@ -708,11 +738,11 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     }
 
     function make(self, options){
-      return IFactory.make(_.get(self.repos, _.get(options, "$type")), _.dissoc(options, "$type"));
+      return IFactory.make(_.get(self.repos, _.get(options, "$type", self.defaultType)), _.dissoc(options, "$type"));
     }
 
     function conj(self, repo){
-      return new Domain(_.assoc(self.repos, IIdentifiable.identifier(repo), repo));
+      return new Domain(_.assoc(self.repos, IIdentifiable.identifier(repo), repo), self.defaultType || IIdentifiable.identifier(repo));
     }
 
     function resolve(self, refs){ //TODO implement
@@ -721,7 +751,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     _.doto(Domain,
       _.implement(IResolver, {resolve: resolve}),
       _.implement(ICollection, {conj: conj}),
-      _.implement(IEmptyableCollection, {empty: domain0}),
+      _.implement(IEmptyableCollection, {empty: _.constantly(domain())}),
       _.implement(IPossession, {owner: owner}),
       _.implement(IFactory, {make: make}),
       _.implement(IQueryable, {query: query}),
@@ -1252,6 +1282,279 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   })();
 
+  function AddCommand(text, options){
+    this.text = text;
+    this.options = options;
+  }
+
+  function addCommand(text, options){
+    return new AddCommand(text, options || {});
+  }
+
+  (function(){
+
+    function lookup(self, key){
+      switch(key){
+        case "id":
+        case "type":
+          return self.options[key];
+        case "text":
+          return self.text;
+        default:
+          return null;
+      }
+    }
+
+    function assoc(self, key, value){
+      switch(key){
+        case "id":
+        case "type":
+          return new self.constructor(self.text, _.assoc(self.options, key, value));
+        case "text":
+          return new self.constructor(value, self.options);
+        default:
+          return self;
+      }
+    }
+
+    return _.doto(AddCommand,
+      _.implement(IAssociative, {assoc: assoc}),
+      _.implement(ILookup, {lookup: lookup}),
+      _.implement(IIdentifiable, {identifier: _.constantly("add")}));
+
+  })();
+
+  function AddHandler(buffer, provider){
+    this.buffer = buffer;
+    this.provider = provider;
+  }
+
+  var addHandler = _.constructs(AddHandler);
+
+  (function(){
+
+    function handle(self, command, next){
+      var entity = IFactory.make(self.buffer, {id: _.get(command, "id") || _.guid(), $type: _.get(command, "type")});
+      _.swap(self.buffer, function(buffer){
+        return ICatalog.add(buffer, [ISubject.title(entity, _.get(command, "text"))]);
+      });
+      $.raise(self.provider, addedEvent(IEntity.eid(entity), _.get(command, "text")));
+      next(command);
+    }
+
+    _.doto(AddHandler,
+      _.implement(IMiddleware, {handle: handle}));
+
+  })();
+
+  function AddedEvent(id, text){
+    this.id = id;
+    this.text = text;
+  }
+
+  var addedEvent = _.constructs(AddedEvent);
+
+  (function(){
+
+    return _.doto(AddedEvent,
+      _.implement(IIdentifiable, {identifier: _.constantly("added")}));
+
+  })();
+
+  function ToggleCommand(key, options){
+    this.key = key;
+    this.options = options;
+  }
+
+  function toggleCommand(key, options){
+    return new ToggleCommand(key, options || {});
+  }
+
+  (function(){
+
+    function lookup(self, key){
+      switch(key){
+        case "id":
+          return self.options[key];
+        case "key":
+          return self.key;
+        default:
+          return null;
+      }
+    }
+
+    function assoc(self, key, value){
+      switch(key){
+        case "id":
+          return new self.constructor(self.key, _.assoc(self.options, key, value));
+        case "key":
+          return new self.constructor(value, self.options);
+        default:
+          return self;
+      }
+    }
+
+    return _.doto(ToggleCommand,
+      _.implement(IAssociative, {assoc: assoc}),
+      _.implement(ILookup, {lookup: lookup}),
+      _.implement(IIdentifiable, {identifier: _.constantly("toggle")}));
+
+  })();
+
+  function ToggleHandler(buffer, provider){
+    this.buffer = buffer;
+    this.provider = provider;
+  }
+
+  var toggleHandler = _.constructs(ToggleHandler);
+
+  (function(){
+
+    function handle(self, command, next){
+      var entity = _.get(self.buffer, _.get(command, "id"));
+      if (entity) {
+        _.swap(self.buffer, function(buffer){
+          var values = _.just(entity, _.get(_, _.get(command, "key")), _.fmap(_, _.not));
+          return ICatalog.edit(buffer, [_.assoc(entity, _.get(command, "key"), values)]);
+        });
+        $.raise(self.provider, toggledEvent(_.get(command, "id"), _.get(command, "key")));
+      }
+      next(command);
+    }
+
+    _.doto(ToggleHandler,
+      _.implement(IMiddleware, {handle: handle}));
+
+  })();
+
+  function ToggledEvent(id, key){
+    this.id = id;
+    this.key = key;
+  }
+
+  var toggledEvent = _.constructs(ToggledEvent);
+
+  (function(){
+
+    return _.doto(ToggledEvent,
+      _.implement(IIdentifiable, {identifier: _.constantly("toggled")}));
+
+  })();
+
+  function TagCommand(value, options){
+    this.value = value;
+    this.options = options;
+  }
+
+  function tagCommand(value, options){
+    return new TagCommand(value, options || {});
+  }
+
+  (function(){
+
+    function lookup(self, key){
+      switch(key){
+        case "id":
+          return self.options[key];
+        case "value":
+          return self.value;
+        default:
+          return null;
+      }
+    }
+
+    function assoc(self, key, value){
+      switch(key){
+        case "id":
+          return new self.constructor(self.value, _.assoc(self.options, key, value));
+        case "value":
+          return new self.constructor(value, self.options);
+        default:
+          return self;
+      }
+    }
+
+    return _.doto(TagCommand,
+      _.implement(IAssociative, {assoc: assoc}),
+      _.implement(ILookup, {lookup: lookup}),
+      _.implement(IIdentifiable, {identifier: _.constantly("tag")}));
+
+  })();
+
+  function TagHandler(handler){
+    this.handler = handler;
+  }
+
+  var tagHandler = _.constructs(TagHandler);
+
+  (function(){
+
+    function handle(self, command, next){
+      $.handle(self.handler, assertCommand("tag", _.get(command, "value"), command.options), next);
+      //next(command);
+    }
+
+    _.doto(TagHandler,
+      _.implement(IMiddleware, {handle: handle}));
+
+  })();
+
+  function UntagCommand(value, options){
+    this.value = value;
+    this.options = options;
+  }
+
+  function untagCommand(value, options){
+    return new UntagCommand(value, options || {});
+  }
+
+  (function(){
+
+    function lookup(self, key){
+      switch(key){
+        case "id":
+          return self.options[key];
+        case "value":
+          return self.value;
+        default:
+          return null;
+      }
+    }
+
+    function assoc(self, key, value){
+      switch(key){
+        case "id":
+          return new self.constructor(self.value, _.assoc(self.options, key, value));
+        case "value":
+          return new self.constructor(value, self.options);
+        default:
+          return self;
+      }
+    }
+
+    return _.doto(UntagCommand,
+      _.implement(IAssociative, {assoc: assoc}),
+      _.implement(ILookup, {lookup: lookup}),
+      _.implement(IIdentifiable, {identifier: _.constantly("untag")}));
+
+  })();
+
+  function UntagHandler(handler){
+    this.handler = handler;
+  }
+
+  var untagHandler = _.constructs(UntagHandler);
+
+  (function(){
+
+    function handle(self, command, next){
+      $.handle(self.handler, retractCommand("tag", _.assoc(command.options, "value", command.value)), next);
+    }
+
+    _.doto(UntagHandler,
+      _.implement(IMiddleware, {handle: handle}));
+
+  })();
 
   function AssertCommand(key, value, options){
     this.key = key;
@@ -1806,6 +2109,10 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   (function(){
 
+    function make(self, attrs){
+      return IFactory.make(self.repo, attrs);
+    }
+
     function edit(self, entities){
       _.swap(self.catalog, function(catalog){
         return ICatalog.edit(catalog, entities);
@@ -1831,6 +2138,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     }
 
     _.doto(Buffer,
+      _.implement(IFactory, {make: make}),
       _.implement(ILookup, {lookup: lookup}),
       _.implement(ISwap, {swap: swap}),
       _.implement(ICatalog, {load: load, edit: edit}), //TODO ITransientBuffer.load
@@ -1872,6 +2180,10 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
         lockingMiddleware(
           _.doto(handlerMiddleware(),
             mut.assoc(_, "load", loadHandler(buffer, events)),
+            mut.assoc(_, "add", addHandler(buffer, events)),
+            mut.assoc(_, "tag", tagHandler(selectionHandler(model, assertHandler(buffer, events)))),
+            mut.assoc(_, "untag", untagHandler(selectionHandler(model, retractHandler(buffer, events)))),
+            mut.assoc(_, "toggle", selectionHandler(model, toggleHandler(buffer, events))),
             mut.assoc(_, "assert", selectionHandler(model, assertHandler(buffer, events))),
             mut.assoc(_, "retract", selectionHandler(model, retractHandler(buffer, events))),
             mut.assoc(_, "destroy", selectionHandler(model, destroyHandler(buffer, events))),
@@ -1934,6 +2246,10 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     required: required,
     unlimited: unlimited,
     loadCommand: loadCommand,
+    addCommand: addCommand,
+    tagCommand: tagCommand,
+    untagCommand: untagCommand,
+    toggleCommand: toggleCommand,
     assertCommand: assertCommand,
     retractCommand: retractCommand,
     destroyCommand: destroyCommand,
