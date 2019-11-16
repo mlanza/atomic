@@ -99,6 +99,18 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     deselect: null
   });
 
+  var ITimeTravel = _.protocol({
+    undo: null,
+    redo: null,
+    flush: null
+  });
+
+  var ITransientTimeTravel = _.protocol({
+    undo: null,
+    redo: null,
+    flush: null
+  });
+
   var IIntention = _.protocol({
     command: null //returns the serialization-friendly command object which upon execution is capable of realizing the intention
   });
@@ -183,6 +195,8 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     IPossession: IPossession,
     ITransaction: ITransaction,
     IEntitySelector: IEntitySelector,
+    ITimeTravel: ITimeTravel,
+    ITransientTimeTravel: ITransientTimeTravel,
     IView: IView,
     IMiddleware: IMiddleware,
     ICatalog: ICatalog
@@ -1177,67 +1191,24 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
       }, entities)));
     }
 
-    function dirty(self, entity){
-      return ICatalog.dirty(self.catalog, entity);
-    }
-
-    function changes(self){
-      return ICatalog.changes(self.catalog);
-    }
-
-    function includes(self, entity){
-      return IInclusive.includes(self.catalog, entity);
-    }
-
-    function first(self){
-      return ISeq.first(self.catalog);
-    }
-
-    function rest(self){
-      return ISeq.rest(self.catalog);
-    }
-
-    function next(self){
-      return INext.next(self.catalog);
-    }
-
-    function seq(self){
-      return ISeqable.seq(self.catalog);
-    }
-
-    function lookup(self, guid){
-      return ILookup.lookup(self.catalog, guid);
-    }
-
-    function reduce(self, xf, init){
-      return IReduce.reduce(self.catalog, xf, init);
-    }
+    var forward = _.forwardTo("catalog");
+    var dirty = forward(ICatalog.dirty);
+    var changes = forward(ICatalog.changes);
+    var includes = forward(IInclusive.includes);
+    var first = forward(ISeq.first);
+    var rest = forward(ISeq.rest);
+    var next = forward(INext.next);
+    var seq = forward(ISeqable.seq);
+    var lookup = forward(ILookup.lookup);
+    var reduce = forward(IReduce.reduce);
+    var keys = forward(IMap.keys);
+    var vals = forward(IMap.vals);
+    var count = forward(ICounted.count);
+    var contains = forward(IAssociative.contains);
+    var eid = forward(IEntity.eid);
+    var commands = forward(ITransaction.commands);
 
     function dissoc(self, guid){
-    }
-
-    function keys(self){
-      return IMap.keys(self.catalog);
-    }
-
-    function count(self){
-      return ICount.count(self.catalog);
-    }
-
-    function vals(self){
-      return IMap.vals(self.catalog);
-    }
-
-    function contains(self, guid){
-      return IAssociative.contains(self.catalog, guid);
-    }
-
-    function eid(self){
-      return IEntity.eid(self.catalog);
-    }
-
-    function commands(self){
-      return ITransaction.commands(self.catalog);
     }
 
     function resolve(self, refs){
@@ -1262,6 +1233,94 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
       _.implement(ISeqable, {seq: seq}),
       _.implement(IInclusive, {includes: includes}),
       _.implement(IEmptyableCollection, {empty: typedCatalog}));
+
+  })();
+
+  function TimeTravelCatalog(pos, max, history){
+    this.pos = pos;
+    this.max = max;
+    this.history = history;
+  }
+
+  function timeTravelCatalog2(max, catalog){
+    return new TimeTravelCatalog(0, max, [catalog]);
+  }
+
+  function timeTravelCatalog1(catalog){
+    return timeTravelCatalog(Infinity, catalog);
+  }
+
+  var timeTravelCatalog = _.overload(null, timeTravelCatalog1, timeTravelCatalog2);
+
+  (function(){
+
+    var forward = _.forwardWith(function(self){
+      return self.history[self.pos];
+    });
+
+    function mutator(manner){
+      return function(self, entities){
+        var catalog = self.history[self.pos];
+        var history = _.prepend(self.pos ? self.history.slice(self.pos) : self.history, manner(catalog, entities));
+        while(_.count(history) > self.max) {
+          history.pop();
+        }
+        return new self.constructor(0, self.max, history);
+      }
+    }
+
+    function undo(self){
+      return self.pos < count(self) - 1 ? new TimeTravelCatalog(self.pos + 1, self.max, self.history) : self;
+    }
+
+    function redo(self){
+      return self.pos > 0 ? new TimeTravelCatalog(self.pos - 1, self.max, self.history) : self;
+    }
+
+    function flush(self){
+      return new TimeTravelCatalog(0, self.max, [self.history[self.pos]]);
+    }
+
+    var load = mutator(ICatalog.load);
+    var add = mutator(ICatalog.add);
+    var edit = mutator(ICatalog.edit);
+    var destroy = mutator(ICatalog.destroy);
+    var dirty = forward(ICatalog.dirty);
+    var changes = forward(ICatalog.changes);
+    var eid = forward(IEntity.eid);
+    var resolve = forward(IResolver.resolve);
+    var query = forward(IQueryable.query);
+    var lookup = forward(ILookup.lookup);
+    var commands = forward(ITransaction.commands);
+    var count = forward(ICounted.count);
+    var contains = forward(IAssociative.contains);
+    var keys = forward(IMap.keys);
+    var vals = forward(IMap.vals);
+    var dissoc = forward(IMap.dissoc);
+    var reduce = forward(IReduce.reduce);
+    var first = forward(ISeq.first);
+    var rest = forward(ISeq.rest);
+    var next = forward(INext.next);
+    var seq = forward(ISeqable.seq);
+    var includes = forward(IInclusive.includes);
+
+    _.doto(TimeTravelCatalog,
+      _.implement(ITimeTravel, {undo: undo, redo: redo, flush: flush}),
+      _.implement(ICatalog, {dirty: dirty, load: load, add: add, edit: edit, destroy: destroy, changes: changes}),
+      _.implement(IEntity, {eid: eid}),
+      _.implement(IResolver, {resolve: resolve}),
+      _.implement(IQueryable, {query: query}),
+      _.implement(ITransaction, {commands: commands}),
+      _.implement(ICatalog, {dirty: dirty, load: load, add: add, edit: edit, destroy: destroy, changes: changes}),
+      _.implement(ICounted, {count: count}),
+      _.implement(IAssociative, {contains: contains}),
+      _.implement(IMap, {keys: keys, vals: vals, dissoc: dissoc}),
+      _.implement(IReduce, {reduce: reduce}),
+      _.implement(ILookup, {lookup: lookup}),
+      _.implement(ISeq, {first: first, rest: rest}),
+      _.implement(INext, {next: next}),
+      _.implement(ISeqable, {seq: seq}),
+      _.implement(IInclusive, {includes: includes}));
 
   })();
 
@@ -1744,6 +1803,127 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   })();
 
+  function UndoCommand(){
+  }
+
+  function undoCommand(){
+    return new UndoCommand();
+  }
+
+  (function(){
+
+    return _.doto(UndoCommand,
+      _.implement(IIdentifiable, {identifier: _.constantly("undo")}));
+
+  })();
+
+  function timeTravels(f, event){
+
+    function handle(self, command, next){
+      f(self.buffer);
+      $.raise(self.provider, event);
+      next(command);
+    }
+
+    return _.does(
+      _.implement(IMiddleware, {handle: handle}));
+
+  }
+
+  function UndoHandler(buffer, provider){
+    this.buffer = buffer;
+    this.provider = provider;
+  }
+
+  var undoHandler = _.constructs(UndoHandler);
+
+  function UndoneEvent(){
+  }
+
+  var undoneEvent = _.constructs(UndoneEvent);
+
+  (function(){
+
+    return _.doto(UndoneEvent,
+      _.implement(IIdentifiable, {identifier: _.constantly("undone")}));
+
+  })();
+
+  _.doto(UndoHandler,
+    timeTravels(ITransientTimeTravel.undo, undoneEvent()));
+
+  function RedoCommand(){
+  }
+
+  function redoCommand(){
+    return new RedoCommand();
+  }
+
+  (function(){
+
+    return _.doto(RedoCommand,
+      _.implement(IIdentifiable, {identifier: _.constantly("redo")}));
+
+  })();
+
+  function RedoHandler(buffer, provider){
+    this.buffer = buffer;
+    this.provider = provider;
+  }
+
+  var redoHandler = _.constructs(RedoHandler);
+
+  function RedoneEvent(){
+  }
+
+  var redoneEvent = _.constructs(RedoneEvent);
+
+  (function(){
+
+    return _.doto(RedoneEvent,
+      _.implement(IIdentifiable, {identifier: _.constantly("redone")}));
+
+  })();
+
+  _.doto(RedoHandler,
+    timeTravels(ITransientTimeTravel.redo, redoneEvent()));
+
+  function FlushCommand(){
+  }
+
+  function flushCommand(){
+    return new FlushCommand();
+  }
+
+  (function(){
+
+    return _.doto(FlushCommand,
+      _.implement(IIdentifiable, {identifier: _.constantly("flush")}));
+
+  })();
+
+  function FlushHandler(buffer, provider){
+    this.buffer = buffer;
+    this.provider = provider;
+  }
+
+  var flushHandler = _.constructs(FlushHandler);
+
+  function FlushedEvent(){
+  }
+
+  var flushedEvent = _.constructs(FlushedEvent);
+
+  (function(){
+
+    return _.doto(FlushedEvent,
+      _.implement(IIdentifiable, {identifier: _.constantly("flushed")}));
+
+  })();
+
+  _.doto(FlushHandler,
+    timeTravels(ITransientTimeTravel.flush, flushedEvent()));
+
   function AssertCommand(key, value, options){
     this.key = key;
     this.value = value;
@@ -1811,6 +1991,21 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
     _.doto(AssertHandler,
       _.implement(IMiddleware, {handle: handle}));
+
+  })();
+
+  function AssertedEvent(id, key, value){
+    this.id = id;
+    this.key = key;
+    this.value = value;
+  }
+
+  var assertedEvent = _.constructs(AssertedEvent);
+
+  (function(){
+
+    return _.doto(AssertedEvent,
+      _.implement(IIdentifiable, {identifier: _.constantly("asserted")}));
 
   })();
 
@@ -1897,21 +2092,6 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
     _.doto(SelectionHandler,
       _.implement(IMiddleware, {handle: handle}));
-
-  })();
-
-  function AssertedEvent(id, key, value){
-    this.id = id;
-    this.key = key;
-    this.value = value;
-  }
-
-  var assertedEvent = _.constructs(AssertedEvent);
-
-  (function(){
-
-    return _.doto(AssertedEvent,
-      _.implement(IIdentifiable, {identifier: _.constantly("asserted")}));
 
   })();
 
@@ -2325,7 +2505,20 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
       _.swap(self.catalog, f);
     }
 
+    function undo(self){
+      swap(self, ITimeTravel.undo);
+    }
+
+    function redo(self){
+      swap(self, ITimeTravel.redo);
+    }
+
+    function flush(self){
+      swap(self, ITimeTravel.flush);
+    }
+
     _.doto(Buffer,
+      _.implement(ITransientTimeTravel, {undo: undo, redo: redo, flush: flush}),
       _.implement(IFactory, {make: make}),
       _.implement(ILookup, {lookup: lookup}),
       _.implement(ISwap, {swap: swap}),
@@ -2370,6 +2563,9 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
           _.doto(handlerMiddleware(),
             mut.assoc(_, "load", loadHandler(buffer, events)),
             mut.assoc(_, "add", addHandler(buffer, events)),
+            mut.assoc(_, "undo", undoHandler(buffer, events)),
+            mut.assoc(_, "redo", redoHandler(buffer, events)),
+            mut.assoc(_, "flush", flushHandler(buffer, events)),
             mut.assoc(_, "cast", selectionHandler(model, castHandler(buffer, events))),
             mut.assoc(_, "tag", tagHandler(selectionHandler(model, assertHandler(buffer, events)))),
             mut.assoc(_, "untag", untagHandler(selectionHandler(model, retractHandler(buffer, events)))),
@@ -2411,7 +2607,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   })();
 
-  var buf = buffer(domain([tasks, notes]), $.cell(typedCatalog()));
+  var buf = buffer(domain([tasks, notes]), $.cell(timeTravelCatalog(typedCatalog())));
 
   _.each(function(el){
     var a = _.guid("a"), //TODO use memoize on fn with weakMap?
@@ -2447,6 +2643,9 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     queryCommand: queryCommand,
     selectCommand: selectCommand,
     deselectCommand: deselectCommand,
+    undoCommand: undoCommand,
+    redoCommand: redoCommand,
+    flushCommand: flushCommand,
     entityCatalog: entityCatalog,
     typedCatalog: typedCatalog,
     domain: domain,
