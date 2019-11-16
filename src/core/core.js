@@ -237,6 +237,14 @@ export function forwardTo(key){
   }
 }
 
+export function forwardWith(g){
+  return function forward(f){
+    return function(self, ...args){
+      return f.apply(this, [g(self), ...args]);
+    }
+  }
+}
+
 export function deprecated(){
   console.warn.apply(null, arguments);
 }
