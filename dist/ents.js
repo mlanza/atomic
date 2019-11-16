@@ -203,9 +203,8 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   })()
 
-  function ConstrainedCollection(cardinality, cap, constraints, values){
+  function ConstrainedCollection(cardinality, constraints, values){
     this.cardinality = cardinality;
-    this.cap = cap;
     this.constraints = constraints;
     this.values = values;
   }
@@ -213,6 +212,15 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
   (function(){
 
     //TODO eliminate field for type
+
+    var forward = _.forwardTo("values");
+    var first = forward(ISeq.first);
+    var rest = forward(ISeq.rest);
+    var next = forward(INext.next);
+    var includes = forward(IInclusive.includes);
+    var count = forward(ICounted.count);
+    var nth = forward(IIndexed.nth);
+    var contains = forward(IAssociative.contains);
 
     function reduce(self, xf, init){
       var memo = init,
@@ -231,43 +239,16 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
       }, init, _.range(0, count(self)));
     }
 
-    function first(self){
-      return ISeq.first(self.values);
-    }
-
-    function rest(self){
-      return ISeq.rest(self.values);
-    }
-
-    var next = _.comp(seq, rest);
-
-    function count(self){
-      return ICounted.count(self.values);
-    }
-
     function conj(self, value){
-      var values = _.conj(self.values, value);
-      return new self.constructor(self.cardinality, self.cap, self.constraints, _.drop(_.max(ICounted.count(values) - self.cap, 0), values));
-    }
-
-    function includes(self, value){
-      return _.detect(_.eq(value, _), self.values);
+      return new self.constructor(self.cardinality, self.constraints, _.conj(self.values, value));
     }
 
     function equiv(self, other){
       return self === other; //TODO self.constructor === other.constructor && _.every()
     }
 
-    function nth(self, idx){
-      return IIndexed.nth(self.values, idx);
-    }
-
     function assoc(self, idx, value){
-      return new self.constructor(self.cardinality, self.cap, self.constraints, IAssociative.assoc(self.values, idx, value));
-    }
-
-    function contains(self, idx){
-      return IAssociative.contains(self.values, idx);
+      return new self.constructor(self.cardinality, self.constraints, IAssociative.assoc(self.values, idx, value));
     }
 
     function seq(self){
@@ -275,7 +256,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     }
 
     function empty(self){
-      return new self.constructor(self.cardinality, self.cap, self.constraints, IEmptyableCollection.empty(self.values));
+      return new self.constructor(self.cardinality, self.constraints, IEmptyableCollection.empty(self.values));
     }
 
     function cardinality(self){
@@ -287,7 +268,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     }
 
     function fmap(self, f){
-      return new self.constructor(self.cardinality, self.cap, constraints, _.fmap(self.values, f));
+      return new self.constructor(self.cardinality, constraints, _.fmap(self.values, f));
     }
 
     function constraints1(self){
@@ -295,7 +276,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     }
 
     function constraints2(self, constraints){
-      return new self.constructor(self.cardinality, self.cap, constraints, self.values);
+      return new self.constructor(self.cardinality, constraints, self.values);
     }
 
     var constraints = _.overload(null, constraints1, constraints2);
@@ -321,10 +302,82 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   })();
 
-  var constrainedCollection = _.fnil(_.constructs(ConstrainedCollection), card(0, 1), 1, [], []),
-      optional = constrainedCollection(card(0, 1), 1),
-      required = constrainedCollection(card(1, 1), 1),
-      unlimited = constrainedCollection(card(0, Infinity), Infinity);
+  function CappedCollection(cap, coll){
+    this.cap = cap;
+    this.coll = coll;
+  }
+
+  var cappedCollection = _.constructs(CappedCollection);
+
+  (function(){
+
+    var forward = _.forwardTo("coll");
+    var reduce = forward(IReduce.reduce);
+    var reducekv = forward(IKVReduce.reducekv);
+    var first = forward(ISeq.first);
+    var rest = forward(ISeq.rest);
+    var next = forward(INext.next);
+    var count = forward(ICounted.count);
+    var includes = forward(IInclusive.includes);
+    var equiv = forward(IEquiv.equiv);
+    var nth = forward(IIndexed.nth);
+    var contains = forward(IAssociative.contains);
+    var seq = forward(ISeqable.seq);
+    var cardinality = forward(ICardinality.cardinality);
+    var deref = forward(IDeref.deref);
+
+    function fmap(self, f){
+      return new self.constructor(self.cap, _.fmap(self.coll, f));
+    }
+
+    function conj(self, value){
+      var coll = ICollection.conj(self.coll, value);
+      return new self.constructor(self.cap, _.into(IEmptyableCollection.empty(coll), _.drop(_.max(ICounted.count(coll) - self.cap, 0), coll)));
+    }
+
+    function assoc(self, idx, value){
+      return new self.constructor(self.cap, IAssociative.assoc(self.coll, idx, value));
+    }
+
+    function empty(self){
+      return new self.constructor(self.cap, IEmptyableCollection.empty(self.coll));
+    }
+
+    function constraints1(self){
+      return IConstrained.constraints(self.coll);
+    }
+
+    function constraints2(self, constraints){
+      return new self.constructor(self.cap, IConstrained.constraints(self.coll, constraints));
+    }
+
+    var constraints = _.overload(null, constraints1, constraints2);
+
+    _.doto(CappedCollection,
+      _.implement(IEmptyableCollection, {empty: empty}),
+      _.implement(IFunctor, {fmap: fmap}),
+      _.implement(IConstrained, {constraints: constraints}),
+      _.implement(ILookup, {lookup: nth}),
+      _.implement(IAssociative, {assoc: assoc, contains: contains}),
+      _.implement(IDeref, {deref: deref}),
+      _.implement(ICounted, {count: count}),
+      _.implement(IReduce, {reduce: reduce}),
+      _.implement(IKVReduce, {reducekv: reducekv}),
+      _.implement(ICardinality, {cardinality: cardinality}),
+      _.implement(ISeq, {first: first, rest: rest}),
+      _.implement(INext, {next: next}),
+      _.implement(IEquiv, {equiv: equiv}),
+      _.implement(IInclusive, {includes: includes}),
+      _.implement(ICollection, {conj: conj}),
+      _.implement(IIndexed, {nth: nth}),
+      _.implement(ISeqable, {seq: seq}));
+
+  })();
+
+  var constrainedCollection = _.fnil(_.constructs(ConstrainedCollection), card(0, 1), [], []),
+      optional = cappedCollection(1, constrainedCollection(card(0, 1))),
+      required = cappedCollection(1, constrainedCollection(card(1, 1))),
+      unlimited = constrainedCollection(card(0, Infinity));
 
   function reassign(self, key, f){
     var field = IKind.field(self, key),
@@ -366,13 +419,6 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
   }
 
   var asserts = _.overload(null, asserts1, asserts2, asserts3);
-
-  function fields(metas){
-    return _.reduce(function(memo, meta){
-      memo[meta.StaticName] = field(meta);
-      return memo;
-    }, {}, metas);
-  }
 
   var behaveAsEntity = (function(){
 
@@ -428,20 +474,6 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   })();
 
-  function Task(repo, attrs){
-    this.repo = repo;
-    this.attrs = attrs;
-  }
-
-  behaveAsEntity(Task);
-
-  function Note(repo, attrs){
-    this.repo = repo;
-    this.attrs = attrs;
-  }
-
-  behaveAsEntity(Note);
-
   function titleBehavior(key){
 
     function title1(self){
@@ -459,10 +491,22 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   }
 
+  function Task(repo, attrs){
+    this.repo = repo;
+    this.attrs = attrs;
+  }
+
   _.doto(Task,
+    behaveAsEntity,
     titleBehavior("summary"));
 
+  function Note(repo, attrs){
+    this.repo = repo;
+    this.attrs = attrs;
+  }
+
   _.doto(Note,
+    behaveAsEntity,
     titleBehavior("body"));
 
   var ReadOnlyBinField = (function(){
@@ -628,12 +672,12 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   var Bin = (function(){
 
-    function Bin(type, fields, items, title, identifier){
+    function Bin(type, title, identifier, fields, items){
       this.type = type;
-      this.fields = fields;
-      this.items = items;
       this.title = title;
       this.identifier = identifier;
+      this.fields = fields;
+      this.items = items;
     }
 
     function make(self, attrs){
@@ -682,7 +726,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   var tasks = (function(){
 
-    return _.doto(new Bin(Task, {
+    return _.doto(new Bin(Task, "Task", "task", {
       id: labeledField("ID", defaultedBinField(_.comp(_.array, _.guid), binField("id", required))),
       summary: labeledField("Summary", binField("summary", required)),
       priority: labeledField("Priority", defaultedBinField(_.constantly(["C"]), binField("priority", optional))),
@@ -693,7 +737,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
       note: labeledField("Note", multiBinField("note")),
       expanded: labeledField("Expanded", binField("expanded", required)),
       tag: labeledField("Tag", multiBinField("tag"))
-    }, [], "Task", "task"), function(bin){
+    }, []), function(bin){
 
       _.each(function(item){
         bin.items.push(item);
@@ -722,10 +766,10 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   var notes = (function(){
 
-    return _.doto(new Bin(Note, {
+    return _.doto(new Bin(Note, "Note", "note", {
       id: labeledField("ID", defaultedBinField(_.comp(_.array, _.guid), binField("id", required))),
       body: labeledField("Body", binField("body", required))
-    }, [], "Note", "note"), function(bin){
+    }, []), function(bin){
 
       _.each(function(item){
         bin.items.push(item);
@@ -1008,7 +1052,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
       } else if (before) {
         return [destruction(before)];
       } else if (after) {
-        return addition(after);
+        return [addition(after)];
       } else {
         return [];
       }
