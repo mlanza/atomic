@@ -159,6 +159,10 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     init: null
   });
 
+  var IDefaultField = _.protocol({
+    defaultField: null
+  });
+
   var IConstrained = _.protocol({ //constraints are validation which expose their data for use iby the UI
     constraints: null
   });
@@ -542,11 +546,11 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     }
 
     function lookup(self, key){
-      return IField.aget(field(self, key), self);
+      return IField.aget(field(self, key) || IDefaultField.defaultField(self, key), self);
     }
 
     function assoc(self, key, values){
-      return IField.aset(field(self, key), self, values);
+      return IField.aset(field(self, key) || IDefaultField.defaultField(self, key), self, values);
     }
 
     function contains(self, key){
@@ -573,44 +577,9 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   })();
 
-  function titleBehavior(key){
+  var ReadOnlyField = (function(){
 
-    function title1(self){
-      return _.just(self, _.get(_, key), _.first);
-    }
-
-    function title2(self, text){
-      return assert(self, key, text);
-    }
-
-    var title = _.overload(null, title1, title2);
-
-    return _.does(
-      _.implement(ISubject, {title: title}));
-
-  }
-
-  function Task(repo, attrs){
-    this.repo = repo;
-    this.attrs = attrs;
-  }
-
-  _.doto(Task,
-    behaveAsEntity,
-    titleBehavior("summary"));
-
-  function Note(repo, attrs){
-    this.repo = repo;
-    this.attrs = attrs;
-  }
-
-  _.doto(Note,
-    behaveAsEntity,
-    titleBehavior("body"));
-
-  var ReadOnlyBinField = (function(){
-
-    function ReadOnlyBinField(field){
+    function ReadOnlyField(field){
       this.field = field;
     }
 
@@ -630,13 +599,13 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
       return IIdentifiable.identifier(self.field);
     }
 
-    return _.doto(ReadOnlyBinField,
+    return _.doto(ReadOnlyField,
       _.implement(IIdentifiable, {identifier: identifier}),
       _.implement(IField, {aget: aget, aset: aset, init: init}));
 
   })();
 
-  var readOnlyBinField = _.constructs(ReadOnlyBinField);
+  var readOnlyField = _.constructs(ReadOnlyField);
 
   var DefaultedField = (function(){
 
@@ -677,7 +646,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     }
 
     function aget(self, entity){
-      return _.into(self.emptyColl, _.array(_.get(entity.attrs, self.key)));
+      return _.into(self.emptyColl, _.maybe(entity.attrs, _.get(_, self.key), _.array));
     }
 
     function aset(self, entity, values){
@@ -859,16 +828,64 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   })();
 
-  function schema(){
-    return new Schema({});
+  function schema(singular, plural){
+    return new Schema({}, singular, plural);
   }
 
   var bin = _.constructs(Bin);
 
+  function titleBehavior(key){
+
+    function title1(self){
+      return _.just(self, _.get(_, key), _.first);
+    }
+
+    function title2(self, text){
+      return assert(self, key, text);
+    }
+
+    var title = _.overload(null, title1, title2);
+
+    return _.does(
+      _.implement(ISubject, {title: title}));
+
+  }
+
+  function defaultFieldBehavior(singular, plural){
+
+    function defaultField(self, key){
+      return _.isArray(_.get(self.attrs, key)) ? plural(key) : singular(key);
+    }
+
+    return _.does(
+      _.implement(IDefaultField, {defaultField: defaultField}));
+
+  }
+
+  function Task(repo, attrs){
+    this.repo = repo;
+    this.attrs = attrs;
+  }
+
+  _.doto(Task,
+    behaveAsEntity,
+    defaultFieldBehavior(binField, multiBinField),
+    titleBehavior("summary"));
+
+  function Note(repo, attrs){
+    this.repo = repo;
+    this.attrs = attrs;
+  }
+
+  _.doto(Note,
+    behaveAsEntity,
+    defaultFieldBehavior(binField, multiBinField),
+    titleBehavior("body"));
+
   var tasks = (function(){
 
     return _.doto(new Bin(Task, "Task", "task",
-      _.conj(schema(),
+      _.conj(schema(binField, multiBinField),
         labeledField("ID", defaultedField(_.comp(_.array, _.guid), binField("id", required))),
         labeledField("Summary", binField("summary", required)),
         labeledField("Priority", defaultedField(_.constantly(["C"]), binField("priority", optional))),
@@ -909,7 +926,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
   var notes = (function(){
 
     return _.doto(new Bin(Note, "Note", "note",
-      _.conj(schema(),
+      _.conj(schema(binField, multiBinField),
         labeledField("ID", defaultedField(_.comp(_.array, _.guid), binField("id", required))),
         labeledField("Body", binField("body", required))),
       []), function(bin){
