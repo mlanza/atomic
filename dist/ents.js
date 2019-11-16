@@ -102,13 +102,9 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
   var ITimeTravel = _.protocol({
     undo: null,
     redo: null,
-    flush: null
-  });
-
-  var ITransientTimeTravel = _.protocol({
-    undo: null,
-    redo: null,
-    flush: null
+    flush: null,
+    undoable: null,
+    redoable: null
   });
 
   var IIntention = _.protocol({
@@ -196,11 +192,96 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     ITransaction: ITransaction,
     IEntitySelector: IEntitySelector,
     ITimeTravel: ITimeTravel,
-    ITransientTimeTravel: ITransientTimeTravel,
     IView: IView,
     IMiddleware: IMiddleware,
     ICatalog: ICatalog
   }
+
+  function TimeTravelCell(pos, max, history, cell){
+    this.pos = pos;
+    this.max = max;
+    this.history = history;
+    this.cell = cell;
+  }
+
+  function timeTravelCell2(max, cell){
+    return new TimeTravelCell(0, max, [_.deref(cell)], cell);
+  }
+
+  function timeTravelCell1(cell){
+    return timeTravelCell2(Infinity, cell);
+  }
+
+  var timeTravelCell = _.overload(null, timeTravelCell1, timeTravelCell2);
+
+  (function(){
+
+    function undo(self){
+      if (undoable(self)) {
+        self.pos += 1;
+        _.reset(self.cell, self.history[self.pos]);
+      }
+    }
+
+    function redo(self){
+      if (redoable(self)) {
+        self.pos -= 1;
+        _.reset(self.cell, self.history[self.pos]);
+      }
+    }
+
+    function flush(self){
+      self.history = [self.history[self.pos]];
+      self.pos = 0;
+    }
+
+    function undoable(self){
+      return self.pos < ICounted.count(self.history);
+    }
+
+    function redoable(self){
+      return self.pos > 0;
+    }
+
+    function deref(self){
+      return IDeref.deref(self.cell);
+    }
+
+    function reset(self, state){
+      var history = self.pos ? self.history.slice(self.pos) : self.history;
+      history.unshift(state);
+      while(_.count(history) > self.max) {
+        history.pop();
+      }
+      self.history = history;
+      self.pos = 0;
+      _.reset(self.cell, state);
+    }
+
+    function swap(self, f){
+      reset(self, f(IDeref.deref(self.cell)));
+    }
+
+    function sub(self, observer){
+      $.sub(self.cell, observer);
+    }
+
+    function unsub(self, observer){
+      $.unsub(self.cell, observer);
+    }
+
+    function subscribed(self){
+      return $.subscribed(self.cell);
+    }
+
+    _.doto(TimeTravelCell,
+      _.implement(ITimeTravel, {undo: undo, redo: redo, flush: flush, undoable: undoable, redoable: redoable}),
+      _.implement(_.IDeref, {deref: deref}),
+      _.implement(_.IReset, {reset: reset}),
+      _.implement(_.ISwap, {swap: swap}),
+      _.implement($.ISubscribe, {sub: sub, unsub: unsub, subscribed: subscribed}))
+
+  })();
 
   function DerefCheck(check){
     this.check = check;
@@ -1236,94 +1317,6 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   })();
 
-  function TimeTravelCatalog(pos, max, history){
-    this.pos = pos;
-    this.max = max;
-    this.history = history;
-  }
-
-  function timeTravelCatalog2(max, catalog){
-    return new TimeTravelCatalog(0, max, [catalog]);
-  }
-
-  function timeTravelCatalog1(catalog){
-    return timeTravelCatalog(Infinity, catalog);
-  }
-
-  var timeTravelCatalog = _.overload(null, timeTravelCatalog1, timeTravelCatalog2);
-
-  (function(){
-
-    var forward = _.forwardWith(function(self){
-      return self.history[self.pos];
-    });
-
-    function mutator(manner){
-      return function(self, entities){
-        var catalog = self.history[self.pos];
-        var history = _.prepend(self.pos ? self.history.slice(self.pos) : self.history, manner(catalog, entities));
-        while(_.count(history) > self.max) {
-          history.pop();
-        }
-        return new self.constructor(0, self.max, history);
-      }
-    }
-
-    function undo(self){
-      return self.pos < count(self) - 1 ? new TimeTravelCatalog(self.pos + 1, self.max, self.history) : self;
-    }
-
-    function redo(self){
-      return self.pos > 0 ? new TimeTravelCatalog(self.pos - 1, self.max, self.history) : self;
-    }
-
-    function flush(self){
-      return new TimeTravelCatalog(0, self.max, [self.history[self.pos]]);
-    }
-
-    var load = mutator(ICatalog.load);
-    var add = mutator(ICatalog.add);
-    var edit = mutator(ICatalog.edit);
-    var destroy = mutator(ICatalog.destroy);
-    var dirty = forward(ICatalog.dirty);
-    var changes = forward(ICatalog.changes);
-    var eid = forward(IEntity.eid);
-    var resolve = forward(IResolver.resolve);
-    var query = forward(IQueryable.query);
-    var lookup = forward(ILookup.lookup);
-    var commands = forward(ITransaction.commands);
-    var count = forward(ICounted.count);
-    var contains = forward(IAssociative.contains);
-    var keys = forward(IMap.keys);
-    var vals = forward(IMap.vals);
-    var dissoc = forward(IMap.dissoc);
-    var reduce = forward(IReduce.reduce);
-    var first = forward(ISeq.first);
-    var rest = forward(ISeq.rest);
-    var next = forward(INext.next);
-    var seq = forward(ISeqable.seq);
-    var includes = forward(IInclusive.includes);
-
-    _.doto(TimeTravelCatalog,
-      _.implement(ITimeTravel, {undo: undo, redo: redo, flush: flush}),
-      _.implement(ICatalog, {dirty: dirty, load: load, add: add, edit: edit, destroy: destroy, changes: changes}),
-      _.implement(IEntity, {eid: eid}),
-      _.implement(IResolver, {resolve: resolve}),
-      _.implement(IQueryable, {query: query}),
-      _.implement(ITransaction, {commands: commands}),
-      _.implement(ICatalog, {dirty: dirty, load: load, add: add, edit: edit, destroy: destroy, changes: changes}),
-      _.implement(ICounted, {count: count}),
-      _.implement(IAssociative, {contains: contains}),
-      _.implement(IMap, {keys: keys, vals: vals, dissoc: dissoc}),
-      _.implement(IReduce, {reduce: reduce}),
-      _.implement(ILookup, {lookup: lookup}),
-      _.implement(ISeq, {first: first, rest: rest}),
-      _.implement(INext, {next: next}),
-      _.implement(ISeqable, {seq: seq}),
-      _.implement(IInclusive, {includes: includes}));
-
-  })();
-
   _.doto(_.Nil,
     _.implement(ITransaction, {commands: _.constantly(null)}));
 
@@ -1817,11 +1810,13 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   })();
 
-  function timeTravels(f, event){
+  function timeTravels(able, effect, event){
 
     function handle(self, command, next){
-      f(self.buffer);
-      $.raise(self.provider, event);
+      if (able(self.buffer)){
+        effect(self.buffer);
+        $.raise(self.provider, event);
+      }
       next(command);
     }
 
@@ -1850,7 +1845,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
   })();
 
   _.doto(UndoHandler,
-    timeTravels(ITransientTimeTravel.undo, undoneEvent()));
+    timeTravels(ITimeTravel.undoable, ITimeTravel.undo, undoneEvent()));
 
   function RedoCommand(){
   }
@@ -1886,7 +1881,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
   })();
 
   _.doto(RedoHandler,
-    timeTravels(ITransientTimeTravel.redo, redoneEvent()));
+    timeTravels(ITimeTravel.redoable, ITimeTravel.redo, redoneEvent()));
 
   function FlushCommand(){
   }
@@ -1922,7 +1917,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
   })();
 
   _.doto(FlushHandler,
-    timeTravels(ITransientTimeTravel.flush, flushedEvent()));
+    timeTravels(_.constantly(true), ITimeTravel.flush, flushedEvent()));
 
   function AssertCommand(key, value, options){
     this.key = key;
@@ -2477,6 +2472,8 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   (function(){
 
+    var forward = _.forwardTo("catalog");
+
     function make(self, attrs){
       return IFactory.make(self.repo, attrs);
     }
@@ -2501,24 +2498,15 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
       return IQueryable.query(self.repo, plan);
     }
 
-    function swap(self, f){
-      _.swap(self.catalog, f);
-    }
-
-    function undo(self){
-      swap(self, ITimeTravel.undo);
-    }
-
-    function redo(self){
-      swap(self, ITimeTravel.redo);
-    }
-
-    function flush(self){
-      swap(self, ITimeTravel.flush);
-    }
+    var swap = forward(ISwap.swap);
+    var undo = forward(ITimeTravel.undo);
+    var redo = forward(ITimeTravel.redo);
+    var flush = forward(ITimeTravel.flush);
+    var undoable = forward(ITimeTravel.undoable);
+    var redoable = forward(ITimeTravel.redoable);
 
     _.doto(Buffer,
-      _.implement(ITransientTimeTravel, {undo: undo, redo: redo, flush: flush}),
+      _.implement(ITimeTravel, {undo: undo, redo: redo, flush: flush, undoable: undoable, redoable: redoable}),
       _.implement(IFactory, {make: make}),
       _.implement(ILookup, {lookup: lookup}),
       _.implement(ISwap, {swap: swap}),
@@ -2607,7 +2595,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   })();
 
-  var buf = buffer(domain([tasks, notes]), $.cell(timeTravelCatalog(typedCatalog())));
+  var buf = buffer(domain([tasks, notes]), timeTravelCell($.cell(typedCatalog())));
 
   _.each(function(el){
     var a = _.guid("a"), //TODO use memoize on fn with weakMap?
