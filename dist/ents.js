@@ -94,6 +94,10 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     owner: null
   });
 
+  var IMergeable = _.protocol({
+    merge: null
+  });
+
   var IEntitySelector = _.protocol({
     select: null,
     deselect: null
@@ -634,9 +638,9 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   var readOnlyBinField = _.constructs(ReadOnlyBinField);
 
-  var DefaultedBinField = (function(){
+  var DefaultedField = (function(){
 
-    function DefaultedBinField(init, field){
+    function DefaultedField(init, field){
       this.init = init;
       this.field = field;
     }
@@ -657,13 +661,13 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
       return IIdentifiable.identifier(self.field);
     }
 
-    return _.doto(DefaultedBinField,
+    return _.doto(DefaultedField,
       _.implement(IIdentifiable, {identifier: identifier}),
       _.implement(IField, {aget: aget, aset: aset, init: init}));
 
   })();
 
-  var defaultedBinField = _.fnil(_.constructs(DefaultedBinField), _.array, null);
+  var defaultedField = _.fnil(_.constructs(DefaultedField), _.array, null);
 
   var BinField = (function(){
 
@@ -767,11 +771,11 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   var Bin = (function(){
 
-    function Bin(type, title, identifier, fields, items){
+    function Bin(type, title, identifier, schema, items){
       this.type = type;
       this.title = title;
       this.identifier = identifier;
-      this.fields = fields;
+      this.schema = schema;
       this.items = items;
     }
 
@@ -779,7 +783,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
       return attrs ? new self.type(self, attrs) : _.reduce(function(memo, key){
         var fld = field(self, key);
         return IField.aset(fld, memo, IField.init(fld));
-      }, new self.type(self, {}), _.keys(self.fields));
+      }, new self.type(self, {}), _.keys(self.schema));
     }
 
     function title(self){
@@ -791,7 +795,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     }
 
     function field(self, key){
-      return _.get(self.fields, key);
+      return _.get(self.schema, key);
     }
 
     function query(self, plan){
@@ -804,7 +808,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     }
 
     function keys(self){
-      return _.keys(self.fields);
+      return _.keys(self.schema);
     }
     return _.doto(Bin,
       _.implement(IKind, {field: field}),
@@ -817,22 +821,65 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   })();
 
+  function Schema(fields){
+    this.fields = fields;
+  }
+
+  (function(){
+
+    function conj(self, field){
+      return new self.constructor(_.assoc(self.fields, IIdentifiable.identifier(field), field));
+    }
+
+    function lookup(self, key){
+      return _.get(self.fields, key);
+    }
+
+    function keys(self){
+      return _.keys(self.fields);
+    }
+
+    function vals(self){
+      return _.vals(self.fields);
+    }
+
+    function dissoc(self, key){
+      return new self.constructor(_.dissoc(self.fields, key));
+    }
+
+    function merge(self, other){
+      return _.reduce(_.conj, self, _.vals(other));
+    }
+
+    _.doto(Schema,
+      _.implement(IMergeable, {merge: merge}),
+      _.implement(IMap, {keys: keys, dissoc: dissoc}),
+      _.implement(ILookup, {lookup: lookup}),
+      _.implement(ICollection, {conj: conj}));
+
+  })();
+
+  function schema(){
+    return new Schema({});
+  }
+
   var bin = _.constructs(Bin);
 
   var tasks = (function(){
 
-    return _.doto(new Bin(Task, "Task", "task", {
-      id: labeledField("ID", defaultedBinField(_.comp(_.array, _.guid), binField("id", required))),
-      summary: labeledField("Summary", binField("summary", required)),
-      priority: labeledField("Priority", defaultedBinField(_.constantly(["C"]), binField("priority", optional))),
-      detail: labeledField("Detail", binField("detail", optional)),
-      due: labeledField("Due Date", binField("due", optional)),
-      assignee: labeledField("Assignee", binField("assignee", optional)),
-      subtask: labeledField("Subtask", multiBinField("subtask")),
-      note: labeledField("Note", multiBinField("note")),
-      expanded: labeledField("Expanded", binField("expanded", required)),
-      tag: labeledField("Tag", multiBinField("tag"))
-    }, []), function(bin){
+    return _.doto(new Bin(Task, "Task", "task",
+      _.conj(schema(),
+        labeledField("ID", defaultedField(_.comp(_.array, _.guid), binField("id", required))),
+        labeledField("Summary", binField("summary", required)),
+        labeledField("Priority", defaultedField(_.constantly(["C"]), binField("priority", optional))),
+        labeledField("Detail", binField("detail", optional)),
+        labeledField("Due Date", binField("due", optional)),
+        labeledField("Assignee", binField("assignee", optional)),
+        labeledField("Subtask", multiBinField("subtask")),
+        labeledField("Note", multiBinField("note")),
+        labeledField("Expanded", binField("expanded", required)),
+        labeledField("Tag", multiBinField("tag"))),
+      []), function(bin){
 
       _.each(function(item){
         bin.items.push(item);
@@ -861,10 +908,11 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   var notes = (function(){
 
-    return _.doto(new Bin(Note, "Note", "note", {
-      id: labeledField("ID", defaultedBinField(_.comp(_.array, _.guid), binField("id", required))),
-      body: labeledField("Body", binField("body", required))
-    }, []), function(bin){
+    return _.doto(new Bin(Note, "Note", "note",
+      _.conj(schema(),
+        labeledField("ID", defaultedField(_.comp(_.array, _.guid), binField("id", required))),
+        labeledField("Body", binField("body", required))),
+      []), function(bin){
 
       _.each(function(item){
         bin.items.push(item);
