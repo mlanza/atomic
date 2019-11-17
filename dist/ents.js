@@ -187,8 +187,14 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     field: null
   });
 
+  function _constraints2(self, f){
+    return IConstrained.constraints(self, _.isFunction(f) ? f(IConstrained.constraints(self)) : f);
+  }
+
+  var _constraints = _.overload(null, IConstrained.constraints, _constraints2);
+
   function constrain(self, constraint){
-    return IConstrained.constraints(self, _.append(IConstrained.constraints(self), constraint));
+    return _constraints(self, _.append(_, constraint));
   }
 
   var protocols = {
@@ -2682,7 +2688,11 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     Object.assign(window, {ol: ol});
   }, dom.sel("#outline"));
 
-  return _.just({
+  return _.just(protocols, _.reduce(_.merge, _, _.map(function(protocol){
+    return _.reduce(function(memo, key){
+      return _.assoc(memo, key, protocol[key]);
+    }, {}, Object.keys(protocol));
+  }, _.vals(protocols))), _.merge(_, {
     optional: optional,
     required: required,
     unlimited: unlimited,
@@ -2705,15 +2715,12 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     typedCatalog: typedCatalog,
     validate: validate,
     constrain: constrain,
+    constraints: _constraints,
     domain: domain,
     assert: assert,
     retract: retract,
     asserts: asserts
-  }, _.merge(_, protocols), _.reduce(_.merge, _, _.map(function(protocol){
-    return _.reduce(function(memo, key){
-      return _.assoc(memo, key, protocol[key]);
-    }, {}, Object.keys(protocol));
-  }, _.vals(protocols))), _.impart(_, _.partly));
+  }), _.impart(_, _.partly));
 
 });
 
