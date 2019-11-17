@@ -187,6 +187,10 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     field: null
   });
 
+  function constrain(self, constraint){
+    return IConstrained.constraints(self, _.append(IConstrained.constraints(self), constraint));
+  }
+
   var protocols = {
     IMultiDictionary: IMultiDictionary,
     IIdentifiable: IIdentifiable,
@@ -310,8 +314,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   })()
 
-  function ConstrainedCollection(cardinality, constraints, values){
-    this.cardinality = cardinality;
+  function ConstrainedCollection(constraints, values){
     this.constraints = constraints;
     this.values = values;
   }
@@ -347,7 +350,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     }
 
     function conj(self, value){
-      return new self.constructor(self.cardinality, self.constraints, _.conj(self.values, value));
+      return new self.constructor(self.constraints, _.conj(self.values, value));
     }
 
     function equiv(self, other){
@@ -355,7 +358,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     }
 
     function assoc(self, idx, value){
-      return new self.constructor(self.cardinality, self.constraints, IAssociative.assoc(self.values, idx, value));
+      return new self.constructor(self.constraints, IAssociative.assoc(self.values, idx, value));
     }
 
     function seq(self){
@@ -363,11 +366,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     }
 
     function empty(self){
-      return new self.constructor(self.cardinality, self.constraints, IEmptyableCollection.empty(self.values));
-    }
-
-    function cardinality(self){
-      return self.cardinality;
+      return new self.constructor(self.constraints, IEmptyableCollection.empty(self.values));
     }
 
     function deref(self){
@@ -375,15 +374,15 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     }
 
     function fmap(self, f){
-      return new self.constructor(self.cardinality, constraints, _.fmap(self.values, f));
+      return new self.constructor(self.constraints, _.fmap(self.values, f));
     }
 
     function constraints1(self){
-      return _.seq(self.constraints) ? vd.and(self.cardinality, vd.collOf(_.apply(vd.and, self.constraints))) : self.cardinality;
+      return self.constraints;
     }
 
     function constraints2(self, constraints){
-      return new self.constructor(self.cardinality, _.isFunction(constraints) ? constraints(self.constraints) : constraints, self.values);
+      return new self.constructor(constraints, self.values);
     }
 
     var constraints = _.overload(null, constraints1, constraints2);
@@ -398,7 +397,6 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
       _.implement(ICounted, {count: count}),
       _.implement(IReduce, {reduce: reduce}),
       _.implement(IKVReduce, {reducekv: reducekv}),
-      _.implement(ICardinality, {cardinality: cardinality}),
       _.implement(ISeq, {first: first, rest: rest}),
       _.implement(INext, {next: next}),
       _.implement(IEquiv, {equiv: equiv}),
@@ -409,12 +407,12 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   })();
 
-  function CappedCollection(cap, coll){
-    this.cap = cap;
+  function ClampedCollection(cardinality, coll){
+    this.cardinality = cardinality;
     this.coll = coll;
   }
 
-  var cappedCollection = _.constructs(CappedCollection);
+  var clampedCollection = _.constructs(ClampedCollection);
 
   (function(){
 
@@ -434,20 +432,20 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     var deref = forward(IDeref.deref);
 
     function fmap(self, f){
-      return new self.constructor(self.cap, _.fmap(self.coll, f));
+      return new self.constructor(self.cardinality, _.fmap(self.coll, f));
     }
 
     function conj(self, value){
       var coll = ICollection.conj(self.coll, value);
-      return new self.constructor(self.cap, _.into(IEmptyableCollection.empty(coll), _.drop(_.max(ICounted.count(coll) - self.cap, 0), coll)));
+      return new self.constructor(self.cardinality, _.into(IEmptyableCollection.empty(coll), _.drop(_.max(ICounted.count(coll) - IBounds.end(self.cardinality), 0), coll)));
     }
 
     function assoc(self, idx, value){
-      return new self.constructor(self.cap, IAssociative.assoc(self.coll, idx, value));
+      return new self.constructor(self.cardinality, IAssociative.assoc(self.coll, idx, value));
     }
 
     function empty(self){
-      return new self.constructor(self.cap, IEmptyableCollection.empty(self.coll));
+      return new self.constructor(self.cardinality, _.into(IEmptyableCollection.empty(self.coll), _.take(IBounds.start(self.cardinality), self.coll)));
     }
 
     function constraints1(self){
@@ -455,12 +453,12 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     }
 
     function constraints2(self, constraints){
-      return new self.constructor(self.cap, IConstrained.constraints(self.coll, constraints));
+      return new self.constructor(self.cardinality, IConstrained.constraints(self.coll, constraints));
     }
 
     var constraints = _.overload(null, constraints1, constraints2);
 
-    _.doto(CappedCollection,
+    _.doto(ClampedCollection,
       _.implement(IEmptyableCollection, {empty: empty}),
       _.implement(IFunctor, {fmap: fmap}),
       _.implement(IConstrained, {constraints: constraints}),
@@ -481,10 +479,10 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   })();
 
-  var constrainedCollection = _.fnil(_.constructs(ConstrainedCollection), card(0, 1), [], []),
-      optional = cappedCollection(1, constrainedCollection(card(0, 1))),
-      required = cappedCollection(1, constrainedCollection(card(1, 1))),
-      unlimited = constrainedCollection(card(0, Infinity));
+  var constrainedCollection = _.fnil(_.constructs(ConstrainedCollection), vd.and(card(0, 1)), [], []),
+      optional = clampedCollection(card(0, 1), constrainedCollection(vd.and(card(0, 1)))),
+      required = clampedCollection(card(1, 1), constrainedCollection(vd.and(card(1, 1)))),
+      unlimited = constrainedCollection(vd.and(card(0, Infinity)));
 
   function reassign(self, key, f){
     var field = IKind.field(self, key),
@@ -2706,6 +2704,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     entityCatalog: entityCatalog,
     typedCatalog: typedCatalog,
     validate: validate,
+    constrain: constrain,
     domain: domain,
     assert: assert,
     retract: retract,
