@@ -58,10 +58,6 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     this.most = most;
   }
 
-  function validate(obj){
-    return _.seq(vd.check(IConstrained.constraints(obj), obj));
-  }
-
   (function(){
 
     function start(self){
@@ -195,6 +191,10 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   function constrain(self, constraint){
     return _constraints(self, _.append(_, constraint));
+  }
+
+  function validate(obj){
+    return _.seq(vd.check(IConstrained.constraints(obj), obj));
   }
 
   var protocols = {
@@ -646,6 +646,30 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   var defaultedField = _.fnil(_.constructs(DefaultedField), _.array, null);
 
+  var BinComputedField = (function(){
+
+    function BinComputedField(key, computations, emptyColl){
+      this.key = key;
+      this.computations = computations;
+      this.emptyColl = emptyColl;
+    }
+
+    function aget(self, entity){
+      return _.into(self.emptyColl, _.filter(_.isSome, _.map(_.applying(entity), self.computations)));
+    }
+
+    function identifier(self){
+      return self.key;
+    }
+
+    return _.doto(BinComputedField,
+      _.implement(IIdentifiable, {identifier: identifier}),
+      _.implement(IField, {aget: aget}));
+
+  })();
+
+  var binComputedField = _.fnil(_.constructs(BinComputedField), null, [], optional);
+
   var BinField = (function(){
 
     function BinField(key, emptyColl){
@@ -892,6 +916,20 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   var tasks = (function(){
 
+    function flag(name, pred){
+      return function(entity){
+        return pred(entity) ? name : null;
+      }
+    }
+
+    function isOverdue(entity){
+      return _.maybe(entity, _.get(_, "due"), _.first, _.gt(new Date(), _)); //impure
+    }
+
+    function isImportant(entity){
+      return _.maybe(entity, _.get(_, "priority"), _.detect(_.eq(_, "A"), _));
+    }
+
     return _.doto(new Bin(Task, "Task", "task",
       _.conj(schema(),
         labeledField("ID", defaultedField(_.comp(_.array, _.guid), binField("id", required))),
@@ -899,6 +937,8 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
         labeledField("Priority", defaultedField(_.constantly(["C"]), binField("priority", optional))),
         labeledField("Detail", binField("detail", optional)),
         labeledField("Due Date", binField("due", optional)),
+        labeledField("Overdue", binComputedField("overdue", [isOverdue], optional)),
+        labeledField("Flags", binComputedField("flags", [flag("overdue", isOverdue), flag("important", isImportant)], unlimited)),
         labeledField("Assignee", binField("assignee", optional)),
         labeledField("Subtask", multiBinField("subtask")),
         labeledField("Note", multiBinField("note")),
@@ -914,6 +954,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
         id: _.guid("a"),
         summary: "Build backyard patio",
         priority: "A",
+        due: _.add(new Date(), _.days(-2)),
         expanded: true,
         subtask: [_.guid("b"), _.guid("c")],
         note: [_.guid("d")]
