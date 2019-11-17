@@ -58,6 +58,10 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     this.most = most;
   }
 
+  function validate(obj){
+    return _.seq(vd.check(IConstrained.constraints(obj), obj));
+  }
+
   (function(){
 
     function start(self){
@@ -375,11 +379,11 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     }
 
     function constraints1(self){
-      return vd.and(self.cardinality, _.maybe(self.constraints, vd.collOf));
+      return _.seq(self.constraints) ? vd.and(self.cardinality, vd.collOf(_.apply(vd.and, self.constraints))) : self.cardinality;
     }
 
     function constraints2(self, constraints){
-      return new self.constructor(self.cardinality, constraints, self.values);
+      return new self.constructor(self.cardinality, _.isFunction(constraints) ? constraints(self.constraints) : constraints, self.values);
     }
 
     var constraints = _.overload(null, constraints1, constraints2);
@@ -885,7 +889,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
   var tasks = (function(){
 
     return _.doto(new Bin(Task, "Task", "task",
-      _.conj(schema(binField, multiBinField),
+      _.conj(schema(),
         labeledField("ID", defaultedField(_.comp(_.array, _.guid), binField("id", required))),
         labeledField("Summary", binField("summary", required)),
         labeledField("Priority", defaultedField(_.constantly(["C"]), binField("priority", optional))),
@@ -926,7 +930,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
   var notes = (function(){
 
     return _.doto(new Bin(Note, "Note", "note",
-      _.conj(schema(binField, multiBinField),
+      _.conj(schema(),
         labeledField("ID", defaultedField(_.comp(_.array, _.guid), binField("id", required))),
         labeledField("Body", binField("body", required))),
       []), function(bin){
@@ -2701,6 +2705,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     flushCommand: flushCommand,
     entityCatalog: entityCatalog,
     typedCatalog: typedCatalog,
+    validate: validate,
     domain: domain,
     assert: assert,
     retract: retract,
