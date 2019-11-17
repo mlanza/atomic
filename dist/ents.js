@@ -854,7 +854,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
     _.doto(Schema,
       _.implement(IMergeable, {merge: merge}),
-      _.implement(IMap, {keys: keys, dissoc: dissoc}),
+      _.implement(IMap, {keys: keys, vals: vals, dissoc: dissoc}),
       _.implement(ILookup, {lookup: lookup}),
       _.implement(ICollection, {conj: conj}));
 
@@ -914,6 +914,9 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     defaultFieldBehavior(binField, multiBinField),
     titleBehavior("body"));
 
+  var taggable = _.conj(schema(),
+    labeledField("Tag", multiBinField("tag")));
+
   var tasks = (function(){
 
     function flag(name, pred){
@@ -931,19 +934,20 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     }
 
     return _.doto(new Bin(Task, "Task", "task",
-      _.conj(schema(),
-        labeledField("ID", defaultedField(_.comp(_.array, _.guid), binField("id", required))),
-        labeledField("Summary", binField("summary", required)),
-        labeledField("Priority", defaultedField(_.constantly(["C"]), binField("priority", optional))),
-        labeledField("Detail", binField("detail", optional)),
-        labeledField("Due Date", binField("due", optional)),
-        labeledField("Overdue", binComputedField("overdue", [isOverdue], optional)),
-        labeledField("Flags", binComputedField("flags", [flag("overdue", isOverdue), flag("important", isImportant)], unlimited)),
-        labeledField("Assignee", binField("assignee", optional)),
-        labeledField("Subtask", multiBinField("subtask")),
-        labeledField("Note", multiBinField("note")),
-        labeledField("Expanded", binField("expanded", required)),
-        labeledField("Tag", multiBinField("tag"))),
+      _.just(schema(),
+        _.conj(_,
+          labeledField("ID", defaultedField(_.comp(_.array, _.guid), binField("id", required))),
+          labeledField("Summary", binField("summary", required)),
+          labeledField("Priority", defaultedField(_.constantly(["C"]), binField("priority", optional))),
+          labeledField("Detail", binField("detail", optional)),
+          labeledField("Due Date", binField("due", optional)),
+          labeledField("Overdue", binComputedField("overdue", [isOverdue], optional)),
+          labeledField("Flags", binComputedField("flags", [flag("overdue", isOverdue), flag("important", isImportant)], unlimited)),
+          labeledField("Assignee", binField("assignee", optional)),
+          labeledField("Subtask", multiBinField("subtask")),
+          labeledField("Note", multiBinField("note")),
+          labeledField("Expanded", binField("expanded", required))),
+        _.partial(IMergeable.merge, taggable)),
       []), function(bin){
 
       _.each(function(item){
@@ -957,7 +961,8 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
         due: _.add(new Date(), _.days(-2)),
         expanded: true,
         subtask: [_.guid("b"), _.guid("c")],
-        note: [_.guid("d")]
+        note: [_.guid("d")],
+        tag: ["backlog"]
       },{
         id: _.guid("b"),
         summary: "Choose 3 potential materials and price them",
@@ -975,9 +980,11 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
   var notes = (function(){
 
     return _.doto(new Bin(Note, "Note", "note",
-      _.conj(schema(),
-        labeledField("ID", defaultedField(_.comp(_.array, _.guid), binField("id", required))),
-        labeledField("Body", binField("body", required))),
+      _.just(schema(),
+        _.conj(_,
+          labeledField("ID", defaultedField(_.comp(_.array, _.guid), binField("id", required))),
+          labeledField("Body", binField("body", required))),
+        _.partial(IMergeable.merge, taggable)),
       []), function(bin){
 
       _.each(function(item){
@@ -986,7 +993,8 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
         return IFactory.make(bin, attrs);
       }, [{
         id: _.guid("d"),
-        body: "My first note"
+        body: "My first note",
+        tag: ["cheese"]
       }]));
 
     });
@@ -2720,6 +2728,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     $.sub(ol, _.see("event"));
     _.each($.dispatch(ol, _), [
       queryCommand({$type: "task"}),
+      queryCommand({$type: "note"}),
       selectCommand(a),
       selectCommand(b),
       selectCommand(c),
