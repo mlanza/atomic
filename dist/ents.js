@@ -123,8 +123,13 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     identifier: null //machine-friendly identifier (lowercase, no embedded spaces) offering reasonable uniqueness within a context
   });
 
-  var ISubject = _.protocol({
-    title: null //human-friendly description offering reasonable uniqueness within a context
+  var INamed = _.protocol({
+    name: null //human-friendly name offering reasonable uniqueness within a context
+  });
+
+  var ITiddler = _.protocol({
+    title: null,
+    text: null
   });
 
   var IResolver = _.protocol({
@@ -204,7 +209,8 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     IField: IField,
     IEntity: IEntity,
     IResolver: IResolver,
-    ISubject: ISubject,
+    INamed: INamed,
+    ITiddler: ITiddler,
     ICardinality: ICardinality,
     IQueryable: IQueryable,
     IFactory: IFactory,
@@ -542,10 +548,6 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
       return self.attrs.id;
     }
 
-    function title(self){
-      return _.get(self, self.repo.title, null);
-    }
-
     function field(self, key){
       return IKind.field(self.repo, key);
     }
@@ -578,7 +580,6 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
       _.implement(IMultiDictionary, {}),
       _.implement(IIdentifiable, {identifier: identifier}),
       _.implement(IEntity, {eid: eid}),
-      _.implement(ISubject, {title: title}),
       _.implement(IMap, {keys: keys, dissoc: dissoc}),
       _.implement(ILookup, {lookup: lookup}),
       _.implement(IAssociative, {assoc: assoc, contains: contains}),
@@ -754,7 +755,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
       return IField.init(self.field);
     }
 
-    function title(self){
+    function name(self){
       return self.label;
     }
 
@@ -763,7 +764,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     }
 
     return _.doto(LabeledField,
-      _.implement(ISubject, {title: title}),
+      _.implement(INamed, {name: name}),
       _.implement(IIdentifiable, {identifier: identifier}),
       _.implement(IField, {aget: aget, aset: aset, init: init}));
 
@@ -773,9 +774,9 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   var Bin = (function(){
 
-    function Bin(type, title, identifier, schema, items){
+    function Bin(type, name, identifier, schema, items){
       this.type = type;
-      this.title = title;
+      this.name = name;
       this.identifier = identifier;
       this.schema = schema;
       this.items = items;
@@ -788,8 +789,8 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
       }, new self.type(self, {}), _.keys(self.schema));
     }
 
-    function title(self){
-      return self.title;
+    function name(self){
+      return self.name;
     }
 
     function identifier(self){
@@ -814,7 +815,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     }
     return _.doto(Bin,
       _.implement(IKind, {field: field}),
-      _.implement(ISubject, {title: title}),
+      _.implement(INamed, {name: name}),
       _.implement(IIdentifiable, {identifier: identifier}),
       _.implement(IMap, {keys: keys}),
       _.implement(IQueryable, {query: query}),
@@ -867,20 +868,23 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   var bin = _.constructs(Bin);
 
-  function titleBehavior(key){
+  function tiddlerBehavior(title, text){
 
-    function title1(self){
-      return _.just(self, _.get(_, key), _.first);
+    function accessor(key){
+
+      function read(self){
+        return _.just(self, _.get(_, key), _.first);
+      }
+
+      function write(self, text){
+        return assert(self, key, text);
+      }
+
+      return _.overload(null, read, write);
     }
-
-    function title2(self, text){
-      return assert(self, key, text);
-    }
-
-    var title = _.overload(null, title1, title2);
 
     return _.does(
-      _.implement(ISubject, {title: title}));
+      _.implement(ITiddler, {title: accessor(title), text: accessor(text)}));
 
   }
 
@@ -895,6 +899,16 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   }
 
+  function Tiddler(repo, attrs){
+    this.repo = repo;
+    this.attrs = attrs;
+  }
+
+  _.doto(Tiddler,
+    behaveAsEntity,
+    defaultFieldBehavior(binField, multiBinField),
+    tiddlerBehavior("title", "text"));
+
   function Task(repo, attrs){
     this.repo = repo;
     this.attrs = attrs;
@@ -903,21 +917,33 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
   _.doto(Task,
     behaveAsEntity,
     defaultFieldBehavior(binField, multiBinField),
-    titleBehavior("summary"));
-
-  function Note(repo, attrs){
-    this.repo = repo;
-    this.attrs = attrs;
-  }
-
-  _.doto(Note,
-    behaveAsEntity,
-    defaultFieldBehavior(binField, multiBinField),
-    titleBehavior("body"));
+    tiddlerBehavior("summary", "detail"));
 
   var defaults = _.conj(schema(),
     labeledField("ID", defaultedField(_.comp(_.array, _.guid), binField("id", required))),
     labeledField("Tag", multiBinField("tag")));
+
+  var tiddlers = (function(){
+
+    return _.doto(new Bin(Tiddler, "Tiddler", "tiddler",
+      _.conj(defaults,
+        labeledField("Title", binField("title")),
+        labeledField("Text", binField("text"))),
+      []), function(bin){
+
+      _.each(function(item){
+        bin.items.push(item);
+      }, _.map(function(attrs){
+        return IFactory.make(bin, attrs);
+      }, [{
+        id: _.guid("d"),
+        title: "Take tea to work",
+        text: "It perks up my day."
+      }]));
+
+    });
+
+  })();
 
   var tasks = (function(){
 
@@ -938,14 +964,13 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     return _.doto(new Bin(Task, "Task", "task",
       _.conj(defaults,
         labeledField("Summary", binField("summary", required)),
-        labeledField("Priority", defaultedField(_.constantly(["C"]), binField("priority", optional))),
         labeledField("Detail", binField("detail")),
+        labeledField("Priority", defaultedField(_.constantly(["C"]), binField("priority", optional))),
         labeledField("Due Date", binField("due", constrain(optional, _.isDate))),
         labeledField("Overdue", binComputedField("overdue", [isOverdue])),
         labeledField("Flags", binComputedField("flags", [flag("overdue", isOverdue), flag("important", isImportant)])),
         labeledField("Assignee", binField("assignee", entities)),
         labeledField("Subtask", multiBinField("subtask", entities)),
-        labeledField("Note", multiBinField("note", constrain(unlimited, _.isString))),
         labeledField("Expanded", binField("expanded", constrain(required, _.isBoolean)))),
       []), function(bin){
 
@@ -960,7 +985,6 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
         due: _.add(new Date(), _.days(-2)),
         expanded: true,
         subtask: [_.guid("b"), _.guid("c")],
-        note: [_.guid("d")],
         tag: ["backlog"]
       },{
         id: _.guid("b"),
@@ -970,27 +994,6 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
         id: _.guid("c"),
         summary: "Get contractor quote",
         expanded: false
-      }]));
-
-    });
-
-  })();
-
-  var notes = (function(){
-
-    return _.doto(new Bin(Note, "Note", "note",
-      _.conj(defaults,
-        labeledField("Body", binField("body", required))),
-      []), function(bin){
-
-      _.each(function(item){
-        bin.items.push(item);
-      }, _.map(function(attrs){
-        return IFactory.make(bin, attrs);
-      }, [{
-        id: _.guid("d"),
-        body: "My first note",
-        tag: ["cheese"]
       }]));
 
     });
@@ -1586,7 +1589,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     function handle(self, command, next){
       var entity = IFactory.make(self.buffer, {id: _.get(command, "id") || _.guid(), $type: _.get(command, "type")});
       _.swap(self.buffer, function(buffer){
-        return ICatalog.add(buffer, [ISubject.title(entity, _.get(command, "text"))]);
+        return ICatalog.add(buffer, [ITiddler.title(entity, _.get(command, "text"))]);
       });
       $.raise(self.provider, addedEvent(IEntity.eid(entity), _.get(command, "text")));
       next(command);
@@ -1884,9 +1887,17 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
     //it's unavoidable that attributes may not line up on a cast, so cast wisely.
     function handle(self, command, next){
-      var existing = _.get(self.buffer, _.get(command, "id"));
-      if (existing) {
-        var entity = IFactory.make(self.buffer, Object.assign({}, existing.attrs, {$type: _.get(command, "type")}));
+      var prior = _.get(self.buffer, _.get(command, "id"));
+      if (prior) {
+        var entity = IFactory.make(self.buffer, Object.assign({}, prior.attrs, {$type: _.get(command, "type")})),
+            title  = ITiddler.title(prior),
+            text   = ITiddler.text(prior);
+        if (title){
+          entity = ITiddler.title(entity, title);
+        }
+        if (text){
+          entity = ITiddler.text(entity, text);
+        }
         _.swap(self.buffer, function(buffer){
           return ICatalog.edit(buffer, [entity]);
         });
@@ -2633,7 +2644,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   })();
 
-  //NOTE a view is capable of returning a seq of all possible `IView.interactions` each implementing `IIdentifiable` and `ISubject`.
+  //NOTE a view is capable of returning a seq of all possible `IView.interactions` each implementing `IIdentifiable` and `INamed`.
   //NOTE an interaction is a persistent, validatable object with field schema.  It will be flagged as command or query which will help with processing esp. pipelining.  When successfully validated it has all that it needs to be handled by the handler.  That it can be introspected allows for the UI to help will completing them.
   function Outline(buffer, model, commandBus, eventBus, emitter, options){
     this.buffer = buffer;
@@ -2713,7 +2724,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   })();
 
-  var buf = buffer(domain([tasks, notes]), timeTravelCell($.cell(typedCatalog())));
+  var buf = buffer(domain([tiddlers, tasks]), timeTravelCell($.cell(typedCatalog())));
 
   _.each(function(el){
     var a = _.guid("a"), //TODO use memoize on fn with weakMap?
@@ -2724,7 +2735,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     $.sub(ol, _.see("event"));
     _.each($.dispatch(ol, _), [
       queryCommand({$type: "task"}),
-      queryCommand({$type: "note"}),
+      queryCommand({$type: "tiddler"}),
       selectCommand(a),
       selectCommand(b),
       selectCommand(c),
