@@ -486,9 +486,10 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
   })();
 
   var constrainedCollection = _.fnil(_.constructs(ConstrainedCollection), vd.and(card(0, 1)), [], []),
-      optional = clampedCollection(card(0, 1), constrainedCollection(vd.and(card(0, 1)))),
-      required = clampedCollection(card(1, 1), constrainedCollection(vd.and(card(1, 1)))),
-      unlimited = constrainedCollection(vd.and(card(0, Infinity)));
+      optional  = clampedCollection(card(0, 1), constrainedCollection(vd.and(card(0, 1)))),
+      required  = clampedCollection(card(1, 1), constrainedCollection(vd.and(card(1, 1)))),
+      unlimited = constrainedCollection(vd.and(card(0, Infinity))),
+      entities  = constrain(unlimited, _.isGuid);
 
   function reassign(self, key, f){
     var field = IKind.field(self, key),
@@ -668,7 +669,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   })();
 
-  var binComputedField = _.fnil(_.constructs(BinComputedField), null, [], optional);
+  var binComputedField = _.fnil(_.constructs(BinComputedField), null, [], unlimited);
 
   var BinField = (function(){
 
@@ -914,7 +915,8 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     defaultFieldBehavior(binField, multiBinField),
     titleBehavior("body"));
 
-  var taggable = _.conj(schema(),
+  var defaults = _.conj(schema(),
+    labeledField("ID", defaultedField(_.comp(_.array, _.guid), binField("id", required))),
     labeledField("Tag", multiBinField("tag")));
 
   var tasks = (function(){
@@ -934,20 +936,17 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     }
 
     return _.doto(new Bin(Task, "Task", "task",
-      _.just(schema(),
-        _.conj(_,
-          labeledField("ID", defaultedField(_.comp(_.array, _.guid), binField("id", required))),
-          labeledField("Summary", binField("summary", required)),
-          labeledField("Priority", defaultedField(_.constantly(["C"]), binField("priority", optional))),
-          labeledField("Detail", binField("detail", optional)),
-          labeledField("Due Date", binField("due", optional)),
-          labeledField("Overdue", binComputedField("overdue", [isOverdue], optional)),
-          labeledField("Flags", binComputedField("flags", [flag("overdue", isOverdue), flag("important", isImportant)], unlimited)),
-          labeledField("Assignee", binField("assignee", optional)),
-          labeledField("Subtask", multiBinField("subtask")),
-          labeledField("Note", multiBinField("note")),
-          labeledField("Expanded", binField("expanded", required))),
-        _.partial(IMergeable.merge, taggable)),
+      _.conj(defaults,
+        labeledField("Summary", binField("summary", required)),
+        labeledField("Priority", defaultedField(_.constantly(["C"]), binField("priority", optional))),
+        labeledField("Detail", binField("detail")),
+        labeledField("Due Date", binField("due", constrain(optional, _.isDate))),
+        labeledField("Overdue", binComputedField("overdue", [isOverdue])),
+        labeledField("Flags", binComputedField("flags", [flag("overdue", isOverdue), flag("important", isImportant)])),
+        labeledField("Assignee", binField("assignee", entities)),
+        labeledField("Subtask", multiBinField("subtask", entities)),
+        labeledField("Note", multiBinField("note", constrain(unlimited, _.isString))),
+        labeledField("Expanded", binField("expanded", constrain(required, _.isBoolean)))),
       []), function(bin){
 
       _.each(function(item){
@@ -980,11 +979,8 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
   var notes = (function(){
 
     return _.doto(new Bin(Note, "Note", "note",
-      _.just(schema(),
-        _.conj(_,
-          labeledField("ID", defaultedField(_.comp(_.array, _.guid), binField("id", required))),
-          labeledField("Body", binField("body", required))),
-        _.partial(IMergeable.merge, taggable)),
+      _.conj(defaults,
+        labeledField("Body", binField("body", required))),
       []), function(bin){
 
       _.each(function(item){
