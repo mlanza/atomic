@@ -576,8 +576,15 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
       return _.keys(self.repo);
     }
 
+    function constraints(self){
+      return _.reduce(function(memo, key){
+        return _.append(memo, vd.optional(key, IConstrained.constraints(field(self, key))));
+      }, vd.and(), keys(self));
+    }
+
     return _.does(
       _.implement(IMultiDictionary, {}),
+      _.implement(IConstrained, {constraints: constraints}),
       _.implement(IIdentifiable, {identifier: identifier}),
       _.implement(IEntity, {eid: eid}),
       _.implement(IMap, {keys: keys, dissoc: dissoc}),
@@ -609,7 +616,12 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
       return IIdentifiable.identifier(self.field);
     }
 
+    function constraints(self){
+      return IConstrained.constraints(self.field);
+    }
+
     return _.doto(ReadOnlyField,
+      _.implement(IConstrained, {constraints: constraints}),
       _.implement(IIdentifiable, {identifier: identifier}),
       _.implement(IField, {aget: aget, aset: aset, init: init}));
 
@@ -640,7 +652,12 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
       return IIdentifiable.identifier(self.field);
     }
 
+    function constraints(self){
+      return IConstrained.constraints(self.field);
+    }
+
     return _.doto(DefaultedField,
+      _.implement(IConstrained, {constraints: constraints}),
       _.implement(IIdentifiable, {identifier: identifier}),
       _.implement(IField, {aget: aget, aset: aset, init: init}));
 
@@ -664,7 +681,12 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
       return self.key;
     }
 
+    function constraints(self){
+      return IConstrained.constraints(self.emptyColl);
+    }
+
     return _.doto(BinComputedField,
+      _.implement(IConstrained, {constraints: constraints}),
       _.implement(IIdentifiable, {identifier: identifier}),
       _.implement(IField, {aget: aget}));
 
@@ -696,7 +718,12 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
       return self.key;
     }
 
+    function constraints(self){
+      return IConstrained.constraints(self.emptyColl);
+    }
+
     return _.doto(BinField,
+      _.implement(IConstrained, {constraints: constraints}),
       _.implement(IIdentifiable, {identifier: identifier}),
       _.implement(IField, {aget: aget, aset: aset, init: init}));
 
@@ -728,7 +755,12 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
       return self.key;
     }
 
+    function constraints(self){
+      return IConstrained.constraints(self.emptyColl);
+    }
+
     return _.doto(MultiBinField,
+      _.implement(IConstrained, {constraints: constraints}),
       _.implement(IIdentifiable, {identifier: identifier}),
       _.implement(IField, {aget: aget, aset: aset, init: init}));
 
@@ -763,7 +795,12 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
       return IIdentifiable.identifier(self.field);
     }
 
+    function constraints(self){
+      return IConstrained.constraints(self.field);
+    }
+
     return _.doto(LabeledField,
+      _.implement(IConstrained, {constraints: constraints}),
       _.implement(INamed, {name: name}),
       _.implement(IIdentifiable, {identifier: identifier}),
       _.implement(IField, {aget: aget, aset: aset, init: init}));
@@ -966,12 +1003,12 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
         labeledField("Summary", binField("summary", required)),
         labeledField("Detail", binField("detail")),
         labeledField("Priority", defaultedField(_.constantly(["C"]), binField("priority", optional))),
-        labeledField("Due Date", binField("due", constrain(optional, _.isDate))),
+        labeledField("Due Date", binField("due", constrain(optional, vd.collOf(_.isDate)))),
         labeledField("Overdue", binComputedField("overdue", [isOverdue])),
         labeledField("Flags", binComputedField("flags", [flag("overdue", isOverdue), flag("important", isImportant)])),
         labeledField("Assignee", binField("assignee", entities)),
         labeledField("Subtask", multiBinField("subtask", entities)),
-        labeledField("Expanded", binField("expanded", constrain(required, _.isBoolean)))),
+        labeledField("Expanded", binField("expanded", constrain(required, vd.collOf(_.isBoolean))))),
       []), function(bin){
 
       _.each(function(item){
