@@ -25,3 +25,7 @@ function guid0(){
 }
 
 export const guid = overload(guid0, guid1);
+
+export function isGUID(self){
+  return self && self.constructor === GUID;
+}

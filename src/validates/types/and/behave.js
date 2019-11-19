@@ -1,4 +1,4 @@
-import {implement, does, map, blot, compact, conj, apply, IAppendable} from 'atomic/core';
+import {implement, does, map, blot, compact, conj, apply, IAppendable, ICollection} from 'atomic/core';
 import {ICheckable} from '../../protocols';
 import {and} from "./construct";
 import {issue, issues} from '../issue';
@@ -13,5 +13,6 @@ function append(self, constraint){
 }
 
 export const behaveAsAnd = does(
+  implement(ICollection, {conj: append}),
   implement(IAppendable, {append}),
   implement(ICheckable, {check}));

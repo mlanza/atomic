@@ -1,6 +1,6 @@
 import {mapa, test, first, doto, specify, includes, identity, implement, constantly, branch, juxt, count, filled, get, eq, gte, lte, maybe, spread, compact, apply, isNil, Nil, isNumber, Number, isString, String, isDate, Date, isFunction, Function, isRegExp, RegExp} from "atomic/core";
 import {ICheckable, IExplains} from "./protocols";
-import {anno, map, scoped, issue, issuing, catches, pred, or, and} from "./types";
+import {anno, map, scoped, issue, issuing, catches, pred, or, and, choice} from "./types";
 import {_ as v} from "param.macro";
 
 export * from "./types";
@@ -16,11 +16,6 @@ export function toPred(constraint){
 
 export function present(constraint){
   return or(isNil, constraint);
-}
-
-export function choice(options){
-  return anno({type: 'choice', options},
-    pred(includes, options, null));
 }
 
 export function atLeast(n){
@@ -46,13 +41,6 @@ export function between(min, max){
       or(
         anno({type: 'min', min}, pred(gte, null, min)),
         anno({type: 'max', max}, pred(lte, null, max))));
-}
-
-export function cardinality(min, max){
-  if (min != null && min < 0) {
-    throw new Error("Minimum cardinality is 0.");
-  }
-  return min === max ? exactly(min) : and(maybe(min, atLeast), maybe(max, atMost));
 }
 
 export function keyed(keys){
