@@ -960,12 +960,17 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     labeledField("ID", defaultedField(_.comp(_.array, _.guid), binField("id", required))),
     labeledField("Tag", multiBinField("tag")));
 
+  function typed(entity){
+    return IIdentifiable.identifier(entity.repo);
+  }
+
   var tiddlers = (function(){
 
     return _.doto(new Bin(Tiddler, "Tiddler", "tiddler",
       _.conj(defaults,
         labeledField("Title", binField("title")),
-        labeledField("Text", binField("text"))),
+        labeledField("Text", binField("text")),
+        labeledField("Flags", binComputedField("flags", [typed]))),
       []), function(bin){
 
       _.each(function(item){
@@ -1005,7 +1010,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
         labeledField("Priority", defaultedField(_.constantly(["C"]), binField("priority", optional))),
         labeledField("Due Date", binField("due", constrain(optional, vd.collOf(_.isDate)))),
         labeledField("Overdue", binComputedField("overdue", [isOverdue])),
-        labeledField("Flags", binComputedField("flags", [flag("overdue", isOverdue), flag("important", isImportant)])),
+        labeledField("Flags", binComputedField("flags", [typed, flag("overdue", isOverdue), flag("important", isImportant)])),
         labeledField("Assignee", binField("assignee", entities)),
         labeledField("Subtask", multiBinField("subtask", entities)),
         labeledField("Expanded", binField("expanded", constrain(required, vd.collOf(_.isBoolean))))),
