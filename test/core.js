@@ -34,7 +34,7 @@ QUnit.test("validation", function(assert){
   const past = vd.or(Date, vd.anno({type: "past"}, _.lt(v, new Date())));
   const herman = {name: ["Herman", "Munster"], status: "married", dob: new Date(birth)};
   const person = vd.and(
-    vd.required('name', vd.and(vd.collOf(String), vd.cardinality(2, 2))),
+    vd.required('name', vd.and(vd.collOf(String), vd.card(2, 2))),
     vd.optional('status', vd.and(String, vd.choice(["single", "married", "divorced"]))),
     vd.optional('dob', past));
 

@@ -53,43 +53,6 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     return _.satisfies(ISequential, values);
   }
 
-  function Cardinality(least, most){ //TODO add to (or replace in) atomic/validates?
-    this.least = least;
-    this.most = most;
-  }
-
-  (function(){
-
-    function start(self){
-      return self.least;
-    }
-
-    function end(self){
-      return self.most;
-    }
-
-    function includes(self, value){
-      return _.isInteger(value) && _.between(self, value);
-    }
-
-    function check(self, coll){
-      var n = _.count(coll);
-      return n < self.least || n > self.most ? [vd.issue(self)] : null;
-    }
-
-    _.doto(Cardinality,
-      _.implement(ICheckable, {check: check}),
-      _.implement(IInclusive, {includes: includes}),
-      _.implement(IBounds, {start: start, end: end}));
-
-  })();
-
-  function validCardinality(least, most){
-    return _.isInteger(least) && least >= 0 &&  most >= 0 && least <= most && (_.isInteger(most) || most === Infinity);
-  }
-
-  var card = _.fnil(_.pre(_.constructs(Cardinality), validCardinality), 0, Infinity);
-
   var IPossession = _.protocol({
     owner: null
   });
@@ -198,7 +161,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     return _constraints(self, _.append(_, constraint));
   }
 
-  function validate(obj){
+  function issues(obj){
     return _.seq(vd.check(IConstrained.constraints(obj), obj));
   }
 
@@ -491,11 +454,11 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   })();
 
-  var constrainedCollection = _.fnil(_.constructs(ConstrainedCollection), vd.and(card(0, 1)), [], []),
-      optional  = clampedCollection(card(0, 1), constrainedCollection(vd.and(card(0, 1)))),
-      required  = clampedCollection(card(1, 1), constrainedCollection(vd.and(card(1, 1)))),
-      unlimited = constrainedCollection(vd.and(card(0, Infinity))),
-      entities  = constrain(unlimited, _.isGuid);
+  var constrainedCollection = _.fnil(_.constructs(ConstrainedCollection), vd.and(vd.card(0, 1)), [], []),
+      optional  = clampedCollection(vd.card(0, 1), constrainedCollection(vd.and(vd.card(0, 1)))),
+      required  = clampedCollection(vd.card(1, 1), constrainedCollection(vd.and(vd.card(1, 1)))),
+      unlimited = constrainedCollection(vd.and(vd.card(0, Infinity))),
+      entities  = constrain(unlimited, vd.collOf(vd.isa(_.GUID)));
 
   function reassign(self, key, f){
     var field = IKind.field(self, key),
@@ -957,7 +920,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     tiddlerBehavior("summary", "detail"));
 
   var defaults = _.conj(schema(),
-    labeledField("ID", defaultedField(_.comp(_.array, _.guid), binField("id", required))),
+    labeledField("ID", defaultedField(_.comp(_.array, _.guid), binField("id", constrain(required, vd.collOf(vd.isa(_.GUID)))))),
     labeledField("Tag", multiBinField("tag")));
 
   function typed(entity){
@@ -1005,9 +968,9 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
     return _.doto(new Bin(Task, "Task", "task",
       _.conj(defaults,
-        labeledField("Summary", binField("summary", required)),
+        labeledField("Summary", binField("summary", constrain(required, vd.collOf(vd.chars(1, 100))))),
         labeledField("Detail", binField("detail")),
-        labeledField("Priority", defaultedField(_.constantly(["C"]), binField("priority", optional))),
+        labeledField("Priority", defaultedField(_.constantly(["C"]), binField("priority", constrain(optional, vd.collOf(vd.choice(["A", "B", "C"])))))),
         labeledField("Due Date", binField("due", constrain(optional, vd.collOf(_.isDate)))),
         labeledField("Overdue", binComputedField("overdue", [isOverdue])),
         labeledField("Flags", binComputedField("flags", [typed, flag("overdue", isOverdue), flag("important", isImportant)])),
@@ -2812,7 +2775,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     flushCommand: flushCommand,
     entityCatalog: entityCatalog,
     typedCatalog: typedCatalog,
-    validate: validate,
+    issues: issues,
     constrain: constrain,
     constraints: _constraints,
     domain: domain,
