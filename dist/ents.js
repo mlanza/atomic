@@ -53,8 +53,8 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     return _.satisfies(ISequential, values);
   }
 
-  var IPossession = _.protocol({
-    owner: null
+  var IOriginated = _.protocol({
+    origin: null
   });
 
   var IMergeable = _.protocol({
@@ -179,7 +179,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     IFactory: IFactory,
     IConstrained: IConstrained,
     IStore: IStore,
-    IPossession: IPossession,
+    IOriginated: IOriginated,
     ITransaction: ITransaction,
     IEntitySelector: IEntitySelector,
     ITimeTravel: ITimeTravel,
@@ -1015,7 +1015,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   (function(){
 
-    function owner(self, txn){
+    function origin(self, txn){
       var entity = _.deref(txn);
       return _.detect(function(repo){
         return repo.type === entity.type ? repo : null;
@@ -1029,7 +1029,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
     function commit(self, txn){
       _.each(function(cmd){
-        IStore.commit(owner(self, cmd), cmd);
+        IStore.commit(origin(self, cmd), cmd);
       }, ITransaction.commands(txn));
     }
 
@@ -1048,7 +1048,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
       _.implement(IResolver, {resolve: resolve}),
       _.implement(ICollection, {conj: conj}),
       _.implement(IEmptyableCollection, {empty: _.constantly(domain())}),
-      _.implement(IPossession, {owner: owner}),
+      _.implement(IOriginated, {origin: origin}),
       _.implement(IFactory, {make: make}),
       _.implement(IQueryable, {query: query}),
       _.implement(IStore, {commit: commit}));
