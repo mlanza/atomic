@@ -10,3 +10,6 @@ function validCardinality(least, most){
 }
 
 export const card = fnil(pre(constructs(Cardinality), validCardinality), 0, Infinity);
+export const opt = card(0, 1);
+export const req = card(1, 1);
+export const unlimited = card(0, Infinity);

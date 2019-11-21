@@ -57,10 +57,6 @@ function next(self){
   return self.substring(1) || null;
 }
 
-function toArray(self){
-  return self.split('');
-}
-
 function prepend(self, head){
   return head + self;
 }

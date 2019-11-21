@@ -4,7 +4,7 @@ import {ICoerce, IDescriptive, IFind, ICollection, IReduce, IKVReduce, INext, IS
 import {lazySeq} from '../../types/lazy-seq/construct';
 import {cons} from '../../types/list/construct';
 import {remove, into} from '../../types/lazy-seq/concrete';
-import {Object, emptyObject} from '../../types/object/construct';
+import {emptyObject} from '../../types/object/construct';
 import {iequiv} from '../../types/array/behave';
 import {iset} from '../../types/object/behave';
 

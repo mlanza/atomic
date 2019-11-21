@@ -4,7 +4,6 @@ import {comp} from '../../types/function/concrete';
 import {selectKeys} from '../../types/object/concrete';
 import {isNumber} from '../../types/number/concrete';
 import {into} from '../../types/lazy-seq/concrete';
-import {Date} from './construct';
 import {_ as v} from "param.macro";
 
 export function isDate(self){

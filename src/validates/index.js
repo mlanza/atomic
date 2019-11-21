@@ -1,4 +1,4 @@
-import {mapa, test, first, doto, specify, includes, identity, implement, constantly, branch, juxt, count, filled, get, eq, gte, lte, maybe, spread, compact, apply, isNil, Nil, isNumber, Number, isString, String, isDate, Date, isFunction, Function, isRegExp, RegExp} from "atomic/core";
+import {mapa, test, first, doto, specify, includes, identity, implement, constantly, branch, juxt, count, filled, get, eq, gte, lte, maybe, spread, compact, apply, isNil, Nil, isNumber, isString, isDate, isFunction, isRegExp} from "atomic/core";
 import {ICheckable, IExplains} from "./protocols";
 import {anno, map, scoped, issue, issuing, catches, pred, or, and, choice} from "./types";
 import {_ as v} from "param.macro";
