@@ -99,6 +99,10 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     resolve: null //TODO returns both resolved and unresolved values
   });
 
+  var IResolveable = _.protocol({
+    resolved: null
+  });
+
   var IFactory = _.protocol({
     make: null
   });
@@ -381,6 +385,77 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
       _.implement(ISeqable, {seq: seq}));
 
   })();
+
+  function ResolvingCollection(constraints, coll){
+    this.constraints = constraints;
+    this.coll = coll;
+  }
+
+  (function(){
+
+    //TODO eliminate field for type
+
+    var forward = _.forwardTo("coll");
+    var first = forward(ISeq.first);
+    var rest = forward(ISeq.rest);
+    var next = forward(INext.next);
+    var includes = forward(IInclusive.includes);
+    var count = forward(ICounted.count);
+    var nth = forward(IIndexed.nth);
+    var contains = forward(IAssociative.contains);
+    var seq = forward(ISeqable.seq);
+    var deref = forward(IDeref.deref);
+    var fmap = forward(IFunctor.fmap);
+    var reduce = forward(IReduce.reduce);
+    var reducekv = forward(IKVReduce.reducekv);
+
+    function conj(self, value){
+      return new self.constructor(self.constraints, _.conj(self.coll, value));
+    }
+
+    function assoc(self, idx, value){
+      return new self.constructor(self.constraints, IAssociative.assoc(self.coll, idx, value));
+    }
+
+    function empty(self){
+      return new self.constructor(self.constraints, IEmptyableCollection.empty(self.coll));
+    }
+
+    function constraints1(self){
+      return IConstrained.constraints(self.coll);
+    }
+
+    function constraints2(self, constraints){
+      return new self.constructor(self.constraints, IConstrained.constraints(self.coll, constraints));
+    }
+
+    var constraints = _.overload(null, constraints1, constraints2);
+
+    function resolved(self){
+      return IConstrained.constraints(self.coll, self.constraints);
+    }
+
+    _.doto(ResolvingCollection,
+      _.implement(IResolveable, {resolved: resolved}),
+      _.implement(IEmptyableCollection, {empty: empty}),
+      _.implement(IFunctor, {fmap: fmap}),
+      _.implement(IConstrained, {constraints: constraints}),
+      _.implement(ILookup, {lookup: nth}),
+      _.implement(IAssociative, {assoc: assoc, contains: contains}),
+      _.implement(IDeref, {deref: deref}),
+      _.implement(ICounted, {count: count}),
+      _.implement(IReduce, {reduce: reduce}),
+      _.implement(IKVReduce, {reducekv: reducekv}),
+      _.implement(ISeq, {first: first, rest: rest}),
+      _.implement(INext, {next: next}),
+      _.implement(IInclusive, {includes: includes}),
+      _.implement(ICollection, {conj: conj}),
+      _.implement(IIndexed, {nth: nth}),
+      _.implement(ISeqable, {seq: seq}));
+
+  })();
+
+  var resolvingCollection = _.constructs(ResolvingCollection);
 
   function ClampedCollection(cardinality, coll){
     this.cardinality = cardinality;
@@ -975,7 +1050,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
         labeledField("Overdue", binComputedField("overdue", [isOverdue])),
         labeledField("Flags", binComputedField("flags", [typed, flag("overdue", isOverdue), flag("important", isImportant)])),
         labeledField("Assignee", binField("assignee", entities)),
-        labeledField("Subtask", multiBinField("subtask", entities)),
+        labeledField("Subtask", multiBinField("subtask", resolvingCollection(vd.and(vd.card(0, Infinity), vd.collOf(vd.isa(Task, Tiddler))), entities))),
         labeledField("Expanded", binField("expanded", constrain(required, vd.collOf(_.isBoolean))))),
       []), function(bin){
 
@@ -1419,9 +1494,9 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     }
 
     function resolve(self, refs){
-      return _.reducekv(function(memo, idx, ref){
+      return IResolveable.resolved(_.reducekv(function(memo, idx, ref){
         return _.assoc(memo, idx, _.get(self, ref));
-      }, refs, refs);
+      }, refs, refs));
     }
 
     _.doto(TypedEntityCatalog,
