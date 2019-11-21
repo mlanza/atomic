@@ -11,6 +11,8 @@ import {emptyObject} from '../object/construct';
 const keys = Object.keys;
 const vals = Object.values;
 
+Object.from = ICoerce.toObject;
+
 function blank(self){
   return keys(self).length === 0;
 }
