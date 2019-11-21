@@ -1718,11 +1718,6 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   })();
 
-
-
-
-
-
   (function(){
 
     return _.doto(AddedEvent,
@@ -2017,9 +2012,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
   function UndoCommand(){
   }
 
-  function undoCommand(){
-    return new UndoCommand();
-  }
+  var undoCommand = _.constantly(new UndoCommand());
 
   (function(){
 
@@ -2053,7 +2046,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
   function UndoneEvent(){
   }
 
-  var undoneEvent = _.constructs(UndoneEvent);
+  var undoneEvent = _.constantly(new UndoneEvent());
 
   (function(){
 
@@ -2068,9 +2061,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
   function RedoCommand(){
   }
 
-  function redoCommand(){
-    return new RedoCommand();
-  }
+  var redoCommand = _.constantly(new RedoCommand());
 
   (function(){
 
@@ -2089,7 +2080,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
   function RedoneEvent(){
   }
 
-  var redoneEvent = _.constructs(RedoneEvent);
+  var redoneEvent = _.constantly(new RedoneEvent());
 
   (function(){
 
@@ -2104,9 +2095,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
   function FlushCommand(){
   }
 
-  function flushCommand(){
-    return new FlushCommand();
-  }
+  var flushCommand = _.constantly(new FlushCommand());
 
   (function(){
 
@@ -2125,7 +2114,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
   function FlushedEvent(){
   }
 
-  var flushedEvent = _.constructs(FlushedEvent);
+  var flushedEvent = _.constantly(new FlushedEvent());
 
   (function(){
 

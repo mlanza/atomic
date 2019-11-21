@@ -5,7 +5,18 @@ export default {
   input: ['test/core.js'],
   output: {
     dir: 'dist/test',
-    format: 'amd'
+    format: 'amd',
+    globals: {
+      "jquery": "jQuery",
+      "qunit": "QUnit",
+      "fetch": "fetch",
+      "map": "Map",
+      "set": "Set",
+      "weak-map": "WeakMap",
+      "symbol": "Symbol",
+      "promise": "Promise",
+      "immutable": "Immutable"
+    }
   },
   experimentalCodeSplitting: true,
   plugins: [
@@ -20,6 +31,7 @@ export default {
   ],
   external: [
     "fetch",
+    "qunit",
     "atomic",
     "atomic/core",
     "atomic/immutables",

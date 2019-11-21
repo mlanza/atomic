@@ -35,21 +35,6 @@ function blank(self){
   return seq(self) == null;
 }
 
-/*
-function reduce(self, xf, init){
-  let memo = init,
-      coll = ISeqable.seq(self);
-  while(coll){
-    memo = xf(memo, first(coll))
-    if (isReduced(memo)) {
-      break;
-    }
-    coll = next(coll);
-  }
-  return unreduced(memo);
-}
-*/
-
 function equiv(as, bs){
   const xs = ISeqable.seq(as),
         ys = ISeqable.seq(bs);
