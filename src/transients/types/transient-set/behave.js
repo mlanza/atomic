@@ -1,12 +1,5 @@
-import {does, identity} from "atomic/core";
-import {implement} from "atomic/core";
+import {does, identity, implement, overload, cons, filter, lazySeq, emptyList, apply, unreduced, ICoerce, ISeq, IReduce, ISeqable, ISet, INext, ISequential, ICounted, ICollection, IEmptyableCollection, IInclusive, ICloneable} from "atomic/core";
 import {emptyTransientSet, transientSet} from './construct';
-import {filter, lazySeq} from "atomic/core";
-import {cons} from "atomic/core";
-import {emptyList} from "atomic/core";
-import {apply} from "atomic/core";
-import {unreduced} from "atomic/core";
-import {ICoerce, ISeq, IReduce, ISeqable, ISet, INext, ISequential, ICounted, ICollection, IEmptyableCollection, IInclusive, ICloneable} from "atomic/core";
 import {IPersistent, ITransientSet, ITransientEmptyableCollection, ITransientCollection} from "../../protocols";
 import {_ as v} from "param.macro";
 
