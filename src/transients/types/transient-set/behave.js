@@ -45,6 +45,8 @@ function seqVals2(iter, done){
   });
 }
 
+const seqVals = overload(null, seqVals1, seqVals2);
+
 function rest(self){
   const iter = self.values();
   iter.next();
