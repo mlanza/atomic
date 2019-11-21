@@ -5,4 +5,3 @@ export function emptyArray(){
 export function array(...args){
   return args;
 }
-export {Array};

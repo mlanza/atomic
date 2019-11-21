@@ -1,7 +1,7 @@
 import {ICompact, IEquiv, IMap, ICoerce, IAssociative, ILookup, IInclusive, IIndexed, ICollection, IComparable, ICounted, ISeq, ISeqable, INext, IHierarchy, IReduce, ISequential} from '../../protocols';
 import {trampoline, identity, constantly, overload} from '../../core';
 import {EmptyList, emptyList} from '../empty-list/construct';
-import {Array, emptyArray} from '../array/construct';
+import {emptyArray} from '../array/construct';
 import {inc, randInt} from '../number/concrete';
 import {reduced} from '../reduced/construct';
 import {not} from '../boolean';

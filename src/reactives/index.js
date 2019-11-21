@@ -7,7 +7,6 @@ import {
   IAssociative,
   IFunctor,
   ICounted,
-  Function,
   Promise,
   doto,
   does,

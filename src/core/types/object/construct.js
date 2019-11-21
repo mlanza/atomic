@@ -1,4 +1,3 @@
-export {Object};
 export function isObject(self){
   return self && self.constructor === Object;
 }

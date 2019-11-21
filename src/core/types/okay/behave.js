@@ -2,7 +2,7 @@ import {IFunctor, IFork} from '../../protocols';
 import {does, overload} from '../../core';
 import {implement} from '../protocol';
 import {okay} from './construct';
-import {Error, isError} from '../error/construct';
+import {isError} from '../error/construct';
 
 function fmap(self, f){
   try{

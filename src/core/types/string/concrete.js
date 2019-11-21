@@ -1,6 +1,6 @@
 import {overload, unbind} from "../../core";
 import {reducing} from "../../protocols/ireduce/concrete";
-import {String, emptyString} from "./construct";
+import {emptyString} from "./construct";
 
 export function isBlank(str){
   return str == null || typeof str === "string" && str.trim().length === 0;

@@ -7,7 +7,7 @@ import {replace} from '../string/concrete';
 import {range} from '../range/construct';
 import {revSeq} from '../rev-seq';
 import {filter, mapa} from '../lazy-seq';
-import {Array, emptyArray} from './construct';
+import {emptyArray} from './construct';
 
 const clone = Array.from;
 

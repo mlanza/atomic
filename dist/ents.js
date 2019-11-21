@@ -462,7 +462,15 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     this.coll = coll;
   }
 
-  var clampedCollection = _.constructs(ClampedCollection);
+  function clampedCollection2(cardinality, coll){
+    return new ClampedCollection(cardinality, coll);
+  }
+
+  function clampedCollection1(cardinality){
+    return clampedCollection2(cardinality, constrainedCollection(vd.and(cardinality)));
+  }
+
+  var clampedCollection = _.overload(null, clampedCollection1, clampedCollection2);
 
   (function(){
 
@@ -529,11 +537,12 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   })();
 
-  var constrainedCollection = _.fnil(_.constructs(ConstrainedCollection), vd.and(vd.card(0, 1)), [], []),
-      optional  = clampedCollection(vd.card(0, 1), constrainedCollection(vd.and(vd.card(0, 1)))),
-      required  = clampedCollection(vd.card(1, 1), constrainedCollection(vd.and(vd.card(1, 1)))),
-      unlimited = constrainedCollection(vd.and(vd.card(0, Infinity))),
-      entities  = constrain(unlimited, vd.collOf(vd.isa(_.GUID)));
+  var constrainedCollection = _.fnil(_.constructs(ConstrainedCollection), vd.and(vd.opt), [], []),
+      optional  = clampedCollection(vd.opt),
+      required  = clampedCollection(vd.req),
+      unlimited = constrainedCollection(vd.and(vd.unlimited)),
+      entities  = constrain(unlimited, vd.collOf(vd.isa(_.GUID))),
+      entity    = constrain(required, vd.collOf(vd.isa(_.GUID)));
 
   function reassign(self, key, f){
     var field = IKind.field(self, key),
@@ -767,7 +776,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   })();
 
-  var binField = _.fnil(_.constructs(BinField), null, optional);
+  var binField = _.fnil(_.constructs(BinField), null, vd.opt);
 
   var MultiBinField = (function(){
 
@@ -995,7 +1004,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     tiddlerBehavior("summary", "detail"));
 
   var defaults = _.conj(schema(),
-    labeledField("ID", defaultedField(_.comp(_.array, _.guid), binField("id", constrain(required, vd.collOf(vd.isa(_.GUID)))))),
+    labeledField("ID", defaultedField(_.comp(_.array, _.guid), binField("id", entity))),
     labeledField("Tag", multiBinField("tag")));
 
   function typed(entity){
@@ -1050,7 +1059,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
         labeledField("Overdue", binComputedField("overdue", [isOverdue])),
         labeledField("Flags", binComputedField("flags", [typed, flag("overdue", isOverdue), flag("important", isImportant)])),
         labeledField("Assignee", binField("assignee", entities)),
-        labeledField("Subtask", multiBinField("subtask", resolvingCollection(vd.and(vd.card(0, Infinity), vd.collOf(vd.isa(Task, Tiddler))), entities))),
+        labeledField("Subtask", multiBinField("subtask", resolvingCollection(vd.and(vd.unlimited, vd.collOf(vd.isa(Task, Tiddler))), entities))),
         labeledField("Expanded", binField("expanded", constrain(required, vd.collOf(_.isBoolean))))),
       []), function(bin){
 

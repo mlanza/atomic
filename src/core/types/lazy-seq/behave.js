@@ -35,6 +35,7 @@ function blank(self){
   return seq(self) == null;
 }
 
+/*
 function reduce(self, xf, init){
   let memo = init,
       coll = ISeqable.seq(self);
@@ -47,6 +48,7 @@ function reduce(self, xf, init){
   }
   return unreduced(memo);
 }
+*/
 
 function equiv(as, bs){
   const xs = ISeqable.seq(as),

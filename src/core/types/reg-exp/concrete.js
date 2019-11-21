@@ -42,7 +42,7 @@ export function reMatches(re, s){
     return count(matches) === 1 ? first(matches) : matches;
   }
 }
-
+/*
 function reSeq(re, s){
   if (!isString(s)) {
     throw new TypeError("reSeq must match against string.");
@@ -52,6 +52,7 @@ function reSeq(re, s){
     return matchData ? cons(matchData, reSeq(re, s)) : emptyList();
   });
 }
+*/
 
 export function reSeq(re, s){
   return lazySeq(function(){

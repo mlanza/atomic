@@ -11,5 +11,3 @@ export const date = overload(Date.now, create, date7);
 
 Date.prototype[Symbol.toStringTag] = "Date";
 Date.create = create;
-
-export {Date};

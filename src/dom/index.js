@@ -1,4 +1,4 @@
-import {constantly, identity, isString, apply, noop, slice, partial, replace, concat, template, key, val, join, merge, filter, map, remove, isObject, specify, implement, doto, get, str, includes, overload, absorb, fmap, each, eachkv, obj, IReduce, first, query, locate, descendants, matches, reducekv, Number, String, Nil, ICoerce, extend, doing} from "atomic/core";
+import {constantly, identity, isString, apply, noop, slice, partial, replace, concat, template, key, val, join, merge, filter, map, remove, isObject, specify, implement, doto, get, str, includes, overload, absorb, fmap, each, eachkv, obj, IReduce, first, query, locate, descendants, matches, reducekv, Nil, ICoerce, extend, doing} from "atomic/core";
 import * as _ from "atomic/core";
 import * as mut from "atomic/transients";
 import {element} from "./types/element/construct";
@@ -133,19 +133,19 @@ export function tag(){
   return apply(partial, element, slice(arguments));
 }
 
-function sel2(selector, context){
+function sel02(selector, context){
   return query(context, context.querySelectorAll ? selector : matches(v, selector));
 }
 
-function sel1(selector){
-  return sel2(selector, document);
+function sel01(selector){
+  return sel02(selector, document);
 }
 
-function sel0(){
+function sel00(){
   return descendants(document);
 }
 
-export const sel = overload(sel0, sel1, sel2);
+export const sel = overload(sel00, sel01, sel02);
 
 function sel12(selector, context){
   return locate(context, selector);
