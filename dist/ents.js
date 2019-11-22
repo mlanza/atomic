@@ -128,7 +128,9 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
   var IField = _.protocol({
     aget: null,
     aset: null,
-    init: null
+    init: null,
+    cast: null,
+    uncast: null
   });
 
   var IDefaultField = _.protocol({
@@ -592,7 +594,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     }
 
     function eid(self){
-      return self.attrs.id;
+      return _.guid(self.attrs.id);
     }
 
     function field(self, key){
@@ -743,18 +745,28 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   var BinField = (function(){
 
-    function BinField(key, emptyColl){
+    function BinField(key, emptyColl, cast, uncast){
       this.key = key;
       this.emptyColl = emptyColl;
+      this.cast = cast;
+      this.uncast = uncast;
+    }
+
+    function cast(self, cast){
+      return new self.constructor(self.key, self.emptyColl, cast, self.uncast);
+    }
+
+    function uncast(self, uncast){
+      return new self.constructor(self.key, self.emptyColl, self.cast, uncast);
     }
 
     function aget(self, entity){
-      return _.into(self.emptyColl, _.maybe(entity.attrs, _.get(_, self.key), _.array));
+      return _.into(self.emptyColl, _.maybe(entity.attrs, _.get(_, self.key), _.array, _.mapa(self.cast, _)));
     }
 
     function aset(self, entity, values){
-      var value = _.last(_.into(self.emptyColl, values));
-      return new entity.constructor(entity.repo, _.isSome(value) ? _.assoc(entity.attrs, self.key, value) : _.dissoc(entity.attrs, self.key));
+      var value = _.maybe(_.into(self.emptyColl, values), _.last, self.uncast);
+      return new entity.constructor(entity.repo, _.isSome(value) ? _.assoc(entity.attrs, self.key, value) : _.dissoc(entity.attrs, self.key), self.cast, self.uncast);
     }
 
     function init(self){
@@ -772,26 +784,36 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     return _.doto(BinField,
       _.implement(IConstrained, {constraints: constraints}),
       _.implement(IIdentifiable, {identifier: identifier}),
-      _.implement(IField, {aget: aget, aset: aset, init: init}));
+      _.implement(IField, {aget: aget, aset: aset, init: init, cast: cast, uncast: uncast}));
 
   })();
 
-  var binField = _.fnil(_.constructs(BinField), null, vd.opt);
+  var binField = _.fnil(_.constructs(BinField), null, vd.opt, _.identity, _.identity);
 
   var MultiBinField = (function(){
 
-    function MultiBinField(key, emptyColl){
+    function MultiBinField(key, emptyColl, cast, uncast){
       this.key = key;
       this.emptyColl = emptyColl;
+      this.cast = cast;
+      this.uncast = uncast;
+    }
+
+    function cast(self, cast){
+      return new self.constructor(self.key, self.emptyColl, cast, self.uncast);
+    }
+
+    function uncast(self, uncast){
+      return new self.constructor(self.key, self.emptyColl, self.cast, uncast);
     }
 
     function aget(self, entity){
-      return _.into(self.emptyColl, _.get(entity.attrs, self.key));
+      return _.into(self.emptyColl, _.map(self.cast, _.get(entity.attrs, self.key)));
     }
 
     function aset(self, entity, values){
-      var values = _.deref(_.into(self.emptyColl, values));
-      return new entity.constructor(entity.repo, _.seq(values) ? _.assoc(entity.attrs, self.key, values) : _.dissoc(entity.attrs, self.key));
+      var values = _.deref(_.into(self.emptyColl, _.map(self.uncast, values)));
+      return new entity.constructor(entity.repo, _.seq(values) ? _.assoc(entity.attrs, self.key, values) : _.dissoc(entity.attrs, self.key), self.cast, self.uncast);
     }
 
     function init(self){
@@ -809,11 +831,11 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     return _.doto(MultiBinField,
       _.implement(IConstrained, {constraints: constraints}),
       _.implement(IIdentifiable, {identifier: identifier}),
-      _.implement(IField, {aget: aget, aset: aset, init: init}));
+      _.implement(IField, {aget: aget, aset: aset, init: init, cast: cast, uncast: uncast}));
 
   })();
 
-  var multiBinField = _.fnil(_.constructs(MultiBinField), null, unlimited);
+  var multiBinField = _.fnil(_.constructs(MultiBinField), null, unlimited, _.identity, _.identity);
 
   var LabeledField = (function(){
 
@@ -1004,7 +1026,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     tiddlerBehavior("summary", "detail"));
 
   var defaults = _.conj(schema(),
-    labeledField("ID", defaultedField(_.comp(_.array, _.guid), binField("id", entity))),
+    labeledField("ID", defaultedField(_.comp(_.array, _.guid), IField.uncast(IField.cast(binField("id", entity), _.guid), _.str))),
     labeledField("Tag", multiBinField("tag")));
 
   function typed(entity){
@@ -1025,7 +1047,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
       }, _.map(function(attrs){
         return IFactory.make(bin, attrs);
       }, [{
-        id: _.guid("d"),
+        id: "d",
         title: "Take tea to work",
         text: "It perks up my day."
       }]));
@@ -1050,16 +1072,18 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
       return _.maybe(entity, _.get(_, "priority"), _.detect(_.eq(_, "A"), _));
     }
 
+    var toLocaleString = _.invokes(_, "toLocaleString");
+
     return _.doto(new Bin(Task, "Task", "task",
       _.conj(defaults,
         labeledField("Summary", binField("summary", constrain(required, vd.collOf(vd.chars(1, 100))))),
         labeledField("Detail", binField("detail")),
         labeledField("Priority", defaultedField(_.constantly(["C"]), binField("priority", constrain(optional, vd.collOf(vd.choice(["A", "B", "C"])))))),
-        labeledField("Due Date", binField("due", constrain(optional, vd.collOf(_.isDate)))),
+        labeledField("Due Date", IField.uncast(IField.cast(binField("due", constrain(optional, vd.collOf(_.isDate))), _.date), toLocaleString)),
         labeledField("Overdue", binComputedField("overdue", [isOverdue])),
         labeledField("Flags", binComputedField("flags", [typed, flag("overdue", isOverdue), flag("important", isImportant)])),
         labeledField("Assignee", binField("assignee", entities)),
-        labeledField("Subtask", multiBinField("subtask", resolvingCollection(vd.and(vd.unlimited, vd.collOf(vd.isa(Task, Tiddler))), entities))),
+        labeledField("Subtask", IField.uncast(IField.cast(multiBinField("subtask", resolvingCollection(vd.and(vd.unlimited, vd.collOf(vd.isa(Task, Tiddler))), entities)), _.guid), _.str)),
         labeledField("Expanded", binField("expanded", constrain(required, vd.collOf(_.isBoolean))))),
       []), function(bin){
 
@@ -1068,19 +1092,19 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
       }, _.map(function(attrs){
         return IFactory.make(bin, attrs);
       }, [{
-        id: _.guid("a"),
+        id: "a",
         summary: "Build backyard patio",
         priority: "A",
-        due: _.add(new Date(), _.days(-2)),
+        due: _.just(new Date(), _.add(_, _.days(-2)), toLocaleString),
         expanded: true,
-        subtask: [_.guid("b"), _.guid("c")],
+        subtask: ["b", "c"],
         tag: ["backlog"]
       },{
-        id: _.guid("b"),
+        id: "b",
         summary: "Choose 3 potential materials and price them",
         expanded: false
       },{
-        id: _.guid("c"),
+        id: "c",
         summary: "Get contractor quote",
         expanded: false
       }]));
