@@ -135,8 +135,8 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     aset: null
   });
 
-  var IInitializableCollection = _.protocol({
-    init: null
+  var IDefaultable = _.protocol({
+    defaults: null
   });
 
   var IDefaultField = _.protocol({
@@ -180,7 +180,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
   var protocols = {
     IMultiDictionary: IMultiDictionary,
     ICaster: ICaster,
-    IInitializableCollection: IInitializableCollection,
+    IDefaultable: IDefaultable,
     IIdentifiable: IIdentifiable,
     IKind: IKind,
     IField: IField,
@@ -587,7 +587,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
       return new self.constructor(self.defaults, IEmptyableCollection.empty(self.coll));
     }
 
-    function init(self){
+    function defaults(self){
       return _.apply(_.conj, empty(self), self.defaults());
     }
 
@@ -603,7 +603,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
     _.doto(FactoryDefaultCollection,
       _.implement(IEmptyableCollection, {empty: empty}),
-      _.implement(IInitializableCollection, {init: init}),
+      _.implement(IDefaultable, {defaults: defaults}),
       _.implement(IFunctor, {fmap: fmap}),
       _.implement(IConstrained, {constraints: constraints}),
       _.implement(ILookup, {lookup: nth}),
@@ -951,7 +951,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     function make(self, attrs){
       return attrs ? new self.type(self, attrs) : _.reduce(function(memo, key){
         var fld = field(self, key);
-        return IField.aset(fld, memo, IInitializableCollection.init(IField.aget(fld, memo)));
+        return IField.aset(fld, memo, IDefaultable.defaults(IField.aget(fld, memo)));
       }, new self.type(self, {}), _.keys(self.schema));
     }
 
