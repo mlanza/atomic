@@ -132,10 +132,11 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   var IField = _.protocol({
     aget: null,
-    aset: null,
-    init: null,
-    cast: null,
-    uncast: null
+    aset: null
+  });
+
+  var IInitializableCollection = _.protocol({
+    init: null
   });
 
   var IDefaultField = _.protocol({
@@ -178,6 +179,8 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   var protocols = {
     IMultiDictionary: IMultiDictionary,
+    ICaster: ICaster,
+    IInitializableCollection: IInitializableCollection,
     IIdentifiable: IIdentifiable,
     IKind: IKind,
     IField: IField,
@@ -544,6 +547,82 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   })();
 
+  function FactoryDefaultCollection(defaults, coll){
+    this.defaults = defaults;
+    this.coll = coll;
+  }
+
+  var factoryDefaultCollection = _.constructs(FactoryDefaultCollection);
+
+  (function(){
+
+    var forward = _.forwardTo("coll");
+    var reduce = forward(IReduce.reduce);
+    var reducekv = forward(IKVReduce.reducekv);
+    var first = forward(ISeq.first);
+    var rest = forward(ISeq.rest);
+    var next = forward(INext.next);
+    var count = forward(ICounted.count);
+    var includes = forward(IInclusive.includes);
+    var equiv = forward(IEquiv.equiv);
+    var nth = forward(IIndexed.nth);
+    var contains = forward(IAssociative.contains);
+    var seq = forward(ISeqable.seq);
+    var cardinality = forward(ICardinality.cardinality);
+    var deref = forward(IDeref.deref);
+
+    function fmap(self, f){
+      return new self.constructor(self.defaults, _.fmap(self.coll, f));
+    }
+
+    function conj(self, value){
+      return new self.constructor(self.defaults, ICollection.conj(self.coll, value));
+    }
+
+    function assoc(self, idx, value){
+      return new self.constructor(self.defaults, IAssociative.assoc(self.coll, idx, value));
+    }
+
+    function empty(self){
+      return new self.constructor(self.defaults, IEmptyableCollection.empty(self.coll));
+    }
+
+    function init(self){
+      return _.apply(_.conj, empty(self), self.defaults());
+    }
+
+    function constraints1(self){
+      return IConstrained.constraints(self.coll);
+    }
+
+    function constraints2(self, constraints){
+      return new self.constructor(self.defaults, IConstrained.constraints(self.coll, constraints));
+    }
+
+    var constraints = _.overload(null, constraints1, constraints2);
+
+    _.doto(FactoryDefaultCollection,
+      _.implement(IEmptyableCollection, {empty: empty}),
+      _.implement(IInitializableCollection, {init: init}),
+      _.implement(IFunctor, {fmap: fmap}),
+      _.implement(IConstrained, {constraints: constraints}),
+      _.implement(ILookup, {lookup: nth}),
+      _.implement(IAssociative, {assoc: assoc, contains: contains}),
+      _.implement(IDeref, {deref: deref}),
+      _.implement(ICounted, {count: count}),
+      _.implement(IReduce, {reduce: reduce}),
+      _.implement(IKVReduce, {reducekv: reducekv}),
+      _.implement(ICardinality, {cardinality: cardinality}),
+      _.implement(ISeq, {first: first, rest: rest}),
+      _.implement(INext, {next: next}),
+      _.implement(IEquiv, {equiv: equiv}),
+      _.implement(IInclusive, {includes: includes}),
+      _.implement(ICollection, {conj: conj}),
+      _.implement(IIndexed, {nth: nth}),
+      _.implement(ISeqable, {seq: seq}));
+
+  })();
+
   var constrainedCollection = _.fnil(_.constructs(ConstrainedCollection), vd.and(vd.opt), [], []),
       optional  = clampedCollection(vd.opt),
       required  = clampedCollection(vd.req),
@@ -662,10 +741,6 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
       throw new Error("Cannot set readonly field '" + identifier(self) + "'.");
     }
 
-    function init(self){
-      return IField.init(self.field);
-    }
-
     function identifier(self){
       return IIdentifiable.identifier(self.field);
     }
@@ -677,47 +752,11 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     return _.doto(ReadOnlyField,
       _.implement(IConstrained, {constraints: constraints}),
       _.implement(IIdentifiable, {identifier: identifier}),
-      _.implement(IField, {aget: aget, aset: aset, init: init}));
+      _.implement(IField, {aget: aget, aset: aset}));
 
   })();
 
   var readOnlyField = _.constructs(ReadOnlyField);
-
-  var DefaultedField = (function(){
-
-    function DefaultedField(init, field){
-      this.init = init;
-      this.field = field;
-    }
-
-    function aget(self, entity){
-      return IField.aget(self.field, entity);
-    }
-
-    function aset(self, entity, values){
-      return IField.aset(self.field, entity, values);
-    }
-
-    function init(self){
-      return _.into(IField.init(self.field), self.init());
-    }
-
-    function identifier(self){
-      return IIdentifiable.identifier(self.field);
-    }
-
-    function constraints(self){
-      return IConstrained.constraints(self.field);
-    }
-
-    return _.doto(DefaultedField,
-      _.implement(IConstrained, {constraints: constraints}),
-      _.implement(IIdentifiable, {identifier: identifier}),
-      _.implement(IField, {aget: aget, aset: aset, init: init}));
-
-  })();
-
-  var defaultedField = _.fnil(_.constructs(DefaultedField), _.array, null);
 
   var BinComputedField = (function(){
 
@@ -832,10 +871,6 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
       return new entity.constructor(entity.repo, _.isSome(value) ? _.assoc(entity.attrs, self.key, value) : _.dissoc(entity.attrs, self.key));
     }
 
-    function init(self){
-      return self.emptyColl;
-    }
-
     function identifier(self){
       return self.key;
     }
@@ -847,7 +882,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     return _.doto(BinField,
       _.implement(IConstrained, {constraints: constraints}),
       _.implement(IIdentifiable, {identifier: identifier}),
-      _.implement(IField, {aget: aget, aset: aset, init: init}));
+      _.implement(IField, {aget: aget, aset: aset}));
 
   })();
 
@@ -881,10 +916,6 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
       return IField.aset(self.field, entity, values);
     }
 
-    function init(self){
-      return IField.init(self.field);
-    }
-
     function name(self){
       return self.label;
     }
@@ -901,7 +932,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
       _.implement(IConstrained, {constraints: constraints}),
       _.implement(INamed, {name: name}),
       _.implement(IIdentifiable, {identifier: identifier}),
-      _.implement(IField, {aget: aget, aset: aset, init: init}));
+      _.implement(IField, {aget: aget, aset: aset}));
 
   })();
 
@@ -920,7 +951,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     function make(self, attrs){
       return attrs ? new self.type(self, attrs) : _.reduce(function(memo, key){
         var fld = field(self, key);
-        return IField.aset(fld, memo, IField.init(fld));
+        return IField.aset(fld, memo, IInitializableCollection.init(IField.aget(fld, memo)));
       }, new self.type(self, {}), _.keys(self.schema));
     }
 
@@ -1034,11 +1065,11 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   }
 
-  function singular(key){
+  function one(key){
     return binField(key, optional, valueCaster);
   }
 
-  function plural(key){
+  function many(key){
     return binField(key, unlimited, valuesCaster);
   }
 
@@ -1049,7 +1080,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   _.doto(Tiddler,
     behaveAsEntity,
-    defaultFieldBehavior(singular, plural),
+    defaultFieldBehavior(one, many),
     tiddlerBehavior("title", "text"));
 
   function Task(repo, attrs){
@@ -1059,13 +1090,13 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   _.doto(Task,
     behaveAsEntity,
-    defaultFieldBehavior(singular, plural),
+    defaultFieldBehavior(one, many),
     tiddlerBehavior("summary", "detail"));
 
   var defaults = _.conj(schema(),
-    labeledField("ID", defaultedField(_.comp(_.array, _.guid), binField("id", entity, function(coll){
+    labeledField("ID", binField("id", factoryDefaultCollection(_.comp(_.array, _.guid), entity), function(coll){
       return recaster(_.guid, _.str, valueCaster(coll));
-    }))),
+    })),
     labeledField("Tag", binField("tag", unlimited, valuesCaster)));
 
   function typed(entity){
@@ -1117,7 +1148,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
       _.conj(defaults,
         labeledField("Summary", binField("summary", constrain(required, vd.collOf(vd.chars(1, 100))))),
         labeledField("Detail", binField("detail")),
-        labeledField("Priority", defaultedField(_.constantly(["C"]), binField("priority", constrain(optional, vd.collOf(vd.choice(["A", "B", "C"])))))),
+        labeledField("Priority", binField("priority", factoryDefaultCollection(_.constantly(["C"]), constrain(optional, vd.collOf(vd.choice(["A", "B", "C"])))))),
         labeledField("Due Date", binField("due", constrain(optional, vd.collOf(_.isDate)), function(coll){
           return recaster(_.date, toLocaleString, valueCaster(coll));
         })),
