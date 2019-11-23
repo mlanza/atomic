@@ -14,6 +14,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
       ISubscribe = $.ISubscribe,
       IEmptyableCollection = _.IEmptyableCollection,
       ICheckable = vd.ICheckable,
+      IConstrained = vd.IConstrained,
       ICollection = _.ICollection,
       ITransientCollection = mut.ITransientCollection,
       IReduce = _.IReduce,
@@ -122,7 +123,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   var ICatalog = _.protocol({
     touched: null, //entities touched during the last operation - useful when diffing before/after model snapshots
-    dirty: null,
+    dirty: null, //was a given entity ever modified?
     load: null, //add existing entity from domain to workspace
     add: null, //add new entity to workspace
     edit: null, //update entity present in workspace
@@ -143,10 +144,6 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     defaultField: null
   });
 
-  var IConstrained = _.protocol({ //constraints are validation which expose their data for use iby the UI
-    constraints: null
-  });
-
   var ICardinality = _.protocol({
     cardinality: null
   });
@@ -155,7 +152,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
   });
 
   var IEntity = _.protocol({
-    eid: null
+    id: null
   });
 
   var IKind = _.protocol({
@@ -171,10 +168,6 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   function constrain(self, constraint){
     return _constraints(self, _.append(_, constraint));
-  }
-
-  function issues(obj){
-    return _.seq(vd.check(IConstrained.constraints(obj), obj));
   }
 
   var protocols = {
@@ -677,7 +670,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
       return IIdentifiable.identifier(self.repo);
     }
 
-    function eid(self){
+    function id(self){
       return _.guid(self.attrs.id);
     }
 
@@ -719,7 +712,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
       _.implement(IMultiDictionary, {}),
       _.implement(IConstrained, {constraints: constraints}),
       _.implement(IIdentifiable, {identifier: identifier}),
-      _.implement(IEntity, {eid: eid}),
+      _.implement(IEntity, {id: id}),
       _.implement(IMap, {keys: keys, dissoc: dissoc}),
       _.implement(ILookup, {lookup: lookup}),
       _.implement(IAssociative, {assoc: assoc, contains: contains}),
@@ -1175,7 +1168,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
         due: _.just(new Date(), _.add(_, _.days(-2)), toLocaleString),
         expanded: true,
         subtask: ["b", "c"],
-        tag: ["backlog"]
+        tag: ["backlog", "wife"]
       },{
         id: "b",
         summary: "Choose 3 potential materials and price them",
@@ -1256,8 +1249,8 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   (function(){
 
-    function eid(self){
-      return IEntity.eid(self.buffer);
+    function id(self){
+      return IEntity.id(self.buffer);
     }
 
     function commands(self){ //TODO serializable commands with sufficient data for later application
@@ -1265,7 +1258,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     }
 
     _.doto(Transaction, //TODO some way of validating both the changed entities and the overall transaction
-      _.implement(IEntity, {eid: eid}),
+      _.implement(IEntity, {id: id}),
       _.implement(ITransaction, {commands: commands}));
 
   })();
@@ -1333,43 +1326,43 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     function load(self, entities){
       return entityCatalog(mut.withMutations(self.loaded, function(loaded){
         return _.reduce(function(memo, entity){
-          var id = _.str(IEntity.eid(entity));
+          var id = _.str(IEntity.id(entity));
           if (!_.contains(memo, id)) {
             mut.assoc(memo, id, entity);
           }
           return memo;
         }, loaded, entities);
-      }), self.changed, _.mapa(IEntity.eid, entities));
+      }), self.changed, _.mapa(IEntity.id, entities));
     }
 
     function add(self, entities){
       return entityCatalog(self.loaded, mut.withMutations(self.changed, function(changed){
         return _.reduce(function(memo, entity){
-          var id = _.str(IEntity.eid(entity));
+          var id = _.str(IEntity.id(entity));
           if (!_.contains(memo, id)){
             mut.assoc(memo, id, entity);
           }
           return memo;
         }, changed, entities);
-      }), _.mapa(IEntity.eid, entities));
+      }), _.mapa(IEntity.id, entities));
     }
 
     function edit(self, entities){
       return entityCatalog(self.loaded, mut.withMutations(self.changed, function(changed){
         return _.reduce(function(memo, entity){
-          var id = _.str(IEntity.eid(entity));
+          var id = _.str(IEntity.id(entity));
           if (_.contains(self.loaded, id) || _.contains(memo, id)) {
             mut.assoc(memo, id, entity);
           }
           return memo;
         }, changed, entities);
-      }), _.mapa(IEntity.eid, entities));
+      }), _.mapa(IEntity.id, entities));
     }
 
     function destroy(self, entities){
       return entityCatalog(self.loaded, mut.withMutations(self.changed, function(changed){
         return _.reduce(function(memo, entity){
-          var id = _.str(IEntity.eid(entity));
+          var id = _.str(IEntity.id(entity));
           if (_.contains(self.loaded, id)) {
             mut.assoc(memo, id, null);
           } else if (_.contains(memo, id)) {
@@ -1377,11 +1370,11 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
           }
           return  memo;
         }, changed, entities);
-      }), _.mapa(IEntity.eid, entities));
+      }), _.mapa(IEntity.id, entities));
     }
 
     function dirty(self, entity){
-      var id = _.str(IEntity.eid(entity));
+      var id = _.str(IEntity.id(entity));
       return _.notEq(entity, _.get(self.loaded, id));
     }
 
@@ -1390,7 +1383,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     }
 
     function includes(self, entity){
-      return IAssociative.contains(self, IEntity.eid(entity));
+      return IAssociative.contains(self, IEntity.id(entity));
     }
 
     function first(self){
@@ -1442,7 +1435,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
       return !!ILookup.lookup(self, guid);
     }
 
-    function eid(self){
+    function id(self){
       return self.id;
     }
 
@@ -1491,7 +1484,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     _.doto(EntityCatalog,
       _.implement(IResolver, {resolve: resolve}),
       _.implement(IIndexed, {nth: nth}),
-      _.implement(IEntity, {eid: eid}),
+      _.implement(IEntity, {id: id}),
       _.implement(IQueryable, {query: query}),
       _.implement(ITransaction, {commands: commands}),
       _.implement(ICatalog, {dirty: dirty, load: load, add: add, edit: edit, destroy: destroy, changes: changes, touched: touched}),
@@ -1597,7 +1590,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     var vals = forward(IMap.vals);
     var count = forward(ICounted.count);
     var contains = forward(IAssociative.contains);
-    var eid = forward(IEntity.eid);
+    var id = forward(IEntity.id);
     var commands = forward(ITransaction.commands);
 
     function dissoc(self, guid){
@@ -1610,7 +1603,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     }
 
     _.doto(TypedEntityCatalog,
-      _.implement(IEntity, {eid: eid}),
+      _.implement(IEntity, {id: id}),
       _.implement(IResolver, {resolve: resolve}),
       _.implement(IQueryable, {query: query}),
       _.implement(ITransaction, {commands: commands}),
@@ -1787,7 +1780,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
       _.swap(self.buffer, function(buffer){
         return ICatalog.add(buffer, [ITiddler.title(entity, _.get(command, "text"))]);
       });
-      $.raise(self.provider, addedEvent(IEntity.eid(entity), _.get(command, "text")));
+      $.raise(self.provider, addedEvent(IEntity.id(entity), _.get(command, "text")));
       next(command);
     }
 
@@ -2955,7 +2948,6 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     flushCommand: flushCommand,
     entityCatalog: entityCatalog,
     typedCatalog: typedCatalog,
-    issues: issues,
     constrain: constrain,
     constraints: _constraints,
     domain: domain,
