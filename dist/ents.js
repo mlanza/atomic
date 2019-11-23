@@ -957,14 +957,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     }
 
     function make(self, attrs){
-      return attrs ? new self.type(self, attrs) : _.just(self.schema, _.keys, _.reduce(function(memo, key){
-        var fld = field(self, key);
-        return _.maybe(IDefaultable.defaults(fld), function(defaults){
-          return IField.aset(fld, memo, defaults);
-        }) || memo;
-      }, new self.type(self, {}), _), function(entity){
-        return assert(entity, 'id', _.guid());
-      });
+      return new self.type(self, attrs);
     }
 
     function name(self){
@@ -1225,8 +1218,8 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
       }, ITransaction.commands(txn));
     }
 
-    function make(self, options){
-      return IFactory.make(_.get(self.repos, _.get(options, "$type")) || _.just(self.repos, _.keys, _.first, _.get(self.repos, _)), _.dissoc(options, "$type"));
+    function make(self, attrs){
+      return IFactory.make(_.get(self.repos, _.get(attrs, "$type")) || _.just(self.repos, _.keys, _.first, _.get(self.repos, _)), _.dissoc(attrs, "$type"));
     }
 
     function conj(self, repo){
@@ -1784,7 +1777,13 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
   (function(){
 
     function handle(self, command, next){
-      var entity = IFactory.make(self.buffer, {id: _.get(command, "id") || _.guid(), $type: _.get(command, "type")});
+      var added = IFactory.make(self.buffer, {id: _.str(_.get(command, "id") || _.guid()), $type: _.get(command, "type")});
+      var entity = _.reduce(function(memo, key){
+          var fld = IKind.field(memo, key);
+          return _.maybe(IDefaultable.defaults(fld), function(defaults){
+            return IField.aset(fld, memo, defaults);
+          }) || memo;
+        }, added, _.keys(added));
       _.swap(self.buffer, function(buffer){
         return ICatalog.add(buffer, [ITiddler.title(entity, _.get(command, "text"))]);
       });
