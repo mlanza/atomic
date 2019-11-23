@@ -303,16 +303,16 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   })()
 
-  function ConstrainedCollection(constraints, values){
+  function ConstrainedCollection(constraints, coll){
     this.constraints = constraints;
-    this.values = values;
+    this.coll = coll;
   }
 
   (function(){
 
     //TODO eliminate field for type
 
-    var forward = _.forwardTo("values");
+    var forward = _.forwardTo("coll");
     var first = forward(ISeq.first);
     var rest = forward(ISeq.rest);
     var next = forward(INext.next);
@@ -339,7 +339,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     }
 
     function conj(self, value){
-      return new self.constructor(self.constraints, _.conj(self.values, value));
+      return new self.constructor(self.constraints, _.conj(self.coll, value));
     }
 
     function equiv(self, other){
@@ -347,23 +347,23 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     }
 
     function assoc(self, idx, value){
-      return new self.constructor(self.constraints, IAssociative.assoc(self.values, idx, value));
+      return new self.constructor(self.constraints, IAssociative.assoc(self.coll, idx, value));
     }
 
     function seq(self){
-      return ISeqable.seq(self.values) ? self : null;
+      return ISeqable.seq(self.coll) ? self : null;
     }
 
     function empty(self){
-      return new self.constructor(self.constraints, IEmptyableCollection.empty(self.values));
+      return new self.constructor(self.constraints, IEmptyableCollection.empty(self.coll));
     }
 
     function deref(self){
-      return self.values;
+      return self.coll;
     }
 
     function fmap(self, f){
-      return new self.constructor(self.constraints, _.fmap(self.values, f));
+      return new self.constructor(self.constraints, _.fmap(self.coll, f));
     }
 
     function constraints1(self){
@@ -371,7 +371,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     }
 
     function constraints2(self, constraints){
-      return new self.constructor(constraints, self.values);
+      return new self.constructor(constraints, self.coll);
     }
 
     var constraints = _.overload(null, constraints1, constraints2);
@@ -861,9 +861,9 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     }
 
     function aget(self, entity){
-      return _.into(self.emptyColl, _.maybe(entity.attrs, _.get(_, self.key), function(value){
+      return _.maybe(entity.attrs, _.get(_, self.key), function(value){
         return ICaster.cast(self.caster, value);
-      }));
+      });
     }
 
     function aset(self, entity, values){
