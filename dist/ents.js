@@ -136,7 +136,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
   });
 
   var IDefaultable = _.protocol({
-    defaults: null
+    defaults: _.constantly(null)
   });
 
   var IDefaultField = _.protocol({
@@ -588,7 +588,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     }
 
     function defaults(self){
-      return _.apply(_.conj, empty(self), self.defaults());
+      return _.apply(_.conj, empty(self), self.defaults);
     }
 
     function constraints1(self){
@@ -854,9 +854,8 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   var BinField = (function(){
 
-    function BinField(key, emptyColl, caster){
+    function BinField(key, caster){
       this.key = key;
-      this.emptyColl = emptyColl;
       this.caster = caster;
     }
 
@@ -876,19 +875,23 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     }
 
     function constraints(self){
-      return IConstrained.constraints(self.emptyColl);
+      return IConstrained.constraints(ICaster.cast(self.caster, null));
+    }
+
+    function defaults(self){
+      return IDefaultable.defaults(ICaster.cast(self.caster, null));
     }
 
     return _.doto(BinField,
+      _.implement(IDefaultable, {defaults: defaults}),
       _.implement(IConstrained, {constraints: constraints}),
       _.implement(IIdentifiable, {identifier: identifier}),
       _.implement(IField, {aget: aget, aset: aset}));
 
   })();
 
-  function binField3(key, emptyColl, callback){
-    var caster = callback(emptyColl);
-    return new BinField(key, emptyColl, caster);
+  function binField3(key, emptyColl, casts){
+    return new BinField(key, casts(emptyColl));
   }
 
   function binField2(key, emptyColl){
@@ -928,7 +931,12 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
       return IConstrained.constraints(self.field);
     }
 
+    function defaults(self){
+      return IDefaultable.defaults(self.field);
+    }
+
     return _.doto(LabeledField,
+      _.implement(IDefaultable, {defaults: defaults}),
       _.implement(IConstrained, {constraints: constraints}),
       _.implement(INamed, {name: name}),
       _.implement(IIdentifiable, {identifier: identifier}),
@@ -949,10 +957,14 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     }
 
     function make(self, attrs){
-      return attrs ? new self.type(self, attrs) : _.reduce(function(memo, key){
+      return attrs ? new self.type(self, attrs) : _.just(self.schema, _.keys, _.reduce(function(memo, key){
         var fld = field(self, key);
-        return IField.aset(fld, memo, IDefaultable.defaults(IField.aget(fld, memo)));
-      }, new self.type(self, {}), _.keys(self.schema));
+        return _.maybe(IDefaultable.defaults(fld), function(defaults){
+          return IField.aset(fld, memo, defaults);
+        }) || memo;
+      }, new self.type(self, {}), _), function(entity){
+        return assert(entity, 'id', _.guid());
+      });
     }
 
     function name(self){
@@ -1094,7 +1106,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     tiddlerBehavior("summary", "detail"));
 
   var defaults = _.conj(schema(),
-    labeledField("ID", binField("id", factoryDefaultCollection(_.comp(_.array, _.guid), entity), function(coll){
+    labeledField("ID", binField("id", entity, function(coll){
       return recaster(_.guid, _.str, valueCaster(coll));
     })),
     labeledField("Tag", binField("tag", unlimited, valuesCaster)));
@@ -1148,7 +1160,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
       _.conj(defaults,
         labeledField("Summary", binField("summary", constrain(required, vd.collOf(vd.chars(1, 100))))),
         labeledField("Detail", binField("detail")),
-        labeledField("Priority", binField("priority", factoryDefaultCollection(_.constantly(["C"]), constrain(optional, vd.collOf(vd.choice(["A", "B", "C"])))))),
+        labeledField("Priority", binField("priority", factoryDefaultCollection(["C"], constrain(optional, vd.collOf(vd.choice(["A", "B", "C"])))))),
         labeledField("Due Date", binField("due", constrain(optional, vd.collOf(_.isDate)), function(coll){
           return recaster(_.date, toLocaleString, valueCaster(coll));
         })),
