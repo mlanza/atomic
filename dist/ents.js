@@ -8,15 +8,17 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   var IAssociative = _.IAssociative,
       ISwap = _.ISwap,
+      IMergeable = _.IMergeable,
       ITransientAssociative = mut.ITransientAssociative,
-      IMiddleware = $.IMiddleware,
       IDispatch = $.IDispatch,
       ISubscribe = $.ISubscribe,
+      ITimeTraveler = $.ITimeTraveler,
       IEmptyableCollection = _.IEmptyableCollection,
       ICheckable = vd.ICheckable,
       IConstrained = vd.IConstrained,
       ICollection = _.ICollection,
       ITransientCollection = mut.ITransientCollection,
+      IMiddleware = $.IMiddleware,
       IReduce = _.IReduce,
       IKVReduce = _.IKVReduce,
       IAppendable = _.IAppendable,
@@ -29,7 +31,6 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
       IIndexed = _.IIndexed,
       ICounted = _.ICounted,
       ISeqable = _.ISeqable,
-      ISequential = _.ISequential,
       IMap = _.IMap,
       ILookup = _.ILookup,
       IBounds = _.IBounds,
@@ -50,38 +51,13 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     return _.replace(_.join("", _.indexed(arguments)), /\/\//g, '/');
   }
 
-  function isSequential(values){
-    return _.satisfies(ISequential, values);
-  }
-
   var IOriginated = _.protocol({
     origin: null
-  });
-
-  var IMergeable = _.protocol({
-    merge: null
-  });
-
-  var IEntitySelector = _.protocol({
-    select: null,
-    deselect: null
-  });
-
-  var ITimeTravel = _.protocol({
-    undo: null,
-    redo: null,
-    flush: null,
-    undoable: null,
-    redoable: null
   });
 
   var ICaster = _.protocol({
     cast: null,
     uncast: null
-  });
-
-  var IIntention = _.protocol({
-    command: null //returns the serialization-friendly command object which upon execution is capable of realizing the intention
   });
 
   var IStore = _.protocol({
@@ -131,30 +107,38 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     changes: null //changed entities
   });
 
-  var IField = _.protocol({
-    aget: null,
-    aset: null
-  });
-
-  var IDefaultField = _.protocol({
-    defaultField: null
-  });
-
-  var ICardinality = _.protocol({
-    cardinality: null
-  });
-
-  var IMultiDictionary = _.protocol({
+  var IKind = _.protocol({
+    kind: null,
+    field: null
   });
 
   var IEntity = _.protocol({
     id: null
   });
 
-  var IKind = _.protocol({
-    kind: null,
-    field: null
+  var IField = _.protocol({
+    aget: null,
+    aset: null
   });
+
+  var protocols = {
+    ICaster: ICaster,
+    IIdentifiable: IIdentifiable,
+    IKind: IKind,
+    IField: IField,
+    IEntity: IEntity,
+    IResolver: IResolver,
+    INamed: INamed,
+    ITiddler: ITiddler,
+    IQueryable: IQueryable,
+    IFactory: IFactory,
+    IConstrained: IConstrained,
+    IStore: IStore,
+    IOriginated: IOriginated,
+    ITransaction: ITransaction,
+    IView: IView,
+    ICatalog: ICatalog
+  }
 
   function _constraints2(self, f){
     return IConstrained.constraints(self, _.isFunction(f) ? f(IConstrained.constraints(self)) : f);
@@ -166,139 +150,12 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     return _constraints(self, _.append(_, constraint));
   }
 
-  var protocols = {
-    IMultiDictionary: IMultiDictionary,
-    ICaster: ICaster,
-    IIdentifiable: IIdentifiable,
-    IKind: IKind,
-    IField: IField,
-    IEntity: IEntity,
-    IResolver: IResolver,
-    INamed: INamed,
-    ITiddler: ITiddler,
-    ICardinality: ICardinality,
-    IQueryable: IQueryable,
-    IFactory: IFactory,
-    IConstrained: IConstrained,
-    IStore: IStore,
-    IOriginated: IOriginated,
-    ITransaction: ITransaction,
-    IEntitySelector: IEntitySelector,
-    ITimeTravel: ITimeTravel,
-    IView: IView,
-    IMiddleware: IMiddleware,
-    ICatalog: ICatalog
-  }
-
-  function TimeTravelCell(pos, max, history, cell){
-    this.pos = pos;
-    this.max = max;
-    this.history = history;
-    this.cell = cell;
-  }
-
-  function timeTravelCell2(max, cell){
-    return new TimeTravelCell(0, max, [_.deref(cell)], cell);
-  }
-
-  function timeTravelCell1(cell){
-    return timeTravelCell2(Infinity, cell);
-  }
-
-  var timeTravelCell = _.overload(null, timeTravelCell1, timeTravelCell2);
-
-  (function(){
-
-    function undo(self){
-      if (undoable(self)) {
-        self.pos += 1;
-        _.reset(self.cell, self.history[self.pos]);
-      }
-    }
-
-    function redo(self){
-      if (redoable(self)) {
-        self.pos -= 1;
-        _.reset(self.cell, self.history[self.pos]);
-      }
-    }
-
-    function flush(self){
-      self.history = [self.history[self.pos]];
-      self.pos = 0;
-    }
-
-    function undoable(self){
-      return self.pos < ICounted.count(self.history);
-    }
-
-    function redoable(self){
-      return self.pos > 0;
-    }
-
-    function deref(self){
-      return IDeref.deref(self.cell);
-    }
-
-    function reset(self, state){
-      var history = self.pos ? self.history.slice(self.pos) : self.history;
-      history.unshift(state);
-      while(_.count(history) > self.max) {
-        history.pop();
-      }
-      self.history = history;
-      self.pos = 0;
-      _.reset(self.cell, state);
-    }
-
-    function swap(self, f){
-      reset(self, f(IDeref.deref(self.cell)));
-    }
-
-    function sub(self, observer){
-      $.sub(self.cell, observer);
-    }
-
-    function unsub(self, observer){
-      $.unsub(self.cell, observer);
-    }
-
-    function subscribed(self){
-      return $.subscribed(self.cell);
-    }
-
-    _.doto(TimeTravelCell,
-      _.implement(ITimeTravel, {undo: undo, redo: redo, flush: flush, undoable: undoable, redoable: redoable}),
-      _.implement(_.IDeref, {deref: deref}),
-      _.implement(_.IReset, {reset: reset}),
-      _.implement(_.ISwap, {swap: swap}),
-      _.implement($.ISubscribe, {sub: sub, unsub: unsub, subscribed: subscribed}))
-
-  })();
-
-  function DerefCheck(check){
-    this.check = check;
-  }
-
-  (function(){
-
-    function check(self, value){
-      return ICheckable.check(self.check, _.deref(value));
-    }
-
-    _.doto(DerefCheck,
-      _.implement(ICheckable, {check: check}));
-
-  })()
-
   function ConstrainedCollection(constraints, coll){
     this.constraints = constraints;
     this.coll = coll;
   }
 
   (function(){
-
-    //TODO eliminate field for type
 
     var forward = _.forwardTo("coll");
     var first = forward(ISeq.first);
@@ -391,8 +248,6 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   (function(){
 
-    //TODO eliminate field for type
-
     var forward = _.forwardTo("coll");
     var first = forward(ISeq.first);
     var rest = forward(ISeq.rest);
@@ -484,7 +339,6 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     var nth = forward(IIndexed.nth);
     var contains = forward(IAssociative.contains);
     var seq = forward(ISeqable.seq);
-    var cardinality = forward(ICardinality.cardinality);
     var deref = forward(IDeref.deref);
 
     function fmap(self, f){
@@ -524,7 +378,6 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
       _.implement(ICounted, {count: count}),
       _.implement(IReduce, {reduce: reduce}),
       _.implement(IKVReduce, {reducekv: reducekv}),
-      _.implement(ICardinality, {cardinality: cardinality}),
       _.implement(ISeq, {first: first, rest: rest}),
       _.implement(INext, {next: next}),
       _.implement(IEquiv, {equiv: equiv}),
@@ -594,7 +447,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     }
 
     function field(self, key){
-      return IKind.field(self.repo, key);
+      return IKind.field(self.repo, key) || _.assoc(_.isArray(_.get(self.attrs, key)) ? _field(key, unlimited, valuesCaster) : _field(key, optional, valueCaster), "virtual", true);
     }
 
     function kind(self){ //TODO use?
@@ -602,11 +455,11 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     }
 
     function lookup(self, key){
-      return IField.aget(field(self, key) || IDefaultField.defaultField(self, key), self);
+      return IField.aget(field(self, key), self);
     }
 
     function assoc(self, key, values){
-      return IField.aset(field(self, key) || IDefaultField.defaultField(self, key), self, values);
+      return IField.aset(field(self, key), self, values);
     }
 
     function contains(self, key){
@@ -628,7 +481,6 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     }
 
     return _.does(
-      _.implement(IMultiDictionary, {}),
       _.implement(IConstrained, {constraints: constraints}),
       _.implement(IIdentifiable, {identifier: identifier}),
       _.implement(IEntity, {id: id}),
@@ -706,9 +558,9 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   var Field = (function(){
 
-    function Field(caster, attrs){
-      this.caster = caster;
+    function Field(attrs, caster){
       this.attrs = attrs;
+      this.caster = caster;
     }
 
     function lookup(self, key){
@@ -716,7 +568,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     }
 
     function assoc(self, key, value){
-      return new self.constructor(self.caster, IAssociative.assoc(self.attrs, key, value));
+      return new self.constructor(IAssociative.assoc(self.attrs, key, value), self.caster);
     }
 
     function contains(self, key){
@@ -724,14 +576,16 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     }
 
     function aget(self, entity){
-      return _.maybe(entity.attrs, _.get(_, self.key), function(value){
+      var key = _.get(self, "key");
+      return _.maybe(entity.attrs, _.get(_, key), function(value){
         return ICaster.cast(self.caster, value);
       });
     }
 
     function aset(self, entity, values){
-      var value = ICaster.uncast(self.caster, values);
-      return new entity.constructor(entity.repo, _.isSome(value) ? _.assoc(entity.attrs, self.key, value) : _.dissoc(entity.attrs, self.key));
+      var key =  _.get(self, "key"),
+          value = ICaster.uncast(self.caster, values);
+      return new entity.constructor(entity.repo, _.isSome(value) ? _.assoc(entity.attrs, key, value) : _.dissoc(entity.attrs, self.key));
     }
 
     function identifier(self){
@@ -752,7 +606,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
   })();
 
   function field3(key, emptyColl, casts){
-    return new Field(casts(emptyColl), {key: key});
+    return new Field({key: key, readonly: false, virtual: false}, casts(emptyColl)); //include defaults here
   }
 
   function field2(key, emptyColl){
@@ -764,13 +618,14 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
   }
 
   var field = _.overload(null, field1, field2, field3);
+  var _field = field;
 
   var ComputedField = (function(){
 
-    function ComputedField(computations, emptyColl, attrs){
+    function ComputedField(attrs, computations, emptyColl){
+      this.attrs = attrs;
       this.computations = computations;
       this.emptyColl = emptyColl;
-      this.attrs = attrs;
     }
 
     function lookup(self, key){
@@ -778,7 +633,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     }
 
     function assoc(self, key, value){
-      return new self.constructor(self.computations, self.emptyColl, IAssociative.assoc(self.attrs, key, value));
+      return new self.constructor(IAssociative.assoc(self.attrs, key, value), self.computations, self.emptyColl);
     }
 
     function contains(self, key){
@@ -807,53 +662,48 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
   })();
 
   function computedField(key, computations, emptyColl){
-    return new ComputedField(computations, emptyColl || [], {key: key});
+    return new ComputedField({key: key, readonly: true, virtual: false}, computations, emptyColl || []);
   }
 
-  var ReadOnlyField = (function(){
+  function Schema(fields){
+    this.fields = fields;
+  }
 
-    function ReadOnlyField(field){
-      this.field = field;
+  (function(){
+
+    function conj(self, field){
+      return new self.constructor(_.assoc(self.fields, IIdentifiable.identifier(field), field));
     }
 
     function lookup(self, key){
-      return ILookup.lookup(self.field, key);
+      return _.get(self.fields, key);
     }
 
-    function assoc(self, key, value){
-      return new self.constructor(IAssociative.assoc(self.field, key, value));
+    function keys(self){
+      return _.keys(self.fields);
     }
 
-    function contains(self, key){
-      return IAssociative.contains(self.field, key);
+    function vals(self){
+      return _.vals(self.fields);
     }
 
-    function aget(self, entity){
-      return IField.aget(self.field, entity);
+    function dissoc(self, key){
+      return new self.constructor(_.dissoc(self.fields, key));
     }
 
-    function aset(self, entity, values){
-      throw new Error("Cannot set readonly field '" + identifier(self) + "'.");
+    function merge(self, other){
+      return _.reduce(_.conj, self, _.vals(other));
     }
 
-    function identifier(self){
-      return IIdentifiable.identifier(self.field);
-    }
-
-    function constraints(self){
-      return IConstrained.constraints(self.field);
-    }
-
-    return _.doto(ReadOnlyField,
+    _.doto(Schema,
+      _.implement(IMergeable, {merge: merge}),
+      _.implement(IMap, {keys: keys, vals: vals, dissoc: dissoc}),
       _.implement(ILookup, {lookup: lookup}),
-      _.implement(IAssociative, {contains: contains, assoc: assoc}),
-      _.implement(IConstrained, {constraints: constraints}),
-      _.implement(IIdentifiable, {identifier: identifier}),
-      _.implement(IField, {aget: aget, aset: aset}));
+      _.implement(ICollection, {conj: conj}));
 
   })();
 
-  var readOnlyField = _.constructs(ReadOnlyField);
+  var schema = _.constructs(Schema);
 
   var Bin = (function(){
 
@@ -904,48 +754,6 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   })();
 
-  function Schema(fields){
-    this.fields = fields;
-  }
-
-  (function(){
-
-    function conj(self, field){
-      return new self.constructor(_.assoc(self.fields, IIdentifiable.identifier(field), field));
-    }
-
-    function lookup(self, key){
-      return _.get(self.fields, key);
-    }
-
-    function keys(self){
-      return _.keys(self.fields);
-    }
-
-    function vals(self){
-      return _.vals(self.fields);
-    }
-
-    function dissoc(self, key){
-      return new self.constructor(_.dissoc(self.fields, key));
-    }
-
-    function merge(self, other){
-      return _.reduce(_.conj, self, _.vals(other));
-    }
-
-    _.doto(Schema,
-      _.implement(IMergeable, {merge: merge}),
-      _.implement(IMap, {keys: keys, vals: vals, dissoc: dissoc}),
-      _.implement(ILookup, {lookup: lookup}),
-      _.implement(ICollection, {conj: conj}));
-
-  })();
-
-  function schema(singular, plural){
-    return new Schema({}, singular, plural);
-  }
-
   var bin = _.constructs(Bin);
 
   function tiddlerBehavior(title, text){
@@ -968,25 +776,6 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   }
 
-  function defaultFieldBehavior(singular, plural){
-
-    function defaultField(self, key){
-      return _.isArray(_.get(self.attrs, key)) ? plural(key) : singular(key);
-    }
-
-    return _.does(
-      _.implement(IDefaultField, {defaultField: defaultField}));
-
-  }
-
-  function one(key){
-    return field(key, optional, valueCaster);
-  }
-
-  function many(key){
-    return field(key, unlimited, valuesCaster);
-  }
-
   function Tiddler(repo, attrs){
     this.repo = repo;
     this.attrs = attrs;
@@ -994,7 +783,6 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   _.doto(Tiddler,
     behaveAsEntity,
-    defaultFieldBehavior(one, many),
     tiddlerBehavior("title", "text"));
 
   function Task(repo, attrs){
@@ -1004,14 +792,13 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   _.doto(Task,
     behaveAsEntity,
-    defaultFieldBehavior(one, many),
     tiddlerBehavior("summary", "detail"));
 
   var defaults = _.conj(schema(),
     _.assoc(field("id", entity, function(coll){
       return recaster(_.guid, _.str, valueCaster(coll));
     }), "label", "ID"),
-    _.assoc(field("tag", unlimited, valuesCaster), "label", "Tag"));
+    _.assoc(field("tag", unlimited, valuesCaster), "label", "Tag", "appendonly", true));
 
   function typed(entity){
     return IIdentifiable.identifier(entity.repo);
@@ -2072,7 +1859,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
   })();
 
   _.doto(UndoHandler,
-    timeTravels(ITimeTravel.undoable, ITimeTravel.undo, undoneEvent()));
+    timeTravels(ITimeTraveler.undoable, ITimeTraveler.undo, undoneEvent()));
 
   function RedoCommand(){
   }
@@ -2106,7 +1893,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
   })();
 
   _.doto(RedoHandler,
-    timeTravels(ITimeTravel.redoable, ITimeTravel.redo, redoneEvent()));
+    timeTravels(ITimeTraveler.redoable, ITimeTraveler.redo, redoneEvent()));
 
   function FlushCommand(){
   }
@@ -2140,7 +1927,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
   })();
 
   _.doto(FlushHandler,
-    timeTravels(_.constantly(true), ITimeTravel.flush, flushedEvent()));
+    timeTravels(_.constantly(true), ITimeTraveler.flush, flushedEvent()));
 
   function AssertCommand(key, value, options){
     this.key = key;
@@ -2197,12 +1984,15 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
   (function(){
 
     function handle(self, command, next){
-      var entity = _.get(self.buffer, _.get(command, "id"));
+      var id = _.get(command, "id"),
+          entity = _.get(self.buffer, id);
       if (entity) {
+        var key = _.get(command, "key"),
+            value = _.get(command, "value");
         _.swap(self.buffer, function(buffer){
-          return ICatalog.edit(buffer, [assert(entity, _.get(command, "key"), _.get(command, "value"))]);
+          return ICatalog.edit(buffer, [assert(entity, key, value)]);
         });
-        $.raise(self.provider, assertedEvent(_.get(command, "id"), _.get(command, "key"), _.get(command, "value")));
+        $.raise(self.provider, assertedEvent(id, key, value));
       }
       next(command);
     }
@@ -2224,6 +2014,34 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
     return _.doto(AssertedEvent,
       _.implement(IIdentifiable, {identifier: _.constantly("asserted")}));
+
+  })();
+
+  function BlockingHandler(key, buffer, handler){
+    this.key = key;
+    this.buffer = buffer;
+    this.handler = handler;
+  }
+
+  var blockingHandler = _.constructs(BlockingHandler);
+
+  (function(){
+
+    function handle(self, command, next){
+      var id = _.get(command, "id"),
+          entity = _.get(self.buffer, id);
+      if (entity) {
+        var key = _.get(command, "key");
+        if (_.get(IKind.field(entity, key), self.key)) {
+          throw new Error("Field `" + key + "` is " + self.key + " and thus cannot " + IIdentifiable.identifier(command) + ".");
+        }
+        IMiddleware.handle(self.handler, command, next);
+      }
+      next(command);
+    }
+
+    _.doto(BlockingHandler,
+      _.implement(IMiddleware, {handle: handle}));
 
   })();
 
@@ -2725,14 +2543,14 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     }
 
     var swap = forward(ISwap.swap);
-    var undo = forward(ITimeTravel.undo);
-    var redo = forward(ITimeTravel.redo);
-    var flush = forward(ITimeTravel.flush);
-    var undoable = forward(ITimeTravel.undoable);
-    var redoable = forward(ITimeTravel.redoable);
+    var undo = forward(ITimeTraveler.undo);
+    var redo = forward(ITimeTraveler.redo);
+    var flush = forward(ITimeTraveler.flush);
+    var undoable = forward(ITimeTraveler.undoable);
+    var redoable = forward(ITimeTraveler.redoable);
 
     _.doto(Buffer,
-      _.implement(ITimeTravel, {undo: undo, redo: redo, flush: flush, undoable: undoable, redoable: redoable}),
+      _.implement(ITimeTraveler, {undo: undo, redo: redo, flush: flush, undoable: undoable, redoable: redoable}),
       _.implement(IFactory, {make: make}),
       _.implement(ILookup, {lookup: lookup}),
       _.implement(ISwap, {swap: swap}),
@@ -2783,9 +2601,9 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
             mut.assoc(_, "cast", selectionHandler(model, castHandler(buffer, events))),
             mut.assoc(_, "tag", tagHandler(selectionHandler(model, assertHandler(buffer, events)))),
             mut.assoc(_, "untag", untagHandler(selectionHandler(model, retractHandler(buffer, events)))),
-            mut.assoc(_, "toggle", selectionHandler(model, toggleHandler(buffer, events))),
-            mut.assoc(_, "assert", selectionHandler(model, assertHandler(buffer, events))),
-            mut.assoc(_, "retract", selectionHandler(model, retractHandler(buffer, events))),
+            mut.assoc(_, "toggle", selectionHandler(model, blockingHandler("readonly", buffer, toggleHandler(buffer, events)))),
+            mut.assoc(_, "assert", selectionHandler(model, blockingHandler("readonly", buffer, assertHandler(buffer, events)))),
+            mut.assoc(_, "retract", selectionHandler(model, blockingHandler("appendonly", buffer, blockingHandler("readonly", buffer, retractHandler(buffer, events))))),
             mut.assoc(_, "destroy", selectionHandler(model, destroyHandler(buffer, events))),
             mut.assoc(_, "query", queryHandler(buffer, events)),
             mut.assoc(_, "select", selectHandler(model, events)),
@@ -2821,7 +2639,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   })();
 
-  var buf = buffer(domain([tiddlers, tasks]), timeTravelCell($.cell(typedCatalog())));
+  var buf = buffer(domain([tiddlers, tasks]), $.timeTraveler($.cell(typedCatalog())));
 
   _.each(function(el){
     var a = _.guid("a"), //TODO use memoize on fn with weakMap?

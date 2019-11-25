@@ -10,3 +10,4 @@ export * from "./types/message-processor";
 export * from "./types/middleware";
 export * from "./types/readonly";
 export * from "./types/router";
+export * from "./types/time-traveler";

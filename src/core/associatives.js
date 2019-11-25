@@ -9,15 +9,6 @@ import {update} from "./protocols/iassociative/concrete";
 import {reducing} from "./protocols/ireduce/concrete";
 import {gt, lt} from "./predicates";
 
-export function merge(...maps){
-  return some(identity, maps) ? IReduce.reduce(maps, function(memo, map){
-    return IReduce.reduce(ISeqable.seq(map), function(memo, [key, value]){
-      memo[key] = value;
-      return memo;
-    }, memo);
-  }, {}) : null;
-}
-
 export function mergeWith(f, init, ...maps){
   return init && some(identity, maps) ? IReduce.reduce(maps, function(memo, map){
     return IReduce.reduce(ISeqable.seq(map), function(memo, [key, value]){

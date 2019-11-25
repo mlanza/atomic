@@ -1,6 +1,6 @@
 import {does, identity} from '../../core';
 import {implement} from '../protocol';
-import {IBlankable, ICompact, IComparable, IYankable, IMatch, IDecode, ISet, INext, ICollection, IEncode, IEquiv, IMapEntry, IReduce, IKVReduce, ISeqable, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, IFn, IMap, ISeq, IDescriptive, ICoerce, ICloneable, IInclusive} from '../../protocols';
+import {IMergeable, IBlankable, ICompact, IComparable, IYankable, IMatch, IDecode, ISet, INext, ICollection, IEncode, IEquiv, IMapEntry, IReduce, IKVReduce, ISeqable, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, IFn, IMap, ISeq, IDescriptive, ICoerce, ICloneable, IInclusive} from '../../protocols';
 import {reduced} from '../reduced';
 import {lazySeq, into, map} from '../lazy-seq';
 import {cons} from '../list';
@@ -12,6 +12,15 @@ const keys = Object.keys;
 const vals = Object.values;
 
 Object.from = ICoerce.toObject;
+
+function merge(...maps){
+  return IReduce.reduce(maps, function(memo, map){
+    return IReduce.reduce(ISeqable.seq(map), function(memo, [key, value]){
+      memo[key] = value;
+      return memo;
+    }, memo);
+  }, {});
+}
 
 function blank(self){
   return keys(self).length === 0;
@@ -191,6 +200,7 @@ export const behaveAsObject = does(
   iequiv,
   implement(IDescriptive),
   implement(IBlankable, {blank}),
+  implement(IMergeable, {merge}),
   implement(ICompact, {compact}),
   implement(IEquiv, {equiv}),
   implement(IDecode, {decode}),

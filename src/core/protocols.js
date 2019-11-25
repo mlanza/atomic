@@ -32,6 +32,7 @@ export * from "./protocols/ilookup/instance";
 export * from "./protocols/imap/instance";
 export * from "./protocols/imapentry/instance";
 export * from "./protocols/imatch/instance";
+export * from "./protocols/imergeable/instance";
 export * from "./protocols/inamed/instance";
 export * from "./protocols/inext/instance";
 export * from "./protocols/iotherwise/instance";
