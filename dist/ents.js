@@ -704,9 +704,9 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   })();
 
-  var BinField = (function(){
+  var Field = (function(){
 
-    function BinField(caster, attrs){
+    function Field(caster, attrs){
       this.caster = caster;
       this.attrs = attrs;
     }
@@ -742,7 +742,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
       return IConstrained.constraints(ICaster.cast(self.caster, null));
     }
 
-    return _.doto(BinField,
+    return _.doto(Field,
       _.implement(ILookup, {lookup: lookup}),
       _.implement(IAssociative, {contains: contains, assoc: assoc}),
       _.implement(IConstrained, {constraints: constraints}),
@@ -751,23 +751,23 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   })();
 
-  function binField3(key, emptyColl, casts){
-    return new BinField(casts(emptyColl), {key: key});
+  function field3(key, emptyColl, casts){
+    return new Field(casts(emptyColl), {key: key});
   }
 
-  function binField2(key, emptyColl){
-    return binField3(key, emptyColl, valueCaster);
+  function field2(key, emptyColl){
+    return field3(key, emptyColl, valueCaster);
   }
 
-  function binField1(key){
-    return binField2(key, optional);
+  function field1(key){
+    return field2(key, optional);
   }
 
-  var binField = _.overload(null, binField1, binField2, binField3);
+  var field = _.overload(null, field1, field2, field3);
 
-  var BinComputedField = (function(){
+  var ComputedField = (function(){
 
-    function BinComputedField(computations, emptyColl, attrs){
+    function ComputedField(computations, emptyColl, attrs){
       this.computations = computations;
       this.emptyColl = emptyColl;
       this.attrs = attrs;
@@ -778,7 +778,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     }
 
     function assoc(self, key, value){
-      return new self.constructor(self.key, self.computations, self.emptyColl, IAssociative.assoc(self.attrs, key, value));
+      return new self.constructor(self.computations, self.emptyColl, IAssociative.assoc(self.attrs, key, value));
     }
 
     function contains(self, key){
@@ -797,7 +797,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
       return IConstrained.constraints(self.emptyColl);
     }
 
-    return _.doto(BinComputedField,
+    return _.doto(ComputedField,
       _.implement(ILookup, {lookup: lookup}),
       _.implement(IAssociative, {contains: contains, assoc: assoc}),
       _.implement(IConstrained, {constraints: constraints}),
@@ -806,8 +806,8 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   })();
 
-  function binComputedField(key, computations, emptyColl){
-    return new BinComputedField(computations, emptyColl || [], {key: key});
+  function computedField(key, computations, emptyColl){
+    return new ComputedField(computations, emptyColl || [], {key: key});
   }
 
   var ReadOnlyField = (function(){
@@ -980,11 +980,11 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
   }
 
   function one(key){
-    return binField(key, optional, valueCaster);
+    return field(key, optional, valueCaster);
   }
 
   function many(key){
-    return binField(key, unlimited, valuesCaster);
+    return field(key, unlimited, valuesCaster);
   }
 
   function Tiddler(repo, attrs){
@@ -1008,10 +1008,10 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     tiddlerBehavior("summary", "detail"));
 
   var defaults = _.conj(schema(),
-    _.assoc(binField("id", entity, function(coll){
+    _.assoc(field("id", entity, function(coll){
       return recaster(_.guid, _.str, valueCaster(coll));
     }), "label", "ID"),
-    _.assoc(binField("tag", unlimited, valuesCaster), "label", "Tag"));
+    _.assoc(field("tag", unlimited, valuesCaster), "label", "Tag"));
 
   function typed(entity){
     return IIdentifiable.identifier(entity.repo);
@@ -1021,9 +1021,9 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
     return _.doto(new Bin(Tiddler, "Tiddler", "tiddler",
       _.conj(defaults,
-        _.assoc(binField("title", required), "label", "Title"),
-        _.assoc(binField("text", optional), "label", "Text"),
-        _.assoc(binComputedField("flags", [typed]), "label", "Flags")),
+        _.assoc(field("title", required), "label", "Title"),
+        _.assoc(field("text", optional), "label", "Text"),
+        _.assoc(computedField("flags", [typed]), "label", "Flags")),
       []), function(bin){
 
       _.each(function(item){
@@ -1060,17 +1060,17 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
     return _.doto(new Bin(Task, "Task", "task",
       _.conj(defaults,
-        _.assoc(binField("summary", constrain(required, vd.collOf(vd.chars(1, 100)))), "label", "Summary"),
-        _.assoc(binField("detail"), "label", "Detail"),
-        _.assoc(binField("priority", constrain(optional, vd.collOf(vd.choice(["A", "B", "C"])))), "label", "Priority", "defaults", ["B"]),
-        _.assoc(binField("due", constrain(optional, vd.collOf(_.isDate)), function(coll){
+        _.assoc(field("summary", constrain(required, vd.collOf(vd.chars(1, 100)))), "label", "Summary"),
+        _.assoc(field("detail"), "label", "Detail"),
+        _.assoc(field("priority", constrain(optional, vd.collOf(vd.choice(["A", "B", "C"])))), "label", "Priority", "defaults", ["B"]),
+        _.assoc(field("due", constrain(optional, vd.collOf(_.isDate)), function(coll){
           return recaster(_.date, toLocaleString, valueCaster(coll));
         }), "label", "Due Date"),
-        _.assoc(binComputedField("overdue", [isOverdue]), "label", "Overdue"),
-        _.assoc(binComputedField("flags", [typed, flag("overdue", isOverdue), flag("important", isImportant)]), "label", "Flags"),
-        _.assoc(binField("assignee", entities), "label", "Assignee"),
-        _.assoc(binField("subtask", resolvingCollection(vd.and(vd.unlimited, vd.collOf(vd.isa(Task, Tiddler))), entities), valuesCaster), "label", "Subtask"),
-        _.assoc(binField("expanded", constrain(required, vd.collOf(_.isBoolean))), "label", "Expanded")),
+        _.assoc(computedField("overdue", [isOverdue]), "label", "Overdue"),
+        _.assoc(computedField("flags", [typed, flag("overdue", isOverdue), flag("important", isImportant)]), "label", "Flags"),
+        _.assoc(field("assignee", entities), "label", "Assignee"),
+        _.assoc(field("subtask", resolvingCollection(vd.and(vd.unlimited, vd.collOf(vd.isa(Task, Tiddler))), entities), valuesCaster), "label", "Subtask"),
+        _.assoc(field("expanded", constrain(required, vd.collOf(_.isBoolean))), "label", "Expanded")),
       []), function(bin){
 
       _.each(function(item){
