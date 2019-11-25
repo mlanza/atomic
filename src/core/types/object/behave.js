@@ -1,9 +1,10 @@
-import {does, identity} from '../../core';
+import {does, identity, constructs} from '../../core';
 import {implement} from '../protocol';
 import {IMergeable, IBlankable, ICompact, IComparable, IYankable, IMatch, IDecode, ISet, INext, ICollection, IEncode, IEquiv, IMapEntry, IReduce, IKVReduce, ISeqable, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, IFn, IMap, ISeq, IDescriptive, ICoerce, ICloneable, IInclusive} from '../../protocols';
 import {reduced} from '../reduced';
 import {lazySeq, into, map} from '../lazy-seq';
 import {cons} from '../list';
+import {apply} from '../function/concrete';
 import {iequiv} from '../array/behave';
 import {satisfies} from "../protocol/concrete";
 import {emptyObject} from '../object/construct';
@@ -172,20 +173,26 @@ function toArray(self){
   }, []);
 }
 
-function encode(self, label, refstore, seed){
+function encode(self, label){
  return reducekv(self, function(memo, key, value){
-    return IAssociative.assoc(memo, IEncode.encode(key, label, refstore, seed), IEncode.encode(value, label, refstore, seed));
+    return IAssociative.assoc(memo, IEncode.encode(key, label), IEncode.encode(value, label));
   }, {});
 }
 
 function decode(self, label, constructors){
   if (IAssociative.contains(self, label)){
-    if (IAssociative.contains(self, "data")) {
-      const constructor = ILookup.lookup(constructors, ILookup.lookup(self, label)).from;
-      const data = ILookup.lookup(self, "data");
-      return constructor(data && data.constructor === Object ? reducekv(data, function(memo, key, value){
+    const type = ILookup.lookup(constructors, ILookup.lookup(self, label)),
+          data = ILookup.lookup(self, "data"),
+          args = ILookup.lookup(self, "args");
+    if (data != null){
+      return Object.assign(Object.create(type.prototype), reducekv(data, function(memo, key, value){
         return IAssociative.assoc(memo, IDecode.decode(key, label, constructors), IDecode.decode(value, label, constructors));
-      }, {}) : IDecode.decode(data, label, constructors));
+      }, {}));
+    } else if (args != null) {
+      const create = constructs(type);
+      return apply(create, map(function(arg){
+        return IDecode.decode(arg, label, constructors);
+      }, args));
     } else {
       throw new Error("Cannot decode reference types.");
     }

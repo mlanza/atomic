@@ -183,16 +183,16 @@ function idx(self, x){
   return n === -1 ? null : n;
 }
 
-function encode(self, label, refstore, seed){
+function encode(self, label){
   return reduce(self, function(memo, value){
-    memo.push(IEncode.encode(value, label, refstore, seed));
+    memo.push(IEncode.encode(value, label));
     return memo;
   }, []);
 }
 
 function decode(self, label, constructors){
   return reduce(self, function(memo, value){
-    memo.push(IDecode.decode(self, label, constructors));
+    memo.push(IDecode.decode(value, label, constructors));
     return memo;
   }, []);
 }

@@ -1,7 +1,15 @@
-import {does, identity, implement, overload, cons, filter, lazySeq, emptyList, apply, unreduced, ICoerce, ISeq, IReduce, ISeqable, ISet, INext, ISequential, ICounted, ICollection, IEmptyableCollection, IInclusive, ICloneable} from "atomic/core";
+import {does, identity, implement, overload, assoc, cons, filter, lazySeq, emptyList, apply, unreduced, ICoerce, ISeq, IReduce, ISeqable, ISet, INext, ISequential, ICounted, ICollection, IEmptyableCollection, IInclusive, ICloneable, IEncode} from "atomic/core";
 import {emptyTransientSet, transientSet} from './construct';
 import {IPersistent, ITransientSet, ITransientEmptyableCollection, ITransientCollection} from "../../protocols";
 import {_ as v} from "param.macro";
+
+function encode(self, label){
+  const xs = reduce(self, function(memo, value){
+    memo.push(IEncode.encode(value, label));
+    return memo;
+  }, []);
+  return assoc({}, label, "Set", "args", [xs]);
+}
 
 function seq(self){
   return count(self) ? self : null;
@@ -74,6 +82,7 @@ function reduce(self, xf, init){
 
 export const behaveAsTransientSet = does(
   implement(ISequential),
+  implement(IEncode, {encode}),
   implement(ITransientCollection, {conj}),
   implement(ITransientSet, {disj}), //TODO unite
   implement(IReduce, {reduce}),

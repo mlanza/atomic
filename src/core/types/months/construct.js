@@ -12,3 +12,4 @@ function from({n, months}){
 }
 
 Months.from = from;
+Months.prototype[Symbol.toStringTag] = "Months";

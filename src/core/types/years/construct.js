@@ -12,3 +12,4 @@ function from({n, options}){
 }
 
 Years.from = from;
+Years.prototype[Symbol.toStringTag] = "Years";

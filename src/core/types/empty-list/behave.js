@@ -1,12 +1,14 @@
 import {identity, constantly, does} from '../../core';
 import {implement} from '../protocol';
 import {IBlankable, ICoerce, IInclusive, IReversible, IEncode, ICollection, INext, ISeq, ISeqable, ISequential, IAssociative, IIndexed, IEmptyableCollection, IKVReduce, IReduce, ICounted} from '../../protocols';
-import {emptyList} from '../../types/empty-list/construct';
+import {emptyList, EmptyList} from '../../types/empty-list/construct';
 import {emptyArray} from '../../types/array/construct';
 import {Symbol} from '../symbol/construct';
 
 function encode(self, label){
-  return IAssociative.assoc({data: null}, label, self[Symbol.toStringTag]);
+  const encoded = {args: []};
+  encoded[label] = EmptyList.prototype[Symbol.toStringTag];
+  return encoded;
 }
 
 function reduce(self, f, init){

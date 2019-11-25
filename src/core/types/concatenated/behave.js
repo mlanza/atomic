@@ -1,12 +1,12 @@
 import {identity, does} from '../../core';
 import {implement} from '../protocol';
-import {concatenated, concat} from '../../types/concatenated/construct';
-import {isReduced, unreduced} from '../../types/reduced';
-import {ICoerce, ICollection, INext, ISeq, ICounted, ISeqable, IIndexed, IReduce, IKVReduce, ISequential, IEmptyableCollection} from '../../protocols';
-import {apply} from '../../types/function/concrete';
+import {isReduced, unreduced} from '../reduced';
+import {IEncode, ICoerce, ICollection, INext, ISeq, ICounted, ISeqable, IIndexed, IReduce, IKVReduce, ISequential, IEmptyableCollection} from '../../protocols';
+import {apply} from '../function/concrete';
 import {EmptyList, emptyList} from '../empty-list';
 import {ireduce, iterable} from '../lazy-seq/behave';
-import {encodeable} from '../record/behave';
+import {mapa} from '../lazy-seq/concrete';
+import {concatenated, concat} from './construct';
 
 function conj(self, x){
   return new self.constructor(ICollection.conj(self.colls, [x]));
@@ -60,11 +60,17 @@ function count(self){
   }, 0);
 }
 
+function encode(self, label){
+  return mapa(function(item){
+    return IEncode.encode(item, label);
+  }, self);
+}
+
 export const behaveAsConcatenated = does(
   iterable,
   ireduce,
-  encodeable,
   implement(ISequential),
+  implement(IEncode, {encode}),
   implement(IEmptyableCollection, {empty: emptyList}),
   implement(IKVReduce, {reducekv}),
   implement(IReduce, {reduce}),

@@ -78,8 +78,8 @@ function construction(Type){
 }
 
 export function encodeable(Type){
-  function encode(self, label, refstore, seed){
-    return IEncode.encode(IAssociative.assoc(IEncode.encode({data: Object.assign({}, self)}, label, refstore, seed), label, self[Symbol.toStringTag]), label, refstore, seed);
+  function encode(self, label){
+    return IEncode.encode(IAssociative.assoc(IEncode.encode({data: Object.assign({}, self)}, label), label, self[Symbol.toStringTag]), label);
   }
   implement(IEncode, {encode}, Type);
 }
