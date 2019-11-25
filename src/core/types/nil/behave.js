@@ -1,9 +1,9 @@
-import {IBlankable, ICompact, IMap, IAssociative, IInclusive, IOtherwise, IEncode, IDecode, IFork, ICoerce, IEquiv, ICollection, INext, ISeq, ISeqable, IIndexed, ICounted, ILookup, IReduce, IEmptyableCollection, ISequential} from '../../protocols';
-import {emptyList} from '../../types/empty-list/construct';
-import {cons} from '../../types/list/construct';
+import {IMergeable, IBlankable, ICompact, IMap, IAssociative, IInclusive, IOtherwise, IEncode, IDecode, IFork, ICoerce, IEquiv, ICollection, INext, ISeq, ISeqable, IIndexed, ICounted, ILookup, IReduce, IEmptyableCollection, ISequential} from '../../protocols';
+import {emptyList} from '../empty-list/construct';
+import {cons} from '../list/construct';
 import {identity, constantly, does, overload, noop} from '../../core';
 import {implement} from '../protocol';
-import {emptyArray} from '../../types/array/construct';
+import {emptyArray} from '../array/construct';
 import {nil} from './construct';
 
 function assoc(self, key, value){
@@ -32,10 +32,15 @@ function conj(self, value){
   return cons(value);
 }
 
+function merge(self, ...xs){
+  return ICounted.count(xs) ? IMergeable.merge.apply(null, Array.from(xs)) : null;
+}
+
 export const behaveAsNil = does(
   implement(ICompact, {compact: identity}),
   implement(ICollection, {conj}),
   implement(IBlankable, {blank: constantly(true)}),
+  implement(IMergeable, {merge}),
   implement(IMap, {keys: nil, vals: nil, dissoc: nil}),
   implement(IEncode, {encode: identity}),
   implement(IDecode, {decode: identity}),

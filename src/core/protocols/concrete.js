@@ -31,6 +31,7 @@ export * from "./ilookup/concrete";
 export * from "./imap/concrete";
 export * from "./imapentry/concrete";
 export * from "./imatch/concrete";
+export * from "./imergeable/concrete";
 export * from "./inamed/concrete";
 export * from "./inext/concrete";
 export * from "./iotherwise/concrete";

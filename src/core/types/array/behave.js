@@ -1,10 +1,11 @@
 import {does, identity, overload, doto, complement} from '../../core';
 import {implement, specify, satisfies} from '../protocol';
-import {IBlankable, IMap, IQueryable, IWrite, ICoerce, IFunctor, IInsertable, IYankable, IEncode, IDecode, IReversible, ISet, IMapEntry, IEquiv, IReduce, IKVReduce, IAppendable, IPrependable, IInclusive, ICollection, INext, ISeq, IFind, ISeqable, IIndexed, IAssociative, ISequential, IEmptyableCollection, IFn, ICounted, ILookup, ICloneable} from '../../protocols';
+import {IMergeable, IBlankable, IMap, IQueryable, IWrite, ICoerce, IFunctor, IInsertable, IYankable, IEncode, IDecode, IReversible, ISet, IMapEntry, IEquiv, IReduce, IKVReduce, IAppendable, IPrependable, IInclusive, ICollection, INext, ISeq, IFind, ISeqable, IIndexed, IAssociative, ISequential, IEmptyableCollection, IFn, ICounted, ILookup, ICloneable} from '../../protocols';
 import {reduced, unreduced, isReduced} from '../reduced';
 import {indexedSeq} from '../indexed-seq';
 import {replace} from '../string/concrete';
 import {range} from '../range/construct';
+import {concat} from "../concatenated/construct";
 import {revSeq} from '../rev-seq';
 import {filter, mapa} from '../lazy-seq';
 import {emptyArray} from './construct';
@@ -229,6 +230,7 @@ export const behaveAsArray = does(
   implement(IQueryable, {query}),
   implement(ISequential),
   implement(IMap, {dissoc, keys, vals: identity}),
+  implement(IMergeable, {merge: concat}),
   implement(IInsertable, {before, after}),
   implement(IWrite, {write}),
   implement(IFunctor, {fmap}),
