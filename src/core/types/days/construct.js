@@ -16,3 +16,4 @@ function from({n, days}){
 }
 
 Days.from = from;
+Days.prototype[Symbol.toStringTag] = "Days";

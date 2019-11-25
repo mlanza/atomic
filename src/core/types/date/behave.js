@@ -101,7 +101,7 @@ function compare(self, other){
 }
 
 function encode(self, label){
-  return IAssociative.assoc({data: self.valueOf()}, label, self[Symbol.toStringTag]);
+  return IAssociative.assoc({args: [self.valueOf()]}, label, self[Symbol.toStringTag]);
 }
 
 function reduce(self, xf, init){
