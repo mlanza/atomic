@@ -540,82 +540,6 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   })();
 
-  function FactoryDefaultCollection(defaults, coll){
-    this.defaults = defaults;
-    this.coll = coll;
-  }
-
-  var factoryDefaultCollection = _.constructs(FactoryDefaultCollection);
-
-  (function(){
-
-    var forward = _.forwardTo("coll");
-    var reduce = forward(IReduce.reduce);
-    var reducekv = forward(IKVReduce.reducekv);
-    var first = forward(ISeq.first);
-    var rest = forward(ISeq.rest);
-    var next = forward(INext.next);
-    var count = forward(ICounted.count);
-    var includes = forward(IInclusive.includes);
-    var equiv = forward(IEquiv.equiv);
-    var nth = forward(IIndexed.nth);
-    var contains = forward(IAssociative.contains);
-    var seq = forward(ISeqable.seq);
-    var cardinality = forward(ICardinality.cardinality);
-    var deref = forward(IDeref.deref);
-
-    function fmap(self, f){
-      return new self.constructor(self.defaults, _.fmap(self.coll, f));
-    }
-
-    function conj(self, value){
-      return new self.constructor(self.defaults, ICollection.conj(self.coll, value));
-    }
-
-    function assoc(self, idx, value){
-      return new self.constructor(self.defaults, IAssociative.assoc(self.coll, idx, value));
-    }
-
-    function empty(self){
-      return new self.constructor(self.defaults, IEmptyableCollection.empty(self.coll));
-    }
-
-    function defaults(self){
-      return _.apply(_.conj, empty(self), self.defaults);
-    }
-
-    function constraints1(self){
-      return IConstrained.constraints(self.coll);
-    }
-
-    function constraints2(self, constraints){
-      return new self.constructor(self.defaults, IConstrained.constraints(self.coll, constraints));
-    }
-
-    var constraints = _.overload(null, constraints1, constraints2);
-
-    _.doto(FactoryDefaultCollection,
-      _.implement(IEmptyableCollection, {empty: empty}),
-      _.implement(IDefaultable, {defaults: defaults}),
-      _.implement(IFunctor, {fmap: fmap}),
-      _.implement(IConstrained, {constraints: constraints}),
-      _.implement(ILookup, {lookup: nth}),
-      _.implement(IAssociative, {assoc: assoc, contains: contains}),
-      _.implement(IDeref, {deref: deref}),
-      _.implement(ICounted, {count: count}),
-      _.implement(IReduce, {reduce: reduce}),
-      _.implement(IKVReduce, {reducekv: reducekv}),
-      _.implement(ICardinality, {cardinality: cardinality}),
-      _.implement(ISeq, {first: first, rest: rest}),
-      _.implement(INext, {next: next}),
-      _.implement(IEquiv, {equiv: equiv}),
-      _.implement(IInclusive, {includes: includes}),
-      _.implement(ICollection, {conj: conj}),
-      _.implement(IIndexed, {nth: nth}),
-      _.implement(ISeqable, {seq: seq}));
-
-  })();
-
   var constrainedCollection = _.fnil(_.constructs(ConstrainedCollection), vd.and(vd.opt), [], []),
       optional  = clampedCollection(vd.opt),
       required  = clampedCollection(vd.req),
@@ -720,66 +644,6 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   })();
 
-  var ReadOnlyField = (function(){
-
-    function ReadOnlyField(field){
-      this.field = field;
-    }
-
-    function aget(self, entity){
-      return IField.aget(self.field, entity);
-    }
-
-    function aset(self, entity, values){
-      throw new Error("Cannot set readonly field '" + identifier(self) + "'.");
-    }
-
-    function identifier(self){
-      return IIdentifiable.identifier(self.field);
-    }
-
-    function constraints(self){
-      return IConstrained.constraints(self.field);
-    }
-
-    return _.doto(ReadOnlyField,
-      _.implement(IConstrained, {constraints: constraints}),
-      _.implement(IIdentifiable, {identifier: identifier}),
-      _.implement(IField, {aget: aget, aset: aset}));
-
-  })();
-
-  var readOnlyField = _.constructs(ReadOnlyField);
-
-  var BinComputedField = (function(){
-
-    function BinComputedField(key, computations, emptyColl){
-      this.key = key;
-      this.computations = computations;
-      this.emptyColl = emptyColl;
-    }
-
-    function aget(self, entity){
-      return _.into(self.emptyColl, _.filter(_.isSome, _.map(_.applying(entity), self.computations)));
-    }
-
-    function identifier(self){
-      return self.key;
-    }
-
-    function constraints(self){
-      return IConstrained.constraints(self.emptyColl);
-    }
-
-    return _.doto(BinComputedField,
-      _.implement(IConstrained, {constraints: constraints}),
-      _.implement(IIdentifiable, {identifier: identifier}),
-      _.implement(IField, {aget: aget}));
-
-  })();
-
-  var binComputedField = _.fnil(_.constructs(BinComputedField), null, [], unlimited);
-
   function ValueCaster(emptyColl){
     this.emptyColl = emptyColl;
   }
@@ -847,9 +711,21 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   var BinField = (function(){
 
-    function BinField(key, caster){
-      this.key = key;
+    function BinField(caster, attrs){
       this.caster = caster;
+      this.attrs = attrs;
+    }
+
+    function lookup(self, key){
+      return self.attrs[key];
+    }
+
+    function assoc(self, key, value){
+      return new self.constructor(self.caster, IAssociative.assoc(self.attrs, key, value));
+    }
+
+    function contains(self, key){
+      return IAssociative.contains(self.attrs, key);
     }
 
     function aget(self, entity){
@@ -864,7 +740,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     }
 
     function identifier(self){
-      return self.key;
+      return _.get(self, "key");
     }
 
     function constraints(self){
@@ -876,6 +752,8 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     }
 
     return _.doto(BinField,
+      _.implement(ILookup, {lookup: lookup}),
+      _.implement(IAssociative, {contains: contains, assoc: assoc}),
       _.implement(IDefaultable, {defaults: defaults}),
       _.implement(IConstrained, {constraints: constraints}),
       _.implement(IIdentifiable, {identifier: identifier}),
@@ -884,7 +762,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
   })();
 
   function binField3(key, emptyColl, casts){
-    return new BinField(key, casts(emptyColl));
+    return new BinField(casts(emptyColl), {key: key});
   }
 
   function binField2(key, emptyColl){
@@ -897,11 +775,67 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   var binField = _.overload(null, binField1, binField2, binField3);
 
-  var LabeledField = (function(){
+  var BinComputedField = (function(){
 
-    function LabeledField(label, field){
-      this.label = label;
+    function BinComputedField(computations, emptyColl, attrs){
+      this.computations = computations;
+      this.emptyColl = emptyColl;
+      this.attrs = attrs;
+    }
+
+    function lookup(self, key){
+      return self.attrs[key];
+    }
+
+    function assoc(self, key, value){
+      return new self.constructor(self.key, self.computations, self.emptyColl, IAssociative.assoc(self.attrs, key, value));
+    }
+
+    function contains(self, key){
+      return IAssociative.contains(self.attrs, key);
+    }
+
+    function aget(self, entity){
+      return _.into(self.emptyColl, _.filter(_.isSome, _.map(_.applying(entity), self.computations)));
+    }
+
+    function identifier(self){
+      return _.get(self, "key");
+    }
+
+    function constraints(self){
+      return IConstrained.constraints(self.emptyColl);
+    }
+
+    return _.doto(BinComputedField,
+      _.implement(ILookup, {lookup: lookup}),
+      _.implement(IAssociative, {contains: contains, assoc: assoc}),
+      _.implement(IConstrained, {constraints: constraints}),
+      _.implement(IIdentifiable, {identifier: identifier}),
+      _.implement(IField, {aget: aget}));
+
+  })();
+
+  function binComputedField(key, computations, emptyColl){
+    return new BinComputedField(computations, emptyColl || [], {key: key});
+  }
+
+  var ReadOnlyField = (function(){
+
+    function ReadOnlyField(field){
       this.field = field;
+    }
+
+    function lookup(self, key){
+      return ILookup.lookup(self.field, key);
+    }
+
+    function assoc(self, key, value){
+      return new self.constructor(IAssociative.assoc(self.field, key, value));
+    }
+
+    function contains(self, key){
+      return IAssociative.contains(self.field, key);
     }
 
     function aget(self, entity){
@@ -909,11 +843,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     }
 
     function aset(self, entity, values){
-      return IField.aset(self.field, entity, values);
-    }
-
-    function name(self){
-      return self.label;
+      throw new Error("Cannot set readonly field '" + identifier(self) + "'.");
     }
 
     function identifier(self){
@@ -924,20 +854,16 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
       return IConstrained.constraints(self.field);
     }
 
-    function defaults(self){
-      return IDefaultable.defaults(self.field);
-    }
-
-    return _.doto(LabeledField,
-      _.implement(IDefaultable, {defaults: defaults}),
+    return _.doto(ReadOnlyField,
+      _.implement(ILookup, {lookup: lookup}),
+      _.implement(IAssociative, {contains: contains, assoc: assoc}),
       _.implement(IConstrained, {constraints: constraints}),
-      _.implement(INamed, {name: name}),
       _.implement(IIdentifiable, {identifier: identifier}),
       _.implement(IField, {aget: aget, aset: aset}));
 
   })();
 
-  var labeledField = _.constructs(LabeledField);
+  var readOnlyField = _.constructs(ReadOnlyField);
 
   var Bin = (function(){
 
@@ -1092,10 +1018,10 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     tiddlerBehavior("summary", "detail"));
 
   var defaults = _.conj(schema(),
-    labeledField("ID", binField("id", entity, function(coll){
+    _.assoc(binField("id", entity, function(coll){
       return recaster(_.guid, _.str, valueCaster(coll));
-    })),
-    labeledField("Tag", binField("tag", unlimited, valuesCaster)));
+    }), "label", "ID"),
+    _.assoc(binField("tag", unlimited, valuesCaster), "label", "Tag"));
 
   function typed(entity){
     return IIdentifiable.identifier(entity.repo);
@@ -1105,9 +1031,9 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
     return _.doto(new Bin(Tiddler, "Tiddler", "tiddler",
       _.conj(defaults,
-        labeledField("Title", binField("title", required)),
-        labeledField("Text", binField("text", optional)),
-        labeledField("Flags", binComputedField("flags", [typed]))),
+        _.assoc(binField("title", required), "label", "Title"),
+        _.assoc(binField("text", optional), "label", "Text"),
+        _.assoc(binComputedField("flags", [typed]), "label", "Flags")),
       []), function(bin){
 
       _.each(function(item){
@@ -1144,17 +1070,17 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
     return _.doto(new Bin(Task, "Task", "task",
       _.conj(defaults,
-        labeledField("Summary", binField("summary", constrain(required, vd.collOf(vd.chars(1, 100))))),
-        labeledField("Detail", binField("detail")),
-        labeledField("Priority", binField("priority", factoryDefaultCollection(["C"], constrain(optional, vd.collOf(vd.choice(["A", "B", "C"])))))),
-        labeledField("Due Date", binField("due", constrain(optional, vd.collOf(_.isDate)), function(coll){
+        _.assoc(binField("summary", constrain(required, vd.collOf(vd.chars(1, 100)))), "label", "Summary"),
+        _.assoc(binField("detail"), "label", "Detail"),
+        _.assoc(binField("priority", constrain(optional, vd.collOf(vd.choice(["A", "B", "C"])))), "label", "Priority", "defaults", ["B"]),
+        _.assoc(binField("due", constrain(optional, vd.collOf(_.isDate)), function(coll){
           return recaster(_.date, toLocaleString, valueCaster(coll));
-        })),
-        labeledField("Overdue", binComputedField("overdue", [isOverdue])),
-        labeledField("Flags", binComputedField("flags", [typed, flag("overdue", isOverdue), flag("important", isImportant)])),
-        labeledField("Assignee", binField("assignee", entities)),
-        labeledField("Subtask", binField("subtask", resolvingCollection(vd.and(vd.unlimited, vd.collOf(vd.isa(Task, Tiddler))), entities), valuesCaster)),
-        labeledField("Expanded", binField("expanded", constrain(required, vd.collOf(_.isBoolean))))),
+        }), "label", "Due Date"),
+        _.assoc(binComputedField("overdue", [isOverdue]), "label", "Overdue"),
+        _.assoc(binComputedField("flags", [typed, flag("overdue", isOverdue), flag("important", isImportant)]), "label", "Flags"),
+        _.assoc(binField("assignee", entities), "label", "Assignee"),
+        _.assoc(binField("subtask", resolvingCollection(vd.and(vd.unlimited, vd.collOf(vd.isa(Task, Tiddler))), entities), valuesCaster), "label", "Subtask"),
+        _.assoc(binField("expanded", constrain(required, vd.collOf(_.isBoolean))), "label", "Expanded")),
       []), function(bin){
 
       _.each(function(item){
@@ -1773,7 +1699,7 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
       var added = IFactory.make(self.buffer, {id: _.str(_.get(command, "id") || _.guid()), $type: _.get(command, "type")});
       var entity = _.reduce(function(memo, key){
           var fld = IKind.field(memo, key);
-          return _.maybe(IDefaultable.defaults(fld), function(defaults){
+          return _.maybe(_.get(fld, "defaults"), function(defaults){
             return IField.aset(fld, memo, defaults);
           }) || memo;
         }, added, _.keys(added));
@@ -2450,11 +2376,14 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
   (function(){
 
     function handle(self, command, next){
-      var entity = _.get(self.buffer, _.get(command, "id"));
+      var id = _.get(command, "id"),
+          key = _.get(command, "key"),
+          value = _.get(command, "value"),
+          entity = _.get(self.buffer, id);
       _.swap(self.buffer, function(buffer){
-        return ICatalog.edit(buffer, [_.isSome(_.get(command, "value")) ? retract(entity, _.get(command, "key"), _.get(command, "value")) : retract(entity, _.get(command, "key"))]);
+        return ICatalog.edit(buffer, [_.isSome(value) ? retract(entity, key, value) : retract(entity, key)]);
       });
-      $.raise(self.provider, retractedEvent(_.get(command, "id"), _.get(command, "key"), _.get(command, "value")));
+      $.raise(self.provider, retractedEvent(id, key, value));
       next(command);
     }
 
