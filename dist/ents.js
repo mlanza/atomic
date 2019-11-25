@@ -136,10 +136,6 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     aset: null
   });
 
-  var IDefaultable = _.protocol({
-    defaults: _.constantly(null)
-  });
-
   var IDefaultField = _.protocol({
     defaultField: null
   });
@@ -173,7 +169,6 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
   var protocols = {
     IMultiDictionary: IMultiDictionary,
     ICaster: ICaster,
-    IDefaultable: IDefaultable,
     IIdentifiable: IIdentifiable,
     IKind: IKind,
     IField: IField,
@@ -747,14 +742,9 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
       return IConstrained.constraints(ICaster.cast(self.caster, null));
     }
 
-    function defaults(self){
-      return IDefaultable.defaults(ICaster.cast(self.caster, null));
-    }
-
     return _.doto(BinField,
       _.implement(ILookup, {lookup: lookup}),
       _.implement(IAssociative, {contains: contains, assoc: assoc}),
-      _.implement(IDefaultable, {defaults: defaults}),
       _.implement(IConstrained, {constraints: constraints}),
       _.implement(IIdentifiable, {identifier: identifier}),
       _.implement(IField, {aget: aget, aset: aset}));
