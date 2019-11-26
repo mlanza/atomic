@@ -20,7 +20,6 @@ export * from "./ifind/concrete";
 export * from "./ifn/concrete";
 export * from "./ifork/concrete";
 export * from "./ifunctor/concrete";
-export * from "./ihash/concrete";
 export * from "./ihierarchy/concrete";
 export * from "./iindexed/concrete";
 export * from "./iinclusive/concrete";
