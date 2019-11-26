@@ -1,5 +1,5 @@
-import {doto, implement, toArray, reduce, reducekv, str, map, each, get, keys, sort, IEquiv, ICounted, IMap} from "atomic/core";
-import {GUID, AssociativeSubset, Concatenated, EmptyList, Indexed, IndexedSeq} from "atomic/core";
+import {doto, implement, toArray, constantly, reduce, reducekv, str, map, each, get, keys, sort, IEquiv, ICounted, IMap} from "atomic/core";
+import {GUID, AssociativeSubset, Concatenated, EmptyList, Indexed, IndexedSeq, Nil} from "atomic/core";
 import {IPersistent, TransientSet} from "atomic/transients";
 import {set} from "./types/set/construct";
 import {IHash} from "./protocols/ihash/instance";
@@ -45,6 +45,13 @@ function combine(h1, h2){
     doto(v,
       implement(IHash, {hash})),
     [Array, Concatenated, EmptyList]);
+
+})();
+
+(function(){
+
+  doto(Nil,
+    implement(IHash, {hash: constantly(0)}));
 
 })();
 
