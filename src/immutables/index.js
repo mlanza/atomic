@@ -9,11 +9,15 @@ export * from "./types";
 export * from "./protocols";
 
 export function hashified(Type){
-  Type.prototype.hashCode = function(){
-    return IHash.hash(this);
+  if (!Type.prototype.hashCode) {
+    Type.prototype.hashCode = function(){
+      return IHash.hash(this);
+    }
   }
-  Type.prototype.equals = function(other){
-    return IEquiv.equiv(this, other);
+  if (!Type.prototype.equals) {
+    Type.prototype.equals = function(other){
+      return IEquiv.equiv(this, other);
+    }
   }
 }
 

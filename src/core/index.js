@@ -1,5 +1,5 @@
 import {overload, toggles, identity, obj, partly, doto, branch, unspread, applying, execute, noop} from "./core";
-import {IDecorated, IAppendable, IYankable, ICoerce, IAssociative, IBounds, IInverse, ICloneable, ICollection, IComparable, ICounted, IDecode, IDeref, IDisposable, IEmptyableCollection, IEncode, IEquiv, IFind, IFn, IFork, IFunctor, IHierarchy, IInclusive, IIndexed, IInsertable, IKVReduce, ILookup, IMap, IMapEntry, IMatch, INext, IOtherwise, IPrependable, IReduce, IReset, ISeq, ISeqable, ISet, ISteppable, ISwap} from "./protocols";
+import {IDecorated, IAppendable, IYankable, ICoerce, IAssociative, IBounds, IInverse, ICloneable, ICollection, IComparable, ICounted, IDeref, IDisposable, IEmptyableCollection, IEquiv, IFind, IFn, IFork, IFunctor, IHierarchy, IInclusive, IIndexed, IInsertable, IKVReduce, ILookup, IMap, IMapEntry, IMatch, INext, IOtherwise, IPrependable, IReduce, IReset, ISeq, ISeqable, ISet, ISteppable, ISwap} from "./protocols";
 import {satisfies, filter, spread, specify, maybe, each, duration, remove, sort, flip, realized, comp, isNumber, isFunction, apply, realize, isNil} from "./types";
 import {add, subtract, compact, matches, name, descendants, query, locate, deref, get, assoc, yank, conj, reducing, toArray, reducekv, includes, excludes} from "./protocols/concrete";
 import {isString, isBlank, str, replace} from "./types/string";
@@ -19,10 +19,6 @@ export * from "./associatives";
 import Set from 'set';
 
 export const global = window;
-
-export function serialize(self){
-  return JSON.stringify(IEncode.encode(self));
-}
 
 export function unique(xs){
   return toArray(new Set(toArray(xs)));

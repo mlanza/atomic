@@ -3,7 +3,6 @@ import {does} from '../../core';
 import {implement} from '../protocol';
 import {min} from '../number/concrete';
 import * as w from '../date/concrete';
-import {encodeable} from '../record/behave';
 import {patch} from '../../associatives';
 
 function inverse(self){
@@ -27,6 +26,5 @@ function step(self, dt){
 }
 
 export const behaveAsYears = does(
-  encodeable,
   implement(IInverse, {inverse}),
   implement(ISteppable, {step}));

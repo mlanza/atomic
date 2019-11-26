@@ -1,7 +1,7 @@
 import {does, constructs} from '../../core';
 import {implement} from '../protocol';
 import {reduced} from "../reduced/construct";
-import {IReduce, IKVReduce, IEquiv, IEncode, ICoerce, IDescriptive, IAssociative, ISeqable, ILookup, ICounted, IMap, ISeq, IRecord, IEmptyableCollection} from '../../protocols';
+import {IReduce, IKVReduce, IEquiv, ICoerce, IDescriptive, IAssociative, ISeqable, ILookup, ICounted, IMap, ISeq, IRecord, IEmptyableCollection} from '../../protocols';
 import {Symbol} from '../symbol/construct';
 
 function toObject(self){
@@ -77,13 +77,6 @@ function construction(Type){
   });
 }
 
-export function encodeable(Type){
-  function encode(self, label){
-    return IEncode.encode(IAssociative.assoc(IEncode.encode({data: Object.assign({}, self)}, label), label, self[Symbol.toStringTag]), label);
-  }
-  implement(IEncode, {encode}, Type);
-}
-
 export function emptyable(Type){
   function empty(){
     return new Type();
@@ -93,7 +86,6 @@ export function emptyable(Type){
 
 export const behaveAsRecord = does(
   construction,
-  encodeable,
   emptyable,
   implement(IRecord),
   implement(IDescriptive),

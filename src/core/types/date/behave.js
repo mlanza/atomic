@@ -1,6 +1,6 @@
 import {does, overload, constantly, identity} from '../../core';
 import {implement, specify} from '../protocol';
-import {IReduce, IKVReduce, ISeqable, IEncode, IBounds, IMap, IDeref, ISeq, IComparable, IEquiv, ICloneable, ILookup, IAssociative, ICollection} from '../../protocols';
+import {IReduce, IKVReduce, ISeqable, IBounds, IMap, IDeref, ISeq, IComparable, IEquiv, ICloneable, ILookup, IAssociative, ICollection} from '../../protocols';
 import {isNumber} from '../number';
 import {days} from '../days';
 import {isDate} from "./concrete";
@@ -100,10 +100,6 @@ function compare(self, other){
   return other == null ? -1 : IDeref.deref(self) - IDeref.deref(other);
 }
 
-function encode(self, label){
-  return IAssociative.assoc({args: [self.valueOf()]}, label, self[Symbol.toStringTag]);
-}
-
 function reduce(self, xf, init){
   return IReduce.reduce(keys(self), function(memo, key){
     const value = ILookup.lookup(self, key);
@@ -127,7 +123,6 @@ export const behaveAsDate = does(
   implement(ISeqable, {seq: identity}),
   implement(IReduce, {reduce}),
   implement(IKVReduce, {reducekv}),
-  implement(IEncode, {encode}),
   implement(IEquiv, {equiv}),
   implement(IMap, {keys, vals}),
   implement(IComparable, {compare}),

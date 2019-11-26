@@ -1,4 +1,4 @@
-import {IBlankable, ITemplate, IKVReduce, IAssociative, ICompact, ICoerce, IMatch, IReduce, ICollection, IEncode, IDecode, IIndexed, ISeqable, INext, ISeq, IInclusive, IAppendable, IPrependable, ICounted, ILookup, IFn, IComparable, IEmptyableCollection} from '../../protocols';
+import {IBlankable, ITemplate, IKVReduce, IAssociative, ICompact, ICoerce, IMatch, IReduce, ICollection, IIndexed, ISeqable, INext, ISeq, IInclusive, IAppendable, IPrependable, ICounted, ILookup, IFn, IComparable, IEmptyableCollection} from '../../protocols';
 import {does, identity, constantly} from "../../core";
 import {implement, specify} from '../protocol';
 import {isReduced, unreduced} from '../reduced';
@@ -91,8 +91,6 @@ export const behaveAsString = does(
   implement(IMatch, {matches}),
   implement(ICollection, {conj}),
   implement(IReduce, {reduce}),
-  implement(IEncode, {encode: identity}),
-  implement(IDecode, {decode: identity}),
   implement(ICoerce, {toArray}),
   implement(IComparable, {compare}),
   implement(IInclusive, {includes}),

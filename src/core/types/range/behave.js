@@ -1,12 +1,12 @@
 import {does} from '../../core';
 import {implement} from '../protocol';
-import {ICoerce, IBounds, IInverse, IEncode, ISteppable, ISequential, ICollection, IComparable, INext, IEquiv, IReduce, IKVReduce, ISeqable, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, ISeq, IInclusive, IIndexed} from '../../protocols';
+import {ICoerce, IBounds, IInverse, ISteppable, ISequential, ICollection, IComparable, INext, IEquiv, IReduce, IKVReduce, ISeqable, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, ISeq, IInclusive, IIndexed} from '../../protocols';
 import {between} from '../../protocols/ibounds/concrete';
 import {unreduced, isReduced} from '../reduced';
 import {drop} from '../lazy-seq';
 import {comp} from '../function';
 import {iterable} from '../lazy-seq/behave';
-import {encodeable, emptyable} from "../record/behave";
+import {emptyable} from "../record/behave";
 import {emptyRange} from "./construct";
 
 function seq(self){
@@ -77,7 +77,6 @@ function count(self){
 export const behaveAsRange = does(
   iterable,
   emptyable,
-  encodeable,
   implement(ISequential),
   implement(IInverse, {inverse}),
   implement(IIndexed, {nth}),

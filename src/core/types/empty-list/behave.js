@@ -1,15 +1,9 @@
 import {identity, constantly, does} from '../../core';
 import {implement} from '../protocol';
-import {IBlankable, ICoerce, IInclusive, IReversible, IEncode, ICollection, INext, ISeq, ISeqable, ISequential, IAssociative, IIndexed, IEmptyableCollection, IKVReduce, IReduce, ICounted} from '../../protocols';
+import {IBlankable, ICoerce, IInclusive, IReversible, ICollection, INext, ISeq, ISeqable, ISequential, IAssociative, IIndexed, IEmptyableCollection, IKVReduce, IReduce, ICounted} from '../../protocols';
 import {emptyList, EmptyList} from '../../types/empty-list/construct';
 import {emptyArray} from '../../types/array/construct';
 import {Symbol} from '../symbol/construct';
-
-function encode(self, label){
-  const encoded = {args: []};
-  encoded[label] = EmptyList.prototype[Symbol.toStringTag];
-  return encoded;
-}
 
 function reduce(self, f, init){
   return init;
@@ -17,7 +11,6 @@ function reduce(self, f, init){
 
 export const behaveAsEmptyList = does(
   implement(ISequential),
-  implement(IEncode, {encode}),
   implement(IBlankable, {blank: constantly(true)}),
   implement(IReversible, {reverse: emptyList}),
   implement(ICounted, {count: constantly(0)}),

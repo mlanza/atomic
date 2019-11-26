@@ -1,6 +1,6 @@
 import {does, identity, overload, doto, complement} from '../../core';
 import {implement, specify, satisfies} from '../protocol';
-import {IMergeable, IBlankable, IMap, IQueryable, IWrite, ICoerce, IFunctor, IInsertable, IYankable, IEncode, IDecode, IReversible, ISet, IMapEntry, IEquiv, IReduce, IKVReduce, IAppendable, IPrependable, IInclusive, ICollection, INext, ISeq, IFind, ISeqable, IIndexed, IAssociative, ISequential, IEmptyableCollection, IFn, ICounted, ILookup, ICloneable} from '../../protocols';
+import {IMergeable, IBlankable, IMap, IQueryable, IWrite, ICoerce, IFunctor, IInsertable, IYankable, IReversible, ISet, IMapEntry, IEquiv, IReduce, IKVReduce, IAppendable, IPrependable, IInclusive, ICollection, INext, ISeq, IFind, ISeqable, IIndexed, IAssociative, ISequential, IEmptyableCollection, IFn, ICounted, ILookup, ICloneable} from '../../protocols';
 import {reduced, unreduced, isReduced} from '../reduced';
 import {indexedSeq} from '../indexed-seq';
 import {replace} from '../string/concrete';
@@ -183,20 +183,6 @@ function idx(self, x){
   return n === -1 ? null : n;
 }
 
-function encode(self, label){
-  return reduce(self, function(memo, value){
-    memo.push(IEncode.encode(value, label));
-    return memo;
-  }, []);
-}
-
-function decode(self, label, constructors){
-  return reduce(self, function(memo, value){
-    memo.push(IDecode.decode(value, label, constructors));
-    return memo;
-  }, []);
-}
-
 function toObject(self){
   return reduce(self, function(memo, [key, value]){
     memo[key] = value;
@@ -234,8 +220,6 @@ export const behaveAsArray = does(
   implement(IInsertable, {before, after}),
   implement(IWrite, {write}),
   implement(IFunctor, {fmap}),
-  implement(IEncode, {encode}),
-  implement(IDecode, {decode}),
   implement(ICoerce, {toObject}),
   implement(IYankable, {yank}),
   implement(IReversible, {reverse}),
