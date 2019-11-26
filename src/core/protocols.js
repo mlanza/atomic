@@ -21,7 +21,6 @@ export * from "./protocols/ifind/instance";
 export * from "./protocols/ifn/instance";
 export * from "./protocols/ifork/instance";
 export * from "./protocols/ifunctor/instance";
-export * from "./protocols/ihash/instance";
 export * from "./protocols/ihierarchy/instance";
 export * from "./protocols/iinclusive/instance";
 export * from "./protocols/iindexed/instance";

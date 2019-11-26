@@ -1,1 +1,0 @@
-import {IHash} from "./instance";
