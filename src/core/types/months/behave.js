@@ -3,7 +3,6 @@ import {does} from '../../core';
 import {implement} from '../protocol';
 import {min} from '../number/concrete';
 import * as w from '../date/concrete';
-import {encodeable} from '../record/behave';
 import {patch} from '../../associatives';
 
 //dow = 0-6 if day is in first week.  Add 7 for every additional week.
@@ -40,6 +39,5 @@ function inverse(self){
 }
 
 export const behaveAsMonths = does(
-  encodeable,
   implement(IInverse, {inverse}),
   implement(ISteppable, {step}));

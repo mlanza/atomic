@@ -8,7 +8,6 @@ import {locate} from '../../protocols/ilocate/concrete';
 import {concat} from '../../types/concatenated/construct';
 import {iterable} from '../lazy-seq/behave';
 import {drop, filter} from '../lazy-seq/concrete';
-import {encodeable} from '../record/behave';
 import {emptyArray} from '../../types/array/construct';
 
 function reverse(self){
@@ -117,7 +116,6 @@ function query(self, pred){
 
 export const behaveAsIndexedSeq = does(
   iterable,
-  encodeable,
   implement(IQueryable, {query}),
   implement(ISequential),
   implement(IIndexed, {nth, idx}),

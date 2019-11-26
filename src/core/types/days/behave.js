@@ -3,7 +3,6 @@ import {does} from '../../core';
 import {implement} from '../protocol';
 import {min} from '../number/concrete';
 import * as w from '../date/concrete';
-import {encodeable} from '../record/behave';
 import {patch} from '../../associatives';
 
 function step(self, dt){
@@ -17,6 +16,5 @@ function inverse(self){
 }
 
 export const behaveAsDays = does(
-  encodeable,
   implement(IInverse, {inverse}),
   implement(ISteppable, {step}));

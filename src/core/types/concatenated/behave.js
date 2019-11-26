@@ -1,7 +1,7 @@
 import {identity, does} from '../../core';
 import {implement} from '../protocol';
 import {isReduced, unreduced} from '../reduced';
-import {IEncode, ICoerce, ICollection, INext, ISeq, ICounted, ISeqable, IIndexed, IReduce, IKVReduce, ISequential, IEmptyableCollection} from '../../protocols';
+import {ICoerce, ICollection, INext, ISeq, ICounted, ISeqable, IIndexed, IReduce, IKVReduce, ISequential, IEmptyableCollection} from '../../protocols';
 import {apply} from '../function/concrete';
 import {EmptyList, emptyList} from '../empty-list';
 import {ireduce, iterable} from '../lazy-seq/behave';
@@ -60,17 +60,10 @@ function count(self){
   }, 0);
 }
 
-function encode(self, label){
-  return mapa(function(item){
-    return IEncode.encode(item, label);
-  }, self);
-}
-
 export const behaveAsConcatenated = does(
   iterable,
   ireduce,
   implement(ISequential),
-  implement(IEncode, {encode}),
   implement(IEmptyableCollection, {empty: emptyList}),
   implement(IKVReduce, {reducekv}),
   implement(IReduce, {reduce}),

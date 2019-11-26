@@ -1,6 +1,6 @@
 import {does, identity, constructs} from '../../core';
 import {implement} from '../protocol';
-import {IMergeable, IBlankable, ICompact, IComparable, IYankable, IMatch, IDecode, ISet, INext, ICollection, IEncode, IEquiv, IMapEntry, IReduce, IKVReduce, ISeqable, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, IFn, IMap, ISeq, IDescriptive, ICoerce, ICloneable, IInclusive} from '../../protocols';
+import {IMergeable, IBlankable, ICompact, IComparable, IYankable, IMatch, ISet, INext, ICollection, IEquiv, IMapEntry, IReduce, IKVReduce, ISeqable, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, IFn, IMap, ISeq, IDescriptive, ICoerce, ICloneable, IInclusive} from '../../protocols';
 import {reduced} from '../reduced';
 import {lazySeq, into, map} from '../lazy-seq';
 import {cons} from '../list';
@@ -173,34 +173,6 @@ function toArray(self){
   }, []);
 }
 
-function encode(self, label){
- return reducekv(self, function(memo, key, value){
-    return IAssociative.assoc(memo, IEncode.encode(key, label), IEncode.encode(value, label));
-  }, {});
-}
-
-function decode(self, label, constructors){
-  if (IAssociative.contains(self, label)){
-    const type = ILookup.lookup(constructors, ILookup.lookup(self, label)),
-          data = ILookup.lookup(self, "data"),
-          args = ILookup.lookup(self, "args");
-    if (data != null){
-      return Object.assign(Object.create(type.prototype), reducekv(data, function(memo, key, value){
-        return IAssociative.assoc(memo, IDecode.decode(key, label, constructors), IDecode.decode(value, label, constructors));
-      }, {}));
-    } else if (args != null) {
-      const create = constructs(type);
-      return apply(create, map(function(arg){
-        return IDecode.decode(arg, label, constructors);
-      }, args));
-    } else {
-      throw new Error("Cannot decode reference types.");
-    }
-  } else {
-    return self;
-  }
-}
-
 export const iset = implement(ISet, {disj});
 export const behaveAsObject = does(
   iset,
@@ -210,8 +182,6 @@ export const behaveAsObject = does(
   implement(IMergeable, {merge}),
   implement(ICompact, {compact}),
   implement(IEquiv, {equiv}),
-  implement(IDecode, {decode}),
-  implement(IEncode, {encode}),
   implement(ICoerce, {toArray: toArray, toObject: identity}),
   implement(IFind, {find}),
   implement(IYankable, {yank}),
