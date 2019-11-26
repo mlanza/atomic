@@ -7,19 +7,18 @@ import {_ as v} from "param.macro";
 
 export * from "./types";
 export * from "./protocols";
+export * from "./protocols/concrete";
 
-export function hashified(Type){
-  if (!Type.prototype.hashCode) {
-    Type.prototype.hashCode = function(){
-      return IHash.hash(this);
-    }
-  }
-  if (!Type.prototype.equals) {
-    Type.prototype.equals = function(other){
-      return IEquiv.equiv(this, other);
-    }
-  }
+function hashCode(){
+  return IHash.hash(this);
 }
+
+function equals(other){
+  return IEquiv.equiv(this, other);
+}
+
+Object.prototype.hashCode = hashCode;
+Object.prototype.equals = equals;
 
 (function(){
 
@@ -44,7 +43,6 @@ function combine(h1, h2){
 
   each(
     doto(v,
-      hashified,
       implement(IHash, {hash})),
     [Array, Concatenated, EmptyList]);
 
@@ -57,7 +55,6 @@ function combine(h1, h2){
   }
 
   doto(Boolean,
-    hashified,
     implement(IHash, {hash}));
 
 })();
@@ -69,7 +66,6 @@ function combine(h1, h2){
   }
 
   doto(Number,
-    hashified,
     implement(IHash, {hash}));
 
 })();
@@ -84,7 +80,6 @@ function combine(h1, h2){
 
   each(
     doto(v,
-      hashified,
       implement(IHash, {hash})),
     [Object, AssociativeSubset, Indexed, IndexedSeq]);
 
@@ -113,7 +108,6 @@ function combine(h1, h2){
   }
 
   doto(GUID,
-    hashified,
     implement(IHash, {hash}));
 
 })();
