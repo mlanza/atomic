@@ -1,4 +1,4 @@
-import {doto, implement, toArray, constantly, reduce, reducekv, str, map, each, get, keys, sort, IEquiv, ICounted, IMap} from "atomic/core";
+import {doto, implement, generate, positives, weakMap, toArray, constantly, reduce, reducekv, str, map, each, get, keys, sort, IEquiv, ICounted, IMap} from "atomic/core";
 import {Symbol, GUID, AssociativeSubset, Concatenated, EmptyList, List, Indexed, IndexedSeq, Nil} from "atomic/core";
 import {IPersistent, TransientSet} from "atomic/transients";
 import {set} from "./types/set/construct";
@@ -9,6 +9,17 @@ import * as imm from "immutable";
 export * from "./types";
 export * from "./protocols";
 export * from "./protocols/concrete";
+
+(function(){
+
+  function persistent(self){
+    return set(toArray(self));
+  }
+
+  doto(TransientSet,
+    implement(IPersistent, {persistent}));
+
+})();
 
 const cache = Symbol.for("hashCode");
 
@@ -28,21 +39,24 @@ function equals(other){
   return IEquiv.equiv(this, other);
 }
 
-Object.prototype.hashCode = cachedHashCode;
-Object.prototype.equals = equals;
-Number.prototype.hashCode = hashCode;
-String.prototype.hashCode = hashCode;
-
-(function(){
-
-  function persistent(self){
-    return set(toArray(self));
+function addProp(obj, key, value){
+  if (obj.hasOwnProperty(key)) {
+    throw new Error("Property `" + key + "` already defined on " + obj.constructor.name + ".");
+  } else {
+    Object.defineProperty(obj, key, {
+      value,
+      writable: true,
+      enumerable: false,
+      configurable: true
+    });
   }
+}
 
-  doto(TransientSet,
-    implement(IPersistent, {persistent}));
-
-})();
+// There be dragons! Integrate with Immutable. Object literals despite their use elsewhere are, in this world, immutable.
+addProp(Object.prototype, "hashCode", cachedHashCode);
+addProp(Object.prototype, "equals", equals);
+addProp(Number.prototype, "hashCode", hashCode);
+addProp(String.prototype, "hashCode", hashCode);
 
 function combine(h1, h2){
   return 3 * h1 + h2;
@@ -72,8 +86,25 @@ function combine(h1, h2){
 
 (function(){
 
-  doto(Nil,
-    implement(IHash, {hash: constantly(imm.hash(null))}));
+  each(implement(IHash, {hash: constantly(imm.hash(null))}),
+    [Nil]);
+
+})();
+
+(function(){
+
+  const seed = generate(positives);
+  const uniques = weakMap();
+
+  function hash(self){
+    if (!uniques.has(self)) {
+      uniques.set(self, seed());
+    }
+    return uniques.get(self);
+  }
+
+  each(implement(IHash, {hash}),
+    [Function]);
 
 })();
 

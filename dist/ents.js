@@ -1,4 +1,4 @@
-define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'atomic/validates', 'atomic/immutables', 'context', 'xml!outline.opml'], function(_, dom, mut, $, vd, imm, context, data){
+define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'atomic/validates', 'atomic/immutables', 'context'], function(fetch, _, dom, mut, $, vd, imm, context){
 
   //TODO Apply effects (destruction, modification, addition) to datastore.
   //TODO Improve efficiency (with an index decorator?) of looking up an entity in a buffer by pk rather than guid.
@@ -38,6 +38,13 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
       IInclusive = _.IInclusive;
 
   var seed = _.generate(_.negatives);
+
+  function xml(resp){
+    var parser = new DOMParser();
+    return _.fmap(resp.text(), function(xml){
+      return parser.parseFromString(xml, "text/xml");
+    });
+  }
 
   function create(){ //USE What.create = create; What.create(1);
     return _.apply(_.constructs(this), _.slice(arguments));  //universal `new-less` create function
@@ -792,12 +799,15 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   _.doto(Task,
     behaveAsEntity,
-    tiddlerBehavior("summary", "detail"));
+    tiddlerBehavior("title", "detail"));
 
   var defaults = _.conj(schema(),
     _.assoc(field("id", entity, function(coll){
       return recaster(_.guid, _.str, valueCaster(coll));
     }), "label", "ID"),
+    _.assoc(field("title", required), "label", "Title"),
+    _.assoc(field("text", optional), "label", "Text"),
+    _.assoc(field("children", resolvingCollection(vd.and(vd.unlimited, vd.collOf(vd.isa(Task, Tiddler))), entities), valuesCaster), "label", "Children"),
     _.assoc(field("tag", unlimited, valuesCaster), "label", "Tag", "appendonly", true));
 
   function typed(entity){
@@ -808,22 +818,8 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
     return _.doto(new Bin(Tiddler, "Tiddler", "tiddler",
       _.conj(defaults,
-        _.assoc(field("title", required), "label", "Title"),
-        _.assoc(field("text", optional), "label", "Text"),
         _.assoc(computedField("flags", [typed]), "label", "Flags")),
-      []), function(bin){
-
-      _.each(function(item){
-        bin.items.push(item);
-      }, _.map(function(attrs){
-        return IFactory.make(bin, attrs);
-      }, [{
-        id: "d",
-        title: "Take tea to work",
-        text: "It perks up my day."
-      }]));
-
-    });
+      []));
 
   })();
 
@@ -840,49 +836,22 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
     }
 
     function isImportant(entity){
-      return _.maybe(entity, _.get(_, "priority"), _.detect(_.eq(_, "A"), _));
+      return _.maybe(entity, _.get(_, "priority"), _.detect(_.eq(_, 1), _));
     }
 
     var toLocaleString = _.invokes(_, "toLocaleString");
 
     return _.doto(new Bin(Task, "Task", "task",
       _.conj(defaults,
-        _.assoc(field("summary", constrain(required, vd.collOf(vd.chars(1, 100)))), "label", "Summary"),
-        _.assoc(field("detail"), "label", "Detail"),
-        _.assoc(field("priority", constrain(optional, vd.collOf(vd.choice(["A", "B", "C"])))), "label", "Priority", "defaults", ["B"]),
+        _.assoc(field("priority", constrain(optional, vd.collOf(vd.choice([1, 2, 3])))), "label", "Priority"),
         _.assoc(field("due", constrain(optional, vd.collOf(_.isDate)), function(coll){
           return recaster(_.date, toLocaleString, valueCaster(coll));
         }), "label", "Due Date"),
         _.assoc(computedField("overdue", [isOverdue]), "label", "Overdue"),
         _.assoc(computedField("flags", [typed, flag("overdue", isOverdue), flag("important", isImportant)]), "label", "Flags"),
         _.assoc(field("assignee", entities), "label", "Assignee"),
-        _.assoc(field("subtask", resolvingCollection(vd.and(vd.unlimited, vd.collOf(vd.isa(Task, Tiddler))), entities), valuesCaster), "label", "Subtask"),
         _.assoc(field("expanded", constrain(required, vd.collOf(_.isBoolean))), "label", "Expanded")),
-      []), function(bin){
-
-      _.each(function(item){
-        bin.items.push(item);
-      }, _.map(function(attrs){
-        return IFactory.make(bin, attrs);
-      }, [{
-        id: "a",
-        summary: "Build backyard patio",
-        priority: "A",
-        due: _.just(new Date(), _.add(_, _.days(-2)), toLocaleString),
-        expanded: true,
-        subtask: ["b", "c"],
-        tag: ["backlog", "wife"]
-      },{
-        id: "b",
-        summary: "Choose 3 potential materials and price them",
-        expanded: false
-      },{
-        id: "c",
-        summary: "Get contractor quote",
-        expanded: false
-      }]));
-
-    });
+      []));
 
   })();
 
@@ -2639,26 +2608,66 @@ define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'a
 
   })();
 
-  var buf = buffer(domain([tiddlers, tasks]), $.timeTraveler($.cell(typedCatalog())));
+  function importOPML(doc){
+    var seed = _.generate(_.positives),
+        typed = {task: "task", note: "tiddler"};
+    function drill(el, parent){
+      return _.toArray(_.mapcat(function(child){
+        var id = seed(),
+            type = _.get(typed, _.maybe(child, dom.attr(_, "type")) || "task"),
+            item = _.compact({
+              id: id,
+              $type: type,
+              title: dom.attr(child, "text"),
+              tag: _.maybe(child, dom.attr(_, "tags"), _.blot, _.split(_, ","), _.toArray),
+              priority: _.maybe(child, _.blot, dom.attr(_, "priority"), parseInt),
+              due: _.maybe(child, _.blot, dom.attr(_, "due")),
+              children: []
+            });
+        parent.children.push(id);
+        return _.cons(item, drill(child, item));
+      }, _.children(el)));
+    }
+    var root = {
+      id: seed(),
+      $type: "task",
+      title: _.just(doc, dom.sel1("head > title", _), dom.text),
+      children: [],
+      modified: _.just(doc, dom.sel1("head > dateModified", _), dom.text)
+    };
+    return _.toArray(_.cons(root, drill(_.just(doc, dom.sel1("body", _)), root)));
+  }
 
-  _.each(function(el){
-    var a = _.guid("a"), //TODO use memoize on fn with weakMap?
-        b = _.guid("b"),
-        c = _.guid("c");
-    var ol = outline(buf, {root: a});
-    IView.render(ol, el);
-    $.sub(ol, _.see("event"));
-    _.each($.dispatch(ol, _), [
-      queryCommand({$type: "task"}),
-      queryCommand({$type: "tiddler"}),
-      selectCommand(a),
-      selectCommand(b),
-      selectCommand(c),
-      deselectCommand(c)
-      //assertCommand(null, "priority", "C")
-    ]);
-    Object.assign(window, {ol: ol});
-  }, dom.sel("#outline"));
+  function preloadBuffer(items){
+    _.just(items, _.filter(_.matches(_, {$type: "task"}), _), _.each(function(attrs){
+      tasks.items.push(IFactory.make(tasks, attrs));
+    }, _));
+
+    _.just(items, _.filter(_.matches(_, {$type: "tiddler"}), _), _.each(function(attrs){
+      tiddlers.items.push(IFactory.make(tiddlers, attrs));
+    }, _));
+
+    return buffer(domain([tiddlers, tasks]), $.timeTraveler($.cell(typedCatalog())));
+  }
+
+  _.fmap(fetch("./dist/outline.opml"),
+    xml,
+    _.see("outline"),
+    importOPML,
+    preloadBuffer,
+    function(buf){
+      _.each(function(el){
+        var ol = outline(buf, {root: _.guid(1)});
+        IView.render(ol, el);
+        $.sub(ol, _.see("event"));
+        _.each($.dispatch(ol, _), [
+          queryCommand({$type: "task"}),
+          queryCommand({$type: "tiddler"})
+          //assertCommand(null, "priority", "C")
+        ]);
+        Object.assign(window, {ol: ol});
+      }, dom.sel("#outline"));
+    });
 
   return _.just(protocols, _.reduce(_.merge, _, _.map(function(protocol){
     return _.reduce(function(memo, key){
