@@ -1,4 +1,4 @@
-import {does, doto, partial, implement, specify, handler, filter, concat, IMatch, ISeqable, IAppendable} from "atomic/core";
+import {does, doto, partial, implement, handler, filter, concat, IMatch, ISeqable, IAppendable} from "atomic/core";
 import {ITransientCollection} from "atomic/transients";
 import {IDispatch, IEvented} from '../../protocols';
 import {_ as v} from "param.macro";

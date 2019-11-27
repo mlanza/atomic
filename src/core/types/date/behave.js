@@ -1,5 +1,5 @@
 import {does, overload, constantly, identity} from '../../core';
-import {implement, specify} from '../protocol';
+import {implement} from '../protocol';
 import {IReduce, IKVReduce, ISeqable, IBounds, IMap, IDeref, ISeq, IComparable, IEquiv, ICloneable, ILookup, IAssociative, ICollection} from '../../protocols';
 import {isNumber} from '../number';
 import {days} from '../days';

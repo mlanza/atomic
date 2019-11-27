@@ -1,6 +1,6 @@
 import {does, identity, overload, doto} from '../../core';
 import {cons} from "../list/construct";
-import {implement, specify, satisfies} from '../protocol';
+import {implement, satisfies} from '../protocol';
 import {IFunctor, ISeq, INext, ISequential, ICoerce, IDeref} from '../../protocols';
 import {mapcat} from '../lazy-seq';
 import {per, emptyPer} from "./construct";

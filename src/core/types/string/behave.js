@@ -1,6 +1,6 @@
 import {IBlankable, ITemplate, IKVReduce, IAssociative, ICompact, ICoerce, IMatch, IReduce, ICollection, IIndexed, ISeqable, INext, ISeq, IInclusive, IAppendable, IPrependable, ICounted, ILookup, IFn, IComparable, IEmptyableCollection} from '../../protocols';
 import {does, identity, constantly} from "../../core";
-import {implement, specify} from '../protocol';
+import {implement} from '../protocol';
 import {isReduced, unreduced} from '../reduced';
 import {lazySeq} from '../lazy-seq/construct';
 import {cons} from '../list/construct';
