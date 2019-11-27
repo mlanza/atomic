@@ -104,6 +104,11 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
     render: null
   });
 
+  var IVertex = _.protocol({
+    outs: null,
+    ins: null
+  });
+
   var ICatalog = _.protocol({
     touched: null, //entities touched during the last operation - useful when diffing before/after model snapshots
     dirty: null, //was a given entity ever modified?
@@ -120,7 +125,8 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
   });
 
   var IEntity = _.protocol({
-    id: null
+    id: null,
+    assertions: null
   });
 
   var IField = _.protocol({
@@ -144,6 +150,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
     IOriginated: IOriginated,
     ITransaction: ITransaction,
     IView: IView,
+    IVertex: IVertex,
     ICatalog: ICatalog
   }
 
@@ -443,7 +450,30 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
 
   var asserts = _.overload(null, asserts1, asserts2, asserts3);
 
+  function Assertion(subject, predicate, object){
+    this.subject = subject;
+    this.predicate = predicate;
+    this.object = object;
+  }
+
+  var assertion = _.constructs(Assertion);
+
   var behaveAsEntity = (function(){
+
+    function assertions(self){
+      var id = IEntity.id(self);
+      return _.mapcat(function(key){
+        return _.map(function(value){
+          return assertion(id, key, value);
+        }, _.get(self, key));
+      }, _.filter(_.notEq(_, "id"), _.keys(self)));
+    }
+
+    function outs(self){ //TODO more efficient by checking keys first
+      return _.filter(function(assertion){
+        return _.is(assertion.object, _.GUID);
+      }, assertions(self));
+    }
 
     function identifier(self){ //TODO use?
       return IIdentifiable.identifier(self.repo);
@@ -490,8 +520,9 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
     return _.does(
       _.implement(IConstrained, {constraints: constraints}),
       _.implement(IIdentifiable, {identifier: identifier}),
-      _.implement(IEntity, {id: id}),
+      _.implement(IEntity, {id: id, assertions: assertions}),
       _.implement(IMap, {keys: keys, dissoc: dissoc}),
+      _.implement(IVertex, {outs: outs}),
       _.implement(ILookup, {lookup: lookup}),
       _.implement(IAssociative, {assoc: assoc, contains: contains}),
       _.implement(IKind, {field: field, kind: kind}));
@@ -807,7 +838,9 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
     }), "label", "ID"),
     _.assoc(field("title", required), "label", "Title"),
     _.assoc(field("text", optional), "label", "Text"),
-    _.assoc(field("children", resolvingCollection(vd.and(vd.unlimited, vd.collOf(vd.isa(Task, Tiddler))), entities), valuesCaster), "label", "Children"),
+    _.assoc(field("child", resolvingCollection(vd.and(vd.unlimited, vd.collOf(vd.isa(Task, Tiddler))), entities), function(coll){
+      return recaster(_.guid, _.identity, valuesCaster(coll));
+    }), "label", "Child"),
     _.assoc(field("tag", unlimited, valuesCaster), "label", "Tag", "appendonly", true));
 
   function typed(entity){
@@ -2622,9 +2655,9 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
               tag: _.maybe(child, dom.attr(_, "tags"), _.blot, _.split(_, ","), _.toArray),
               priority: _.maybe(child, _.blot, dom.attr(_, "priority"), parseInt),
               due: _.maybe(child, _.blot, dom.attr(_, "due")),
-              children: []
+              child: []
             });
-        parent.children.push(id);
+        parent.child.push(id);
         return _.cons(item, drill(child, item));
       }, _.children(el)));
     }
@@ -2632,7 +2665,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
       id: seed(),
       $type: "task",
       title: _.just(doc, dom.sel1("head > title", _), dom.text),
-      children: [],
+      child: [],
       modified: _.just(doc, dom.sel1("head > dateModified", _), dom.text)
     };
     return _.toArray(_.cons(root, drill(_.just(doc, dom.sel1("body", _)), root)));
