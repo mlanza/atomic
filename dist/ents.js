@@ -1,4 +1,4 @@
-define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'atomic/validates', 'atomic/immutables', 'context'], function(_, dom, mut, $, vd, imm, context){
+define(['atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'atomic/validates', 'atomic/immutables', 'context', 'xml!outline.opml'], function(_, dom, mut, $, vd, imm, context, data){
 
   //TODO Apply effects (destruction, modification, addition) to datastore.
   //TODO Improve efficiency (with an index decorator?) of looking up an entity in a buffer by pk rather than guid.
