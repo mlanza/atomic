@@ -80,13 +80,13 @@ function doing1(f){
 
 function doing2(f, order){
   return function(self, ...xs){
-    each(f(self, v), order(xs));
+    each2(f(self, v), order(xs));
   }
 }
 
 export const doing = overload(null, doing1, doing2); //mutating counterpart to `reducing`
 
-export function each(f, xs){
+function each2(f, xs){
   var ys = ISeqable.seq(xs);
   while(ys){
     f(ISeq.first(ys));
@@ -94,14 +94,47 @@ export function each(f, xs){
   }
 }
 
+function each3(f, xs, ys){
+  each2(function(x){
+    each2(function(y){
+      f(x, y);
+    }, ys);
+  }, xs);
+}
+
+function each4(f, xs, ys, zs){
+  each2(function(x){
+    each2(function(y){
+      each2(function(z){
+        f(x, y, z);
+      }, zs);
+    }, ys);
+  }, xs);
+}
+
+function eachN(f, xs, ...colls){
+  each2(function(x){
+    if (ISeqable.seq(colls)) {
+      apply(each, function(...args){
+        apply(f, x, args);
+      }, colls);
+    } else {
+      f(x);
+    }
+  }, xs || []);
+}
+
+export const each = overload(null, null, each2, each3, each4, eachN);
+export const doseq = each;
+
 export function eachkv(f, xs){
-  each(function([key, value]){
+  each2(function([key, value]){
     return f(key, value);
   }, entries(xs));
 }
 
 export function eachvk(f, xs){
-  each(function([key, value]){
+  each2(function([key, value]){
     return f(value, key);
   }, entries(xs));
 }
@@ -477,7 +510,7 @@ export function withIndex(iter){
 
 export const butlast     = partial(dropLast, 1);
 export const initial     = butlast;
-export const eachIndexed = withIndex(each);
+export const eachIndexed = withIndex(each2);
 export const mapIndexed  = withIndex(map);
 export const keepIndexed = withIndex(keep);
 export const splitAt     = juxt(take, drop);
@@ -514,38 +547,6 @@ function forEveryN(f, xs, ...colls){
 }
 
 export const forEvery = overload(null, null, map, forEvery3, forEvery4, forEveryN);
-
-function doseq3(f, xs, ys){
-  each(function(x){
-    each(function(y){
-      f(x, y);
-    }, ys);
-  }, xs);
-}
-
-function doseq4(f, xs, ys, zs){
-  each(function(x){
-    each(function(y){
-      each(function(z){
-        f(x, y, z);
-      }, zs);
-    }, ys);
-  }, xs);
-}
-
-function doseqN(f, xs, ...colls){
-  each(function(x){
-    if (ISeqable.seq(colls)) {
-      apply(doseq, function(...args){
-        apply(f, x, args);
-      }, colls);
-    } else {
-      f(x);
-    }
-  }, xs || []);
-}
-
-export const doseq = overload(null, null, each, doseq3, doseq4, doseqN);
 
 function best2(better, xs){
   const coll = ISeqable.seq(xs);
@@ -635,7 +636,7 @@ export const positives = range(1, Number.MAX_SAFE_INTEGER, 1);
 export const negatives = range(-1, Number.MIN_SAFE_INTEGER, -1);
 
 export function dotimes(n, f){
-  each(f, range(n))
+  each2(f, range(n))
 }
 
 export function randNth(coll){
