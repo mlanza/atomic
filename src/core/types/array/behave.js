@@ -1,5 +1,5 @@
 import {does, identity, overload, doto, complement} from '../../core';
-import {implement, specify, satisfies} from '../protocol';
+import {implement, satisfies} from '../protocol';
 import {IMergeable, IBlankable, IMap, IQueryable, IWrite, ICoerce, IFunctor, IInsertable, IYankable, IReversible, ISet, IMapEntry, IEquiv, IReduce, IKVReduce, IAppendable, IPrependable, IInclusive, ICollection, INext, ISeq, IFind, ISeqable, IIndexed, IAssociative, ISequential, IEmptyableCollection, IFn, ICounted, ILookup, ICloneable} from '../../protocols';
 import {reduced, unreduced, isReduced} from '../reduced';
 import {indexedSeq} from '../indexed-seq';
