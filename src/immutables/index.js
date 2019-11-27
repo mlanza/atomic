@@ -1,9 +1,10 @@
 import {doto, implement, toArray, constantly, reduce, reducekv, str, map, each, get, keys, sort, IEquiv, ICounted, IMap} from "atomic/core";
-import {GUID, AssociativeSubset, Concatenated, EmptyList, Indexed, IndexedSeq, Nil} from "atomic/core";
+import {GUID, AssociativeSubset, Concatenated, EmptyList, List, Indexed, IndexedSeq, Nil} from "atomic/core";
 import {IPersistent, TransientSet} from "atomic/transients";
 import {set} from "./types/set/construct";
 import {IHash} from "./protocols/ihash/instance";
 import {_ as v} from "param.macro";
+import * as imm from "immutable";
 
 export * from "./types";
 export * from "./protocols";
@@ -41,39 +42,15 @@ function combine(h1, h2){
     return reduce(combine, 0, map(IHash.hash, self));
   }
 
-  each(
-    doto(v,
-      implement(IHash, {hash})),
-    [Array, Concatenated, EmptyList]);
+  each(implement(IHash, {hash}),
+    [Array, Concatenated, List, EmptyList]);
 
 })();
 
 (function(){
 
   doto(Nil,
-    implement(IHash, {hash: constantly(0)}));
-
-})();
-
-(function(){
-
-  function hash(self){
-    return self === true ? 1 : 0;
-  }
-
-  doto(Boolean,
-    implement(IHash, {hash}));
-
-})();
-
-(function(){
-
-  function hash(self){
-    return IHash.hash(str(self));
-  }
-
-  doto(Number,
-    implement(IHash, {hash}));
+    implement(IHash, {hash: constantly(imm.hash(null))}));
 
 })();
 
@@ -85,26 +62,15 @@ function combine(h1, h2){
     }, 0, sort(keys(self)));
   }
 
-  each(
-    doto(v,
-      implement(IHash, {hash})),
+  each(implement(IHash, {hash}),
     [Object, AssociativeSubset, Indexed, IndexedSeq]);
 
 })();
 
 (function(){
 
-  function hash(self){
-    let hash = 0;
-    for (let i = 0; i < self.length; i++) {
-      hash += Math.pow(self.charCodeAt(i) * 31, self.length - i);
-      hash = hash & hash;
-    }
-    return hash;
-  }
-
-  doto(String,
-    implement(IHash, {hash}));
+  each(implement(IHash, {hash: imm.hash}),
+    [String, Number, Boolean]);
 
 })();
 
