@@ -1,5 +1,5 @@
 import {doto, implement, toArray, constantly, reduce, reducekv, str, map, each, get, keys, sort, IEquiv, ICounted, IMap} from "atomic/core";
-import {GUID, AssociativeSubset, Concatenated, EmptyList, List, Indexed, IndexedSeq, Nil} from "atomic/core";
+import {Symbol, GUID, AssociativeSubset, Concatenated, EmptyList, List, Indexed, IndexedSeq, Nil} from "atomic/core";
 import {IPersistent, TransientSet} from "atomic/transients";
 import {set} from "./types/set/construct";
 import {IHash} from "./protocols/ihash/instance";
@@ -10,6 +10,16 @@ export * from "./types";
 export * from "./protocols";
 export * from "./protocols/concrete";
 
+const cache = Symbol.for("hashCode");
+
+function cachedHashCode(){
+  const result = this[cache] || IHash.hash(this);
+  if (!Object.isFrozen(this) && this[cache] == null) {
+    this[cache] = result;
+  }
+  return result;
+}
+
 function hashCode(){
   return IHash.hash(this);
 }
@@ -18,8 +28,10 @@ function equals(other){
   return IEquiv.equiv(this, other);
 }
 
-Object.prototype.hashCode = hashCode;
+Object.prototype.hashCode = cachedHashCode;
 Object.prototype.equals = equals;
+Number.prototype.hashCode = hashCode;
+String.prototype.hashCode = hashCode;
 
 (function(){
 
@@ -35,6 +47,17 @@ Object.prototype.equals = equals;
 function combine(h1, h2){
   return 3 * h1 + h2;
 }
+
+(function(){
+
+  function hash(self){
+    return self.valueOf();
+  }
+
+  each(implement(IHash, {hash}),
+    [Date]);
+
+})();
 
 (function(){
 
