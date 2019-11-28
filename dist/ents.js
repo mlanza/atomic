@@ -466,10 +466,10 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
         return _.map(function(value){
           return assertion(id, key, value);
         }, _.get(self, key));
-      }, _.filter(_.notEq(_, "id"), _.keys(self)));
+      }, _.filter(_.notEq(_, "id"), _.keys(self))); //TODO identify pk with metadata
     }
 
-    function outs(self){ //TODO more efficient by checking keys first
+    function outs(self){ //TODO improve efficiency by using only relational keys
       return _.filter(function(assertion){
         return _.is(assertion.object, _.GUID);
       }, assertions(self));
@@ -488,7 +488,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
     }
 
     function kind(self){ //TODO use?
-      return self.repo.identifier;
+      return self.repo.attrs.key; //TODO demeter
     }
 
     function lookup(self, key){
@@ -752,35 +752,50 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
       this.items = items;
     }
 
+    function lookup(self, key){
+      return ILookup.lookup(self.attrs, key);
+    }
+
+    function assoc(self, key, value){
+      return new Bin(self.type, IAssociative.assoc(self.attrs, key, value), self.schema, self.items);
+    }
+
+    function contains(self, key){
+      return IAssociative.contains(self.attrs, key);
+    }
+
     function make(self, attrs){
       return new self.type(self, attrs);
     }
 
     function name(self){
-      return self.attrs.label;
+      return _.get(self, "label");
     }
 
     function identifier(self){
-      return self.attrs.key;
+      return _.get(self, "key");
     }
 
     function field(self, key){
       return _.get(self.schema, key);
     }
 
+    function keys(self){
+      return _.keys(self.schema);
+    }
+
     function query(self, plan){
       return new Promise(function(resolve, reject){
         setTimeout(function(){
           resolve(self.items);
-        }, 500);
-      })
+        }, 5);
+      });
       //return Promise.resolve(self.items); //TODO use plan
     }
 
-    function keys(self){
-      return _.keys(self.schema);
-    }
     return _.doto(Bin,
+      _.implement(ILookup, {lookup: lookup}),
+      _.implement(IAssociative, {assoc: assoc, contains: contains}),
       _.implement(IKind, {field: field}),
       _.implement(INamed, {name: name}),
       _.implement(IIdentifiable, {identifier: identifier}),
@@ -791,9 +806,15 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
 
   })();
 
-  function bin(type, key, schema){
-    return new Bin(type, {label: type.name, key: key}, schema, []);
+  function bin3(type, key, schema){
+    return bin4(type, type.name, key, schema);
   }
+
+  function bin4(type, label, key, schema){
+    return new Bin(type, {label: label, key: key}, schema, []);
+  }
+
+  var bin = _.overload(null, null, null, bin3, bin4);
 
   function tiddlerBehavior(title, text){
 
@@ -831,7 +852,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
 
   _.doto(Task,
     behaveAsEntity,
-    tiddlerBehavior("title", "detail"));
+    tiddlerBehavior("title", "text"));
 
   var defaults = _.conj(schema(),
     _.assoc(field("id", entity, function(coll){
@@ -901,8 +922,9 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
     }
 
     function query(self, options){
-      var type = _.get(options, "$type");
-      return IQueryable.query(_.get(self.repos, type), null); //TODO web.toQueryString(_.dissoc(options, "$type")));
+      var type = _.get(options, "$type"),
+          plan = _.dissoc(options, "$type");
+      return IQueryable.query(_.get(self.repos, type), plan);
     }
 
     function commit(self, txn){
@@ -1019,7 +1041,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
 
     //TODO should `clone` return identity or a copy? i returned identity because I assumed no mutation.
 
-    function query(self, qs){
+    function query(self, plan){
       return ISeqable.seq(self);
     }
 
