@@ -745,11 +745,10 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
 
   var Bin = (function(){
 
-    function Bin(type, attrs, schema, items){
+    function Bin(type, attrs, schema){
       this.type = type;
       this.attrs = attrs;
       this.schema = schema;
-      this.items = items;
     }
 
     function lookup(self, key){
@@ -757,7 +756,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
     }
 
     function assoc(self, key, value){
-      return new Bin(self.type, IAssociative.assoc(self.attrs, key, value), self.schema, self.items);
+      return new Bin(self.type, IAssociative.assoc(self.attrs, key, value), self.schema);
     }
 
     function contains(self, key){
@@ -784,13 +783,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
       return _.keys(self.schema);
     }
 
-    function query(self, plan){
-      return new Promise(function(resolve, reject){
-        setTimeout(function(){
-          resolve(self.items);
-        }, 5);
-      });
-      //return Promise.resolve(self.items); //TODO use plan
+    function query(self, plan){ //TODO
     }
 
     return _.doto(Bin,
@@ -811,7 +804,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
   }
 
   function bin4(type, label, key, schema){
-    return new Bin(type, {label: label, key: key}, schema, []);
+    return new Bin(type, {label: label, key: key}, schema);
   }
 
   var bin = _.overload(null, null, null, bin3, bin4);
@@ -863,7 +856,10 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
     _.assoc(field("child", resolvingCollection(vd.and(vd.unlimited, vd.collOf(vd.isa(Task, Tiddler))), entities), function(coll){
       return recaster(_.guid, _.identity, valuesCaster(coll));
     }), "label", "Child"),
-    _.assoc(field("tag", unlimited, valuesCaster), "label", "Tag", "appendonly", true));
+    _.assoc(field("tag", unlimited, valuesCaster), "label", "Tag", "appendonly", true),
+    _.assoc(field("modified", constrain(optional, vd.collOf(_.isDate)), function(coll){
+      return recaster(_.date, toLocaleString, valueCaster(coll));
+    }), "label", "Modified Date"));
 
   function typed(entity){
     return IIdentifiable.identifier(entity.repo);
@@ -2672,7 +2668,8 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
               tag: _.maybe(child, dom.attr(_, "tags"), _.blot, _.split(_, ","), _.toArray),
               priority: _.maybe(child, _.blot, dom.attr(_, "priority"), parseInt),
               due: _.maybe(child, _.blot, dom.attr(_, "due")),
-              child: []
+              child: [],
+              modified: _.maybe(child, _.blot, dom.attr(_, "dateModified"))
             });
         parent.child.push(id);
         return _.cons(item, drill(child, item));
@@ -2689,13 +2686,19 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
   }
 
   function preloadBuffer(items){
-    _.just(items, _.filter(_.matches(_, {$type: "task"}), _), _.each(function(attrs){
-      tasks.items.push(IFactory.make(tasks, attrs));
+    var _tasks = _.just(items, _.filter(_.matches(_, {$type: "task"}), _), _.mapa(function(attrs){
+      return IFactory.make(tasks, attrs);
     }, _));
 
-    _.just(items, _.filter(_.matches(_, {$type: "tiddler"}), _), _.each(function(attrs){
-      tiddlers.items.push(IFactory.make(tiddlers, attrs));
+    var _tiddlers = _.just(items, _.filter(_.matches(_, {$type: "tiddler"}), _), _.mapa(function(attrs){
+      return IFactory.make(tiddlers, attrs);
     }, _));
+
+    _.doto(tasks,
+      _.specify(IQueryable, {query: _.constantly(Promise.resolve(_tasks))}));
+
+    _.doto(tiddlers,
+      _.specify(IQueryable, {query: _.constantly(Promise.resolve(_tiddlers))}));
 
     return buffer(domain([tiddlers, tasks]), $.timeTraveler($.cell(typedCatalog())));
   }
