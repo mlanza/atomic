@@ -109,7 +109,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
     ins: null
   });
 
-  var ICatalog = _.protocol({
+  var IWorkspace = _.protocol({
     touched: null, //entities touched during the last operation - useful when diffing before/after model snapshots
     dirty: null, //was a given entity ever modified?
     load: null, //add existing entity from domain to workspace
@@ -151,7 +151,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
     ITransaction: ITransaction,
     IView: IView,
     IVertex: IVertex,
-    ICatalog: ICatalog
+    IWorkspace: IWorkspace
   }
 
   function _constraints2(self, f){
@@ -476,7 +476,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
     }
 
     function identifier(self){ //TODO use?
-      return IIdentifiable.identifier(self.repo);
+      return IIdentifiable.identifier(self.topic);
     }
 
     function id(self){
@@ -484,11 +484,11 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
     }
 
     function field(self, key){
-      return IKind.field(self.repo, key) || _.assoc(_.isArray(_.get(self.attrs, key)) ? _field(key, unlimited, valuesCaster) : _field(key, optional, valueCaster), "virtual", true);
+      return IKind.field(self.topic, key) || _.assoc(_.isArray(_.get(self.attrs, key)) ? _field(key, unlimited, valuesCaster) : _field(key, optional, valueCaster), "virtual", true);
     }
 
     function kind(self){ //TODO use?
-      return self.repo.attrs.key; //TODO demeter
+      return self.topic.attrs.key; //TODO demeter
     }
 
     function lookup(self, key){
@@ -508,7 +508,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
     }
 
     function keys(self){
-      return _.keys(self.repo);
+      return _.keys(self.topic);
     }
 
     function constraints(self){
@@ -743,9 +743,115 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
 
   var schema = _.constructs(Schema);
 
-  var Bin = (function(){
+  function Ontology(topics){
+    this.topics = topics;
+  }
 
-    function Bin(type, attrs, schema){
+  (function(){
+
+    function conj(self, topic){
+      return new self.constructor(_.assoc(self.topics, IIdentifiable.identifier(topic), topic));
+    }
+
+    function lookup(self, key){
+      return _.get(self.topics, key);
+    }
+
+    function keys(self){
+      return _.keys(self.topics);
+    }
+
+    function vals(self){
+      return _.vals(self.topics);
+    }
+
+    function dissoc(self, key){
+      return new self.constructor(_.dissoc(self.topics, key));
+    }
+
+    function merge(self, other){
+      return _.reduce(_.conj, self, _.vals(other));
+    }
+
+    _.doto(Ontology,
+      _.implement(IMergeable, {merge: merge}),
+      _.implement(IMap, {keys: keys, vals: vals, dissoc: dissoc}),
+      _.implement(ILookup, {lookup: lookup}),
+      _.implement(ICollection, {conj: conj}));
+
+  })();
+
+  var ontology = _.fnil(_.constructs(Ontology), {});
+
+  function OpmlResource(url, ontology) {
+    this.url = url;
+    this.ontology = ontology;
+  }
+
+  var opmlResource = _.constructs(OpmlResource);
+
+  (function(){
+
+    function read(doc){
+      var seed = _.generate(_.positives),
+          typed = {task: "task", note: "tiddler"};
+      function drill(el, parent){
+        return _.toArray(_.mapcat(function(child){
+          var id = seed(),
+              type = _.get(typed, _.maybe(child, dom.attr(_, "type")) || "task"),
+              item = _.compact({
+                id: id,
+                $type: type,
+                title: dom.attr(child, "text"),
+                tag: _.maybe(child, dom.attr(_, "tags"), _.blot, _.split(_, ","), _.toArray),
+                priority: _.maybe(child, _.blot, dom.attr(_, "priority"), parseInt),
+                due: _.maybe(child, _.blot, dom.attr(_, "due")),
+                child: [],
+                modified: _.maybe(child, _.blot, dom.attr(_, "dateModified"))
+              });
+          parent.child.push(id);
+          return _.cons(item, drill(child, item));
+        }, _.children(el)));
+      }
+      var root = {
+        id: seed(),
+        $type: "task",
+        title: _.just(doc, dom.sel1("head > title", _), dom.text),
+        child: [],
+        modified: _.just(doc, dom.sel1("head > dateModified", _), dom.text)
+      };
+      return _.toArray(_.cons(root, drill(_.just(doc, dom.sel1("body", _)), root)));
+    }
+
+    function query(self, plan){ //plan is disregarded, must fully load outline.
+      return _.fmap(fetch(self.url),
+        xml,
+        _.see("outline"),
+        read,
+        _.mapa(function(attrs){
+          return make(self, attrs);
+        }, _));
+    }
+
+    function make(self, attrs){
+      return IFactory.make(_.get(self.ontology, attrs.$type), attrs);
+    }
+
+    _.doto(OpmlResource,
+      _.implement(IQueryable, {query: query}));
+
+  })();
+
+/*
+    function query(self, plan){ //TODO
+      return _.fmap(IQueryable.query(self.resource, plan),
+        _.filtera(_.is(_, self.Type), _));
+    }
+*/
+
+  var Topic = (function(){
+
+    function Topic(type, attrs, schema){
       this.type = type;
       this.attrs = attrs;
       this.schema = schema;
@@ -756,7 +862,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
     }
 
     function assoc(self, key, value){
-      return new Bin(self.type, IAssociative.assoc(self.attrs, key, value), self.schema);
+      return new Topic(self.type, IAssociative.assoc(self.attrs, key, value), self.schema, self.resource);
     }
 
     function contains(self, key){
@@ -783,31 +889,27 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
       return _.keys(self.schema);
     }
 
-    function query(self, plan){ //TODO
-    }
-
-    return _.doto(Bin,
+    return _.doto(Topic,
       _.implement(ILookup, {lookup: lookup}),
       _.implement(IAssociative, {assoc: assoc, contains: contains}),
       _.implement(IKind, {field: field}),
       _.implement(INamed, {name: name}),
       _.implement(IIdentifiable, {identifier: identifier}),
       _.implement(IMap, {keys: keys}),
-      _.implement(IQueryable, {query: query}),
       _.implement(IFactory, {make: make}),
       _.implement(IStore, {commit: _.see("commit")}));
 
   })();
 
-  function bin3(type, key, schema){
-    return bin4(type, type.name, key, schema);
+  function topic3(type, key, schema){
+    return topic4(type, type.name, key, schema);
   }
 
-  function bin4(type, label, key, schema){
-    return new Bin(type, {label: label, key: key}, schema);
+  function topic4(type, label, key, schema){
+    return new Topic(type, {label: label, key: key}, schema);
   }
 
-  var bin = _.overload(null, null, null, bin3, bin4);
+  var topic = _.overload(null, null, null, topic3, topic4);
 
   function tiddlerBehavior(title, text){
 
@@ -829,8 +931,8 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
 
   }
 
-  function Tiddler(repo, attrs){
-    this.repo = repo;
+  function Tiddler(topic, attrs){
+    this.topic = topic;
     this.attrs = attrs;
   }
 
@@ -838,8 +940,8 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
     behaveAsEntity,
     tiddlerBehavior("title", "text"));
 
-  function Task(repo, attrs){
-    this.repo = repo;
+  function Task(topic, attrs){
+    this.topic = topic;
     this.attrs = attrs;
   }
 
@@ -881,14 +983,14 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
 
   var toLocaleString = _.invokes(_, "toLocaleString");
 
-  var tiddlers =
-    bin(Tiddler,
+  var tiddler =
+    topic(Tiddler,
       "tiddler",
       _.conj(defaults,
         _.assoc(computedField("flags", [typed]), "label", "Flags")));
 
-  var tasks =
-    bin(Task,
+  var task =
+    topic(Task,
       "task",
       _.conj(defaults,
         _.assoc(field("priority", constrain(optional, vd.collOf(vd.choice([1, 2, 3])))), "label", "Priority"),
@@ -899,6 +1001,8 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
         _.assoc(computedField("flags", [typed, flag("overdue", isOverdue), flag("important", isImportant)]), "label", "Flags"),
         _.assoc(field("assignee", entities), "label", "Assignee"),
         _.assoc(field("expanded", constrain(required, vd.collOf(_.isBoolean))), "label", "Expanded")));
+
+  var work = _.conj(ontology(), tiddler, task);
 
   function Domain(repos){
     this.repos = repos;
@@ -951,7 +1055,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
 
   })();
 
-  function EntityCatalog(id, loaded, changed, touched){
+  function EntityWorkspace(id, loaded, changed, touched){
     this.id = id; //for idempotence checking
     this.loaded = loaded;
     this.changed = changed;
@@ -1042,7 +1146,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
     }
 
     function load(self, entities){
-      return entityCatalog(mut.withMutations(self.loaded, function(loaded){
+      return entityWorkspace(mut.withMutations(self.loaded, function(loaded){
         return _.reduce(function(memo, entity){
           var id = _.str(IEntity.id(entity));
           if (!_.contains(memo, id)) {
@@ -1054,7 +1158,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
     }
 
     function add(self, entities){
-      return entityCatalog(self.loaded, mut.withMutations(self.changed, function(changed){
+      return entityWorkspace(self.loaded, mut.withMutations(self.changed, function(changed){
         return _.reduce(function(memo, entity){
           var id = _.str(IEntity.id(entity));
           if (!_.contains(memo, id)){
@@ -1066,7 +1170,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
     }
 
     function edit(self, entities){
-      return entityCatalog(self.loaded, mut.withMutations(self.changed, function(changed){
+      return entityWorkspace(self.loaded, mut.withMutations(self.changed, function(changed){
         return _.reduce(function(memo, entity){
           var id = _.str(IEntity.id(entity));
           if (_.contains(self.loaded, id) || _.contains(memo, id)) {
@@ -1078,7 +1182,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
     }
 
     function destroy(self, entities){
-      return entityCatalog(self.loaded, mut.withMutations(self.changed, function(changed){
+      return entityWorkspace(self.loaded, mut.withMutations(self.changed, function(changed){
         return _.reduce(function(memo, entity){
           var id = _.str(IEntity.id(entity));
           if (_.contains(self.loaded, id)) {
@@ -1131,7 +1235,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
     function dissoc(self, guid){
       var id = _.str(guid);
       return IAssociative.contains(self, id) ?
-        entityCatalog(
+        entityWorkspace(
           IAssociative.contains(self.loaded, id) ? IMap.dissoc(self.loaded, id) : self.loaded,
           IAssociative.contains(self.changed, id) ? IMap.dissoc(self.changed, id) : self.changed, _.cons(guid)) : self;
     }
@@ -1199,13 +1303,13 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
       return _.first(_.drop(idx, self));
     }
 
-    _.doto(EntityCatalog,
+    _.doto(EntityWorkspace,
       _.implement(IResolver, {resolve: resolve}),
       _.implement(IIndexed, {nth: nth}),
       _.implement(IEntity, {id: id}),
       _.implement(IQueryable, {query: query}),
       _.implement(ITransaction, {commands: commands}),
-      _.implement(ICatalog, {dirty: dirty, load: load, add: add, edit: edit, destroy: destroy, changes: changes, touched: touched}),
+      _.implement(IWorkspace, {dirty: dirty, load: load, add: add, edit: edit, destroy: destroy, changes: changes, touched: touched}),
       _.implement(ICounted, {count: count}),
       _.implement(IAssociative, {contains: contains}),
       _.implement(IMap, {keys: keys, vals: vals, dissoc: dissoc}),
@@ -1219,34 +1323,34 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
 
   })();
 
-  function entityCatalog(loaded, changed, touched){
-    return new EntityCatalog(_.guid(), loaded, changed, touched);
+  function entityWorkspace(loaded, changed, touched){
+    return new EntityWorkspace(_.guid(), loaded, changed, touched);
   }
 
-  var _catalog = entityCatalog({}, {});
+  var _workspace = entityWorkspace({}, {});
 
-  function catalog(){
-    return _catalog;
+  function workspace(){
+    return _workspace;
   }
 
-  function TypedEntityCatalog(catalog, types){
-    this.catalog = catalog;
+  function TypedEntityWorkspace(workspace, types){
+    this.workspace = workspace;
     this.types = types;
   }
 
-  function typedCatalog2(catalog, types){
-    return new TypedEntityCatalog(catalog, types);
+  function typedWorkspace2(workspace, types){
+    return new TypedEntityWorkspace(workspace, types);
   }
 
-  function typedCatalog1(catalog){
-    return typedCatalog2(catalog, {});
+  function typedWorkspace1(workspace){
+    return typedWorkspace2(workspace, {});
   }
 
-  function typedCatalog0(){
-    return typedCatalog1(catalog());
+  function typedWorkspace0(){
+    return typedWorkspace1(workspace());
   }
 
-  var typedCatalog = _.overload(typedCatalog0, typedCatalog1, typedCatalog2);
+  var typedWorkspace = _.overload(typedWorkspace0, typedWorkspace1, typedWorkspace2);
 
   (function(){
 
@@ -1255,9 +1359,9 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
     }
 
     function load(self, entities){
-      return typedCatalog(ICatalog.load(self.catalog, entities), _.reducekv(function(memo, key, value){
+      return typedWorkspace(IWorkspace.load(self.workspace, entities), _.reducekv(function(memo, key, value){
         return _.update(memo, key, function(b){
-          return ICatalog.load(b || catalog(), value);
+          return IWorkspace.load(b || workspace(), value);
         });
       }, self.types, _.groupBy(function(entity){
         return IKind.kind(entity);
@@ -1265,9 +1369,9 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
     }
 
     function add(self, entities){
-      return typedCatalog(ICatalog.add(self.catalog, entities), _.reducekv(function(memo, key, value){
+      return typedWorkspace(IWorkspace.add(self.workspace, entities), _.reducekv(function(memo, key, value){
         return _.update(memo, key, function(b){
-          return ICatalog.add(b || catalog(), value);
+          return IWorkspace.add(b || workspace(), value);
         });
       }, self.types,  _.groupBy(function(entity){
         return IKind.kind(entity);
@@ -1275,9 +1379,9 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
     }
 
     function edit(self, entities){
-      return typedCatalog(ICatalog.edit(self.catalog, entities), _.reducekv(function(memo, key, value){
+      return typedWorkspace(IWorkspace.edit(self.workspace, entities), _.reducekv(function(memo, key, value){
         return _.update(memo, key, function(b){
-          return ICatalog.edit(b || catalog(), value);
+          return IWorkspace.edit(b || workspace(), value);
         });
       }, self.types, _.groupBy(function(entity){
         return IKind.kind(entity);
@@ -1285,18 +1389,18 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
     }
 
     function destroy(self, entities){
-      return typedCatalog(ICatalog.destroy(self.catalog, entities), _.reducekv(function(memo, key, value){
+      return typedWorkspace(IWorkspace.destroy(self.workspace, entities), _.reducekv(function(memo, key, value){
         return _.update(memo, key, function(b){
-          return ICatalog.destroy(b || catalog(), value);
+          return IWorkspace.destroy(b || workspace(), value);
         });
       }, self.types, _.groupBy(function(entity){
         return IKind.kind(entity);
       }, entities)));
     }
 
-    var forward = _.forwardTo("catalog");
-    var dirty = forward(ICatalog.dirty);
-    var changes = forward(ICatalog.changes);
+    var forward = _.forwardTo("workspace");
+    var dirty = forward(IWorkspace.dirty);
+    var changes = forward(IWorkspace.changes);
     var includes = forward(IInclusive.includes);
     var first = forward(ISeq.first);
     var rest = forward(ISeq.rest);
@@ -1320,12 +1424,12 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
       }, refs, refs));
     }
 
-    _.doto(TypedEntityCatalog,
+    _.doto(TypedEntityWorkspace,
       _.implement(IEntity, {id: id}),
       _.implement(IResolver, {resolve: resolve}),
       _.implement(IQueryable, {query: query}),
       _.implement(ITransaction, {commands: commands}),
-      _.implement(ICatalog, {dirty: dirty, load: load, add: add, edit: edit, destroy: destroy, changes: changes}),
+      _.implement(IWorkspace, {dirty: dirty, load: load, add: add, edit: edit, destroy: destroy, changes: changes}),
       _.implement(ICounted, {count: count}),
       _.implement(IAssociative, {contains: contains}),
       _.implement(IMap, {keys: keys, vals: vals, dissoc: dissoc}),
@@ -1335,7 +1439,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
       _.implement(INext, {next: next}),
       _.implement(ISeqable, {seq: seq}),
       _.implement(IInclusive, {includes: includes}),
-      _.implement(IEmptyableCollection, {empty: typedCatalog}));
+      _.implement(IEmptyableCollection, {empty: typedWorkspace}));
 
   })();
 
@@ -1410,7 +1514,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
   (function(){
 
     function handle(self, command, next){
-      ICatalog.load(self.buffer, command.entities); //TODO ITransientBuffer.load
+      IWorkspace.load(self.buffer, command.entities); //TODO ITransientBuffer.load
       $.raise(self.provider, loadedEvent(command.entities));
       next(command);
     }
@@ -1496,7 +1600,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
           }) || memo;
         }, added, _.keys(added));
       _.swap(self.buffer, function(buffer){
-        return ICatalog.add(buffer, [ITiddler.title(entity, _.get(command, "text"))]);
+        return IWorkspace.add(buffer, [ITiddler.title(entity, _.get(command, "text"))]);
       });
       $.raise(self.provider, addedEvent(IEntity.id(entity), _.get(command, "text")));
       next(command);
@@ -1597,7 +1701,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
       if (entity) {
         _.swap(self.buffer, function(buffer){
           var values = _.just(entity, _.get(_, _.get(command, "key")), _.fmap(_, _.not));
-          return ICatalog.edit(buffer, [_.assoc(entity, _.get(command, "key"), values)]);
+          return IWorkspace.edit(buffer, [_.assoc(entity, _.get(command, "key"), values)]);
         });
         $.raise(self.provider, toggledEvent(_.get(command, "id"), _.get(command, "key")));
       }
@@ -1801,7 +1905,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
           entity = ITiddler.text(entity, text);
         }
         _.swap(self.buffer, function(buffer){
-          return ICatalog.edit(buffer, [entity]);
+          return IWorkspace.edit(buffer, [entity]);
         });
         $.raise(self.provider, castedEvent(_.get(command, "id"), _.get(command, "type")));
       }
@@ -2005,7 +2109,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
         var key = _.get(command, "key"),
             value = _.get(command, "value");
         _.swap(self.buffer, function(buffer){
-          return ICatalog.edit(buffer, [assert(entity, key, value)]);
+          return IWorkspace.edit(buffer, [assert(entity, key, value)]);
         });
         $.raise(self.provider, assertedEvent(id, key, value));
       }
@@ -2096,7 +2200,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
       var entity = _.get(self.buffer, command.id);
       if (entity) {
         _.swap(self.buffer, function(buffer){
-          return ICatalog.destroy(buffer, [entity]);
+          return IWorkspace.destroy(buffer, [entity]);
         });
         $.raise(self.provider, destroyedEvent(command.id));
       }
@@ -2204,7 +2308,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
           value = _.get(command, "value"),
           entity = _.get(self.buffer, id);
       _.swap(self.buffer, function(buffer){
-        return ICatalog.edit(buffer, [_.isSome(value) ? retract(entity, key, value) : retract(entity, key)]);
+        return IWorkspace.edit(buffer, [_.isSome(value) ? retract(entity, key, value) : retract(entity, key)]);
       });
       $.raise(self.provider, retractedEvent(id, key, value));
       next(command);
@@ -2522,34 +2626,34 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
 
   })();
 
-  function Buffer(repo, catalog){
+  function Buffer(repo, workspace){
     this.repo = repo;
-    this.catalog = catalog;
+    this.workspace = workspace;
   }
 
   var buffer = _.constructs(Buffer);
 
   (function(){
 
-    var forward = _.forwardTo("catalog");
+    var forward = _.forwardTo("workspace");
 
     function make(self, attrs){
       return IFactory.make(self.repo, attrs);
     }
 
     function edit(self, entities){
-      _.swap(self.catalog, function(catalog){
-        return ICatalog.edit(catalog, entities);
+      _.swap(self.workspace, function(workspace){
+        return IWorkspace.edit(workspace, entities);
       });
     }
 
     function lookup(self, id){
-      return _.just(self.catalog, _.deref, _.get(_, id));
+      return _.just(self.workspace, _.deref, _.get(_, id));
     }
 
     function load(self, entities){
-      _.swap(self.catalog, function(catalog){
-        return ICatalog.load(catalog, entities);
+      _.swap(self.workspace, function(workspace){
+        return IWorkspace.load(workspace, entities);
       });
     }
 
@@ -2569,7 +2673,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
       _.implement(IFactory, {make: make}),
       _.implement(ILookup, {lookup: lookup}),
       _.implement(ISwap, {swap: swap}),
-      _.implement(ICatalog, {load: load, edit: edit}), //TODO ITransientBuffer.load
+      _.implement(IWorkspace, {load: load, edit: edit}), //TODO ITransientBuffer.load
       _.implement(IQueryable, {query: query}));
 
   })();
@@ -2654,73 +2758,18 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
 
   })();
 
-  function importOPML(doc){
-    var seed = _.generate(_.positives),
-        typed = {task: "task", note: "tiddler"};
-    function drill(el, parent){
-      return _.toArray(_.mapcat(function(child){
-        var id = seed(),
-            type = _.get(typed, _.maybe(child, dom.attr(_, "type")) || "task"),
-            item = _.compact({
-              id: id,
-              $type: type,
-              title: dom.attr(child, "text"),
-              tag: _.maybe(child, dom.attr(_, "tags"), _.blot, _.split(_, ","), _.toArray),
-              priority: _.maybe(child, _.blot, dom.attr(_, "priority"), parseInt),
-              due: _.maybe(child, _.blot, dom.attr(_, "due")),
-              child: [],
-              modified: _.maybe(child, _.blot, dom.attr(_, "dateModified"))
-            });
-        parent.child.push(id);
-        return _.cons(item, drill(child, item));
-      }, _.children(el)));
-    }
-    var root = {
-      id: seed(),
-      $type: "task",
-      title: _.just(doc, dom.sel1("head > title", _), dom.text),
-      child: [],
-      modified: _.just(doc, dom.sel1("head > dateModified", _), dom.text)
-    };
-    return _.toArray(_.cons(root, drill(_.just(doc, dom.sel1("body", _)), root)));
-  }
+  var buf = buffer(opmlResource("./dist/outline.opml", work), $.timeTraveler($.cell(typedWorkspace())));
 
-  function preloadBuffer(items){
-    var _tasks = _.just(items, _.filter(_.matches(_, {$type: "task"}), _), _.mapa(function(attrs){
-      return IFactory.make(tasks, attrs);
-    }, _));
-
-    var _tiddlers = _.just(items, _.filter(_.matches(_, {$type: "tiddler"}), _), _.mapa(function(attrs){
-      return IFactory.make(tiddlers, attrs);
-    }, _));
-
-    _.doto(tasks,
-      _.specify(IQueryable, {query: _.constantly(Promise.resolve(_tasks))}));
-
-    _.doto(tiddlers,
-      _.specify(IQueryable, {query: _.constantly(Promise.resolve(_tiddlers))}));
-
-    return buffer(domain([tiddlers, tasks]), $.timeTraveler($.cell(typedCatalog())));
-  }
-
-  _.fmap(fetch("./dist/outline.opml"),
-    xml,
-    _.see("outline"),
-    importOPML,
-    preloadBuffer,
-    function(buf){
-      _.each(function(el){
-        var ol = outline(buf, {root: _.guid(1)});
-        IView.render(ol, el);
-        $.sub(ol, _.see("event"));
-        _.each($.dispatch(ol, _), [
-          queryCommand({$type: "task"}),
-          queryCommand({$type: "tiddler"})
-          //assertCommand(null, "priority", "C")
-        ]);
-        Object.assign(window, {ol: ol});
-      }, dom.sel("#outline"));
-    });
+  _.maybe(dom.sel1("#outline"), function(el){
+    var ol = outline(buf, {root: _.guid(1)});
+    IView.render(ol, el);
+    $.sub(ol, _.see("event"));
+    _.each($.dispatch(ol, _), [
+      queryCommand()
+      //assertCommand(null, "priority", "C")
+    ]);
+    Object.assign(window, {ol: ol});
+  });
 
   return _.just(protocols, _.reduce(_.merge, _, _.map(function(protocol){
     return _.reduce(function(memo, key){
@@ -2745,8 +2794,8 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
     undoCommand: undoCommand,
     redoCommand: redoCommand,
     flushCommand: flushCommand,
-    entityCatalog: entityCatalog,
-    typedCatalog: typedCatalog,
+    entityWorkspace: entityWorkspace,
+    typedWorkspace: typedWorkspace,
     constrain: constrain,
     constraints: _constraints,
     domain: domain,
