@@ -745,10 +745,9 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
 
   var Bin = (function(){
 
-    function Bin(type, name, identifier, schema, items){
+    function Bin(type, attrs, schema, items){
       this.type = type;
-      this.name = name;
-      this.identifier = identifier;
+      this.attrs = attrs;
       this.schema = schema;
       this.items = items;
     }
@@ -758,11 +757,11 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
     }
 
     function name(self){
-      return self.name;
+      return self.attrs.label;
     }
 
     function identifier(self){
-      return self.identifier;
+      return self.attrs.key;
     }
 
     function field(self, key){
@@ -792,7 +791,9 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
 
   })();
 
-  var bin = _.constructs(Bin);
+  function bin(type, key, schema){
+    return new Bin(type, {label: type.name, key: key}, schema, []);
+  }
 
   function tiddlerBehavior(title, text){
 
@@ -847,34 +848,31 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
     return IIdentifiable.identifier(entity.repo);
   }
 
-  var tiddlers = (function(){
+  function flag(name, pred){
+    return function(entity){
+      return pred(entity) ? name : null;
+    }
+  }
 
-    return _.doto(new Bin(Tiddler, "Tiddler", "tiddler",
+  function isOverdue(entity){
+    return _.maybe(entity, _.get(_, "due"), _.first, _.gt(new Date(), _)); //impure
+  }
+
+  function isImportant(entity){
+    return _.maybe(entity, _.get(_, "priority"), _.detect(_.eq(_, 1), _));
+  }
+
+  var toLocaleString = _.invokes(_, "toLocaleString");
+
+  var tiddlers =
+    bin(Tiddler,
+      "tiddler",
       _.conj(defaults,
-        _.assoc(computedField("flags", [typed]), "label", "Flags")),
-      []));
+        _.assoc(computedField("flags", [typed]), "label", "Flags")));
 
-  })();
-
-  var tasks = (function(){
-
-    function flag(name, pred){
-      return function(entity){
-        return pred(entity) ? name : null;
-      }
-    }
-
-    function isOverdue(entity){
-      return _.maybe(entity, _.get(_, "due"), _.first, _.gt(new Date(), _)); //impure
-    }
-
-    function isImportant(entity){
-      return _.maybe(entity, _.get(_, "priority"), _.detect(_.eq(_, 1), _));
-    }
-
-    var toLocaleString = _.invokes(_, "toLocaleString");
-
-    return _.doto(new Bin(Task, "Task", "task",
+  var tasks =
+    bin(Task,
+      "task",
       _.conj(defaults,
         _.assoc(field("priority", constrain(optional, vd.collOf(vd.choice([1, 2, 3])))), "label", "Priority"),
         _.assoc(field("due", constrain(optional, vd.collOf(_.isDate)), function(coll){
@@ -883,10 +881,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
         _.assoc(computedField("overdue", [isOverdue]), "label", "Overdue"),
         _.assoc(computedField("flags", [typed, flag("overdue", isOverdue), flag("important", isImportant)]), "label", "Flags"),
         _.assoc(field("assignee", entities), "label", "Assignee"),
-        _.assoc(field("expanded", constrain(required, vd.collOf(_.isBoolean))), "label", "Expanded")),
-      []));
-
-  })();
+        _.assoc(field("expanded", constrain(required, vd.collOf(_.isBoolean))), "label", "Expanded")));
 
   function Domain(repos){
     this.repos = repos;
