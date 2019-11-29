@@ -67,6 +67,10 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
     uncast: null
   });
 
+  var IPersistable = _.protocol({
+    save: null
+  });
+
   var IStore = _.protocol({
     commit: null
   });
@@ -146,7 +150,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
     IQueryable: IQueryable,
     IFactory: IFactory,
     IConstrained: IConstrained,
-    IStore: IStore,
+    IPersistable: IPersistable,
     IOriginated: IOriginated,
     ITransaction: ITransaction,
     IView: IView,
@@ -837,7 +841,13 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
       return IFactory.make(_.get(self.ontology, attrs.$type), attrs);
     }
 
+    function commit(self, workspace){
+      _.log('committing', workspace); //TODO implement
+    }
+
     _.doto(OpmlResource,
+      _.implement(IFactory, {make: make}),
+      _.implement(IStore, {commit: commit}),
       _.implement(IQueryable, {query: query}));
 
   })();
@@ -896,8 +906,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
       _.implement(INamed, {name: name}),
       _.implement(IIdentifiable, {identifier: identifier}),
       _.implement(IMap, {keys: keys}),
-      _.implement(IFactory, {make: make}),
-      _.implement(IStore, {commit: _.see("commit")}));
+      _.implement(IFactory, {make: make}));
 
   })();
 
@@ -1027,12 +1036,6 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
       return IQueryable.query(_.get(self.repos, type), plan);
     }
 
-    function commit(self, txn){
-      _.each(function(cmd){
-        IStore.commit(origin(self, cmd), cmd);
-      }, ITransaction.commands(txn));
-    }
-
     function make(self, attrs){
       return IFactory.make(_.get(self.repos, _.get(attrs, "$type")) || _.just(self.repos, _.keys, _.first, _.get(self.repos, _)), _.dissoc(attrs, "$type"));
     }
@@ -1050,8 +1053,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
       _.implement(IEmptyableCollection, {empty: _.constantly(domain())}),
       _.implement(IOriginated, {origin: origin}),
       _.implement(IFactory, {make: make}),
-      _.implement(IQueryable, {query: query}),
-      _.implement(IStore, {commit: commit}));
+      _.implement(IQueryable, {query: query}));
 
   })();
 
@@ -1524,22 +1526,6 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
 
   })();
 
-  function NullHandler(){
-  }
-
-  var nullHandler = new NullHandler();
-
-  (function(){
-
-    function handle(self, message, next){
-      next(message);
-    }
-
-    return _.doto(NullHandler,
-      _.implement(IMiddleware, {handle: handle}));
-
-  })();
-
   function AddCommand(text, options){
     this.text = text;
     this.options = options;
@@ -1931,15 +1917,64 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
 
   })();
 
-  function UndoCommand(){
+  function SaveCommand(){
   }
 
-  var undoCommand = _.constantly(new UndoCommand());
+  var saveCommand = _.constantly(new SaveCommand());
 
   (function(){
 
-    return _.doto(UndoCommand,
-      _.implement(IIdentifiable, {identifier: _.constantly("undo")}));
+    return _.doto(SaveCommand,
+      _.implement(IIdentifiable, {identifier: _.constantly("save")}));
+
+  })();
+
+  function SaveHandler(buffer, provider){
+    this.buffer = buffer;
+    this.provider = provider;
+  }
+
+  var saveHandler = _.constructs(SaveHandler);
+
+  function SavedEvent(){
+  }
+
+  var savedEvent = _.constantly(new SavedEvent());
+
+  (function(){
+
+    return _.doto(SavedEvent,
+      _.implement(IIdentifiable, {identifier: _.constantly("saved")}));
+
+  })();
+
+  (function (){
+
+    function handle(self, command){
+      IPersistable.save(self.buffer)
+      $.raise(self.provider, savedEvent());
+    }
+
+    _.doto(SaveHandler,
+      _.implement(IMiddleware, {handle: handle}));
+
+  })();
+
+  function SavedHandler(commandBus){
+    this.commandBus = commandBus;
+  }
+
+  var savedHandler = _.constructs(SavedHandler);
+
+  (function(){
+
+    function handle(self, event, next){
+      $.dispatch(self.commandBus, flushCommand());
+      next(event);
+    }
+
+    return _.doto(SavedHandler,
+      _.implement(IMiddleware, {handle: handle}));
 
   })();
 
@@ -1957,6 +1992,20 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
       _.implement(IMiddleware, {handle: handle}));
 
   }
+
+
+
+  function UndoCommand(){
+  }
+
+  var undoCommand = _.constantly(new UndoCommand());
+
+  (function(){
+
+    return _.doto(UndoCommand,
+      _.implement(IIdentifiable, {identifier: _.constantly("undo")}));
+
+  })();
 
   function UndoHandler(buffer, provider){
     this.buffer = buffer;
@@ -2661,6 +2710,10 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
       return IQueryable.query(self.repo, plan);
     }
 
+    function save(self){
+      return IStore.commit(self.repo, self.workspace); //TODO return outcome status?
+    }
+
     var swap = forward(ISwap.swap);
     var undo = forward(ITimeTraveler.undo);
     var redo = forward(ITimeTraveler.redo);
@@ -2670,6 +2723,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
 
     _.doto(Buffer,
       _.implement(ITimeTraveler, {undo: undo, redo: redo, flush: flush, undoable: undoable, redoable: redoable}),
+      _.implement(IPersistable, {save: save}),
       _.implement(IFactory, {make: make}),
       _.implement(ILookup, {lookup: lookup}),
       _.implement(ISwap, {swap: swap}),
@@ -2705,6 +2759,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
         eventMiddleware(emitter),
         _.doto(handlerMiddleware(),
           mut.assoc(_, "added", addedHandler(model, commandBus)),
+          mut.assoc(_, "saved", savedHandler(commandBus)),
           mut.assoc(_, "queried", queriedHandler(commandBus)))));
 
     _.doto(commandBus,
@@ -2714,6 +2769,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
           _.doto(handlerMiddleware(),
             mut.assoc(_, "load", loadHandler(buffer, events)),
             mut.assoc(_, "add", addHandler(buffer, events)),
+            mut.assoc(_, "save", saveHandler(buffer, events)),
             mut.assoc(_, "undo", undoHandler(buffer, events)),
             mut.assoc(_, "redo", redoHandler(buffer, events)),
             mut.assoc(_, "flush", flushHandler(buffer, events)),
@@ -2781,6 +2837,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
     unlimited: unlimited,
     loadCommand: loadCommand,
     addCommand: addCommand,
+    saveCommand: saveCommand,
     castCommand: castCommand,
     tagCommand: tagCommand,
     untagCommand: untagCommand,
