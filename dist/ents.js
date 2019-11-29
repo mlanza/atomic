@@ -96,6 +96,10 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
     resolved: null
   });
 
+  var ISerializable = _.protocol({
+    serialize: null
+  });
+
   var IFactory = _.protocol({
     make: null
   });
@@ -141,6 +145,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
   var protocols = {
     ICaster: ICaster,
     IIdentifiable: IIdentifiable,
+    ISerializable: ISerializable,
     IKind: IKind,
     IField: IField,
     IEntity: IEntity,
@@ -521,7 +526,12 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
       }, vd.and(), keys(self));
     }
 
+    function serialize(self){
+      return self.attrs;
+    }
+
     return _.does(
+      _.implement(ISerializable, {serialize: serialize}),
       _.implement(IConstrained, {constraints: constraints}),
       _.implement(IIdentifiable, {identifier: identifier}),
       _.implement(IEntity, {id: id, assertions: assertions}),
@@ -797,7 +807,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
   (function(){
 
     function read(doc){
-      var seed = _.generate(_.positives),
+      var seed = _.generate(_.positives), // TODO ints for now, later: _.generate(_.repeatedly(_.pipe(_.guid, _.str))),
           typed = {task: "task", note: "tiddler"};
       function drill(el, parent){
         return _.toArray(_.mapcat(function(child){
@@ -842,22 +852,16 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
     }
 
     function commit(self, workspace){
-      _.log('committing', workspace); //TODO implement
+      _.just(workspace, _.deref, _.mapa(ISerializable.serialize, _), function(items){
+        return JSON.stringify(items, null, "\t");
+      }, _.see("commit")); //TODO
     }
-
     _.doto(OpmlResource,
       _.implement(IFactory, {make: make}),
       _.implement(IStore, {commit: commit}),
       _.implement(IQueryable, {query: query}));
 
   })();
-
-/*
-    function query(self, plan){ //TODO
-      return _.fmap(IQueryable.query(self.resource, plan),
-        _.filtera(_.is(_, self.Type), _));
-    }
-*/
 
   var Topic = (function(){
 
@@ -2817,7 +2821,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
   var buf = buffer(opmlResource("./dist/outline.opml", work), $.timeTraveler($.cell(typedWorkspace())));
 
   _.maybe(dom.sel1("#outline"), function(el){
-    var ol = outline(buf, {root: _.guid(1)});
+    var ol = outline(buf, {root: null});
     IView.render(ol, el);
     $.sub(ol, _.see("event"));
     _.each($.dispatch(ol, _), [
