@@ -852,9 +852,17 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
     }
 
     function commit(self, workspace){
-      _.just(workspace, _.deref, _.mapa(ISerializable.serialize, _), function(items){
+      var body = _.just(workspace, _.deref, _.mapa(ISerializable.serialize, _), function(items){
         return JSON.stringify(items, null, "\t");
-      }, _.see("commit")); //TODO
+      });
+      _.fmap(fetch(self.url, {
+        method: "POST",
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: body
+      }), _.log);
     }
     _.doto(OpmlResource,
       _.implement(IFactory, {make: make}),
