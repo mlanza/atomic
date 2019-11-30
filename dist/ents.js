@@ -9,6 +9,8 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
   var IAssociative = _.IAssociative,
       ISwap = _.ISwap,
       IMergeable = _.IMergeable,
+      IHash = imm.IHash,
+      ISet = _.ISet,
       ITransientAssociative = mut.ITransientAssociative,
       IDispatch = $.IDispatch,
       ISubscribe = $.ISubscribe,
@@ -460,6 +462,92 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
 
   var assertion = _.constructs(Assertion);
 
+  (function(){
+
+    function lookup(self, key){
+      switch(key){
+        case "subject":
+          return self.subject;
+        case "predicate":
+          return self.predicate;
+        case "object":
+          return self.object;
+      }
+      return null;
+    }
+
+    function assoc(self, key, value){
+      switch(key){
+        case "subject":
+          return new self.constructor(value, self.predicate, self.object);
+        case "predicate":
+          return new self.constructor(self.subject, value, self.object);
+        case "object":
+          return new self.constructor(self.subject, self.predicate, value);
+      }
+      return self;
+    }
+
+    function contains(self, key){
+      return IInclusive.contains(["subject", "predicate", "object"], key);
+    }
+
+    function equiv(self, other){
+      return other != null && self.constructor === other.constructor && IEquiv.equiv(self.subject, other.subject) && IEquiv.equiv(self.predicate, other.predicate) && IEquiv.equiv(self.object, other.object);
+    }
+
+    function hash(self){
+      return imm.hashing([self.subject, self.predicate, self.object]);
+    }
+
+    _.doto(Assertion,
+      _.implement(IHash, {hash: hash}),
+      _.implement(IEquiv, {equiv: equiv}),
+      _.implement(ILookup, {lookup: lookup}),
+      _.implement(IAssociative, {assoc: assoc, contains: contains}));
+
+  })();
+
+  function AssertionStore(questions, assertions){
+    this.questions = questions;
+    this.assertions = assertions;
+  }
+
+  var assertionStore = _.fnil(_.constructs(AssertionStore), _.array, imm.dict());
+
+  function questions(assertion){
+    return [
+      assertion,
+      _.assoc(assertion, "predicate", null, "object", null),
+      _.assoc(assertion, "predicate", null),
+      _.assoc(assertion, "subject", null),
+      _.assoc(assertion, "object", null)
+    ];
+  }
+
+  (function(){
+
+    function reviseStore(manner){
+      return function(self, assertion){
+        return assertionStore(self.questions, _.reduce(function(memo, question){
+          return _.update(memo, question, function(answers){
+            return manner(answers || imm.set(), assertion);
+          });
+        }, self.assertions, self.questions(assertion)));
+      }
+    }
+
+    function lookup(self, assertion){
+      return ISeqable.seq(ILookup.lookup(self.assertions, assertion));
+    }
+
+    _.doto(AssertionStore,
+      _.implement(ICollection, {conj: reviseStore(ICollection.conj)}),
+      _.implement(ISet, {disj: reviseStore(ISet.disj)}),
+      _.implement(ILookup, {lookup: lookup}));
+
+  })();
+
   var behaveAsEntity = (function(){
 
     function assertions(self){
@@ -622,7 +710,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
 
     function aget(self, entity){
       var key = _.get(self, "key");
-      return _.maybe(entity.attrs, _.get(_, key), function(value){
+      return _.just(entity.attrs, _.get(_, key), function(value){
         return ICaster.cast(self.caster, value);
       });
     }
@@ -2815,6 +2903,9 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
     optional: optional,
     required: required,
     unlimited: unlimited,
+    assertionStore: assertionStore,
+    questions: questions,
+    assertion: assertion,
     loadCommand: loadCommand,
     addCommand: addCommand,
     saveCommand: saveCommand,

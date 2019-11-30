@@ -1,4 +1,4 @@
-import {doto, implement, generate, positives, weakMap, toArray, constantly, reduce, reducekv, str, map, each, get, keys, sort, IEquiv, ICounted, IMap} from "atomic/core";
+import {doto, overload, implement, generate, positives, weakMap, toArray, constantly, reduce, reducekv, str, map, each, get, keys, sort, IEquiv, ICounted, IMap} from "atomic/core";
 import {Symbol, GUID, AssociativeSubset, Concatenated, EmptyList, List, Indexed, IndexedSeq, Nil} from "atomic/core";
 import {IPersistent, TransientSet} from "atomic/transients";
 import {set} from "./types/set/construct";
@@ -58,8 +58,14 @@ addProp(Object.prototype, "equals", equals);
 addProp(Number.prototype, "hashCode", hashCode);
 addProp(String.prototype, "hashCode", hashCode);
 
-function combine(h1, h2){
-  return 3 * h1 + h2;
+export function hashed(hs){
+  return reduce(function(h1, h2){
+    return 3 * h1 + h2;
+  }, 0, hs);
+}
+
+export function hashing(os){
+  return hashed(map(IHash.hash, os));
 }
 
 (function(){
@@ -75,11 +81,7 @@ function combine(h1, h2){
 
 (function(){
 
-  function hash(self){
-    return reduce(combine, 0, map(IHash.hash, self));
-  }
-
-  each(implement(IHash, {hash}),
+  each(implement(IHash, {hash: hashing}),
     [Array, Concatenated, List, EmptyList]);
 
 })();
@@ -112,7 +114,7 @@ function combine(h1, h2){
 
   function hash(self){
     return reduce(function(memo, key){
-      return combine(memo, combine(IHash.hash(key), IHash.hash(get(self, key))));
+      return hashing([memo, key, get(self, key)]);
     }, 0, sort(keys(self)));
   }
 
