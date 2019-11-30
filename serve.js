@@ -18,7 +18,6 @@ require('http').createServer(function(request, response) {
       });
     });
   }
-  console.log(request.body);
   request.addListener('end', function() {
     fileServer.serve(request, response, function (err, result) {
       if (err) { // There was an error serving the file
