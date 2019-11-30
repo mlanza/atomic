@@ -22,6 +22,8 @@
     "@babel/plugin-transform-arrow-functions": "^7.7.4",
     "@babel/preset-es2015": "^7.0.0-beta.53",
     "babel-cli": "^7.0.0-beta.3",
-    "node-static": "^0.7.11"
+    "flatten": "^1.0.3",
+    "node-static": "^0.7.11",
+    "xml2json": "^0.11.2"
   }
 }
