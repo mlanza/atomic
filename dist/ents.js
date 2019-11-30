@@ -1125,8 +1125,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
 
   })();
 
-  function EntityWorkspace(id, loaded, changed, touched){
-    this.id = id; //for idempotence checking
+  function EntityWorkspace(loaded, changed, touched){
     this.loaded = loaded;
     this.changed = changed;
     this.touched = touched;
@@ -1212,61 +1211,41 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
     //TODO should `clone` return identity or a copy? i returned identity because I assumed no mutation.
 
     function query(self, plan){
-      return ISeqable.seq(self);
+      return _.filtera(function(entity){
+        return _.matches(entity.attrs, plan); //TODO temporary
+      }, ISeqable.seq(self));
     }
 
     function load(self, entities){
-      return entityWorkspace(mut.withMutations(self.loaded, function(loaded){
-        return _.reduce(function(memo, entity){
-          var id = _.str(IEntity.id(entity));
-          if (!_.contains(memo, id)) {
-            mut.assoc(memo, id, entity);
-          }
-          return memo;
-        }, loaded, entities);
-      }), self.changed, _.mapa(IEntity.id, entities));
+      return entityWorkspace(_.reduce(function(memo, entity){
+        var id = IEntity.id(entity);
+        return _.contains(memo, id) ? memo : _.assoc(memo, id, entity);
+      }, self.loaded, entities), self.changed, _.mapa(IEntity.id, entities));
     }
 
     function add(self, entities){
-      return entityWorkspace(self.loaded, mut.withMutations(self.changed, function(changed){
-        return _.reduce(function(memo, entity){
-          var id = _.str(IEntity.id(entity));
-          if (!_.contains(memo, id)){
-            mut.assoc(memo, id, entity);
-          }
-          return memo;
-        }, changed, entities);
-      }), _.mapa(IEntity.id, entities));
+      return entityWorkspace(self.loaded, _.reduce(function(memo, entity){
+        var id = IEntity.id(entity);
+        return _.contains(memo, id) ? memo : _.assoc(memo, id, entity);
+      }, self.changed, entities), _.mapa(IEntity.id, entities));
     }
 
     function edit(self, entities){
-      return entityWorkspace(self.loaded, mut.withMutations(self.changed, function(changed){
-        return _.reduce(function(memo, entity){
-          var id = _.str(IEntity.id(entity));
-          if (_.contains(self.loaded, id) || _.contains(memo, id)) {
-            mut.assoc(memo, id, entity);
-          }
-          return memo;
-        }, changed, entities);
-      }), _.mapa(IEntity.id, entities));
+      return entityWorkspace(self.loaded, _.reduce(function(memo, entity){
+        var id = IEntity.id(entity);
+        return _.contains(self.loaded, id) || _.contains(memo, id) ? _.assoc(memo, id, entity) : memo;
+      }, self.changed, entities), _.mapa(IEntity.id, entities));
     }
 
     function destroy(self, entities){
-      return entityWorkspace(self.loaded, mut.withMutations(self.changed, function(changed){
-        return _.reduce(function(memo, entity){
-          var id = _.str(IEntity.id(entity));
-          if (_.contains(self.loaded, id)) {
-            mut.assoc(memo, id, null);
-          } else if (_.contains(memo, id)) {
-            mut.dissoc(memo, id);
-          }
-          return  memo;
-        }, changed, entities);
-      }), _.mapa(IEntity.id, entities));
+      return entityWorkspace(self.loaded, _.reduce(function(memo, entity){
+        var id = IEntity.id(entity);
+        return _.contains(self.loaded, id) ? _.assoc(memo, id, null) : _.contains(memo, id) ? _.dissoc(memo, id) : memo;
+      }, self.changed, entities), _.mapa(IEntity.id, entities));
     }
 
     function dirty(self, entity){
-      var id = _.str(IEntity.id(entity));
+      var id = IEntity.id(entity);
       return _.notEq(entity, _.get(self.loaded, id));
     }
 
@@ -1294,20 +1273,19 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
       return ISeqable.seq(IMap.keys(self)) ? self : null;
     }
 
-    function lookup(self, guid){
-      return IAssociative.contains(self.changed, guid) ? _.get(self.changed, _.str(guid)) : _.get(self.loaded, _.str(guid));
+    function lookup(self, id){
+      return IAssociative.contains(self.changed, id) ? _.get(self.changed, id) : _.get(self.loaded, id);
     }
 
     function reduce(self, xf, init){
       return IReduce.reduce(_.map(_.get(self, _), _.keys(self)), xf, init);
     }
 
-    function dissoc(self, guid){
-      var id = _.str(guid);
+    function dissoc(self, id){
       return IAssociative.contains(self, id) ?
         entityWorkspace(
           IAssociative.contains(self.loaded, id) ? IMap.dissoc(self.loaded, id) : self.loaded,
-          IAssociative.contains(self.changed, id) ? IMap.dissoc(self.changed, id) : self.changed, _.cons(guid)) : self;
+          IAssociative.contains(self.changed, id) ? IMap.dissoc(self.changed, id) : self.changed, _.cons(id)) : self;
     }
 
     function keys(self){
@@ -1323,8 +1301,8 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
       return _.count(keys(self));
     }
 
-    function contains(self, guid){
-      return !!ILookup.lookup(self, guid);
+    function contains(self, id){
+      return !!ILookup.lookup(self, id);
     }
 
     function id(self){
@@ -1394,124 +1372,14 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
   })();
 
   function entityWorkspace(loaded, changed, touched){
-    return new EntityWorkspace(_.guid(), loaded, changed, touched);
+    return new EntityWorkspace(loaded, changed, touched);
   }
 
-  var _workspace = entityWorkspace({}, {});
+  var _workspace = entityWorkspace(imm.dict(), imm.dict());
 
   function workspace(){
     return _workspace;
   }
-
-  function TypedEntityWorkspace(workspace, types){
-    this.workspace = workspace;
-    this.types = types;
-  }
-
-  function typedWorkspace2(workspace, types){
-    return new TypedEntityWorkspace(workspace, types);
-  }
-
-  function typedWorkspace1(workspace){
-    return typedWorkspace2(workspace, {});
-  }
-
-  function typedWorkspace0(){
-    return typedWorkspace1(workspace());
-  }
-
-  var typedWorkspace = _.overload(typedWorkspace0, typedWorkspace1, typedWorkspace2);
-
-  (function(){
-
-    function query(self, options){
-      return _.maybe(_.get(self.types, _.get(options, "$type")), IQueryable.query);
-    }
-
-    function load(self, entities){
-      return typedWorkspace(IWorkspace.load(self.workspace, entities), _.reducekv(function(memo, key, value){
-        return _.update(memo, key, function(b){
-          return IWorkspace.load(b || workspace(), value);
-        });
-      }, self.types, _.groupBy(function(entity){
-        return IKind.kind(entity);
-      }, entities)));
-    }
-
-    function add(self, entities){
-      return typedWorkspace(IWorkspace.add(self.workspace, entities), _.reducekv(function(memo, key, value){
-        return _.update(memo, key, function(b){
-          return IWorkspace.add(b || workspace(), value);
-        });
-      }, self.types,  _.groupBy(function(entity){
-        return IKind.kind(entity);
-      }, entities)));
-    }
-
-    function edit(self, entities){
-      return typedWorkspace(IWorkspace.edit(self.workspace, entities), _.reducekv(function(memo, key, value){
-        return _.update(memo, key, function(b){
-          return IWorkspace.edit(b || workspace(), value);
-        });
-      }, self.types, _.groupBy(function(entity){
-        return IKind.kind(entity);
-      }, entities)));
-    }
-
-    function destroy(self, entities){
-      return typedWorkspace(IWorkspace.destroy(self.workspace, entities), _.reducekv(function(memo, key, value){
-        return _.update(memo, key, function(b){
-          return IWorkspace.destroy(b || workspace(), value);
-        });
-      }, self.types, _.groupBy(function(entity){
-        return IKind.kind(entity);
-      }, entities)));
-    }
-
-    var forward = _.forwardTo("workspace");
-    var dirty = forward(IWorkspace.dirty);
-    var changes = forward(IWorkspace.changes);
-    var includes = forward(IInclusive.includes);
-    var first = forward(ISeq.first);
-    var rest = forward(ISeq.rest);
-    var next = forward(INext.next);
-    var seq = forward(ISeqable.seq);
-    var lookup = forward(ILookup.lookup);
-    var reduce = forward(IReduce.reduce);
-    var keys = forward(IMap.keys);
-    var vals = forward(IMap.vals);
-    var count = forward(ICounted.count);
-    var contains = forward(IAssociative.contains);
-    var id = forward(IEntity.id);
-    var commands = forward(ITransaction.commands);
-
-    function dissoc(self, guid){
-    }
-
-    function resolve(self, refs){
-      return IResolveable.resolved(_.reducekv(function(memo, idx, ref){
-        return _.assoc(memo, idx, _.get(self, ref));
-      }, refs, refs));
-    }
-
-    _.doto(TypedEntityWorkspace,
-      _.implement(IEntity, {id: id}),
-      _.implement(IResolver, {resolve: resolve}),
-      _.implement(IQueryable, {query: query}),
-      _.implement(ITransaction, {commands: commands}),
-      _.implement(IWorkspace, {dirty: dirty, load: load, add: add, edit: edit, destroy: destroy, changes: changes}),
-      _.implement(ICounted, {count: count}),
-      _.implement(IAssociative, {contains: contains}),
-      _.implement(IMap, {keys: keys, vals: vals, dissoc: dissoc}),
-      _.implement(IReduce, {reduce: reduce}),
-      _.implement(ILookup, {lookup: lookup}),
-      _.implement(ISeq, {first: first, rest: rest}),
-      _.implement(INext, {next: next}),
-      _.implement(ISeqable, {seq: seq}),
-      _.implement(IInclusive, {includes: includes}),
-      _.implement(IEmptyableCollection, {empty: typedWorkspace}));
-
-  })();
 
   _.doto(_.Nil,
     _.implement(ITransaction, {commands: _.constantly(null)}));
@@ -1646,7 +1514,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
   (function(){
 
     function handle(self, command, next){
-      var added = IFactory.make(self.buffer, {id: _.str(_.get(command, "id") || _.guid()), $type: _.get(command, "type")});
+      var added = IFactory.make(self.buffer, {id: _.get(command, "id") || _.guid(), $type: _.get(command, "type")});
       var entity = _.reduce(function(memo, key){
           var fld = IKind.field(memo, key);
           return _.maybe(_.get(fld, "defaults"), function(defaults){
@@ -2882,7 +2750,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
 
   })();
 
-  var buf = buffer(jsonResource("./dist/outline.json", work), $.timeTraveler($.cell(typedWorkspace())));
+  var buf = buffer(jsonResource("./dist/outline.json", work), $.timeTraveler($.cell(workspace())));
 
   _.maybe(dom.sel1("#outline"), function(el){
     var ol = outline(buf, {root: null});
@@ -2923,7 +2791,6 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
     redoCommand: redoCommand,
     flushCommand: flushCommand,
     entityWorkspace: entityWorkspace,
-    typedWorkspace: typedWorkspace,
     constrain: constrain,
     constraints: _constraints,
     domain: domain,
