@@ -1125,12 +1125,6 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
 
   })();
 
-  function EntityWorkspace(loaded, changed, touched){
-    this.loaded = loaded;
-    this.changed = changed;
-    this.touched = touched;
-  }
-
   function Transaction(buffer, user){
     this.buffer = buffer;
     this.user = user;
@@ -1206,6 +1200,12 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
 
   })();
 
+  function EntityWorkspace(loaded, changed, touched){
+    this.loaded = loaded;
+    this.changed = changed;
+    this.touched = touched;
+  }
+
   (function(){
 
     //TODO should `clone` return identity or a copy? i returned identity because I assumed no mutation.
@@ -1220,33 +1220,32 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
       return entityWorkspace(_.reduce(function(memo, entity){
         var id = IEntity.id(entity);
         return _.contains(memo, id) ? memo : _.assoc(memo, id, entity);
-      }, self.loaded, entities), self.changed, _.mapa(IEntity.id, entities));
+      }, self.loaded, entities), self.changed, _.into(imm.set(), _.map(IEntity.id, entities)));
     }
 
     function add(self, entities){
       return entityWorkspace(self.loaded, _.reduce(function(memo, entity){
         var id = IEntity.id(entity);
         return _.contains(memo, id) ? memo : _.assoc(memo, id, entity);
-      }, self.changed, entities), _.mapa(IEntity.id, entities));
+      }, self.changed, entities), _.into(imm.set(), _.map(IEntity.id, entities)));
     }
 
     function edit(self, entities){
       return entityWorkspace(self.loaded, _.reduce(function(memo, entity){
         var id = IEntity.id(entity);
         return _.contains(self.loaded, id) || _.contains(memo, id) ? _.assoc(memo, id, entity) : memo;
-      }, self.changed, entities), _.mapa(IEntity.id, entities));
+      }, self.changed, entities), _.into(imm.set(), _.map(IEntity.id, entities)));
     }
 
     function destroy(self, entities){
       return entityWorkspace(self.loaded, _.reduce(function(memo, entity){
         var id = IEntity.id(entity);
         return _.contains(self.loaded, id) ? _.assoc(memo, id, null) : _.contains(memo, id) ? _.dissoc(memo, id) : memo;
-      }, self.changed, entities), _.mapa(IEntity.id, entities));
+      }, self.changed, entities), _.into(imm.set(), _.map(IEntity.id, entities)));
     }
 
     function dirty(self, entity){
-      var id = IEntity.id(entity);
-      return _.notEq(entity, _.get(self.loaded, id));
+      return _.notEq(entity, _.get(self.loaded, IEntity.id(entity)));
     }
 
     function changes(self){
@@ -1290,7 +1289,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
 
     function keys(self){
       return _.filter(_.get(self, _),
-        imm.distinct(_.concat(_.keys(self.loaded), _.keys(self.changed))));
+        imm.distinct(_.concat(Array.from(_.keys(self.loaded)), Array.from(_.keys(self.changed)))));
     }
 
     function vals(self){
@@ -1371,15 +1370,82 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
 
   })();
 
-  function entityWorkspace(loaded, changed, touched){
-    return new EntityWorkspace(loaded, changed, touched);
+  var entityWorkspace = _.fnil(_.constructs(EntityWorkspace), imm.dict(), imm.dict(), imm.set());
+
+  function IndexedEntityWorkspace(indexes, workspace){
+    this.indexes = indexes;
+    this.workspace = workspace;
   }
 
-  var _workspace = entityWorkspace(imm.dict(), imm.dict());
+  (function(){ // TODO implement indexing
 
-  function workspace(){
-    return _workspace;
-  }
+    var forward = _.forwardTo("workspace");
+
+    function query(self, plan){
+      return IQueryable.query(self.workspace, plan);
+    }
+
+    function load(self, entities){
+      return new self.constructor(self.indexes, IWorkspace.load(self.workspace, entities));
+    }
+
+    function add(self, entities){
+      return new self.constructor(self.indexes, IWorkspace.add(self.workspace, entities));
+    }
+
+    function edit(self, entities){
+      return new self.constructor(self.indexes, IWorkspace.edit(self.workspace, entities));
+    }
+
+    function destroy(self, entities){
+      return new self.constructor(self.indexes, IWorkspace.destroy(self.workspace, entities));
+    }
+
+    var dirty = forward(IWorkspace.dirty);
+    var changes = forward(IWorkspace.changes);
+    var includes = forward(IInclusive.includes);
+    var first = forward(ISeq.first);
+    var rest = forward(ISeq.rest);
+    var next = forward(INext.next);
+    var seq = forward(ISeqable.seq);
+    var lookup = forward(ILookup.lookup);
+    var reduce = forward(IReduce.reduce);
+
+    function dissoc(self, id){
+      return new self.constructor(self.indexes, IMap.dissoc(self.workspace, id));
+    }
+
+    var keys = forward(IMap.keys);
+    var vals = forward(IMap.vals);
+    var count = forward(ICounted.count);
+    var contains = forward(IAssociative.contains);
+    var id = forward(IEntity.id);
+    var commands = forward(ITransaction.commands);
+    var resolve = forward(IResolver.resolve);
+    var touched = forward(IWorkspace.touched);
+    var nth = forward(IIndexed.nth);
+
+    _.doto(IndexedEntityWorkspace,
+      _.implement(IResolver, {resolve: resolve}),
+      _.implement(IIndexed, {nth: nth}),
+      _.implement(IEntity, {id: id}),
+      _.implement(IQueryable, {query: query}),
+      _.implement(ITransaction, {commands: commands}),
+      _.implement(IWorkspace, {dirty: dirty, load: load, add: add, edit: edit, destroy: destroy, changes: changes, touched: touched}),
+      _.implement(ICounted, {count: count}),
+      _.implement(IAssociative, {contains: contains}),
+      _.implement(IMap, {keys: keys, vals: vals, dissoc: dissoc}),
+      _.implement(IReduce, {reduce: reduce}),
+      _.implement(ILookup, {lookup: lookup}),
+      _.implement(ISeq, {first: first, rest: rest}),
+      _.implement(INext, {next: next}),
+      _.implement(ISeqable, {seq: seq}),
+      _.implement(IInclusive, {includes: includes}),
+      _.implement(IEmptyableCollection, {empty: buffer}));
+
+  })();
+
+  var indexedEntityWorkspace = _.fnil(_.constructs(IndexedEntityWorkspace), assertionStore(), entityWorkspace());
 
   _.doto(_.Nil,
     _.implement(ITransaction, {commands: _.constantly(null)}));
@@ -2750,7 +2816,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
 
   })();
 
-  var buf = buffer(jsonResource("./dist/outline.json", work), $.timeTraveler($.cell(workspace())));
+  var buf = buffer(jsonResource("./dist/outline.json", work), $.timeTraveler($.cell(indexedEntityWorkspace(assertionStore(), entityWorkspace()))));
 
   _.maybe(dom.sel1("#outline"), function(el){
     var ol = outline(buf, {root: null});
