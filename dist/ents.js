@@ -630,7 +630,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
     function aset(self, entity, values){
       var key =  _.get(self, "key"),
           value = ICaster.uncast(self.caster, values);
-      return new entity.constructor(entity.repo, _.isSome(value) ? _.assoc(entity.attrs, key, value) : _.dissoc(entity.attrs, self.key));
+      return new entity.constructor(entity.topic, _.isSome(value) ? _.assoc(entity.attrs, key, value) : _.dissoc(entity.attrs, self.key));
     }
 
     function identifier(self){
@@ -823,14 +823,14 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
       var body = _.just(workspace, _.deref, _.mapa(ISerializable.serialize, _), function(items){
         return JSON.stringify(items, null, "\t");
       });
-      _.fmap(fetch(self.url, {
+      fetch(self.url, {
         method: "POST",
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json'
         },
         body: body
-      }), _.log);
+      });
     }
     _.doto(JsonResource,
       _.implement(IFactory, {make: make}),
@@ -953,7 +953,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
     }), "label", "Modified Date"));
 
   function typed(entity){
-    return IIdentifiable.identifier(entity.repo);
+    return IIdentifiable.identifier(entity.topic);
   }
 
   function flag(name, pred){
