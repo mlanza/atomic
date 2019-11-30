@@ -10,11 +10,10 @@ function read(source){
   var typed = {task: "task", note: "tiddler"};
   function drill(node, parent){
     function convert(child){
-      var id = seed++,
-          type = child.type || "task";
+      var id = seed++;
       var item = {
         id: id,
-        $type: type,
+        $type: typed[child.type] || "task",
         title: child.text,
         child: []
       };

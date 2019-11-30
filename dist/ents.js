@@ -39,13 +39,6 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
 
   var seed = _.generate(_.negatives);
 
-  function xml(resp){
-    var parser = new DOMParser();
-    return _.fmap(resp.text(), function(xml){
-      return parser.parseFromString(xml, "text/xml");
-    });
-  }
-
   function create(){ //USE What.create = create; What.create(1);
     return _.apply(_.constructs(this), _.slice(arguments));  //universal `new-less` create function
   }
@@ -797,51 +790,26 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
 
   var ontology = _.fnil(_.constructs(Ontology), {});
 
-  function OpmlResource(url, ontology) {
+  function JsonResource(url, ontology) {
     this.url = url;
     this.ontology = ontology;
   }
 
-  var opmlResource = _.constructs(OpmlResource);
+  var jsonResource = _.constructs(JsonResource);
 
   (function(){
 
-    function read(doc){
-      var seed = _.generate(_.positives), // TODO ints for now, later: _.generate(_.repeatedly(_.pipe(_.guid, _.str))),
-          typed = {task: "task", note: "tiddler"};
-      function drill(el, parent){
-        return _.toArray(_.mapcat(function(child){
-          var id = seed(),
-              type = _.get(typed, _.maybe(child, dom.attr(_, "type")) || "task"),
-              item = _.compact({
-                id: id,
-                $type: type,
-                title: dom.attr(child, "text"),
-                tag: _.maybe(child, dom.attr(_, "tags"), _.blot, _.split(_, ","), _.toArray),
-                priority: _.maybe(child, _.blot, dom.attr(_, "priority"), parseInt),
-                due: _.maybe(child, _.blot, dom.attr(_, "due")),
-                child: [],
-                modified: _.maybe(child, _.blot, dom.attr(_, "dateModified"))
-              });
-          parent.child.push(id);
-          return _.cons(item, drill(child, item));
-        }, _.children(el)));
-      }
-      var root = {
-        id: seed(),
-        $type: "task",
-        title: _.just(doc, dom.sel1("head > title", _), dom.text),
-        child: [],
-        modified: _.just(doc, dom.sel1("head > dateModified", _), dom.text)
-      };
-      return _.toArray(_.cons(root, drill(_.just(doc, dom.sel1("body", _)), root)));
-    }
-
     function query(self, plan){ //plan is disregarded, must fully load outline.
-      return _.fmap(fetch(self.url),
-        xml,
-        _.see("outline"),
-        read,
+      return _.fmap(fetch(self.url, {
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        }
+       }),
+        function(resp){
+          return resp.text();
+        },
+        JSON.parse,
         _.mapa(function(attrs){
           return make(self, attrs);
         }, _));
@@ -864,7 +832,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
         body: body
       }), _.log);
     }
-    _.doto(OpmlResource,
+    _.doto(JsonResource,
       _.implement(IFactory, {make: make}),
       _.implement(IStore, {commit: commit}),
       _.implement(IQueryable, {query: query}));
@@ -2826,7 +2794,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
 
   })();
 
-  var buf = buffer(opmlResource("./dist/outline.opml", work), $.timeTraveler($.cell(typedWorkspace())));
+  var buf = buffer(jsonResource("./dist/outline.json", work), $.timeTraveler($.cell(typedWorkspace())));
 
   _.maybe(dom.sel1("#outline"), function(el){
     var ol = outline(buf, {root: null});
