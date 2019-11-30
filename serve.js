@@ -1,5 +1,6 @@
 var static = require('node-static');
 var fs = require('fs');
+var path = require('path');
 var fileServer = new static.Server('./');
 require('http').createServer(function(request, response) {
   console.log(request.method, request.url);
@@ -9,7 +10,7 @@ require('http').createServer(function(request, response) {
       body += chunk.toString(); // convert Buffer to string
     });
     request.on('end', function(){
-      fs.writeFile("./outline.json", body, function(err) {
+      fs.writeFile(path.join(__dirname, request.url), body, function(err) {
         if (err) {
           console.log("save failed!", err);
         } else {
