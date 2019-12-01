@@ -553,7 +553,8 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
     function assertions(self){
       var id = IEntity.id(self);
       return _.mapcat(function(key){
-        return _.map(function(value){
+        var fld = IKind.field(self, key);
+        return _.get(fld, "computed") ? [] : _.map(function(value){
           return assertion(id, key, value);
         }, _.get(self, key));
       }, _.filter(_.notEq(_, "id"), _.keys(self))); //TODO identify pk with metadata
@@ -574,7 +575,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
     }
 
     function field(self, key){
-      return IKind.field(self.topic, key) || _.assoc(_.isArray(_.get(self.attrs, key)) ? _field(key, unlimited, valuesCaster) : _field(key, optional, valueCaster), "virtual", true);
+      return IKind.field(self.topic, key) || _.assoc(_.isArray(_.get(self.attrs, key)) ? _field(key, unlimited, valuesCaster) : _field(key, optional, valueCaster), "missing", true);
     }
 
     function kind(self){ //TODO use?
@@ -623,6 +624,12 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
       _.implement(IKind, {field: field, kind: kind}));
 
   })();
+
+  function dirtyKeys(self, other){
+    return self.attrs === other.attrs ? null : _.remove(function(key){
+      return self.attrs[key] === other.attrs[key];
+    }, imm.distinct(_.concat(_.keys(self.attrs), _.keys(other.attrs))));
+  }
 
   function ValueCaster(emptyColl){
     this.emptyColl = emptyColl;
@@ -739,7 +746,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
   })();
 
   function field3(key, emptyColl, casts){
-    return new Field({key: key, readonly: false, virtual: false}, casts(emptyColl)); //include defaults here
+    return new Field({key: key, readonly: false, missing: false, computed: false}, casts(emptyColl)); //include defaults here
   }
 
   function field2(key, emptyColl){
@@ -795,7 +802,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
   })();
 
   function computedField(key, computations, emptyColl){
-    return new ComputedField({key: key, readonly: true, virtual: false}, computations, emptyColl || []);
+    return new ComputedField({key: key, readonly: true, missing: false, computed: true}, computations, emptyColl || []);
   }
 
   function Schema(fields){
@@ -1211,7 +1218,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
     //TODO should `clone` return identity or a copy? i returned identity because I assumed no mutation.
 
     function query(self, plan){
-      return _.filtera(function(entity){
+      return _.filter(function(entity){
         return _.matches(entity.attrs, plan); //TODO temporary
       }, ISeqable.seq(self));
     }
@@ -1390,6 +1397,8 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
     }
 
     function add(self, entities){
+      var xs = _.mapcat(IEntity.assertions, entities);
+      _.log("added", _.toArray(xs));
       return new self.constructor(self.indexes, IWorkspace.add(self.workspace, entities));
     }
 
@@ -2838,6 +2847,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
     required: required,
     unlimited: unlimited,
     assertionStore: assertionStore,
+    dirtyKeys: dirtyKeys,
     questions: questions,
     assertion: assertion,
     loadCommand: loadCommand,
