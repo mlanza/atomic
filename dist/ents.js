@@ -168,6 +168,18 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
     return _constraints(self, _.append(_, constraint));
   }
 
+  function identifiableRecord(Type, identifier){
+
+    function hash(self){
+      return IHash.hash(self.attrs);
+    }
+
+    _.doto(Type,
+      _.record,
+      _.implement(IHash, {hash: hash}),
+      _.implement(IIdentifiable, {identifier: _.constantly(identifier)}));
+  }
+
   function ConstrainedCollection(constraints, coll){
     this.constraints = constraints;
     this.coll = coll;
@@ -454,57 +466,22 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
 
   var asserts = _.overload(null, asserts1, asserts2, asserts3);
 
-  function Assertion(subject, predicate, object){
-    this.subject = subject;
-    this.predicate = predicate;
-    this.object = object;
+  function Assertion(attrs){
+    this.attrs = attrs;
   }
 
-  var assertion = _.constructs(Assertion);
+  function assertion(subject, predicate, object){
+    return new Assertion({subject: subject, predicate: predicate, object: object});
+  }
 
   (function(){
 
-    function lookup(self, key){
-      switch(key){
-        case "subject":
-          return self.subject;
-        case "predicate":
-          return self.predicate;
-        case "object":
-          return self.object;
-      }
-      return null;
-    }
-
-    function assoc(self, key, value){
-      switch(key){
-        case "subject":
-          return new self.constructor(value, self.predicate, self.object);
-        case "predicate":
-          return new self.constructor(self.subject, value, self.object);
-        case "object":
-          return new self.constructor(self.subject, self.predicate, value);
-      }
-      return self;
-    }
-
-    function contains(self, key){
-      return IInclusive.contains(["subject", "predicate", "object"], key);
-    }
-
-    function equiv(self, other){
-      return other != null && self.constructor === other.constructor && IEquiv.equiv(self.subject, other.subject) && IEquiv.equiv(self.predicate, other.predicate) && IEquiv.equiv(self.object, other.object);
-    }
-
-    function hash(self){
-      return imm.hashing([self.subject, self.predicate, self.object]);
-    }
+    var forward = _.forwardTo("attrs");
+    var hash = forward(IHash.hash);
 
     _.doto(Assertion,
       _.implement(IHash, {hash: hash}),
-      _.implement(IEquiv, {equiv: equiv}),
-      _.implement(ILookup, {lookup: lookup}),
-      _.implement(IAssociative, {assoc: assoc, contains: contains}));
+      _.record);
 
   })();
 
@@ -1537,47 +1514,15 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
 
   })();
 
-  function AddCommand(text, options){
-    this.text = text;
-    this.options = options;
+  function AddCommand(attrs){
+    this.attrs = attrs;
   }
 
   function addCommand(text, options){
-    return new AddCommand(text, options || {});
+    return new AddCommand(_.merge({text: text}, options));
   }
 
-  (function(){
-
-    function lookup(self, key){
-      switch(key){
-        case "id":
-        case "type":
-          return self.options[key];
-        case "text":
-          return self.text;
-        default:
-          return null;
-      }
-    }
-
-    function assoc(self, key, value){
-      switch(key){
-        case "id":
-        case "type":
-          return new self.constructor(self.text, _.assoc(self.options, key, value));
-        case "text":
-          return new self.constructor(value, self.options);
-        default:
-          return self;
-      }
-    }
-
-    return _.doto(AddCommand,
-      _.implement(IAssociative, {assoc: assoc}),
-      _.implement(ILookup, {lookup: lookup}),
-      _.implement(IIdentifiable, {identifier: _.constantly("add")}));
-
-  })();
+  identifiableRecord(AddCommand, "add");
 
   function AddHandler(buffer, provider){
     this.buffer = buffer;
@@ -1644,45 +1589,15 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
 
   })();
 
-  function ToggleCommand(key, options){
-    this.key = key;
-    this.options = options;
+  function ToggleCommand(attrs){
+    this.attrs = attrs;
   }
 
   function toggleCommand(key, options){
-    return new ToggleCommand(key, options || {});
+    return new ToggleCommand(_.merge({key: key}, options));
   }
 
-  (function(){
-
-    function lookup(self, key){
-      switch(key){
-        case "id":
-          return self.options[key];
-        case "key":
-          return self.key;
-        default:
-          return null;
-      }
-    }
-
-    function assoc(self, key, value){
-      switch(key){
-        case "id":
-          return new self.constructor(self.key, _.assoc(self.options, key, value));
-        case "key":
-          return new self.constructor(value, self.options);
-        default:
-          return self;
-      }
-    }
-
-    return _.doto(ToggleCommand,
-      _.implement(IAssociative, {assoc: assoc}),
-      _.implement(ILookup, {lookup: lookup}),
-      _.implement(IIdentifiable, {identifier: _.constantly("toggle")}));
-
-  })();
+  identifiableRecord(ToggleCommand, "toggle");
 
   function ToggleHandler(buffer, provider){
     this.buffer = buffer;
@@ -1724,45 +1639,15 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
 
   })();
 
-  function TagCommand(value, options){
-    this.value = value;
-    this.options = options;
+  function TagCommand(attrs){
+    this.attrs = attrs;
   }
 
   function tagCommand(value, options){
-    return new TagCommand(value, options || {});
+    return new TagCommand(_.merge({value: value}, options));
   }
 
-  (function(){
-
-    function lookup(self, key){
-      switch(key){
-        case "id":
-          return self.options[key];
-        case "value":
-          return self.value;
-        default:
-          return null;
-      }
-    }
-
-    function assoc(self, key, value){
-      switch(key){
-        case "id":
-          return new self.constructor(self.value, _.assoc(self.options, key, value));
-        case "value":
-          return new self.constructor(value, self.options);
-        default:
-          return self;
-      }
-    }
-
-    return _.doto(TagCommand,
-      _.implement(IAssociative, {assoc: assoc}),
-      _.implement(ILookup, {lookup: lookup}),
-      _.implement(IIdentifiable, {identifier: _.constantly("tag")}));
-
-  })();
+  identifiableRecord(tagCommand, "tag");
 
   function TagHandler(handler){
     this.handler = handler;
@@ -1782,45 +1667,15 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
 
   })();
 
-  function UntagCommand(value, options){
-    this.value = value;
-    this.options = options;
+  function UntagCommand(attrs){
+    this.attrs = attrs;
   }
 
   function untagCommand(value, options){
-    return new UntagCommand(value, options || {});
+    return new UntagCommand(_.merge({value: value}, options));
   }
 
-  (function(){
-
-    function lookup(self, key){
-      switch(key){
-        case "id":
-          return self.options[key];
-        case "value":
-          return self.value;
-        default:
-          return null;
-      }
-    }
-
-    function assoc(self, key, value){
-      switch(key){
-        case "id":
-          return new self.constructor(self.value, _.assoc(self.options, key, value));
-        case "value":
-          return new self.constructor(value, self.options);
-        default:
-          return self;
-      }
-    }
-
-    return _.doto(UntagCommand,
-      _.implement(IAssociative, {assoc: assoc}),
-      _.implement(ILookup, {lookup: lookup}),
-      _.implement(IIdentifiable, {identifier: _.constantly("untag")}));
-
-  })();
+  identifiableRecord(UntagCommand, "untag");
 
   function UntagHandler(handler){
     this.handler = handler;
@@ -1839,45 +1694,15 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
 
   })();
 
-  function CastCommand(type, options){
-    this.type = type;
-    this.options = options;
+  function CastCommand(attrs){
+    this.attrs = attrs;
   }
 
   function castCommand(type, options){
-    return new CastCommand(type, options || {});
+    return new CastCommand(_.merge({type: type}, options));
   }
 
-  (function(){
-
-    function lookup(self, key){
-      switch(key){
-        case "id":
-          return self.options[key];
-        case "type":
-          return self.type;
-        default:
-          return null;
-      }
-    }
-
-    function assoc(self, key, value){
-      switch(key){
-        case "id":
-          return new self.constructor(self.type, _.assoc(self.options, key, value));
-        case "type":
-          return new self.constructor(value, self.options);
-        default:
-          return self;
-      }
-    }
-
-    return _.doto(CastCommand,
-      _.implement(IAssociative, {assoc: assoc}),
-      _.implement(ILookup, {lookup: lookup}),
-      _.implement(IIdentifiable, {identifier: _.constantly("cast")}));
-
-  })();
+  identifiableRecord(castCommand, "cast");
 
   function CastHandler(buffer, provider){
     this.buffer = buffer;
@@ -1928,17 +1753,15 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
 
   })();
 
-  function SaveCommand(){
+  function SaveCommand(attrs){
+    this.attrs = attrs;
   }
 
-  var saveCommand = _.constantly(new SaveCommand());
+  function saveCommand(){
+    return SaveCommand({});
+  }
 
-  (function(){
-
-    return _.doto(SaveCommand,
-      _.implement(IIdentifiable, {identifier: _.constantly("save")}));
-
-  })();
+  identifiableRecord(SaveCommand, "save");
 
   function SaveHandler(buffer, provider){
     this.buffer = buffer;
@@ -2004,19 +1827,15 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
 
   }
 
-
-
-  function UndoCommand(){
+  function UndoCommand(attrs){
+    this.attrs = attrs;
   }
 
-  var undoCommand = _.constantly(new UndoCommand());
+  function undoCommand(){
+    return new UndoCommand({});
+  }
 
-  (function(){
-
-    return _.doto(UndoCommand,
-      _.implement(IIdentifiable, {identifier: _.constantly("undo")}));
-
-  })();
+  identifiableRecord(UndoCommand, "undo");
 
   function UndoHandler(buffer, provider){
     this.buffer = buffer;
@@ -2040,17 +1859,15 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
   _.doto(UndoHandler,
     timeTravels(ITimeTraveler.undoable, ITimeTraveler.undo, undoneEvent()));
 
-  function RedoCommand(){
+  function RedoCommand(attrs){
+    this.attrs = attrs;
   }
 
-  var redoCommand = _.constantly(new RedoCommand());
+  function redoCommand(){
+    return new RedoCommand({});
+  }
 
-  (function(){
-
-    return _.doto(RedoCommand,
-      _.implement(IIdentifiable, {identifier: _.constantly("redo")}));
-
-  })();
+  identifiableRecord(RedoCommand, "redo");
 
   function RedoHandler(buffer, provider){
     this.buffer = buffer;
@@ -2074,17 +1891,15 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
   _.doto(RedoHandler,
     timeTravels(ITimeTraveler.redoable, ITimeTraveler.redo, redoneEvent()));
 
-  function FlushCommand(){
+  function FlushCommand(attrs){
+    this.attrs = attrs;
   }
 
-  var flushCommand = _.constantly(new FlushCommand());
+  function flushCommand(){
+    return new FlushCommand({});
+  }
 
-  (function(){
-
-    return _.doto(FlushCommand,
-      _.implement(IIdentifiable, {identifier: _.constantly("flush")}));
-
-  })();
+  identifiableRecord(FlushCommand, "flush");
 
   function FlushHandler(buffer, provider){
     this.buffer = buffer;
@@ -2108,50 +1923,15 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
   _.doto(FlushHandler,
     timeTravels(_.constantly(true), ITimeTraveler.flush, flushedEvent()));
 
-  function AssertCommand(key, value, options){
-    this.key = key;
-    this.value = value;
-    this.options = options;
+  function AssertCommand(attrs){
+    this.attrs = attrs;
   }
 
   function assertCommand(key, value, options){
-    return new AssertCommand(key, value, options || {});
+    return new AssertCommand(_.merge({key: key, value: value}, options));
   }
 
-  (function(){
-
-    function lookup(self, key){
-      switch(key){
-        case "id":
-          return self.options.id;
-        case "key":
-          return self.key;
-        case "value":
-          return self.value;
-        default:
-          return null;
-      }
-    }
-
-    function assoc(self, key, value){
-      switch(key){
-        case "id":
-          return new self.constructor(self.key, self.value, _.assoc(self.options, key, value));
-        case "key":
-          return new self.constructor(value, self.value, self.options);
-        case "value":
-          return new self.constructor(self.key, value, self.options);
-        default:
-          return self;
-      }
-    }
-
-    return _.doto(AssertCommand,
-      _.implement(IAssociative, {assoc: assoc}),
-      _.implement(ILookup, {lookup: lookup}),
-      _.implement(IIdentifiable, {identifier: _.constantly("assert")}));
-
-  })();
+  identifiableRecord(AssertCommand, "assert");
 
   function AssertHandler(buffer, provider){
     this.buffer = buffer;
@@ -2224,28 +2004,15 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
 
   })();
 
-  function DestroyCommand(id){
-    this.id = id;
+  function DestroyCommand(attrs){
+    this.attrs = attrs;
   }
 
-  var destroyCommand = _.constructs(DestroyCommand);
+  function destroyCommand(id){
+    return new DestroyCommand({id: id});
+  }
 
-  (function(){
-
-    function assoc(self, key, value){
-      switch(key){
-        case "id":
-          return destroyCommand(value, self.key, self.value);
-        default:
-          return self;
-      }
-    }
-
-    return _.doto(DestroyCommand,
-      _.implement(IAssociative, {assoc: assoc}),
-      _.implement(IIdentifiable, {identifier: _.constantly("destroy")}));
-
-  })();
+  identifiableRecord(DestroyCommand, "destroy");
 
   function DestroyHandler(buffer, provider){
     this.buffer = buffer;
@@ -2310,48 +2077,15 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
 
   })();
 
-  function RetractCommand(key, options){
-    this.key = key;
-    this.options = options;
+  function RetractCommand(attrs){
+    this.attrs = attrs;
   }
 
   function retractCommand(key, options){
-    return new RetractCommand(key, options || {});
+    return new RetractCommand(_.merge({key: key}, options));
   }
 
-  (function(){
-
-    function lookup(self, key){
-      switch(key){
-        case "id":
-          return self.options.id;
-        case "key":
-          return self.key;
-        case "value":
-          return self.options.value;
-        default:
-          return null;
-      }
-    }
-
-    function assoc(self, key, value){
-      switch(key){
-        case "id":
-        case "value":
-          return new self.constructor(self.key, _.assoc(self.options, key, value));
-        case "key":
-          return new self.constructor(value, self.options);
-        default:
-          return self;
-      }
-    }
-
-    return _.doto(RetractCommand,
-      _.implement(IAssociative, {assoc: assoc}),
-      _.implement(ILookup, {lookup: lookup}),
-      _.implement(IIdentifiable, {identifier: _.constantly("retract")}));
-
-  })();
+  identifiableRecord(RetractCommand, "retract");
 
   function RetractHandler(buffer, provider){
     this.buffer = buffer;
@@ -2394,18 +2128,15 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
 
   })();
 
-  function QueryCommand(plan){
-    this.plan = plan;
+  function QueryCommand(attrs){
+    this.attrs = attrs;
   }
 
-  var queryCommand = _.constructs(QueryCommand);
+  function queryCommand(plan){
+    return new QueryCommand({plan: plan});
+  }
 
-  (function(){
-
-    return _.doto(QueryCommand,
-      _.implement(IIdentifiable, {identifier: _.constantly("query")}));
-
-  })();
+  identifiableRecord(QueryCommand, "query");
 
   function QueriedEvent(entities){
     this.entities = entities;
@@ -2459,18 +2190,15 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
 
   })();
 
-  function SelectCommand(id){
-    this.id = id;
+  function SelectCommand(attrs){
+    this.attrs = attrs;
   }
 
-  var selectCommand = _.constructs(SelectCommand);
+  function selectCommand(id){
+    return new SelectCommand({id: id});
+  }
 
-  (function(){
-
-    return _.doto(SelectCommand,
-      _.implement(IIdentifiable, {identifier: _.constantly("select")}))
-
-  })();
+  identifiableRecord(SelectCommand, "select");
 
   function SelectedEvent(id){
     this.id = id;
@@ -2507,18 +2235,15 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
 
   })();
 
-  function DeselectCommand(id){
-    this.id = id;
+  function DeselectCommand(attrs){
+    this.attrs = attrs;
   }
 
-  var deselectCommand = _.constructs(DeselectCommand);
+  function deselectCommand(id){
+    return new DeselectCommand({id: id});
+  }
 
-  (function(){
-
-    return _.doto(DeselectCommand,
-      _.implement(IIdentifiable, {identifier: _.constantly("deselect")}))
-
-  })();
+  identifiableRecord(DeselectCommand, "deselect");
 
   function DeselectedEvent(id){
     this.id = id;
