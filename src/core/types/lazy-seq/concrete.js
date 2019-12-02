@@ -26,20 +26,20 @@ function map2(f, xs){
 }
 
 function map3(f, c1, c2){
-  var s1 = ISeqable.seq(c1),
-      s2 = ISeqable.seq(c2);
+  const s1 = ISeqable.seq(c1),
+        s2 = ISeqable.seq(c2);
   return s1 && s2 ? cons(f(ISeq.first(s1), ISeq.first(s2)), map3(f, ISeq.rest(s1), ISeq.rest(s2))) : emptyList();
 }
 
 function map4(f, c1, c2, c3){
-  var s1 = ISeqable.seq(c1),
-      s2 = ISeqable.seq(c2),
-      s3 = ISeqable.seq(c3);
+  const s1 = ISeqable.seq(c1),
+        s2 = ISeqable.seq(c2),
+        s3 = ISeqable.seq(c3);
   return s1 && s2 && s3 ? cons(f(ISeq.first(s1), ISeq.first(s2), ISeq.first(s3)), map4(f, ISeq.rest(s1), ISeq.rest(s2), ISeq.rest(s3))) : emptyList();
 }
 
 function mapN(f, ...tail){
-  var seqs = mapa(ISeqable.seq, tail);
+  const seqs = mapa(ISeqable.seq, tail);
   return notAny(isNil, seqs) ? cons(apply(f, mapa(ISeq.first, seqs)), apply(mapN, f, mapa(ISeq.rest, seqs))) : emptyList();
 }
 
@@ -87,7 +87,7 @@ function doing2(f, order){
 export const doing = overload(null, doing1, doing2); //mutating counterpart to `reducing`
 
 function each2(f, xs){
-  var ys = ISeqable.seq(xs);
+  let ys = ISeqable.seq(xs);
   while(ys){
     f(ISeq.first(ys));
     ys = ISeqable.seq(ISeq.rest(ys));
@@ -172,7 +172,7 @@ export function seek(...fs){
 }
 
 export function some(f, coll){
-  var xs = ISeqable.seq(coll);
+  let xs = ISeqable.seq(coll);
   while(xs){
     const value = f(ISeq.first(xs));
     if (value) {
@@ -187,7 +187,7 @@ export const notSome = comp(not, some);
 export const notAny  = notSome;
 
 export function every(pred, coll){
-  var xs = ISeqable.seq(coll);
+  let xs = ISeqable.seq(coll);
   while(xs){
     if (!pred(ISeq.first(xs))){
       return false;
@@ -260,7 +260,7 @@ export function keep(f, xs){
 }
 
 export function drop(n, coll){
-  var i = n,
+  let i = n,
       xs = ISeqable.seq(coll)
   while (i > 0 && xs) {
     xs = ISeq.rest(xs);
@@ -501,7 +501,7 @@ export const sortBy = overload(null, null, sortBy2, sortBy3);
 
 export function withIndex(iter){
   return function(f, xs){
-    var idx = -1;
+    let idx = -1;
     return iter(function(x){
       return f(++idx, x);
     }, xs);
@@ -516,7 +516,7 @@ export const keepIndexed = withIndex(keep);
 export const splitAt     = juxt(take, drop);
 export const splitWith   = juxt(takeWhile, dropWhile);
 
-function forEvery3(f, xs, ys){
+function braid3(f, xs, ys){
   return mapcat(function(x){
     return map(function(y){
       return f(x, y);
@@ -524,7 +524,7 @@ function forEvery3(f, xs, ys){
   }, xs);
 }
 
-function forEvery4(f, xs, ys, zs){
+function braid4(f, xs, ys, zs){
   return mapcat(function(x){
     return mapcat(function(y){
       return map(function(z){
@@ -534,11 +534,11 @@ function forEvery4(f, xs, ys, zs){
   }, xs);
 }
 
-function forEveryN(f, xs, ...colls){
+function braidN(f, xs, ...colls){
   if (ISeqable.seq(colls)) {
     return mapcat(function(x){
-      return apply(forEvery, function(...args){
-        apply(f, x, args);
+      return apply(braid, function(...args){
+        return apply(f, x, args);
       }, colls);
     }, xs);
   } else {
@@ -546,7 +546,8 @@ function forEveryN(f, xs, ...colls){
   }
 }
 
-export const forEvery = overload(null, null, map, forEvery3, forEvery4, forEveryN);
+//Clojure's `for`; however, could not use the name as it's a reserved word in JavaScript.
+export const braid = overload(null, null, map, braid3, braid4, braidN);
 
 function best2(better, xs){
   const coll = ISeqable.seq(xs);
@@ -700,7 +701,7 @@ export function also(f, xs){
 
 export function countBy(f, coll){
   return IReduce.reduce(coll, function(memo, value){
-    var by = f(value),
+    let by = f(value),
         n  = memo[by];
     memo[by] = n ? inc(n) : 1;
     return memo;
