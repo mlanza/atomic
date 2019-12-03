@@ -1481,18 +1481,15 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
 
   })();
 
-  function LoadedEvent(entities){
-    this.entities = entities;
+  function LoadedEvent(attrs){
+    this.attrs = attrs;
   }
 
-  var loadedEvent = _.constructs(LoadedEvent);
+  function loadedEvent(entities){
+    return new LoadedEvent({entities: entities});
+  }
 
-  (function(){
-
-    return _.doto(LoadedEvent,
-      _.implement(IIdentifiable, {identifier: _.constantly("loaded")}))
-
-  })();
+  identifiableRecord(LoadedEvent, "loaded");
 
   function LoadHandler(buffer, provider){
     this.buffer = buffer;
@@ -1553,12 +1550,15 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
 
   })();
 
-  function AddedEvent(id, text){
-    this.id = id;
-    this.text = text;
+  function AddedEvent(attrs){
+    this.attrs = attrs;
   }
 
-  var addedEvent = _.constructs(AddedEvent);
+  function addedEvent(id, text){
+    return new AddedEvent({id: id, text: text});
+  }
+
+  identifiableRecord(AddedEvent, "added");
 
   function AddedHandler(model, commandBus){
     this.model = model;
@@ -1579,13 +1579,6 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
 
     _.doto(AddedHandler,
       _.implement(IMiddleware, {handle: handle}));
-
-  })();
-
-  (function(){
-
-    return _.doto(AddedEvent,
-      _.implement(IIdentifiable, {identifier: _.constantly("added")}));
 
   })();
 
@@ -1625,19 +1618,15 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
 
   })();
 
-  function ToggledEvent(id, key){
-    this.id = id;
-    this.key = key;
+  function ToggledEvent(attrs){
+    this.attrs = attrs;
   }
 
-  var toggledEvent = _.constructs(ToggledEvent);
+  function toggledEvent(id, key){
+    return new ToggledEvent({id: id, key: key});
+  }
 
-  (function(){
-
-    return _.doto(ToggledEvent,
-      _.implement(IIdentifiable, {identifier: _.constantly("toggled")}));
-
-  })();
+  identifiableRecord(ToggledEvent, "toggled");
 
   function TagCommand(attrs){
     this.attrs = attrs;
@@ -1770,17 +1759,15 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
 
   var saveHandler = _.constructs(SaveHandler);
 
-  function SavedEvent(){
+  function SavedEvent(attrs){
+    this.attrs = attrs;
   }
 
-  var savedEvent = _.constantly(new SavedEvent());
+  function savedEvent(){
+    return new SavedEvent({});
+  }
 
-  (function(){
-
-    return _.doto(SavedEvent,
-      _.implement(IIdentifiable, {identifier: _.constantly("saved")}));
-
-  })();
+  identifiableRecord(SavedEvent, "saved");
 
   (function (){
 
@@ -1844,17 +1831,15 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
 
   var undoHandler = _.constructs(UndoHandler);
 
-  function UndoneEvent(){
+  function UndoneEvent(attrs){
+    this.attrs = attrs;
   }
 
-  var undoneEvent = _.constantly(new UndoneEvent());
+  function undoneEvent(){
+    return UndoneEvent({});
+  }
 
-  (function(){
-
-    return _.doto(UndoneEvent,
-      _.implement(IIdentifiable, {identifier: _.constantly("undone")}));
-
-  })();
+  identifiableRecord(UndoneEvent, "undone");
 
   _.doto(UndoHandler,
     timeTravels(ITimeTraveler.undoable, ITimeTraveler.undo, undoneEvent()));
@@ -1876,17 +1861,15 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
 
   var redoHandler = _.constructs(RedoHandler);
 
-  function RedoneEvent(){
+  function RedoneEvent(attrs){
+    this.attrs = attrs;
   }
 
-  var redoneEvent = _.constantly(new RedoneEvent());
+  function redoneEvent(){
+    return new RedoneEvent({});
+  }
 
-  (function(){
-
-    return _.doto(RedoneEvent,
-      _.implement(IIdentifiable, {identifier: _.constantly("redone")}));
-
-  })();
+  identifiableRecord(RedoneEvent, "redone");
 
   _.doto(RedoHandler,
     timeTravels(ITimeTraveler.redoable, ITimeTraveler.redo, redoneEvent()));
@@ -1908,17 +1891,15 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
 
   var flushHandler = _.constructs(FlushHandler);
 
-  function FlushedEvent(){
+  function FlushedEvent(attrs){
+    this.attrs = attrs;
   }
 
-  var flushedEvent = _.constantly(new FlushedEvent());
+  function flushedEvent(){
+    return new FlushedEvent({});
+  }
 
-  (function(){
-
-    return _.doto(FlushedEvent,
-      _.implement(IIdentifiable, {identifier: _.constantly("flushed")}));
-
-  })();
+  identifiableRecord(FlushedEvent, "flushed");
 
   _.doto(FlushHandler,
     timeTravels(_.constantly(true), ITimeTraveler.flush, flushedEvent()));
@@ -1961,20 +1942,15 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
 
   })();
 
-  function AssertedEvent(id, key, value){
-    this.id = id;
-    this.key = key;
-    this.value = value;
+  function AssertedEvent(attrs){
+    this.attrs = attrs;
   }
 
-  var assertedEvent = _.constructs(AssertedEvent);
+  function assertedEvent(id, key, value){
+    return new AssertedEvent({id: id, key: key, value: value});
+  }
 
-  (function(){
-
-    return _.doto(AssertedEvent,
-      _.implement(IIdentifiable, {identifier: _.constantly("asserted")}));
-
-  })();
+  identifiableRecord(AssertedEvent, "asserted");
 
   function BlockingHandler(key, buffer, handler){
     this.key = key;
@@ -2039,18 +2015,15 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
 
   })();
 
-  function DestroyedEvent(id){
-    this.id = id;
+  function DestroyedEvent(attrs){
+    this.attrs = attrs;
   }
 
-  var destroyedEvent = _.constructs(DestroyedEvent);
+  function destroyedEvent(id){
+    return new DestroyedEvent({id: id});
+  }
 
-  (function(){
-
-    return _.doto(DestroyedEvent,
-      _.implement(IIdentifiable, {identifier: _.constantly("destroyed")}));
-
-  })();
+  identifiableRecord(DestroyedEvent, "destroyed");
 
   function SelectionHandler(model, handler){
     this.model = model;
@@ -2119,14 +2092,11 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
     this.value = value;
   }
 
-  var retractedEvent = _.constructs(RetractedEvent);
+  function retractedEvent(id, key, value){
+    return new RetractedEvent({id: id, key: key, value: value});
+  }
 
-  (function(){
-
-    return _.doto(RetractedEvent,
-      _.implement(IIdentifiable, {identifier: _.constantly("retracted")}));
-
-  })();
+  identifiableRecord(RetractedEvent, "retracted");
 
   function QueryCommand(attrs){
     this.attrs = attrs;
@@ -2138,18 +2108,15 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
 
   identifiableRecord(QueryCommand, "query");
 
-  function QueriedEvent(entities){
-    this.entities = entities;
+  function QueriedEvent(attrs){
+    this.attrs = attrs;
   }
 
-  var queriedEvent = _.constructs(QueriedEvent);
+  function queriedEvent(entities){
+    return new QueriedEvent({entities: entities});
+  }
 
-  (function(){
-
-    return _.doto(QueriedEvent,
-      _.implement(IIdentifiable, {identifier: _.constantly("queried")}));
-
-  })();
+  identifiableRecord(QueriedEvent, "queried");
 
   function QueryHandler(buffer, provider){
     this.buffer = buffer;
@@ -2181,7 +2148,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
   (function(){
 
     function handle(self, event, next){
-      $.dispatch(self.commandBus, loadCommand(event.entities));
+      $.dispatch(self.commandBus, loadCommand(_.get(event, "entities")));
       next(event);
     }
 
@@ -2200,18 +2167,15 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
 
   identifiableRecord(SelectCommand, "select");
 
-  function SelectedEvent(id){
-    this.id = id;
+  function SelectedEvent(attrs){
+    this.attrs = attrs;
   }
 
-  var selectedEvent = _.constructs(SelectedEvent);
+  function selectedEvent(id){
+    return new SelectedEvent({id: id});
+  }
 
-  (function(){
-
-    return _.doto(SelectedEvent,
-      _.implement(IIdentifiable, {identifier: _.constantly("selected")}))
-
-  })();
+  identifiableRecord(SelectedEvent, "selected");
 
   function SelectHandler(model, provider){
     this.model = model;
@@ -2225,8 +2189,8 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
     function handle(self, command, next){
       _.swap(self.model,
         _.update(_, "selected",
-          _.conj(_, command.id)));
-      $.raise(self.provider, selectedEvent(command.id));
+          _.conj(_, _.get(command, "id"))));
+      $.raise(self.provider, selectedEvent(_.get(command, "id")));
       next(command);
     }
 
@@ -2245,18 +2209,15 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
 
   identifiableRecord(DeselectCommand, "deselect");
 
-  function DeselectedEvent(id){
-    this.id = id;
+  function DeselectedEvent(attrs){
+    this.attrs = attrs;
   }
 
-  var deselectedEvent = _.constructs(DeselectedEvent);
+  function deselectedEvent(id){
+    return new DeselectedEvent({id: id});
+  }
 
-  (function(){
-
-    return _.doto(DeselectedEvent,
-      _.implement(IIdentifiable, {identifier: _.constantly("deselected")}))
-
-  })();
+  identifiableRecord(identifiableRecord, "deselected");
 
   function DeselectHandler(model, provider){
     this.model = model;
@@ -2270,8 +2231,8 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
     function handle(self, command, next){
       _.swap(self.model,
         _.update(_, "selected",
-          _.disj(_, command.id)));
-      $.raise(self.provider, deselectedEvent(command.id));
+          _.disj(_, _.get(command, "id"))));
+      $.raise(self.provider, deselectedEvent(_.get(command, "id")));
       next(command);
     }
 
