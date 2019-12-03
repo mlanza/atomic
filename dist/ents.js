@@ -1132,57 +1132,14 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
 
   })();
 
-  function Addition(entity){
-    this.entity = entity;
+  function Change(id, prior, current, op){
+    this.id = id;
+    this.prior = prior;
+    this.current = current;
+    this.op = op;
   }
 
-  var addition = _.constructs(Addition);
-
-  (function(){
-
-    function deref(self){
-      return self.entity;
-    }
-
-    _.doto(Addition,
-      _.implement(IDeref, {deref: deref}));
-
-  })();
-
-  function Destruction(entity){
-    this.entity = entity;
-  }
-
-  var destruction = _.constructs(Destruction);
-
-  (function(){
-
-    function deref(self){
-      return self.entity;
-    }
-
-    _.doto(Destruction,
-      _.implement(IDeref, {deref: deref}));
-
-  })();
-
-  function Modification(before, after){
-    this.before = before;
-    this.after = after;
-  }
-
-  var modification = _.constructs(Modification);
-
-  (function(){
-
-    function deref(self){
-      return self.after;
-    }
-
-    _.doto(Modification,
-      _.implement(IDeref, {deref: deref}));
-
-  })();
+  var change = _.constructs(Change);
 
   function EntityWorkspace(loaded, changed, touched){
     this.loaded = loaded;
@@ -1292,29 +1249,29 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
       return self.id;
     }
 
-    function changed(before, after){
-      if (before && after) {
-        if (_.eq(before, after)) {
-          return [];
-        } else if (before.constructor !== after.constructor) { //type changed
-          return [destruction(before), addition(after)];
-        } else {
-          return [modification(before, after)];
-        }
-      } else if (before) {
-        return [destruction(before)];
-      } else if (after) {
-        return [addition(after)];
-      } else {
-        return [];
-      }
-    }
-
     function commands(self){
       return _.just(self.changed,
-        _.keys,
+        Array.from, //TODO prefer lazy so implement lazy iteration
+        _.see('items'),
+        _.map(_.first, _),
         _.mapcat(function(id){
-          return changed(_.get(self.loaded, id), _.get(self.changed, id));
+          var prior   = _.get(self.loaded , id),
+              current = _.get(self.changed, id);
+          if (prior && current) {
+            if (_.eq(prior, current)) {
+              return [];
+            } else if (prior.constructor !== current.constructor) { //type changed
+              return [change(id, prior, null, 'destroy'), change(id, null, current, 'add')];
+            } else {
+              return [change(id, prior, current, 'modify')];
+            }
+          } else if (prior) {
+            return [change(id, prior, null, 'destroy')];
+          } else if (current) {
+            return [change(id, null, current, 'add')];
+          } else {
+            return [];
+          }
         }, _));
     }
 
