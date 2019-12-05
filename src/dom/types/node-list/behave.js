@@ -1,4 +1,4 @@
-import {does, maybe, cons, implement, lazySeq, comp, iterable, ILookup, IIndexed, ICounted, ISeq, INext, ISeqable, ISequential, IHierarchy, IQueryable, ILocate, IReduce, ICoerce} from 'atomic/core';
+import {does, maybe, cons, implement, lazySeq, comp, iterable, ILookup, IIndexed, ICounted, ISeq, INext, ISeqable, ISequential, IHierarchy, IQueryable, ILocate, IReduce, ICoerceable} from 'atomic/core';
 import {IContent} from "../../protocols";
 import {_ as v} from "param.macro";
 
@@ -59,7 +59,7 @@ export const behaveAsNodeList = does(
   implement(IReduce, {reduce}),
   implement(INext, {next}),
   implement(IContent, {contents}),
-  implement(ICoerce, {toArray: Array.from}),
+  implement(ICoerceable, {toArray: Array.from}),
   implement(IQueryable, {query}),
   implement(ILocate, {locate}),
   implement(IHierarchy, {parent, parents, closest, nextSiblings, nextSibling, prevSiblings, prevSibling, siblings, children, descendants}),

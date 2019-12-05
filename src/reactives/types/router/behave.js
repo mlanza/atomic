@@ -1,4 +1,4 @@
-import {does, doto, partial, implement, handler, filter, concat, IMatch, ISeqable, IAppendable} from "atomic/core";
+import {does, doto, partial, implement, handler, filter, concat, IMatchable, ISeqable, IAppendable} from "atomic/core";
 import {ITransientCollection} from "atomic/transients";
 import {IDispatch, IEvented} from '../../protocols';
 import {_ as v} from "param.macro";
@@ -16,7 +16,7 @@ function dispatch(self, message){
 }
 
 function matches(self, message){
-  const xs = filter(IMatch.matches(v, message), self.handlers);
+  const xs = filter(IMatchable.matches(v, message), self.handlers);
   return ISeqable.seq(xs) ? xs : self.fallback ? [self.fallback] : [];
 }
 
@@ -27,5 +27,5 @@ function conj(self, handler){
 export const behaveAsRouter = does(
   implement(IEvented, {on}),
   implement(IDispatch, {dispatch}),
-  implement(IMatch, {matches}),
+  implement(IMatchable, {matches}),
   implement(ITransientCollection, {conj}));

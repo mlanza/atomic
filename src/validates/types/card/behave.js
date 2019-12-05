@@ -15,7 +15,7 @@ function includes(self, value){
 }
 
 function check(self, coll){
-  var n = count(coll);
+  const n = count(coll);
   return n < self.least || n > self.most ? [issue(self)] : null;
 }
 

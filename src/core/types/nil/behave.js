@@ -1,4 +1,4 @@
-import {IMergeable, IBlankable, ICompact, IMap, IAssociative, IInclusive, IOtherwise, IFork, ICoerce, IEquiv, ICollection, INext, ISeq, ISeqable, IIndexed, ICounted, ILookup, IReduce, IEmptyableCollection, ISequential} from '../../protocols';
+import {IMergeable, IBlankable, ICompactable, IMap, IAssociative, IInclusive, IOtherwise, IForkable, ICoerceable, IEquiv, ICollection, INext, ISeq, ISeqable, IIndexed, ICounted, ILookup, IReduce, IEmptyableCollection, ISequential} from '../../protocols';
 import {emptyList} from '../empty-list/construct';
 import {cons} from '../list/construct';
 import {identity, constantly, does, overload, noop} from '../../core';
@@ -37,12 +37,12 @@ function merge(self, ...xs){
 }
 
 export const behaveAsNil = does(
-  implement(ICompact, {compact: identity}),
+  implement(ICompactable, {compact: identity}),
   implement(ICollection, {conj}),
   implement(IBlankable, {blank: constantly(true)}),
   implement(IMergeable, {merge}),
   implement(IMap, {keys: nil, vals: nil, dissoc: nil}),
-  implement(IFork, {fork}),
+  implement(IForkable, {fork}),
   implement(IEmptyableCollection, {empty: identity}),
   implement(IOtherwise, {otherwise}),
   implement(IEquiv, {equiv}),
@@ -50,7 +50,7 @@ export const behaveAsNil = does(
   implement(IInclusive, {includes: constantly(false)}),
   implement(IAssociative, {assoc: assoc, contains: constantly(false)}),
   implement(INext, {next: identity}),
-  implement(ICoerce, {toArray: emptyArray}),
+  implement(ICoerceable, {toArray: emptyArray}),
   implement(ISeq, {first: identity, rest: emptyList}),
   implement(ISeqable, {seq: identity}),
   implement(IIndexed, {nth: identity}),

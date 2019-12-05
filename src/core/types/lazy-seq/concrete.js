@@ -1,4 +1,4 @@
-import {ICompact, IEquiv, IMap, ICoerce, IAssociative, ILookup, IInclusive, IIndexed, ICollection, IComparable, ICounted, ISeq, ISeqable, INext, IHierarchy, IReduce, ISequential} from '../../protocols';
+import {ICompactable, IEquiv, IMap, ICoerceable, IAssociative, ILookup, IInclusive, IIndexed, ICollection, IComparable, ICounted, ISeq, ISeqable, INext, IHierarchy, IReduce, ISequential} from '../../protocols';
 import {trampoline, identity, constantly, overload} from '../../core';
 import {EmptyList, emptyList} from '../empty-list/construct';
 import {emptyArray} from '../array/construct';
@@ -44,7 +44,7 @@ function mapN(f, ...tail){
 }
 
 export const map  = overload(null, null, map2, map3, mapN);
-export const mapa = comp(ICoerce.toArray, map);
+export const mapa = comp(ICoerceable.toArray, map);
 
 export function keyed(f, keys){
   return IReduce.reduce(keys, function(memo, key){
@@ -248,7 +248,7 @@ export function zip(...colls){
   return mapcat(identity, map(ISeqable.seq, ...colls));
 }
 
-export const filtera = comp(ICoerce.toArray, filter);
+export const filtera = comp(ICoerceable.toArray, filter);
 
 export function remove(pred, xs){
   return filter(complement(pred), xs);
@@ -736,3 +736,16 @@ function index2(key, coll){
 }
 
 export const index = overload(null, null, index2, index3, index4);
+
+function lazyIterable1(iter){
+  return lazyIterable2(iter, emptyList());
+}
+
+function lazyIterable2(iter, done){
+  const res = iter.next();
+  return res.done ? done : lazySeq(function(){
+    return cons(res.value, lazyIterable1(iter));
+  });
+}
+
+export const lazyIterable = overload(null, lazyIterable1, lazyIterable2);

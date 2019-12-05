@@ -1,4 +1,4 @@
-import {specify, IMatch, isRegExp, isString, test, does} from 'atomic/core';
+import {specify, IMatchable, isRegExp, isString, test, does} from 'atomic/core';
 import {IEvented} from "atomic/reactives";
 
 function matches(self, pattern){
@@ -18,4 +18,4 @@ function on(self, pattern, callback){
 
 export const behaveAsLocation = does(
   specify(IEvented, {on}),
-  specify(IMatch, {matches}));
+  specify(IMatchable, {matches}));

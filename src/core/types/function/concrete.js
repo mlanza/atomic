@@ -1,4 +1,4 @@
-import {ICoerce}  from "../../protocols/icoerce";
+import {ICoerceable}  from "../../protocols/icoerceable";
 import {IReduce}  from "../../protocols/ireduce";
 import {conj}  from "../../protocols/icollection";
 import {reduced} from "../../types/reduced/construct";
@@ -10,7 +10,7 @@ export {complement, partial, slice} from "../../core";
 
 export function spread(f){
   return function(args){
-    return f(...ICoerce.toArray(args));
+    return f(...ICoerceable.toArray(args));
   }
 }
 
@@ -53,23 +53,23 @@ export function comp(...fs){
 }
 
 function apply2(f, args){
-  return f.apply(null, ICoerce.toArray(args));
+  return f.apply(null, ICoerceable.toArray(args));
 }
 
 function apply3(f, a, args){
-  return f.apply(null, [a].concat(ICoerce.toArray(args)));
+  return f.apply(null, [a].concat(ICoerceable.toArray(args)));
 }
 
 function apply4(f, a, b, args){
-  return f.apply(null, [a, b].concat(ICoerce.toArray(args)));
+  return f.apply(null, [a, b].concat(ICoerceable.toArray(args)));
 }
 
 function apply5(f, a, b, c, args){
-  return f.apply(null, [a, b, c].concat(ICoerce.toArray(args)));
+  return f.apply(null, [a, b, c].concat(ICoerceable.toArray(args)));
 }
 
 function applyN(f, a, b, c, d, args){
-  return f.apply(null, [a, b, c, d].concat(ICoerce.toArray(args)));
+  return f.apply(null, [a, b, c, d].concat(ICoerceable.toArray(args)));
 }
 
 export const apply = overload(null, null, apply2, apply3, apply4, apply5, applyN);
@@ -124,7 +124,7 @@ export function flip(f){
 
 export function fnil(f, ...substitutes){
   return function(...args){
-    for(var x = 0; x < substitutes.length; x++){
+    for(let x = 0; x < substitutes.length; x++){
       if (isNil(args[x])) {
         args[x] = substitutes[x]
       };

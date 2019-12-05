@@ -1,4 +1,4 @@
-import {identity, constantly, does, doto, overload, implement, cons, emptyList, IReduce, ISeqable, ISeq, INext, IMatch, IHierarchy, ICoerce} from 'atomic/core';
+import {identity, constantly, does, doto, overload, implement, cons, emptyList, IReduce, ISeqable, ISeq, INext, IMatchable, IHierarchy, ICoerceable} from 'atomic/core';
 import {behaveAsElement} from "../element/behave";
 
 export const behaveAsDocumentFragment = does(

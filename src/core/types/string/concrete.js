@@ -23,14 +23,14 @@ function split1(str){
 }
 
 function split3(str, pattern, n){
-  var parts = [];
+  const parts = [];
   while(str && n !== 0){
-    var found = str.match(pattern);
+    let found = str.match(pattern);
     if (!found || n < 2) {
       parts.push(str);
       break;
     }
-    var pos  = str.indexOf(found),
+    let pos  = str.indexOf(found),
         part = str.substring(0, pos);
     parts.push(part);
     str = str.substring(pos + found.length);

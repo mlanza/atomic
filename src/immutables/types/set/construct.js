@@ -1,10 +1,9 @@
-import Immutable from "immutable";
-import {ICoerce} from "atomic/core";
-
-export const Set = Immutable.Set;
+import {Set} from "immutable";
+import {ICoerceable} from "atomic/core";
+export {Set} from "immutable";
 
 export function set(coll){
-  return coll instanceof Set ? coll : new Set(ICoerce.toArray(coll));
+  return coll instanceof Set ? coll : new Set(ICoerceable.toArray(coll));
 }
 
 export function emptySet(){

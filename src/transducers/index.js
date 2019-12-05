@@ -31,7 +31,7 @@ export function mapcat(f){
 
 export function mapIndexed(f){
   return function(xf){
-    var idx = -1;
+    let idx = -1;
     return overload(xf, xf, function(memo, value){
       return xf(memo, f(++idx, value));
     });
@@ -70,7 +70,7 @@ function dedupe1(f){
 
 function dedupe2(f, equiv){
   return function(xf){
-    var last;
+    let last;
     return overload(xf, xf, function(memo, value){
       const result = equiv(f(value), f(last)) ? memo : xf(memo, value);
       last = value;
@@ -83,7 +83,7 @@ export const dedupe = overload(dedupe0, dedupe1, dedupe2);
 
 export function take(n){
   return function(xf){
-    var taking = n;
+    let taking = n;
     return overload(xf, xf, function(memo, value){
       return taking-- > 0 ? xf(memo, value) : reduced(memo);
     });
@@ -92,7 +92,7 @@ export function take(n){
 
 export function drop(n){
   return function(xf){
-    var dropping = n;
+    let dropping = n;
     return overload(xf, xf, function(memo, value){
       return dropping-- > 0 ? memo : xf(memo, value);
     });
@@ -109,7 +109,7 @@ export function interpose(sep){
 
 export function dropWhile(pred){
   return function(xf){
-    var dropping = true;
+    let dropping = true;
     return overload(xf, xf, function(memo, value){
       !dropping || (dropping = pred(value));
       return dropping ? memo : xf(memo, value);
@@ -135,7 +135,7 @@ export function takeWhile(pred){
 
 export function takeNth(n){
   return function(xf){
-    var x = -1;
+    let x = -1;
     return overload(xf, xf, function(memo, value){
       x++;
       return x === 0 || x % n === 0 ? xf(memo, value) : memo;

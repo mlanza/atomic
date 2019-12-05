@@ -1,4 +1,4 @@
-import {IFunctor, IFork} from '../../protocols';
+import {IFunctor, IForkable} from '../../protocols';
 import {does, overload} from '../../core';
 import {implement} from '../protocol';
 import {okay} from './construct';
@@ -17,5 +17,5 @@ function fork(self, reject, resolve){
 }
 
 export const behaveAsOkay = does(
-  implement(IFork, {fork}),
+  implement(IForkable, {fork}),
   implement(IFunctor, {fmap}));

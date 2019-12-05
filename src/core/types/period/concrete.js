@@ -18,11 +18,11 @@ export function year(obj){ //TODO optional arg: first month of year
 }
 
 export function week(pd, fdow){
-  var firstDayOfWeek = fdow || 0,
-      lastDayOfWeek = 6 - firstDayOfWeek,
-      s       = start(pd),
-      e       = end(pd),
-      soffset = Math.abs(firstDayOfWeek - s.getDay()),
-      eoffset = Math.abs(lastDayOfWeek  - e.getDay());
+  const firstDayOfWeek = fdow || 0,
+        lastDayOfWeek = 6 - firstDayOfWeek,
+        s       = start(pd),
+        e       = end(pd),
+        soffset = Math.abs(firstDayOfWeek - s.getDay()),
+        eoffset = Math.abs(lastDayOfWeek  - e.getDay());
   return period(add(s, days(-soffset)), add(e, days(eoffset)));
 }

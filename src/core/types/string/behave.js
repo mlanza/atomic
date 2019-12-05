@@ -1,4 +1,4 @@
-import {IBlankable, ITemplate, IKVReduce, IAssociative, ICompact, ICoerce, IMatch, IReduce, ICollection, IIndexed, ISeqable, INext, ISeq, IInclusive, IAppendable, IPrependable, ICounted, ILookup, IFn, IComparable, IEmptyableCollection} from '../../protocols';
+import {IBlankable, ITemplate, IKVReduce, IAssociative, ICompactable, ICoerceable, IMatchable, IReduce, ICollection, IIndexed, ISeqable, INext, ISeq, IInclusive, IAppendable, IPrependable, ICounted, ILookup, IFn, IComparable, IEmptyableCollection} from '../../protocols';
 import {does, identity, constantly} from "../../core";
 import {implement} from '../protocol';
 import {isReduced, unreduced} from '../reduced';
@@ -85,13 +85,13 @@ function matches(self, re){
 
 export const behaveAsString = does(
   iindexed,
-  implement(ICompact, {compact}),
+  implement(ICompactable, {compact}),
   implement(IBlankable, {blank}),
   implement(ITemplate, {fill}),
-  implement(IMatch, {matches}),
+  implement(IMatchable, {matches}),
   implement(ICollection, {conj}),
   implement(IReduce, {reduce}),
-  implement(ICoerce, {toArray}),
+  implement(ICoerceable, {toArray}),
   implement(IComparable, {compare}),
   implement(IInclusive, {includes}),
   implement(IAppendable, {append: conj}),

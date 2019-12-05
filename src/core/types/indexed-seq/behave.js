@@ -3,7 +3,7 @@ import {implement} from '../protocol';
 import {indexedSeq} from './construct';
 import {revSeq} from '../../types/rev-seq/construct';
 import {isReduced, unreduced} from '../../types/reduced';
-import {ICoerce, IQueryable, IEquiv, IReversible, IMapEntry, IFind, IInclusive, IAssociative, IAppendable, IPrependable, ICollection, INext, ICounted, IReduce, IKVReduce, ISeq, ISeqable, ISequential, IIndexed, ILookup, IFn, IEmptyableCollection} from '../../protocols';
+import {ICoerceable, IQueryable, IEquiv, IReversible, IMapEntry, IFind, IInclusive, IAssociative, IAppendable, IPrependable, ICollection, INext, ICounted, IReduce, IKVReduce, ISeq, ISeqable, ISequential, IIndexed, ILookup, IFn, IEmptyableCollection} from '../../protocols';
 import {locate} from '../../protocols/ilocate/concrete';
 import {concat} from '../../types/concatenated/construct';
 import {iterable} from '../lazy-seq/behave';
@@ -44,7 +44,7 @@ function prepend(self, x){
 }
 
 function next(self){
-  var pos = self.start + 1;
+  const pos = self.start + 1;
   return pos < ICounted.count(self.seq) ? indexedSeq(self.seq, pos) : null;
 }
 
@@ -133,7 +133,7 @@ export const behaveAsIndexedSeq = does(
   implement(ILookup, {lookup}),
   implement(ICollection, {conj: append}),
   implement(INext, {next}),
-  implement(ICoerce, {toArray}),
+  implement(ICoerceable, {toArray}),
   implement(ISeq, {first, rest}),
   implement(ISeqable, {seq: identity}),
   implement(ICounted, {count}));

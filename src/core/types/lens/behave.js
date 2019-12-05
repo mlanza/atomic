@@ -7,7 +7,7 @@ import {locate} from '../../protocols/ilocate/concrete';
 import {get, getIn} from '../../protocols/ilookup/concrete';
 import {includes} from '../../protocols/iinclusive/concrete';
 import {first} from '../../protocols/iseq/concrete';
-import {toArray} from '../../protocols/icoerce/concrete';
+import {toArray} from '../../protocols/icoerceable/concrete';
 import {reverse} from '../../protocols/ireversible/concrete';
 import {downward} from "../../protocols/ihierarchy/concrete";
 import * as icollection from "../../protocols/icollection/concrete";

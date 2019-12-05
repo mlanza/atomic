@@ -51,7 +51,7 @@ function conj(self, [key, value]){
 
 //the benefit of exposing internal state as a map is assocIn and updateIn
 function assoc(self, key, value){
-  var dt = new Date(self.valueOf());
+  const dt = new Date(self.valueOf());
   switch(key){
     case "year":
       dt.setFullYear(value);

@@ -1,4 +1,4 @@
-import {does, identity, implement, IEmptyableCollection, ICounted, ISeqable, ISeq, ICollection, ICloneable} from "atomic/core";
+import {does, identity, implement, iterable, IEmptyableCollection, ICounted, ISeqable, ISeq, ICollection, ICloneable} from "atomic/core";
 
 function conj(self, value){
   return self.push(value);
@@ -25,6 +25,7 @@ function seq(self){
 }
 
 export const behaveAsList = does(
+  iterable,
   implement(IEmptyableCollection, {empty}),
   implement(ICloneable, {clone: identity}),
   implement(ISeqable, {seq}),

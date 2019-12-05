@@ -1,5 +1,5 @@
 export * from "./protocols/icheckable/instance";
-export * from "./protocols/iconstrained/instance";
+export * from "./protocols/iconstrainable/instance";
 export * from "./protocols/iexplains/instance";
 export * from "./protocols/iscope/instance";
 export * from "./protocols/iselection/instance";

@@ -68,7 +68,7 @@ function specify1(behavior){
 function specify2(behavior, target){
   const keys = this.generate();
   addMeta(target, keys("__marker__"), this);
-  for(var method in behavior){
+  for(let method in behavior){
     addMeta(target, keys(method), behavior[method]);
   }
 }
@@ -85,7 +85,7 @@ function unspecify1(behavior){
 function unspecify2(behavior, target){
   const keys = this.generate();
   addMeta(target, keys("__marker__"), undefined);
-  for(var method in behavior){
+  for(let method in behavior){
     addMeta(target, keys(method), undefined);
   }
 }

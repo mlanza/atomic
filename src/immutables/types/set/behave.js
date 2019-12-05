@@ -1,9 +1,10 @@
 import {
   does,
   identity,
+  iterable,
   implement,
   unreduced,
-  ICoerce,
+  ICoerceable,
   ISeq,
   IReduce,
   ISeqable,
@@ -76,10 +77,11 @@ function reduce(self, xf, init){
 }
 
 export const behaveAsSet = does(
+  iterable,
   implement(ISequential),
   implement(ITransient, {transient}),
   implement(IReduce, {reduce}),
-  implement(ICoerce, {toArray}),
+  implement(ICoerceable, {toArray}),
   implement(ISeqable, {seq}),
   implement(IInclusive, {includes}),
   implement(ISet, {disj, unite: conj}),

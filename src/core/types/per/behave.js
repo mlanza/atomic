@@ -1,14 +1,14 @@
 import {does, identity, overload, doto} from '../../core';
 import {cons} from "../list/construct";
 import {implement, satisfies} from '../protocol';
-import {IFunctor, ISeq, INext, ISequential, ICoerce, IDeref} from '../../protocols';
+import {IFunctor, ISeq, INext, ISequential, ICoerceable, IDeref} from '../../protocols';
 import {mapcat} from '../lazy-seq';
 import {per, emptyPer} from "./construct";
 import {behaveAsSeries} from "../series/behave";
 
 function fmap(self, f){
   return per(mapcat(function(x){
-    var y = f(x);
+    const y = f(x);
     return y == null ? [] : satisfies(ISequential, y) ? y : cons(y);
   }, self.items));
 }
@@ -33,7 +33,7 @@ const toArray = Array.from;
 export const behaveAsPer = does(
   behaveAsSeries,
   implement(IDeref, {deref}),
-  implement(ICoerce, {toArray}),
+  implement(ICoerceable, {toArray}),
   implement(INext, {next}),
   implement(ISeq, {first, rest}),
   implement(IFunctor, {fmap}));

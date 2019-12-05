@@ -1,5 +1,5 @@
 import {implement} from '../protocol';
-import {IBlankable, ICompact, ILocate, IQueryable, IFunctor, IReversible, IYankable, IMatch, ICoerce, IInclusive, IFind, IEquiv, ICollection, INext, ISeq, IReduce, IKVReduce, ISeqable, ISequential, IIndexed, IEmptyableCollection, ICounted, IAppendable, IPrependable} from '../../protocols';
+import {IBlankable, ICompactable, ILocate, IQueryable, IFunctor, IReversible, IYankable, IMatchable, ICoerceable, IInclusive, IFind, IEquiv, ICollection, INext, ISeq, IReduce, IKVReduce, ISeqable, ISequential, IIndexed, IEmptyableCollection, ICounted, IAppendable, IPrependable} from '../../protocols';
 import {overload, identity, does, partial} from '../../core';
 import {Reduced, isReduced, reduced, unreduced} from "../reduced";
 import {concat} from "../concatenated/construct";
@@ -79,10 +79,10 @@ function next(self){
 }
 
 function nth(self, n){
-  var xs  = self,
+  let xs  = self,
       idx = 0;
   while(xs){
-    var x = ISeq.first(xs);
+    let x = ISeq.first(xs);
     if (idx === n) {
       return x;
     }
@@ -93,7 +93,7 @@ function nth(self, n){
 }
 
 function idx(self, x){
-  var xs = ISeqable.seq(self),
+  let xs = ISeqable.seq(self),
       n  = 0;
   while(xs){
     if (x === ISeq.first(xs)) {
@@ -106,7 +106,7 @@ function idx(self, x){
 }
 
 function reduce(xs, xf, init){
-  var memo = init,
+  let memo = init,
       ys = ISeqable.seq(xs);
   while(ys && !(memo instanceof Reduced)){
     memo = xf(memo, ISeq.first(ys));
@@ -116,7 +116,7 @@ function reduce(xs, xf, init){
 }
 
 function reducekv(xs, xf, init){
-  var memo = init,
+  let memo = init,
       ys = ISeqable.seq(xs);
   while(ys && !(memo instanceof Reduced)){
     let pair = ISeq.first(ys);
@@ -171,14 +171,14 @@ export const behaveAsLazySeq = does(
   implement(IIndexed, {nth, idx}),
   implement(IReversible, {reverse}),
   implement(IBlankable, {blank}),
-  implement(ICompact, {compact}),
+  implement(ICompactable, {compact}),
   implement(IInclusive, {includes}),
   implement(IQueryable, {query}),
   implement(ILocate, {locate}),
   implement(IYankable, {yank}),
   implement(IFunctor, {fmap}),
   implement(ICollection, {conj}),
-  implement(ICoerce, {toArray}),
+  implement(ICoerceable, {toArray}),
   implement(IAppendable, {append}),
   implement(IPrependable, {prepend: conj}),
   implement(IReduce, {reduce}),

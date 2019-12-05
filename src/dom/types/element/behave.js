@@ -39,10 +39,10 @@ import {
   ILocate,
   IQueryable,
   ISequential,
-  IMatch,
+  IMatchable,
   IYankable,
   IInclusive,
-  ICoerce,
+  ICoerceable,
   IAssociative,
   IDescriptive,
   IMap,
@@ -148,10 +148,10 @@ function eventContext(catalog){
 
   function on4(self, key, selector, callback){
     on3(self, key, doto(function(e){
-      if (IMatch.matches(e.target, selector)) {
+      if (IMatchable.matches(e.target, selector)) {
         callback.call(e.target, e);
       } else {
-        var found = closest(e.target, selector);
+        const found = closest(e.target, selector);
         if (found && self.contains(found)) {
           callback.call(found, e);
         }
@@ -255,7 +255,7 @@ const root = comp(last, upward(parent));
 export function closest(self, selector){
   let target = self;
   while(target){
-    if (IMatch.matches(target, selector)){
+    if (IMatchable.matches(target, selector)){
       return target;
     }
     target = IHierarchy.parent(target);
@@ -263,7 +263,7 @@ export function closest(self, selector){
 }
 
 function query(self, selector){
-  return self.querySelectorAll && isString(selector) ? self.querySelectorAll(selector) : filter(IMatch.matches(v, selector), IHierarchy.descendants(self));
+  return self.querySelectorAll && isString(selector) ? self.querySelectorAll(selector) : filter(IMatchable.matches(v, selector), IHierarchy.descendants(self));
 }
 
 function locate(self, selector){
@@ -310,7 +310,7 @@ function yank2(self, node){
       if (isObject(curr)){
         curr = mapa(function(pair){
           return pair.join(": ") + "; ";
-        }, ICoerce.toArray(curr)).join("").trim();
+        }, ICoerceable.toArray(curr)).join("").trim();
       }
       curr == value && dissoc(self, key);
     }, attrs);
@@ -423,7 +423,7 @@ export const behaveAsElement = does(
   implement(IInclusive, {includes}),
   implement(IHideable, {show, hide, toggle}),
   implement(ITransientYankable, {yank}),
-  implement(IMatch, {matches}),
+  implement(IMatchable, {matches}),
   implement(ICloneable, {clone}),
   implement(ITransientAppendable, {append}),
   implement(ITransientPrependable, {prepend}),

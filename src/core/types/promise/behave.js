@@ -1,4 +1,4 @@
-import {IFunctor, IFork, IOtherwise} from '../../protocols';
+import {IFunctor, IForkable, IOtherwise} from '../../protocols';
 import {identity, does, overload} from '../../core';
 import {implement} from '../protocol';
 import {Promise} from './construct';
@@ -19,5 +19,5 @@ function otherwise(self, other){
 
 export const behaveAsPromise = does(
   implement(IOtherwise, {otherwise}),
-  implement(IFork, {fork}),
+  implement(IForkable, {fork}),
   implement(IFunctor, {fmap}));

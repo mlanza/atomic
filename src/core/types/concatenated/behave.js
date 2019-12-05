@@ -1,7 +1,7 @@
 import {identity, does} from '../../core';
 import {implement} from '../protocol';
 import {isReduced, unreduced} from '../reduced';
-import {ICoerce, ICollection, INext, ISeq, ICounted, ISeqable, IIndexed, IReduce, IKVReduce, ISequential, IEmptyableCollection} from '../../protocols';
+import {ICoerceable, ICollection, INext, ISeq, ICounted, ISeqable, IIndexed, IReduce, IKVReduce, ISequential, IEmptyableCollection} from '../../protocols';
 import {apply} from '../function/concrete';
 import {EmptyList, emptyList} from '../empty-list';
 import {ireduce, iterable} from '../lazy-seq/behave';
@@ -70,6 +70,6 @@ export const behaveAsConcatenated = does(
   implement(ICollection, {conj}),
   implement(INext, {next}),
   implement(ISeq, {first, rest}),
-  implement(ICoerce, {toArray}),
+  implement(ICoerceable, {toArray}),
   implement(ISeqable, {seq: identity}),
   implement(ICounted, {count}));

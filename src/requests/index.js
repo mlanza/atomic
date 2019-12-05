@@ -132,7 +132,7 @@ export function mandatory(keys){
           ks = slice(keys);
 
     while(args.length && ks.length) {
-      var arg = args.shift(),
+      let arg = args.shift(),
           key = ks.shift();
       if (isDescriptive(arg) && contains(arg, key)) {
         inject(options, arg); // the remaining options
