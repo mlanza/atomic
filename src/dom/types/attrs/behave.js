@@ -1,9 +1,9 @@
-import {does, implement, cons, IEmptyableCollection, ICoerce, INext, ISeq, ISeqable, IMap, IAssociative, ILookup, ICounted, IInclusive} from 'atomic/core';
+import {does, implement, cons, IEmptyableCollection, ICoerceable, INext, ISeq, ISeqable, IMap, IAssociative, ILookup, ICounted, IInclusive} from 'atomic/core';
 import * as _ from 'atomic/core';
 import {ITransientAssociative, ITransientEmptyableCollection, ITransientMap} from 'atomic/transients';
 
 function toArray(self){
-  return ICoerce.toArray(next2(self, 0));
+  return ICoerceable.toArray(next2(self, 0));
 }
 
 function count(self){
@@ -68,7 +68,7 @@ function empty(self){
 
 export const behaveAsAttrs = does(
   implement(ITransientEmptyableCollection, {empty}),
-  implement(ICoerce, {toArray}),
+  implement(ICoerceable, {toArray}),
   implement(ICounted, {count}),
   implement(ISeqable, {seq}),
   implement(INext, {next}),

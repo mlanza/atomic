@@ -1,6 +1,6 @@
 import {does, identity, constructs} from '../../core';
 import {implement} from '../protocol';
-import {IMergeable, IBlankable, ICompact, IComparable, IYankable, IMatch, ISet, INext, ICollection, IEquiv, IMapEntry, IReduce, IKVReduce, ISeqable, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, IFn, IMap, ISeq, IDescriptive, ICoerce, ICloneable, IInclusive} from '../../protocols';
+import {IMergeable, IBlankable, ICompactable, IComparable, IYankable, IMatchable, INext, ICollection, IEquiv, IMapEntry, IReduce, IKVReduce, ISeqable, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, IFn, IMap, ISeq, IDescriptive, ICoerceable, ICloneable, IInclusive} from '../../protocols';
 import {reduced} from '../reduced';
 import {lazySeq, into, map} from '../lazy-seq';
 import {cons} from '../list';
@@ -12,7 +12,7 @@ import {emptyObject} from '../object/construct';
 const keys = Object.keys;
 const vals = Object.values;
 
-Object.from = ICoerce.toObject;
+Object.from = ICoerceable.toObject;
 
 function merge(...maps){
   return IReduce.reduce(maps, function(memo, map){
@@ -109,12 +109,6 @@ function next(self){
   return next2(self, INext.next(keys(self)));
 }
 
-function disj(self, entry){
-  const key = IMapEntry.key(entry),
-        val = IMapEntry.val(entry);
-  return ILookup.lookup(self, key) === val ? IMap.dissoc(self, key) : self;
-}
-
 function dissoc(self, key){
   if (IAssociative.contains(self, key)) {
     const result = clone(self);
@@ -173,20 +167,17 @@ function toArray(self){
   }, []);
 }
 
-export const iset = implement(ISet, {disj});
 export const behaveAsObject = does(
-  iset,
   iequiv,
   implement(IDescriptive),
   implement(IBlankable, {blank}),
   implement(IMergeable, {merge}),
-  implement(ICompact, {compact}),
+  implement(ICompactable, {compact}),
   implement(IEquiv, {equiv}),
-  implement(ICoerce, {toArray: toArray, toObject: identity}),
+  implement(ICoerceable, {toArray: toArray, toObject: identity}),
   implement(IFind, {find}),
   implement(IYankable, {yank}),
-  implement(IMatch, {matches}),
-  implement(ISet, {disj}),
+  implement(IMatchable, {matches}),
   implement(IInclusive, {includes}),
   implement(ICollection, {conj}),
   implement(ICloneable, {clone}),

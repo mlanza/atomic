@@ -46,7 +46,7 @@ export function signature(...preds){
 }
 
 export function everyPair(pred, xs){
-  var every = xs.length > 0;
+  let every = xs.length > 0;
   while(every && xs.length > 1){
     every = pred(xs[0], xs[1]);
     xs = slice(xs, 1);
@@ -147,7 +147,7 @@ export function everyPred(...preds){
   return function(){
     return IReduce.reduce(slice(arguments), function(memo, arg){
       return IReduce.reduce(preds, function(memo, pred){
-        var result = memo && pred(arg);
+        let result = memo && pred(arg);
         return result ? result : reduced(result);
       }, memo);
     }, true)
@@ -165,7 +165,7 @@ export function pre(f, pred){
 
 export function post(f, pred){
   return function(){
-    var result = f.apply(this, arguments);
+    let result = f.apply(this, arguments);
     if (!pred(result)) {
       throw new TypeError("Failed post-condition.");
     }

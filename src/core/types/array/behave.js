@@ -1,6 +1,6 @@
 import {does, identity, overload, doto, complement} from '../../core';
 import {implement, satisfies} from '../protocol';
-import {IMergeable, IBlankable, IMap, IQueryable, IWrite, ICoerce, IFunctor, IInsertable, IYankable, IReversible, ISet, IMapEntry, IEquiv, IReduce, IKVReduce, IAppendable, IPrependable, IInclusive, ICollection, INext, ISeq, IFind, ISeqable, IIndexed, IAssociative, ISequential, IEmptyableCollection, IFn, ICounted, ILookup, ICloneable} from '../../protocols';
+import {IMergeable, IBlankable, IMap, IQueryable, ICoerceable, IFunctor, IInsertable, IYankable, IReversible, IMapEntry, IEquiv, IReduce, IKVReduce, IAppendable, IPrependable, IInclusive, ICollection, INext, ISeq, IFind, ISeqable, IIndexed, IAssociative, ISequential, IEmptyableCollection, IFn, ICounted, ILookup, ICloneable} from '../../protocols';
 import {reduced, unreduced, isReduced} from '../reduced';
 import {indexedSeq} from '../indexed-seq';
 import {replace} from '../string/concrete';
@@ -18,7 +18,7 @@ function _before(self, reference, inserted){
 }
 
 function before(self, reference, inserted){
-  var arr = Array.from(self);
+  let arr = Array.from(self);
   _before(arr, reference, inserted);
   return arr;
 }
@@ -29,7 +29,7 @@ function _after(self, reference, inserted){
 }
 
 function after(self, reference, inserted){
-  var arr = Array.from(self);
+  let arr = Array.from(self);
   _after(arr, reference, inserted);
   return arr;
 }
@@ -43,14 +43,14 @@ function _dissoc(self, idx){
 }
 
 function dissoc(self, idx){
-  var arr = Array.from(self);
+  let arr = Array.from(self);
   _dissoc(arr, idx);
   return arr;
 }
 
 function reduce3(xs, xf, init){
-  var memo = init, to = xs.length - 1;
-  for(var i = 0; i <= to; i++){
+  let memo = init, to = xs.length - 1;
+  for(let i = 0; i <= to; i++){
     if (isReduced(memo))
       break;
     memo = xf(memo, xs[i]);
@@ -63,15 +63,15 @@ function reduce4(xs, xf, init, from){
 }
 
 function reduce5(xs, xf, init, from, to){
-  var memo = init;
+  let memo = init;
   if (from <= to) {
-    for(var i = from; i <= to; i++){
+    for(let i = from; i <= to; i++){
       if (isReduced(memo))
         break;
       memo = xf(memo, xs[i]);
     }
   } else {
-    for(var i = from; i >= to; i--){
+    for(let i = from; i >= to; i--){
       if (isReduced(memo))
         break;
       memo = xf(memo, xs[i]);
@@ -83,8 +83,8 @@ function reduce5(xs, xf, init, from, to){
 const reduce = overload(null, null, null, reduce3, reduce4, reduce5);
 
 function reducekv(xs, xf, init, from){
-  var memo = init, len = xs.length;
-  for(var i = from || 0; i < len; i++){
+  let memo = init, len = xs.length;
+  for(let i = from || 0; i < len; i++){
     if (isReduced(memo))
       break;
     memo = xf(memo, i, xs[i]);
@@ -101,12 +101,6 @@ function yank(self, value){
 function reverse(self){
   let c = ICounted.count(self);
   return c > 0 ? revSeq(self, c - 1) : null;
-}
-
-function disj(self, value){
-  return self.filter(function(x){
-    return value !== value;
-  });
 }
 
 function key(self){
@@ -135,7 +129,7 @@ function assoc(self, key, value){
   if (lookup(self, key) === value) {
     return self;
   }
-  var arr = Array.from(self);
+  const arr = Array.from(self);
   arr.splice(key, 1, value);
   return arr;
 }
@@ -179,7 +173,7 @@ function length(self){
 const nth = lookup;
 
 function idx(self, x){
-  var n = self.indexOf(x);
+  const n = self.indexOf(x);
   return n === -1 ? null : n;
 }
 
@@ -192,10 +186,6 @@ function toObject(self){
 
 function fmap(self, f){
   return mapa(f, self);
-}
-
-function write(self, message){
-  self.push(message);
 }
 
 function query(self, pred){
@@ -218,12 +208,10 @@ export const behaveAsArray = does(
   implement(IMap, {dissoc, keys, vals: identity}),
   implement(IMergeable, {merge: concat}),
   implement(IInsertable, {before, after}),
-  implement(IWrite, {write}),
   implement(IFunctor, {fmap}),
-  implement(ICoerce, {toObject}),
+  implement(ICoerceable, {toObject, toArray: identity}),
   implement(IYankable, {yank}),
   implement(IReversible, {reverse}),
-  implement(ISet, {disj}),
   implement(IFind, {find}),
   implement(IMapEntry, {key, val}),
   implement(IInclusive, {includes}),
@@ -240,5 +228,4 @@ export const behaveAsArray = does(
   implement(ISeqable, {seq}),
   implement(ICollection, {conj: append}),
   implement(INext, {next}),
-  implement(ICoerce, {toArray: identity}),
   implement(ISeq, {first, rest}));

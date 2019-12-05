@@ -6,7 +6,7 @@ import {optional} from './construct';
 import {_ as v} from "param.macro";
 
 function check(self, obj){
-  var found = get(obj, self.key);
+  const found = get(obj, self.key);
   if (blank(found)) {
     return null;
   } else {

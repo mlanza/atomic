@@ -11,13 +11,14 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
       IMergeable = _.IMergeable,
       IHash = imm.IHash,
       ISet = _.ISet,
+      INameable = _.INameable,
       ITransientAssociative = mut.ITransientAssociative,
       IDispatch = $.IDispatch,
       ISubscribe = $.ISubscribe,
       ITimeTraveler = $.ITimeTraveler,
       IEmptyableCollection = _.IEmptyableCollection,
       ICheckable = vd.ICheckable,
-      IConstrained = vd.IConstrained,
+      IConstrainable = vd.IConstrainable,
       ICollection = _.ICollection,
       ITransientCollection = mut.ITransientCollection,
       IMiddleware = $.IMiddleware,
@@ -66,16 +67,12 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
     save: null
   });
 
-  var IStore = _.protocol({
+  var IRepository = _.protocol({
     commit: null
   });
 
   var IIdentifiable = _.protocol({
     identifier: null //machine-friendly identifier (lowercase, no embedded spaces) offering reasonable uniqueness within a context
-  });
-
-  var INamed = _.protocol({
-    name: null //human-friendly name offering reasonable uniqueness within a context
   });
 
   var ITiddler = _.protocol({
@@ -112,7 +109,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
     ins: null
   });
 
-  var IWorkspace = _.protocol({
+  var IBuffer = _.protocol({
     touched: null, //entities touched during the last operation - useful when diffing before/after model snapshots
     dirty: null, //was a given entity ever modified?
     load: null, //add existing entity from domain to workspace
@@ -145,27 +142,15 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
     IField: IField,
     IEntity: IEntity,
     IResolver: IResolver,
-    INamed: INamed,
     ITiddler: ITiddler,
     IQueryable: IQueryable,
     IFactory: IFactory,
-    IConstrained: IConstrained,
     IPersistable: IPersistable,
     IOriginated: IOriginated,
     ITransaction: ITransaction,
     IView: IView,
     IVertex: IVertex,
-    IWorkspace: IWorkspace
-  }
-
-  function _constraints2(self, f){
-    return IConstrained.constraints(self, _.isFunction(f) ? f(IConstrained.constraints(self)) : f);
-  }
-
-  var _constraints = _.overload(null, IConstrained.constraints, _constraints2);
-
-  function constrain(self, constraint){
-    return _constraints(self, _.append(_, constraint));
+    IBuffer: IBuffer
   }
 
   function identifiableRecord(Type, identifier){
@@ -254,7 +239,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
     _.doto(ConstrainedCollection,
       _.implement(IEmptyableCollection, {empty: empty}),
       _.implement(IFunctor, {fmap: fmap}),
-      _.implement(IConstrained, {constraints: constraints}),
+      _.implement(IConstrainable, {constraints: constraints}),
       _.implement(ILookup, {lookup: nth}),
       _.implement(IAssociative, {assoc: assoc, contains: contains}),
       _.implement(IDeref, {deref: deref}),
@@ -305,24 +290,24 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
     }
 
     function constraints1(self){
-      return IConstrained.constraints(self.coll);
+      return IConstrainable.constraints(self.coll);
     }
 
     function constraints2(self, constraints){
-      return new self.constructor(self.constraints, IConstrained.constraints(self.coll, constraints));
+      return new self.constructor(self.constraints, IConstrainable.constraints(self.coll, constraints));
     }
 
     var constraints = _.overload(null, constraints1, constraints2);
 
     function resolved(self){
-      return IConstrained.constraints(self.coll, self.constraints);
+      return IConstrainable.constraints(self.coll, self.constraints);
     }
 
     _.doto(ResolvingCollection,
       _.implement(IResolveable, {resolved: resolved}),
       _.implement(IEmptyableCollection, {empty: empty}),
       _.implement(IFunctor, {fmap: fmap}),
-      _.implement(IConstrained, {constraints: constraints}),
+      _.implement(IConstrainable, {constraints: constraints}),
       _.implement(ILookup, {lookup: nth}),
       _.implement(IAssociative, {assoc: assoc, contains: contains}),
       _.implement(IDeref, {deref: deref}),
@@ -389,11 +374,11 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
     }
 
     function constraints1(self){
-      return IConstrained.constraints(self.coll);
+      return IConstrainable.constraints(self.coll);
     }
 
     function constraints2(self, constraints){
-      return new self.constructor(self.cardinality, IConstrained.constraints(self.coll, constraints));
+      return new self.constructor(self.cardinality, IConstrainable.constraints(self.coll, constraints));
     }
 
     var constraints = _.overload(null, constraints1, constraints2);
@@ -401,7 +386,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
     _.doto(ClampedCollection,
       _.implement(IEmptyableCollection, {empty: empty}),
       _.implement(IFunctor, {fmap: fmap}),
-      _.implement(IConstrained, {constraints: constraints}),
+      _.implement(IConstrainable, {constraints: constraints}),
       _.implement(ILookup, {lookup: nth}),
       _.implement(IAssociative, {assoc: assoc, contains: contains}),
       _.implement(IDeref, {deref: deref}),
@@ -422,8 +407,8 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
       optional  = clampedCollection(vd.opt),
       required  = clampedCollection(vd.req),
       unlimited = constrainedCollection(vd.and(vd.unlimited)),
-      entities  = constrain(unlimited, vd.collOf(vd.isa(_.GUID))),
-      entity    = constrain(required, vd.collOf(vd.isa(_.GUID)));
+      entities  = vd.constrain(unlimited, vd.collOf(vd.isa(_.GUID))),
+      entity    = vd.constrain(required, vd.collOf(vd.isa(_.GUID)));
 
   function reassign(self, key, f){
     var field = IKind.field(self, key),
@@ -490,7 +475,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
     this.assertions = assertions;
   }
 
-  var assertionStore = _.fnil(_.constructs(AssertionStore), _.array, imm.dict());
+  var assertionStore = _.fnil(_.constructs(AssertionStore), _.array, imm.map());
 
   function questions(assertion){
     return [
@@ -581,7 +566,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
 
     function constraints(self){
       return _.reduce(function(memo, key){
-        return _.append(memo, vd.optional(key, IConstrained.constraints(field(self, key))));
+        return _.append(memo, vd.optional(key, IConstrainable.constraints(field(self, key))));
       }, vd.and(), keys(self));
     }
 
@@ -591,7 +576,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
 
     return _.does(
       _.implement(ISerializable, {serialize: serialize}),
-      _.implement(IConstrained, {constraints: constraints}),
+      _.implement(IConstrainable, {constraints: constraints}),
       _.implement(IIdentifiable, {identifier: identifier}),
       _.implement(IEntity, {id: id, assertions: assertions}),
       _.implement(IMap, {keys: keys, dissoc: dissoc}),
@@ -710,13 +695,13 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
     }
 
     function constraints(self){
-      return IConstrained.constraints(ICaster.cast(self.caster, null));
+      return IConstrainable.constraints(ICaster.cast(self.caster, null));
     }
 
     return _.doto(Field,
       _.implement(ILookup, {lookup: lookup}),
       _.implement(IAssociative, {contains: contains, assoc: assoc}),
-      _.implement(IConstrained, {constraints: constraints}),
+      _.implement(IConstrainable, {constraints: constraints}),
       _.implement(IIdentifiable, {identifier: identifier}),
       _.implement(IField, {aget: aget, aset: aset}));
 
@@ -766,13 +751,13 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
     }
 
     function constraints(self){
-      return IConstrained.constraints(self.emptyColl);
+      return IConstrainable.constraints(self.emptyColl);
     }
 
     return _.doto(ComputedField,
       _.implement(ILookup, {lookup: lookup}),
       _.implement(IAssociative, {contains: contains, assoc: assoc}),
-      _.implement(IConstrained, {constraints: constraints}),
+      _.implement(IConstrainable, {constraints: constraints}),
       _.implement(IIdentifiable, {identifier: identifier}),
       _.implement(IField, {aget: aget}));
 
@@ -906,7 +891,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
     }
     _.doto(JsonResource,
       _.implement(IFactory, {make: make}),
-      _.implement(IStore, {commit: commit}),
+      _.implement(IRepository, {commit: commit}),
       _.implement(IQueryable, {query: query}));
 
   })();
@@ -955,7 +940,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
       _.implement(ILookup, {lookup: lookup}),
       _.implement(IAssociative, {assoc: assoc, contains: contains}),
       _.implement(IKind, {field: field}),
-      _.implement(INamed, {name: name}),
+      _.implement(INameable, {name: name}),
       _.implement(IIdentifiable, {identifier: identifier}),
       _.implement(IMap, {keys: keys}),
       _.implement(IFactory, {make: make}));
@@ -1020,7 +1005,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
       return recaster(_.guid, _.identity, valuesCaster(coll));
     }), "label", "Child"),
     _.assoc(field("tag", unlimited, valuesCaster), "label", "Tag", "appendonly", true),
-    _.assoc(field("modified", constrain(optional, vd.collOf(_.isDate)), function(coll){
+    _.assoc(field("modified", vd.constrain(optional, vd.collOf(_.isDate)), function(coll){
       return recaster(_.date, toLocaleString, valueCaster(coll));
     }), "label", "Modified Date"));
 
@@ -1054,14 +1039,14 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
     topic(Task,
       "task",
       _.conj(defaults,
-        _.assoc(field("priority", constrain(optional, vd.collOf(vd.choice([1, 2, 3])))), "label", "Priority"),
-        _.assoc(field("due", constrain(optional, vd.collOf(_.isDate)), function(coll){
+        _.assoc(field("priority", vd.constrain(optional, vd.collOf(vd.choice([1, 2, 3])))), "label", "Priority"),
+        _.assoc(field("due", vd.constrain(optional, vd.collOf(_.isDate)), function(coll){
           return recaster(_.date, toLocaleString, valueCaster(coll));
         }), "label", "Due Date"),
         _.assoc(computedField("overdue", [isOverdue]), "label", "Overdue"),
         _.assoc(computedField("flags", [typed, flag("overdue", isOverdue), flag("important", isImportant)]), "label", "Flags"),
         _.assoc(field("assignee", entities), "label", "Assignee"),
-        _.assoc(field("expanded", constrain(required, vd.collOf(_.isBoolean))), "label", "Expanded")));
+        _.assoc(field("expanded", vd.constrain(required, vd.collOf(_.isBoolean))), "label", "Expanded")));
 
   var work = _.conj(ontology(), tiddler, task);
 
@@ -1251,9 +1236,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
 
     function commands(self){
       return _.just(self.changed,
-        Array.from, //TODO prefer lazy so implement lazy iteration
-        _.see('items'),
-        _.map(_.first, _),
+        _.keys,
         _.mapcat(function(id){
           var prior   = _.get(self.loaded , id),
               current = _.get(self.changed, id);
@@ -1297,7 +1280,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
       _.implement(IEntity, {id: id}),
       _.implement(IQueryable, {query: query}),
       _.implement(ITransaction, {commands: commands}),
-      _.implement(IWorkspace, {dirty: dirty, load: load, add: add, edit: edit, destroy: destroy, changes: changes, touched: touched}),
+      _.implement(IBuffer, {dirty: dirty, load: load, add: add, edit: edit, destroy: destroy, changes: changes, touched: touched}),
       _.implement(ICounted, {count: count}),
       _.implement(IAssociative, {contains: contains}),
       _.implement(IMap, {keys: keys, vals: vals, dissoc: dissoc}),
@@ -1311,7 +1294,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
 
   })();
 
-  var entityWorkspace = _.fnil(_.constructs(EntityWorkspace), imm.dict(), imm.dict(), imm.set());
+  var entityWorkspace = _.fnil(_.constructs(EntityWorkspace), imm.map(), imm.map(), imm.set());
 
   function IndexedEntityWorkspace(indexes, workspace){
     this.indexes = indexes;
@@ -1327,25 +1310,25 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
     }
 
     function load(self, entities){
-      return new self.constructor(self.indexes, IWorkspace.load(self.workspace, entities));
+      return new self.constructor(self.indexes, IBuffer.load(self.workspace, entities));
     }
 
     function add(self, entities){
       var xs = _.mapcat(IEntity.assertions, entities);
       _.log("added", _.toArray(xs));
-      return new self.constructor(self.indexes, IWorkspace.add(self.workspace, entities));
+      return new self.constructor(self.indexes, IBuffer.add(self.workspace, entities));
     }
 
     function edit(self, entities){
-      return new self.constructor(self.indexes, IWorkspace.edit(self.workspace, entities));
+      return new self.constructor(self.indexes, IBuffer.edit(self.workspace, entities));
     }
 
     function destroy(self, entities){
-      return new self.constructor(self.indexes, IWorkspace.destroy(self.workspace, entities));
+      return new self.constructor(self.indexes, IBuffer.destroy(self.workspace, entities));
     }
 
-    var dirty = forward(IWorkspace.dirty);
-    var changes = forward(IWorkspace.changes);
+    var dirty = forward(IBuffer.dirty);
+    var changes = forward(IBuffer.changes);
     var includes = forward(IInclusive.includes);
     var first = forward(ISeq.first);
     var rest = forward(ISeq.rest);
@@ -1365,7 +1348,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
     var id = forward(IEntity.id);
     var commands = forward(ITransaction.commands);
     var resolve = forward(IResolver.resolve);
-    var touched = forward(IWorkspace.touched);
+    var touched = forward(IBuffer.touched);
     var nth = forward(IIndexed.nth);
 
     _.doto(IndexedEntityWorkspace,
@@ -1374,7 +1357,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
       _.implement(IEntity, {id: id}),
       _.implement(IQueryable, {query: query}),
       _.implement(ITransaction, {commands: commands}),
-      _.implement(IWorkspace, {dirty: dirty, load: load, add: add, edit: edit, destroy: destroy, changes: changes, touched: touched}),
+      _.implement(IBuffer, {dirty: dirty, load: load, add: add, edit: edit, destroy: destroy, changes: changes, touched: touched}),
       _.implement(ICounted, {count: count}),
       _.implement(IAssociative, {contains: contains}),
       _.implement(IMap, {keys: keys, vals: vals, dissoc: dissoc}),
@@ -1458,7 +1441,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
   (function(){
 
     function handle(self, command, next){
-      IWorkspace.load(self.buffer, command.entities); //TODO ITransientBuffer.load
+      IBuffer.load(self.buffer, command.entities); //TODO ITransientBuffer.load
       $.raise(self.provider, loadedEvent(command.entities));
       next(command);
     }
@@ -1496,7 +1479,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
           }) || memo;
         }, added, _.keys(added));
       _.swap(self.buffer, function(buffer){
-        return IWorkspace.add(buffer, [ITiddler.title(entity, _.get(command, "text"))]);
+        return IBuffer.add(buffer, [ITiddler.title(entity, _.get(command, "text"))]);
       });
       $.raise(self.provider, addedEvent(IEntity.id(entity), _.get(command, "text")));
       next(command);
@@ -1563,7 +1546,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
       if (entity) {
         _.swap(self.buffer, function(buffer){
           var values = _.just(entity, _.get(_, _.get(command, "key")), _.fmap(_, _.not));
-          return IWorkspace.edit(buffer, [_.assoc(entity, _.get(command, "key"), values)]);
+          return IBuffer.edit(buffer, [_.assoc(entity, _.get(command, "key"), values)]);
         });
         $.raise(self.provider, toggledEvent(_.get(command, "id"), _.get(command, "key")));
       }
@@ -1673,7 +1656,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
           entity = ITiddler.text(entity, text);
         }
         _.swap(self.buffer, function(buffer){
-          return IWorkspace.edit(buffer, [entity]);
+          return IBuffer.edit(buffer, [entity]);
         });
         $.raise(self.provider, castedEvent(_.get(command, "id"), _.get(command, "type")));
       }
@@ -1887,7 +1870,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
         var key = _.get(command, "key"),
             value = _.get(command, "value");
         _.swap(self.buffer, function(buffer){
-          return IWorkspace.edit(buffer, [assert(entity, key, value)]);
+          return IBuffer.edit(buffer, [assert(entity, key, value)]);
         });
         $.raise(self.provider, assertedEvent(id, key, value));
       }
@@ -1960,7 +1943,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
       var entity = _.get(self.buffer, command.id);
       if (entity) {
         _.swap(self.buffer, function(buffer){
-          return IWorkspace.destroy(buffer, [entity]);
+          return IBuffer.destroy(buffer, [entity]);
         });
         $.raise(self.provider, destroyedEvent(command.id));
       }
@@ -2032,7 +2015,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
           value = _.get(command, "value"),
           entity = _.get(self.buffer, id);
       _.swap(self.buffer, function(buffer){
-        return IWorkspace.edit(buffer, [_.isSome(value) ? retract(entity, key, value) : retract(entity, key)]);
+        return IBuffer.edit(buffer, [_.isSome(value) ? retract(entity, key, value) : retract(entity, key)]);
       });
       $.raise(self.provider, retractedEvent(id, key, value));
       next(command);
@@ -2346,7 +2329,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
 
     function edit(self, entities){
       _.swap(self.workspace, function(workspace){
-        return IWorkspace.edit(workspace, entities);
+        return IBuffer.edit(workspace, entities);
       });
     }
 
@@ -2356,7 +2339,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
 
     function load(self, entities){
       _.swap(self.workspace, function(workspace){
-        return IWorkspace.load(workspace, entities);
+        return IBuffer.load(workspace, entities);
       });
     }
 
@@ -2365,7 +2348,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
     }
 
     function save(self){
-      return IStore.commit(self.repo, self.workspace); //TODO return outcome status?
+      return IRepository.commit(self.repo, self.workspace); //TODO return outcome status?
     }
 
     var swap = forward(ISwap.swap);
@@ -2381,12 +2364,12 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
       _.implement(IFactory, {make: make}),
       _.implement(ILookup, {lookup: lookup}),
       _.implement(ISwap, {swap: swap}),
-      _.implement(IWorkspace, {load: load, edit: edit}), //TODO ITransientBuffer.load
+      _.implement(IBuffer, {load: load, edit: edit}), //TODO ITransientBuffer.load
       _.implement(IQueryable, {query: query}));
 
   })();
 
-  //NOTE a view is capable of returning a seq of all possible `IView.interactions` each implementing `IIdentifiable` and `INamed`.
+  //NOTE a view is capable of returning a seq of all possible `IView.interactions` each implementing `IIdentifiable` and `INameable`.
   //NOTE an interaction is a persistent, validatable object with field schema.  It will be flagged as command or query which will help with processing esp. pipelining.  When successfully validated it has all that it needs to be handled by the handler.  That it can be introspected allows for the UI to help will completing them.
   function Outline(buffer, model, commandBus, eventBus, emitter, options){
     this.buffer = buffer;
@@ -2510,8 +2493,6 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
     redoCommand: redoCommand,
     flushCommand: flushCommand,
     entityWorkspace: entityWorkspace,
-    constrain: constrain,
-    constraints: _constraints,
     domain: domain,
     assert: assert,
     retract: retract,

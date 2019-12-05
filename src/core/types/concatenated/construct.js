@@ -1,6 +1,6 @@
 import {ISeqable} from '../../protocols/iseqable';
 import {ISeq} from '../../protocols/iseq';
-import {ICoerce} from '../../protocols/icoerce/instance';
+import {ICoerceable} from '../../protocols/icoerceable/instance';
 import {identity, overload, unspread} from "../../core";
 import {lazySeq} from "../../types/lazy-seq/construct";
 import {cons} from "../../types/list/construct";

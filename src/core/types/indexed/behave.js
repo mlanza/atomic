@@ -1,5 +1,5 @@
 import {does, overload} from '../../core';
-import {ICoerce, INext, ICounted, ISeq, ISeqable, ISequential, IIndexed, ILookup, IInclusive} from '../../protocols';
+import {ICoerceable, INext, ICounted, ISeq, ISeqable, ISequential, IIndexed, ILookup, IInclusive} from '../../protocols';
 import {implement} from '../protocol';
 import {indexedSeq} from '../indexed-seq/construct';
 import {emptyList} from '../empty-list/construct';
@@ -43,7 +43,7 @@ export const behaveAsIndexed = does(
   implement(IIndexed, {nth}),
   implement(ILookup, {lookup: nth}),
   implement(INext, {next}),
-  implement(ICoerce, {toArray: Array.from}),
+  implement(ICoerceable, {toArray: Array.from}),
   implement(ISeq, {first, rest}),
   implement(ISeqable, {seq}),
   implement(ICounted, {count}));

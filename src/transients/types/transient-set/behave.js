@@ -1,4 +1,4 @@
-import {does, identity, implement, overload, assoc, cons, filter, lazySeq, emptyList, apply, unreduced, ICoerce, ISeq, IReduce, ISeqable, ISet, INext, ISequential, ICounted, ICollection, IEmptyableCollection, IInclusive, ICloneable} from "atomic/core";
+import {does, identity, implement, overload, assoc, cons, filter, lazyIterable, emptyList, apply, unreduced, ICoerceable, ISeq, IReduce, ISeqable, ISet, INext, ISequential, ICounted, ICollection, IEmptyableCollection, IInclusive, ICloneable} from "atomic/core";
 import {emptyTransientSet, transientSet} from './construct';
 import {IPersistent, ITransientSet, ITransientEmptyableCollection, ITransientCollection} from "../../protocols";
 import {_ as v} from "param.macro";
@@ -27,29 +27,16 @@ function first(self){
   return self.values().next().value;
 }
 
-function seqVals1(iter){
-  return seqVals2(iter, emptyList());
-}
-
-function seqVals2(iter, done){
-  const res = iter.next();
-  return res.done ? done : lazySeq(function(){
-    return cons(res.value, seqVals1(iter));
-  });
-}
-
-const seqVals = overload(null, seqVals1, seqVals2);
-
 function rest(self){
   const iter = self.values();
   iter.next();
-  return seqVals(iter);
+  return lazyIterable(iter);
 }
 
 function next(self){
   const iter = self.values();
   iter.next();
-  return seqVals(iter, null);
+  return lazyIterable(iter, null);
 }
 
 function count(self){
@@ -77,7 +64,7 @@ export const behaveAsTransientSet = does(
   implement(ITransientCollection, {conj}),
   implement(ITransientSet, {disj}), //TODO unite
   implement(IReduce, {reduce}),
-  implement(ICoerce, {toArray}),
+  implement(ICoerceable, {toArray}),
   implement(ISeqable, {seq}),
   implement(IInclusive, {includes}),
   implement(ICloneable, {clone}),

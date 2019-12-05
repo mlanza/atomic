@@ -4,15 +4,12 @@ import {ISeq, first} from "../iseq";
 import {count} from "../icounted/concrete";
 import {deref} from "../ideref/concrete";
 import {path} from "../ipath/concrete";
-import {matches} from "../imatch/concrete";
-import {satisfies} from "../../types/protocol";
 import {lens} from "../../types/lens/construct";
 import {cons} from "../../types/list/construct";
 import {emptyList} from "../../types/empty-list/construct";
-import {map, mapcat, remove, filter} from "../../types/lazy-seq/concrete";
+import {map, mapcat, remove} from "../../types/lazy-seq/concrete";
 import {concat} from "../../types/concatenated/construct";
 import {comp, juxt} from "../../types/function/concrete";
-import {isString} from '../../types/string/construct';
 import {_ as v} from "param.macro";
 
 export function downward(f){

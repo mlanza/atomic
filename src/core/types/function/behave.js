@@ -2,7 +2,7 @@ import {does, partial} from '../../core';
 import {implement} from '../protocol';
 import {apply} from './concrete';
 import {get} from "../../protocols/ilookup/concrete";
-import {INamed, IFn, IAssociative, ILookup, IAppendable, IPrependable} from '../../protocols';
+import {INameable, IFn, IAssociative, ILookup, IAppendable, IPrependable} from '../../protocols';
 import {Symbol} from '../symbol/construct';
 
 export function append(f, ...applied){
@@ -20,7 +20,7 @@ function name(self){
 }
 
 export const behaveAsFunction = does(
-  implement(INamed, {name}),
+  implement(INameable, {name}),
   implement(IAppendable, {append}),
   implement(IPrependable, {prepend: partial}),
   implement(IFn, {invoke}));

@@ -1,5 +1,5 @@
 import {does, overload, doto, forwardTo, implement} from "atomic/core";
-import {ICoerce, IFunctor, ILookup, IAssociative, IFind, IMapEntry, IYankable, ISeq, INext, ISeqable, ICounted, IInclusive, IEmptyableCollection, IMap, IReduce, IKVReduce, ICloneable, ISequential, ICollection} from "atomic/core";
+import {ICoerceable, IFunctor, ILookup, IAssociative, IFind, IMapEntry, IYankable, ISeq, INext, ISeqable, ICounted, IInclusive, IEmptyableCollection, IMap, IReduce, IKVReduce, ICloneable, ISequential, ICollection} from "atomic/core";
 import {IPersistent, ITransientMap, ITransientInsertable, ITransientEmptyableCollection, ITransientReversible, ITransientYankable, ITransientAssociative, ITransientAppendable, ITransientPrependable, ITransientCollection} from "../../protocols";
 
 function before(self, reference, inserted){
@@ -60,7 +60,7 @@ const val = forward(IMapEntry.val);
 const contains = forward(IAssociative.contains);
 const keys = forward(IMap.keys);
 const vals = forward(IMap.vals);
-const toObject = forward(ICoerce.toObject);
+const toObject = forward(ICoerceable.toObject);
 const lookup = forward(ILookup.lookup);
 const reduce = forward(IReduce.reduce);
 const reducekv = forward(IKVReduce.reducekv);
@@ -90,7 +90,7 @@ export const behaveAsTransientArray = does(
   implement(ITransientReversible, {reverse}),
   implement(ITransientMap, {dissoc}),
   implement(IMap, {keys, vals}),
-  implement(ICoerce, {toObject}),
+  implement(ICoerceable, {toObject}),
   implement(IReduce, {reduce}),
   implement(IKVReduce, {reducekv}),
   implement(ITransientAppendable, {append}),

@@ -1,4 +1,4 @@
-import {constantly, identity, isString, apply, noop, slice, partial, replace, concat, template, key, val, join, merge, filter, map, remove, isObject, specify, implement, doto, get, str, includes, overload, absorb, fmap, each, eachkv, obj, IReduce, first, query, locate, descendants, matches, reducekv, Nil, ICoerce, extend, doing} from "atomic/core";
+import {constantly, identity, isString, apply, noop, slice, partial, replace, concat, template, key, val, join, merge, filter, map, remove, isObject, specify, implement, doto, get, str, includes, overload, absorb, fmap, each, eachkv, obj, IReduce, first, query, locate, descendants, matches, reducekv, Nil, ICoerceable, extend, doing} from "atomic/core";
 import * as _ from "atomic/core";
 import * as mut from "atomic/transients";
 import {element} from "./types/element/construct";
@@ -169,7 +169,7 @@ export function checkbox(...args){
   function value2(el, checked){
     el.checked = checked;
   }
-  var value = overload(null, value1, value2);
+  const value = overload(null, value1, value2);
   return doto(checkbox(...args),
     specify(IValue, {value: value}));
 }
@@ -186,9 +186,9 @@ export function select(options, ...args){
 
 export const textbox = tag('input', {type: "text"});
 
-extend(ICoerce, {toFragment: null});
+extend(ICoerceable, {toFragment: null});
 
-export const toFragment = ICoerce.toFragment;
+export const toFragment = ICoerceable.toFragment;
 
 (function(){
 
@@ -201,7 +201,7 @@ export const toFragment = ICoerce.toFragment;
   }
 
   doto(String,
-    implement(ICoerce, {toFragment}),
+    implement(ICoerceable, {toFragment}),
     implement(IEmbeddable, {embed}));
 
 })();
@@ -235,7 +235,7 @@ export const toFragment = ICoerce.toFragment;
   }
 
   doto(Nil,
-    implement(ICoerce, {toFragment}),
+    implement(ICoerceable, {toFragment}),
     implement(IEmbeddable, {embed: identity}));
 
 })();

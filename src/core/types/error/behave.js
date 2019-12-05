@@ -1,4 +1,4 @@
-import {IFunctor, IFork} from '../../protocols';
+import {IFunctor, IForkable} from '../../protocols';
 import {identity, does} from '../../core';
 import {implement} from '../protocol';
 
@@ -7,5 +7,5 @@ function fork(self, reject, resolve){
 }
 
 export const behaveAsError = does(
-  implement(IFork, {fork}),
+  implement(IForkable, {fork}),
   implement(IFunctor, {fmap: identity}));

@@ -1,6 +1,6 @@
 import {overload, identity, fmap, map, blot, compact, flatten, toArray, satisfies, isPromise, Promise, detect, seq, ISeq} from 'atomic/core';
 import {ICheckable} from "../../protocols/icheckable/instance";
-import {IConstrained} from "../../protocols/iconstrained/instance";
+import {IConstrainable} from "../../protocols/iconstrainable/instance";
 import {_ as v} from "param.macro";
 
 export function Issue(constraint, path){
@@ -13,7 +13,7 @@ export function issue(constraint, path){
 }
 
 function issues1(obj){
-  return seq(ICheckable.check(IConstrained.constraints(obj), obj));
+  return seq(ICheckable.check(IConstrainable.constraints(obj), obj));
 }
 
 function issues2(xs, f) {

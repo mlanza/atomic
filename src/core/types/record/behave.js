@@ -1,7 +1,7 @@
 import {does, constructs} from '../../core';
 import {implement} from '../protocol';
 import {reduced} from "../reduced/construct";
-import {IReduce, IKVReduce, IEquiv, ICoerce, IDescriptive, IAssociative, ISeqable, ILookup, ICounted, IMap, ISeq, IRecord, IEmptyableCollection} from '../../protocols';
+import {IReduce, IKVReduce, IEquiv, ICoerceable, IDescriptive, IAssociative, ISeqable, ILookup, ICounted, IMap, ISeq, IRecord, IEmptyableCollection} from '../../protocols';
 import {Symbol} from '../symbol/construct';
 
 function toObject(self){
@@ -92,7 +92,7 @@ export const behaveAsRecord = does(
   implement(IReduce, {reduce}),
   implement(IKVReduce, {reducekv}),
   implement(IEquiv, {equiv}),
-  implement(ICoerce, {toObject}),
+  implement(ICoerceable, {toObject}),
   implement(IEmptyableCollection, {empty}),
   implement(IAssociative, {assoc, contains}),
   implement(ILookup, {lookup}),

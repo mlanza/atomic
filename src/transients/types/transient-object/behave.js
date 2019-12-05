@@ -1,7 +1,7 @@
 import {does, overload, doto, forwardTo} from "atomic/core";
 import {implement} from "atomic/core";
 import {transientObject} from "./construct";
-import {ICoerce, IEquiv, IFn, IComparable, IDescriptive, IMatch, IFunctor, ILookup, IAssociative, IFind, IMapEntry, IYankable, ISeq, INext, ISeqable, ICounted, IInclusive, IEmptyableCollection, IMap, IReduce, IKVReduce, ICloneable, ISequential, ICollection} from "atomic/core";
+import {ICoerceable, IEquiv, IFn, IComparable, IDescriptive, IMatchable, IFunctor, ILookup, IAssociative, IFind, IMapEntry, IYankable, ISeq, INext, ISeqable, ICounted, IInclusive, IEmptyableCollection, IMap, IReduce, IKVReduce, ICloneable, ISequential, ICollection} from "atomic/core";
 import {IPersistent, ITransientYankable, ITransientAssociative, ITransientEmptyableCollection, ITransientCollection, ITransientMap} from "../../protocols";
 
 function yank(self, entry){
@@ -58,7 +58,7 @@ function persistent(self){
 const forward = forwardTo("obj");
 const keys = forward(IMap.keys);
 const vals = forward(IMap.vals);
-const matches = forward(IMatch.matches);
+const matches = forward(IMatchable.matches);
 const find = forward(IFind.find);
 const includes = forward(IInclusive.includes);
 const lookup = forward(ILookup.lookup);
@@ -70,7 +70,7 @@ const seq = forward(ISeqable.seq);
 const count = forward(ICounted.count);
 const reduce = forward(IReduce.reduce);
 const reducekv = forward(IKVReduce.reducekv);
-const toArray = forward(ICoerce.toArray);
+const toArray = forward(ICoerceable.toArray);
 
 export const behaveAsTransientObject = does(
   implement(IDescriptive),
@@ -78,7 +78,7 @@ export const behaveAsTransientObject = does(
   implement(ITransientCollection, {conj}),
   implement(IComparable, {compare}),
   implement(ITransientEmptyableCollection, {empty}),
-  implement(ICoerce, {toArray, toObject}),
+  implement(ICoerceable, {toArray, toObject}),
   implement(IFn, {invoke: lookup}),
   implement(IReduce, {reduce}),
   implement(IKVReduce, {reducekv}),
@@ -95,4 +95,4 @@ export const behaveAsTransientObject = does(
   implement(IEquiv, {equiv}),
   implement(IMap, {keys, vals}),
   implement(ITransientMap, {dissoc}),
-  implement(IMatch, {matches}));
+  implement(IMatchable, {matches}));

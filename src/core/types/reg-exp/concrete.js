@@ -23,7 +23,7 @@ export function reFind(re, s){
 }
 
 function reFindAll2(text, find){
-  var found = find(text);
+  const found = find(text);
   return found ? lazySeq(function(){
     return cons(found, reFindAll2(text, find));
   }) : emptyList();

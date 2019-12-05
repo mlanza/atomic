@@ -1,4 +1,4 @@
-import {identity, does, implement, filtera, locate, ISequential, ISeq, IDeref, ICoerce, ICounted, ICollection, IInclusive, IYankable} from 'atomic/core';
+import {identity, does, implement, filtera, locate, ISequential, ISeq, IDeref, ICoerceable, ICounted, ICollection, IInclusive, IYankable} from 'atomic/core';
 import {ITransientCollection, ITransientYankable} from 'atomic/transients';
 
 function seq(self){
@@ -39,4 +39,4 @@ export const behaveAsSpaceSeparated = does(
   implement(ITransientYankable, {yank}),
   implement(ICounted, {count}),
   implement(ITransientCollection, {conj}),
-  implement(ICoerce, {toArray: deref}));
+  implement(ICoerceable, {toArray: deref}));

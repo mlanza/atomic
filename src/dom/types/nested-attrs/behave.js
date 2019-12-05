@@ -1,4 +1,4 @@
-import {constantly, identity, does, overload, implement, mapa, compact, trim, split, str, ICoerce, IDescriptive, ISeqable, IMap, IAssociative, ILookup, IDeref, ICounted, ICollection, IReduce, IInclusive, IYankable} from 'atomic/core';
+import {constantly, identity, does, overload, implement, mapa, compact, trim, split, str, ICoerceable, IDescriptive, ISeqable, IMap, IAssociative, ILookup, IDeref, ICounted, ICollection, IReduce, IInclusive, IYankable} from 'atomic/core';
 import {ITransientYankable, ITransientAssociative, ITransientMap, ITransientCollection} from 'atomic/transients';
 
 function asText(obj){
@@ -64,4 +64,4 @@ export const behaveAsNestedAttrs = does(
   implement(ILookup, {lookup}),
   implement(ITransientYankable, {yank}),
   implement(ITransientCollection, {conj}),
-  implement(ICoerce, {toObject: deref}));
+  implement(ICoerceable, {toObject: deref}));

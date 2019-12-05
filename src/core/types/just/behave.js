@@ -1,7 +1,7 @@
 import {implement} from '../protocol';
 import {identity, does} from '../../core';
 import {just} from './construct';
-import {IFunctor, IOtherwise, IFork, IDeref} from '../../protocols';
+import {IFunctor, IOtherwise, IForkable, IDeref} from '../../protocols';
 
 function fmap(self, f){
   return just(f(self.value));
@@ -21,6 +21,6 @@ function deref(self){
 
 export const behaveAsJust = does(
   implement(IDeref, {deref}),
-  implement(IFork, {fork}),
+  implement(IForkable, {fork}),
   implement(IOtherwise, {otherwise}),
   implement(IFunctor, {fmap}));

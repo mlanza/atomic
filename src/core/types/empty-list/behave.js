@@ -1,6 +1,6 @@
 import {identity, constantly, does} from '../../core';
 import {implement} from '../protocol';
-import {IBlankable, ICoerce, IInclusive, IReversible, ICollection, INext, ISeq, ISeqable, ISequential, IAssociative, IIndexed, IEmptyableCollection, IKVReduce, IReduce, ICounted} from '../../protocols';
+import {IBlankable, ICoerceable, IInclusive, IReversible, ICollection, INext, ISeq, ISeqable, ISequential, IAssociative, IIndexed, IEmptyableCollection, IKVReduce, IReduce, ICounted} from '../../protocols';
 import {emptyList, EmptyList} from '../../types/empty-list/construct';
 import {emptyArray} from '../../types/array/construct';
 import {Symbol} from '../symbol/construct';
@@ -18,7 +18,7 @@ export const behaveAsEmptyList = does(
   implement(IInclusive, {includes: constantly(false)}),
   implement(IKVReduce, {reducekv: reduce}),
   implement(IReduce, {reduce}),
-  implement(ICoerce, {toArray: emptyArray}),
+  implement(ICoerceable, {toArray: emptyArray}),
   implement(ISeq, {first: constantly(null), rest: emptyList}),
   implement(INext, {next: constantly(null)}),
   implement(ISeqable, {seq: constantly(null)}));

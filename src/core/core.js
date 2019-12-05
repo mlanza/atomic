@@ -83,7 +83,7 @@ export function constantly(x){
 
 export function doto(obj, ...effects){
   const len = effects.length;
-  for(var i = 0; i < len; i++){
+  for(let i = 0; i < len; i++){
     const effect = effects[i];
     effect(obj);
   }
@@ -93,7 +93,7 @@ export function doto(obj, ...effects){
 export function does(...effects){
   return function(...args){
     const len = effects.length;
-    for(var i = 0; i < len; i++){
+    for(let i = 0; i < len; i++){
       const effect = effects[i];
       effect(...args);
     }

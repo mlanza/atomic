@@ -1,6 +1,6 @@
 import {does} from '../../core';
 import {implement} from '../protocol';
-import {ICoerce, IBounds, IInverse, ISteppable, ISequential, ICollection, IComparable, INext, IEquiv, IReduce, IKVReduce, ISeqable, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, ISeq, IInclusive, IIndexed} from '../../protocols';
+import {ICoerceable, IBounds, IInverse, ISteppable, ISequential, ICollection, IComparable, INext, IEquiv, IReduce, IKVReduce, ISeqable, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, ISeq, IInclusive, IIndexed} from '../../protocols';
 import {between} from '../../protocols/ibounds/concrete';
 import {unreduced, isReduced} from '../reduced';
 import {drop} from '../lazy-seq';
@@ -65,7 +65,7 @@ function nth(self, idx){
 }
 
 function count(self){
-  var n  = 0,
+  let n  = 0,
       xs = self;
   while (ISeqable.seq(xs)) {
     n++;
@@ -84,7 +84,7 @@ export const behaveAsRange = does(
   implement(IInclusive, {includes: between}),
   implement(ISeqable, {seq}),
   implement(IBounds, {start, end}),
-  implement(ICoerce, {toArray}),
+  implement(ICoerceable, {toArray}),
   implement(IReduce, {reduce}),
   implement(INext, {next}),
   implement(ISeq, {first, rest}),
