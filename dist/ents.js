@@ -528,10 +528,6 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
       }, assertions(self));
     }
 
-    function identifier(self){ //TODO use?
-      return IIdentifiable.identifier(self.topic);
-    }
-
     function id(self){
       return _.guid(self.attrs.id);
     }
@@ -541,7 +537,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
     }
 
     function kind(self){ //TODO use?
-      return self.topic.attrs.key; //TODO demeter
+      return IIdentifiable.identifier(self.topic);
     }
 
     function lookup(self, key){
@@ -561,7 +557,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
     }
 
     function keys(self){
-      return _.keys(self.topic);
+      return imm.distinct(_.concat(_.keys(self.topic), _.keys(self.attrs)));
     }
 
     function constraints(self){
@@ -577,7 +573,6 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
     return _.does(
       _.implement(ISerializable, {serialize: serialize}),
       _.implement(IConstrainable, {constraints: constraints}),
-      _.implement(IIdentifiable, {identifier: identifier}),
       _.implement(IEntity, {id: id, assertions: assertions}),
       _.implement(IMap, {keys: keys, dissoc: dissoc}),
       _.implement(IVertex, {outs: outs}),
@@ -1315,7 +1310,6 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
 
     function add(self, entities){
       var xs = _.mapcat(IEntity.assertions, entities);
-      _.log("added", _.toArray(xs));
       return new self.constructor(self.indexes, IBuffer.add(self.workspace, entities));
     }
 
@@ -2451,7 +2445,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
 
   })();
 
-  var buf = buffer(jsonResource("./dist/outline.json", work), $.timeTraveler($.cell(indexedEntityWorkspace(assertionStore(), entityWorkspace()))));
+  var buf = buffer(jsonResource("./dist/outline.json", work), $.timeTraveler($.cell(indexedEntityWorkspace())));
 
   _.maybe(dom.sel1("#outline"), function(el){
     var ol = outline(buf, {root: null});
