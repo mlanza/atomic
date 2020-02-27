@@ -35,6 +35,7 @@ export default {
     "atomic",
     "atomic/core",
     "atomic/immutables",
+    "atomic/repos",
     "atomic/requests",
     "atomic/reactives",
     "atomic/transducers",

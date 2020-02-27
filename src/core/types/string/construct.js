@@ -1,5 +1,5 @@
 export function isString(s){
-  return typeof s === "string";
+  return s != null && typeof s === "string";
 }
 export function emptyString(){
   return "";

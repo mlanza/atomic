@@ -1,6 +1,6 @@
 import {overload, toggles, identity, obj, partly, doto, branch, unspread, applying, execute, noop} from "./core";
 import {IAppendable, IYankable, ICoerceable, IAssociative, IBounds, IInverse, ICloneable, ICollection, IComparable, ICounted, IDeref, IDisposable, IEmptyableCollection, IEquiv, IFind, IFn, IForkable, IFunctor, IHierarchy, IInclusive, IIndexed, IInsertable, IKVReduce, ILookup, IMap, IMapEntry, IMatchable, INext, IOtherwise, IPrependable, IReduce, IReset, ISeq, ISeqable, ISet, ISteppable, ISwap} from "./protocols";
-import {satisfies, filter, spread, maybe, each, duration, remove, sort, flip, realized, comp, isNumber, isFunction, apply, realize, isNil} from "./types";
+import {just, satisfies, filter, spread, maybe, each, duration, remove, sort, flip, realized, comp, isNumber, isFunction, apply, realize, isNil, reFindAll, mapkv} from "./types";
 import {add, subtract, compact, matches, name, descendants, query, locate, deref, get, assoc, yank, conj, reducing, toArray, reducekv, includes, excludes} from "./protocols/concrete";
 import {isString, isBlank, str, replace} from "./types/string";
 import {isSome} from "./types/nil";
@@ -19,6 +19,19 @@ export * from "./associatives";
 import Set from 'set';
 
 export const global = window;
+
+export function toQueryString(obj){
+  return just(obj, mapkv(str(v, "=", v), v), join("&", v), collapse("?", v));
+}
+
+export function fromQueryString(url){
+  const params = {};
+  each(function (match) {
+    const key = decodeURIComponent(match[1]), val = decodeURIComponent(match[2]);
+    params[key] = val;
+  }, reFindAll(/[?&]([^=&]*)=([^=&]*)/g, url));
+  return params;
+}
 
 export function unique(xs){
   return toArray(new Set(toArray(xs)));
