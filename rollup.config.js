@@ -9,6 +9,7 @@ export default {
     'src/reactives.js',
     'src/transducers.js',
     'src/transients.js',
+    'src/repos.js',
     'src/requests.js',
     'src/validates.js'
   ],
@@ -44,6 +45,7 @@ export default {
     "atomic/reactives",
     "atomic/transducers",
     "atomic/transients",
+    "atomic/repos",
     "atomic/requests",
     "atomic/validates",
     "atomic/dom"
