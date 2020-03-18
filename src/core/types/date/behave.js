@@ -11,7 +11,7 @@ function lookup(self, key){
     case "year":
       return self.getFullYear();
     case "month":
-      return self.getMonth() + 1;
+      return self.getMonth();
     case "day":
       return self.getDate();
     case "hours":
@@ -57,7 +57,7 @@ function assoc(self, key, value){
       dt.setFullYear(value);
       break;
     case "month":
-      dt.setMonth(value - 1); //abstract away javascript's base 0 months!
+      dt.setMonth(value);
       break;
     case "day":
       dt.setDate(value);
@@ -82,10 +82,6 @@ function assoc(self, key, value){
 
 function clone(self){
   return new Date(self.valueOf());
-}
-
-function show(self){
-  return "\"" + self.toISOString() + "\"";
 }
 
 function unit2(self, amount){

@@ -31,7 +31,7 @@ function seq(self) {
 }
 
 function includes(self, value){
-  return some(function(x){
+  return !!some(function(x){
     return x === value;
   }, self);
 }

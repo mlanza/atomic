@@ -91,7 +91,7 @@ export function isOdd(n){
   return n % 2;
 }
 
-export const isEven  = complement(isOdd);
+export const isEven = complement(isOdd);
 
 export function clamp(self, min, max){
   return self < min ? min : self > max ? max : self;

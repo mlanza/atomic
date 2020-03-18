@@ -1,24 +1,15 @@
 import {does} from '../../core';
 import {implement} from '../protocol';
-import {ICoerceable, IBounds, IInverse, ISteppable, ISequential, ICollection, IComparable, INext, IEquiv, IReduce, IKVReduce, ISeqable, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, ISeq, IInclusive, IIndexed} from '../../protocols';
-import {between} from '../../protocols/ibounds/concrete';
+import {ICoerceable, IInverse, ISteppable, ISequential, ICollection, IComparable, INext, IEquiv, IReduce, IKVReduce, ISeqable, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, ISeq, IInclusive, IIndexed} from '../../protocols';
 import {unreduced, isReduced} from '../reduced';
-import {drop} from '../lazy-seq';
+import {some, drop} from '../lazy-seq';
 import {comp} from '../function';
 import {iterable} from '../lazy-seq/behave';
 import {emptyable} from "../record/behave";
-import {emptyRange} from "./construct";
+import {_ as v} from "param.macro";
 
 function seq(self){
   return IEquiv.equiv(self.start, self.end) || (self.step == null && self.direction == null && self.start == null && self.end == null) ? null : self;
-}
-
-function start(self){
-  return self.start;
-}
-
-function end(self){
-  return self.end;
 }
 
 function first(self){
@@ -26,7 +17,7 @@ function first(self){
 }
 
 function rest(self){
-  return next(self) || emptyRange();
+  return INext.next(self) || new self.constructor(self.end, self.end, self.step, self.direction);
 }
 
 function next(self){
@@ -61,7 +52,7 @@ function inverse(self){
 }
 
 function nth(self, idx){
-  return first(drop(idx, self));
+  return ISeq.first(drop(idx, self));
 }
 
 function count(self){
@@ -74,6 +65,30 @@ function count(self){
   return n;
 }
 
+function includes(self, value){
+  let xs = self;
+  if (self.direction > 0) {
+    while (ISeqable.seq(xs)) {
+      let c = IComparable.compare(ISeq.first(xs), value);
+      if (c === 0)
+        return true;
+      if (c > 0)
+        break;
+      xs = ISeq.rest(xs);
+    }
+  } else {
+    while (ISeqable.seq(xs)) {
+      let c = IComparable.compare(ISeq.first(xs), value);
+      if (c === 0)
+        return true;
+      if (c < 0)
+        break;
+      xs = ISeq.rest(xs);
+    }
+  }
+  return false;
+}
+
 export const behaveAsRange = does(
   iterable,
   emptyable,
@@ -81,9 +96,8 @@ export const behaveAsRange = does(
   implement(IInverse, {inverse}),
   implement(IIndexed, {nth}),
   implement(ICounted, {count}),
-  implement(IInclusive, {includes: between}),
+  implement(IInclusive, {includes}),
   implement(ISeqable, {seq}),
-  implement(IBounds, {start, end}),
   implement(ICoerceable, {toArray}),
   implement(IReduce, {reduce}),
   implement(INext, {next}),

@@ -1,4 +1,7 @@
 import {protocol} from "../../types/protocol";
-export const ICloneable = protocol({
-  clone: null
-});
+
+function clone(self){
+  return Object.assign(Object.create(self.constructor.prototype), self);
+}
+
+export const ICloneable = protocol({clone});

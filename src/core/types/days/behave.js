@@ -1,20 +1,20 @@
-import {ISteppable, IInverse, ICloneable} from '../../protocols';
+import {ISteppable, ICoerceable, IMultipliable} from '../../protocols';
 import {does} from '../../core';
 import {implement} from '../protocol';
-import {min} from '../number/concrete';
-import * as w from '../date/concrete';
-import {patch} from '../../associatives';
+import {duration} from '../duration';
+import {datestep} from '../date/concrete';
 
-function step(self, dt){
-  const date = new Date(dt.valueOf());
-  date.setDate(date.getDate() + self.n);
-  return date;
+const step = datestep("day");
+
+function mult(self, n){
+  return new self.constructor(self.n * n, self.options);
 }
 
-function inverse(self){
-  return new self.construct(self.n * -1, self.options);
+function toDuration(self){
+  return duration(self.n * 1000 * 60 * 60 * 24);
 }
 
 export const behaveAsDays = does(
-  implement(IInverse, {inverse}),
+  implement(IMultipliable, {mult}),
+  implement(ICoerceable, {toDuration}),
   implement(ISteppable, {step}));

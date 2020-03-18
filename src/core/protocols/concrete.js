@@ -29,6 +29,7 @@ export * from "./imap/concrete";
 export * from "./imapentry/concrete";
 export * from "./imatchable/concrete";
 export * from "./imergeable/concrete";
+export * from "./imultipliable/concrete";
 export * from "./inameable/concrete";
 export * from "./inext/concrete";
 export * from "./iotherwise/concrete";

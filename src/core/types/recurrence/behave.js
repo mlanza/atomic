@@ -1,0 +1,1 @@
+export {behaveAsRange as behaveAsRecurrence} from '../range/behave';

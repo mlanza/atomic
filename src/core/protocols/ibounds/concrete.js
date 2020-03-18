@@ -9,6 +9,9 @@ function chronology(item){
   return s == null || e == null ? [s, e] : [s, e].sort(IComparable.compare);
 }
 
+//The end range value must also be the start range value of the next successive range to avoid infinitisimally small gaps.
+//As such, the end range value cannot itself be considered part of a range, for if it did that value would nonsensically belong to two successive ranges.
+
 export function inside(sr, er, b){
   if (b == null) {
     return false;
@@ -16,7 +19,7 @@ export function inside(sr, er, b){
   if (sr == null && er == null) {
     return true;
   }
-  return (sr == null || IComparable.compare(b, sr) >= 0) && (er == null || IComparable.compare(b, er) <= 0);
+  return (sr == null || IComparable.compare(b, sr) >= 0) && (er == null || IComparable.compare(b, er) < 0);
 }
 
 export function between(a, b){

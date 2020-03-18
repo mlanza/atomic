@@ -1,7 +1,7 @@
 import {protocol} from "../../types/protocol";
-import {IDeref} from "../ideref";
+import {IMultipliable} from "../imultipliable";
 function inverse(self){
-  return new self.constructor(IDeref.deref(self) * -1);
+  return IMultipliable.mult(self, -1);
 }
 export const IInverse = protocol({
   inverse: inverse
