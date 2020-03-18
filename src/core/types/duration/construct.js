@@ -1,5 +1,7 @@
 import {overload} from "../../core";
+import {ICoerceable, IDeref} from "../../protocols";
 import {days, weeks} from "../days/construct";
+import {isNumber} from "../number/concrete";
 import {months} from "../months/construct";
 import {years} from "../years/construct";
 import {Symbol} from '../symbol/construct';
@@ -30,18 +32,20 @@ Duration.prototype[Symbol.toStringTag] = "Duration";
 Duration.create = duration;
 Duration.from = from;
 
-export const milliseconds = duration1;
-
-export function seconds(n){
-  return duration1(n * 1000);
+export function hours(self){
+  return isNumber(self) ? duration1(self * 1000 * 60 * 60) : self.getHours();
 }
 
-export function minutes(n){
-  return duration1(n * 1000 * 60);
+export function minutes(self){
+  return isNumber(self) ? duration1(self * 1000 * 60) : self.getMinutes();
 }
 
-export function hours(n){
-  return duration1(n * 1000 * 60 * 60);
+export function seconds(self){
+  return isNumber(self) ? duration1(self * 1000) : self.getSeconds();
+}
+
+export function milliseconds(self){
+  return isNumber(self) ? duration1(self) : self.getMilliseconds();
 }
 
 const units = {
@@ -55,6 +59,6 @@ const units = {
   years
 }
 
-export function isDuration(self){
-  return self instanceof Duration;
+export function ddiv(a, b){
+  return IDeref.deref(ICoerceable.toDuration(a)) / IDeref.deref(ICoerceable.toDuration(b));
 }

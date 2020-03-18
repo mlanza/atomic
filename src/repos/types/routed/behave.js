@@ -5,7 +5,7 @@ import {query} from "../request/behave";
 import {_ as v} from "param.macro";
 
 function filled(self){
-  return !_.test(/\{[^{}]+\}/, IAddress.addr(self));
+  return _.maybe(self, IAddress.addr, _.test(/\{[^{}]+\}/, v), _.not);
 }
 
 function fork(self, reject, resolve){

@@ -30,6 +30,7 @@ export * from "./protocols/imap/instance";
 export * from "./protocols/imapentry/instance";
 export * from "./protocols/imatchable/instance";
 export * from "./protocols/imergeable/instance";
+export * from "./protocols/imultipliable/instance";
 export * from "./protocols/inameable/instance";
 export * from "./protocols/inext/instance";
 export * from "./protocols/iotherwise/instance";

@@ -1,30 +1,20 @@
-import {ISteppable, IInverse, ICloneable} from '../../protocols';
+import {ISteppable, ICoerceable, IMultipliable} from '../../protocols';
 import {does} from '../../core';
 import {implement} from '../protocol';
-import {min} from '../number/concrete';
-import * as w from '../date/concrete';
-import {patch} from '../../associatives';
+import {duration} from '../duration';
+import {datestep} from '../date/concrete';
 
-function inverse(self){
-  return new self.constructor(self.n * -1, self.options);
+const step = datestep("year");
+
+function mult(self, n){
+  return new self.constructor(self.n * n, self.options);
 }
 
-function step(self, dt){
-  const day = self.options.day || dt.getDate();
-  if (day > 28) {
-    const som  = patch(dt, w.som());
-    const calc = ICloneable.clone(som);
-    calc.setFullYear(calc.getFullYear() + self.n);
-    const eom  = patch(calc, w.eom());
-    calc.setDate(day);
-    return min(calc, eom);
-  } else {
-    const calc = ICloneable.clone(dt);
-    calc.setFullYear(calc.getFullYear() + self.n);
-    return calc;
-  }
+function toDuration(self){
+  return duration(self.n * 1000 * 60 * 60 * 24 * 365.25);
 }
 
 export const behaveAsYears = does(
-  implement(IInverse, {inverse}),
+  implement(IMultipliable, {mult}),
+  implement(ICoerceable, {toDuration}),
   implement(ISteppable, {step}));

@@ -7,7 +7,7 @@ export function ProtocolLookupError(protocol, method, subject, args) {
 
 ProtocolLookupError.prototype = new Error();
 ProtocolLookupError.prototype.toString = function(){
-  return "Protocol lookup for " + this.method + " failed.";
+  return `Protocol lookup for ${this.method} failed.`;
 }
 
 export function protocolLookupError(...args){

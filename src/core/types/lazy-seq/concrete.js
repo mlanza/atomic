@@ -2,7 +2,7 @@ import {ICompactable, IEquiv, IMap, ICoerceable, IAssociative, ILookup, IInclusi
 import {trampoline, identity, constantly, overload} from '../../core';
 import {EmptyList, emptyList} from '../empty-list/construct';
 import {emptyArray} from '../array/construct';
-import {inc, randInt} from '../number/concrete';
+import {inc, randInt, isEven} from '../number/concrete';
 import {reduced} from '../reduced/construct';
 import {not} from '../boolean';
 import {isNil, isSome} from '../nil';
@@ -28,19 +28,25 @@ function map2(f, xs){
 function map3(f, c1, c2){
   const s1 = ISeqable.seq(c1),
         s2 = ISeqable.seq(c2);
-  return s1 && s2 ? cons(f(ISeq.first(s1), ISeq.first(s2)), map3(f, ISeq.rest(s1), ISeq.rest(s2))) : emptyList();
+  return s1 && s2 ? lazySeq(function(){
+    return cons(f(ISeq.first(s1), ISeq.first(s2)), map3(f, ISeq.rest(s1), ISeq.rest(s2)));
+  }) : emptyList();
 }
 
 function map4(f, c1, c2, c3){
   const s1 = ISeqable.seq(c1),
         s2 = ISeqable.seq(c2),
         s3 = ISeqable.seq(c3);
-  return s1 && s2 && s3 ? cons(f(ISeq.first(s1), ISeq.first(s2), ISeq.first(s3)), map4(f, ISeq.rest(s1), ISeq.rest(s2), ISeq.rest(s3))) : emptyList();
+  return s1 && s2 && s3 ? lazySeq(function(){
+    return cons(f(ISeq.first(s1), ISeq.first(s2), ISeq.first(s3)), map4(f, ISeq.rest(s1), ISeq.rest(s2), ISeq.rest(s3)));
+  }) : emptyList();
 }
 
 function mapN(f, ...tail){
-  const seqs = mapa(ISeqable.seq, tail);
-  return notAny(isNil, seqs) ? cons(apply(f, mapa(ISeq.first, seqs)), apply(mapN, f, mapa(ISeq.rest, seqs))) : emptyList();
+  const seqs = map(ISeqable.seq, tail);
+  return notAny(isNil, seqs) ? lazySeq(function(){
+    return cons(apply(f, mapa(ISeq.first, seqs)), apply(mapN, f, mapa(ISeq.rest, seqs)));
+  }) : emptyList();
 }
 
 export const map  = overload(null, null, map2, map3, mapN);
@@ -71,7 +77,6 @@ function into3(to, xform, from){
 }
 
 export const into = overload(emptyArray, identity, into2, into3);
-
 
 //TODO unnecessary if CQS pattern is that commands return self
 function doing1(f){
@@ -643,7 +648,8 @@ export function randNth(coll){
   return IIndexed.nth(coll, randInt(ICounted.count(coll)));
 }
 
-export function cond(...conditions){
+export function cond(...xs){
+  const conditions = isEven(ICounted.count(xs)) ? xs : Array.from(concat(butlast(xs), [constantly(true), last(xs)]));
   return function(...args){
     return IReduce.reduce(partition(2, conditions), function(memo, condition){
       const pred = ISeq.first(condition);
