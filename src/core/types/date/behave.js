@@ -2,7 +2,7 @@ import {does, overload, constantly, identity} from '../../core';
 import {implement} from '../protocol';
 import {IReduce, IKVReduce, ISeqable, IBounds, IMap, IDeref, ISeq, IComparable, IEquiv, ICloneable, ILookup, IAssociative, ICollection} from '../../protocols';
 import {isNumber} from '../number';
-import {days} from '../days';
+import {days} from '../duration';
 import {isDate} from "./concrete";
 import {Symbol} from '../symbol/construct';
 

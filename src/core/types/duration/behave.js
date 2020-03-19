@@ -1,16 +1,50 @@
 import {implement} from '../protocol';
-import {does, overload, identity} from '../../core';
-import {ISteppable, IDeref, ICoerceable} from '../../protocols';
+import {does, identity} from '../../core';
+import {ISteppable, ICoerceable, IMultipliable, IMap, IAssociative, ILookup, IInclusive} from '../../protocols';
+import {reducekv} from '../../protocols/ikvreduce/concrete';
+import {add} from '../../protocols/isteppable/concrete';
+import {dadd, isDate} from "../../types/date/concrete";
+import {duration} from '../duration/construct';
+import {mergeWith} from '../../associatives';
 
-function deref(self){
-  return self.milliseconds;
+const units = ["year", "month", "day", "hours", "minutes", "seconds", "milliseconds"];
+
+function mult(self, n){
+  return new self.constructor(reducekv(function(memo, key, value){
+    return IAssociative.assoc(memo, key, value * n);
+  }, {}, self.units));
 }
 
 function step(self, dt){
-  return new Date(dt.valueOf() + self.milliseconds);
+  return dt == null ? null : isDate(dt) ? reducekv(function(memo, key, value){
+    return dadd(memo, value, key);
+  }, dt, self.units) : duration(mergeWith(add, dt.units, self.units));
+}
+
+const toDuration = identity;
+
+function keys(self){
+  return IMap.keys(self.units);
+}
+
+function lookup(self, key){
+  if (!IInclusive.includes(units, key)){
+    throw new Error("Invalid duration unit.");
+  }
+  return ILookup.lookup(self.units, key);
+}
+
+function assoc(self, key, value){
+  if (!IInclusive.includes(units, key)){
+    throw new Error("Invalid duration unit.");
+  }
+  return duration(IAssociative.assoc(self.units, key, value));
 }
 
 export const behaveAsDuration = does(
-  implement(ICoerceable, {toDuration: identity}),
-  implement(IDeref, {deref}),
+  implement(IAssociative, {assoc}),
+  implement(ILookup, {lookup}),
+  implement(IMap, {keys}),
+  implement(IMultipliable, {mult}),
+  implement(ICoerceable, {toDuration}),
   implement(ISteppable, {step}));
