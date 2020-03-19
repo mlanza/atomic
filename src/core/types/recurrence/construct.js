@@ -1,5 +1,5 @@
 import {overload} from '../../core';
-import {days} from '../days/construct';
+import {days} from '../duration/construct';
 import {sod, eod, isDate} from '../date/concrete';
 import {filter} from '../lazy-seq/concrete';
 import {steps} from '../../protocols/isteppable/concrete';

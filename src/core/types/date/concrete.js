@@ -4,12 +4,42 @@ import {inc} from '../../types/number/concrete';
 import {overload} from '../../core';
 import {_ as v} from "param.macro";
 
-export function dadd(dt, n, key){
-  return IAssociative.assoc(dt, key, ILookup.lookup(dt, key) + n);
+export function monthDays(dt){
+  return patch(dt, {
+    month: inc,
+    day: 0,
+    hours: 0,
+    minutes: 0,
+    seconds: 0,
+    milliseconds: 0
+  }).getDate();
 }
 
-function dset(dt, n, key){
-  return IAssociative.assoc(dt, key, n);
+export function weekday(self){
+  return self ? !weekend(self) : null;
+}
+
+export function weekend(self){
+  const day = dow1(self);
+  return day == null ? null : day == 0 || day == 6;
+}
+
+function dow1(self){
+  return self ? self.getDay() : null;
+}
+
+function dow2(self, n){
+  return self ? dow1(self) === n : null;
+}
+
+export const dow = overload(null, dow1, dow2);
+
+export function dadd(self, n, key){
+  return IAssociative.assoc(self, key, ILookup.lookup(self, key) + n);
+}
+
+function dset(self, n, key){
+  return IAssociative.assoc(self, key, n);
 }
 
 function year1(self){
