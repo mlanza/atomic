@@ -6,6 +6,10 @@ import {overload} from "../../core";
 
 export const step = ISteppable.step;
 
+export function directed(start, step) {
+  return compare(ISteppable.step(step, start), start);;
+}
+
 export function steps(Type, pred){
   return function(start, end, step){
     if (start == null && end == null) {
@@ -20,7 +24,7 @@ export function steps(Type, pred){
     if (start == null && end != null) {
       throw Error(Type.name + " cannot get started without a beginning.");
     }
-    const direction = compare(ISteppable.step(step, start), start);;
+    const direction = directed(start, step);
     if (direction === 0) {
       throw Error(Type.name + " lacks direction.");
     }
