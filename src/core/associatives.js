@@ -44,6 +44,7 @@ function scanKeyN(better, k, x, ...args){
 export const scanKey = overload(null, scanKey1, null, scanKey3, scanKey4, scanKeyN);
 export const maxKey  = scanKey(gt);
 export const minKey  = scanKey(lt);
+export const prop    = overload(null, null, ILookup.lookup, IAssociative.assoc);
 
 function absorb2(tgt, src){
   return IKVReduce.reducekv(src || IEmptyableCollection.empty(tgt), function(memo, key, value){

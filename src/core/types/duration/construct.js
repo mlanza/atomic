@@ -2,6 +2,9 @@ import {overload} from "../../core";
 import {ICoerceable, IAssociative, ILookup, IDeref, IMap} from "../../protocols";
 import {Symbol} from '../symbol/construct';
 import {isNumber, inc} from "../number/concrete";
+import {prop} from "../../associatives";
+import {branch} from "../../core";
+import {_ as v} from "param.macro";
 
 export function Duration(units){
   this.units = units;
@@ -19,18 +22,13 @@ Duration.prototype[Symbol.toStringTag] = "Duration";
 Duration.create = duration;
 Duration.from = from;
 
+function kind(self, key){
+  return duration(IAssociative.assoc({}, key, self));
+}
+
 //TODO make duration normalize units (e.g. so that when you request `hours` you get the max. value).
 function unit(key){
-
-  function f1(self){
-    return isNumber(self) ? duration(IAssociative.assoc({}, key, self)) : ILookup.lookup(self, key);
-  }
-
-  function f2(self, n){
-    return IAssociative.assoc(self, key, n);
-  }
-
-  return overload(null, f1, f2);
+  return branch(isNumber, kind(v, key), overload(null, ILookup.lookup(v, key), IAssociative.assoc(v, key, v)));
 }
 
 export const years = unit("year");
