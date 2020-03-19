@@ -4,8 +4,8 @@ import {inc} from '../../types/number/concrete';
 import {overload} from '../../core';
 import {_ as v} from "param.macro";
 
-export function monthDays(dt){
-  return patch(dt, {
+export function monthDays(self){
+  return patch(self, {
     month: inc,
     day: 0,
     hours: 0,
