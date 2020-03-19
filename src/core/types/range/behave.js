@@ -2,11 +2,10 @@ import {does} from '../../core';
 import {implement} from '../protocol';
 import {ICoerceable, IInverse, ISteppable, ISequential, ICollection, IComparable, INext, IEquiv, IReduce, IKVReduce, ISeqable, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, ISeq, IInclusive, IIndexed} from '../../protocols';
 import {unreduced, isReduced} from '../reduced';
-import {some, drop} from '../lazy-seq';
-import {comp} from '../function';
+import {drop} from '../lazy-seq';
 import {iterable} from '../lazy-seq/behave';
 import {emptyable} from "../record/behave";
-import {_ as v} from "param.macro";
+import {directed} from '../../protocols/isteppable/concrete';
 
 function seq(self){
   return IEquiv.equiv(self.start, self.end) || (self.step == null && self.direction == null && self.start == null && self.end == null) ? null : self;
@@ -48,7 +47,10 @@ function toArray(self){
 }
 
 function inverse(self){
-  return self.constructor.create(self.end, self.start, IInverse.inverse(self.step));
+  const start = self.end,
+        end   = self.start,
+        step  = IInverse.inverse(self.step);
+  return new self.constructor(start, end, step, directed(start, step));
 }
 
 function nth(self, idx){

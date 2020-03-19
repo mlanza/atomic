@@ -1,9 +1,7 @@
 import {does} from '../../core';
 import {implement} from '../protocol';
-import {ICoerceable, IBounds, IComparable, IEquiv, IInclusive} from '../../protocols';
-import {iterable} from '../lazy-seq/behave';
 import {emptyable} from "../record/behave";
-import {_ as v} from "param.macro";
+import {ICoerceable, IBounds, IComparable, IEquiv, IInclusive} from '../../protocols';
 
 function start(self){
   return self.start;
@@ -25,9 +23,13 @@ function toDuration(self){
   return self.end == null || self.start == null ? duration(Number.POSITIVE_INFINITY) : duration(self.end - self.start);
 }
 
+function compare(self, other){ //TODO test with sort of periods
+  return IComparable.compare(other.start, self.start) || IComparable.compare(other.end, self.end);
+}
+
 export const behaveAsPeriod = does(
-  iterable,
   emptyable,
+  implement(IComparable, {compare}),
   implement(ICoerceable, {toDuration}),
   implement(IInclusive, {includes}),
   implement(IBounds, {start, end}),
