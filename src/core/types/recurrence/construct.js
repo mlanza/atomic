@@ -1,13 +1,11 @@
 import {overload} from '../../core';
 import {days} from '../days/construct';
 import {sod, eod, isDate} from '../date/concrete';
-import {steps, add} from '../../protocols/isteppable/concrete';
-import {mult} from '../../protocols/imultipliable/concrete';
-import {first, rest} from '../../protocols/iseq/concrete';
+import {filter} from '../lazy-seq/concrete';
+import {steps} from '../../protocols/isteppable/concrete';
 import {compare} from '../../protocols/icomparable/concrete';
 import {patch} from '../../associatives';
 import {Symbol} from '../symbol/construct';
-import {_ as v} from "param.macro";
 
 export function Recurrence(start, end, step, direction){
   this.start = start;
@@ -32,17 +30,15 @@ function recurrence2(start, end){
   return recurrence3(start, end, days(end == null || start <= end ? 1 : -1));
 }
 
-const recurrence3a = steps(Recurrence, isDate);
+const recurrence3 = steps(Recurrence, isDate);
 
-function recurrence3(start, end, step){
-  const normalize = add(v, mult(step, 0)),
-        s  = normalize(start),
-        e  = end == null ? end : normalize(end),
-        xs = recurrence3a(s, null, step);
-  return recurrence3a(compare(start, first(xs)) <= 0 ? s : first(rest(xs)), e, step);
+function recurrence4(start, end, step, f){
+  return filter(function(dt){
+    return compare(start, dt) <= 0;
+  }, f(recurrence3(start, end, step)));
 }
 
-export const recurrence = overload(emptyRecurrence, recurrence1, recurrence2, recurrence3);
+export const recurrence = overload(emptyRecurrence, recurrence1, recurrence2, recurrence3, recurrence4);
 
 Recurrence.from = from;
 Recurrence.create = recurrence;
