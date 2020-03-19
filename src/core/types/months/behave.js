@@ -1,13 +1,15 @@
 import {ISteppable, ICoerceable, IMultipliable} from '../../protocols';
 import {does} from '../../core';
+import {dadd} from '../date/concrete';
 import {implement} from '../protocol';
 import {duration} from '../duration';
-import {datestep} from '../date/concrete';
 
-const step = datestep("month");
+function step(self, dt){
+  return dt == null ? null : dadd(dt, self.n, "month");
+}
 
 function mult(self, n){
-  return new self.constructor(self.n * n, self.options);
+  return new self.constructor(self.n * n);
 }
 
 function toDuration(self){

@@ -2,13 +2,12 @@ import {overload} from '../../core';
 import {patch} from '../../associatives';
 import {isNumber, inc} from '../number';
 
-export function Days(n, options){
+export function Days(n){
   this.n = n;
-  this.options = options;
 }
 
-export function days(n, options){
-  return isNumber(n) ? new Days(n, options || {}) : patch(n, {
+export function days(n){
+  return isNumber(n) ? new Days(n) : patch(n, {
     month: inc,
     day: 0,
     hours: 0,
@@ -41,8 +40,8 @@ function dow2(dt, n){
 
 export const dow = overload(null, dow1, dow2);
 
-function from({n, options}){
-  return days(n, options);
+function from({n}){
+  return days(n);
 }
 
 Days.from = from;

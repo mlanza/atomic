@@ -1,14 +1,13 @@
-export function Years(n, options){
+export function Years(n){
   this.n = n;
-  this.options = options;
 }
 
-export function years(n, options){
-  return new Years(n, options || {});
+export function years(n){
+  return new Years(n);
 }
 
-function from({n, options}){
-  return years(n, options);
+function from({n}){
+  return years(n);
 }
 
 Years.from = from;

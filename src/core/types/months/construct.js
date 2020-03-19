@@ -1,14 +1,13 @@
-export function Months(n, options){
+export function Months(n){
   this.n = n;
-  this.options = options;
 }
 
-export function months(n, options){
-  return new Months(n, options || {});
+export function months(n){
+  return new Months(n);
 }
 
-function from({n, months}){
-  return months(n, options);
+function from({n}){
+  return months(n);
 }
 
 Months.from = from;

@@ -1,22 +1,40 @@
 import {IKVReduce, IAssociative, ILookup, ICloneable, ISeq} from '../../protocols';
 import {patch} from '../../associatives';
-import {duration} from '../../types/duration';
 import {inc} from '../../types/number/concrete';
-import {overload, identity} from '../../core';
-import {filter, map, drop, iterate, last} from "../../types/lazy-seq/concrete";
+import {overload} from '../../core';
 import {_ as v} from "param.macro";
 
-export function year(self){
+export function dadd(dt, n, key){
+  return IAssociative.assoc(dt, key, ILookup.lookup(dt, key) + n);
+}
+
+function dset(dt, n, key){
+  return IAssociative.assoc(dt, key, n);
+}
+
+function year1(self){
   return self.getFullYear();
 }
 
-export function month(self){
+const year2 = dset(v, v, "year");
+
+export const year = overload(null, year1, year2);
+
+function month1(self){
   return self.getMonth();
 }
 
-export function day(self){
+const month2 = dset(v, v, "month");
+
+export const month = overload(null, month1, month2);
+
+function day1(self){
   return self.getDate();
 }
+
+const day2 = dset(v, v, "day");
+
+export const day = overload(null, day1, day2);
 
 export function quarter(self){
   return (month(self) + 1) / 3;
@@ -156,23 +174,4 @@ export function eoy(){
     seconds: 0,
     milliseconds: 0
   };
-}
-
-export function datestep(key){
-
-  function plus(dt, n){
-    return IAssociative.assoc(dt, key, ILookup.lookup(dt, key) + n);
-  }
-
-  return function step(self, dt){
-    const fmap = self.options.fmap || identity,
-          pred = self.options.pred;
-    if (dt == null) {
-      return null;
-    } else if (pred) {
-      return ISeq.first(drop(Math.abs(self.n), filter(pred, map(fmap, iterate(plus(v, self.n >= 0 ? 1 : -1), dt)))));
-    } else {
-      return fmap(plus(dt, self.n));
-    }
-  }
 }
