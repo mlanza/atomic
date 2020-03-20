@@ -1,8 +1,8 @@
-import {overload} from '../../core';
+import {overload, constantly} from '../../core';
 import {days} from '../duration/construct';
 import {sod, eod, isDate} from '../date/concrete';
 import {filter} from '../lazy-seq/concrete';
-import {steps} from '../../protocols/isteppable/concrete';
+import {steps, directed} from '../../protocols/isteppable/concrete';
 import {compare} from '../../protocols/icomparable/concrete';
 import {patch} from '../../associatives';
 import {Symbol} from '../symbol/construct';
@@ -33,9 +33,12 @@ function recurrence2(start, end){
 const recurrence3 = steps(Recurrence, isDate);
 
 function recurrence4(start, end, step, f){
-  return filter(function(dt){
+  const pred = end == null ? constantly(true) : directed(start, end) > 0 ? function(dt){
     return compare(start, dt) <= 0;
-  }, f(recurrence3(start, end, step)));
+  } : directed(start, end) < 0 ? function(dt){
+    return compare(start, dt) >= 0;
+  } : constantly(true);
+  return filter(pred, f(recurrence3(start, end, step)));
 }
 
 export const recurrence = overload(emptyRecurrence, recurrence1, recurrence2, recurrence3, recurrence4);

@@ -1,9 +1,10 @@
-import {overload} from "../../core";
-import {ICoerceable, IAssociative, ILookup, IDeref, IMap} from "../../protocols";
+import {overload, constructs} from "../../core";
+import {IAssociative} from "../../protocols";
+import {mult} from "../../protocols/imultipliable/concrete";
 import {Symbol} from '../symbol/construct';
-import {isNumber, inc} from "../number/concrete";
-import {prop} from "../../associatives";
+import {isNumber} from "../number/concrete";
 import {branch} from "../../core";
+import {comp} from "../function/concrete";
 import {_ as v} from "param.macro";
 
 export function Duration(units){
@@ -11,38 +12,26 @@ export function Duration(units){
 }
 
 function from(obj){
-  return duration(Object.assign({}, obj));
+  return new Duration(Object.assign({}, obj));
 }
 
-export function duration(units){
-  return new Duration(isNumber(units) ? {milliseconds: units} : units);
-}
-
-Duration.prototype[Symbol.toStringTag] = "Duration";
-Duration.create = duration;
-Duration.from = from;
-
-function kind(self, key){
-  return duration(IAssociative.assoc({}, key, self));
-}
-
-//TODO make duration normalize units (e.g. so that when you request `hours` you get the max. value).
 function unit(key){
-  return branch(isNumber, kind(v, key), overload(null, ILookup.lookup(v, key), IAssociative.assoc(v, key, v)));
+  return function(n){
+    return new Duration(IAssociative.assoc({}, key, n));
+  }
 }
 
 export const years = unit("year");
 export const months = unit("month");
 export const days = unit("day");
-export const hours = unit("hours");
-export const minutes = unit("minutes");
-export const seconds = unit("seconds");
-export const milliseconds = unit("milliseconds");
+export const hours = unit("hour");
+export const minutes = unit("minute");
+export const seconds = unit("second");
+export const milliseconds = unit("millisecond");
+export const duration = branch(isNumber, milliseconds, constructs(Duration));
+export const weeks = comp(days, mult(v, 7));
 
-export function weeks(n){
-  return days(n * 7); //TODO apply against duration/date
-}
-
-export function ddiv(a, b){
-  return IDeref.deref(ICoerceable.toDuration(a)) / IDeref.deref(ICoerceable.toDuration(b));
-}
+Duration.prototype[Symbol.toStringTag] = "Duration";
+Duration.create = duration;
+Duration.from = from;
+Duration.units = ["year", "month", "day", "hour", "minute", "second", "millisecond"];

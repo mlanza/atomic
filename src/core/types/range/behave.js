@@ -12,7 +12,7 @@ function seq(self){
 }
 
 function first(self){
-  return IComparable.compare(self.start, self.end) * self.direction < 0 ? self.start : null;
+  return self.end == null ? self.start : IComparable.compare(self.start, self.end) * self.direction < 0 ? self.start : null;
 }
 
 function rest(self){
@@ -22,7 +22,7 @@ function rest(self){
 function next(self){
   if (!seq(self)) return null;
   const stepped = ISteppable.step(self.step, self.start);
-  return (IComparable.compare(stepped, self.end) * self.direction) < 0 ? new self.constructor(stepped, self.end, self.step, self.direction) : null;
+  return self.end == null || (IComparable.compare(stepped, self.end) * self.direction) < 0 ? new self.constructor(stepped, self.end, self.step, self.direction) : null;
 }
 
 function equiv(self, other){
