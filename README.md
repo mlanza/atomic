@@ -1,10 +1,9 @@
 # Atomic
-A wholemeal, Clojure-inspired approach for JavaScript for building up programs which treats native objects and arrays as immutables.
+A wholemeal, Clojure-inspired approach for building up programs which treats JavaScript natives as immutables.
 
-* protocol-oriented
-* composable
-* immutable-first
-* functional 
+* protocols (added for use in JavaScript)
+* functional (pure and composable)
 * reactive (FRP)
-* transducers
 * transients
+* dates
+* transducers
