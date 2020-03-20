@@ -1,8 +1,8 @@
 import {overload, constructs} from '../../core';
 import {Symbol} from '../symbol/construct';
 
-function date7(year, month, day, hours, minutes, seconds, milliseconds){
-  return new Date(year, month || 0, day || 1, hours || 0, minutes || 0, seconds || 0, milliseconds || 0);
+function date7(year, month, day, hour, minute, second, millisecond){
+  return new Date(year, month || 0, day || 1, hour || 0, minute || 0, second || 0, millisecond || 0);
 }
 
 const create = constructs(Date);

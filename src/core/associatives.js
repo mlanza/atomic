@@ -8,6 +8,7 @@ import {concat} from "./types/concatenated";
 import {update} from "./protocols/iassociative/concrete";
 import {reducing} from "./protocols/ireduce/concrete";
 import {gt, lt} from "./predicates";
+import {_ as v} from "param.macro";
 
 export function mergeWith(f, init, ...maps){
   return init && some(identity, maps) ? IReduce.reduce(maps, function(memo, map){
@@ -44,7 +45,9 @@ function scanKeyN(better, k, x, ...args){
 export const scanKey = overload(null, scanKey1, null, scanKey3, scanKey4, scanKeyN);
 export const maxKey  = scanKey(gt);
 export const minKey  = scanKey(lt);
-export const prop    = overload(null, null, ILookup.lookup, IAssociative.assoc);
+export const prop    = overload(null, function(key){
+    return overload(null, ILookup.lookup(v, key), IAssociative.assoc(v, key, v));
+}, ILookup.lookup, IAssociative.assoc);
 
 function absorb2(tgt, src){
   return IKVReduce.reducekv(src || IEmptyableCollection.empty(tgt), function(memo, key, value){

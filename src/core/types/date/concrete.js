@@ -1,17 +1,17 @@
-import {IKVReduce, IAssociative, ILookup, ICloneable, ISeq} from '../../protocols';
+import {ICloneable, ICompactable} from '../../protocols';
 import {patch} from '../../associatives';
 import {inc} from '../../types/number/concrete';
-import {overload} from '../../core';
-import {_ as v} from "param.macro";
+import {prop} from "../../associatives";
+import {overload, identity} from '../../core';
 
 export function monthDays(self){
   return patch(self, {
     month: inc,
     day: 0,
-    hours: 0,
-    minutes: 0,
-    seconds: 0,
-    milliseconds: 0
+    hour: 0,
+    minute: 0,
+    second: 0,
+    millisecond: 0
   }).getDate();
 }
 
@@ -33,41 +33,16 @@ function dow2(self, n){
 }
 
 export const dow = overload(null, dow1, dow2);
-
-export function dadd(self, n, key){
-  return IAssociative.assoc(self, key, ILookup.lookup(self, key) + n);
-}
-
-function dset(self, n, key){
-  return IAssociative.assoc(self, key, n);
-}
-
-function year1(self){
-  return self.getFullYear();
-}
-
-const year2 = dset(v, v, "year");
-
-export const year = overload(null, year1, year2);
-
-function month1(self){
-  return self.getMonth();
-}
-
-const month2 = dset(v, v, "month");
-
-export const month = overload(null, month1, month2);
-
-function day1(self){
-  return self.getDate();
-}
-
-const day2 = dset(v, v, "day");
-
-export const day = overload(null, day1, day2);
+export const year = prop("year");
+export const month = prop("month");
+export const day = prop("day");
+export const hour = prop("hour");
+export const minute = prop("minute");
+export const second = prop("second");
+export const millisecond = prop("millisecond");
 
 export function quarter(self){
-  return (month(self) + 1) / 3;
+  return Math.ceil((month(self) + 1) / 3);
 }
 
 export function clockHours(self){
@@ -107,22 +82,12 @@ export function isDate(self){
   return self instanceof Date && !isNaN(self);
 }
 
-function trim(obj){ //TODO protocol, compact on sequence, trim on string?
-  return IKVReduce.reducekv(obj, function(memo, key, value){
-    return value == null ? memo : IAssociative.assoc(memo, key, value);
-  }, {});
-}
-
-export function dated(year, month, day, hours, minutes, seconds, milliseconds){
-  return trim({year, month, day, hours, minutes, seconds, milliseconds});
-}
-
-export function time(hours, minutes, seconds, milliseconds){
+export function time(hour, minute, second, millisecond){
   return {
-    hours: hours || 0,
-    minutes: minutes || 0,
-    seconds: seconds || 0,
-    milliseconds: milliseconds || 0
+    hour: hour || 0,
+    minute: minute || 0,
+    second: second || 0,
+    millisecond: millisecond || 0
   };
 }
 
@@ -142,10 +107,10 @@ export function annually(month, day){
   return {
     month: month,
     day: day,
-    hours: 0,
-    minutes: 0,
-    seconds: 0,
-    milliseconds: 0
+    hour: 0,
+    minute: 0,
+    second: 0,
+    millisecond: 0
   };
 }
 
@@ -154,10 +119,10 @@ export const midnight = sod;
 export function som(){
   return {
     day: 1,
-    hours: 0,
-    minutes: 0,
-    seconds: 0,
-    milliseconds: 0
+    hour: 0,
+    minute: 0,
+    second: 0,
+    millisecond: 0
   };
 }
 
@@ -165,10 +130,10 @@ export function eom(){
   return {
     month: inc,
     day: 1,
-    hours: 0,
-    minutes: 0,
-    seconds: 0,
-    milliseconds: 0
+    hour: 0,
+    minute: 0,
+    second: 0,
+    millisecond: 0
   };
 }
 
@@ -176,10 +141,10 @@ export function bom(){ //bottom of month -- locates last day of month
   return {
     month: inc,
     day: 0,
-    hours: 0,
-    minutes: 0,
-    seconds: 0,
-    milliseconds: 0
+    hour: 0,
+    minute: 0,
+    second: 0,
+    millisecond: 0
   };
 }
 
@@ -187,10 +152,10 @@ export function soy(){
   return {
     month: 1,
     day: 1,
-    hours: 0,
-    minutes: 0,
-    seconds: 0,
-    milliseconds: 0
+    hour: 0,
+    minute: 0,
+    second: 0,
+    millisecond: 0
   };
 }
 
@@ -199,9 +164,9 @@ export function eoy(){
     year: inc,
     month: 1,
     day: 1,
-    hours: 0,
-    minutes: 0,
-    seconds: 0,
-    milliseconds: 0
+    hour: 0,
+    minute: 0,
+    second: 0,
+    millisecond: 0
   };
 }

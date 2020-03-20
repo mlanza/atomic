@@ -14,13 +14,13 @@ function lookup(self, key){
       return self.getMonth();
     case "day":
       return self.getDate();
-    case "hours":
+    case "hour":
       return self.getHours();
-    case "minutes":
+    case "minute":
       return self.getMinutes();
-    case "seconds":
+    case "second":
       return self.getSeconds();
-    case "milliseconds":
+    case "millisecond":
       return self.getMilliseconds();
   }
 }
@@ -35,7 +35,7 @@ function contains(self, key){
 }
 
 function keys(self){
-  return ["year", "month", "day", "hours", "minutes", "seconds", "milliseconds"];
+  return ["year", "month", "day", "hour", "minute", "second", "millisecond"];
 }
 
 function vals(self){
@@ -62,16 +62,16 @@ function assoc(self, key, value){
     case "day":
       dt.setDate(value);
       break;
-    case "hours":
+    case "hour":
       dt.setHours(value);
       break;
-    case "minutes":
+    case "minute":
       dt.setMinutes(value);
       break;
-    case "seconds":
+    case "second":
       dt.setSeconds(value);
       break;
-    case "milliseconds":
+    case "millisecond":
       dt.setMilliseconds(value);
       break;
     default:
@@ -82,10 +82,6 @@ function assoc(self, key, value){
 
 function clone(self){
   return new Date(self.valueOf());
-}
-
-function unit2(self, amount){
-  return isNumber(amount) ? days(amount) : amount;
 }
 
 function equiv(self, other){
@@ -113,10 +109,14 @@ function deref(self){
   return self.valueOf();
 }
 
+const start = identity,
+      end = identity,
+      seq = identity;
+
 export const behaveAsDate = does(
   implement(IDeref, {deref}),
-  implement(IBounds, {start: identity, end: identity}),
-  implement(ISeqable, {seq: identity}),
+  implement(IBounds, {start, end}),
+  implement(ISeqable, {seq}),
   implement(IReduce, {reduce}),
   implement(IKVReduce, {reducekv}),
   implement(IEquiv, {equiv}),
