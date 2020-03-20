@@ -1,2 +1,4 @@
 import {IMergeable} from "./instance";
-export const merge = IMergeable.merge;
+import {identity, overload} from "../../core";
+import {reducing} from "../ireduce/concrete";
+export const merge = overload(null, identity, IMergeable.merge, reducing(IMergeable.merge));
