@@ -11,6 +11,18 @@ export function Duration(units){
   this.units = units;
 }
 
+function valueOf(){
+  const units = this.units;
+  return (
+    ((units.year   || 0) * 1000 * 60 * 60 * 24 * 365.25) +
+    ((units.month  || 0) * 1000 * 60 * 60 * 24 * 30.4375) +
+    ((units.day    || 0) * 1000 * 60 * 60 * 24) +
+    ((units.hour   || 0) * 1000 * 60 * 60) +
+    ((units.minute || 0) * 1000 * 60) +
+    ((units.second || 0) * 1000) +
+     (units.millisecond || 0));
+}
+
 function from(obj){
   return new Duration(Object.assign({}, obj));
 }
@@ -31,21 +43,12 @@ export const milliseconds = unit("millisecond");
 export const duration = branch(isNumber, milliseconds, constructs(Duration));
 export const weeks = comp(days, mult(v, 7));
 
-export function lcd(self){ //TODO protocol?
-  return duration(((self.units.year || 0) * 1000 * 60 * 60 * 24 * 365.25) +
-    ((self.units.month || 0) * 1000 * 60 * 60 * 24 * 30.4375) +
-    ((self.units.day || 0) * 1000 * 60 * 60 * 24) +
-    ((self.units.hour || 0) * 1000 * 60 * 60) +
-    ((self.units.minute || 0) * 1000 * 60) +
-    ((self.units.second || 0) * 1000) +
-    (self.units.millisecond || 0));
-}
-
 export function ddiv(a, b){
-  return lcd(a).units.millisecond / lcd(b).units.millisecond;
+  return a.valueOf() / b.valueOf();
 }
 
 Duration.prototype[Symbol.toStringTag] = "Duration";
+Duration.prototype.valueOf = valueOf;
 Duration.create = duration;
 Duration.from = from;
 Duration.units = ["year", "month", "day", "hour", "minute", "second", "millisecond"];
