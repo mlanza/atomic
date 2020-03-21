@@ -56,24 +56,9 @@ export function week(obj, fdow){
   return period(add(s, days(-soffset)), add(e, days(eoffset)));
 }
 
-export function periodically(start, end, step, round){
-  const nxt = add(start, step);
-  return IEquiv.equiv(start, end) ? emptyList() : round && nxt > end ? cons(recurrence(start, end, step)) : nxt <= end ? lazySeq(function(){
-    return cons(recurrence(start, nxt, step), periodically(nxt, end, step, round));
-  }) : emptyList();
+export function periodically(start, end, step){
+  return map(period(v, step), recurrence(start, end, step));
 }
-
-function apart3(start, end, step, round){
-  return duration(reduce(add, 0, map(function(pd){
-    return IBounds.end(pd) - IBounds.start(pd);
-  }, periodically(start, end, step, round))));
-}
-
-function apart2(start, end){
-  return duration(end - start);
-}
-
-export const apart = overload(null, null, apart2, apart3);
 
 export function toQueryString(obj){
   return just(obj, mapkv(str(v, "=", v), v), join("&", v), collapse("?", v));
