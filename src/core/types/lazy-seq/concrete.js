@@ -2,7 +2,7 @@ import {ICompactable, IEquiv, IMap, ICoerceable, IAssociative, ILookup, IInclusi
 import {trampoline, identity, constantly, overload} from '../../core';
 import {EmptyList, emptyList} from '../empty-list/construct';
 import {emptyArray} from '../array/construct';
-import {inc, randInt, isEven} from '../number/concrete';
+import {randInt, isEven} from '../number/concrete';
 import {reduced} from '../reduced/construct';
 import {not} from '../boolean';
 import {isNil, isSome} from '../nil';
@@ -17,6 +17,7 @@ import {satisfies} from '../protocol/concrete';
 import {Symbol} from '../symbol/construct';
 import {update, assocIn} from "../../protocols/iassociative/concrete";
 import {first} from "../../protocols/iseq/concrete";
+import {inc} from '../../protocols/iaddable/concrete';
 import {_ as v} from "param.macro";
 
 function map2(f, xs){

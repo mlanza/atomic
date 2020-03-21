@@ -43,10 +43,6 @@ export const milliseconds = unit("millisecond");
 export const duration = branch(isNumber, milliseconds, constructs(Duration));
 export const weeks = comp(days, mult(v, 7));
 
-export function ddiv(a, b){
-  return a.valueOf() / b.valueOf();
-}
-
 Duration.prototype[Symbol.toStringTag] = "Duration";
 Duration.prototype.valueOf = valueOf;
 Duration.create = duration;

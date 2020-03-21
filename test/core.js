@@ -16,10 +16,10 @@ const stooges = ["Larry","Curly","Moe"],
 QUnit.test("router & multimethod", function(assert){ //not just for fns!
   const f = _.doto($.router(), //router handlers need not be (but can be) fns
       mut.conj(v, $.handler(_.signature(_.isString), _.str(v, "!"), _.apply)), //use apply to spread the message against the pred and callback
-      mut.conj(v, $.handler(_.signature(_.isNumber), _.multiply(v, 2), _.apply)));
+      mut.conj(v, $.handler(_.signature(_.isNumber), _.mult(v, 2), _.apply)));
   const g = _.doto(mut.multimethod(), //multimethod handlers must be fns
       mut.conj(v, mut.method(_.signature(_.isString), _.str(v, "!"))), //as a multimethod always dispatches to fns, apply is a given and need not be specified.
-      mut.conj(v, mut.method(_.signature(_.isNumber), _.multiply(v, 2))));
+      mut.conj(v, mut.method(_.signature(_.isNumber), _.mult(v, 2))));
   assert.equal($.dispatch(f, [1]), 2);
   assert.equal($.dispatch(f, ["timber"]), "timber!");
   assert.equal($.dispatch(g, [1]), 2);
@@ -200,8 +200,8 @@ QUnit.test("iassociative", function(assert){
   assert.deepEqual(court |> _.assoc(v, "ace", 14), {jack: 11, queen: 12, king: 13, ace: 14});
   assert.deepEqual(worth |> _.assocIn(v, ["court","ace"], 1), {pieces: {pawn: 1, knight: 3, bishop: 3, rook: 5, queen: 10, king: Infinity}, court: {ace: 1, jack: 11, queen: 12, king: 13}});
   assert.deepEqual(worth |> _.assocIn(v, ["court","king"], Infinity), {pieces: {pawn: 1, knight: 3, bishop: 3, rook: 5, queen: 10, king: Infinity}, court: {jack: 11, queen: 12, king: Infinity}});
-  assert.deepEqual(court |> _.update(v, "jack", _.plus(v, -10)), {jack: 1, queen: 12, king: 13});
-  assert.deepEqual(worth |> _.updateIn(v, ["court","king"], _.plus(v, -10)), {pieces: {pawn: 1, knight: 3, bishop: 3, rook: 5, queen: 10, king: Infinity}, court: {jack: 11, queen: 12, king: 3}});
+  assert.deepEqual(court |> _.update(v, "jack", _.add(v, -10)), {jack: 1, queen: 12, king: 13});
+  assert.deepEqual(worth |> _.updateIn(v, ["court","king"], _.add(v, -10)), {pieces: {pawn: 1, knight: 3, bishop: 3, rook: 5, queen: 10, king: Infinity}, court: {jack: 11, queen: 12, king: 3}});
   assert.deepEqual(stooges, ["Larry","Curly","Moe"], "no mutations occurred");
   assert.deepEqual(court, {jack: 11, queen: 12, king: 13}, "no mutations occurred");
   assert.deepEqual({surname: "Howard"} |> _.assoc(v, "givenName", "Moe"), {givenName: "Moe", surname: "Howard"});
@@ -419,7 +419,7 @@ QUnit.test("indexed-seq", function(assert){
   assert.equal(nums |> _.nth(v, 1), 13);
   assert.equal(nums |> _.count, 3);
   assert.ok(nums |> _.satisfies(_.IReduce, v));
-  assert.equal(nums |> _.reduce(_.plus, 0, v), 39);
+  assert.equal(nums |> _.reduce(_.add, 0, v), 39);
 });
 
 QUnit.test("equality", function(assert){

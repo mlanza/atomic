@@ -13,6 +13,7 @@ export * from "./iinverse/concrete";
 export * from "./icounted/concrete";
 export * from "./ideref/concrete";
 export * from "./idisposable/concrete";
+export * from "./idivisible/concrete";
 export * from "./iemptyablecollection/concrete";
 export * from "./iequiv/concrete";
 export * from "./ifind/concrete";

@@ -1,6 +1,6 @@
 import {does, identity} from '../../core';
 import {implement} from '../protocol';
-import {IBounds, IAddable, IInverse, IComparable, IMultipliable} from '../../protocols';
+import {IBounds, IAddable, IInverse, IComparable, IMultipliable, IDivisible} from '../../protocols';
 
 function compare(self, other){
   return self === other ? 0 : self - other;
@@ -18,10 +18,15 @@ function mult(self, n){
   return self * n;
 }
 
+function divide(self, n){
+  return self / n;
+}
+
 const start = identity,
       end   = identity;
 
 export const behaveAsNumber = does(
+  implement(IDivisible, {divide}),
   implement(IMultipliable, {mult}),
   implement(IBounds, {start, end}),
   implement(IComparable, {compare}),

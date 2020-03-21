@@ -3,6 +3,7 @@ import {IInverse} from "../iinverse/instance";
 import {compare} from "../icomparable/concrete";
 import {reducing} from "../ireduce/concrete";
 import {constantly, overload, identity} from "../../core";
+import {_ as v} from "param.macro";
 
 export function directed(start, step) {
   return compare(IAddable.add(start, step), start);
@@ -36,3 +37,5 @@ function subtract2(self, n){
 
 export const subtract = overload(constantly(0), identity, subtract2, reducing(subtract2));
 export const add = overload(constantly(0), identity, IAddable.add, reducing(IAddable.add));
+export const inc = overload(constantly(+1), IAddable.add(v, +1));
+export const dec = overload(constantly(-1), IAddable.add(v, -1));
