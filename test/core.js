@@ -315,6 +315,19 @@ QUnit.test("add/subtract", function(assert){
   assert.equal(christmas |> _.subtract(v, _.years(1)) |> _.deref, 1482642000000);
 });
 
+QUnit.test("duration", function(assert){
+  const newYearsEve = _.date(2019, 11, 31);
+  const newYearsDay = _.period(_.date(2020, 0, 1));
+  assert.equal(_.divide(_.years(1), _.days(1)), 365.25);
+  assert.equal(_.divide(_.days(1), _.hours(1)), 24);
+  assert.equal(newYearsDay |> _.toDuration |> _.divide(v, _.hours(1)), 24);
+  assert.equal(_.add(newYearsEve, 1) |> _.deref, 1577854800000);
+  assert.equal(_.add(newYearsEve, _.days(1)) |> _.deref, 1577854800000);
+  assert.equal(_.add(newYearsEve, _.years(-1)) |> _.deref, 1546232400000);  //prior New Year's Eve
+  assert.equal(_.add(newYearsEve, _.days(1), _.hours(7)) |> _.deref, 1577880000000);  //7am New Year's Day
+
+});
+
 QUnit.test("record", function(assert){
   function Person(name, surname, dob){
     this.attrs = {name, surname, dob};
