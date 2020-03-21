@@ -7,7 +7,7 @@ import {mergeWith} from '../../protocols/imergeable/instance';
 import {Duration, days} from '../duration';
 import {Symbol} from '../symbol/construct';
 
-function merge(self, other){
+function _add(self, other){
   return mergeWith(add, self, isNumber(other) ? days(other) : other);
 }
 
@@ -115,8 +115,7 @@ function deref(self){
 }
 
 export const behaveAsDate = does(
-  implement(IAddable, {add: merge}),
-  implement(IMergeable, {merge}),
+  implement(IAddable, {add: _add}),
   implement(IDeref, {deref}),
   implement(IBounds, {start: identity, end: identity}),
   implement(ISeqable, {seq: identity}),
