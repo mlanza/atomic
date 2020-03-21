@@ -1,5 +1,5 @@
-import {IBlankable, ITemplate, IKVReduce, IAssociative, ICompactable, ICoerceable, IMatchable, IReduce, ICollection, IIndexed, ISeqable, INext, ISeq, IInclusive, IAppendable, IPrependable, ICounted, ILookup, IFn, IComparable, IEmptyableCollection} from '../../protocols';
-import {does, identity, constantly} from "../../core";
+import {IBlankable, ISplittable, ITemplate, IKVReduce, IAssociative, ICompactable, ICoerceable, IMatchable, IReduce, ICollection, IIndexed, ISeqable, INext, ISeq, IInclusive, IAppendable, IPrependable, ICounted, ILookup, IFn, IComparable, IEmptyableCollection} from '../../protocols';
+import {does, identity, constantly, unbind, overload} from "../../core";
 import {implement} from '../protocol';
 import {isReduced, unreduced} from '../reduced';
 import {lazySeq} from '../lazy-seq/construct';
@@ -8,6 +8,29 @@ import {iindexed} from '../array/behave';
 import {rePattern} from '../reg-exp/concrete';
 import {emptyString, isString} from "./construct";
 import {replace} from "./concrete";
+
+function split1(str){
+  return str.split("");
+}
+
+function split3(str, pattern, n){
+  const parts = [];
+  while(str && n !== 0){
+    let found = str.match(pattern);
+    if (!found || n < 2) {
+      parts.push(str);
+      break;
+    }
+    let pos  = str.indexOf(found),
+        part = str.substring(0, pos);
+    parts.push(part);
+    str = str.substring(pos + found.length);
+    n = n ? n - 1 : n;
+  }
+  return parts;
+}
+
+const split = overload(null, split1, unbind(String.prototype.split), split3)
 
 function fill(self, params){
   return IKVReduce.reducekv(params, function(text, key, value){
@@ -85,6 +108,7 @@ function matches(self, re){
 
 export const behaveAsString = does(
   iindexed,
+  implement(ISplittable, {split}),
   implement(ICompactable, {compact}),
   implement(IBlankable, {blank}),
   implement(ITemplate, {fill}),

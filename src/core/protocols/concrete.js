@@ -48,6 +48,7 @@ export * from "./iseqable/concrete";
 export * from "./isequential/concrete";
 export * from "./iset/concrete";
 export * from "./istatemachine/concrete";
+export * from "./isplittable/concrete";
 export * from "./iswap/concrete";
 export * from "./itemplate/concrete";
 export * from "./iyankable/concrete";

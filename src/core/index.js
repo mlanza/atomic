@@ -1,7 +1,7 @@
 import {overload, toggles, identity, obj, partly, doto, branch, unspread, applying, execute, noop, constantly} from "./core";
 import {IAppendable, IYankable, ICoerceable, IAssociative, IBounds, IInverse, ICloneable, ICollection, IComparable, ICounted, IDeref, IDisposable, IEmptyableCollection, IEquiv, IFind, IFn, IForkable, IFunctor, IHierarchy, IInclusive, IIndexed, IInsertable, IKVReduce, ILookup, IMap, IMapEntry, IMatchable, INext, IOtherwise, IPrependable, IReduce, IReset, ISeq, ISeqable, ISet, ISwap} from "./protocols";
-import {just, satisfies, filter, spread, maybe, each, duration, remove, sort, flip, realized, comp, isNumber, isFunction, apply, realize, isNil, reFindAll, mapkv, period, selectKeys, mapVals, split, reMatches, test, date, emptyList, cons, days, second as _second} from "./types";
-import {add, subtract, compact, matches, name, descendants, query, locate, deref, get, assoc, yank, conj, reducing, toArray, reducekv, includes, excludes, rest, count, between, reduce, divide, fmap} from "./protocols/concrete";
+import {just, satisfies, filter, spread, maybe, each, duration, remove, sort, flip, realized, comp, isNumber, isFunction, apply, realize, isNil, reFindAll, mapkv, period, selectKeys, mapVals, reMatches, test, date, emptyList, cons, days, second as _second} from "./types";
+import {add, subtract, compact, matches, name, descendants, query, locate, deref, get, assoc, yank, conj, reducing, toArray, reducekv, includes, excludes, rest, count, between, reduce, divide, fmap, split} from "./protocols/concrete";
 import {isString, isBlank, str, replace} from "./types/string";
 import {isSome} from "./types/nil";
 import {into, detect, map, mapa, splice, drop, join, some, last, lazySeq} from "./types/lazy-seq";
