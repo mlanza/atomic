@@ -1,5 +1,5 @@
 import {overload, identity, constantly} from "../../core";
-import {IReduce, ICounted} from "../../protocols";
+import {IReduce, ICounted, IComparable, IAddable} from "../../protocols";
 import {complement, partial, unary} from "../function";
 import {reducing} from "../../protocols/ireduce/concrete";
 
@@ -33,43 +33,12 @@ export function mod(n, div){
   return n % div;
 }
 
-function plus2(x, y){
-  return x + y;
-}
-
-function minus1(x){
-  return minus2(0, x);
-}
-
-function minus2(x, y){
-  return x - y;
-}
-
-function multiply2(x, y){
-  return x * y;
-}
-
-function divide1(x){
-  return divide2(1, x);
-}
-
-function divide2(x, y){
-  return x / y;
-}
-
-export const plus     = overload(constantly(0), identity, plus2, reducing(plus2));
-export const minus    = overload(constantly(0), minus1, minus2, reducing(minus2));
-export const multiply = overload(constantly(1), identity, multiply2, reducing(multiply2));
-export const divide   = overload(null, divide1, divide2, reducing(divide2));
-export const inc      = overload(constantly(+1), partial(plus2, +1));
-export const dec      = overload(constantly(-1), partial(plus2, -1));
-
 function min2(x, y){
-  return x < y ? x : y;
+  return IComparable.compare(x, y) < 0 ? x : y;
 }
 
 function max2(x, y){
-  return x > y ? x : y;
+  return IComparable.compare(x, y) > 0 ? x : y;
 }
 
 export const min = overload(null, identity, min2, reducing(min2));
@@ -112,7 +81,7 @@ export function randInt(n){
 }
 
 export function sum(ns){
-  return IReduce.reduce(ns, plus, 0);
+  return IReduce.reduce(ns, IAddable.add, 0);
 }
 
 export function least(ns){

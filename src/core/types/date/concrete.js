@@ -1,6 +1,6 @@
 import {ICloneable, ICompactable} from '../../protocols';
+import {inc} from '../../protocols/iaddable/concrete';
 import {patch} from '../../associatives';
-import {inc} from '../../types/number/concrete';
 import {prop} from "../../associatives";
 import {overload, identity} from '../../core';
 

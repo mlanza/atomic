@@ -1,6 +1,6 @@
 import {implement} from '../protocol';
 import {does, identity} from '../../core';
-import {IKVReduce, IReduce, IFunctor, IMergeable, ICoerceable, IMultipliable, IMap, IAssociative, ILookup, IInclusive} from '../../protocols';
+import {IKVReduce, IReduce, IFunctor, IMergeable, ICoerceable, IMultipliable, IDivisible, IMap, IAssociative, ILookup, IInclusive} from '../../protocols';
 import {add} from '../../protocols/iaddable/concrete';
 import {Duration, duration} from '../duration/construct';
 import {mergeWith} from '../../associatives';
@@ -49,6 +49,10 @@ function assoc(self, key, value){
   return duration(IAssociative.assoc(self.units, key, value));
 }
 
+function divide(a, b){
+  return a.valueOf() / b.valueOf();
+}
+
 export const behaveAsDuration = does(
   implement(IKVReduce, {reducekv}),
   implement(IMergeable, {merge}),
@@ -56,5 +60,6 @@ export const behaveAsDuration = does(
   implement(IAssociative, {assoc}),
   implement(ILookup, {lookup}),
   implement(IMap, {keys, dissoc}),
+  implement(IDivisible, {divide}),
   implement(IMultipliable, {mult}),
   implement(ICoerceable, {toDuration: identity}));

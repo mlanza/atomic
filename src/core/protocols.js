@@ -14,6 +14,7 @@ export * from "./protocols/icounted/instance";
 export * from "./protocols/ideref/instance";
 export * from "./protocols/idescriptive/instance";
 export * from "./protocols/idisposable/instance";
+export * from "./protocols/idivisible/instance";
 export * from "./protocols/iemptyablecollection/instance";
 export * from "./protocols/iequiv/instance";
 export * from "./protocols/ifind/instance";
