@@ -40,7 +40,10 @@ export const hours = unit("hour");
 export const minutes = unit("minute");
 export const seconds = unit("second");
 export const milliseconds = unit("millisecond");
-export const duration = branch(isNumber, milliseconds, constructs(Duration));
+export const duration = overload(null, branch(isNumber, milliseconds, constructs(Duration)), function(start, end){
+  return milliseconds(end - start);
+});
+
 export const weeks = comp(days, mult(v, 7));
 
 Duration.prototype[Symbol.toStringTag] = "Duration";
