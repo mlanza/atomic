@@ -1,15 +1,11 @@
 import {does} from '../../core';
 import {implement} from '../protocol';
 import {emptyable} from "../record/behave";
-import {recurrence} from "../recurrence/construct";
-import {period} from "./construct";
-import {map} from "../lazy-seq/concrete";
 import {duration} from "../duration/construct";
 import {ICoerceable, IBounds, IComparable, IEquiv, IInclusive, IDivisible} from '../../protocols';
-import {_ as v} from "param.macro";
 
 function divide(self, step){
-  return map(period(v, step), recurrence(IBounds.start(self), IBounds.end(self), step));
+  return IDivisible.divide(ICoerceable.toDuration(self), step);
 }
 
 function start(self){
