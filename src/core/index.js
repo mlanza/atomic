@@ -1,6 +1,6 @@
 import {overload, toggles, identity, obj, partly, doto, branch, unspread, applying, execute, noop, constantly} from "./core";
 import {IAppendable, IYankable, ICoerceable, IAssociative, IBounds, IInverse, ICloneable, ICollection, IComparable, ICounted, IDeref, IDisposable, IEmptyableCollection, IEquiv, IFind, IFn, IForkable, IFunctor, IHierarchy, IInclusive, IIndexed, IInsertable, IKVReduce, ILookup, IMap, IMapEntry, IMatchable, INext, IOtherwise, IPrependable, IReduce, IReset, ISeq, ISeqable, ISet, ISwap} from "./protocols";
-import {just, satisfies, filter, spread, maybe, each, duration, remove, sort, flip, realized, comp, isNumber, isFunction, apply, realize, isNil, reFindAll, mapkv, period, recurrence, selectKeys, mapVals, split, reMatches, test, date, emptyList, cons, days, second as _second} from "./types";
+import {just, satisfies, filter, spread, maybe, each, duration, remove, sort, flip, realized, comp, isNumber, isFunction, apply, realize, isNil, reFindAll, mapkv, period, selectKeys, mapVals, split, reMatches, test, date, emptyList, cons, days, second as _second} from "./types";
 import {add, subtract, compact, matches, name, descendants, query, locate, deref, get, assoc, yank, conj, reducing, toArray, reducekv, includes, excludes, rest, count, between, reduce, divide, fmap} from "./protocols/concrete";
 import {isString, isBlank, str, replace} from "./types/string";
 import {isSome} from "./types/nil";
@@ -54,10 +54,6 @@ export function week(obj, fdow){
         soffset = Math.abs(firstDayOfWeek - s.getDay()),
         eoffset = Math.abs(lastDayOfWeek  - e.getDay());
   return period(add(s, days(-soffset)), add(e, days(eoffset)));
-}
-
-export function periodically(start, end, step){
-  return map(period(v, step), recurrence(start, end, step));
 }
 
 export function toQueryString(obj){
