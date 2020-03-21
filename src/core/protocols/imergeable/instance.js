@@ -14,12 +14,11 @@ function patch2(self, other){
 
 function patch3(self, other, xf){
   return other ? IKVReduce.reducekv(other, function(memo, key, value){
-    const was = ILookup.lookup(memo, key);
-    return IAssociative.assoc(memo, key, was == null ? xf(value) : xf(was, value));
+    return IAssociative.assoc(memo, key, IAssociative.contains(memo, key) ? xf(ILookup.lookup(memo, key), value) : xf(value));
   }, self) : self;
 }
 
-export const patch = overload(null, identity, patch2, patch3);
+const patch = overload(null, identity, patch2, patch3);
 
 export function mergeWith(xf, init, ...xs){
   return IReduce.reduce(xs, patch3(v, v, xf), init);

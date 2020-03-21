@@ -3,7 +3,7 @@ import {does, identity, partial} from '../../core';
 import {IAddable, IKVReduce, IReduce, IFunctor, IMergeable, ICoerceable, IMultipliable, IDivisible, IMap, IAssociative, ILookup, IInclusive} from '../../protocols';
 import {add} from '../../protocols/iaddable/concrete';
 import {mergeWith} from '../../protocols/imergeable/instance';
-import {Duration, duration} from '../duration/construct';
+import {Duration} from '../duration/construct';
 
 function reducekv(self, xf, init){
   return IReduce.reduce(keys(self), function(memo, key){
@@ -30,7 +30,7 @@ function keys(self){
 }
 
 function dissoc(self, key){
-  return duration(IMap.dissoc(self.units, key));
+  return new self.constructor(IMap.dissoc(self.units, key));
 }
 
 function lookup(self, key){
@@ -40,11 +40,15 @@ function lookup(self, key){
   return ILookup.lookup(self.units, key);
 }
 
+function contains(self, key){
+  return IAssociative.contains(self.units, key);
+}
+
 function assoc(self, key, value){
   if (!IInclusive.includes(Duration.units, key)){
     throw new Error("Invalid unit.");
   }
-  return duration(IAssociative.assoc(self.units, key, value));
+  return new self.constructor(IAssociative.assoc(self.units, key, value));
 }
 
 function divide(a, b){
@@ -56,7 +60,7 @@ export const behaveAsDuration = does(
   implement(IAddable, {add: merge}),
   implement(IMergeable, {merge}),
   implement(IFunctor, {fmap}),
-  implement(IAssociative, {assoc}),
+  implement(IAssociative, {assoc, contains}),
   implement(ILookup, {lookup}),
   implement(IMap, {keys, dissoc}),
   implement(IDivisible, {divide}),
