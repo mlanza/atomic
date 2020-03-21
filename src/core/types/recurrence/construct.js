@@ -4,7 +4,7 @@ import {sod, eod, isDate} from '../date/concrete';
 import {filter} from '../lazy-seq/concrete';
 import {steps, directed} from '../../protocols/iaddable/concrete';
 import {compare} from '../../protocols/icomparable/concrete';
-import {patch} from '../../associatives';
+import {IMergeable} from '../../protocols/imergeable/instance';
 import {Symbol} from '../symbol/construct';
 
 export function Recurrence(start, end, step, direction){
@@ -23,7 +23,7 @@ export function emptyRecurrence(){
 }
 
 export function recurrence1(obj){
-  return recurrence2(patch(obj, sod()), patch(obj, eod()));
+  return recurrence2(IMergeable.merge(obj, sod()), IMergeable.merge(obj, eod()));
 }
 
 function recurrence2(start, end){

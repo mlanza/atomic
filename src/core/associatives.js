@@ -10,22 +10,6 @@ import {reducing} from "./protocols/ireduce/concrete";
 import {gt, lt} from "./predicates";
 import {_ as v} from "param.macro";
 
-export function mergeWith(f, init, ...maps){
-  return init && some(identity, maps) ? IReduce.reduce(maps, function(memo, map){
-    return IReduce.reduce(ISeqable.seq(map), function(memo, [key, value]){
-      return IAssociative.contains(memo, key) ? update(memo, key, function(prior){
-        return f(prior, value);
-      }) : IAssociative.assoc(memo, key, value);
-    }, memo);
-  }, init) : null;
-}
-
-export function patch(...maps){
-  return mergeWith(function(prior, value){
-    return isFunction(value) ? value(prior) : value;
-  }, ...maps);
-}
-
 function scanKey1(better){
   return partial(scanKey, better);
 }
