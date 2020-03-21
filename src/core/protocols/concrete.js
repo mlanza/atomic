@@ -1,3 +1,4 @@
+export * from "./iaddable/concrete";
 export * from "./iappendable/concrete";
 export * from "./iassociative/concrete";
 export * from "./iblankable/concrete";
@@ -46,7 +47,6 @@ export * from "./iseqable/concrete";
 export * from "./isequential/concrete";
 export * from "./iset/concrete";
 export * from "./istatemachine/concrete";
-export * from "./isteppable/concrete";
 export * from "./iswap/concrete";
 export * from "./itemplate/concrete";
 export * from "./iyankable/concrete";

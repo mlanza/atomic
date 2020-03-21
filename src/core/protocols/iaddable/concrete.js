@@ -1,13 +1,11 @@
-import {ISteppable} from "./instance";
+import {IAddable} from "./instance";
 import {IInverse} from "../iinverse/instance";
 import {compare} from "../icomparable/concrete";
 import {reducing} from "../ireduce/concrete";
 import {overload} from "../../core";
 
-export const step = ISteppable.step;
-
 export function directed(start, step) {
-  return compare(ISteppable.step(step, start), start);;
+  return compare(IAddable.add(start, step), start);
 }
 
 export function steps(Type, pred){
@@ -32,14 +30,9 @@ export function steps(Type, pred){
   }
 }
 
-function add2(self, n){
-  return ISteppable.step(n, self);
-}
-
-export const add = overload(null, null, add2, reducing(add2));
-
 function subtract2(self, n){
-  return ISteppable.step(IInverse.inverse(n), self);
+  return IAddable.add(self, IInverse.inverse(n));
 }
 
 export const subtract = overload(null, null, subtract2, reducing(subtract2));
+export const add = overload(null, null, IAddable.add, reducing(IAddable.add));

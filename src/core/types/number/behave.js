@@ -1,12 +1,12 @@
 import {does, identity} from '../../core';
 import {implement} from '../protocol';
-import {IBounds, ISteppable, IInverse, IComparable, IMultipliable} from '../../protocols';
+import {IBounds, IAddable, IInverse, IComparable, IMultipliable} from '../../protocols';
 
 function compare(self, other){
   return self === other ? 0 : self - other;
 }
 
-function step(self, other){
+function add(self, other){
   return self + other;
 }
 
@@ -26,4 +26,4 @@ export const behaveAsNumber = does(
   implement(IBounds, {start, end}),
   implement(IComparable, {compare}),
   implement(IInverse, {inverse}),
-  implement(ISteppable, {step}));
+  implement(IAddable, {add}));
