@@ -1,14 +1,14 @@
-import {does, overload, constantly, identity} from '../../core';
+import {does, overload, constantly, identity, partial} from '../../core';
 import {implement} from '../protocol';
-import {IAddable, IReduce, IKVReduce, ISeqable, IBounds, IMap, IDeref, ISeq, IComparable, IEquiv, ICloneable, ILookup, IAssociative, ICollection} from '../../protocols';
+import {IAddable, IMergeable, IReduce, IKVReduce, ISeqable, IBounds, IMap, IDeref, ISeq, IComparable, IEquiv, ICloneable, ILookup, IAssociative, ICollection} from '../../protocols';
 import {isNumber} from '../number';
+import {add} from '../../protocols/iaddable/concrete';
+import {mergeWith} from '../../protocols/imergeable/instance';
 import {Duration, days} from '../duration';
 import {Symbol} from '../symbol/construct';
 
-function add(self, other){
-  return IKVReduce.reducekv(other instanceof Duration ? other : days(other), function(self, key, value){
-    return IAssociative.assoc(self, key, ILookup.lookup(self, key) + value);
-  }, self);
+function merge(self, other){
+  return mergeWith(add, self, isNumber(other) ? days(other) : other);
 }
 
 function lookup(self, key){
@@ -115,7 +115,8 @@ function deref(self){
 }
 
 export const behaveAsDate = does(
-  implement(IAddable, {add}),
+  implement(IAddable, {add: merge}),
+  implement(IMergeable, {merge}),
   implement(IDeref, {deref}),
   implement(IBounds, {start: identity, end: identity}),
   implement(ISeqable, {seq: identity}),
