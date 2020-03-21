@@ -1,7 +1,7 @@
-import {overload, toggles, identity, obj, partly, doto, branch, unspread, applying, execute, noop} from "./core";
+import {overload, toggles, identity, obj, partly, doto, branch, unspread, applying, execute, noop, constantly} from "./core";
 import {IAppendable, IYankable, ICoerceable, IAssociative, IBounds, IInverse, ICloneable, ICollection, IComparable, ICounted, IDeref, IDisposable, IEmptyableCollection, IEquiv, IFind, IFn, IForkable, IFunctor, IHierarchy, IInclusive, IIndexed, IInsertable, IKVReduce, ILookup, IMap, IMapEntry, IMatchable, INext, IOtherwise, IPrependable, IReduce, IReset, ISeq, ISeqable, ISet, ISwap} from "./protocols";
 import {just, satisfies, filter, spread, maybe, each, duration, remove, sort, flip, realized, comp, isNumber, isFunction, apply, realize, isNil, reFindAll, mapkv, period, recurrence, selectKeys, mapVals, split, reMatches, test, date, emptyList, cons, days, second as _second} from "./types";
-import {add, subtract, compact, matches, name, descendants, query, locate, deref, get, assoc, yank, conj, reducing, toArray, reducekv, includes, excludes, rest, count, between, reduce} from "./protocols/concrete";
+import {add, subtract, compact, matches, name, descendants, query, locate, deref, get, assoc, yank, conj, reducing, toArray, reducekv, includes, excludes, rest, count, between, reduce, divide, fmap} from "./protocols/concrete";
 import {isString, isBlank, str, replace} from "./types/string";
 import {isSome} from "./types/nil";
 import {into, detect, map, mapa, splice, drop, join, some, last, lazySeq} from "./types/lazy-seq";
@@ -35,6 +35,15 @@ export const fromMDY = comp(spread(function(M, d, y, h, m, ampm){
   const mh = h != null ? h + (ampm == "pm" ? 12 : 0) : null;
   return new Date((y < 99 ? 2000 : 0) + y, M - 1, d, mh || 0, m || 0);
 }), toArray, mapVals(v, parseInt, test(numeric, v)), toArray, splice(v, 3, 1, []), drop(1, v), reMatches(mdy, v));
+
+export function deconstruct(dur, ...units){
+  let memo = dur;
+  return mapa(function(unit){
+    const n = fmap(divide(memo, unit), Math.floor);
+    memo = subtract(memo, fmap(unit, constantly(n)));
+    return n;
+  }, units);
+}
 
 //TODO remove!
 export function week(obj, fdow){
