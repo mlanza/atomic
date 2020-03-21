@@ -1,9 +1,9 @@
 import {implement} from '../protocol';
-import {does, identity} from '../../core';
-import {IKVReduce, IReduce, IFunctor, IMergeable, ICoerceable, IMultipliable, IDivisible, IMap, IAssociative, ILookup, IInclusive} from '../../protocols';
+import {does, identity, partial} from '../../core';
+import {IAddable, IKVReduce, IReduce, IFunctor, IMergeable, ICoerceable, IMultipliable, IDivisible, IMap, IAssociative, ILookup, IInclusive} from '../../protocols';
 import {add} from '../../protocols/iaddable/concrete';
+import {mergeWith} from '../../protocols/imergeable/instance';
 import {Duration, duration} from '../duration/construct';
-import {mergeWith} from '../../associatives';
 
 function reducekv(self, xf, init){
   return IReduce.reduce(keys(self), function(memo, key){
@@ -11,9 +11,7 @@ function reducekv(self, xf, init){
   }, init);
 }
 
-function merge(self, other){
-  return other ? duration(mergeWith(add, self.units, other.units)) : self;
-}
+const merge = partial(mergeWith, add);
 
 function mult(self, n){
   return IFunctor.fmap(self, function(value){
@@ -55,6 +53,7 @@ function divide(a, b){
 
 export const behaveAsDuration = does(
   implement(IKVReduce, {reducekv}),
+  implement(IAddable, {add: merge}),
   implement(IMergeable, {merge}),
   implement(IFunctor, {fmap}),
   implement(IAssociative, {assoc}),

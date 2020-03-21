@@ -1,11 +1,10 @@
-import {ICloneable, ICompactable} from '../../protocols';
+import {ICloneable, ICompactable, IMergeable} from '../../protocols';
 import {inc} from '../../protocols/iaddable/concrete';
-import {patch} from '../../associatives';
 import {prop} from "../../associatives";
 import {overload, identity} from '../../core';
 
 export function monthDays(self){
-  return patch(self, {
+  return IMergeable.merge(self, {
     month: inc,
     day: 0,
     hour: 0,
@@ -75,7 +74,7 @@ export function rdow(self, n){
 }
 
 export function mdow(self, n){
-  return rdow(patch(self, som()), n);
+  return rdow(IMergeable.merge(self, som()), n);
 }
 
 export function isDate(self){
