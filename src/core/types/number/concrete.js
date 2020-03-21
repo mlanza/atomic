@@ -61,8 +61,8 @@ export const plus     = overload(constantly(0), identity, plus2, reducing(plus2)
 export const minus    = overload(constantly(0), minus1, minus2, reducing(minus2));
 export const multiply = overload(constantly(1), identity, multiply2, reducing(multiply2));
 export const divide   = overload(null, divide1, divide2, reducing(divide2));
-export const inc      = partial(plus2, +1);
-export const dec      = partial(plus2, -1);
+export const inc      = overload(constantly(+1), partial(plus2, +1));
+export const dec      = overload(constantly(-1), partial(plus2, -1));
 
 function min2(x, y){
   return x < y ? x : y;

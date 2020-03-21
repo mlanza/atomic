@@ -2,11 +2,11 @@ import {does, overload, constantly, identity} from '../../core';
 import {implement} from '../protocol';
 import {IAddable, IReduce, IKVReduce, ISeqable, IBounds, IMap, IDeref, ISeq, IComparable, IEquiv, ICloneable, ILookup, IAssociative, ICollection} from '../../protocols';
 import {isNumber} from '../number';
-import {days} from '../duration';
+import {Duration, days} from '../duration';
 import {Symbol} from '../symbol/construct';
 
-function add(self, dur){
-  return IKVReduce.reducekv(dur, function(self, key, value){
+function add(self, other){
+  return IKVReduce.reducekv(other instanceof Duration ? other : days(other), function(self, key, value){
     return IAssociative.assoc(self, key, ILookup.lookup(self, key) + value);
   }, self);
 }
