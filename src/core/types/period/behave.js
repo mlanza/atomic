@@ -2,7 +2,18 @@ import {does} from '../../core';
 import {implement} from '../protocol';
 import {emptyable} from "../record/behave";
 import {duration} from "../duration/construct";
-import {ICoerceable, IBounds, IComparable, IEquiv, IInclusive, IDivisible} from '../../protocols';
+import {min, max} from "../number/concrete";
+import {_ as v} from "param.macro";
+
+import {ICoerceable, IAddable, IBounds, IComparable, IEquiv, IInclusive, IDivisible, IMergeable} from '../../protocols';
+
+function add(self, dur){
+  return IBounds.end(self) ? new self.constructor(IBounds.start(self), self |> IBounds.end |> IAddable.add(v, dur)) : self;
+}
+
+function merge(self, other){
+  return other == null ? self : new self.constructor(min(IBounds.start(self), IBounds.start(other)), max(IBounds.end(other), IBounds.end(other)));
+}
 
 function divide(self, step){
   return IDivisible.divide(ICoerceable.toDuration(self), step);
@@ -34,6 +45,8 @@ function compare(self, other){ //TODO test with sort of periods
 
 export const behaveAsPeriod = does(
   emptyable,
+  implement(IAddable, {add}),
+  implement(IMergeable, {merge}),
   implement(IDivisible, {divide}),
   implement(IComparable, {compare}),
   implement(ICoerceable, {toDuration}),
