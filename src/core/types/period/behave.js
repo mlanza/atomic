@@ -1,6 +1,7 @@
 import {does} from '../../core';
 import {implement} from '../protocol';
 import {emptyable} from "../record/behave";
+import {duration} from "../duration/construct";
 import {ICoerceable, IBounds, IComparable, IEquiv, IInclusive} from '../../protocols';
 
 function start(self){
