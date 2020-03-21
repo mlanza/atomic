@@ -3,9 +3,15 @@ import {implement} from '../protocol';
 import {emptyable} from "../record/behave";
 import {duration} from "../duration/construct";
 import {min, max} from "../number/concrete";
+import {recurrence} from "../recurrence/construct";
+import {period} from "./construct";
+import {map} from "../lazy-seq/concrete";
+import {ISplittable, ICoerceable, IAddable, IBounds, IComparable, IEquiv, IInclusive, IDivisible, IMergeable} from '../../protocols';
 import {_ as v} from "param.macro";
 
-import {ICoerceable, IAddable, IBounds, IComparable, IEquiv, IInclusive, IDivisible, IMergeable} from '../../protocols';
+export function split(self, step){
+  return map(period(v, step), recurrence(IBounds.start(self), IBounds.end(self), step));
+}
 
 function add(self, dur){
   return IBounds.end(self) ? new self.constructor(IBounds.start(self), self |> IBounds.end |> IAddable.add(v, dur)) : self;
@@ -45,6 +51,7 @@ function compare(self, other){ //TODO test with sort of periods
 
 export const behaveAsPeriod = does(
   emptyable,
+  implement(ISplittable, {split}),
   implement(IAddable, {add}),
   implement(IMergeable, {merge}),
   implement(IDivisible, {divide}),

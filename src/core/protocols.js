@@ -49,6 +49,7 @@ export * from "./protocols/iseqable/instance";
 export * from "./protocols/isequential/instance";
 export * from "./protocols/iset/instance";
 export * from "./protocols/istatemachine/instance";
+export * from "./protocols/isplittable/instance";
 export * from "./protocols/iswap/instance";
 export * from "./protocols/itemplate/instance";
 export * from "./protocols/iyankable/instance";
