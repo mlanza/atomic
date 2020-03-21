@@ -2,7 +2,7 @@ import {IAddable} from "./instance";
 import {IInverse} from "../iinverse/instance";
 import {compare} from "../icomparable/concrete";
 import {reducing} from "../ireduce/concrete";
-import {overload} from "../../core";
+import {constantly, overload, identity} from "../../core";
 
 export function directed(start, step) {
   return compare(IAddable.add(start, step), start);
@@ -34,5 +34,5 @@ function subtract2(self, n){
   return IAddable.add(self, IInverse.inverse(n));
 }
 
-export const subtract = overload(null, null, subtract2, reducing(subtract2));
-export const add = overload(null, null, IAddable.add, reducing(IAddable.add));
+export const subtract = overload(constantly(0), identity, subtract2, reducing(subtract2));
+export const add = overload(constantly(0), identity, IAddable.add, reducing(IAddable.add));
