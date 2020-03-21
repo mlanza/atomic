@@ -1,17 +1,23 @@
-import {does} from '../../core';
+import {does, overload} from '../../core';
 import {implement} from '../protocol';
 import {emptyable} from "../record/behave";
 import {duration} from "../duration/construct";
 import {min, max} from "../number/concrete";
 import {recurrence} from "../recurrence/construct";
 import {period} from "./construct";
-import {map} from "../lazy-seq/concrete";
+import {map, take} from "../lazy-seq/concrete";
 import {ISplittable, ICoerceable, IAddable, IBounds, IComparable, IEquiv, IInclusive, IDivisible, IMergeable} from '../../protocols';
 import {_ as v} from "param.macro";
 
-export function split(self, step){
+function split2(self, step){
   return map(period(v, step), recurrence(IBounds.start(self), IBounds.end(self), step));
 }
+
+function split3(self, step, n){
+  return take(n, split2(self, step));
+}
+
+const split = overload(null, null, split2, split3);
 
 function add(self, dur){
   return IBounds.end(self) ? new self.constructor(IBounds.start(self), self |> IBounds.end |> IAddable.add(v, dur)) : self;
