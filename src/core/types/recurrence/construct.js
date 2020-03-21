@@ -2,7 +2,7 @@ import {overload, constantly} from '../../core';
 import {days} from '../duration/construct';
 import {sod, eod, isDate} from '../date/concrete';
 import {filter} from '../lazy-seq/concrete';
-import {steps, directed} from '../../protocols/isteppable/concrete';
+import {steps, directed} from '../../protocols/iaddable/concrete';
 import {compare} from '../../protocols/icomparable/concrete';
 import {patch} from '../../associatives';
 import {Symbol} from '../symbol/construct';

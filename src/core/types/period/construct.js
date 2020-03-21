@@ -1,6 +1,6 @@
 import {overload} from '../../core';
 import {sod, eod, isDate} from '../date/concrete';
-import {add} from '../../protocols/isteppable/concrete';
+import {add} from '../../protocols/iaddable/concrete';
 import {patch} from '../../associatives';
 import {Symbol} from '../symbol/construct';
 import {_ as v} from "param.macro";

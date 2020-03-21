@@ -1,3 +1,4 @@
+export * from "./protocols/iaddable/instance";
 export * from "./protocols/iappendable/instance";
 export * from "./protocols/iassociative/instance";
 export * from "./protocols/iblankable/instance";
@@ -47,7 +48,6 @@ export * from "./protocols/iseqable/instance";
 export * from "./protocols/isequential/instance";
 export * from "./protocols/iset/instance";
 export * from "./protocols/istatemachine/instance";
-export * from "./protocols/isteppable/instance";
 export * from "./protocols/iswap/instance";
 export * from "./protocols/itemplate/instance";
 export * from "./protocols/iyankable/instance";

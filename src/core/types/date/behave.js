@@ -1,10 +1,15 @@
 import {does, overload, constantly, identity} from '../../core';
 import {implement} from '../protocol';
-import {IReduce, IKVReduce, ISeqable, IBounds, IMap, IDeref, ISeq, IComparable, IEquiv, ICloneable, ILookup, IAssociative, ICollection} from '../../protocols';
+import {IAddable, IReduce, IKVReduce, ISeqable, IBounds, IMap, IDeref, ISeq, IComparable, IEquiv, ICloneable, ILookup, IAssociative, ICollection} from '../../protocols';
 import {isNumber} from '../number';
 import {days} from '../duration';
-import {isDate} from "./concrete";
 import {Symbol} from '../symbol/construct';
+
+function add(self, dur){
+  return IKVReduce.reducekv(dur, function(self, key, value){
+    return IAssociative.assoc(self, key, ILookup.lookup(self, key) + value);
+  }, self);
+}
 
 function lookup(self, key){
   switch(key){
@@ -109,14 +114,11 @@ function deref(self){
   return self.valueOf();
 }
 
-const start = identity,
-      end = identity,
-      seq = identity;
-
 export const behaveAsDate = does(
+  implement(IAddable, {add}),
   implement(IDeref, {deref}),
-  implement(IBounds, {start, end}),
-  implement(ISeqable, {seq}),
+  implement(IBounds, {start: identity, end: identity}),
+  implement(ISeqable, {seq: identity}),
   implement(IReduce, {reduce}),
   implement(IKVReduce, {reducekv}),
   implement(IEquiv, {equiv}),

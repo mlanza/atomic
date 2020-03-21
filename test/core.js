@@ -298,7 +298,7 @@ QUnit.test("sequences", function(assert){
   assert.equal(_.maxKey(obj => obj["king"], pieces, court), pieces);
 });
 
-QUnit.test("step, add, subtract", function(assert){
+QUnit.test("add/subtract", function(assert){
   const christmas = _.date(2017, 11, 25);
   const newYears  = _.date(2018, 0, 1);
   const mmddyyyy  =
@@ -308,7 +308,6 @@ QUnit.test("step, add, subtract", function(assert){
       _.comp(_.zeros(v, 4), _.year));
   assert.equal(christmas |> mmddyyyy, "12/25/2017");
   assert.equal(newYears  |> mmddyyyy, "01/01/2018");
-  assert.equal(christmas |> _.add(v, _.days(1)) |> _.deref, christmas |> _.step(_.days(1), v) |> _.deref);
   assert.equal(christmas |> _.add(v, _.days(1)) |> _.deref, 1514264400000);
   assert.equal(christmas |> _.add(v, _.weeks(1)) |> _.deref, 1514782800000);
   assert.equal(christmas |> _.add(v, _.months(1)) |> _.deref, 1516856400000);

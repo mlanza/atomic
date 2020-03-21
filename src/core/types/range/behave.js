@@ -1,11 +1,11 @@
 import {does} from '../../core';
 import {implement} from '../protocol';
-import {ICoerceable, IInverse, ISteppable, ISequential, ICollection, IComparable, INext, IEquiv, IReduce, IKVReduce, ISeqable, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, ISeq, IInclusive, IIndexed} from '../../protocols';
+import {ICoerceable, IInverse, IAddable, ISequential, ICollection, IComparable, INext, IEquiv, IReduce, IKVReduce, ISeqable, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, ISeq, IInclusive, IIndexed} from '../../protocols';
 import {unreduced, isReduced} from '../reduced';
 import {drop} from '../lazy-seq';
 import {iterable} from '../lazy-seq/behave';
 import {emptyable} from "../record/behave";
-import {directed} from '../../protocols/isteppable/concrete';
+import {directed} from '../../protocols/iaddable/concrete';
 
 function seq(self){
   return IEquiv.equiv(self.start, self.end) || (self.step == null && self.direction == null && self.start == null && self.end == null) ? null : self;
@@ -21,7 +21,7 @@ function rest(self){
 
 function next(self){
   if (!seq(self)) return null;
-  const stepped = ISteppable.step(self.step, self.start);
+  const stepped = IAddable.add(self.start, self.step);
   return self.end == null || (IComparable.compare(stepped, self.end) * self.direction) < 0 ? new self.constructor(stepped, self.end, self.step, self.direction) : null;
 }
 

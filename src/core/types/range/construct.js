@@ -1,5 +1,5 @@
 import {overload} from '../../core';
-import {steps} from '../../protocols/isteppable/concrete';
+import {steps} from '../../protocols/iaddable/concrete';
 import {isNumber} from '../number/concrete';
 import {Symbol} from '../symbol/construct';
 
