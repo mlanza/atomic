@@ -51,11 +51,6 @@ QUnit.test("validation", function(assert){
   assert.ok(vd.check(zipCode, "1705x-0001") != null);
   assert.ok(vd.check(Number, "7") != null);
   assert.ok(vd.check(Number, parseInt, "7") == null);
-  assert.ok(vd.check(Date, mut.parseDate, "11/10/2019 5:45 am") == null);
-  assert.ok(vd.check(Date, mut.parseDate, "d11/10/2019 5:45 am") != null);
-  assert.ok(vd.check(vd.parses(mut.parseDate, past), "1/1/3000") != null);
-  assert.ok(vd.check(vd.parses(mut.parseDate, past), birth) == null);
-  assert.ok(vd.check(vd.parses(mut.parseDate, past), `d${birth}`) != null);
   assert.ok(vd.check(vd.range("start", "end"), {start: 1, end: 5}) == null);
   assert.ok(vd.check(vd.range("start", "end"), {start: 1, end: 1}) == null);
   assert.ok(vd.check(vd.range("start", "end"), {start: 5, end: 1}) != null);
