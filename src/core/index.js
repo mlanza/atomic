@@ -19,22 +19,7 @@ export * from "./associatives";
 import Set from 'set';
 
 export const global = window;
-
-export const serialDate = /^\d{4}(-\d{2}(-\d{2}( \d{2}:\d{2}(:\d{2})?)?)?)?$/;
-export const localDate  = /^(\d{4})-(\d{2})-(\d{2})[T ](\d{2}):(\d{2}):(\d{2})Z?$/;
-export const jsonDate   = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$/;
-export const timestamp  = /^\/*Date\((\-?\d+)\)\/*$/;
-export const mdy        = /^(\d{1,2})\/(\d{1,2})\/(\d{2,5})( (\d{1,2}):(\d{2})[ ]?([ap]m)?)?$/i;
-export const numeric    = /^\d+$/i;
-
-export const fromSerialDate = comp(spread(date), split(v, /[-:. \/]/));
-export const fromLocalDate  = comp(spread(date), mapa(parseInt, v), drop(1, v), reMatches(localDate, v));
-export const fromJsonDate   = comp(date, reMatches(jsonDate, v));
-export const fromTimestamp  = comp(date, parseInt, get(v, 1), reMatches(timestamp, v));
-export const fromMDY = comp(spread(function(M, d, y, h, m, ampm){
-  const mh = h != null ? h + (ampm == "pm" ? 12 : 0) : null;
-  return new Date((y < 99 ? 2000 : 0) + y, M - 1, d, mh || 0, m || 0);
-}), toArray, mapVals(v, parseInt, test(numeric, v)), toArray, splice(v, 3, 1, []), drop(1, v), reMatches(mdy, v));
+export const numeric = test(/^\d+$/i, v);
 
 export function deconstruct(dur, ...units){
   let memo = dur;
@@ -43,17 +28,6 @@ export function deconstruct(dur, ...units){
     memo = subtract(memo, fmap(unit, constantly(n)));
     return n;
   }, units);
-}
-
-//TODO remove!
-export function week(obj, fdow){
-  const firstDayOfWeek = fdow || 0,
-        lastDayOfWeek = 7 - firstDayOfWeek,
-        s       = IBounds.start(obj),
-        e       = IBounds.end(obj),
-        soffset = Math.abs(firstDayOfWeek - s.getDay()),
-        eoffset = Math.abs(lastDayOfWeek  - e.getDay());
-  return period(add(s, days(-soffset)), add(e, days(eoffset)));
 }
 
 export function toQueryString(obj){
