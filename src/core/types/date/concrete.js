@@ -44,7 +44,7 @@ export function quarter(self){
   return Math.ceil((month(self) + 1) / 3);
 }
 
-export function clockHours(self){
+export function clockHour(self){
   const h = self.getHours();
   return (h > 12 ? h - 12 : h) || 12;
 }
