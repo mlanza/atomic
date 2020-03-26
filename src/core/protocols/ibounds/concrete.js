@@ -1,5 +1,6 @@
 import {IBounds} from "./instance";
 import {IComparable} from "../../protocols/icomparable";
+import {min, max} from "../../types/number/concrete";
 
 export const start = IBounds.start;
 export const end = IBounds.end;
@@ -30,10 +31,8 @@ export function between(a, b){
 
 export function overlap(a, b){
   const [sa, ea] = chronology(a),
-        [sb, eb] = chronology(b);
-  return (
-    inside(sa, ea, sb) ||
-    inside(sa, ea, eb) ||
-    inside(sb, eb, sa) ||
-    inside(sb, eb, ea));
+        [sb, eb] = chronology(b),
+        s = max(sa, sb),
+        e = min(ea, eb);
+  return IComparable.compare(s, e) <= 0 ? new a.constructor(s, e) : null;
 }
