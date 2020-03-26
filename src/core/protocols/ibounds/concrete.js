@@ -1,6 +1,10 @@
 import {IBounds} from "./instance";
 import {IComparable} from "../../protocols/icomparable";
+import {filtera} from "../../types/lazy-seq/concrete";
+import {isSome} from "../../types/nil";
 import {min, max} from "../../types/number/concrete";
+import {spread} from "../../types/function/concrete";
+import {_ as v} from "param.macro";
 
 export const start = IBounds.start;
 export const end = IBounds.end;
@@ -33,6 +37,6 @@ export function overlap(a, b){
   const [sa, ea] = chronology(a),
         [sb, eb] = chronology(b),
         s = max(sa, sb),
-        e = min(ea, eb);
-  return IComparable.compare(s, e) <= 0 ? new a.constructor(s, e) : null;
+        e = [ea, eb] |> filtera(isSome, v) |> spread(min);
+  return s == null || e == null || IComparable.compare(s, e) < 0 ? new a.constructor(s, e) : null;
 }
