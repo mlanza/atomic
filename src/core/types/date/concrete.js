@@ -1,16 +1,12 @@
 import {ICloneable, ICompactable, IMergeable} from '../../protocols';
-import {inc} from '../../protocols/iaddable/concrete';
+import {inc, dec} from '../../protocols/iaddable/concrete';
 import {prop} from "../../associatives";
 import {overload, identity} from '../../core';
 
 export function monthDays(self){
   return IMergeable.merge(self, {
     month: inc,
-    day: 0,
-    hour: 0,
-    minute: 0,
-    second: 0,
-    millisecond: 0
+    day: 0
   }).getDate();
 }
 
@@ -95,7 +91,13 @@ export function sod(){
 }
 
 export function eod(){
-  return Object.assign(sod(), {day: inc});
+  return {
+    hour: 0,
+    minute: 0,
+    second: 0,
+    millisecond: 0,
+    day: inc
+  };
 }
 
 export function noon(){
@@ -136,20 +138,9 @@ export function eom(){
   };
 }
 
-export function bom(){ //bottom of month -- locates last day of month
-  return {
-    month: inc,
-    day: 0,
-    hour: 0,
-    minute: 0,
-    second: 0,
-    millisecond: 0
-  };
-}
-
 export function soy(){
   return {
-    month: 1,
+    month: 0,
     day: 1,
     hour: 0,
     minute: 0,
@@ -161,11 +152,21 @@ export function soy(){
 export function eoy(){
   return {
     year: inc,
-    month: 1,
+    month: 0,
     day: 1,
     hour: 0,
     minute: 0,
     second: 0,
     millisecond: 0
   };
+}
+
+export function tick(n){
+  return {
+    millisecond: n
+  }
+}
+
+export function untick(){
+  return tick(dec);
 }
