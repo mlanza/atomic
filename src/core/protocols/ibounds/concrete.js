@@ -1,10 +1,8 @@
 import {IBounds} from "./instance";
 import {IComparable} from "../../protocols/icomparable";
-import {filtera} from "../../types/lazy-seq/concrete";
-import {isSome} from "../../types/nil";
-import {min, max} from "../../types/number/concrete";
-import {spread} from "../../types/function/concrete";
-import {_ as v} from "param.macro";
+import {isNil} from "../../types/nil";
+import {constructs} from "../../core";
+import {gt, lt, lte} from "../../predicates";
 
 export const start = IBounds.start;
 export const end = IBounds.end;
@@ -33,10 +31,13 @@ export function between(a, b){
   return inside(sa, ea, sb) && inside(sa, ea, eb);
 }
 
-export function overlap(a, b){
-  const [sa, ea] = chronology(a),
-        [sb, eb] = chronology(b),
-        s = max(sa, sb),
-        e = [ea, eb] |> filtera(isSome, v) |> spread(min);
-  return s == null || e == null || IComparable.compare(s, e) < 0 ? new a.constructor(s, e) : null;
+export function overlap(self, other){
+  const make = constructs(self.constructor),
+        ss = start(self),
+        es = end(self),
+        so = start(other),
+        eo = end(other),
+        sn = isNil(ss) || isNil(so) ? ss || so : gt(ss, so) ? ss : so,
+        en = isNil(es) || isNil(eo) ? es || eo : lt(es, eo) ? es : eo
+  return lte(sn, en) ? make(sn, en) : null;
 }
