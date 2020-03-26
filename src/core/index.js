@@ -27,6 +27,16 @@ function recurs2(pd, step) {
 
 export const recurs = overload(null, recurs2(v, days(1)), recurs2);
 
+export function cleanly(f){
+  return function(...args){
+    try {
+      return f(...args);
+    } catch {
+      return null;
+    }
+  }
+}
+
 export function deconstruct(dur, ...units){
   let memo = dur;
   return mapa(function(unit){
