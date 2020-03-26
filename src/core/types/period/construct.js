@@ -3,7 +3,6 @@ import {sod, eod, isDate} from '../date/concrete';
 import {add} from '../../protocols/iaddable/concrete';
 import {IMergeable} from '../../protocols/imergeable/instance';
 import {Symbol} from '../symbol/construct';
-import {_ as v} from "param.macro";
 
 export function Period(start, end){
   this.start = start;
@@ -23,7 +22,17 @@ export function period1(obj){
 }
 
 function period2(start, end){ //end could be a duration (e.g. `minutes(30)`).
-  return new Period(start, end == null || isDate(end) ? end : add(start, end));
+  const pd = new Period(start, end == null || isDate(end) ? end : add(start, end));
+  if (!(pd.start == null || isDate(pd.start))) {
+    throw new Error("Invalid start of period.");
+  }
+  if (!(pd.end == null || isDate(pd.end))) {
+    throw new Error("Invalid end of period.");
+  }
+  if (pd.start != null && pd.end != null && pd.start > pd.end) {
+    throw new Error("Period bounds must be chronological.");
+  }
+  return pd;
 }
 
 export const period = overload(emptyPeriod, period1, period2);
