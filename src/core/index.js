@@ -1,6 +1,6 @@
 import {overload, toggles, identity, obj, partly, doto, branch, unspread, applying, execute, noop, constantly} from "./core";
 import {IAppendable, IYankable, ICoerceable, IAssociative, IBounds, IInverse, ICloneable, ICollection, IComparable, ICounted, IDeref, IDisposable, IEmptyableCollection, IEquiv, IFind, IFn, IForkable, IFunctor, IHierarchy, IInclusive, IIndexed, IInsertable, IKVReduce, ILookup, IMap, IMapEntry, IMatchable, INext, IOtherwise, IPrependable, IReduce, IReset, ISeq, ISeqable, ISet, ISwap} from "./protocols";
-import {just, satisfies, filter, spread, maybe, each, duration, remove, sort, flip, realized, comp, isNumber, isFunction, apply, realize, isNil, reFindAll, mapkv, period, selectKeys, mapVals, reMatches, test, date, emptyList, cons, days, second as _second} from "./types";
+import {just, satisfies, filter, spread, maybe, each, duration, remove, sort, flip, realized, comp, isNumber, isFunction, apply, realize, isNil, reFindAll, mapkv, period, selectKeys, mapVals, reMatches, test, date, emptyList, cons, days, recurrence, second as _second} from "./types";
 import {add, subtract, compact, matches, name, descendants, query, locate, deref, get, assoc, yank, conj, reducing, toArray, reducekv, includes, excludes, rest, count, between, reduce, divide, fmap, split} from "./protocols/concrete";
 import {isString, isBlank, str, replace} from "./types/string";
 import {isSome} from "./types/nil";
@@ -20,6 +20,12 @@ import Set from 'set';
 
 export const global = window;
 export const numeric = test(/^\d+$/i, v);
+
+function recurs2(pd, step) {
+  return recurrence(IBounds.start(pd), IBounds.end(pd), step);
+}
+
+export const recurs = overload(null, recurs2(v, days(1)), recurs2);
 
 export function deconstruct(dur, ...units){
   let memo = dur;
