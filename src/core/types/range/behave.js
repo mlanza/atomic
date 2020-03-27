@@ -39,6 +39,17 @@ function reduce(self, xf, init){
   return unreduced(memo);
 }
 
+function reducekv(self, xf, init){
+  let memo = init,
+      coll = seq(self),
+      n = 0;
+  while(!isReduced(memo) && coll){
+    memo = xf(memo, n++, ISeq.first(coll));
+    coll = INext.next(coll);
+  }
+  return unreduced(memo);
+}
+
 function toArray(self){
   return reduce(self, function(memo, date){
     memo.push(date);
@@ -102,6 +113,7 @@ export const behaveAsRange = does(
   implement(ISeqable, {seq}),
   implement(ICoerceable, {toArray}),
   implement(IReduce, {reduce}),
+  implement(IKVReduce, {reducekv}),
   implement(INext, {next}),
   implement(ISeq, {first, rest}),
   implement(IEquiv, {equiv}));

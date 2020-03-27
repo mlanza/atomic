@@ -27,6 +27,10 @@ function recurs2(pd, step) {
 
 export const recurs = overload(null, recurs2(v, days(1)), recurs2);
 
+export function inclusive(self){
+  return new self.constructor(self.start, add(self.end, self.step), self.step, self.direction);
+}
+
 function cleanlyN(f, ...args){
   try {
     return f(...args);
