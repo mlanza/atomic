@@ -84,6 +84,14 @@ export function expands(f){
   return expand;
 }
 
+export function xarg(fn, n, f){
+  return function(){
+    const args = slice(arguments);
+    args[n] = f(args[n]);
+    return fn.apply(this, args);
+  }
+}
+
 export function xargs(f, ...fs){
   return function(...args){
     return apply(f, map(execute, fs, args));
