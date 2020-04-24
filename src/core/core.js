@@ -149,21 +149,29 @@ export function constructs(Type) {
   }
 }
 
+function branch3(pred, yes, no){
+  return function(...args){
+    return pred(...args) ? yes(...args) : no(...args);
+  }
+}
+
+function branchN(pred, f, ...fs){
+  return function(...args){
+    return pred(...args) ? f(...args) : branch(...fs)(...args);
+  }
+}
+
+export const branch = overload(null, null, null, branch3, branchN);
+
 function guard1(pred){
   return guard2(pred, identity);
 }
 
 function guard2(pred, f){
-  return branch(pred, f, noop);
+  return branch3(pred, f, noop);
 }
 
 export const guard = overload(null, guard1, guard2);
-
-export function branch(pred, yes, no){
-  return function(...args){
-    return pred(...args) ? yes(...args) : no(...args);
-  }
-}
 
 function memoize1(f){
   return memoize2(f, function(...args){
