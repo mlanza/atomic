@@ -1,6 +1,6 @@
 import * as _ from "atomic/core";
 import {IParams, IOptions, IAddress, IIntercept} from "../../protocols";
-import {ITemplate, IFunctor, IQueryable, ICoerceable, IForkable, ISeq, fromTask} from "atomic/core";
+import {ITemplate, IFunctor, IQueryable, ICoerceable, IForkable, ISeq, IAssociative, IMap, fromTask} from "atomic/core";
 import {query} from "../request/behave";
 import {_ as v} from "param.macro";
 
@@ -24,8 +24,12 @@ function options(self, options){
   return new self.constructor(_.mapa(IOptions.options(v, options), self.requests));
 }
 
-function fill(self, params){
-  return new self.constructor(_.mapa(_.fill(v, params), self.requests));
+function assoc(self, key, value){
+  return new self.constructor(_.mapa(IAssociative.assoc(v, key, value), self.requests));
+}
+
+function dissoc(self, key){
+  return new self.constructor(_.mapa(IMap.dissoc(v, key), self.requests));
 }
 
 function intercept(self, interceptor){
@@ -51,7 +55,8 @@ export const behaveAsRouted = _.does(
   _.implement(ISeq, {first, rest}),
   _.implement(IIntercept, {intercept}),
   _.implement(IFunctor, {fmap}),
-  _.implement(ITemplate, {fill}),
+  _.implement(IAssociative, {assoc}),
+  _.implement(IMap, {dissoc}),
   _.implement(IAddress, {addr}),
   _.implement(IParams, {params}),
   _.implement(IOptions, {options}));
