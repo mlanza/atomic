@@ -2,37 +2,47 @@ import fetch from "fetch";
 import Promise from "promise";
 import * as _ from "atomic/core";
 import {IParams, IOptions, IAddress, IIntercept} from "../../protocols";
-import {ITemplate, IFunctor, IQueryable, ICoerceable, IForkable, fromTask} from "atomic/core";
+import {ITemplate, IFunctor, IQueryable, ICoerceable, IForkable, IMap, IAssociative, ILookup, fromTask} from "atomic/core";
 import {_ as v} from "param.macro";
 
 export function query(self, plan){
-  const ks = _.keys(plan),
-        os = _.filter(_.startsWith(v, "$"), ks),
-        params = _.selectKeys(plan, os),
-        fills = _.apply(_.dissoc, plan, os);
-  return fromTask(IParams.params(ITemplate.fill(self, fills), params));
+  const keys = _.filter(_.startsWith(v, "$"), _.keys(plan)),
+        params = _.selectKeys(plan, keys),
+        attrs = _.apply(_.dissoc, plan, keys);
+  return fromTask(IParams.params(_.merge(self, attrs), params));
 }
 
 function addr(self){
-  return _.fill(_.str(self.url), self.filled);
+  return _.fill(_.str(self.url), self.config);
 }
 
-function fill(self, filled){
-  const f = _.isFunction(filled) ? filled : _.merge(v, filled);
-  return new self.constructor(self.url, f(self.filled), self.options, self.interceptors, self.handlers);
+function assoc(self, key, value) {
+  return new self.constructor(self.url, IAssociative.assoc(self.config, key, value), self.options, self.interceptors, self.handlers);
+}
+
+function keys(self){
+  return IMap.keys(self.config);
+}
+
+function dissoc(self, key) {
+  return new self.constructor(self.url, IMap.dissoc(self.config, key), self.options, self.interceptors, self.handlers);
+}
+
+function lookup(self, key){
+  return ILookup.lookup(self.config, key);
 }
 
 function params(self, params){
-  return new self.constructor(IParams.params(self.url, params), self.filled, self.options, self.interceptors, self.handlers);
+  return new self.constructor(IParams.params(self.url, params), self.config, self.options, self.interceptors, self.handlers);
 }
 
 function options(self, options){
   const f = _.isFunction(options) ? options : _.absorb(v, options);
-  return new self.constructor(self.url, self.filled, f(self.options), self.interceptors, self.handlers);
+  return new self.constructor(self.url, self.config, f(self.options), self.interceptors, self.handlers);
 }
 
 function fmap(self, handler){
-  return new self.constructor(self.url, self.filled, self.options, self.interceptors, _.conj(self.handlers, handler));
+  return new self.constructor(self.url, self.config, self.options, self.interceptors, _.conj(self.handlers, handler));
 }
 
 function intercept2(self, interceptor){
@@ -40,7 +50,7 @@ function intercept2(self, interceptor){
 }
 
 function intercept3(self, interceptor, manner){
-  return new self.constructor(self.url, self.filled, self.options, manner(self.interceptors, interceptor), self.handlers);
+  return new self.constructor(self.url, self.config, self.options, manner(self.interceptors, interceptor), self.handlers);
 }
 
 const intercept = _.overload(null, null, intercept2, intercept3);
@@ -58,9 +68,11 @@ export const behaveAsRequest = _.does(
   _.implement(ICoerceable, {toPromise: fromTask}),
   _.implement(IForkable, {fork}),
   _.implement(IQueryable, {query}),
+  _.implement(IAssociative, {assoc}),
+  _.implement(ILookup, {lookup}),
+  _.implement(IMap, {keys, dissoc}),
   _.implement(IAddress, {addr}),
   _.implement(IOptions, {options}),
   _.implement(IParams, {params}),
-  _.implement(ITemplate, {fill}),
   _.implement(IIntercept, {intercept}),
   _.implement(IFunctor, {fmap}));
