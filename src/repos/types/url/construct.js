@@ -1,4 +1,4 @@
-import {constructs, overload, identity, emptyObject, selectKeys as whitelist, reducekv, assoc, includes} from "atomic/core";
+import {constructs, overload, identity} from "atomic/core";
 import {_ as v} from "param.macro";
 
 export function URL(url, xfq){
@@ -17,19 +17,3 @@ function url1(url){
 const url2 = constructs(URL);
 
 export const url = overload(null, url1, url2);
-
-function blacklist(obj, keys){
-  return reducekv(function(memo, key, value){
-    return includes(keys, key) ? memo : assoc(memo, key, value);
-  }, {}, obj);
-}
-
-export function restrictedUrl(url, options){
-  const list = options.whitelist || options.blacklist,
-        f    = options.whitelist ? whitelist : blacklist;
-  return url2(url, f(v, list));
-}
-
-export function fixedUrl(url){
-  return url2(url, emptyObject);
-}
