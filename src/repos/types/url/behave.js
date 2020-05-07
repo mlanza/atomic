@@ -8,7 +8,7 @@ function params(self, obj){
   return new self.constructor(
     _.str(
       self.url |> _.split(v, "?") |> _.first,
-      self.url |> _.fromQueryString |> f |> _.toQueryString));
+      self.url |> _.fromQueryString |> f |> self.xfq |> _.toQueryString), self.xfq);
 }
 
 function fill(self, params){
