@@ -1,4 +1,4 @@
-import {IFn, ISeq, IReduce, IKVReduce, ILookup, IAssociative, IEmptyableCollection} from "../../protocols";
+import {IFn, ISeq, IReduce, IKVReduce, ILookup, IInclusive, IAssociative, IEmptyableCollection} from "../../protocols";
 import {apply, isFunction} from "../function";
 import {reducing} from "../../protocols/ireduce/concrete";
 import {overload, branch} from "../../core";
@@ -16,6 +16,12 @@ export function juxtVals(self, value){
 export function selectKeys(self, keys){
   return IReduce.reduce(keys, function(memo, key){
     return IAssociative.assoc(memo, key, ILookup.lookup(self, key));
+  }, emptied(self));
+}
+
+export function removeKeys(self, keys){
+  return IKVReduce.reducekv(self, function(memo, key, value){
+    return IInclusive.includes(keys, key) ? memo : IAssociative.assoc(memo, key, value);
   }, emptied(self));
 }
 
