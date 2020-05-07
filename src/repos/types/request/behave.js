@@ -6,10 +6,11 @@ import {ITemplate, IFunctor, IQueryable, ICoerceable, IForkable, IMap, IAssociat
 import {_ as v} from "param.macro";
 
 export function query(self, plan){
-  const keys = _.filter(_.startsWith(v, "$"), _.keys(plan)),
-        params = _.selectKeys(plan, keys),
-        attrs = _.apply(_.dissoc, plan, keys);
-  return fromTask(IParams.params(_.merge(self, attrs), params));
+  const keys = _.filter(_.startsWith(v, "$"), _.keys(plan));
+  return self
+    |> _.merge(v, _.apply(_.dissoc, plan, keys))
+    |> IParams.params(v, _.selectKeys(plan, keys))
+    |> fromTask;
 }
 
 function addr(self){
@@ -56,11 +57,13 @@ function intercept3(self, interceptor, manner){
 const intercept = _.overload(null, null, intercept2, intercept3);
 
 function fork(self, reject, resolve){
-  return _.fork(
-    _.reduce(_.fmap, Promise.resolve(self), self.interceptors),
-    reject,
-    function(self){
-      return _.fork(_.apply(_.fmap, fetch(self.url, self.options), self.handlers), reject, resolve);
+  return self
+    |> Promise.resolve
+    |> _.reduce(IFunctor.fmap, v, self.interceptors)
+    |> _.fork(v, reject, function(self){
+      return fetch(self.url, self.options)
+        |> _.reduce(IFunctor.fmap, v, self.handlers)
+        |> _.fork(v, reject, resolve);
     });
 }
 
