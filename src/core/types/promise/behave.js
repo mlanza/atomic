@@ -3,8 +3,8 @@ import {identity, does, overload} from '../../core';
 import {implement} from '../protocol';
 import {Promise} from './construct';
 
-function fmap(self, f){
-  return self.then(f);
+function fmap(self, resolve){
+  return self.then(resolve);
 }
 
 function fork(self, reject, resolve){

@@ -60,11 +60,11 @@ function fork(self, reject, resolve){
   return self
     |> Promise.resolve
     |> _.reduce(IFunctor.fmap, v, self.interceptors)
-    |> _.fork(v, reject, function(self){
-      return fetch(self.url, self.options)
-        |> _.reduce(IFunctor.fmap, v, self.handlers)
-        |> _.fork(v, reject, resolve);
-    });
+    |> _.fmap(v, function(self){
+      return fetch(self.url, self.options);
+    })
+    |> _.reduce(IFunctor.fmap, v, self.handlers)
+    |> _.fork(v, reject, resolve);
 }
 
 export const behaveAsRequest = _.does(
