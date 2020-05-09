@@ -24,7 +24,15 @@ export function raise(req){
     return new Promise(function(resolve, reject){
       return resp.ok ? resolve(resp) : reject(resp);
     });
-  })
+  });
+}
+
+export function suppress(req, f){
+  return _.fmap(req, function(resp){
+    return new Promise(function(resolve, reject){
+      return resp.ok ? resolve(resp) : resolve(f(resp));
+    });
+  });
 }
 
 function params(self, obj){

@@ -1,8 +1,14 @@
 import * as _ from "atomic/core";
 import {IParams, IOptions, IAddress, IIntercept} from "../../protocols";
-import {ITemplate, IFunctor, IQueryable, ICoerceable, IForkable, ISeq, IAssociative, IMap, fromTask} from "atomic/core";
+import {ITemplate, IFunctor, IQueryable, ICoerceable, IForkable, ISeq, IAssociative, IMap, ICollection, fromTask} from "atomic/core";
 import {query} from "../request/behave";
 import {_ as v} from "param.macro";
+
+function xform(xf){
+  return function(self, ...args){
+    return new self.constructor(_.mapa(_.apply(xf, v, args), self.requests));
+  }
+}
 
 function filled(self){
   return _.maybe(self, IAddress.addr, _.test(/\{[^{}]+\}/, v), _.not);
@@ -14,30 +20,6 @@ function fork(self, reject, resolve){
 
 function addr(self){
   return IAddress.addr(_.detect(filled, self.requests));
-}
-
-function params(self, params){
-  return new self.constructor(_.mapa(IParams.params(v, params), self.requests));
-}
-
-function options(self, options){
-  return new self.constructor(_.mapa(IOptions.options(v, options), self.requests));
-}
-
-function assoc(self, key, value){
-  return new self.constructor(_.mapa(IAssociative.assoc(v, key, value), self.requests));
-}
-
-function dissoc(self, key){
-  return new self.constructor(_.mapa(IMap.dissoc(v, key), self.requests));
-}
-
-function intercept(self, interceptor){
-  return new self.constructor(_.mapa(IIntercept.intercept(v, interceptor), self.requests));
-}
-
-function fmap(self, fmap){
-  return new self.constructor(_.mapa(_.fmap(v, fmap), self.requests));
 }
 
 function first(self){
@@ -53,10 +35,11 @@ export const behaveAsRouted = _.does(
   _.implement(IForkable, {fork}),
   _.implement(IQueryable, {query}),
   _.implement(ISeq, {first, rest}),
-  _.implement(IIntercept, {intercept}),
-  _.implement(IFunctor, {fmap}),
-  _.implement(IAssociative, {assoc}),
-  _.implement(IMap, {dissoc}),
   _.implement(IAddress, {addr}),
-  _.implement(IParams, {params}),
-  _.implement(IOptions, {options}));
+  _.implement(ICollection, {conj: xform(ICollection.conj)}),
+  _.implement(IIntercept, {intercept: xform(IIntercept.intercept)}),
+  _.implement(IFunctor, {fmap: xform(IFunctor.fmap)}),
+  _.implement(IAssociative, {assoc: xform(IAssociative.assoc)}),
+  _.implement(IMap, {dissoc: xform(IMap.dissoc)}),
+  _.implement(IParams, {params: xform(IParams.params)}),
+  _.implement(IOptions, {options: xform(IOptions.options)}));

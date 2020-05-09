@@ -1,4 +1,5 @@
 import * as _ from "atomic/core";
+import {_ as v} from "param.macro";
 import {IIntercept} from "../../protocols"
 
 export function Request(url, config, options, interceptors, handlers){
@@ -13,9 +14,9 @@ export function request(url, context){
   return new Request(url, context || {}, {}, [fillin], []);
 }
 
-function fillin(self){
+const fillin = _.fmap(v, function(self){
   return new Request(_.fill(self.url, self.config), self.config, filledOptions(self.options, self.config), self.interceptors, self.handlers);
-}
+});
 
 function filledOptions(options, filled){
   return _.reducekv(function(memo, key, value){
