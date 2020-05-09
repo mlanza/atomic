@@ -2,7 +2,7 @@ import fetch from "fetch";
 import Promise from "promise";
 import * as _ from "atomic/core";
 import {IParams, IOptions, IAddress, IIntercept} from "../../protocols";
-import {ITemplate, IFunctor, IQueryable, ICoerceable, IForkable, IMap, IAssociative, ILookup, fromTask} from "atomic/core";
+import {ITemplate, IFunctor, IQueryable, ICoerceable, IForkable, IMap, IAssociative, ILookup, ICollection, fromTask} from "atomic/core";
 import {_ as v} from "param.macro";
 
 export function query(self, plan){
@@ -43,7 +43,7 @@ function options(self, options){
 }
 
 function fmap(self, handler){
-  return new self.constructor(self.url, self.config, self.options, self.interceptors, _.conj(self.handlers, handler));
+  return conj(self, _.fmap(v, handler));
 }
 
 function intercept2(self, interceptor){
@@ -51,7 +51,11 @@ function intercept2(self, interceptor){
 }
 
 function intercept3(self, interceptor, manner){
-  return new self.constructor(self.url, self.config, self.options, manner(self.interceptors, interceptor), self.handlers);
+  return new self.constructor(self.url, self.config, self.options, manner(self.interceptors, _.fmap(v, interceptor)), self.handlers);
+}
+
+function conj(self, f){
+  return new self.constructor(self.url, self.config, self.options, self.interceptors, _.conj(self.handlers, f));
 }
 
 const intercept = _.overload(null, null, intercept2, intercept3);
@@ -59,16 +63,17 @@ const intercept = _.overload(null, null, intercept2, intercept3);
 function fork(self, reject, resolve){
   return self
     |> Promise.resolve
-    |> _.reduce(IFunctor.fmap, v, self.interceptors)
+    |> _.apply(_.pipe, self.interceptors)
     |> _.fmap(v, function(self){
-      return fetch(self.url, self.options);
-    })
-    |> _.reduce(IFunctor.fmap, v, self.handlers)
+         return fetch(self.url, self.options);
+       })
+    |> _.apply(_.pipe, self.handlers)
     |> _.fork(v, reject, resolve);
 }
 
 export const behaveAsRequest = _.does(
   _.implement(ICoerceable, {toPromise: fromTask}),
+  _.implement(ICollection, {conj}),
   _.implement(IForkable, {fork}),
   _.implement(IQueryable, {query}),
   _.implement(IAssociative, {assoc}),
