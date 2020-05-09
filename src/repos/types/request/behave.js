@@ -65,10 +65,10 @@ function fork(self, reject, resolve){
     |> Promise.resolve
     |> _.apply(_.pipe, self.interceptors)
     |> _.fmap(v, function(self){
-         return fetch(self.url, self.options);
-       })
-    |> _.apply(_.pipe, self.handlers)
-    |> _.fork(v, reject, resolve);
+      return fetch(self.url, self.options)
+        |> _.apply(_.pipe, self.handlers)
+        |> _.fork(v, reject, resolve);
+    });
 }
 
 export const behaveAsRequest = _.does(
