@@ -41,6 +41,16 @@ function cleanlyN(f, ...args){
 
 export const cleanly = overload(null, curry(cleanlyN, 2), cleanlyN);
 
+//Like `update` but deals with private attributes not exposed via `lookup` and `assoc`.
+//Used only to define an implementation and not publicly for general purposes — an implementation detail.
+export function edit(self, key, f){
+  const obj = ICloneable.clone(self);
+  if (key in obj) {
+    obj[key] = f(obj[key]); //must be a mutable copy
+  }
+  return obj;
+}
+
 export function deconstruct(dur, ...units){
   let memo = dur;
   return mapa(function(unit){

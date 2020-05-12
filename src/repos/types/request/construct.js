@@ -23,9 +23,3 @@ function filledOptions(options, filled){
     return _.assoc(memo, key, _.isString(value) ? _.fill(value, filled) :  _.isObject(value) ? filledOptions(value, filled) : value);
   }, {}, options);
 }
-
-export function reconfig(req, f){
-  return IIntercept.intercept(req, function(self){
-    return new self.constructor(self.url, f(self.config), self.options, self.interceptors, self.handlers);
-  }, _.prepend);
-}

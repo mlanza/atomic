@@ -18,7 +18,7 @@ function patch3(self, other, xf){
   }, self) : self;
 }
 
-const patch = overload(null, identity, patch2, patch3);
+export const patch = overload(null, identity, patch2, patch3);
 
 export function mergeWith(xf, init, ...xs){
   return IReduce.reduce(xs, patch3(v, v, xf), init);

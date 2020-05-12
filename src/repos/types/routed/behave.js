@@ -1,12 +1,16 @@
 import * as _ from "atomic/core";
 import {IParams, IOptions, IAddress, IIntercept} from "../../protocols";
-import {ITemplate, IFunctor, IQueryable, ICoerceable, IForkable, ISeq, IAssociative, IMap, ICollection, fromTask} from "atomic/core";
+import {ICloneable, ITemplate, IFunctor, IQueryable, ICoerceable, IForkable, ISeq, IAssociative, IMap, ICollection, fromTask} from "atomic/core";
 import {query} from "../request/behave";
 import {_ as v} from "param.macro";
 
+function clone(self){
+  return new self.constructor(self.requests);
+}
+
 function xform(xf){
   return function(self, ...args){
-    return new self.constructor(_.mapa(_.apply(xf, v, args), self.requests));
+    return _.edit(self, "requests", _.mapa(_.apply(xf, v, args), v));
   }
 }
 
@@ -31,6 +35,7 @@ function rest(self){
 }
 
 export const behaveAsRouted = _.does(
+  _.implement(ICloneable, {clone}),
   _.implement(ICoerceable, {toPromise: fromTask}),
   _.implement(IForkable, {fork}),
   _.implement(IQueryable, {query}),

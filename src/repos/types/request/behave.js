@@ -2,7 +2,7 @@ import fetch from "fetch";
 import Promise from "promise";
 import * as _ from "atomic/core";
 import {IParams, IOptions, IAddress, IIntercept} from "../../protocols";
-import {ITemplate, IFunctor, IQueryable, ICoerceable, IForkable, IMap, IAssociative, ILookup, ICollection, fromTask} from "atomic/core";
+import {ICloneable, ITemplate, IFunctor, IQueryable, ICoerceable, IForkable, IMap, IAssociative, ILookup, IAppendable, IPrependable, fromTask} from "atomic/core";
 import {_ as v} from "param.macro";
 
 export function query(self, plan){
@@ -13,20 +13,20 @@ export function query(self, plan){
     |> fromTask;
 }
 
+function clone(self){
+  return new self.constructor(self.url, self.config, self.options, self.interceptors, self.handlers);
+}
+
 function addr(self){
   return _.fill(_.str(self.url), self.config);
 }
 
 function assoc(self, key, value) {
-  return new self.constructor(self.url, IAssociative.assoc(self.config, key, value), self.options, self.interceptors, self.handlers);
+  return _.edit(self, "config", IAssociative.assoc(v, key, value));
 }
 
 function keys(self){
   return IMap.keys(self.config);
-}
-
-function dissoc(self, key) {
-  return new self.constructor(self.url, IMap.dissoc(self.config, key), self.options, self.interceptors, self.handlers);
 }
 
 function lookup(self, key){
@@ -34,31 +34,28 @@ function lookup(self, key){
 }
 
 function params(self, params){
-  return new self.constructor(IParams.params(self.url, params), self.config, self.options, self.interceptors, self.handlers);
+  return _.edit(self, "url", IParams.params(v, params));
 }
 
 function options(self, options){
-  const f = _.isFunction(options) ? options : _.absorb(v, options);
-  return new self.constructor(self.url, self.config, f(self.options), self.interceptors, self.handlers);
+  return _.edit(self, "options", _.isFunction(options) ? options : _.absorb(v, options));
+}
+
+function intercept(self, interceptor){
+  return prepend(self, _.fmap(v, interceptor));
 }
 
 function fmap(self, handler){
-  return conj(self, _.fmap(v, handler));
+  return append(self, _.fmap(v, handler));
 }
 
-function intercept2(self, interceptor){
-  return intercept3(self, interceptor, _.append);
+function prepend(self, xf){
+  return _.edit(self, "interceptors", _.prepend(v, xf));
 }
 
-function intercept3(self, interceptor, manner){
-  return new self.constructor(self.url, self.config, self.options, manner(self.interceptors, _.fmap(v, interceptor)), self.handlers);
+function append(self, xf){
+  return _.edit(self, "handlers", _.append(v, xf));
 }
-
-function conj(self, f){
-  return new self.constructor(self.url, self.config, self.options, self.interceptors, _.conj(self.handlers, f));
-}
-
-const intercept = _.overload(null, null, intercept2, intercept3);
 
 function fork(self, reject, resolve){
   return self
@@ -72,13 +69,15 @@ function fork(self, reject, resolve){
 }
 
 export const behaveAsRequest = _.does(
+  _.implement(ICloneable, {clone}),
   _.implement(ICoerceable, {toPromise: fromTask}),
-  _.implement(ICollection, {conj}),
+  _.implement(IAppendable, {append}),
+  _.implement(IPrependable, {prepend}),
   _.implement(IForkable, {fork}),
   _.implement(IQueryable, {query}),
   _.implement(IAssociative, {assoc}),
   _.implement(ILookup, {lookup}),
-  _.implement(IMap, {keys, dissoc}),
+  _.implement(IMap, {keys}),
   _.implement(IAddress, {addr}),
   _.implement(IOptions, {options}),
   _.implement(IParams, {params}),
