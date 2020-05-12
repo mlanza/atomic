@@ -23,3 +23,15 @@ function filledOptions(options, filled){
     return _.assoc(memo, key, _.isString(value) ? _.fill(value, filled) :  _.isObject(value) ? filledOptions(value, filled) : value);
   }, {}, options);
 }
+
+export function demand(self, keys){
+  return IIntercept.intercept(self, function(req){
+    const param = _.reduce(function(memo, key){
+      return memo || _.contains(req, key) ? null : key;
+    }, null, keys);
+    if (param){
+      throw new TypeError("Missing required param `" + param + "`.");
+    }
+    return req;
+  });
+}

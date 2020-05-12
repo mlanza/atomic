@@ -25,6 +25,10 @@ function assoc(self, key, value) {
   return _.edit(self, "config", IAssociative.assoc(v, key, value));
 }
 
+function contains(self, key){
+  return IAssociative.contains(self.config, key);
+}
+
 function keys(self){
   return IMap.keys(self.config);
 }
@@ -75,7 +79,7 @@ export const behaveAsRequest = _.does(
   _.implement(IPrependable, {prepend}),
   _.implement(IForkable, {fork}),
   _.implement(IQueryable, {query}),
-  _.implement(IAssociative, {assoc}),
+  _.implement(IAssociative, {assoc, contains}),
   _.implement(ILookup, {lookup}),
   _.implement(IMap, {keys}),
   _.implement(IAddress, {addr}),
