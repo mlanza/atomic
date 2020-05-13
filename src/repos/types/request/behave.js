@@ -13,6 +13,12 @@ export function query(self, plan){
     |> fromTask;
 }
 
+function fill(self, params){
+  return _.just(self,
+    _.edit(v, "url", _.fill(v, params)),
+    _.edit(v, "options", _.fill(v, params)));
+}
+
 function clone(self){
   return new self.constructor(self.url, self.config, self.options, self.interceptors, self.handlers);
 }
@@ -73,6 +79,7 @@ function fork(self, reject, resolve){
 }
 
 export const behaveAsRequest = _.does(
+  _.implement(ITemplate, {fill}),
   _.implement(ICloneable, {clone}),
   _.implement(ICoerceable, {toPromise: fromTask}),
   _.implement(IAppendable, {append}),
