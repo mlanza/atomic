@@ -7,15 +7,15 @@ import {IAssociative} from "../../protocols/iassociative";
 import {_ as v} from "param.macro";
 
 function patch2(self, other){
-  return other ? IKVReduce.reducekv(other, function(memo, key, value){
+  return IKVReduce.reducekv(other, function(memo, key, value){
     return IAssociative.assoc(memo, key, typeof value === "function" ? value(ILookup.lookup(memo, key)) : value);
-  }, self) : self;
+  }, self);
 }
 
 function patch3(self, other, xf){
-  return other ? IKVReduce.reducekv(other, function(memo, key, value){
+  return IKVReduce.reducekv(other, function(memo, key, value){
     return IAssociative.assoc(memo, key, IAssociative.contains(memo, key) ? xf(ILookup.lookup(memo, key), value) : xf(value));
-  }, self) : self;
+  }, self);
 }
 
 export const patch = overload(null, identity, patch2, patch3);
