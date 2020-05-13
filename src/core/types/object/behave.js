@@ -1,18 +1,31 @@
-import {does, identity, constructs} from '../../core';
+import {does, identity, constructs, branch} from '../../core';
 import {implement} from '../protocol';
-import {IMergeable, IBlankable, ICompactable, IComparable, IYankable, IMatchable, INext, ICollection, IEquiv, IMapEntry, IReduce, IKVReduce, ISeqable, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, IFn, IMap, ISeq, IDescriptive, ICoerceable, ICloneable, IInclusive} from '../../protocols';
+import {IMergeable, IBlankable, ICompactable, IComparable, IYankable, IMatchable, INext, ICollection, IEquiv, IMapEntry, IReduce, IKVReduce, ISeqable, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, IFn, IMap, ISeq, IDescriptive, ICoerceable, ICloneable, IInclusive, ITemplate} from '../../protocols';
 import {reduced} from '../reduced';
 import {lazySeq, into, map} from '../lazy-seq';
 import {cons} from '../list';
 import {apply} from '../function/concrete';
 import {iequiv} from '../array/behave';
+import {isString} from '../string/construct';
 import {satisfies} from "../protocol/concrete";
-import {emptyObject} from '../object/construct';
+import {update} from "../../protocols/iassociative/concrete";
+import {emptyObject, isObject} from '../object/construct';
+import {_ as v} from "param.macro";
 
 const keys = Object.keys;
 const vals = Object.values;
 
 Object.from = ICoerceable.toObject;
+
+function fill(self, params){
+  return IKVReduce.reducekv(self, function(memo, key, value){
+    return IAssociative.assoc(memo, key,
+      value |> branch(
+        isString, ITemplate.fill(v, params),
+        isObject, fill(v, params),
+        identity));
+  }, {});
+}
 
 function merge(...maps){
   return IReduce.reduce(maps, function(memo, map){
@@ -170,6 +183,7 @@ function toArray(self){
 export const behaveAsObject = does(
   iequiv,
   implement(IDescriptive),
+  implement(ITemplate, {fill}),
   implement(IBlankable, {blank}),
   implement(IMergeable, {merge}),
   implement(ICompactable, {compact}),
