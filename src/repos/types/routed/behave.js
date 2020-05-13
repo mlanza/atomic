@@ -4,14 +4,14 @@ import {ICloneable, ITemplate, IFunctor, IQueryable, ICoerceable, IForkable, ISe
 import {query} from "../request/behave";
 import {_ as v} from "param.macro";
 
-function clone(self){
-  return new self.constructor(self.requests);
-}
-
 function xform(xf){
   return function(self, ...args){
     return _.edit(self, "requests", _.mapa(_.apply(xf, v, args), v));
   }
+}
+
+function clone(self){
+  return new self.constructor(self.requests);
 }
 
 function filled(self){
@@ -41,6 +41,7 @@ export const behaveAsRouted = _.does(
   _.implement(IQueryable, {query}),
   _.implement(ISeq, {first, rest}),
   _.implement(IAddress, {addr}),
+  _.implement(ITemplate, {fill: xform(ITemplate.fill)}),
   _.implement(ICollection, {conj: xform(ICollection.conj)}),
   _.implement(IIntercept, {intercept: xform(IIntercept.intercept)}),
   _.implement(IFunctor, {fmap: xform(IFunctor.fmap)}),
