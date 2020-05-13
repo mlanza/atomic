@@ -14,9 +14,9 @@ export function query(self, plan){
 }
 
 function fill(self, params){
-  return _.just(self,
-    _.edit(v, "url", _.fill(v, params)),
-    _.edit(v, "options", _.fill(v, params)));
+  return self
+    |> _.edit(v, "url", _.fill(v, params))
+    |> _.edit(v, "options", _.fill(v, params));
 }
 
 function clone(self){
