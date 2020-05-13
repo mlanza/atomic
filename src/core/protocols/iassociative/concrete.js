@@ -1,5 +1,5 @@
 import {IAssociative} from "./instance";
-import {overload, slice} from "../../core";
+import {overload, slice, branch, identity} from "../../core";
 import {ISeq} from "../iseq";
 import {ICoerceable} from "../icoerceable/instance";
 import {ILookup} from "../ilookup";
@@ -76,3 +76,4 @@ function updateInN(self, keys, f) {
 }
 
 export const updateIn = overload(null, null, null, updateIn3, updateIn4, updateIn5, updateIn6, updateInN);
+export const rewrite = branch(contains, update, identity);
