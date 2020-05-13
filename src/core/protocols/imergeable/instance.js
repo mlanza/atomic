@@ -6,24 +6,24 @@ import {ILookup} from "../../protocols/ilookup";
 import {IAssociative} from "../../protocols/iassociative";
 import {_ as v} from "param.macro";
 
-function patch2(self, other){
-  return IKVReduce.reducekv(other, function(memo, key, value){
+export function patch(init, x){
+  return IKVReduce.reducekv(x, function(memo, key, value){
     return IAssociative.assoc(memo, key, typeof value === "function" ? value(ILookup.lookup(memo, key)) : value);
-  }, self);
+  }, init);
 }
 
-function patch3(self, other, xf){
-  return IKVReduce.reducekv(other, function(memo, key, value){
+function mergeWith3(xf, init, x){
+  return IKVReduce.reducekv(x, function(memo, key, value){
     return IAssociative.assoc(memo, key, IAssociative.contains(memo, key) ? xf(ILookup.lookup(memo, key), value) : xf(value));
-  }, self);
+  }, init);
 }
 
-export const patch = overload(null, identity, patch2, patch3);
-
-export function mergeWith(xf, init, ...xs){
-  return IReduce.reduce(xs, patch3(v, v, xf), init);
+function mergeWithN(xf, init, ...xs){
+  return IReduce.reduce(xs, mergeWith3(v, v, xf), init);
 }
+
+export const mergeWith = overload(null, null, null, mergeWith3, mergeWithN);
 
 export const IMergeable = protocol({
-  merge: patch2
+  merge: patch
 });
