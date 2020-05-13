@@ -1,4 +1,4 @@
-import {IMergeable, IBlankable, ICompactable, IMap, IAssociative, IInclusive, IOtherwise, IForkable, ICoerceable, IEquiv, ICollection, INext, ISeq, ISeqable, IIndexed, ICounted, ILookup, IReduce, IEmptyableCollection, ISequential, ICloneable} from '../../protocols';
+import {IMergeable, IBlankable, ICompactable, IMap, IAssociative, IInclusive, IOtherwise, IForkable, ICoerceable, IEquiv, ICollection, INext, ISeq, ISeqable, IIndexed, ICounted, ILookup, IReduce, IKVReduce, IEmptyableCollection, ISequential, ICloneable} from '../../protocols';
 import {emptyList} from '../empty-list/construct';
 import {cons} from '../list/construct';
 import {identity, constantly, does, overload, noop} from '../../core';
@@ -56,4 +56,5 @@ export const behaveAsNil = does(
   implement(ISeqable, {seq: identity}),
   implement(IIndexed, {nth: identity}),
   implement(ICounted, {count: constantly(0)}),
+  implement(IKVReduce, {reducekv: reduce}),
   implement(IReduce, {reduce}));
