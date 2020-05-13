@@ -3,7 +3,7 @@ import {overload, slice, branch, identity} from "../../core";
 import {ISeq} from "../iseq";
 import {ICoerceable} from "../icoerceable/instance";
 import {ILookup} from "../ilookup";
-import {reducekv} from "../ikvreduce";
+import {reduce} from "../ireduce";
 import {_ as v} from "param.macro";
 
 export const contains = IAssociative.contains;
@@ -78,6 +78,4 @@ function updateInN(self, keys, f) {
 }
 
 export const updateIn = overload(null, null, null, updateIn3, updateIn4, updateIn5, updateIn6, updateInN);
-
 export const rewrite = branch(contains, update, identity);
-export const rewriteWith = reducekv(rewrite, v, v);
