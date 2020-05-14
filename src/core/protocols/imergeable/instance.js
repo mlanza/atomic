@@ -19,7 +19,7 @@ function mergeWith3(xf, init, x){
 }
 
 function mergeWithN(xf, init, ...xs){
-  return IReduce.reduce(xs, mergeWith3(v, v, xf), init);
+  return IReduce.reduce(xs, mergeWith3(xf, v, v), init);
 }
 
 export const mergeWith = overload(null, null, null, mergeWith3, mergeWithN);
