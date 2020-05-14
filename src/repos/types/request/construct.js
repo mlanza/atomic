@@ -1,16 +1,16 @@
 import * as _ from "atomic/core";
 import {_ as v} from "param.macro";
 
-export function Request(url, config, options, interceptors, handlers){
+export function Request(url, options, config, interceptors, handlers){
   this.url = url;
-  this.config = config;
   this.options = options;
+  this.config = config;
   this.interceptors = interceptors;
   this.handlers = handlers;
 }
 
-export function request(url, context){
-  return new Request(url, context || {}, {}, [filling], []);
+export function request(url, config){
+  return new Request(url, {}, config || {}, [filling], []);
 }
 
 const filling = _.fmap(v, function(self){
