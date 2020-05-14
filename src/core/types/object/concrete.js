@@ -1,4 +1,4 @@
-import {IFn, ISeq, IReduce, IKVReduce, ILookup, IInclusive, IAssociative, IEmptyableCollection} from "../../protocols";
+import {IFn, ISeq, IMap, IReduce, IKVReduce, ILookup, IInclusive, IAssociative, IEmptyableCollection} from "../../protocols";
 import {apply, isFunction} from "../function";
 import {reducing} from "../../protocols/ireduce/concrete";
 import {overload, branch} from "../../core";
@@ -32,13 +32,13 @@ export function mapKeys(self, f){
 function mapVals2(self, f){
   return IKVReduce.reducekv(self, function(memo, key, value){
     return IAssociative.assoc(memo, key, f(value));
-  }, empty(self));
+  }, self);
 }
 
-function mapVals3(self, f, pred){
-  return IKVReduce.reducekv(self, function(memo, key, value){
-    return IAssociative.assoc(memo, key, pred(key) ? f(value) : value);
-  }, empty(self));
+function mapVals3(init, f, pred){
+  return IReduce.reduce(IMap.keys(init), function(memo, key){
+    return pred(key) ? IAssociative.assoc(memo, key, f(ILookup.lookup(memo, key))) : memo;
+  }, init);
 }
 
 export const mapVals = overload(null, null, mapVals2, mapVals3);
