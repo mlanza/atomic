@@ -49,9 +49,6 @@
     define('atomic/repos', ["_atomic/core", "_atomic/repos"], function(core, repos){
       return core.impart(repos, core.partly);
     });
-    define('atomic/requests', ["_atomic/core", "_atomic/requests"], function(core, requests){
-      return core.impart(requests, core.partly);
-    });
     define('atomic/transducers', ["_atomic/core", "_atomic/transducers"], function(core, transducers){
       return core.impart(transducers, core.partly);
     });
@@ -64,7 +61,7 @@
     define('atomic/immutables', ["_atomic/core", "_atomic/immutables"], function(core, immutables){
       return core.impart(immutables, core.partly);
     });
-    define('atomic', ['atomic/core', 'atomic/dom', 'atomic/immutables', 'atomic/reactives', 'atomic/transducers', 'atomic/transients', 'atomic/repos', 'atomic/requests', 'atomic/validates'], function(core, dom, immutables, reactives, transducers, transients, repos, requests, validates){
+    define('atomic', ['atomic/core', 'atomic/dom', 'atomic/immutables', 'atomic/reactives', 'atomic/transducers', 'atomic/transients', 'atomic/repos', 'atomic/validates'], function(core, dom, immutables, reactives, transducers, transients, repos, validates){
       return Object.assign(core, { //for in-browser testing, not for production use.
         core: core,
         dom: dom,
@@ -73,8 +70,7 @@
         transducers: transducers,
         transients: transients,
         validates: validates,
-        repos: repos,
-        requests: requests
+        repos: repos
       });
     });
     require(['atomic', 'test/core'], function(atomic){
