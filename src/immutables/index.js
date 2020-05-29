@@ -1,4 +1,4 @@
-import {doto, overload, implement, generate, positives, weakMap, toArray, constantly, reduce, reducekv, str, map, each, get, keys, sort, IEquiv, ICounted, IMap} from "atomic/core";
+import {doto, overload, implement, generate, positives, weakMap, toArray, constantly, reduce, str, map, each, get, keys, sort, IEquiv, ICounted, IMap} from "atomic/core";
 import {Symbol, GUID, AssociativeSubset, Concatenated, EmptyList, List, Indexed, IndexedSeq, Nil} from "atomic/core";
 import {IPersistent, TransientSet} from "atomic/transients";
 import {set} from "./types/set/construct";
