@@ -4,29 +4,32 @@ import {reducing} from "../../protocols/ireduce/concrete";
 import {overload, branch} from "../../core";
 import {satisfies} from "../protocol/concrete";
 import {empty} from "../../protocols/iemptyablecollection";
+import {emptyObject} from "./construct";
+
+const emptied = branch(satisfies(IEmptyableCollection), empty, emptyObject);
 
 export function juxtVals(self, value){
   return IKVReduce.reducekv(self, function(memo, key, f){
     return IAssociative.assoc(memo, key, isFunction(f) ? f(value) : f);
-  }, empty(self));
+  }, emptied(self));
 }
 
 export function selectKeys(self, keys){
   return IReduce.reduce(keys, function(memo, key){
     return IAssociative.assoc(memo, key, ILookup.lookup(self, key));
-  }, empty(self));
+  }, emptied(self));
 }
 
 export function removeKeys(self, keys){
   return IKVReduce.reducekv(self, function(memo, key, value){
     return IInclusive.includes(keys, key) ? memo : IAssociative.assoc(memo, key, value);
-  }, empty(self));
+  }, emptied(self));
 }
 
 export function mapKeys(self, f){
   return IKVReduce.reducekv(self, function(memo, key, value){
     return IAssociative.assoc(memo, f(key), value);
-  }, empty(self));
+  }, emptied(self));
 }
 
 function mapVals2(self, f){
