@@ -36,11 +36,11 @@ export function juxt(...fs){
 }
 
 export function pipe(f, ...fs){
-  return function(){
+  return arguments.length ? function(){
     return IReduce.reduce(fs, function(memo, f){
       return f(memo);
     }, f.apply(null, arguments));
-  }
+  } : identity;
 }
 
 export function comp(...fs){
