@@ -20,7 +20,7 @@ function fill(self, params){
 }
 
 function clone(self){
-  return new self.constructor(self.url, self.config, self.options, self.interceptors, self.handlers);
+  return new self.constructor(self.url, self.options, self.config, self.interceptors, self.handlers);
 }
 
 function addr(self){
