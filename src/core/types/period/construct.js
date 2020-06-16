@@ -1,7 +1,7 @@
 import {overload} from '../../core';
+import {patch} from "../../associatives";
 import {sod, eod, isDate} from '../date/concrete';
 import {add} from '../../protocols/iaddable/concrete';
-import {IMergeable} from '../../protocols/imergeable/instance';
 import {Symbol} from '../symbol/construct';
 
 export function Period(start, end){
@@ -18,7 +18,7 @@ export function emptyPeriod(){
 }
 
 export function period1(obj){
-  return period2(IMergeable.merge(obj, sod()), IMergeable.merge(obj, eod()));
+  return period2(patch(obj, sod()), patch(obj, eod()));
 }
 
 function period2(start, end){ //end could be a duration (e.g. `minutes(30)`).
