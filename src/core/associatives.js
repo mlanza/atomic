@@ -33,11 +33,13 @@ export const prop    = overload(null, function(key){
     return overload(null, ILookup.lookup(v, key), IAssociative.assoc(v, key, v));
 }, ILookup.lookup, IAssociative.assoc);
 
-export function patch(target, source){
+function patch2(target, source){
   return IKVReduce.reducekv(source, function(memo, key, value){
     return IAssociative.assoc(memo, key, typeof value === "function" ? value(ILookup.lookup(memo, key)) : value);
   }, target);
 }
+
+export const patch = overload(null, identity, patch2, reducing(patch2));
 
 function absorb2(tgt, src){
   return IKVReduce.reducekv(src || IEmptyableCollection.empty(tgt), function(memo, key, value){
