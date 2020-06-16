@@ -117,10 +117,10 @@ function reduce(xs, xf, init){
 
 function reducekv(xs, xf, init){
   let memo = init,
-      ys = ISeqable.seq(xs);
+      ys = ISeqable.seq(xs),
+      idx = 0;
   while(ys && !(memo instanceof Reduced)){
-    let pair = ISeq.first(ys);
-    memo = xf(memo, pair[0], pair[1]);
+    memo = xf(memo, idx++, ISeq.first(ys));
     ys = INext.next(ys);
   }
   return memo instanceof Reduced ? memo.valueOf() : memo;
