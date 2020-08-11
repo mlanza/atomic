@@ -1,10 +1,10 @@
 import {implement} from '../protocol';
 import {identity, does} from '../../core';
-import {just} from './construct';
+import {right} from './construct';
 import {IFunctor, IOtherwise, IForkable, IDeref} from '../../protocols';
 
 function fmap(self, f){
-  return just(f(self.value));
+  return right(f(self.value));
 }
 
 function otherwise(self, other){
@@ -19,7 +19,7 @@ function deref(self){
   return self.value;
 }
 
-export const behaveAsJust = does(
+export const behaveAsRight = does(
   implement(IDeref, {deref}),
   implement(IForkable, {fork}),
   implement(IOtherwise, {otherwise}),
