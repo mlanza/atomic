@@ -1,4 +1,4 @@
-import {does, identity, implement, iterable, lazyIterable, IReduce, IKVReduce, IMap, ICounted, IAssociative, ILookup, ICloneable} from "atomic/core";
+import {does, identity, implement, iterable, lazyIterable, IReduce, IMergeable, ICoerceable, IKVReduce, IMap, ICounted, IAssociative, ILookup, ICloneable} from "atomic/core";
 
 function assoc(self, key, value){
   return self.set(key, value);
@@ -34,9 +34,19 @@ function reducekv(self, xf, init){
   }, init);
 }
 
+function toArray(self){
+  return self.toArray();
+}
+
+function merge(self, other){
+  return reducekv(other, _.assoc, self);
+}
+
 export const behaveAsMap = does(
   iterable,
   implement(IKVReduce, {reducekv}),
+  implement(ICoerceable, {toArray}),
+  implement(IMergeable, {merge}),
   implement(IMap, {keys, vals, dissoc}),
   implement(ICloneable, {clone: identity}),
   implement(ICounted, {count}),
