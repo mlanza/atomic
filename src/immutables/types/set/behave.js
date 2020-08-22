@@ -14,6 +14,7 @@ import {
   ICounted,
   ICollection,
   IEmptyableCollection,
+  IMergeable,
   IInclusive,
   ICloneable
 } from 'atomic/core';
@@ -76,9 +77,14 @@ function reduce(self, xf, init){
   return unreduced(memo);
 }
 
+function merge(self, other){
+  return reduce(other, _.conj, self);
+}
+
 export const behaveAsSet = does(
   iterable,
   implement(ISequential),
+  implement(IMergeable, {merge}),
   implement(ITransient, {transient}),
   implement(IReduce, {reduce}),
   implement(ICoerceable, {toArray}),
