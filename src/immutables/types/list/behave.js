@@ -1,4 +1,4 @@
-import {does, identity, implement, iterable, unreduced, IReduce, IMergeable, ICoerceable, IEmptyableCollection, ICounted, ISeqable, ISeq, ICollection, ICloneable} from "atomic/core";
+import {does, identity, implement, iterable, unreduced, IReduce, IMergeable, ICoerceable, IEmptyableCollection, ICounted, ISeqable, ISeq, INext, ICollection, ICloneable} from "atomic/core";
 
 function conj(self, value){
   return self.push(value);
@@ -10,6 +10,10 @@ function first(self){
 
 function rest(self){
   return self.rest();
+}
+
+function next(self){
+  return ISeqable.seq(ISeq.rest(self));
 }
 
 function empty(self){
@@ -45,6 +49,7 @@ function merge(self, other){
 export const behaveAsList = does(
   iterable,
   implement(IReduce, {reduce}),
+  implement(INext, {next}),
   implement(ICoerceable, {toArray}),
   implement(IMergeable, {merge}),
   implement(IEmptyableCollection, {empty}),
