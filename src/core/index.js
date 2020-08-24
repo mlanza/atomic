@@ -41,14 +41,24 @@ function cleanlyN(f, ...args){
 
 export const cleanly = overload(null, curry(cleanlyN, 2), cleanlyN);
 
-//Like `update` but deals with private attributes not exposed via `lookup` and `assoc`.
-//Used only to define an implementation and not publicly for general purposes — an implementation detail.
-export function edit(self, key, f){
-  const obj = ICloneable.clone(self);
+function mod3(obj, key, f){
   if (key in obj) {
     obj[key] = f(obj[key]); //must be a mutable copy
   }
   return obj;
+}
+
+function modN(obj, key, value, ...args){
+  return args.length > 0 ? modN(mod3(obj, key, value), ...args) : mod3(obj, key, value);
+}
+
+const mod = overload(null, null, null, mod3, modN);
+
+//Has the api of `assoc` and behaves like `update` persistently updating object attributes.  Depends on `clone` but not `lookup` or `assoc`.
+export function edit(obj, ...args){
+  const copy = ICloneable.clone(obj);
+  args.unshift(copy);
+  return modN.apply(copy, args);
 }
 
 export function deconstruct(dur, ...units){
