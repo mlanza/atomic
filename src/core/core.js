@@ -1,3 +1,4 @@
+import Symbol from 'symbol';
 export const unbind = Function.call.bind(Function.bind, Function.call);
 export const slice = unbind(Array.prototype.slice);
 export const indexOf = unbind(Array.prototype.indexOf);
@@ -91,8 +92,8 @@ export function doto(obj, ...effects){
 }
 
 export function does(...effects){
-  return function(...args){
-    const len = effects.length;
+  const len = effects.length;
+  return function doing(...args){
     for(let i = 0; i < len; i++){
       const effect = effects[i];
       effect(...args);
@@ -255,4 +256,28 @@ export function forwardWith(g){
 
 export function deprecated(){
   console.warn.apply(null, arguments);
+}
+
+const STASH = Symbol("@stash");
+
+export function stash(obj, stash){
+  obj[STASH] = stash;
+}
+
+export function unstash(obj){
+  return obj[STASH];
+}
+
+export function marked(fn){
+  return function(...xs){
+    const f = fn.apply(this, xs),
+          len = xs.length;
+    for (let i = 0; i < len; i++){
+      const data = unstash(xs[i]);
+      if (data && data.mark){
+        data.mark(f);
+      }
+    }
+    return f;
+  }
 }

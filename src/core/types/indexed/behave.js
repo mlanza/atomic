@@ -1,11 +1,10 @@
-import {does, overload} from '../../core';
+import {overload, does} from '../../core';
 import {IKVReduce, IReduce, ICoerceable, INext, ICounted, ISeq, ISeqable, ISequential, IIndexed, ILookup, IInclusive} from '../../protocols';
-import {implement, implementing} from '../protocol';
+import {implement} from '../protocol';
 import {indexedSeq} from '../indexed-seq/construct';
 import {emptyList} from '../empty-list/construct';
 import {some} from '../lazy-seq/concrete';
-import {iterable} from '../lazy-seq/behave';
-import {LazySeq} from '../lazy-seq/construct';
+import {iterable, behaveAsLazySeq} from '../lazy-seq/behave';
 
 function count(self){
   return self.obj.length;
@@ -39,7 +38,8 @@ function includes(self, value){
 
 export const behaveAsIndexed = does(
   iterable,
-  implementing([IKVReduce, IReduce], LazySeq),
+  implement(IReduce, behaveAsLazySeq),
+  implement(IKVReduce, behaveAsLazySeq),
   implement(ISequential),
   implement(IInclusive, {includes}),
   implement(IIndexed, {nth}),
