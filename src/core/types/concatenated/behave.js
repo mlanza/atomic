@@ -1,11 +1,12 @@
 import {identity, does} from '../../core';
-import {implement} from '../protocol';
+import {implement, implementing} from '../protocol';
 import {isReduced, unreduced} from '../reduced';
 import {ICoerceable, ICollection, INext, ISeq, ICounted, ISeqable, IIndexed, IReduce, IKVReduce, ISequential, IEmptyableCollection} from '../../protocols';
 import {apply} from '../function/concrete';
 import {EmptyList, emptyList} from '../empty-list';
-import {ireduce, iterable} from '../lazy-seq/behave';
+import {iterable} from '../lazy-seq/behave';
 import {mapa} from '../lazy-seq/concrete';
+import {LazySeq} from '../lazy-seq/construct';
 import {concatenated, concat} from './construct';
 
 function conj(self, x){
@@ -62,7 +63,7 @@ function count(self){
 
 export const behaveAsConcatenated = does(
   iterable,
-  ireduce,
+  implementing([IReduce, IKVReduce], LazySeq),
   implement(ISequential),
   implement(IEmptyableCollection, {empty: emptyList}),
   implement(IKVReduce, {reducekv}),

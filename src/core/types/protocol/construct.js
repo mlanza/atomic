@@ -114,14 +114,18 @@ function implementation1(constructor){
   const obj = {}
   for(let method in this[INDEX]){
     if (method !== "__marker__") {
-      obj[method] = constructor.prototype[this[INDEX][method]];
+      obj[method] = implementation2.call(this, method, constructor);
     }
   }
   return obj;
 }
 
 function implementation2(method, constructor){
-  return constructor.prototype[this[INDEX][method]];
+  const impl = constructor.prototype[this[INDEX][method]];
+  if (typeof impl !== "function") {
+    throw new Error("Cannot locate implementation for `" + method + "`.")
+  }
+  return impl;
 }
 
 Protocol.prototype.implementation = overload(null, implementation1, implementation2);

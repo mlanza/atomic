@@ -402,7 +402,6 @@ function reduce(self, xf, init){
 
 export const ihierarchy = implement(IHierarchy, {root, parent, parents, closest, children, descendants, nextSibling, nextSiblings, prevSibling, prevSiblings, siblings});
 export const icontents = implement(IContent, {contents});
-export const ireduce = implement(IReduce, {reduce});
 export const ievented = implement(IEvented, {on, off, trigger});
 export const ilocate = implement(ILocate, {locate});
 export const iquery = implement(IQueryable, {query});
@@ -410,10 +409,10 @@ export const iquery = implement(IQueryable, {query});
 export const behaveAsElement = does(
   ihierarchy,
   icontents,
-  ireduce,
   ievented,
   iquery,
   ilocate,
+  implement(IReduce, {reduce}),
   implement(IText, {text}),
   implement(IHtml, {html}),
   implement(IValue, {value}),
