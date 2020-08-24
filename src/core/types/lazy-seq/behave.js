@@ -1,4 +1,4 @@
-import {implement, implementation} from '../protocol';
+import {implement, implementing} from '../protocol';
 import {IBlankable, ICompactable, ILocate, IQueryable, IFunctor, IReversible, IYankable, IMatchable, ICoerceable, IInclusive, IFind, IEquiv, ICollection, INext, ISeq, IReduce, IKVReduce, ISeqable, ISequential, IIndexed, IEmptyableCollection, ICounted, IAppendable, IPrependable} from '../../protocols';
 import {overload, identity, does, partial} from '../../core';
 import {Reduced, isReduced, reduced, unreduced} from "../reduced";
@@ -154,14 +154,11 @@ function includes(self, value){
 
 const reverse = comp(IReversible.reverse, toArray);
 
-export const ireduce = does(
-  implement(IReduce, {reduce}),
-  implement(IKVReduce, {reducekv}));
-
 export const behaveAsLazySeq = does(
   iterable,
-  ireduce,
-  implement(IEquiv, implementation(IEquiv, EmptyList)),
+  implementing([IEquiv], EmptyList),
+  implement(IReduce, {reduce}),
+  implement(IKVReduce, {reducekv}),
   implement(ISequential),
   implement(IIndexed, {nth, idx}),
   implement(IReversible, {reverse}),

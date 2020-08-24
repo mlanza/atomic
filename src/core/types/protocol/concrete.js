@@ -1,12 +1,21 @@
-import {unbind} from '../../core';
+import {unbind, does} from '../../core';
 import {Protocol} from "./construct";
 
+export const extend    = unbind(Protocol.prototype.extend);
 export const satisfies = unbind(Protocol.prototype.satisfies);
 export const specify   = unbind(Protocol.prototype.specify);
 export const unspecify = unbind(Protocol.prototype.unspecify);
 export const implement = unbind(Protocol.prototype.implement);
 export const implementation = unbind(Protocol.prototype.implementation);
-export const extend    = unbind(Protocol.prototype.extend);
+
+export function implementing(protocols, constructor){
+  const implementations = [];
+  for(let idx in protocols){
+    let protocol = protocols[idx];
+    implementations.push(implement(protocol, implementation(protocol, constructor)));
+  }
+  return does.apply(null, implementations);
+}
 
 export function reifiable(properties){
   function Reifiable(properties){
