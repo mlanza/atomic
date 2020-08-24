@@ -100,12 +100,12 @@ export function implement0(){
 }
 
 function implement1(behavior){
-  const data = behavior[this[IDENTITY]];
-  if (data) { //anticipate borrowed behavior
-    if (!data.impl) {
+  const found = behavior[this[IDENTITY]];
+  if (found) { //anticipate borrowed behavior
+    if (!found.impl) {
       throw new Error("Cannot borrow protocol implementation.");
     }
-    return data.impl;
+    return found.impl;
   } else {
     function mark(obj){
       obj[ident] = data;
