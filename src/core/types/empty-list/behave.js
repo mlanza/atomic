@@ -1,4 +1,4 @@
-import {identity, constantly, does} from '../../core';
+import {identity, constantly, does, marked} from '../../core';
 import {implement} from '../protocol';
 import {IEquiv, IBlankable, ICoerceable, IInclusive, IReversible, ICollection, INext, ISeq, ISeqable, ISequential, IAssociative, IIndexed, IEmptyableCollection, IKVReduce, IReduce, ICounted} from '../../protocols';
 import {emptyList, EmptyList} from '../../types/empty-list/construct';
@@ -15,7 +15,7 @@ function equiv(as, bs){
   return IEquiv.equiv(ISeq.first(xs), ISeq.first(ys)) && IEquiv.equiv(INext.next(xs), INext.next(ys));
 }
 
-export const behaveAsEmptyList = does(
+export const behaveAsEmptyList = marked(does)(
   implement(IEquiv, {equiv}),
   implement(ISequential),
   implement(IBlankable, {blank: constantly(true)}),

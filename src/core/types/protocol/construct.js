@@ -1,19 +1,22 @@
-import {overload} from '../../core';
+import {overload, does, stash, unstash} from '../../core';
 import {protocolLookupError} from '../protocol-lookup-error/construct';
 import {Nil} from '../nil/construct';
 import {Symbol} from '../symbol/construct';
+import Map from 'map';
 
 const TEMPLATE = Symbol("@protocol-template"),
       INDEX    = Symbol("@protocol-index"),
-      MISSING  = Symbol("@protocol-missing");
+      MISSING  = Symbol("@protocol-missing"),
+      IDENTITY = Symbol("@protocol-identity");
 
-export function Protocol(template, index){
+export function Protocol(template, index, identity){
   this[INDEX] = index;
   this[TEMPLATE] = template;
+  this[IDENTITY] = identity;
 }
 
 export function protocol(template){
-  const p = new Protocol({}, {});
+  const p = new Protocol({}, {}, Symbol("@identity"));
   p.extend(template);
   return p;
 }
@@ -97,7 +100,22 @@ export function implement0(){
 }
 
 function implement1(behavior){
-  return implement2.bind(this, behavior);
+  const data = behavior[this[IDENTITY]];
+  if (data) { //anticipate borrowed behavior
+    if (!data.impl) {
+      throw new Error("Cannot borrow protocol implementation.");
+    }
+    return data.impl;
+  } else {
+    function mark(obj){
+      obj[ident] = data;
+    }
+    const ident = this[IDENTITY],
+          impl  = implement2.bind(this, behavior),
+          data  = {impl, behavior, mark};
+    stash(impl, data);
+    return impl;
+  }
 }
 
 function implement2(behavior, target){
@@ -109,26 +127,6 @@ function implement2(behavior, target){
 }
 
 Protocol.prototype.implement = overload(implement0, implement1, implement2);
-
-function implementation1(constructor){
-  const obj = {}
-  for(let method in this[INDEX]){
-    if (method !== "__marker__") {
-      obj[method] = implementation2.call(this, method, constructor);
-    }
-  }
-  return obj;
-}
-
-function implementation2(method, constructor){
-  const impl = constructor.prototype[this[INDEX][method]];
-  if (typeof impl !== "function") {
-    throw new Error("Cannot locate implementation for `" + method + "`.")
-  }
-  return impl;
-}
-
-Protocol.prototype.implementation = overload(null, implementation1, implementation2);
 
 function satisfies0(){
   return this.satisfies.bind(this);
@@ -147,3 +145,13 @@ function satisfies2(method, obj){
 }
 
 Protocol.prototype.satisfies = overload(satisfies0, satisfies1, satisfies2);
+
+function behavior(obj){
+  const data = obj[this[IDENTITY]];
+  if (!data || !data.behavior) {
+    throw new Error("Cannot borrow protocol behavior.");
+  }
+  return Object.assign({}, data.behavior);
+}
+
+Protocol.prototype.behavior = behavior;
