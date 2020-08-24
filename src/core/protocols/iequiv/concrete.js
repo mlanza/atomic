@@ -1,2 +1,4 @@
 import {IEquiv} from "./instance";
-export const equiv = IEquiv.equiv;
+export function equiv(self, other){
+  return self === other || IEquiv.equiv(self, other);
+}

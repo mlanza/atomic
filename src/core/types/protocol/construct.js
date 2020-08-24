@@ -110,6 +110,22 @@ function implement2(behavior, target){
 
 Protocol.prototype.implement = overload(implement0, implement1, implement2);
 
+function implementation1(constructor){
+  const obj = {}
+  for(let method in this[INDEX]){
+    if (method !== "__marker__") {
+      obj[method] = constructor.prototype[this[INDEX][method]];
+    }
+  }
+  return obj;
+}
+
+function implementation2(method, constructor){
+  return constructor.prototype[this[INDEX][method]];
+}
+
+Protocol.prototype.implementation = overload(null, implementation1, implementation2);
+
 function satisfies0(){
   return this.satisfies.bind(this);
 }

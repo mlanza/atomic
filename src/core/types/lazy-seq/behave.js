@@ -1,4 +1,4 @@
-import {implement} from '../protocol';
+import {implement, implementation} from '../protocol';
 import {IBlankable, ICompactable, ILocate, IQueryable, IFunctor, IReversible, IYankable, IMatchable, ICoerceable, IInclusive, IFind, IEquiv, ICollection, INext, ISeq, IReduce, IKVReduce, ISeqable, ISequential, IIndexed, IEmptyableCollection, ICounted, IAppendable, IPrependable} from '../../protocols';
 import {overload, identity, does, partial} from '../../core';
 import {Reduced, isReduced, reduced, unreduced} from "../reduced";
@@ -6,7 +6,7 @@ import {concat} from "../concatenated/construct";
 import {comp} from "../function/concrete";
 import {cons} from "../list/construct";
 import {map, filter, detect} from "./concrete";
-import {emptyList} from '../empty-list/construct';
+import {emptyList, EmptyList} from '../empty-list/construct';
 import {Symbol} from '../symbol/construct';
 
 const compact = partial(filter, identity);
@@ -33,12 +33,6 @@ function seq(self){
 
 function blank(self){
   return seq(self) == null;
-}
-
-function equiv(as, bs){
-  const xs = ISeqable.seq(as),
-        ys = ISeqable.seq(bs);
-  return ys == null ? false : xs === ys || (IEquiv.equiv(ISeq.first(xs), ISeq.first(ys)) && IEquiv.equiv(ISeq.rest(xs), ISeq.rest(ys)));
 }
 
 function iterate(self){
@@ -167,6 +161,7 @@ export const ireduce = does(
 export const behaveAsLazySeq = does(
   iterable,
   ireduce,
+  implement(IEquiv, implementation(IEquiv, EmptyList)),
   implement(ISequential),
   implement(IIndexed, {nth, idx}),
   implement(IReversible, {reverse}),
@@ -183,7 +178,6 @@ export const behaveAsLazySeq = does(
   implement(IPrependable, {prepend: conj}),
   implement(IReduce, {reduce}),
   implement(ICounted, {count}),
-  implement(IEquiv, {equiv}),
   implement(IFind, {find}),
   implement(IEmptyableCollection, {empty: emptyList}),
   implement(ISeq, {first, rest}),
