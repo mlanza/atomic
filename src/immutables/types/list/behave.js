@@ -1,4 +1,24 @@
-import {does, identity, implement, iterable, unreduced, IReduce, IMergeable, ICoerceable, IEmptyableCollection, ICounted, ISeqable, ISeq, INext, ICollection, ICloneable} from "atomic/core";
+import {does, identity, implement, iterable, unreduced, IEquiv, IInclusive, ILookup, IAssociative, IReduce, IMergeable, ICoerceable, IEmptyableCollection, ICounted, ISeqable, ISeq, INext, ICollection, ICloneable} from "atomic/core";
+
+function equiv(self, other){
+  return self.equals(other);
+}
+
+function includes(self, value){
+  return self.includes(value);
+}
+
+function lookup(self, idx){
+  return self.get(idx);
+}
+
+function assoc(self, idx, value){
+  return self.set(idx, value);
+}
+
+function contains(self, idx){
+  return self.has(idx);
+}
 
 function conj(self, value){
   return self.push(value);
@@ -25,7 +45,7 @@ function count(self){
 }
 
 function seq(self){
-  return first(self) ? self : null
+  return self.size ? self : null
 }
 
 function toArray(self){
@@ -48,6 +68,10 @@ function merge(self, other){
 
 export const behaveAsList = does(
   iterable,
+  implement(IEquiv, {equiv}),
+  implement(IInclusive, {includes}),
+  implement(IAssociative, {assoc, contains}),
+  implement(ILookup, {lookup}),
   implement(IReduce, {reduce}),
   implement(INext, {next}),
   implement(ICoerceable, {toArray}),
