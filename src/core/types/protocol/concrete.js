@@ -5,6 +5,7 @@ export const satisfies = unbind(Protocol.prototype.satisfies);
 export const specify   = unbind(Protocol.prototype.specify);
 export const unspecify = unbind(Protocol.prototype.unspecify);
 export const implement = unbind(Protocol.prototype.implement);
+export const implementation = unbind(Protocol.prototype.implementation);
 export const extend    = unbind(Protocol.prototype.extend);
 
 export function reifiable(properties){

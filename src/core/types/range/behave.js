@@ -1,11 +1,14 @@
-import {does} from '../../core';
-import {implement} from '../protocol';
+import {does, is} from '../../core';
+import {implement, implementation} from '../protocol';
 import {ICoerceable, IInverse, IAddable, ISequential, ICollection, IComparable, INext, IEquiv, IReduce, IKVReduce, ISeqable, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, ISeq, IInclusive, IIndexed} from '../../protocols';
 import {unreduced, isReduced} from '../reduced';
 import {drop} from '../lazy-seq';
 import {iterable} from '../lazy-seq/behave';
 import {emptyable} from "../record/behave";
+import {EmptyList} from "../empty-list/construct";
+import {Range} from "./construct";
 import {directed} from '../../protocols/iaddable/concrete';
+import {_ as v} from "param.macro";
 
 function seq(self){
   return IEquiv.equiv(self.start, self.end) || (self.step == null && self.direction == null && self.start == null && self.end == null) ? null : self;
@@ -26,7 +29,7 @@ function next(self){
 }
 
 function equiv(self, other){
-  return other != null && IEquiv.equiv(self.start, other.start) && IEquiv.equiv(self.end, other.end) && IEquiv.equiv(self.step, other.step);
+  return (is(other, Range) && IEquiv.equiv(self.start, other.start) && IEquiv.equiv(self.end, other.end) && IEquiv.equiv(self.step, other.step)) || implementation(IEquiv, "equiv", EmptyList)(self, other);
 }
 
 function reduce(self, xf, init){
