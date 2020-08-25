@@ -1,4 +1,4 @@
-import {overload, does, stash, unstash} from '../../core';
+import {overload, does} from '../../core';
 import {protocolLookupError} from '../protocol-lookup-error/construct';
 import {Nil} from '../nil/construct';
 import {Symbol} from '../symbol/construct';
@@ -6,17 +6,15 @@ import Map from 'map';
 
 const TEMPLATE = Symbol("@protocol-template"),
       INDEX    = Symbol("@protocol-index"),
-      MISSING  = Symbol("@protocol-missing"),
-      IDENTITY = Symbol("@protocol-identity");
+      MISSING  = Symbol("@protocol-missing");
 
-export function Protocol(template, index, identity){
+export function Protocol(template, index){
   this[INDEX] = index;
   this[TEMPLATE] = template;
-  this[IDENTITY] = identity;
 }
 
 export function protocol(template){
-  const p = new Protocol({}, {}, Symbol("@identity"));
+  const p = new Protocol({}, {});
   p.extend(template);
   return p;
 }
@@ -99,23 +97,12 @@ export function implement0(){
   return implement1.call(this, {}); //marker interface
 }
 
-function implement1(behavior){
-  const found = behavior[this[IDENTITY]];
-  if (found) { //anticipate borrowed behavior
-    if (!found.impl) {
-      throw new Error("Cannot borrow protocol implementation.");
-    }
-    return found.impl;
-  } else {
-    function mark(obj){
-      obj[ident] = data;
-    }
-    const ident = this[IDENTITY],
-          impl  = implement2.bind(this, behavior),
-          data  = {impl, behavior, mark};
-    stash(impl, data);
-    return impl;
+function implement1(obj){
+  const behavior = obj.behaves ? obj.behaves(this) : obj;
+  if (obj.behaves && !behavior) {
+    throw new Error("Unable to borrow behavior.");
   }
+  return Object.assign(implement2.bind(this, behavior), {protocol: this, behavior: behavior});
 }
 
 function implement2(behavior, target){
@@ -146,12 +133,16 @@ function satisfies2(method, obj){
 
 Protocol.prototype.satisfies = overload(satisfies0, satisfies1, satisfies2);
 
-function behavior(obj){
-  const data = obj[this[IDENTITY]];
-  if (!data || !data.behavior) {
-    throw new Error("Cannot borrow protocol behavior.");
+export function packs(...args){ //same api as `does` but promotes sharing behaviors
+  const fs = [],
+        behaviors = new Map(),
+        behaves = behaviors.get.bind(behaviors);
+  for(let arg of args){
+    let f = typeof arg === "function" ? arg : implement(arg.protocol, arg.behavior);
+    fs.push(f);
+    if (f.protocol && f.behavior){
+      behaviors.set(f.protocol, f.behavior);
+    }
   }
-  return Object.assign({}, data.behavior);
+  return Object.assign(does.apply(this, fs), {behaves});
 }
-
-Protocol.prototype.behavior = behavior;
