@@ -1,5 +1,5 @@
 import {does, is} from '../../core';
-import {implement, behavior} from '../protocol';
+import {implement} from '../protocol';
 import {ICoerceable, IInverse, IAddable, ISequential, ICollection, IComparable, INext, IEquiv, IReduce, IKVReduce, ISeqable, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, ISeq, IInclusive, IIndexed} from '../../protocols';
 import {unreduced, isReduced} from '../reduced';
 import {drop} from '../lazy-seq';
@@ -28,8 +28,10 @@ function next(self){
   return self.end == null || (IComparable.compare(stepped, self.end) * self.direction) < 0 ? new self.constructor(stepped, self.end, self.step, self.direction) : null;
 }
 
+const _equiv = implement(IEquiv, behaveAsEmptyList).behavior.equiv;
+
 function equiv(self, other){
-  return (is(other, Range) && IEquiv.equiv(self.start, other.start) && IEquiv.equiv(self.end, other.end) && IEquiv.equiv(self.step, other.step)) || behavior(IEquiv, behaveAsEmptyList).equiv(self, other);
+  return (is(other, Range) && IEquiv.equiv(self.start, other.start) && IEquiv.equiv(self.end, other.end) && IEquiv.equiv(self.step, other.step)) || _equiv(self, other);
 }
 
 function reduce(self, xf, init){

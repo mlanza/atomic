@@ -257,27 +257,3 @@ export function forwardWith(g){
 export function deprecated(){
   console.warn.apply(null, arguments);
 }
-
-const STASH = Symbol("@stash");
-
-export function stash(obj, stash){
-  obj[STASH] = stash;
-}
-
-export function unstash(obj){
-  return obj[STASH];
-}
-
-export function marked(fn){
-  return function(...xs){
-    const f = fn.apply(this, xs),
-          len = xs.length;
-    for (let i = 0; i < len; i++){
-      const data = unstash(xs[i]);
-      if (data && data.mark){
-        data.mark(f);
-      }
-    }
-    return f;
-  }
-}
