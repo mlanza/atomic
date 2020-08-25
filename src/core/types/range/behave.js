@@ -1,4 +1,4 @@
-import {does, is} from '../../core';
+import {does, kin} from '../../core';
 import {implement} from '../protocol';
 import {ICoerceable, IInverse, IAddable, ISequential, ICollection, IComparable, INext, IEquiv, IReduce, IKVReduce, ISeqable, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, ISeq, IInclusive, IIndexed} from '../../protocols';
 import {unreduced, isReduced} from '../reduced';
@@ -8,6 +8,7 @@ import {emptyable} from "../record/behave";
 import {behaveAsEmptyList} from "../empty-list/behave";
 import {Range} from "./construct";
 import {directed} from '../../protocols/iaddable/concrete';
+import {alike} from '../../protocols/iequiv/concrete';
 import {_ as v} from "param.macro";
 
 function seq(self){
@@ -31,7 +32,7 @@ function next(self){
 const _equiv = implement(IEquiv, behaveAsEmptyList).behavior.equiv;
 
 function equiv(self, other){
-  return (is(other, Range) && IEquiv.equiv(self.start, other.start) && IEquiv.equiv(self.end, other.end) && IEquiv.equiv(self.step, other.step)) || _equiv(self, other);
+  return alike(self, other) || _equiv(self, other);
 }
 
 function reduce(self, xf, init){

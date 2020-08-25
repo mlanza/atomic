@@ -5,6 +5,7 @@ import {reduced, unreduced, isReduced} from '../reduced';
 import {indexedSeq} from '../indexed-seq';
 import {replace} from '../string/concrete';
 import {range} from '../range/construct';
+import {behaveAsEmptyList} from '../empty-list/behave';
 import {concat} from "../concatenated/construct";
 import {revSeq} from '../rev-seq';
 import {filter, mapa} from '../lazy-seq';
@@ -111,12 +112,6 @@ function val(self){
   return self[1];
 }
 
-function equiv(self, other){
-  return IKVReduce.reducekv(self, function(memo, key, value){
-    return memo ? IEquiv.equiv(value, ILookup.lookup(other, key)) : reduced(memo);
-  }, satisfies(ICounted, other) && ICounted.count(self) === ICounted.count(other));
-}
-
 function find(self, key){
   return IAssociative.contains(self, key) ? [key, ILookup.lookup(self, key)] : null;
 }
@@ -198,11 +193,9 @@ export const iindexed = does(
   implement(IIndexed, {nth, idx}),
   implement(ICounted, {count: length}));
 
-export const iequiv = implement(IEquiv, {equiv});
-
 export const behaveAsArray = does(
   iindexed,
-  iequiv,
+  implement(IEquiv, behaveAsEmptyList),
   implement(IQueryable, {query}),
   implement(ISequential),
   implement(IMap, {dissoc, keys, vals: identity}),

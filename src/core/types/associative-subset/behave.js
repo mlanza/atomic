@@ -1,11 +1,11 @@
 import {implement} from '../protocol';
 import {identity, does} from '../../core';
-import {ICoerceable, IDescriptive, IFind, ICollection, IReduce, IKVReduce, INext, ISeq, ISeqable, IIndexed, ICounted, ILookup, IFn, IMap, ICloneable, IEmptyableCollection} from '../../protocols';
+import {IEquiv, ICoerceable, IDescriptive, IFind, ICollection, IReduce, IKVReduce, INext, ISeq, ISeqable, IIndexed, ICounted, ILookup, IFn, IMap, ICloneable, IEmptyableCollection} from '../../protocols';
 import {lazySeq} from '../../types/lazy-seq/construct';
 import {cons} from '../../types/list/construct';
 import {remove, into} from '../../types/lazy-seq/concrete';
 import {emptyObject} from '../../types/object/construct';
-import {iequiv} from '../../types/array/behave';
+import {behaveAsEmptyList} from '../../types/empty-list/behave';
 
 function toObject(self){
   return into({}, self);
@@ -64,8 +64,8 @@ function reducekv(self, xf, init){
 }
 
 export const behaveAsAssociativeSubset = does(
-  iequiv,
   implement(IDescriptive),
+  implement(IEquiv, behaveAsEmptyList),
   implement(ICoerceable, {toObject}),
   implement(IFind, {find}),
   implement(IMap, {dissoc, keys, vals}),
