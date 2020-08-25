@@ -1,6 +1,5 @@
-import {unbind, does} from '../../core';
+import {unbind} from '../../core';
 import {Protocol} from "./construct";
-import Map from "map";
 
 export const extend    = unbind(Protocol.prototype.extend);
 export const satisfies = unbind(Protocol.prototype.satisfies);
