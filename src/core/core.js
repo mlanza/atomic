@@ -49,7 +49,7 @@ export function obj(f, len){ //objective
 
 export const placeholder = {};
 
-export function part(f){
+export function plug(f){ //apply placeholders and, optionally, values returning a partially applied function which is executed when all placeholders are supplied.
   const xs = slice(arguments, 1), n = xs.length;
   return xs.indexOf(placeholder) < 0 ? f.apply(null, xs) : function() {
     const ys = slice(arguments),
@@ -58,7 +58,7 @@ export function part(f){
       let x = xs[i];
       zs.push(x === placeholder && ys.length ? ys.shift() : x);
     }
-    return part.apply(null, [f].concat(zs).concat(ys));
+    return plug.apply(null, [f].concat(zs).concat(ys));
   }
 }
 
@@ -69,7 +69,7 @@ export function partial(f, ...applied){
 }
 
 export function partly(f){
-  return partial(part, f);
+  return partial(plug, f);
 }
 
 export function identity(x){
