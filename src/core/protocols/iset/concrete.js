@@ -8,7 +8,7 @@ import {every} from "../../types/lazy-seq/concrete";
 import {ISet} from "./instance";
 import {_ as v} from "param.macro";
 
-export const disj = ISet.disj;
+export const disj = overload(null, identity, ISet.disj, reducing(ISet.disj));
 
 const union2 = reduce(ISet.unite, v, v);
 
