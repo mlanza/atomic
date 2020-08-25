@@ -32,7 +32,7 @@ function next(self){
 const _equiv = implement(IEquiv, behaveAsEmptyList).behavior.equiv;
 
 function equiv(self, other){
-  return alike(self, other) || _equiv(self, other);
+  return kin(self, other) ? alike(self, other) : _equiv(self, other);
 }
 
 function reduce(self, xf, init){
