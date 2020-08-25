@@ -8,6 +8,7 @@ import {compare} from "./protocols/icomparable/concrete";
 import {isNil} from "./types/nil/construct";
 import {indexed} from "./types/indexed/construct";
 import {maybe} from './types/maybe/construct';
+import {equiv as eq2} from './protocols/iequiv/concrete';
 import {_ as v} from "param.macro";
 
 export function both(memo, value){
@@ -122,10 +123,6 @@ function gteN(...args){
 }
 
 export const gte = overload(constantly(false), constantly(true), gte2, gteN);
-
-function eq2(a, b){
-  return IEquiv.equiv(a, b);
-}
 
 function eqN(...args){
   return everyPair(eq2, args);
