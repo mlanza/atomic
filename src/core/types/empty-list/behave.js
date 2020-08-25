@@ -12,7 +12,7 @@ function reduce(self, f, init){
 function equiv(as, bs){
   const xs = ISeqable.seq(as),
         ys = ISeqable.seq(bs);
-  return IEquiv.equiv(ISeq.first(xs), ISeq.first(ys)) && IEquiv.equiv(INext.next(xs), INext.next(ys));
+  return ICounted.count(xs) === ICounted.count(ys) && IEquiv.equiv(ISeq.first(xs), ISeq.first(ys)) && IEquiv.equiv(INext.next(xs), INext.next(ys));
 }
 
 export const behaveAsEmptyList = does(

@@ -117,6 +117,12 @@ export function isInstance(self, constructor){
   return self instanceof constructor;
 }
 
+export const ako = isInstance;
+
+export function kin(self, other){
+  return other != null && self != null && other.constructor === self.constructor;
+}
+
 export function unspread(f){
   return function(...args){
     return f(args);

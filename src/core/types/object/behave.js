@@ -5,7 +5,6 @@ import {reduced} from '../reduced';
 import {lazySeq, into, map} from '../lazy-seq';
 import {cons} from '../list';
 import {apply} from '../function/concrete';
-import {iequiv} from '../array/behave';
 import {isString} from '../string/construct';
 import {satisfies} from "../protocol/concrete";
 import {update} from "../../protocols/iassociative/concrete";
@@ -181,7 +180,6 @@ function toArray(self){
 }
 
 export const behaveAsObject = does(
-  iequiv,
   implement(IDescriptive),
   implement(ITemplate, {fill}),
   implement(IBlankable, {blank}),
