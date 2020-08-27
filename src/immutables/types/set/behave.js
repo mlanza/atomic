@@ -4,8 +4,10 @@ import {
   iterable,
   implement,
   unreduced,
+  union,
   ICoerceable,
   ISeq,
+  IEquiv,
   IReduce,
   ISeqable,
   ISet,
@@ -82,9 +84,14 @@ function merge(self, other){
   return reduce(other, _.conj, self);
 }
 
+function equiv(self, other){
+  return ICounted.count(union(self, other)) === ICounted.count(self);
+}
+
 export const behaveAsSet = does(
   iterable,
   implement(ISequential),
+  implement(IEquiv, {equiv: equiv}),
   implement(IAssociative, {contains: includes}),
   implement(IMergeable, {merge}),
   implement(ITransient, {transient}),
