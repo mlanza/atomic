@@ -1,4 +1,4 @@
-import {overload, toggles, identity, obj, partly, doto, branch, unspread, applying, execute, noop, constantly, once} from "./core";
+import {overload, toggles, identity, obj, partly, doto, does, branch, unspread, applying, execute, noop, constantly, once} from "./core";
 import {IAppendable, IYankable, ICoerceable, IAssociative, IBounds, IInverse, ICloneable, ICollection, IComparable, ICounted, IDeref, IDisposable, IEmptyableCollection, IEquiv, IFind, IFn, IForkable, IFunctor, IHierarchy, IInclusive, IIndexed, IInsertable, IKVReduce, ILookup, IMap, IMapEntry, IMatchable, INext, IOtherwise, IPrependable, IReduce, IReset, ISeq, ISeqable, ISet, ISwap} from "./protocols";
 import {just, satisfies, filter, spread, maybe, each, duration, remove, sort, flip, realized, comp, isNumber, isFunction, apply, realize, isNil, reFindAll, mapkv, period, selectKeys, mapVals, reMatches, test, date, emptyList, cons, days, recurrence, curry, second as _second} from "./types";
 import {add, subtract, compact, matches, name, descendants, query, locate, deref, get, assoc, yank, conj, reducing, toArray, reducekv, includes, excludes, rest, count, between, reduce, divide, fmap, split} from "./protocols/concrete";
@@ -171,49 +171,41 @@ export function when(pred, ...xs) {
   return last(map(realize, pred ? xs : null));
 }
 
-function readable1(pred){
-  function lookup(self, key){
-    if (!pred(key)) {
+export function readable(keys){
+  const lookup = keys ? function(self, key){
+    if (!includes(keys, key)) {
       throw new Error("Cannot read from " + key);
     }
     return self[key];
-  }
-  return doto(v,
-    implement(ILookup, {lookup}));
-}
-
-function readable0(){
-  function lookup(self, key){
+  } : function(self, key){
     return self[key];
   }
-  return doto(v,
-    implement(ILookup, {lookup}));
+  return implement(ILookup, {lookup});
 }
 
-export const readable = overload(once(readable0), readable1);
-
-function writable1(pred){
+export function writable(keys){
   function clone(self){
     return Object.assign(Object.create(self.constructor.prototype), self);
   }
   function contains(self, key){
     return self.hasOwnProperty(key);
   }
-  function assoc(self, key, value){
-    if (!pred(key) || !contains(self, key)) {
+  const assoc = keys ? function(self, key, value){
+    if (!includes(keys, key) || !contains(self, key)) {
+      throw new Error("Cannot write to " + key);
+    }
+    var tgt = clone(self);
+    tgt[key] = value;
+    return tgt;
+  } : function(self, key, value){
+    if (!contains(self, key)) {
       throw new Error("Cannot write to " + key);
     }
     var tgt = clone(self);
     tgt[key] = value;
     return tgt;
   }
-  return doto(v,
+  return does(
     implement(ICloneable, {clone}),
     implement(IAssociative, {assoc, contains}));
 }
-
-function writable0(){
-  return writable1(constantly(true));
-}
-
-export const writable = overload(once(writable0), writable1);
