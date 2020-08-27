@@ -78,6 +78,17 @@ addProp(Object.prototype, "equals", equals);
 addProp(Number.prototype, "hashCode", hashCode);
 addProp(String.prototype, "hashCode", hashCode);
 
+export function hashable(){
+  function hash(self){
+    const content = [self.constructor.name], keys = Object.keys(self);
+    for(let key of keys){
+      content.push(key, self[key]);
+    }
+    return hashing(content);
+  }
+  return implement(IHash, {hash});
+}
+
 export function hashed(hs){
   return reduce(function(h1, h2){
     return 3 * h1 + h2;
