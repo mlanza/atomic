@@ -46,6 +46,15 @@ export function signature(...preds){
   }
 }
 
+export function osignature(...preds){
+  return function(...values){
+    return IKVReduce.reducekv(values, function(memo, idx, value){
+      let pred = preds[idx];
+      return memo ? !pred || pred(value) : reduced(memo);
+    }, true);
+  }
+}
+
 export function everyPair(pred, xs){
   let every = xs.length > 0;
   while(every && xs.length > 1){

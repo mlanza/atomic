@@ -1,7 +1,8 @@
-import {doto, overload, implement, generate, positives, weakMap, toArray, constantly, reduce, str, map, each, get, keys, sort, IEquiv, ICounted, IMap} from "atomic/core";
+import {doto, overload, implement, generate, positives, weakMap, toArray, constantly, reduce, str, map, each, assoc, get, contains, keys, sort, IEquiv, ICounted, IMap} from "atomic/core";
 import {Symbol, GUID, AssociativeSubset, Concatenated, EmptyList, List, Indexed, IndexedSeq, Nil} from "atomic/core";
 import {IPersistent, TransientSet} from "atomic/transients";
 import {set} from "./types/set/construct";
+import {map as _map} from "./types/map/construct";
 import {IHash} from "./protocols/ihash/instance";
 import {_ as v} from "param.macro";
 import * as imm from "immutable";
@@ -9,6 +10,25 @@ import * as imm from "immutable";
 export * from "./types";
 export * from "./protocols";
 export * from "./protocols/concrete";
+
+function memoize2(f, hash){
+  const c = Symbol("cache");
+  return function(self){
+    const cache  = self[c] || _map(),
+          key    = hash.apply(self, arguments),
+          result = contains(cache, key) ? get(cache, key) : f.apply(self, arguments);
+    self[c] = assoc(cache, key, result);
+    return result;
+  }
+}
+
+function memoize1(f){
+  return memoize2(f, function(self, ...args){
+    return args;
+  });
+}
+
+export const memoize = overload(null, memoize1, memoize2);
 
 (function(){
 

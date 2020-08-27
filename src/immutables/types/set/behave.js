@@ -13,6 +13,7 @@ import {
   ISequential,
   ICounted,
   ICollection,
+  IAssociative,
   IEmptyableCollection,
   IMergeable,
   IInclusive,
@@ -84,6 +85,7 @@ function merge(self, other){
 export const behaveAsSet = does(
   iterable,
   implement(ISequential),
+  implement(IAssociative, {contains: includes}),
   implement(IMergeable, {merge}),
   implement(ITransient, {transient}),
   implement(IReduce, {reduce}),

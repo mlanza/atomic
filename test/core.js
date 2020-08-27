@@ -434,9 +434,8 @@ QUnit.test("equality", function(assert){
   assert.ok("Curly" |> _.eq(v, "Curly"), "Equal strings");
   assert.notOk("Curlers" |> _.eq(v, "Curly"), "Unequal strings");
   assert.ok("Curlers" |> _.notEq(v, "Curly"), "Unequal strings");
-  assert.ok(_.eq(_.range(3), _.range(3)), "Equal ranges");
-  assert.ok(_.eq(_.range(3), [0,1,2]), "Communicative sequences (range, array)");
-  assert.ok(_.eq([0,1,2], _.range(3)), "Communicative sequences (array, range)");
+  const rng = _.range(3);
+  assert.ok(_.eq(rng, rng, _.range(3), rng, [0,1,2], rng, _.cons(0, _.range(1,3)), _.initial(_.range(4))), "Communicative sequences");
   assert.ok(45 |> _.eq(v, 45), "Equal numbers");
   assert.ok([1, 2, 3] |> _.eq(v, [1, 2, 3]), "Equal arrays");
   assert.notOk([1, 2, 3] |> _.eq(v, [2, 3]), "Unequal arrays");
