@@ -10,7 +10,8 @@ export default {
     'src/transducers.js',
     'src/transients.js',
     'src/repos.js',
-    'src/validates.js'
+    'src/validates.js',
+    'src/vectors.js'
   ],
   output: {
     dir: 'dist/_atomic',
@@ -46,6 +47,7 @@ export default {
     "atomic/transients",
     "atomic/repos",
     "atomic/validates",
+    "atomic/vectors",
     "atomic/dom"
   ],
   plugins: [
