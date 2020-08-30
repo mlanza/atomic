@@ -11,7 +11,7 @@ export default {
     'src/transients.js',
     'src/repos.js',
     'src/validates.js',
-    'src/vectors.js'
+    'src/draw.js'
   ],
   output: {
     dir: 'dist/_atomic',
@@ -47,7 +47,7 @@ export default {
     "atomic/transients",
     "atomic/repos",
     "atomic/validates",
-    "atomic/vectors",
+    "atomic/draw",
     "atomic/dom"
   ],
   plugins: [
