@@ -83,11 +83,9 @@ QUnit.test("dom", function(assert){
   const [ul, li, div, span] = _.mapa(_.comp(_.expands, dom.tag), ["ul", "li", "div", "span"]);
   const duo = _.doto(dom.fragment(), dom.append(v, div("Abbott")), dom.append(v, dom.element("div", "Costello")));
   const who = div(_.get(v, "givenName"), " ", _.get(v, "surname"));
-  const template =
-    ul(
-      _.map(function([id, person]){
-        return li({id: id}, who(person));
-      }, v));
+  const template = ul(_.map(function([id, person]){
+    return li({id: id}, who(person));
+  }, v));
   const stooges = template({
     moe: {givenName: "Moe", surname: "Howard"},
     curly: {givenName: "Curly", surname: "Howard"},
