@@ -1,4 +1,4 @@
-import {ICloneable, ICompactable, IMergeable} from '../../protocols';
+import {ICloneable, ICompactable} from '../../protocols';
 import {inc, dec} from '../../protocols/iaddable/concrete';
 import {prop, patch} from "../../associatives";
 import {overload, identity} from '../../core';
@@ -70,7 +70,7 @@ export function rdow(self, n){
 }
 
 export function mdow(self, n){
-  return rdow(IMergeable.merge(self, som()), n);
+  return rdow(patch(self, som()), n);
 }
 
 export function isDate(self){
