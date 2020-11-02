@@ -1,10 +1,10 @@
 import {ICloneable, ICompactable, IMergeable} from '../../protocols';
 import {inc, dec} from '../../protocols/iaddable/concrete';
-import {prop} from "../../associatives";
+import {prop, patch} from "../../associatives";
 import {overload, identity} from '../../core';
 
 export function monthDays(self){
-  return IMergeable.merge(self, {
+  return patch(self, {
     month: inc,
     day: 0
   }).getDate();
