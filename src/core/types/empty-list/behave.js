@@ -9,13 +9,11 @@ function reduce(self, f, init){
   return init;
 }
 
-function equiv(as, bs){
-  if (!satisfies(ISeqable, bs)) {
-    return false;
-  }
-  const xs = ISeqable.seq(as),
-        ys = ISeqable.seq(bs);
-  return ICounted.count(xs) === ICounted.count(ys) && IEquiv.equiv(ISeq.first(xs), ISeq.first(ys)) && IEquiv.equiv(INext.next(xs), INext.next(ys));
+function equiv(xs, ys){
+  return !!satisfies(ISequential, xs) === !!satisfies(ISequential, ys)
+    && ICounted.count(xs) === ICounted.count(ys)
+    && IEquiv.equiv(ISeq.first(xs), ISeq.first(ys))
+    && IEquiv.equiv(INext.next(xs), INext.next(ys));
 }
 
 export const behaveAsEmptyList = does(
