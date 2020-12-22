@@ -1,6 +1,5 @@
 import {each, global, partial, flatten, apply} from 'atomic/core';
 import {embed, embeds} from "../../protocols/iembeddable";
-import {_ as v} from "param.macro";
 
 export const Element = global.Element;
 

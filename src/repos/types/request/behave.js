@@ -3,20 +3,19 @@ import Promise from "promise";
 import * as _ from "atomic/core";
 import {IParams, IOptions, IAddress, IIntercept} from "../../protocols";
 import {ICloneable, ITemplate, IFunctor, IQueryable, ICoerceable, IForkable, IMap, IAssociative, ILookup, IAppendable, IPrependable, IKVReduce, fromTask} from "atomic/core";
-import {_ as v} from "param.macro";
 
 export function query(self, plan){
-  const keys = _.filter(_.startsWith(v, "$"), _.keys(plan));
+  const keys = _.filter(_.startsWith(?, "$"), _.keys(plan));
   return self
-    |> _.merge(v, _.apply(_.dissoc, plan, keys))
-    |> IParams.params(v, _.selectKeys(plan, keys))
+    |> _.merge(?, _.apply(_.dissoc, plan, keys))
+    |> IParams.params(?, _.selectKeys(plan, keys))
     |> fromTask;
 }
 
 function fill(self, params){
   return self
-    |> _.edit(v, "url", _.fill(v, params))
-    |> _.edit(v, "options", _.fill(v, params));
+    |> _.edit(?, "url", _.fill(?, params))
+    |> _.edit(?, "options", _.fill(?, params));
 }
 
 function clone(self){
@@ -28,7 +27,7 @@ function addr(self){
 }
 
 function assoc(self, key, value) {
-  return _.edit(self, "config", IAssociative.assoc(v, key, value));
+  return _.edit(self, "config", IAssociative.assoc(?, key, value));
 }
 
 function contains(self, key){
@@ -44,37 +43,37 @@ function lookup(self, key){
 }
 
 function params(self, params){
-  return _.edit(self, "url", IParams.params(v, params));
+  return _.edit(self, "url", IParams.params(?, params));
 }
 
 function options(self, options){
-  return _.edit(self, "options", _.isFunction(options) ? options : _.absorb(v, options));
+  return _.edit(self, "options", _.isFunction(options) ? options : _.absorb(?, options));
 }
 
 function intercept(self, interceptor){
-  return prepend(self, _.fmap(v, interceptor));
+  return prepend(self, _.fmap(?, interceptor));
 }
 
 function fmap(self, handler){
-  return append(self, _.fmap(v, handler));
+  return append(self, _.fmap(?, handler));
 }
 
 function prepend(self, xf){
-  return _.edit(self, "interceptors", _.prepend(v, xf));
+  return _.edit(self, "interceptors", _.prepend(?, xf));
 }
 
 function append(self, xf){
-  return _.edit(self, "handlers", _.append(v, xf));
+  return _.edit(self, "handlers", _.append(?, xf));
 }
 
 function fork(self, reject, resolve){
   return self
     |> Promise.resolve
     |> _.apply(_.pipe, self.interceptors)
-    |> _.fmap(v, function(self){
+    |> _.fmap(?, function(self){
       return fetch(self.url, self.options)
         |> _.apply(_.pipe, self.handlers)
-        |> _.fork(v, reject, resolve);
+        |> _.fork(?, reject, resolve);
     });
 }
 

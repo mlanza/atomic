@@ -1,9 +1,8 @@
 import {specify, satisfies, each, parent as _parent} from 'atomic/core';
 import {trigger} from "atomic/reactives";
 import {IMountable} from "./instance";
-import {_ as v} from "param.macro";
 
-export const isMountable = satisfies(IMountable, v);
+export const isMountable = satisfies(IMountable, ?);
 
 export function mounts(self){
   specify(IMountable, {}, self);

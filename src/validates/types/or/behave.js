@@ -1,10 +1,9 @@
 import {implement, does, map, detect, isSome, ISeqable, INext, IEmptyableCollection, ICollection, ISeq, IAppendable} from 'atomic/core';
 import {ICheckable} from '../../protocols';
 import {or} from './construct';
-import {_ as v} from "param.macro";
 
 function check(self, value){
-  return detect(isSome, map(ICheckable.check(v, value), self.constraints));
+  return detect(isSome, map(ICheckable.check(?, value), self.constraints));
 }
 
 function conj(self, constraint){

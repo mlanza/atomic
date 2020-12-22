@@ -1,7 +1,6 @@
 import {does, doto, partial, implement, handler, filter, concat, IMatchable, ISeqable, IAppendable} from "atomic/core";
 import {ITransientCollection} from "atomic/transients";
 import {IDispatch, IEvented} from '../../protocols';
-import {_ as v} from "param.macro";
 
 function on(self, pred, callback){
   conj(self, handler(pred, callback));
@@ -16,7 +15,7 @@ function dispatch(self, message){
 }
 
 function matches(self, message){
-  const xs = filter(IMatchable.matches(v, message), self.handlers);
+  const xs = filter(IMatchable.matches(?, message), self.handlers);
   return ISeqable.seq(xs) ? xs : self.fallback ? [self.fallback] : [];
 }
 

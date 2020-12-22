@@ -7,10 +7,9 @@ import {recurrence} from "../recurrence/construct";
 import {period} from "./construct";
 import {map, take} from "../lazy-seq/concrete";
 import {ISplittable, ICoerceable, IAddable, IBounds, IComparable, IEquiv, IInclusive, IDivisible, IMergeable} from '../../protocols';
-import {_ as v} from "param.macro";
 
 function split2(self, step){
-  return map(period(v, step), recurrence(IBounds.start(self), IBounds.end(self), step));
+  return map(period(?, step), recurrence(IBounds.start(self), IBounds.end(self), step));
 }
 
 function split3(self, step, n){
@@ -20,7 +19,7 @@ function split3(self, step, n){
 const split = overload(null, null, split2, split3);
 
 function add(self, dur){
-  return IBounds.end(self) ? new self.constructor(IBounds.start(self), self |> IBounds.end |> IAddable.add(v, dur)) : self;
+  return IBounds.end(self) ? new self.constructor(IBounds.start(self), self |> IBounds.end |> IAddable.add(?, dur)) : self;
 }
 
 function merge(self, other){

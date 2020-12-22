@@ -4,7 +4,6 @@ import {IPersistent, TransientSet} from "atomic/transients";
 import {set} from "./types/set/construct";
 import {map as _map} from "./types/map/construct";
 import {IHash} from "./protocols/ihash/instance";
-import {_ as v} from "param.macro";
 import * as imm from "immutable";
 
 export * from "./types";

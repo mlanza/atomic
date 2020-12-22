@@ -11,7 +11,6 @@ import {IMiddleware} from "../../protocols/imiddleware/instance";
 import {IEventProvider} from "../../protocols/ieventprovider/instance";
 import {sub} from "../../protocols/isubscribe/concrete";
 import {dispatch} from "../../protocols/idispatch/concrete";
-import {_ as v} from "param.macro";
 
 export function handles(handle){
   return doto({},
@@ -37,7 +36,7 @@ function affects3(bus, f, react){
   return handles(function(_, event, next){
     const past = deref(bus),
           present = event.path ? apply(updateIn, past, event.path, f, event.args) : apply(f, past, event.args),
-          scope = event.path ? getIn(v, event.path) : identity;
+          scope = event.path ? getIn(?, event.path) : identity;
     reset(bus, present);
     react(bus, event, scope(present), scope(past));
     next(event);

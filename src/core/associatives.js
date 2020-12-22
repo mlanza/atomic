@@ -8,7 +8,6 @@ import {concat} from "./types/concatenated";
 import {update} from "./protocols/iassociative/concrete";
 import {reducing} from "./protocols/ireduce/concrete";
 import {gt, lt} from "./predicates";
-import {_ as v} from "param.macro";
 
 function scanKey1(better){
   return partial(scanKey, better);
@@ -30,7 +29,7 @@ export const scanKey = overload(null, scanKey1, null, scanKey3, scanKey4, scanKe
 export const maxKey  = scanKey(gt);
 export const minKey  = scanKey(lt);
 export const prop    = overload(null, function(key){
-    return overload(null, ILookup.lookup(v, key), IAssociative.assoc(v, key, v));
+    return overload(null, v => ILookup.lookup(v, key), v => IAssociative.assoc(v, key, v));
 }, ILookup.lookup, IAssociative.assoc);
 
 function patch2(target, source){

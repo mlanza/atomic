@@ -4,7 +4,6 @@ export * from "./types";
 export * from "./protocols";
 export * from "./protocols/concrete";
 import {IParams} from "./protocols";
-import {_ as v} from "param.macro";
 
 export function text(req){
   return _.fmap(req, function(resp){
@@ -36,9 +35,9 @@ export function suppress(req, f){
 }
 
 function params(self, obj){
-  const f = _.isFunction(obj) ? obj : _.merge(v, obj);
+  const f = _.isFunction(obj) ? obj : _.merge(?, obj);
   return _.str(
-    self |> _.split(v, "?") |> _.first,
+    self |> _.split(?, "?") |> _.first,
     self |> _.fromQueryString |> f |> _.toQueryString);
 }
 

@@ -3,14 +3,13 @@ import {ICheckable, IScope} from '../../protocols';
 import {issue, issues} from '../issue';
 import {and} from '../and/construct';
 import {optional} from './construct';
-import {_ as v} from "param.macro";
 
 function check(self, obj){
   const found = get(obj, self.key);
   if (blank(found)) {
     return null;
   } else {
-    return issues(ICheckable.check(self.constraint, found), IScope.scope(v, self.key));
+    return issues(ICheckable.check(self.constraint, found), IScope.scope(?, self.key));
   }
 }
 

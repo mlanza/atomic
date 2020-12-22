@@ -74,10 +74,9 @@ import {embed as _embed} from "../../protocols/iembeddable/concrete";
 import {nestedAttrs} from "../nested-attrs/construct";
 import {isDocumentFragment} from "../document-fragment/construct";
 import {isElement} from "../element/construct";
-import {_ as v} from "param.macro";
 
 const hides = ["display", "none"];
-export const hidden = comp(IInclusive.includes(v, hides), nestedAttrs(v, "style"));
+export const hidden = comp(IInclusive.includes(?, hides), nestedAttrs(?, "style"));
 const toggle = partial(toggles, show, hide, hidden);
 
 function hide(self){
@@ -156,7 +155,7 @@ function eventContext(catalog){
           callback.call(found, e);
         }
       }
-    }, _assoc(catalog, callback, v)));
+    }, _assoc(catalog, callback, ?)));
     return self;
   }
 
@@ -263,7 +262,7 @@ export function closest(self, selector){
 }
 
 function query(self, selector){
-  return self.querySelectorAll && isString(selector) ? self.querySelectorAll(selector) : filter(IMatchable.matches(v, selector), IHierarchy.descendants(self));
+  return self.querySelectorAll && isString(selector) ? self.querySelectorAll(selector) : filter(IMatchable.matches(?, selector), IHierarchy.descendants(self));
 }
 
 function locate(self, selector){
@@ -324,7 +323,7 @@ export const yank = overload(null, yank1, yank2);
 
 function includes(self, target){
   if (isElement(target)) {
-    return ILocate.locate(children(self), isIdentical(target, v));
+    return ILocate.locate(children(self), isIdentical(target, ?));
   } else if (satisfies(ISequential, target)){
     const keys = target;
     return IReduce.reduce(keys, function(memo, key){

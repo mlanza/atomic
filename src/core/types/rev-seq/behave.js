@@ -8,7 +8,6 @@ import {ISequential, ICoerceable, ILookup, IMap, ICloneable, IReduce, ICollectio
 import {revSeq} from './construct';
 import {iterable} from '../lazy-seq/behave';
 import {map} from '../lazy-seq/concrete';
-import {_ as v} from "param.macro";
 
 function clone(self){
   return new revSeq(self.coll, self.idx);
@@ -23,7 +22,7 @@ function keys(self){
 }
 
 function vals(self){
-  return map(nth(self, v), keys(self));
+  return map(nth(self, ?), keys(self));
 }
 
 function nth(self, idx){

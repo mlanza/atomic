@@ -8,7 +8,6 @@ import {lazySeq} from "../../types/lazy-seq/construct";
 import {cons} from "../../types/list/construct";
 import {emptyList} from "../../types/empty-list/construct";
 import {isRegExp} from "./construct";
-import {_ as v} from "param.macro";
 
 export const test = unbind(RegExp.prototype.test);
 
@@ -30,7 +29,7 @@ function reFindAll2(text, find){
 }
 
 export function reFindAll(re, text){
-  return reFindAll2(text, reFind(re, v));
+  return reFindAll2(text, reFind(re, ?));
 }
 
 export function reMatches(re, s){

@@ -1,7 +1,6 @@
 import {overload, identity, fmap, map, blot, compact, flatten, toArray, satisfies, isPromise, Promise, detect, seq, ISeq} from 'atomic/core';
 import {ICheckable} from "../../protocols/icheckable/instance";
 import {IConstrainable} from "../../protocols/iconstrainable/instance";
-import {_ as v} from "param.macro";
 
 export function Issue(constraint, path){
   this.constraint = constraint;
@@ -36,7 +35,7 @@ function issuing2(x, issue){
 
 function issuing3(x, valid, issue){
   if (isPromise(x)) {
-    return fmap(x, valid, issuing(v, valid, issue));
+    return fmap(x, valid, issuing(?, valid, issue));
   } else if (valid(x)) {
     return null;
   } else {

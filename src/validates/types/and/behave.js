@@ -2,10 +2,9 @@ import {implement, does, map, blot, compact, apply, ISeqable, INext, IEmptyableC
 import {ICheckable} from '../../protocols';
 import {and} from "./construct";
 import {issue, issues} from '../issue';
-import {_ as v} from "param.macro";
 
 function check(self, value){
-  return issues(self.constraints, ICheckable.check(v, value));
+  return issues(self.constraints, ICheckable.check(?, value));
 }
 
 function conj(self, constraint){

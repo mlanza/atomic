@@ -10,7 +10,6 @@ import {emptyList} from "../../types/empty-list/construct";
 import {map, mapcat, remove} from "../../types/lazy-seq/concrete";
 import {concat} from "../../types/concatenated/construct";
 import {comp, juxt} from "../../types/function/concrete";
-import {_ as v} from "param.macro";
 
 export function downward(f){
   return function down(self){
@@ -44,4 +43,4 @@ export function leaves(self){
   return remove(comp(count, children), descendants(self));
 }
 
-export const asLeaves = comp(map(juxt(path, deref), v), leaves, lens);
+export const asLeaves = comp(map(juxt(path, deref), ?), leaves, lens);

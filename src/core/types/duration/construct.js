@@ -5,7 +5,6 @@ import {Symbol} from '../symbol/construct';
 import {isNumber} from "../number/concrete";
 import {branch} from "../../core";
 import {comp} from "../function/concrete";
-import {_ as v} from "param.macro";
 
 export function Duration(units){
   this.units = units;
@@ -44,7 +43,7 @@ export const duration = overload(null, branch(isNumber, milliseconds, constructs
   return milliseconds(end - start);
 });
 
-export const weeks = comp(days, mult(v, 7));
+export const weeks = comp(days, mult(?, 7));
 
 Duration.prototype[Symbol.toStringTag] = "Duration";
 Duration.prototype.valueOf = valueOf;

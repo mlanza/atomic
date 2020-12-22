@@ -9,7 +9,6 @@ import {isString} from '../string/construct';
 import {satisfies} from "../protocol/concrete";
 import {update} from "../../protocols/iassociative/concrete";
 import {emptyObject, isObject} from '../object/construct';
-import {_ as v} from "param.macro";
 
 const keys = Object.keys;
 const vals = Object.values;
@@ -20,8 +19,8 @@ function fill(self, params){
   return IKVReduce.reducekv(self, function(memo, key, value){
     return IAssociative.assoc(memo, key,
       value |> branch(
-        isString, ITemplate.fill(v, params),
-        isObject, fill(v, params),
+        isString, ITemplate.fill(?, params),
+        isObject, fill(?, params),
         identity));
   }, {});
 }

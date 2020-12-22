@@ -6,7 +6,6 @@ import * as vd from "atomic/validates";
 import * as t from "atomic/transducers";
 import * as mut from "atomic/transients";
 import QUnit from "qunit";
-import {_ as v} from "param.macro";
 
 const stooges = ["Larry","Curly","Moe"],
       pieces  = {pawn: 1, knight: 3, bishop: 3, rook: 5, queen: 10, king: Infinity},
@@ -15,11 +14,11 @@ const stooges = ["Larry","Curly","Moe"],
 
 QUnit.test("router & multimethod", function(assert){ //not just for fns!
   const f = _.doto($.router(), //router handlers need not be (but can be) fns
-      mut.conj(v, $.handler(_.signature(_.isString), _.str(v, "!"), _.apply)), //use apply to spread the message against the pred and callback
-      mut.conj(v, $.handler(_.signature(_.isNumber), _.mult(v, 2), _.apply)));
+      mut.conj(?, $.handler(_.signature(_.isString), _.str(?, "!"), _.apply)), //use apply to spread the message against the pred and callback
+      mut.conj(?, $.handler(_.signature(_.isNumber), _.mult(?, 2), _.apply)));
   const g = _.doto(mut.multimethod(), //multimethod handlers must be fns
-      mut.conj(v, mut.method(_.signature(_.isString), _.str(v, "!"))), //as a multimethod always dispatches to fns, apply is a given and need not be specified.
-      mut.conj(v, mut.method(_.signature(_.isNumber), _.mult(v, 2))));
+      mut.conj(?, mut.method(_.signature(_.isString), _.str(?, "!"))), //as a multimethod always dispatches to fns, apply is a given and need not be specified.
+      mut.conj(?, mut.method(_.signature(_.isNumber), _.mult(?, 2))));
   assert.equal($.dispatch(f, [1]), 2);
   assert.equal($.dispatch(f, ["timber"]), "timber!");
   assert.equal($.dispatch(g, [1]), 2);
@@ -31,7 +30,7 @@ QUnit.test("router & multimethod", function(assert){ //not just for fns!
 QUnit.test("validation", function(assert){
   const zipCode = /^\d{5}(-\d{1,4})?$/;
   const birth = "7/10/1926";
-  const past = vd.or(Date, vd.anno({type: "past"}, _.lt(v, new Date())));
+  const past = vd.or(Date, vd.anno({type: "past"}, _.lt(?, new Date())));
   const herman = {name: ["Herman", "Munster"], status: "married", dob: new Date(birth)};
   const person = vd.and(
     vd.required('name', vd.and(vd.collOf(String), vd.card(2, 2))),
@@ -72,45 +71,45 @@ QUnit.test("component", function(assert){
           "added": affects(_.conj)
         }]
       }),
-    $.dispatch(v, {type: "add", args: [{name: "Moe"}]}),
-    $.dispatch(v, {type: "add", args: [{name: "Curly"}]}),
-    $.dispatch(v, {type: "add", args: [{name: "Shemp"}]}));
+    $.dispatch(?, {type: "add", args: [{name: "Moe"}]}),
+    $.dispatch(?, {type: "add", args: [{name: "Curly"}]}),
+    $.dispatch(?, {type: "add", args: [{name: "Shemp"}]}));
 
   assert.equal(_.count(_.deref(people)), 3);
 });
 
 QUnit.test("dom", function(assert){
   const [ul, li, div, span] = _.mapa(_.comp(_.expands, dom.tag), ["ul", "li", "div", "span"]);
-  const duo = _.doto(dom.fragment(), dom.append(v, div("Abbott")), dom.append(v, dom.element("div", "Costello")));
-  const who = div(_.get(v, "givenName"), " ", _.get(v, "surname"));
+  const duo = _.doto(dom.fragment(), dom.append(?, div("Abbott")), dom.append(?, dom.element("div", "Costello")));
+  const who = div(_.get(?, "givenName"), " ", _.get(?, "surname"));
   const template = ul(_.map(function([id, person]){
     return li({id: id}, who(person));
-  }, v));
+  }, ?));
   const stooges = template({
     moe: {givenName: "Moe", surname: "Howard"},
     curly: {givenName: "Curly", surname: "Howard"},
     larry: {givenName: "Larry", surname: "Fine"}
   });
-  const moe = stooges |> dom.sel("li", v) |> _.first;
+  const moe = stooges |> dom.sel("li", ?) |> _.first;
 
   assert.equal(duo |> _.children |> _.first  |> dom.text, "Abbott");
   assert.equal(duo |> _.children |> _.second |> dom.text, "Costello");
   assert.equal(stooges |> _.leaves |> _.count, 3);
   assert.equal(moe |> dom.text, "Moe Howard", "Found by tag");
-  assert.deepEqual(stooges |> dom.sel("li", v) |> _.map(_.get(v, "id"), v) |> _.toArray, ["moe", "curly", "larry"], "Extracted ids");
+  assert.deepEqual(stooges |> dom.sel("li", ?) |> _.map(_.get(?, "id"), ?) |> _.toArray, ["moe", "curly", "larry"], "Extracted ids");
   assert.equal({givenName: "Curly", surname: "Howard"} |> who |> dom.text, "Curly Howard");
-  assert.deepEqual(_.fluent(moe, dom.classes, mut.conj(v, "main"), _.deref), ["main"]);
-  assert.equal(_.fluent(moe, dom.attr(v, "data-tagged", "tests"), _.get(v, "data-tagged")), "tests");
-  stooges |> dom.append(v, div({id: 'branding'}, span("Three Blind Mice")));
-  assert.ok(stooges |> dom.sel("#branding", v) |> _.first |> (el => el instanceof HTMLDivElement), "Found by id");
-  assert.deepEqual(stooges |> dom.sel("#branding span", v) |> _.map(dom.text, v) |> _.first, "Three Blind Mice", "Read text content");
-  const greeting = stooges |> dom.sel("#branding span", v) |> _.first;
+  assert.deepEqual(_.fluent(moe, dom.classes, mut.conj(?, "main"), _.deref), ["main"]);
+  assert.equal(_.fluent(moe, dom.attr(?, "data-tagged", "tests"), _.get(?, "data-tagged")), "tests");
+  stooges |> dom.append(?, div({id: 'branding'}, span("Three Blind Mice")));
+  assert.ok(stooges |> dom.sel("#branding", ?) |> _.first |> (el => el instanceof HTMLDivElement), "Found by id");
+  assert.deepEqual(stooges |> dom.sel("#branding span", ?) |> _.map(dom.text, ?) |> _.first, "Three Blind Mice", "Read text content");
+  const greeting = stooges |> dom.sel("#branding span", ?) |> _.first;
   dom.hide(greeting);
   assert.deepEqual(greeting |> dom.style |> _.deref, {display: "none"}, "Hidden");
-  assert.equal(greeting |> dom.style |> _.get(v, "display"), "none");
+  assert.equal(greeting |> dom.style |> _.get(?, "display"), "none");
   dom.show(greeting);
   assert.deepEqual(greeting |> dom.style |> _.deref, {}, "Shown");
-  const branding = stooges |> dom.sel("#branding", v) |> _.first;
+  const branding = stooges |> dom.sel("#branding", ?) |> _.first;
   dom.yank(branding);
   assert.equal(branding |> _.parent |> _.first, null, "Removed");
 });
@@ -142,38 +141,38 @@ QUnit.test("lazy-seq", function(assert){
 });
 
 QUnit.test("transducers", function(assert){
-  assert.deepEqual([1,2,3] |> _.cycle |> _.into([], _.comp(t.take(4), t.map(_.inc)), v), [2,3,4,2]);
-  assert.deepEqual([1, 3, 2, 2, 3] |> _.into([], t.dedupe(), v), [1,3,2,3]);
-  assert.deepEqual([1, 3, 2, 2, 3] |> _.into([], t.filter(_.isEven), v), [2,2]);
+  assert.deepEqual([1,2,3] |> _.cycle |> _.into([], _.comp(t.take(4), t.map(_.inc)), ?), [2,3,4,2]);
+  assert.deepEqual([1, 3, 2, 2, 3] |> _.into([], t.dedupe(), ?), [1,3,2,3]);
+  assert.deepEqual([1, 3, 2, 2, 3] |> _.into([], t.filter(_.isEven), ?), [2,2]);
 });
 
 QUnit.test("iinclusive", function(assert){
   const charlie = {name: "Charlie", iq: 120, hitpoints: 30};
-  assert.ok(charlie |> _.includes(v, ["name", "Charlie"]));
-  assert.notOk(charlie |> _.includes(v, ["name", "Charles"]));
+  assert.ok(charlie |> _.includes(?, ["name", "Charlie"]));
+  assert.notOk(charlie |> _.includes(?, ["name", "Charles"]));
 });
 
 QUnit.test("ilookup", function(assert){
-  assert.equal(stooges |> _.get(v, 2), "Moe");
-  assert.equal(pieces |> _.get(v, "pawn"), 1);
-  assert.equal(worth |> _.getIn(v, ["pieces", "queen"]), 10);
+  assert.equal(stooges |> _.get(?, 2), "Moe");
+  assert.equal(pieces |> _.get(?, "pawn"), 1);
+  assert.equal(worth |> _.getIn(?, ["pieces", "queen"]), 10);
   const boris = {givenName: "Boris", surname: "Lasky", address: {
     lines: ["401 Mayor Ave.", "Suite 401"],
     city: "Mechanicsburg", state: "PA", zip: "17055"
   }};
   const moe = {givenName: "Moe", surname: "Howard"};
-  const givenName = _.overload(null, _.get(v, "givenName"), _.assoc(v, "givenName", v)); //lens
-  const getAddressLine1 = _.pipe(_.maybe, _.fmap(v, _.get(v, "address"), _.get(v, "lines"), _.get(v, 1)), _.otherwise(v, ""));
+  const givenName = _.overload(null, _.get(?, "givenName"), _.assoc(?, "givenName", ?)); //lens
+  const getAddressLine1 = _.pipe(_.maybe, _.fmap(?, _.get(?, "address"), _.get(?, "lines"), _.get(?, 1)), _.otherwise(?, ""));
   assert.equal(moe   |> getAddressLine1, "");
   assert.equal(boris |> getAddressLine1, "Suite 401");
-  assert.equal(boris |> _.maybe |> _.fmap(v, _.get(v, "address"), _.get(v, "lines"), _.get(v, 1)) |> _.otherwise(v, ""), "Suite 401");
-  assert.equal(boris |> _.getIn(v, ["address", "lines", 1]), "Suite 401");
-  assert.equal(boris |> _.getIn(v, ["address", "lines", 2]), null);
-  assert.deepEqual(boris |> _.assocIn(v, ["address", "lines", 1], "attn: Finance Dept."), {givenName: "Boris", surname: "Lasky", address: {
+  assert.equal(boris |> _.maybe |> _.fmap(?, _.get(?, "address"), _.get(?, "lines"), _.get(?, 1)) |> _.otherwise(?, ""), "Suite 401");
+  assert.equal(boris |> _.getIn(?, ["address", "lines", 1]), "Suite 401");
+  assert.equal(boris |> _.getIn(?, ["address", "lines", 2]), null);
+  assert.deepEqual(boris |> _.assocIn(?, ["address", "lines", 1], "attn: Finance Dept."), {givenName: "Boris", surname: "Lasky", address: {
     lines: ["401 Mayor Ave.", "attn: Finance Dept."],
     city: "Mechanicsburg", state: "PA", zip: "17055"
   }})
-  assert.deepEqual(boris |> _.updateIn(v, ["address", "lines", 1], _.upperCase), {givenName: "Boris", surname: "Lasky", address: {
+  assert.deepEqual(boris |> _.updateIn(?, ["address", "lines", 1], _.upperCase), {givenName: "Boris", surname: "Lasky", address: {
     lines: ["401 Mayor Ave.", "SUITE 401"],
     city: "Mechanicsburg", state: "PA", zip: "17055"
   }});
@@ -184,21 +183,21 @@ QUnit.test("ilookup", function(assert){
   assert.equal(givenName(moe), "Moe");
   assert.deepEqual(givenName(moe, "Curly"), {givenName: "Curly", surname: "Howard"});
   assert.deepEqual(moe, {givenName: "Moe", surname: "Howard"}, "no lens mutation");
-  assert.equal(["ace", "king", "queen"] |> _.get(v, 2), "queen");
+  assert.equal(["ace", "king", "queen"] |> _.get(?, 2), "queen");
 });
 
 QUnit.test("iassociative", function(assert){
-  assert.equal(stooges |> _.assoc(v, 0, "Larry"), stooges, "maintain referential equivalence");
-  assert.deepEqual(stooges |> _.assoc(v, 0, "Shemp"), ["Shemp","Curly","Moe"]);
-  assert.deepEqual(court |> _.assoc(v, "ace", 14), {jack: 11, queen: 12, king: 13, ace: 14});
-  assert.deepEqual(worth |> _.assocIn(v, ["court","ace"], 1), {pieces: {pawn: 1, knight: 3, bishop: 3, rook: 5, queen: 10, king: Infinity}, court: {ace: 1, jack: 11, queen: 12, king: 13}});
-  assert.deepEqual(worth |> _.assocIn(v, ["court","king"], Infinity), {pieces: {pawn: 1, knight: 3, bishop: 3, rook: 5, queen: 10, king: Infinity}, court: {jack: 11, queen: 12, king: Infinity}});
-  assert.deepEqual(court |> _.update(v, "jack", _.add(v, -10)), {jack: 1, queen: 12, king: 13});
-  assert.deepEqual(worth |> _.updateIn(v, ["court","king"], _.add(v, -10)), {pieces: {pawn: 1, knight: 3, bishop: 3, rook: 5, queen: 10, king: Infinity}, court: {jack: 11, queen: 12, king: 3}});
+  assert.equal(stooges |> _.assoc(?, 0, "Larry"), stooges, "maintain referential equivalence");
+  assert.deepEqual(stooges |> _.assoc(?, 0, "Shemp"), ["Shemp","Curly","Moe"]);
+  assert.deepEqual(court |> _.assoc(?, "ace", 14), {jack: 11, queen: 12, king: 13, ace: 14});
+  assert.deepEqual(worth |> _.assocIn(?, ["court","ace"], 1), {pieces: {pawn: 1, knight: 3, bishop: 3, rook: 5, queen: 10, king: Infinity}, court: {ace: 1, jack: 11, queen: 12, king: 13}});
+  assert.deepEqual(worth |> _.assocIn(?, ["court","king"], Infinity), {pieces: {pawn: 1, knight: 3, bishop: 3, rook: 5, queen: 10, king: Infinity}, court: {jack: 11, queen: 12, king: Infinity}});
+  assert.deepEqual(court |> _.update(?, "jack", _.add(?, -10)), {jack: 1, queen: 12, king: 13});
+  assert.deepEqual(worth |> _.updateIn(?, ["court","king"], _.add(?, -10)), {pieces: {pawn: 1, knight: 3, bishop: 3, rook: 5, queen: 10, king: Infinity}, court: {jack: 11, queen: 12, king: 3}});
   assert.deepEqual(stooges, ["Larry","Curly","Moe"], "no mutations occurred");
   assert.deepEqual(court, {jack: 11, queen: 12, king: 13}, "no mutations occurred");
-  assert.deepEqual({surname: "Howard"} |> _.assoc(v, "givenName", "Moe"), {givenName: "Moe", surname: "Howard"});
-  assert.deepEqual([1, 2, 3] |> _.assoc(v, 1, 0), [1, 0, 3]);
+  assert.deepEqual({surname: "Howard"} |> _.assoc(?, "givenName", "Moe"), {givenName: "Moe", surname: "Howard"});
+  assert.deepEqual([1, 2, 3] |> _.assoc(?, 1, 0), [1, 0, 3]);
 });
 
 QUnit.test("icompare", function(assert){
@@ -212,81 +211,81 @@ QUnit.test("icompare", function(assert){
 });
 
 QUnit.test("iset", function(assert){
-  assert.deepEqual([1, 2, 3] |> _.union(v, [2, 3, 4]) |> _.sort |> _.toArray, [1, 2, 3, 4]);
-  assert.deepEqual([1, 2, 3, 4, 5] |> _.difference(v, [5, 2, 10]) |> _.sort |> _.toArray, [1, 3, 4]);
-  assert.ok([1, 2, 3] |> _.superset(v, [2, 3]));
-  assert.notOk([1, 2, 3] |> _.superset(v, [2, 4]));
+  assert.deepEqual([1, 2, 3] |> _.union(?, [2, 3, 4]) |> _.sort |> _.toArray, [1, 2, 3, 4]);
+  assert.deepEqual([1, 2, 3, 4, 5] |> _.difference(?, [5, 2, 10]) |> _.sort |> _.toArray, [1, 3, 4]);
+  assert.ok([1, 2, 3] |> _.superset(?, [2, 3]));
+  assert.notOk([1, 2, 3] |> _.superset(?, [2, 4]));
 });
 
 QUnit.test("iappendable, iprependable", function(assert){
-  assert.deepEqual(["Moe"] |> _.append(v, "Howard"), ["Moe", "Howard"]);
-  assert.deepEqual({surname: "Howard"} |> _.conj(v, ['givenName', "Moe"]), {givenName: "Moe", surname: "Howard"});
-  assert.deepEqual([1, 2] |> _.append(v, 3), [1, 2, 3]);
-  assert.deepEqual([1, 2] |> _.prepend(v, 0), [0, 1, 2]);
+  assert.deepEqual(["Moe"] |> _.append(?, "Howard"), ["Moe", "Howard"]);
+  assert.deepEqual({surname: "Howard"} |> _.conj(?, ['givenName', "Moe"]), {givenName: "Moe", surname: "Howard"});
+  assert.deepEqual([1, 2] |> _.append(?, 3), [1, 2, 3]);
+  assert.deepEqual([1, 2] |> _.prepend(?, 0), [0, 1, 2]);
 });
 
 QUnit.test("sequences", function(assert){
-  assert.deepEqual(["A","B","C"] |> _.cycle |> _.take(5, v) |> _.toArray, ["A","B","C","A","B"])
-  assert.deepEqual(_.positives |> _.take(5, v) |> _.toArray, [1,2,3,4,5]);
+  assert.deepEqual(["A","B","C"] |> _.cycle |> _.take(5, ?) |> _.toArray, ["A","B","C","A","B"])
+  assert.deepEqual(_.positives |> _.take(5, ?) |> _.toArray, [1,2,3,4,5]);
   assert.deepEqual(["A","B","C"] |> _.rest |> _.toArray, ["B", "C"]);
   assert.deepEqual(_.repeatedly(3, _.constantly(4)) |> _.toArray, [4,4,4]);
-  assert.deepEqual(stooges |> _.concat(v, ["Shemp","Corey"]) |> _.toArray, ["Larry","Curly","Moe","Shemp","Corey"]);
+  assert.deepEqual(stooges |> _.concat(?, ["Shemp","Corey"]) |> _.toArray, ["Larry","Curly","Moe","Shemp","Corey"]);
   assert.deepEqual(_.range(4) |> _.toArray, [0,1,2,3]);
   assert.equal(stooges |> _.second, "Curly");
-  assert.equal([1,2,3] |> _.some(_.isEven, v), true);
-  assert.equal([1,2,3] |> _.notAny(_.isEven, v), false);
-  assert.equal([2,4,6] |> _.every(_.isEven, v), true);
-  assert.deepEqual([9,8,7,6,5,4,3] |> _.dropLast(3, v) |> _.toArray, [9,8,7,6]);
+  assert.equal([1,2,3] |> _.some(_.isEven, ?), true);
+  assert.equal([1,2,3] |> _.notAny(_.isEven, ?), false);
+  assert.equal([2,4,6] |> _.every(_.isEven, ?), true);
+  assert.deepEqual([9,8,7,6,5,4,3] |> _.dropLast(3, ?) |> _.toArray, [9,8,7,6]);
   assert.deepEqual(stooges |> _.sort |> _.toArray, ["Curly","Larry","Moe"])
   assert.deepEqual(["A","B",["C","D"],["E", ["F", "G"]]] |> _.flatten |> _.toArray, ["A","B","C","D","E","F","G"]);
   assert.deepEqual([null, ""] |> _.flatten |> _.toArray, [null, ""]);
-  assert.deepEqual(pieces |> _.selectKeys(v, ["pawn", "knight"]), {pawn: 1, knight: 3});
-  assert.deepEqual(["A","B","C","D","E"] |> _.interleave(v, _.repeat("="), _.positives) |> _.toArray, ["A","=",1,"B","=",2,"C","=",3,"D","=",4,"E","=",5]);
-  assert.deepEqual([1,2,3] |> _.interleave(v, [10,11,12]) |> _.toArray, [1,10,2,11,3,12]);
-  assert.equal([false, true] |> _.some(_.isTrue, v), true);
-  assert.equal([false, true] |> _.some(_.isFalse, v), true);
-  assert.equal([false, false] |> _.some(_.isTrue, v), null);
-  assert.equal(_.range(10) |> _.detect(x => x > 5, v), 6);
-  assert.notOk(_.range(10) |> _.every(x => x > 5, v));
+  assert.deepEqual(pieces |> _.selectKeys(?, ["pawn", "knight"]), {pawn: 1, knight: 3});
+  assert.deepEqual(["A","B","C","D","E"] |> _.interleave(?, _.repeat("="), _.positives) |> _.toArray, ["A","=",1,"B","=",2,"C","=",3,"D","=",4,"E","=",5]);
+  assert.deepEqual([1,2,3] |> _.interleave(?, [10,11,12]) |> _.toArray, [1,10,2,11,3,12]);
+  assert.equal([false, true] |> _.some(_.isTrue, ?), true);
+  assert.equal([false, true] |> _.some(_.isFalse, ?), true);
+  assert.equal([false, false] |> _.some(_.isTrue, ?), null);
+  assert.equal(_.range(10) |> _.detect(x => x > 5, ?), 6);
+  assert.notOk(_.range(10) |> _.every(x => x > 5, ?));
   assert.deepEqual([1, 2, 3] |> _.empty, []);
-  assert.deepEqual(null |> _.into([], v), []);
-  assert.deepEqual(_.repeat(1) |> _.take(2, v) |> _.toArray, [1, 1]);
+  assert.deepEqual(null |> _.into([], ?), []);
+  assert.deepEqual(_.repeat(1) |> _.take(2, ?) |> _.toArray, [1, 1]);
   assert.deepEqual([1, 2, 3] |> _.butlast |> _.toArray, [1, 2]);
-  assert.deepEqual(["A","B","C"] |> _.interpose("-", v) |> _.toArray, ["A", "-", "B", "-", "C"]);
-  assert.deepEqual(_.repeat(1) |> _.take(5, v) |> _.toArray, [1,1,1,1,1]);
-  assert.deepEqual(_.repeat(1) |> _.take(5, v) |> _.conj(v, 0) |> _.conj(v, -1) |> _.toArray, [-1, 0, 1, 1, 1, 1, 1]);
-  assert.deepEqual(_.range(10) |> _.take(5, v) |> _.toArray, [0, 1, 2, 3, 4]);
+  assert.deepEqual(["A","B","C"] |> _.interpose("-", ?) |> _.toArray, ["A", "-", "B", "-", "C"]);
+  assert.deepEqual(_.repeat(1) |> _.take(5, ?) |> _.toArray, [1,1,1,1,1]);
+  assert.deepEqual(_.repeat(1) |> _.take(5, ?) |> _.conj(?, 0) |> _.conj(?, -1) |> _.toArray, [-1, 0, 1, 1, 1, 1, 1]);
+  assert.deepEqual(_.range(10) |> _.take(5, ?) |> _.toArray, [0, 1, 2, 3, 4]);
   assert.deepEqual(_.range(-5, 5) |> _.toArray, [-5, -4, -3, -2, -1, 0, 1, 2, 3, 4]);
   assert.deepEqual(_.range(-20, 100, 10) |> _.toArray, [-20, -10, 0, 10, 20, 30, 40, 50, 60, 70, 80, 90]);
-  assert.deepEqual(_.range(10) |> _.drop(3, v) |> _.take(3, v) |> _.toArray, [3, 4, 5]);
-  assert.deepEqual([1, 2, 3] |> _.map(_.inc, v) |> _.toArray, [2, 3, 4]);
-  assert.equal([1, 2, 3, 4] |> _.some(_.isEven, v), true);
-  assert.equal([1, 2, 3, 4] |> _.detect(_.isEven, v), 2);
-  assert.equal(_.range(10) |> _.some(x => x > 5, v), true);
-  assert.deepEqual({ace: 1, king: 2, queen: 3} |> _.selectKeys(v, ["ace", "king"]), {ace: 1, king: 2});
-  assert.equal("Polo" |> _.into("Marco ", v), "Marco Polo");
-  assert.deepEqual([5, 6, 7, 8, 9] |> _.filter(x => x > 6, v) |> _.into("", v), "789");
+  assert.deepEqual(_.range(10) |> _.drop(3, ?) |> _.take(3, ?) |> _.toArray, [3, 4, 5]);
+  assert.deepEqual([1, 2, 3] |> _.map(_.inc, ?) |> _.toArray, [2, 3, 4]);
+  assert.equal([1, 2, 3, 4] |> _.some(_.isEven, ?), true);
+  assert.equal([1, 2, 3, 4] |> _.detect(_.isEven, ?), 2);
+  assert.equal(_.range(10) |> _.some(x => x > 5, ?), true);
+  assert.deepEqual({ace: 1, king: 2, queen: 3} |> _.selectKeys(?, ["ace", "king"]), {ace: 1, king: 2});
+  assert.equal("Polo" |> _.into("Marco ", ?), "Marco Polo");
+  assert.deepEqual([5, 6, 7, 8, 9] |> _.filter(x => x > 6, ?) |> _.into("", ?), "789");
   assert.deepEqual("Polo" |> _.toArray, ["P", "o", "l", "o"]);
-  assert.deepEqual([1, 2, 3] |> _.cycle |> _.take(7, v) |> _.toArray, [1, 2, 3, 1, 2, 3, 1]);
+  assert.deepEqual([1, 2, 3] |> _.cycle |> _.take(7, ?) |> _.toArray, [1, 2, 3, 1, 2, 3, 1]);
   assert.deepEqual([1, 2, 3, 3, 4, 4, 4, 5, 6, 6, 7] |> _.dedupe |> _.toArray, [1, 2, 3, 4, 5, 6, 7]);
   assert.deepEqual([1, 2, 3, 1, 4, 3, 4, 3, 2, 2] |> I.distinct |> _.toArray, [1, 2, 3, 4]);
-  assert.deepEqual(_.range(10) |> _.takeNth(2, v) |> _.toArray, [0, 2, 4, 6, 8]);
-  assert.deepEqual(_.constantly(1) |> _.repeatedly |> _.take(0, v) |> _.toArray, []);
-  assert.deepEqual(_.constantly(2) |> _.repeatedly |> _.take(10, v) |> _.toArray, [2, 2, 2, 2, 2, 2, 2, 2, 2, 2]);
-  assert.deepEqual(_.range(10) |> _.take(5, v) |> _.toArray, [0, 1, 2, 3, 4]);
-  assert.deepEqual(_.range(10) |> _.filter(x => x > 5, v) |> _.toArray, [6, 7, 8, 9]);
-  assert.deepEqual(_.range(10) |> _.remove(x => x > 5, v) |> _.toArray, [0, 1, 2, 3, 4, 5]);
-  assert.deepEqual(_.range(10) |> _.takeWhile(x => x < 5, v) |> _.toArray, [0, 1, 2, 3, 4]);
-  assert.deepEqual(_.range(10) |> _.dropWhile(x => x > 5, v) |> _.toArray, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
-  assert.deepEqual(_.range(1, 5) |> _.map(_.inc, v) |> _.toArray, [2, 3, 4, 5]);
-  assert.deepEqual([10, 11, 12] |> _.map(_.inc, v) |> _.toArray, [11, 12, 13]);
-  assert.deepEqual([5, 6, 7, 8, 9] |> _.filter(x => x > 6, v) |> _.map(_.inc, v) |> _.take(2, v) |> _.toArray, [8, 9]);
-  assert.deepEqual(_.range(7, 15) |> _.take(10, v) |> _.toArray, [7, 8, 9, 10, 11, 12, 13, 14]);
+  assert.deepEqual(_.range(10) |> _.takeNth(2, ?) |> _.toArray, [0, 2, 4, 6, 8]);
+  assert.deepEqual(_.constantly(1) |> _.repeatedly |> _.take(0, ?) |> _.toArray, []);
+  assert.deepEqual(_.constantly(2) |> _.repeatedly |> _.take(10, ?) |> _.toArray, [2, 2, 2, 2, 2, 2, 2, 2, 2, 2]);
+  assert.deepEqual(_.range(10) |> _.take(5, ?) |> _.toArray, [0, 1, 2, 3, 4]);
+  assert.deepEqual(_.range(10) |> _.filter(x => x > 5, ?) |> _.toArray, [6, 7, 8, 9]);
+  assert.deepEqual(_.range(10) |> _.remove(x => x > 5, ?) |> _.toArray, [0, 1, 2, 3, 4, 5]);
+  assert.deepEqual(_.range(10) |> _.takeWhile(x => x < 5, ?) |> _.toArray, [0, 1, 2, 3, 4]);
+  assert.deepEqual(_.range(10) |> _.dropWhile(x => x > 5, ?) |> _.toArray, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
+  assert.deepEqual(_.range(1, 5) |> _.map(_.inc, ?) |> _.toArray, [2, 3, 4, 5]);
+  assert.deepEqual([10, 11, 12] |> _.map(_.inc, ?) |> _.toArray, [11, 12, 13]);
+  assert.deepEqual([5, 6, 7, 8, 9] |> _.filter(x => x > 6, ?) |> _.map(_.inc, ?) |> _.take(2, ?) |> _.toArray, [8, 9]);
+  assert.deepEqual(_.range(7, 15) |> _.take(10, ?) |> _.toArray, [7, 8, 9, 10, 11, 12, 13, 14]);
   assert.deepEqual(_.range(5) |> _.toArray, [0, 1, 2, 3, 4]);
-  assert.deepEqual(_.repeat("X") |> _.take(5, v) |> _.toArray, ["X", "X", "X", "X", "X"]);
-  assert.deepEqual([1, 2] |> _.concat(v, [3, 4], [5, 6]) |> _.toArray, [1, 2, 3, 4, 5, 6]);
-  assert.deepEqual(["a", "b", "c", "d", "e"] |> _.keepIndexed((idx, value) => _.isOdd(idx) ? value : null, v) |> _.toArray, ["b", "d"]);
-  assert.deepEqual([10, 11, 12] |> _.mapIndexed((idx, value) => [idx, _.inc(value)], v) |> _.toArray, [[0, 11], [1, 12], [2, 13]]);
+  assert.deepEqual(_.repeat("X") |> _.take(5, ?) |> _.toArray, ["X", "X", "X", "X", "X"]);
+  assert.deepEqual([1, 2] |> _.concat(?, [3, 4], [5, 6]) |> _.toArray, [1, 2, 3, 4, 5, 6]);
+  assert.deepEqual(["a", "b", "c", "d", "e"] |> _.keepIndexed((idx, value) => _.isOdd(idx) ? value : null, ?) |> _.toArray, ["b", "d"]);
+  assert.deepEqual([10, 11, 12] |> _.mapIndexed((idx, value) => [idx, _.inc(value)], ?) |> _.toArray, [[0, 11], [1, 12], [2, 13]]);
   assert.deepEqual(_.everyPred(_.isEven, x => x > 10)(12,14,16), true);
   assert.equal(_.maxKey(obj => obj["king"], pieces, court), pieces);
 });
@@ -296,16 +295,16 @@ QUnit.test("add/subtract", function(assert){
   const newYears  = _.date(2018, 0, 1);
   const mmddyyyy  =
     _.fmt(
-      _.comp(_.zeros(v, 2), _.inc, _.month), "/",
-      _.comp(_.zeros(v, 2), _.day), "/",
-      _.comp(_.zeros(v, 4), _.year));
+      _.comp(_.zeros(?, 2), _.inc, _.month), "/",
+      _.comp(_.zeros(?, 2), _.day), "/",
+      _.comp(_.zeros(?, 4), _.year));
   assert.equal(christmas |> mmddyyyy, "12/25/2017");
   assert.equal(newYears  |> mmddyyyy, "01/01/2018");
-  assert.equal(christmas |> _.add(v, _.days(1)) |> _.deref, 1514264400000);
-  assert.equal(christmas |> _.add(v, _.weeks(1)) |> _.deref, 1514782800000);
-  assert.equal(christmas |> _.add(v, _.months(1)) |> _.deref, 1516856400000);
-  assert.equal(christmas |> _.add(v, _.years(1)) |> _.deref, 1545714000000);
-  assert.equal(christmas |> _.subtract(v, _.years(1)) |> _.deref, 1482642000000);
+  assert.equal(christmas |> _.add(?, _.days(1)) |> _.deref, 1514264400000);
+  assert.equal(christmas |> _.add(?, _.weeks(1)) |> _.deref, 1514782800000);
+  assert.equal(christmas |> _.add(?, _.months(1)) |> _.deref, 1516856400000);
+  assert.equal(christmas |> _.add(?, _.years(1)) |> _.deref, 1545714000000);
+  assert.equal(christmas |> _.subtract(?, _.years(1)) |> _.deref, 1482642000000);
 });
 
 QUnit.test("duration", function(assert){
@@ -313,7 +312,7 @@ QUnit.test("duration", function(assert){
   const newYearsDay = _.period(_.date(2020, 0, 1));
   assert.equal(_.divide(_.years(1), _.days(1)), 365.25);
   assert.equal(_.divide(_.days(1), _.hours(1)), 24);
-  assert.equal(newYearsDay |> _.toDuration |> _.divide(v, _.hours(1)), 24);
+  assert.equal(newYearsDay |> _.toDuration |> _.divide(?, _.hours(1)), 24);
   assert.equal(_.add(newYearsEve, 1) |> _.deref, 1577854800000);
   assert.equal(_.add(newYearsEve, _.days(1)) |> _.deref, 1577854800000);
   assert.equal(_.add(newYearsEve, _.years(-1)) |> _.deref, 1546232400000);  //prior New Year's Eve
@@ -329,9 +328,9 @@ QUnit.test("record", function(assert){
   const sean  = new Person("Sean", "Penn", _.date(1960, 8, 17));
   const robin = Person.create("Robin", "Wright", new Date(1966, 3, 8));
   const dylan = Person.from({name: "Dylan", surname: "Penn", dob: _.date(1991, 4, 13)});
-  assert.equal(robin |> _.get(v, "surname"), "Wright");
-  assert.equal(robin |> _.assoc(v, "surname", "Penn") |> _.get(v, "surname"), "Penn");
-  assert.equal(sean |> _.get(v, "surname"), "Penn");
+  assert.equal(robin |> _.get(?, "surname"), "Wright");
+  assert.equal(robin |> _.assoc(?, "surname", "Penn") |> _.get(?, "surname"), "Penn");
+  assert.equal(sean |> _.get(?, "surname"), "Penn");
   assert.equal(_.count(robin), 3);
 });
 
@@ -352,44 +351,44 @@ QUnit.test("cell", function(assert){
   const source = $.cell(0);
   const sink   = $.signal(t.map(_.inc), source);
   const msink  = _.fmap(source, _.inc);
-  source |> _.swap(v, _.inc);
+  source |> _.swap(?, _.inc);
   assert.equal(clicks |> _.deref, 1);
   assert.equal(source |> _.deref, 1);
   assert.equal(sink   |> _.deref, 2);
   assert.equal(msink  |> _.deref, 2);
-  const bucket = $.cell([], $.broadcast(), _.pipe(_.get(v, 'length'), _.lt(v, 3))),
+  const bucket = $.cell([], $.broadcast(), _.pipe(_.get(?, 'length'), _.lt(?, 3))),
         states = $.cell([]);
-  bucket |> $.sub(v, state => states |> _.swap(v, _.conj(v, state)));
-  bucket |> _.swap(v, _.conj(v, "ice"));
-  bucket |> _.swap(v, _.conj(v, "champagne"));
+  bucket |> $.sub(?, state => states |> _.swap(?, _.conj(?, state)));
+  bucket |> _.swap(?, _.conj(?, "ice"));
+  bucket |> _.swap(?, _.conj(?, "champagne"));
   assert.throws(function(){
-    bucket |> _.swap(v, _.conj(v, "soda"));
+    bucket |> _.swap(?, _.conj(?, "soda"));
   });
-  bucket |> _.swap(v, _.assoc(v, 1, "wine"));
+  bucket |> _.swap(?, _.assoc(?, 1, "wine"));
   assert.deepEqual(bucket |> _.deref, ["ice", "wine"]);
   assert.deepEqual(states |> _.deref, [[], ["ice"], ["ice", "champagne"], ["ice", "wine"]]);
 });
 
 QUnit.test("immutable updates", function(assert){
   const duos = $.cell([["Hall", "Oates"], ["Laurel", "Hardy"]]),
-        get0 = _.pipe(_.deref, _.nth(v, 0)),
-        get1 = _.pipe(_.deref, _.nth(v, 1)),
-        get2 = _.pipe(_.deref, _.nth(v, 2)),
+        get0 = _.pipe(_.deref, _.nth(?, 0)),
+        get1 = _.pipe(_.deref, _.nth(?, 1)),
+        get2 = _.pipe(_.deref, _.nth(?, 2)),
         d0 = get0(duos),
         d1 = get1(duos),
         d2 = get2(duos),
         states = $.cell([]),
         txn = _.pipe(
-          _.conj(v, ["Andrew Ridgeley", "George Michaels"]),
-          _.assocIn(v, [0, 0], "Daryl"),
-          _.assocIn(v, [0, 1], "John"));
-  duos |> $.sub(v, state => states |> _.swap(v, _.conj(v, state)));
-  duos |> _.swap(v, txn);
+          _.conj(?, ["Andrew Ridgeley", "George Michaels"]),
+          _.assocIn(?, [0, 0], "Daryl"),
+          _.assocIn(?, [0, 1], "John"));
+  duos |> $.sub(?, state => states |> _.swap(?, _.conj(?, state)));
+  duos |> _.swap(?, txn);
   assert.equal(states |> _.deref |> _.count, 2, "original + transaction");
   assert.deepEqual(duos |> _.deref, [["Daryl", "John"], ["Laurel", "Hardy"], ["Andrew Ridgeley", "George Michaels"]]);
-  assert.notOk(d0 |> _.isIdentical(v, get0(duos)), "new container for");
-  assert.ok(d1 |> _.isIdentical(v, get1(duos)), "original container untouched");
-  assert.notOk(d2 |> _.isIdentical(v, get2(duos)), "created from nothing");
+  assert.notOk(d0 |> _.isIdentical(?, get0(duos)), "new container for");
+  assert.ok(d1 |> _.isIdentical(?, get1(duos)), "original container untouched");
+  assert.notOk(d2 |> _.isIdentical(?, get2(duos)), "created from nothing");
   assert.notOk(d2, "non-existent");
 });
 
@@ -400,15 +399,15 @@ QUnit.test("list", function(assert){
 });
 
 QUnit.test("strings", function(assert){
-  assert.deepEqual("I like peanutbutter" |> _.split(v, " "), ["I", "like", "peanutbutter"]);
-  assert.deepEqual("q1w2e3r4t5y6u7i8o9p" |> _.split(v, /\d/), ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p"]);
-  assert.deepEqual("q1w2e3r4t5y6u7i8o9p" |> _.split(v, /\d/, 4), ["q", "w", "e", "r4t5y6u7i8o9p"]);
-  assert.equal("reading" |> _.subs(v, 3), "ding");
-  assert.equal("reading" |> _.subs(v, 0, 4), "read");
-  assert.equal(["spam", null, "eggs", "", "spam"] |> _.join(", ", v), "spam, , eggs, , spam");
-  assert.equal([1, 2, 3] |> _.join(", ", v), "1, 2, 3");
-  assert.equal(["ace", "king", "queen"] |> _.join("-", v), "ace-king-queen");
-  assert.equal(["hello", " ", "world"] |> _.join("", v), "hello world");
+  assert.deepEqual("I like peanutbutter" |> _.split(?, " "), ["I", "like", "peanutbutter"]);
+  assert.deepEqual("q1w2e3r4t5y6u7i8o9p" |> _.split(?, /\d/), ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p"]);
+  assert.deepEqual("q1w2e3r4t5y6u7i8o9p" |> _.split(?, /\d/, 4), ["q", "w", "e", "r4t5y6u7i8o9p"]);
+  assert.equal("reading" |> _.subs(?, 3), "ding");
+  assert.equal("reading" |> _.subs(?, 0, 4), "read");
+  assert.equal(["spam", null, "eggs", "", "spam"] |> _.join(", ", ?), "spam, , eggs, , spam");
+  assert.equal([1, 2, 3] |> _.join(", ", ?), "1, 2, 3");
+  assert.equal(["ace", "king", "queen"] |> _.join("-", ?), "ace-king-queen");
+  assert.equal(["hello", " ", "world"] |> _.join("", ?), "hello world");
 });
 
 QUnit.test("min/max", function(assert){
@@ -420,26 +419,26 @@ QUnit.test("indexed-seq", function(assert){
   const nums = _.indexedSeq([11,12,13,14], 1);
   const letters = _.indexedSeq(_.split("grace", ""));
   assert.equal(letters |> _.first, "g");
-  assert.equal(letters |> _.nth(v, 2), "a");
+  assert.equal(letters |> _.nth(?, 2), "a");
   assert.equal(nums |> _.first, 12);
-  assert.equal(nums |> _.nth(v, 1), 13);
+  assert.equal(nums |> _.nth(?, 1), 13);
   assert.equal(nums |> _.count, 3);
-  assert.ok(nums |> _.satisfies(_.IReduce, v));
-  assert.equal(nums |> _.reduce(_.add, 0, v), 39);
+  assert.ok(nums |> _.satisfies(_.IReduce, ?));
+  assert.equal(nums |> _.reduce(_.add, 0, ?), 39);
 });
 
 QUnit.test("equality", function(assert){
-  assert.ok("Curly" |> _.eq(v, "Curly"), "Equal strings");
-  assert.notOk("Curlers" |> _.eq(v, "Curly"), "Unequal strings");
-  assert.ok("Curlers" |> _.notEq(v, "Curly"), "Unequal strings");
+  assert.ok("Curly" |> _.eq(?, "Curly"), "Equal strings");
+  assert.notOk("Curlers" |> _.eq(?, "Curly"), "Unequal strings");
+  assert.ok("Curlers" |> _.notEq(?, "Curly"), "Unequal strings");
   const rng = _.range(3);
   assert.ok(_.eq(rng, rng, _.range(3), rng, [0,1,2], rng, _.cons(0, _.range(1,3)), _.initial(_.range(4))), "Communicative sequences");
-  assert.ok(45 |> _.eq(v, 45), "Equal numbers");
-  assert.ok([1, 2, 3] |> _.eq(v, [1, 2, 3]), "Equal arrays");
-  assert.notOk([1, 2, 3] |> _.eq(v, [2, 3]), "Unequal arrays");
-  assert.notOk([1, 2, 3] |> _.eq(v, [3, 2, 1]), "Unequal arrays");
-  assert.ok({fname: "Moe", lname: "Howard"} |> _.eq(v, {fname: "Moe", lname: "Howard"}), "Equal objects");
-  assert.notOk({fname: "Moe", middle: "Harry", lname: "Howard"} |> _.eq(v, {fname: "Moe", lname: "Howard"}), "Unequal objects");
+  assert.ok(45 |> _.eq(?, 45), "Equal numbers");
+  assert.ok([1, 2, 3] |> _.eq(?, [1, 2, 3]), "Equal arrays");
+  assert.notOk([1, 2, 3] |> _.eq(?, [2, 3]), "Unequal arrays");
+  assert.notOk([1, 2, 3] |> _.eq(?, [3, 2, 1]), "Unequal arrays");
+  assert.ok({fname: "Moe", lname: "Howard"} |> _.eq(?, {fname: "Moe", lname: "Howard"}), "Equal objects");
+  assert.notOk({fname: "Moe", middle: "Harry", lname: "Howard"} |> _.eq(?, {fname: "Moe", lname: "Howard"}), "Unequal objects");
 });
 
 QUnit.test("coersion", function(assert){
@@ -448,7 +447,7 @@ QUnit.test("coersion", function(assert){
 });
 
 QUnit.test("predicates", function(assert){
-  assert.ok({ace: 1, king: 2, queen: 3} |> _.matches(v, {ace: 1, king: 2}));
+  assert.ok({ace: 1, king: 2, queen: 3} |> _.matches(?, {ace: 1, king: 2}));
   assert.equal(_.any(3, 1), 3);
   assert.equal(_.any(null, 1), 1);
   assert.equal(_.all(3, 1), 1);

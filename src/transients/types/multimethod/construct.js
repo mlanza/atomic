@@ -1,6 +1,5 @@
 import {IFn, doto, partial, specify, overload} from "atomic/core";
 import {ITransientCollection} from "../../protocols";
-import {_ as v} from "param.macro";
 
 function surrogate(f, substitute){
   return function(self, ...args){
