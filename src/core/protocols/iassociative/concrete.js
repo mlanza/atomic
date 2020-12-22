@@ -4,7 +4,6 @@ import {ISeq} from "../iseq";
 import {ICoerceable} from "../icoerceable/instance";
 import {ILookup} from "../ilookup";
 import {reduce} from "../ireduce";
-import {_ as v} from "param.macro";
 
 export const contains = IAssociative.contains;
 

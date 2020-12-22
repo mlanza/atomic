@@ -50,7 +50,6 @@ import * as t from "atomic/transducers";
 export * from "./types";
 export * from "./protocols";
 export * from "./protocols/concrete";
-import {_ as v} from "param.macro";
 
 //TODO that promises could potentially return out of order is a problem!
 export function then2(f, source){
@@ -188,7 +187,7 @@ function fromPromise1(promise){
 
 function fromPromise2(promise, init){
   const sink = cell(init);
-  IFunctor.fmap(promise, IPublish.pub(sink, v));
+  IFunctor.fmap(promise, IPublish.pub(sink, ?));
   return sink;
 }
 
@@ -207,10 +206,10 @@ export function focus(el){
 }
 
 export function join(sink, ...sources){
-  const callback = IPublish.pub(sink, v);
+  const callback = IPublish.pub(sink, ?);
   return audienceDetector(sink, function(state){
     const f = state === "active" ? ISubscribe.sub : ISubscribe.unsub;
-    each(f(v, callback), sources);
+    each(f(?, callback), sources);
   });
 }
 
@@ -220,7 +219,7 @@ export function latest(sources){
   const sink = cell(mapa(constantly(null), sources));
   const fs = memoize(function(idx){
     return function(value){
-      ISwap.swap(sink, IAssociative.assoc(v, idx, value));
+      ISwap.swap(sink, IAssociative.assoc(?, idx, value));
     }
   }, str);
   return audienceDetector(sink, function(state){
@@ -298,7 +297,7 @@ function mutate3(self, state, f){
 }
 
 function mutate2(state, f){
-  return mutate3(v, state, f);
+  return mutate3(?, state, f);
 }
 
 export const mutate = overload(null, null, mutate2, mutate3);

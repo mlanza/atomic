@@ -9,7 +9,6 @@ import {isNil} from "./types/nil/construct";
 import {indexed} from "./types/indexed/construct";
 import {maybe} from './types/maybe/construct';
 import {equiv as eq2} from './protocols/iequiv/concrete';
-import {_ as v} from "param.macro";
 
 export function both(memo, value){
   return memo && value;
@@ -145,7 +144,7 @@ export function notEq(...args){
 
 export function mapArgs(xf, f){
   return function(){
-    return apply(f, mapa(maybe(v, xf), indexed(arguments)));
+    return apply(f, mapa(maybe(?, xf), indexed(arguments)));
   }
 }
 

@@ -1,6 +1,5 @@
 import {does, maybe, cons, implement, lazySeq, comp, iterable, ILookup, IIndexed, ICounted, ISeq, INext, ISeqable, ISequential, IHierarchy, IQueryable, ILocate, IReduce, ICoerceable} from 'atomic/core';
 import {IContent} from "../../protocols";
-import {_ as v} from "param.macro";
 
 function seq2(self, idx){
   return idx < self.length ? lazySeq(function(){
@@ -31,15 +30,15 @@ const parents = comp(IHierarchy.parents, seq);
 const contents = comp(IContent.contents, seq);
 
 function query(self, selector){
-  return maybe(self, seq, IQueryable.query(v, selector)) || [];
+  return maybe(self, seq, IQueryable.query(?, selector)) || [];
 }
 
 function locate(self, selector){
-  return maybe(self, seq, ILocate.locate(v, selector));
+  return maybe(self, seq, ILocate.locate(?, selector));
 }
 
 function closest(self, selector){
-  return maybe(self, seq, IHierarchy.closest(v, selector));
+  return maybe(self, seq, IHierarchy.closest(?, selector));
 }
 
 function reduce(self, f, init){

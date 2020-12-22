@@ -4,7 +4,6 @@ import {IReduce} from "../../protocols/ireduce";
 import {IKVReduce} from "../../protocols/ikvreduce";
 import {ILookup} from "../../protocols/ilookup";
 import {IAssociative} from "../../protocols/iassociative";
-import {_ as v} from "param.macro";
 
 function merge(target, source){
   return IKVReduce.reducekv(source, IAssociative.assoc, target);
@@ -17,7 +16,7 @@ function mergeWith3(xf, init, x){
 }
 
 function mergeWithN(xf, init, ...xs){
-  return IReduce.reduce(xs, mergeWith3(xf, v, v), init);
+  return IReduce.reduce(xs, mergeWith3(xf, ?, ?), init);
 }
 
 export const mergeWith = overload(null, null, null, mergeWith3, mergeWithN);

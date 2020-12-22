@@ -1,2 +1,1 @@
-import * as _ from "./core/index";
-export default _;
+export * from "./core/index";

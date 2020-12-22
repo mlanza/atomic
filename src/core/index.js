@@ -7,7 +7,6 @@ import {isSome} from "./types/nil";
 import {implement} from "./types/protocol/concrete";
 import {into, detect, map, mapa, splice, drop, join, some, last, lazySeq} from "./types/lazy-seq";
 import {absorb} from "./associatives";
-import {_ as v} from "param.macro";
 import {behaveAsSeries as _serieslike} from "./types/series/behave";
 export const serieslike = _serieslike;
 export {iterable} from "./types/lazy-seq/behave";
@@ -20,13 +19,13 @@ export * from "./associatives";
 import Set from 'set';
 
 export const global = window;
-export const numeric = test(/^\d+$/i, v);
+export const numeric = test(/^\d+$/i, ?);
 
 function recurs2(pd, step) {
   return recurrence(IBounds.start(pd), IBounds.end(pd), step);
 }
 
-export const recurs = overload(null, recurs2(v, days(1)), recurs2);
+export const recurs = overload(null, recurs2(?, days(1)), recurs2);
 
 export function inclusive(self){
   return new self.constructor(self.start, add(self.end, self.step), self.step, self.direction);
@@ -72,7 +71,7 @@ export function deconstruct(dur, ...units){
 }
 
 export function toQueryString(obj){
-  return just(obj, mapkv(str(v, "=", v), v), join("&", v), collapse("?", v));
+  return just(obj, mapkv(str(?, "=", ?), ?), join("&", ?), collapse("?", ?));
 }
 
 export function fromQueryString(url){
@@ -88,7 +87,7 @@ export function unique(xs){
   return toArray(new Set(toArray(xs)));
 }
 
-export const second = branch(satisfies(ISeq, v), comp(ISeq.first, INext.next), _second);
+export const second = branch(satisfies(ISeq, ?), comp(ISeq.first, INext.next), _second);
 
 export function expands(f){
   function expand(...contents){
@@ -150,11 +149,11 @@ export function impart(self, f){ //set retraction to identity to curb retraction
 }
 
 function include2(self, value){
-  return toggles(conj(v, value), yank(v, value), includes(v, value), self);
+  return toggles(conj(?, value), yank(?, value), includes(?, value), self);
 }
 
 function include3(self, value, want){
-  return toggles(conj(v, value), yank(v, value), includes(v, value), self, want);
+  return toggles(conj(?, value), yank(?, value), includes(?, value), self, want);
 }
 
 export const include = overload(null, null, include2, include3);

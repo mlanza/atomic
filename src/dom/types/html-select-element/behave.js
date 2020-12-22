@@ -1,11 +1,10 @@
 import {overload, does, implement, locate, query, each, maybe, comp, either} from 'atomic/core';
 import {IValue, IText} from "../../protocols";
-import {_ as v} from "param.macro";
 
 function access(f, g){
 
   function _value1(self){
-    return maybe(query(self, "option"), locate(v, function(option){
+    return maybe(query(self, "option"), locate(?, function(option){
       return option.selected;
     }), f);
   }
@@ -25,7 +24,7 @@ function access(f, g){
 
 }
 
-const text  = access(IText.text, either(v, "")),
+const text  = access(IText.text, either(?, "")),
       value = access(IValue.value);
 
 export const behaveAsHTMLSelectElement = does(

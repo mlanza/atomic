@@ -1,5 +1,4 @@
 import {constructs, overload, identity} from "atomic/core";
-import {_ as v} from "param.macro";
 
 export function URL(url, xfq){
   this.url = url;

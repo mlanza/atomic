@@ -7,7 +7,6 @@ import {InvalidHostElementError} from "./types/invalid-host-element-error";
 import {IValue} from "./protocols/ivalue/instance";
 import {IEmbeddable} from "./protocols/iembeddable/instance";
 import {Promise} from "promise";
-import {_ as v} from "param.macro";
 import * as $ from "atomic/reactives";
 export * from "./types";
 export * from "./protocols";
@@ -19,7 +18,7 @@ function attr2(self, key){
     return self.getAttribute(key);
   } else {
     const pairs = key;
-    eachkv(attr3(self, v, v), pairs);
+    self |> attr3(self, ?, ?) |> eachkv(?, pairs);
   }
 }
 
@@ -107,12 +106,11 @@ function mount4(create, render, config, el){
   const bus = create(config),
         detail = {config, bus};
 
-  doto(el,
-    $.on(v, "mounting mounted", function(e){
-      Object.assign(e.detail, detail);
-    }),
-    render(v, config, bus),
-    mounts);
+  el |> $.on(?, "mounting mounted", function(e){
+    Object.assign(e.detail, detail);
+  });
+  el |> render(?, config, bus);
+  el |> mounts;
 
   config.what && $.trigger(el, config.what + ":installed", {bubbles: true, detail});
   $.trigger(el, "installed", {bubbles: true, detail});
@@ -134,7 +132,7 @@ export function tag(){
 }
 
 function sel02(selector, context){
-  return query(context, context.querySelectorAll ? selector : matches(v, selector));
+  return query(context, context.querySelectorAll ? selector : v => matches(v, selector));
 }
 
 function sel01(selector){

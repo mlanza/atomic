@@ -5,7 +5,6 @@ import {maybe} from '../../types/maybe/construct';
 import {fsm} from "./construct";
 import {does} from '../../core';
 import {implement} from '../protocol';
-import {_ as v} from "param.macro";
 
 function equiv(self, other){
   return state(self) === state(other) && self.transitions === other.transitions;
@@ -20,7 +19,7 @@ function transitions(self){
 }
 
 function transition(self, event) {
-  return maybe(self.transitions, getIn(v, [self.state, event]), fsm(v, self.transitions)) || self;
+  return maybe(self.transitions, getIn(?, [self.state, event]), fsm(?, self.transitions)) || self;
 }
 
 export const behaveAsFiniteStateMachine = does(

@@ -9,7 +9,6 @@ import {behaveAsEmptyList} from "../empty-list/behave";
 import {Range} from "./construct";
 import {directed} from '../../protocols/iaddable/concrete';
 import {alike} from '../../protocols/iequiv/concrete';
-import {_ as v} from "param.macro";
 
 function seq(self){
   return IEquiv.equiv(self.start, self.end) || (self.step == null && self.direction == null && self.start == null && self.end == null) ? null : self;

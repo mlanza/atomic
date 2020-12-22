@@ -16,7 +16,6 @@ import {cons} from "../../types/list/construct";
 import {concat} from "../../types/concatenated/construct";
 import {updateIn, assocIn} from "../../protocols/iassociative/concrete";
 import {IFn, IPath, ISwap, IReset, IDeref, IMap, IHierarchy, ILookup, IAssociative, ICollection} from '../../protocols';
-import {_ as v} from "param.macro";
 
 function path(self){
   return self.path;
@@ -27,7 +26,7 @@ function deref(self){
 }
 
 function conj(self, value){
-  return swap(self, icollection.conj(v, value));
+  return swap(self, icollection.conj(?, value));
 }
 
 function lookup(self, key){
@@ -35,7 +34,7 @@ function lookup(self, key){
 }
 
 function assoc(self, key, value){
-  return swap(self, IAssociative.assoc(v, key, value));
+  return swap(self, IAssociative.assoc(?, key, value));
 }
 
 function contains(self, key){
@@ -43,7 +42,7 @@ function contains(self, key){
 }
 
 function dissoc(self, key){
-  return swap(self, IMap.dissoc(v, key));
+  return swap(self, IMap.dissoc(?, key));
 }
 
 function reset(self, value){
@@ -71,7 +70,7 @@ function keys(self){
 
 function vals(self){
   const value = deref(self);
-  return map(get(value, v), keys(self));
+  return map(get(value, ?), keys(self));
 }
 
 function siblings(self){

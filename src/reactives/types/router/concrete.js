@@ -1,9 +1,8 @@
 import {doto, overload, specify, IMatchable} from "atomic/core";
 import {IDispatch} from '../../protocols';
-import {_ as v} from "param.macro";
 
 function handler3(pred, callback, how){
-  return handler2(how(pred, v), how(callback, v));
+  return handler2(how(pred, ?), how(callback, ?));
 }
 
 function handler2(pred, callback){

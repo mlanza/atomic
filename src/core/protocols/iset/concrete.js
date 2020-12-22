@@ -6,11 +6,10 @@ import {empty} from "../iemptyablecollection/concrete"
 import {concat} from "../../types/concatenated/construct";
 import {every} from "../../types/lazy-seq/concrete";
 import {ISet} from "./instance";
-import {_ as v} from "param.macro";
 
 export const disj = overload(null, identity, ISet.disj, reducing(ISet.disj));
 
-const union2 = reduce(ISet.unite, v, v);
+const union2 = reduce(ISet.unite, ?, ?);
 
 function intersection2(xs, ys){
   return reduce(function(memo, x){
@@ -25,7 +24,7 @@ function difference2(xs, ys){
 }
 
 export function subset(self, other){
-  return every(includes(other, v), self);
+  return every(includes(other, ?), self);
 }
 
 export function superset(self, other){

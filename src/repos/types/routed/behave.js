@@ -2,11 +2,10 @@ import * as _ from "atomic/core";
 import {IParams, IOptions, IAddress, IIntercept} from "../../protocols";
 import {ICloneable, ITemplate, IFunctor, IQueryable, ICoerceable, IForkable, ISeq, IAssociative, IMap, ICollection, fromTask} from "atomic/core";
 import {query} from "../request/behave";
-import {_ as v} from "param.macro";
 
 function xform(xf){
   return function(self, ...args){
-    return _.edit(self, "requests", _.mapa(_.apply(xf, v, args), v));
+    return _.edit(self, "requests", _.mapa(_.apply(xf, ?, args), ?));
   }
 }
 
@@ -15,7 +14,7 @@ function clone(self){
 }
 
 function filled(self){
-  return _.maybe(self, IAddress.addr, _.test(/\{[^{}]+\}/, v), _.not);
+  return _.maybe(self, IAddress.addr, _.test(/\{[^{}]+\}/, ?), _.not);
 }
 
 function fork(self, reject, resolve){

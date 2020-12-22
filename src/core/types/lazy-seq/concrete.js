@@ -18,7 +18,6 @@ import {Symbol} from '../symbol/construct';
 import {update, assocIn} from "../../protocols/iassociative/concrete";
 import {first} from "../../protocols/iseq/concrete";
 import {inc} from '../../protocols/iaddable/concrete';
-import {_ as v} from "param.macro";
 
 function map2(f, xs){
   return ISeqable.seq(xs) ? lazySeq(function(){
@@ -86,7 +85,7 @@ function doing1(f){
 
 function doing2(f, order){
   return function(self, ...xs){
-    each(f(self, v), order(xs));
+    each(f(self, ?), order(xs));
   }
 }
 

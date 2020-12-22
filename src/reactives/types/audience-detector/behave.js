@@ -1,10 +1,9 @@
 import {implement, does, noop, transition, satisfies, swap, IStateMachine, IDisposable} from 'atomic/core';
 import {ISubscribe} from "../../protocols/isubscribe/instance";
-import {_ as v} from "param.macro";
 
 function sub(self, observer){
   if (subscribed(self) === 0) {
-    swap(self.state, transition(v, "activate"));
+    swap(self.state, transition(?, "activate"));
   }
   ISubscribe.sub(self.sink, observer);
 }
@@ -12,7 +11,7 @@ function sub(self, observer){
 function unsub(self, observer){
   ISubscribe.unsub(self.sink, observer);
   if (subscribed(self) === 0) {
-    swap(self.state, transition(v, "deactivate"));
+    swap(self.state, transition(?, "deactivate"));
   }
 }
 
@@ -21,7 +20,7 @@ function subscribed(self){
 }
 
 function dispose(self){
-  swap(self.state, transition(v, "deactivate"));
+  swap(self.state, transition(?, "deactivate"));
 }
 
 function state(self){

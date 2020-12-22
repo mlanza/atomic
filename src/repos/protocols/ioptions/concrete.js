@@ -1,16 +1,15 @@
 import * as _ from "atomic/core";
-import {_ as v} from "param.macro";
 import {IOptions} from "./instance";
 export const options = IOptions.options;
 
 export function json(req){
-  return req |> IOptions.options(v, {
+  return req |> IOptions.options(?, {
     credentials: "same-origin",
     headers: {
       "Accept": "application/json;odata=verbose",
       "Content-Type": "application/json;odata=verbose"
     }
-  }) |> _.fmap(v, function(resp){
+  }) |> _.fmap(?, function(resp){
     return resp.json();
   });
 }

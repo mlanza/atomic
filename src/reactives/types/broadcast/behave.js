@@ -1,6 +1,5 @@
 import {implement, does, each} from 'atomic/core';
 import {IPublish, ISubscribe} from "../../protocols";
-import {_ as v} from "param.macro";
 
 function sub(self, observer){
   self.observers.push(observer);
@@ -16,7 +15,7 @@ function subscribed(self){
 }
 
 function pub(self, message){
-  each(IPublish.pub(v, message), self.observers);
+  each(IPublish.pub(?, message), self.observers);
 }
 
 export const behaveAsBroadcast = does(
