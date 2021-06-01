@@ -1,6 +1,6 @@
-import {overload, identity, constantly} from "../../core";
+import {overload, identity, constantly, complement} from "../../core";
 import {IReduce, ICounted, IComparable, IAddable} from "../../protocols";
-import {complement, partial, unary} from "../function";
+import {partial, unary} from "../function";
 import {reducing} from "../../protocols/ireduce/concrete";
 
 export function number(...args){

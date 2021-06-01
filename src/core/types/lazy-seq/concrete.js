@@ -1,5 +1,5 @@
 import {ICompactable, IEquiv, IMap, ICoerceable, IAssociative, ILookup, IInclusive, IIndexed, ICollection, IComparable, ICounted, ISeq, ISeqable, INext, IHierarchy, IReduce, ISequential} from '../../protocols';
-import {trampoline, identity, constantly, overload} from '../../core';
+import {trampoline, identity, constantly, overload, complement} from '../../core';
 import {EmptyList, emptyList} from '../empty-list/construct';
 import {emptyArray} from '../array/construct';
 import {randInt, isEven} from '../number/concrete';
@@ -9,7 +9,7 @@ import {isNil, isSome} from '../nil';
 import {cons} from '../list/construct';
 import {range} from '../range/construct';
 import {str} from '../string/concrete';
-import {juxt, complement, comp, apply, partial} from '../function/concrete';
+import {juxt, comp, apply, partial} from '../function/concrete'; //MOD
 import {get, getIn} from "../../protocols/ilookup/concrete";
 import {lazySeq} from '../lazy-seq/construct';
 import {concat, concatenated} from "../concatenated/construct";

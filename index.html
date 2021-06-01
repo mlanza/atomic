@@ -40,32 +40,32 @@
     define('set', function(){
       return Set;
     });
-    define('atomic/core', ["_atomic/core"], function(core){
+    define('atomic/core', ["/dist/atomic/core.js"], function(core){
       return Object.assign(core.placeholder, core.impart(core, core.partly));
     });
-    define('atomic/dom', ["_atomic/core", "_atomic/dom"], function(core, dom){
-      return Object.assign(dom, core.impart(dom, core.partly));
+    define('atomic/dom', ["atomic/core", "/dist/atomic/dom.js"], function(core, dom){
+      return core.impart(dom, core.partly);
     });
-    define('atomic/reactives', ["_atomic/core", "_atomic/reactives"], function(core, reactives){
+    define('atomic/immutables', ["atomic/core", "/dist/atomic/immutables.js"], function(core, immutables){
+      return core.impart(immutables, core.partly);
+    });
+    define('atomic/reactives', ["atomic/core", "/dist/atomic/reactives.js"], function(core, reactives){
       return core.impart(reactives, core.partly);
     });
-    define('atomic/repos', ["_atomic/core", "_atomic/repos"], function(core, repos){
+    define('atomic/repos', ["atomic/core", "/dist/atomic/repos.js"], function(core, repos){
       return core.impart(repos, core.partly);
     });
-    define('atomic/transducers', ["_atomic/core", "_atomic/transducers"], function(core, transducers){
+    define('atomic/transducers', ["atomic/core", "/dist/atomic/transducers.js"], function(core, transducers){
       return core.impart(transducers, core.partly);
     });
-    define('atomic/transients', ["_atomic/core", "_atomic/transients"], function(core, transients){
+    define('atomic/transients', ["atomic/core", "/dist/atomic/transients.js"], function(core, transients){
       return core.impart(transients, core.partly);
     });
-    define('atomic/validates', ["_atomic/core", "_atomic/validates"], function(core, validates){
+    define('atomic/validates', ["atomic/core", "/dist/atomic/validates.js"], function(core, validates){
       return core.impart(validates, core.partly);
     });
-    define('atomic/draw', ["_atomic/core", "_atomic/draw"], function(core, draw){
+    define('atomic/draw', ["atomic/core", "/dist/atomic/draw.js"], function(core, draw){
       return core.impart(draw, core.partly);
-    });
-    define('atomic/immutables', ["_atomic/core", "_atomic/immutables"], function(core, immutables){
-      return core.impart(immutables, core.partly);
     });
     define('atomic', ['atomic/core', 'atomic/dom', 'atomic/immutables', 'atomic/reactives', 'atomic/transducers', 'atomic/transients', 'atomic/repos', 'atomic/validates', 'atomic/draw'], function(core, dom, immutables, reactives, transducers, transients, repos, validates, draw){
       return Object.assign(core, { //for in-browser testing, not for production use.
@@ -85,6 +85,7 @@
       QUnit.config.autostart = false;
       QUnit.start();
     });
+
   </script>
 </head>
 <body>
