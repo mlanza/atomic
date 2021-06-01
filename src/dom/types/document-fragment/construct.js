@@ -1,7 +1,7 @@
-import {each, global} from 'atomic/core';
+import {each} from 'atomic/core';
+import {DocumentFragment, document} from 'dom';
+export {DocumentFragment} from 'dom';
 import {embed} from "../../protocols/iembeddable/concrete";
-
-export const DocumentFragment = global.DocumentFragment;
 
 export function fragment(...contents){
   const frag = document.createDocumentFragment();

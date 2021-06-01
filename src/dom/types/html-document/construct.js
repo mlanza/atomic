@@ -1,6 +1,5 @@
-import {global} from "atomic/core";
-
-export const HTMLDocument = global.HTMLDocument || global.Document; //IE fallback
+import {HTMLDocument} from "dom";
+export {HTMLDocument} from "dom"; //HTMLDocument || Document; ensure IE fallback
 
 export function isHTMLDocument(self){
   return self instanceof HTMLDocument;

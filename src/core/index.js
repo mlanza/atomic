@@ -21,7 +21,6 @@ export {filter} from "./types/lazy-seq"; //necessary due to odd rollup behavior
 
 import Set from 'set';
 
-export const global = window;
 export const numeric = test(/^\d+$/i, v);
 
 function recurs2(pd, step) {

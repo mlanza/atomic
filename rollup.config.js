@@ -39,6 +39,7 @@ export default {
     "map",
     "qunit",
     "jquery",
+    "dom",
     "atomic",
     "atomic/core",
     "atomic/immutables",

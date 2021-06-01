@@ -1,5 +1,5 @@
-import {global} from "atomic/core";
-export const XMLDocument = global.XMLDocument || global.Document; //IE fallback
+import {XMLDocument} from "dom";
+export {XMLDocument} from "dom"; //XMLDocument || Document; ensure IE fallback
 
 export function isXMLDocument(self){
   return self instanceof XMLDocument;

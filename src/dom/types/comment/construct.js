@@ -1,2 +1,1 @@
-import {global} from "atomic/core";
-export const Comment = global.Comment;
+export {Comment} from "dom";

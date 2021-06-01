@@ -1,7 +1,7 @@
-import {each, global, partial, flatten, apply} from 'atomic/core';
+import {each, partial, flatten, apply} from 'atomic/core';
+import {Element} from "dom";
+export {Element} from "dom";
 import {embed, embeds} from "../../protocols/iembeddable";
-
-export const Element = global.Element;
 
 export function element(name, ...contents){
   const el = document.createElement(name);
