@@ -7,85 +7,15 @@
   <meta name="author" content="Mario T. Lanza">
   <link rel="stylesheet" href="dist/qunit.css">
   <script src="dist/require.js"></script>
+  <script src="boot.js"></script>
   <script type="text/javascript">
-    requirejs.config({
-      baseUrl: '/dist',
-      shim: {
-        'immutable': {
-          export: 'Immutable'
-        },
-        'jquery': {
-          exports: 'jQuery'
-        },
-        'qunit': {
-          exports: 'QUnit'
-        }
-      }
-    });
-    define('map', function(){
-      return Map;
-    });
-    define('weak-map', function(){
-      return WeakMap;
-    });
-    define('symbol', function(){
-      return Symbol;
-    });
-    define('fetch', function(){
-      return fetch;
-    });
-    define('promise', function(){
-      return Promise;
-    });
-    define('set', function(){
-      return Set;
-    });
-    define('atomic/core', ["/dist/atomic/core.js"], function(core){
-      return Object.assign(core.placeholder, core.impart(core, core.partly));
-    });
-    define('atomic/dom', ["atomic/core", "/dist/atomic/dom.js"], function(core, dom){
-      return core.impart(dom, core.partly);
-    });
-    define('atomic/immutables', ["atomic/core", "/dist/atomic/immutables.js"], function(core, immutables){
-      return core.impart(immutables, core.partly);
-    });
-    define('atomic/reactives', ["atomic/core", "/dist/atomic/reactives.js"], function(core, reactives){
-      return core.impart(reactives, core.partly);
-    });
-    define('atomic/repos', ["atomic/core", "/dist/atomic/repos.js"], function(core, repos){
-      return core.impart(repos, core.partly);
-    });
-    define('atomic/transducers', ["atomic/core", "/dist/atomic/transducers.js"], function(core, transducers){
-      return core.impart(transducers, core.partly);
-    });
-    define('atomic/transients', ["atomic/core", "/dist/atomic/transients.js"], function(core, transients){
-      return core.impart(transients, core.partly);
-    });
-    define('atomic/validates', ["atomic/core", "/dist/atomic/validates.js"], function(core, validates){
-      return core.impart(validates, core.partly);
-    });
-    define('atomic/draw', ["atomic/core", "/dist/atomic/draw.js"], function(core, draw){
-      return core.impart(draw, core.partly);
-    });
-    define('atomic', ['atomic/core', 'atomic/dom', 'atomic/immutables', 'atomic/reactives', 'atomic/transducers', 'atomic/transients', 'atomic/repos', 'atomic/validates', 'atomic/draw'], function(core, dom, immutables, reactives, transducers, transients, repos, validates, draw){
-      return Object.assign(core, { //for in-browser testing, not for production use.
-        core: core,
-        dom: dom,
-        immutables: immutables,
-        reactives: reactives,
-        transducers: transducers,
-        transients: transients,
-        validates: validates,
-        draw: draw,
-        repos: repos
-      });
-    });
-    require(['atomic', 'test/core'], function(atomic){
+    location.search == "" ?  require(['atomic', 'test/core'], function(atomic){
       Object.assign(window, {_: atomic});
       QUnit.config.autostart = false;
       QUnit.start();
+    }) : require(['atomic', 'ents'], function(atomic, ents){
+      Object.assign(window, {_: atomic, ents: ents});
     });
-
   </script>
 </head>
 <body>
