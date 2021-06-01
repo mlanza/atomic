@@ -1,4 +1,4 @@
-import {constantly, identity, isString, apply, noop, slice, partial, replace, concat, template, key, val, join, merge, filter, map, remove, isObject, specify, implement, doto, get, str, includes, overload, absorb, fmap, each, eachkv, obj, IReduce, first, query, locate, descendants, matches, Nil, ICoerceable, extend, doing} from "atomic/core";
+import {constantly, identity, isString, apply, noop, slice, partial, replace, concat, template, key, val, join, merge, filter, map, remove, isObject, specify, implement, doto, get, str, includes, overload, fmap, each, eachkv, obj, IReduce, first, query, locate, descendants, matches, Nil, ICoerceable, extend, doing} from "atomic/core";
 import * as _ from "atomic/core";
 import * as mut from "atomic/transients";
 import {element} from "./types/element/construct";

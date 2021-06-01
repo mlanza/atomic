@@ -1,5 +1,6 @@
-import babel from 'rollup-plugin-babel';
-import json  from 'rollup-plugin-json';
+import resolve from '@rollup/plugin-node-resolve';
+import babel from '@rollup/plugin-babel';
+import json  from '@rollup/plugin-json';
 
 export default {
   input: ['test/core.js'],
@@ -18,10 +19,11 @@ export default {
       "immutable": "Immutable"
     }
   },
-  experimentalCodeSplitting: true,
   plugins: [
+    resolve(),
     babel({
-      exclude: 'node_modules/**'
+      exclude: 'node_modules/**',
+      babelHelpers: 'bundled'
     }),
     json({
       include: 'node_modules/**',

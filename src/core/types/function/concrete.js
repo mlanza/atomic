@@ -6,7 +6,7 @@ import {overload, identity, partial, log, slice} from "../../core";
 import {isNil}  from "../nil";
 import {satisfies}  from "../protocol";
 import {isFunction}  from "./construct";
-export {complement, partial, slice} from "../../core";
+export {partial} from "../../core";
 
 export function spread(f){
   return function(args){

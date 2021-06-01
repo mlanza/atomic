@@ -1,12 +1,13 @@
 import {overload, toggles, identity, obj, partly, doto, does, branch, unspread, applying, execute, noop, constantly, once} from "./core";
 import {IAppendable, IYankable, ICoerceable, IAssociative, IBounds, IInverse, ICloneable, ICollection, IComparable, ICounted, IDeref, IDisposable, IEmptyableCollection, IEquiv, IFind, IFn, IForkable, IFunctor, IHierarchy, IInclusive, IIndexed, IInsertable, IKVReduce, ILookup, IMap, IMapEntry, IMatchable, INext, IOtherwise, IPrependable, IReduce, IReset, ISeq, ISeqable, ISet, ISwap} from "./protocols";
-import {just, satisfies, filter, spread, maybe, each, duration, remove, sort, flip, realized, comp, isNumber, isFunction, apply, realize, isNil, reFindAll, mapkv, period, selectKeys, mapVals, reMatches, test, date, emptyList, cons, days, recurrence, curry, second as _second} from "./types";
+import {just, satisfies, spread, maybe, each, duration, remove, sort, flip, realized, comp, isNumber, isFunction, apply, realize, isNil, reFindAll, mapkv, period, selectKeys, mapVals, reMatches, test, date, emptyList, cons, days, recurrence, curry, second as _second} from "./types";
+import {filter} from "./types/lazy-seq";
 import {add, subtract, compact, matches, name, descendants, query, locate, deref, get, assoc, yank, conj, reducing, toArray, reducekv, includes, excludes, rest, count, between, reduce, divide, fmap, split} from "./protocols/concrete";
 import {isString, isBlank, str, replace} from "./types/string";
 import {isSome} from "./types/nil";
 import {implement} from "./types/protocol/concrete";
 import {into, detect, map, mapa, splice, drop, join, some, last, lazySeq} from "./types/lazy-seq";
-import {absorb} from "./associatives";
+import {_ as v} from "param.macro";
 import {behaveAsSeries as _serieslike} from "./types/series/behave";
 export const serieslike = _serieslike;
 export {iterable} from "./types/lazy-seq/behave";
@@ -16,16 +17,18 @@ export * from "./protocols";
 export * from "./protocols/concrete";
 export * from "./predicates";
 export * from "./associatives";
+export {filter} from "./types/lazy-seq"; //necessary due to odd rollup behavior
+
 import Set from 'set';
 
 export const global = window;
-export const numeric = test(/^\d+$/i, ?);
+export const numeric = test(/^\d+$/i, v);
 
 function recurs2(pd, step) {
   return recurrence(IBounds.start(pd), IBounds.end(pd), step);
 }
 
-export const recurs = overload(null, recurs2(?, days(1)), recurs2);
+export const recurs = overload(null, recurs2(v, days(1)), recurs2);
 
 export function inclusive(self){
   return new self.constructor(self.start, add(self.end, self.step), self.step, self.direction);
@@ -71,7 +74,7 @@ export function deconstruct(dur, ...units){
 }
 
 export function toQueryString(obj){
-  return just(obj, mapkv(str(?, "=", ?), ?), join("&", ?), collapse("?", ?));
+  return just(obj, mapkv(str(v, "=", v), v), join("&", v), collapse("?", v));
 }
 
 export function fromQueryString(url){
@@ -87,7 +90,7 @@ export function unique(xs){
   return toArray(new Set(toArray(xs)));
 }
 
-export const second = branch(satisfies(ISeq, ?), comp(ISeq.first, INext.next), _second);
+export const second = branch(satisfies(ISeq, v), comp(ISeq.first, INext.next), _second);
 
 export function expands(f){
   function expand(...contents){
@@ -149,11 +152,11 @@ export function impart(self, f){ //set retraction to identity to curb retraction
 }
 
 function include2(self, value){
-  return toggles(conj(?, value), yank(?, value), includes(?, value), self);
+  return toggles(conj(v, value), yank(v, value), includes(v, value), self);
 }
 
 function include3(self, value, want){
-  return toggles(conj(?, value), yank(?, value), includes(?, value), self, want);
+  return toggles(conj(v, value), yank(v, value), includes(v, value), self, want);
 }
 
 export const include = overload(null, null, include2, include3);
