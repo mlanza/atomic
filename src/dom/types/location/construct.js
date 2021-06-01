@@ -1,5 +1,5 @@
-import {global} from "atomic/core";
-export const Location = global.Location;
+import {Location} from "dom";
+export {Location} from "dom";
 
 export function isLocation(self){
   return self instanceof Location;

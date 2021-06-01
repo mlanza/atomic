@@ -34,6 +34,7 @@ export default {
   external: [
     "fetch",
     "qunit",
+    "dom",
     "atomic",
     "atomic/core",
     "atomic/immutables",
