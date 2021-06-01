@@ -18,7 +18,7 @@ function attr2(self, key){
     return self.getAttribute(key);
   } else {
     const pairs = key;
-    self |> attr3(self, ?, ?) |> eachkv(?, pairs);
+    eachkv(attr3(self, ?, ?), pairs);
   }
 }
 
