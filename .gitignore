@@ -1,6 +1,7 @@
 npm-debug.log
 node_modules/*
 dist/atomic/*
+dist/test/*
 dist/outline.*
 .sublime-*
 _src
