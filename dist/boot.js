@@ -1,5 +1,5 @@
 requirejs.config({
-  baseUrl: './dist',
+  baseUrl: '/dist',
   waitSeconds: 0, //disabled to allow for interactive debugging
   shim: {
     'immutable': {
@@ -13,26 +13,26 @@ requirejs.config({
     }
   }
 });
-define('promise', window.Promise ? [] : ["/dist/polyfill/promise"], function(Promise){
+define('promise', window.Promise ? [] : ["/dist/promise.js"], function(Promise){
   window.Promise || (window.Promise = Promise);
   return window.Promise;
 });
-define('fetch', window.fetch ? [] : ["promise", "/dist/fetch"], function(){
+define('fetch', window.fetch ? [] : ["promise", "/dist/fetch.js"], function(){
   return window.fetch;
 });
-define('symbol', window.Symbol ? [] : ["/dist/symbol"], function(){
+define('symbol', window.Symbol ? [] : ["/dist/symbol-es6.js"], function(){
   return window.Symbol;
 });
-define('map', window.Map ? [] : ['/dist/collections-es6'], function(){
+define('map', window.Map ? [] : ["/dist/collections-es6.js"], function(){
   return window.Map;
 });
-define('set', window.Set ? [] : ['/dist/collections-es6'], function(){
+define('set', window.Set ? [] : ["/dist/collections-es6.js"], function(){
   return window.Set;
 });
-define('weak-map', window.WeakMap ? [] : ['/dist/collections-es6'], function(){
+define('weak-map', window.WeakMap ? [] : ["/dist/collections-es6.js"], function(){
   return window.WeakMap;
 });
-define('weak-set', window.WeakSet ? [] : ['/dist/collections-es6'], function(){
+define('weak-set', window.WeakSet ? [] : ["/dist/collections-es6.js"], function(){
   return window.WeakSet;
 });
 define('context', function(){
