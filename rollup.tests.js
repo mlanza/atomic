@@ -7,7 +7,7 @@ export default {
   output: {
     dir: 'dist/test',
     format: 'amd',
-    interop: false,
+    interop: 'default',
     globals: {
       "jquery": "jQuery",
       "qunit": "QUnit",
