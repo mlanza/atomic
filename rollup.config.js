@@ -58,10 +58,6 @@ export default {
       exclude: 'node_modules/**',
       babelHelpers: 'bundled'
     }),
-    json({
-      include: 'node_modules/**',
-      exclude: [ 'node_modules/foo/**', 'node_modules/bar/**' ],
-      indent: '  '
-    })
+    json()
   ]
 };
