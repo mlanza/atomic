@@ -7,7 +7,7 @@ export default {
   output: {
     dir: 'dist/test',
     format: 'amd',
-    interop: 'esModule',
+    interop: false,
     globals: {
       "jquery": "jQuery",
       "qunit": "QUnit",

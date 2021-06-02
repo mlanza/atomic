@@ -17,7 +17,7 @@ export default {
   output: {
     dir: 'dist/atomic',
     format: 'amd',
-    interop: 'esModule',
+    interop: false,
     globals: {
       "jquery": "jQuery",
       "qunit": "QUnit",
