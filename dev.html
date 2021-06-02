@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Entities (Development)</title>
+  <meta name="description" content="Entities">
+  <meta name="author" content="Mario T. Lanza">
+  <script src="dist/require.js"></script>
+  <script src="dist/boot.js"></script>
+  <script type="text/javascript">
+    define('context', function(){
+      return {};
+    });
+    require(['atomic', 'ents'], function(atomic, ents){ //repl use
+      Object.assign(window, atomic, {_: atomic.core, ents: ents});
+    });
+  </script>
+</head>
+<body id="outline">
+</body>
+</html>

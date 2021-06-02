@@ -9,12 +9,9 @@
   <script src="dist/require.js"></script>
   <script src="dist/boot.js"></script>
   <script type="text/javascript">
-    location.search == "" ?  require(['atomic', 'test/core'], function(atomic){
-      Object.assign(window, {_: atomic});
+    require(['test/core'], function(){
       QUnit.config.autostart = false;
       QUnit.start();
-    }) : require(['atomic', 'ents'], function(atomic, ents){
-      Object.assign(window, {_: atomic, ents: ents});
     });
   </script>
 </head>
