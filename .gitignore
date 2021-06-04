@@ -1,7 +1,7 @@
 npm-debug.log
 node_modules/*
-public/scripts/atomic/*
-public/scripts/test.js
+public/assets/atomic/*
+public/assets/tests.js
 public/data/*
 _src
 .DS_Store

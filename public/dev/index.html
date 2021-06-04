@@ -5,13 +5,13 @@
   <title>Entities (Development)</title>
   <meta name="description" content="Entities">
   <meta name="author" content="Mario T. Lanza">
-  <script src="../scripts/require.js"></script>
-  <script src="../scripts/boot.js"></script>
+  <script src="../assets/require.js"></script>
+  <script src="../assets/boot.js"></script>
   <script type="text/javascript">
     define('context', function(){
       return {};
     });
-    require(["atomic", "../scripts/ents"], function(atomic, ents){ //repl use
+    require(["atomic", "../assets/ents"], function(atomic, ents){ //repl use
       Object.assign(window, atomic, {_: atomic.core, ents: ents});
     });
   </script>
