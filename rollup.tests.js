@@ -3,9 +3,9 @@ import babel from '@rollup/plugin-babel';
 import json  from '@rollup/plugin-json';
 
 export default {
-  input: ['test/core.js'],
+  input: ['src/tests.js'],
   output: {
-    dir: 'dist/test',
+    dir: 'public/scripts',
     format: 'amd',
     interop: false,
     globals: {

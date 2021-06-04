@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Atomic</title>
+  <meta name="description" content="Atomic">
+  <meta name="author" content="Mario T. Lanza">
+  <link rel="stylesheet" href="../styles/qunit.css">
+  <script src="../scripts/require.js"></script>
+  <script src="../scripts/boot.js"></script>
+  <script type="text/javascript">
+    require(['../scripts/tests'], function(){
+      QUnit.config.autostart = false;
+      QUnit.start();
+    });
+  </script>
+</head>
+<body>
+  <div id="qunit"></div>
+  <div id="qunit-fixture"></div>
+</body>
+</html>
