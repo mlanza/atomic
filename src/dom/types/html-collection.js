@@ -1,4 +1,3 @@
-export * from "./html-collection/construct";
-import {HTMLCollection} from "./html-collection/construct";
+import {HTMLCollection} from "dom";
 import {behaveAsNodeList} from "./node-list/behave";
 behaveAsNodeList(HTMLCollection);

@@ -1,1 +1,0 @@
-export {HTMLSelectElement} from 'dom';
