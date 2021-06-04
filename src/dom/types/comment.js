@@ -1,4 +1,3 @@
-export * from "./comment/construct";
-import {Comment} from "./comment/construct";
+import {Comment} from "dom";
 import {behaveAsComment} from "./comment/behave";
 behaveAsComment(Comment);

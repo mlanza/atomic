@@ -1,6 +1,5 @@
 import {each} from 'atomic/core';
 import {DocumentFragment, document} from 'dom';
-export {DocumentFragment} from 'dom';
 import {embed} from "../../protocols/iembeddable/concrete";
 
 export function fragment(...contents){

@@ -1,4 +1,3 @@
-export * from "./html-select-element/construct";
-import {HTMLSelectElement} from "./html-select-element/construct";
+import {HTMLSelectElement} from "dom";
 import {behaveAsHTMLSelectElement} from "./html-select-element/behave";
 behaveAsHTMLSelectElement(HTMLSelectElement);

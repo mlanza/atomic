@@ -1,6 +1,5 @@
 import {each, partial, flatten, apply} from 'atomic/core';
 import {Element} from "dom";
-export {Element} from "dom";
 import {embed, embeds} from "../../protocols/iembeddable";
 
 export function element(name, ...contents){
