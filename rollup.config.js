@@ -15,7 +15,7 @@ export default {
     'src/draw.js'
   ],
   output: {
-    dir: 'dist/atomic',
+    dir: 'public/scripts/atomic',
     format: 'amd',
     interop: false,
     globals: {

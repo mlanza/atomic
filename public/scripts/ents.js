@@ -2445,7 +2445,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
 
   })();
 
-  var buf = buffer(jsonResource("./dist/outline.json", work), $.timeTraveler($.cell(indexedEntityWorkspace())));
+  var buf = buffer(jsonResource("../data/outline.json", work), $.timeTraveler($.cell(indexedEntityWorkspace())));
 
   _.maybe(dom.sel1("#outline"), function(el){
     var ol = outline(buf, {root: null});
