@@ -1,7 +1,8 @@
-import {Promise, isPromise} from "./construct";
+import {isPromise} from "./construct";
 import {fmap} from "../../protocols/ifunctor/concrete";
 import {fork} from "../../protocols/iforkable/concrete";
 import {detect} from "../lazy-seq/concrete"
+import Promise from "promise";
 
 export function awaits(f){
   return function(...args){

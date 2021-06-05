@@ -3,7 +3,7 @@ import {satisfies, implement, packs as does} from '../protocol';
 import {IEquiv, IBlankable, ICoerceable, IInclusive, IReversible, ICollection, INext, ISeq, ISeqable, ISequential, IAssociative, IIndexed, IEmptyableCollection, IKVReduce, IReduce, ICounted} from '../../protocols';
 import {emptyList, EmptyList} from '../../types/empty-list/construct';
 import {emptyArray} from '../../types/array/construct';
-import {Symbol} from '../symbol/construct';
+import Symbol from 'symbol';
 
 function reduce(self, f, init){
   return init;

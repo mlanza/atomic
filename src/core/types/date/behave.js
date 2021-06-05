@@ -5,7 +5,6 @@ import {isNumber} from '../number';
 import {add} from '../../protocols/iaddable/concrete';
 import {mergeWith} from '../../protocols/imergeable/instance';
 import {Duration, days} from '../duration';
-import {Symbol} from '../symbol/construct';
 
 function _add(self, other){
   return mergeWith(add, self, isNumber(other) ? days(other) : other);

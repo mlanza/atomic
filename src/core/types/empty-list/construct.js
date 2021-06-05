@@ -1,4 +1,4 @@
-import {Symbol} from '../symbol/construct';
+import Symbol from 'symbol';
 
 export function EmptyList(){
 }

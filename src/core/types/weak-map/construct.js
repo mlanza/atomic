@@ -1,6 +1,5 @@
 import {overload} from "../../core";
 import WeakMap from 'weak-map';
-export {WeakMap};
 
 export function isWeakMap(self){
   return self && self.constructor === WeakMap;

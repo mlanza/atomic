@@ -3,7 +3,7 @@ import {implement} from '../protocol';
 import {apply} from './concrete';
 import {get} from "../../protocols/ilookup/concrete";
 import {INameable, IFn, IAssociative, ILookup, IAppendable, IPrependable} from '../../protocols';
-import {Symbol} from '../symbol/construct';
+import Symbol from 'symbol';
 
 export function append(f, ...applied){
   return function(...args){
