@@ -1,5 +1,5 @@
 # Atomic
-A wholemeal, Clojure-inspired approach for building up programs which treats JavaScript natives as immutables.
+A wholemeal, Clojure-inspired approach for programming.  Treats native JavaScript data structures (e.g. Object, Array) by default as immutable data.  Includes persistent data structures via Immutable.js integration.
 
 * protocols (added for use in JavaScript)
 * functional (pure and composable)
@@ -8,6 +8,10 @@ A wholemeal, Clojure-inspired approach for building up programs which treats Jav
 * dates
 * transducers
 
-Provides pipelines for non-transpiled code.  See [`pipelines.js`](./pipelines.js).  When pipeline operators and partial application are adopted into JavaScript environments this workaround will be deprecated.
+Aim to permit pipelines in non-transpiled code.  See [`pipelines.js`](./pipelines.js).  When [pipeline operators](https://github.com/tc39/proposal-pipeline-operator) and [partial application](https://github.com/tc39/proposal-partial-application) are, hopefully, ratified into JavaScript this workaround will be deprecated.
 
-Bare modules are used to permit environment-based substitutions (e.g. browser AMD, browser ES6 modules, deno).  A target environment which natively supports a type can export it from the global namespace.  See  [`import-maps.json`](./import-map.json) for an example (used in deno).
+Aims to provide a suitable core for web development and to avoid most vendor dependencies.
+
+Aims to be deno compatible.  Bare module use permits environment-based polyfills or substitutions.  An environment which defines a type can export it directly.  See how [`import-map.json`](./import-map.json) (deno) and [`boot.js`](./public/assets/boot.js) (modern browser) compare.
+
+Aims to provide a consistent, functional api which abides standard protocols where possible.  Thus, an api layer is provided for any integrated vendor types.
