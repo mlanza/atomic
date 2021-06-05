@@ -1,7 +1,7 @@
 import {overload} from '../../core';
 import {steps} from '../../protocols/iaddable/concrete';
 import {isNumber} from '../number/concrete';
-import {Symbol} from '../symbol/construct';
+import Symbol from 'symbol';
 
 export function Range(start, end, step, direction){
   this.start = start;

@@ -1,7 +1,7 @@
 import {overload, constructs} from "../../core";
 import {IAssociative} from "../../protocols";
 import {mult} from "../../protocols/imultipliable/concrete";
-import {Symbol} from '../symbol/construct';
+import Symbol from 'symbol';
 import {isNumber} from "../number/concrete";
 import {branch} from "../../core";
 import {comp} from "../function/concrete";

@@ -2,7 +2,7 @@ import {overload} from "../../core";
 import {reducing} from "../../protocols/ireduce/concrete";
 import {EmptyList, emptyList} from '../../types/empty-list';
 import {IReduce} from '../../protocols/ireduce';
-import {Symbol} from '../symbol/construct';
+import Symbol from 'symbol';
 
 export function List(head, tail){
   this.head = head;

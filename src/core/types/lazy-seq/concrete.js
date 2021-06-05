@@ -14,7 +14,7 @@ import {get, getIn} from "../../protocols/ilookup/concrete";
 import {lazySeq} from '../lazy-seq/construct';
 import {concat, concatenated} from "../concatenated/construct";
 import {satisfies} from '../protocol/concrete';
-import {Symbol} from '../symbol/construct';
+import Symbol from 'symbol';
 import {update, assocIn} from "../../protocols/iassociative/concrete";
 import {first} from "../../protocols/iseq/concrete";
 import {inc} from '../../protocols/iaddable/concrete';

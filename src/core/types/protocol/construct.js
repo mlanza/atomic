@@ -1,7 +1,7 @@
 import {overload, does} from '../../core';
 import {protocolLookupError} from '../protocol-lookup-error/construct';
 import {Nil} from '../nil/construct';
-import {Symbol} from '../symbol/construct';
+import Symbol from 'symbol';
 import Map from 'map';
 
 const TEMPLATE = Symbol("@protocol-template"),

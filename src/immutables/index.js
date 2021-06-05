@@ -1,9 +1,10 @@
 import {doto, overload, implement, generate, positives, weakMap, toArray, constantly, reduce, str, map, each, assoc, get, contains, keys, sort, IEquiv, ICounted, IMap} from "atomic/core";
-import {Symbol, GUID, AssociativeSubset, Concatenated, EmptyList, List, Indexed, IndexedSeq, Nil} from "atomic/core";
+import {GUID, AssociativeSubset, Concatenated, EmptyList, List, Indexed, IndexedSeq, Nil} from "atomic/core";
 import {IPersistent, TransientSet} from "atomic/transients";
 import {set} from "./types/set/construct";
 import {map as _map} from "./types/map/construct";
 import {IHash} from "./protocols/ihash/instance";
+import Symbol from "symbol";
 import * as imm from "immutable";
 
 export * from "./types";

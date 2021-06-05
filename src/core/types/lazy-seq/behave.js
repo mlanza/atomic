@@ -8,7 +8,7 @@ import {cons} from "../list/construct";
 import {map, filter, detect} from "./concrete";
 import {emptyList} from '../empty-list/construct';
 import {behaveAsEmptyList} from '../empty-list/behave';
-import {Symbol} from '../symbol/construct';
+import Symbol from 'symbol';
 
 const compact = partial(filter, identity);
 

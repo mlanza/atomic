@@ -5,7 +5,7 @@ import {identity, overload, unspread} from "../../core";
 import {lazySeq} from "../../types/lazy-seq/construct";
 import {cons} from "../../types/list/construct";
 import {emptyList} from '../empty-list/construct';
-import {Symbol} from '../symbol/construct';
+import Symbol from 'symbol';
 
 //duplicated to break dependencies
 export function filter(pred, xs){

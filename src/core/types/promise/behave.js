@@ -1,7 +1,7 @@
 import {IFunctor, IForkable, IOtherwise} from '../../protocols';
 import {identity, does, overload} from '../../core';
 import {implement} from '../protocol';
-import {Promise} from './construct';
+import Promise from "promise";
 
 function fmap(self, resolve){
   return self.then(resolve);

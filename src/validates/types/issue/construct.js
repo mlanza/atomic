@@ -1,6 +1,7 @@
-import {overload, identity, fmap, map, blot, compact, flatten, toArray, satisfies, isPromise, Promise, detect, seq, ISeq} from 'atomic/core';
+import {overload, identity, fmap, map, blot, compact, flatten, toArray, satisfies, isPromise, detect, seq, ISeq} from 'atomic/core';
 import {ICheckable} from "../../protocols/icheckable/instance";
 import {IConstrainable} from "../../protocols/iconstrainable/instance";
+import Promise from "promise";
 
 export function Issue(constraint, path){
   this.constraint = constraint;

@@ -1,9 +1,9 @@
 import {overload, partial} from '../../core';
 import {ISeq} from '../../protocols';
-import {Promise} from '../promise/construct';
 import {period} from '../period/construct';
 import {mapa, sort, asc} from '../lazy-seq/concrete';
 import {measure} from '../number/concrete';
+import Promise from "promise";
 
 export function Benchmark(operation, result, period, duration){
   this.operation = operation;

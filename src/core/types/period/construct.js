@@ -2,7 +2,7 @@ import {overload} from '../../core';
 import {patch} from "../../associatives";
 import {sod, eod, isDate} from '../date/concrete';
 import {add} from '../../protocols/iaddable/concrete';
-import {Symbol} from '../symbol/construct';
+import Symbol from 'symbol';
 
 export function Period(start, end){
   this.start = start;

@@ -6,8 +6,9 @@ import {mounts} from "./protocols/imountable/concrete";
 import {InvalidHostElementError} from "./types/invalid-host-element-error";
 import {IValue} from "./protocols/ivalue/instance";
 import {IEmbeddable} from "./protocols/iembeddable/instance";
-import {Promise} from "promise";
 import * as $ from "atomic/reactives";
+import Promise from "promise";
+
 export * from "./types";
 export * from "./protocols";
 export * from "./protocols/concrete";

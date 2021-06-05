@@ -1,6 +1,6 @@
 import {overload} from '../../core';
 import {emptyList} from "../empty-list";
-import {Symbol} from '../symbol/construct';
+import Symbol from 'symbol';
 import {ICounted} from '../../protocols';
 
 export function IndexedSeq(seq, start){

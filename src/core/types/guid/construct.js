@@ -1,5 +1,5 @@
 import {overload} from '../../core';
-import {Symbol} from '../symbol/construct';
+import Symbol from 'symbol';
 import {rand} from '../number/concrete';
 
 export function GUID(id){
