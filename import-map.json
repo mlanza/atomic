@@ -1,0 +1,11 @@
+{
+  "imports": {
+    "promise": "./import-map/promise.js",
+    "fetch": "./import-map/fetch.js",
+    "symbol": "./import-map/symbol.js",
+    "set": "./import-map/set.js",
+    "map": "./import-map/map.js",
+    "weak-set": "./import-map/weak-set.js",
+    "weak-map": "./import-map/weak-map.js"
+  }
+}
