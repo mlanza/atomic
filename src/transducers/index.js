@@ -1,4 +1,10 @@
-import {overload, identity, complement, comp, first, rest, partial, isSome, reduced, seq, equiv, IReduce} from "atomic/core";
+import {overload, complement, comp, first, rest, partial, isSome, reduced, seq, equiv, IReduce} from "atomic/core";
+import * as _ from "atomic/core";
+import Set from "set";
+
+export function identity(){
+  return _.identity;
+}
 
 export function tee(f){
   return function(xf){
@@ -57,11 +63,11 @@ export function detect(pred){
 }
 
 export function compact(){
-  return filter(identity);
+  return filter(_.identity);
 }
 
 function dedupe0(){
-  return dedupe1(identity);
+  return dedupe1(_.identity);
 }
 
 function dedupe1(f){
