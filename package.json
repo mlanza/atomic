@@ -2,7 +2,11 @@
   "name": "Atomic",
   "version": "1.0.0",
   "scripts": {
-    "build": "babel src -d lib"
+    "bundle": "rollup --config",
+    "bundle-es": "rollup --config --format es",
+    "bundle-tests": "rollup --config rollup.tests.js",
+    "transpile": "babel src -d lib",
+    "pipelines": "deno run --import-map=import-map.json pipelines.js"
   },
   "devDependencies": {
     "@babel/cli": "^7.14.3",
