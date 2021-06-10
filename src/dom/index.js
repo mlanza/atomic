@@ -8,11 +8,20 @@ import {IValue} from "./protocols/ivalue/instance.js";
 import {IEmbeddable} from "./protocols/iembeddable/instance.js";
 import * as $ from "atomic/reactives";
 import Promise from "promise";
+import {document} from "dom";
 
 export * from "./types.js";
 export * from "./protocols.js";
 export * from "./protocols/concrete.js";
 export {append, prepend, before, after, yank, empty} from "atomic/transients";
+
+export function ready(callback) {
+  if (document.readyState !== 'loading') {
+    callback(null);
+  } else {
+    document.addEventListener("DOMContentLoaded", callback);
+  }
+}
 
 function attr2(self, key){
   if (isString(key)) {
