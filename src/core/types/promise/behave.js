@@ -1,6 +1,6 @@
-import {IFunctor, IForkable, IOtherwise} from '../../protocols';
-import {identity, does, overload} from '../../core';
-import {implement} from '../protocol';
+import {IFunctor, IForkable, IOtherwise} from "../../protocols.js";
+import {identity, does, overload} from "../../core.js";
+import {implement} from "../protocol.js";
 import Promise from "promise";
 
 function fmap(self, resolve){

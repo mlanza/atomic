@@ -1,7 +1,7 @@
-import {ICloneable, ICompactable} from '../../protocols';
-import {inc, dec} from '../../protocols/iaddable/concrete';
-import {prop, patch} from "../../associatives";
-import {overload, identity} from '../../core';
+import {ICloneable, ICompactable} from "../../protocols.js";
+import {inc, dec} from "../../protocols/iaddable/concrete.js";
+import {prop, patch} from "../../associatives.js";
+import {overload, identity} from "../../core.js";
 
 export function monthDays(self){
   return patch(self, {

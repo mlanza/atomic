@@ -1,10 +1,10 @@
-import {IStateMachine, IEquiv} from '../../protocols';
-import {getIn} from '../../protocols/ilookup';
-import {keys} from '../../protocols/imap';
-import {maybe} from '../../types/maybe/construct';
-import {fsm} from "./construct";
-import {does} from '../../core';
-import {implement} from '../protocol';
+import {IStateMachine, IEquiv} from "../../protocols.js";
+import {getIn} from "../../protocols/ilookup.js";
+import {keys} from "../../protocols/imap.js";
+import {maybe} from "../../types/maybe/construct.js";
+import {fsm} from "./construct.js";
+import {does} from "../../core.js";
+import {implement} from "../protocol.js";
 
 function equiv(self, other){
   return state(self) === state(other) && self.transitions === other.transitions;

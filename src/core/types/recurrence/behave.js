@@ -1,1 +1,1 @@
-export {behaveAsRange as behaveAsRecurrence} from '../range/behave';
+export {behaveAsRange as behaveAsRecurrence} from "../range/behave.js";

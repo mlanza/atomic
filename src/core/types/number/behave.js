@@ -1,6 +1,6 @@
-import {does, identity} from '../../core';
-import {implement} from '../protocol';
-import {IBounds, IAddable, IInverse, IComparable, IMultipliable, IDivisible} from '../../protocols';
+import {does, identity} from "../../core.js";
+import {implement} from "../protocol.js";
+import {IBounds, IAddable, IInverse, IComparable, IMultipliable, IDivisible} from "../../protocols.js";
 
 function compare(self, other){
   return self === other ? 0 : self - other;

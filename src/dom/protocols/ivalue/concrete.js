@@ -1,2 +1,2 @@
-import {IValue} from "./instance";
+import {IValue} from "./instance.js";
 export const value = IValue.value;

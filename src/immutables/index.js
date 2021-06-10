@@ -1,15 +1,15 @@
 import {doto, overload, implement, generate, positives, weakMap, toArray, constantly, reduce, str, map, each, assoc, get, contains, keys, sort, IEquiv, ICounted, IMap} from "atomic/core";
 import {GUID, AssociativeSubset, Concatenated, EmptyList, List, Indexed, IndexedSeq, Nil} from "atomic/core";
 import {IPersistent, TransientSet} from "atomic/transients";
-import {set} from "./types/set/construct";
-import {map as _map} from "./types/map/construct";
-import {IHash} from "./protocols/ihash/instance";
+import {set} from "./types/set/construct.js";
+import {map as _map} from "./types/map/construct.js";
+import {IHash} from "./protocols/ihash/instance.js";
 import Symbol from "symbol";
 import * as imm from "immutable";
 
-export * from "./types";
-export * from "./protocols";
-export * from "./protocols/concrete";
+export * from "./types.js";
+export * from "./protocols.js";
+export * from "./protocols/concrete.js";
 
 function memoize2(f, hash){
   const c = Symbol("cache");

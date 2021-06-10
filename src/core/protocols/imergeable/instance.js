@@ -1,9 +1,9 @@
-import {overload, identity} from '../../core';
-import {protocol} from "../../types/protocol";
-import {IReduce} from "../../protocols/ireduce";
-import {IKVReduce} from "../../protocols/ikvreduce";
-import {ILookup} from "../../protocols/ilookup";
-import {IAssociative} from "../../protocols/iassociative";
+import {overload, identity} from "../../core.js";
+import {protocol} from "../../types/protocol.js";
+import {IReduce} from "../../protocols/ireduce.js";
+import {IKVReduce} from "../../protocols/ikvreduce.js";
+import {ILookup} from "../../protocols/ilookup.js";
+import {IAssociative} from "../../protocols/iassociative.js";
 
 function merge(target, source){
   return IKVReduce.reducekv(source, IAssociative.assoc, target);

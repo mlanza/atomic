@@ -1,5 +1,5 @@
 import * as _ from "atomic/core";
-import {IIntercept} from "../../protocols"
+import {IIntercept} from "../../protocols.js"
 
 export function demand(self, keys){
   return IIntercept.intercept(self, function(req){

@@ -1,2 +1,2 @@
-export * from "./ilookup/instance";
-export * from "./ilookup/concrete";
+export * from "./ilookup/instance.js";
+export * from "./ilookup/concrete.js";

@@ -1,7 +1,7 @@
-import {implement, does, IDeref, IAppendable} from 'atomic/core';
-import {ICheckable, IExplains} from '../../protocols';
-import {issue, issues} from '../issue';
-import {anno} from './construct';
+import {implement, does, IDeref, IAppendable} from "atomic/core";
+import {ICheckable, IExplains} from "../../protocols.js";
+import {issue, issues} from "../issue.js";
+import {anno} from "./construct.js";
 
 function deref(self){
   return self.constraint;

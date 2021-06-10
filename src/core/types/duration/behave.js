@@ -1,9 +1,9 @@
-import {implement} from '../protocol';
-import {does, identity, partial} from '../../core';
-import {IAddable, IKVReduce, IReduce, IFunctor, IMergeable, ICoerceable, IMultipliable, IDivisible, IMap, IAssociative, ILookup, IInclusive} from '../../protocols';
-import {add} from '../../protocols/iaddable/concrete';
-import {mergeWith} from '../../protocols/imergeable/instance';
-import {Duration} from '../duration/construct';
+import {implement} from "../protocol.js";
+import {does, identity, partial} from "../../core.js";
+import {IAddable, IKVReduce, IReduce, IFunctor, IMergeable, ICoerceable, IMultipliable, IDivisible, IMap, IAssociative, ILookup, IInclusive} from "../../protocols.js";
+import {add} from "../../protocols/iaddable/concrete.js";
+import {mergeWith} from "../../protocols/imergeable/instance.js";
+import {Duration} from "../duration/construct.js";
 
 function reducekv(self, xf, init){
   return IReduce.reduce(keys(self), function(memo, key){

@@ -1,1 +1,1 @@
-export * from "./idescriptive/instance";
+export * from "./idescriptive/instance.js";

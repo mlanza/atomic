@@ -1,7 +1,7 @@
-import {overload, identity, constantly, complement} from "../../core";
-import {IReduce, ICounted, IComparable, IAddable} from "../../protocols";
-import {partial, unary} from "../function";
-import {reducing} from "../../protocols/ireduce/concrete";
+import {overload, identity, constantly, complement} from "../../core.js";
+import {IReduce, ICounted, IComparable, IAddable} from "../../protocols.js";
+import {partial, unary} from "../function.js";
+import {reducing} from "../../protocols/ireduce/concrete.js";
 
 export function number(...args){
   return Number(...args);

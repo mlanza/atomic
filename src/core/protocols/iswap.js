@@ -1,2 +1,2 @@
-export * from "./iswap/instance";
-export * from "./iswap/concrete";
+export * from "./iswap/instance.js";
+export * from "./iswap/concrete.js";

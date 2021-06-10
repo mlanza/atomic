@@ -1,4 +1,4 @@
-export * from "./document-fragment/construct";
+export * from "./document-fragment/construct.js";
 import {DocumentFragment} from "dom";
-import {behaveAsDocumentFragment} from "./document-fragment/behave";
+import {behaveAsDocumentFragment} from "./document-fragment/behave.js";
 behaveAsDocumentFragment(DocumentFragment);

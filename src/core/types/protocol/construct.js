@@ -1,8 +1,8 @@
-import {overload, does} from '../../core';
-import {protocolLookupError} from '../protocol-lookup-error/construct';
-import {Nil} from '../nil/construct';
-import Symbol from 'symbol';
-import Map from 'map';
+import {overload, does} from "../../core.js";
+import {protocolLookupError} from "../protocol-lookup-error/construct.js";
+import {Nil} from "../nil/construct.js";
+import Symbol from "symbol";
+import Map from "map";
 
 const TEMPLATE = Symbol("@protocol-template"),
       INDEX    = Symbol("@protocol-index"),

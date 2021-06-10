@@ -1,5 +1,5 @@
-import {does, implement, ILookup} from 'atomic/core';
-import {IMiddleware} from "../../protocols/imiddleware/instance"
+import {does, implement, ILookup} from "atomic/core";
+import {IMiddleware} from "../../protocols/imiddleware/instance.js"
 
 function handle(self, command, next){
   const type = ILookup.lookup(command, "type");

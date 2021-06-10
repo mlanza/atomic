@@ -1,1 +1,1 @@
-export * from "./invalid-host-element-error/construct";
+export * from "./invalid-host-element-error/construct.js";

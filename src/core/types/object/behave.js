@@ -1,14 +1,14 @@
-import {does, identity, constructs, branch} from '../../core';
-import {implement} from '../protocol';
-import {IMergeable, IBlankable, ICompactable, IComparable, IYankable, IMatchable, INext, ICollection, IEquiv, IMapEntry, IReduce, IKVReduce, ISeqable, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, IFn, IMap, ISeq, IDescriptive, ICoerceable, ICloneable, IInclusive, ITemplate} from '../../protocols';
-import {reduced} from '../reduced';
-import {lazySeq, into, map} from '../lazy-seq';
-import {cons} from '../list';
-import {apply} from '../function/concrete';
-import {isString} from '../string/construct';
-import {satisfies} from "../protocol/concrete";
-import {update} from "../../protocols/iassociative/concrete";
-import {emptyObject, isObject} from '../object/construct';
+import {does, identity, constructs, branch} from "../../core.js";
+import {implement} from "../protocol.js";
+import {IMergeable, IBlankable, ICompactable, IComparable, IYankable, IMatchable, INext, ICollection, IEquiv, IMapEntry, IReduce, IKVReduce, ISeqable, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, IFn, IMap, ISeq, IDescriptive, ICoerceable, ICloneable, IInclusive, ITemplate} from "../../protocols.js";
+import {reduced} from "../reduced.js";
+import {lazySeq, into, map} from "../lazy-seq.js";
+import {cons} from "../list.js";
+import {apply} from "../function/concrete.js";
+import {isString} from "../string/construct.js";
+import {satisfies} from "../protocol/concrete.js";
+import {update} from "../../protocols/iassociative/concrete.js";
+import {emptyObject, isObject} from "../object/construct.js";
 
 const keys = Object.keys;
 const vals = Object.values;

@@ -1,2 +1,2 @@
-export * from "./inameable/instance";
-export * from "./inameable/concrete";
+export * from "./inameable/instance.js";
+export * from "./inameable/concrete.js";

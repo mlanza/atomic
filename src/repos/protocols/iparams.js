@@ -1,2 +1,2 @@
-export * from "./iparams/instance";
-export * from "./iparams/concrete";
+export * from "./iparams/instance.js";
+export * from "./iparams/concrete.js";

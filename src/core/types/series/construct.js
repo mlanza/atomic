@@ -1,6 +1,6 @@
-import {doto, overload} from '../../core';
-import {constructs} from '../../types/function';
-import {behaveAsSeries} from "./behave";
+import {doto, overload} from "../../core.js";
+import {constructs} from "../../types/function.js";
+import {behaveAsSeries} from "./behave.js";
 
 function extend(Type){
   behaveAsSeries(Type);

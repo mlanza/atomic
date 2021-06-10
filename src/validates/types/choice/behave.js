@@ -1,6 +1,6 @@
-import {implement, does, includes} from 'atomic/core';
-import {ICheckable, ISelection} from '../../protocols';
-import {issue} from '../issue';
+import {implement, does, includes} from "atomic/core";
+import {ICheckable, ISelection} from "../../protocols.js";
+import {issue} from "../issue.js";
 
 function options(self){
   return self.options;

@@ -1,5 +1,5 @@
-import {overload, identity} from "../../core";
-import {IReduce} from "./instance";
+import {overload, identity} from "../../core.js";
+import {IReduce} from "./instance.js";
 
 function reduce2(xf, coll){
   return IReduce.reduce(coll, xf, xf());

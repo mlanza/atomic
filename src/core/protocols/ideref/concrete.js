@@ -1,2 +1,2 @@
-import {IDeref} from "./instance";
+import {IDeref} from "./instance.js";
 export const deref = IDeref.deref;

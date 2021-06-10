@@ -1,6 +1,6 @@
-import {implement} from '../protocol';
-import {does} from '../../core';
-import {IMatchable} from '../../protocols';
+import {implement} from "../protocol.js";
+import {does} from "../../core.js";
+import {IMatchable} from "../../protocols.js";
 
 function matches(self, text){
   return self.test(text);

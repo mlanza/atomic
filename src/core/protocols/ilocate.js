@@ -1,2 +1,2 @@
-export * from "./ilocate/instance";
-export * from "./ilocate/concrete";
+export * from "./ilocate/instance.js";
+export * from "./ilocate/concrete.js";

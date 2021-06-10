@@ -1,8 +1,8 @@
-import {overload} from "../../core";
-import {reducing} from "../../protocols/ireduce/concrete";
-import {EmptyList, emptyList} from '../../types/empty-list';
-import {IReduce} from '../../protocols/ireduce';
-import Symbol from 'symbol';
+import {overload} from "../../core.js";
+import {reducing} from "../../protocols/ireduce/concrete.js";
+import {EmptyList, emptyList} from "../../types/empty-list.js";
+import {IReduce} from "../../protocols/ireduce.js";
+import Symbol from "symbol";
 
 export function List(head, tail){
   this.head = head;

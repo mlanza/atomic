@@ -1,2 +1,2 @@
-export * from "./itransientmap/instance";
-export * from "./itransientmap/concrete";
+export * from "./itransientmap/instance.js";
+export * from "./itransientmap/concrete.js";

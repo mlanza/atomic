@@ -1,5 +1,5 @@
-import {implement, IHierarchy, IMatchable, constantly, does, emptyList} from 'atomic/core';
-import {behaveAsElement} from "../element/behave";
+import {implement, IHierarchy, IMatchable, constantly, does, emptyList} from "atomic/core";
+import {behaveAsElement} from "../element/behave.js";
 
 export const behaveAsHTMLDocument = does(
   behaveAsElement,

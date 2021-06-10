@@ -1,4 +1,4 @@
-export * from "./annotation/construct";
-import {Annotation} from "./annotation/construct";
-import {behaveAsAnnotation} from "./annotation/behave";
+export * from "./annotation/construct.js";
+import {Annotation} from "./annotation/construct.js";
+import {behaveAsAnnotation} from "./annotation/behave.js";
 behaveAsAnnotation(Annotation);

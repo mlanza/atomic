@@ -1,2 +1,2 @@
-export * from "./iintercept/instance";
-export * from "./iintercept/concrete";
+export * from "./iintercept/instance.js";
+export * from "./iintercept/concrete.js";

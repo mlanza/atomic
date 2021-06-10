@@ -1,4 +1,4 @@
-export * from "./cell/construct";
-import {Cell} from "./cell/construct";
-import {behaveAsCell} from "./cell/behave";
+export * from "./cell/construct.js";
+import {Cell} from "./cell/construct.js";
+import {behaveAsCell} from "./cell/behave.js";
 behaveAsCell(Cell);

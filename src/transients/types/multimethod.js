@@ -1,4 +1,4 @@
-export * from "./multimethod/construct";
-import {Multimethod} from "./multimethod/construct";
-import {behaveAsMultimethod} from "./multimethod/behave";
+export * from "./multimethod/construct.js";
+import {Multimethod} from "./multimethod/construct.js";
+import {behaveAsMultimethod} from "./multimethod/behave.js";
 behaveAsMultimethod(Multimethod);

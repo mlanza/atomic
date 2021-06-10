@@ -1,2 +1,2 @@
-export * from "./irecord/instance";
-export * from "./irecord/concrete";
+export * from "./irecord/instance.js";
+export * from "./irecord/concrete.js";

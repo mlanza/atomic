@@ -1,7 +1,7 @@
 import fetch from "fetch";
 import Promise from "promise";
 import * as _ from "atomic/core";
-import {IParams, IOptions, IAddress, IIntercept} from "../../protocols";
+import {IParams, IOptions, IAddress, IIntercept} from "../../protocols.js";
 import {ICloneable, ITemplate, IFunctor, IQueryable, ICoerceable, IForkable, IMap, IAssociative, ILookup, IAppendable, IPrependable, IKVReduce, fromTask} from "atomic/core";
 
 export function query(self, plan){

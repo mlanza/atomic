@@ -1,5 +1,5 @@
-import {overload, does, implement, locate, query, each, maybe, comp, either} from 'atomic/core';
-import {IValue, IText} from "../../protocols";
+import {overload, does, implement, locate, query, each, maybe, comp, either} from "atomic/core";
+import {IValue, IText} from "../../protocols.js";
 
 function access(f, g){
 

@@ -1,6 +1,6 @@
-import {implement, does, cons, toArray, assoc, IDeref} from 'atomic/core';
-import {IScope} from '../../protocols';
-import {issue} from './construct';
+import {implement, does, cons, toArray, assoc, IDeref} from "atomic/core";
+import {IScope} from "../../protocols.js";
+import {issue} from "./construct.js";
 
 function deref(self){
   return self.constraint;

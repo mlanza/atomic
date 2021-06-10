@@ -1,6 +1,6 @@
-import {overload} from '../../core';
-import {IReduce, IFunctor} from '../../protocols';
-import {isError} from '../error/construct';
+import {overload} from "../../core.js";
+import {IReduce, IFunctor} from "../../protocols.js";
+import {isError} from "../error/construct.js";
 
 export function Okay(value){
   this.value = value;

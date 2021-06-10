@@ -1,4 +1,4 @@
-export * from "./guid/construct";
-import {GUID} from "./guid/construct";
-import {behaveAsGuid} from "./guid/behave";
+export * from "./guid/construct.js";
+import {GUID} from "./guid/construct.js";
+import {behaveAsGuid} from "./guid/behave.js";
 behaveAsGuid(GUID);

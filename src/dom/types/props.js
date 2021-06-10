@@ -1,5 +1,5 @@
-export * from "./props/construct";
-//export * from "./props/concrete";
-import {Props} from "./props/construct";
-import {behaveAsProps} from "./props/behave";
+export * from "./props/construct.js";
+//export * from "./props/concrete.js";
+import {Props} from "./props/construct.js";
+import {behaveAsProps} from "./props/behave.js";
 behaveAsProps(Props);

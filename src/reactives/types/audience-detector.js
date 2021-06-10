@@ -1,4 +1,4 @@
-export * from "./audience-detector/construct";
-import {AudienceDetector} from "./audience-detector/construct";
-import {behaveAsAudienceDetector} from "./audience-detector/behave";
+export * from "./audience-detector/construct.js";
+import {AudienceDetector} from "./audience-detector/construct.js";
+import {behaveAsAudienceDetector} from "./audience-detector/behave.js";
 behaveAsAudienceDetector(AudienceDetector);

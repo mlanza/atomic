@@ -1,6 +1,6 @@
-import {implement} from '../protocol';
-import {does} from '../../core';
-import {IBounds} from '../../protocols';
+import {implement} from "../protocol.js";
+import {does} from "../../core.js";
+import {IBounds} from "../../protocols.js";
 
 function start(self){
   return IBounds.start(self.period);

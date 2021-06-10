@@ -1,5 +1,5 @@
-import {does, implement} from 'atomic/core';
-import {IEventProvider} from "../../protocols/ieventprovider/instance"
+import {does, implement} from "atomic/core";
+import {IEventProvider} from "../../protocols/ieventprovider/instance.js"
 
 function raise(self, event){
   self.queued.push(event);

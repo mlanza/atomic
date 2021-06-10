@@ -1,5 +1,5 @@
 import {does, implement, ICounted, IDeref, IReset, ISwap} from "atomic/core";
-import {ISubscribe, ITimeTraveler} from "../../protocols";
+import {ISubscribe, ITimeTraveler} from "../../protocols.js";
 
 function deref(self){
   return IDeref.deref(self.cell);

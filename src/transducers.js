@@ -1,1 +1,1 @@
-export * from "./transducers/index";
+export * from "./transducers/index.js";

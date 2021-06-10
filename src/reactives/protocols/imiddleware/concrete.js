@@ -1,5 +1,5 @@
-import {does, overload, noop} from 'atomic/core';
-import {IMiddleware} from "./instance";
+import {does, overload, noop} from "atomic/core";
+import {IMiddleware} from "./instance.js";
 function handle2(self, message){
   return IMiddleware.handle(self, message, noop);
 }

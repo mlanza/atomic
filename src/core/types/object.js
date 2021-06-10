@@ -1,4 +1,4 @@
-export * from "./object/construct";
-export * from "./object/concrete";
-import {behaveAsObject} from "./object/behave";
+export * from "./object/construct.js";
+export * from "./object/concrete.js";
+import {behaveAsObject} from "./object/behave.js";
 behaveAsObject(Object);

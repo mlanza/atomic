@@ -1,4 +1,4 @@
-export * from "./boolean/construct";
-export * from "./boolean/concrete";
-import {behaveAsBoolean} from "./boolean/behave";
+export * from "./boolean/construct.js";
+export * from "./boolean/concrete.js";
+import {behaveAsBoolean} from "./boolean/behave.js";
 behaveAsBoolean(Boolean);

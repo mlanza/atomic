@@ -1,4 +1,4 @@
-export * from "./ordered-map/construct";
-import {OrderedMap} from "./ordered-map/construct";
-import {behaveAsOrderedMap} from "./ordered-map/behave";
+export * from "./ordered-map/construct.js";
+import {OrderedMap} from "./ordered-map/construct.js";
+import {behaveAsOrderedMap} from "./ordered-map/behave.js";
 behaveAsOrderedMap(OrderedMap);

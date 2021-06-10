@@ -1,6 +1,6 @@
-import {implement} from '../protocol';
-import {does} from '../../core';
-import {IDeref} from '../../protocols';
+import {implement} from "../protocol.js";
+import {does} from "../../core.js";
+import {IDeref} from "../../protocols.js";
 
 function deref(self){
   return self.valueOf();

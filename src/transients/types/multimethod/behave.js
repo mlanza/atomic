@@ -1,5 +1,5 @@
 import {IFn, does, matches, implement, detect} from "atomic/core";
-import {ITransientCollection} from '../../protocols';
+import {ITransientCollection} from "../../protocols.js";
 
 function conj(self, method){
   self.methods.push(method);

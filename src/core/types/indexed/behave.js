@@ -1,10 +1,10 @@
-import {overload, does} from '../../core';
-import {IKVReduce, IReduce, ICoerceable, INext, ICounted, ISeq, ISeqable, ISequential, IIndexed, ILookup, IInclusive} from '../../protocols';
-import {implement} from '../protocol';
-import {indexedSeq} from '../indexed-seq/construct';
-import {emptyList} from '../empty-list/construct';
-import {some} from '../lazy-seq/concrete';
-import {iterable, behaveAsLazySeq} from '../lazy-seq/behave';
+import {overload, does} from "../../core.js";
+import {IKVReduce, IReduce, ICoerceable, INext, ICounted, ISeq, ISeqable, ISequential, IIndexed, ILookup, IInclusive} from "../../protocols.js";
+import {implement} from "../protocol.js";
+import {indexedSeq} from "../indexed-seq/construct.js";
+import {emptyList} from "../empty-list/construct.js";
+import {some} from "../lazy-seq/concrete.js";
+import {iterable, behaveAsLazySeq} from "../lazy-seq/behave.js";
 
 function count(self){
   return self.obj.length;

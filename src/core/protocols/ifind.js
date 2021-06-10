@@ -1,2 +1,2 @@
-export * from "./ifind/instance";
-export * from "./ifind/concrete";
+export * from "./ifind/instance.js";
+export * from "./ifind/concrete.js";

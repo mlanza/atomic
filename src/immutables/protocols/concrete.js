@@ -1,1 +1,1 @@
-export * from "./ihash/concrete";
+export * from "./ihash/concrete.js";

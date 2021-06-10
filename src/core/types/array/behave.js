@@ -1,15 +1,15 @@
-import {does, identity, overload, doto, complement} from '../../core';
-import {implement, satisfies} from '../protocol';
-import {IMergeable, IBlankable, IMap, IQueryable, ICoerceable, IFunctor, IInsertable, IYankable, IReversible, IMapEntry, IEquiv, IReduce, IKVReduce, IAppendable, IPrependable, IInclusive, ICollection, INext, ISeq, IFind, ISeqable, IIndexed, IAssociative, ISequential, IEmptyableCollection, IFn, ICounted, ILookup, ICloneable} from '../../protocols';
-import {reduced, unreduced, isReduced} from '../reduced';
-import {indexedSeq} from '../indexed-seq';
-import {replace} from '../string/concrete';
-import {range} from '../range/construct';
-import {behaveAsEmptyList} from '../empty-list/behave';
-import {concat} from "../concatenated/construct";
-import {revSeq} from '../rev-seq';
-import {filter, mapa} from '../lazy-seq';
-import {emptyArray} from './construct';
+import {does, identity, overload, doto, complement} from "../../core.js";
+import {implement, satisfies} from "../protocol.js";
+import {IMergeable, IBlankable, IMap, IQueryable, ICoerceable, IFunctor, IInsertable, IYankable, IReversible, IMapEntry, IEquiv, IReduce, IKVReduce, IAppendable, IPrependable, IInclusive, ICollection, INext, ISeq, IFind, ISeqable, IIndexed, IAssociative, ISequential, IEmptyableCollection, IFn, ICounted, ILookup, ICloneable} from "../../protocols.js";
+import {reduced, unreduced, isReduced} from "../reduced.js";
+import {indexedSeq} from "../indexed-seq.js";
+import {replace} from "../string/concrete.js";
+import {range} from "../range/construct.js";
+import {behaveAsEmptyList} from "../empty-list/behave.js";
+import {concat} from "../concatenated/construct.js";
+import {revSeq} from "../rev-seq.js";
+import {filter, mapa} from "../lazy-seq.js";
+import {emptyArray} from "./construct.js";
 
 const clone = Array.from;
 

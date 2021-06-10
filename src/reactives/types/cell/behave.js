@@ -1,5 +1,5 @@
-import {does, implement, satisfies, IReset, ISwap, IDeref, IDisposable} from 'atomic/core';
-import {IPublish, ISubscribe} from "../../protocols";
+import {does, implement, satisfies, IReset, ISwap, IDeref, IDisposable} from "atomic/core";
+import {IPublish, ISubscribe} from "../../protocols.js";
 
 function deref(self){
   return self.state;

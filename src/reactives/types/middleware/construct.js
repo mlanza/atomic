@@ -1,4 +1,4 @@
-import {doto, conj, apply} from 'atomic/core';
+import {doto, conj, apply} from "atomic/core";
 
 export function Middleware(handlers){
   this.handlers = handlers;

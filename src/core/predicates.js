@@ -1,14 +1,14 @@
-import {overload, constantly, identity, type, branch, slice} from "./core";
-import {IReduce, IKVReduce, ICounted, IComparable, IEquiv} from "./protocols";
-import {reduced} from "./types/reduced";
-import {comp, partial, apply} from "./types/function/concrete";
-import {mapa} from "./types/lazy-seq/concrete";
-import {reducing} from "./protocols/ireduce/concrete";
-import {compare} from "./protocols/icomparable/concrete";
-import {isNil} from "./types/nil/construct";
-import {indexed} from "./types/indexed/construct";
-import {maybe} from './types/maybe/construct';
-import {equiv as eq2} from './protocols/iequiv/concrete';
+import {overload, constantly, identity, type, branch, slice} from "./core.js";
+import {IReduce, IKVReduce, ICounted, IComparable, IEquiv} from "./protocols.js";
+import {reduced} from "./types/reduced.js";
+import {comp, partial, apply} from "./types/function/concrete.js";
+import {mapa} from "./types/lazy-seq/concrete.js";
+import {reducing} from "./protocols/ireduce/concrete.js";
+import {compare} from "./protocols/icomparable/concrete.js";
+import {isNil} from "./types/nil/construct.js";
+import {indexed} from "./types/indexed/construct.js";
+import {maybe} from "./types/maybe/construct.js";
+import {equiv as eq2} from "./protocols/iequiv/concrete.js";
 
 export function both(memo, value){
   return memo && value;

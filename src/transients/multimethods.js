@@ -1,1 +1,1 @@
-export * from "./multimethods/parse-date";
+export * from "./multimethods/parse-date.js";

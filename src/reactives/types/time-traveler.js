@@ -1,4 +1,4 @@
-export * from "./time-traveler/construct";
-import {TimeTraveler} from "./time-traveler/construct";
-import {behaveAsTimeTraveler} from "./time-traveler/behave";
+export * from "./time-traveler/construct.js";
+import {TimeTraveler} from "./time-traveler/construct.js";
+import {behaveAsTimeTraveler} from "./time-traveler/behave.js";
 behaveAsTimeTraveler(TimeTraveler);

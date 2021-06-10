@@ -1,2 +1,2 @@
-export * from "./iinclusive/instance";
-export * from "./iinclusive/concrete";
+export * from "./iinclusive/instance.js";
+export * from "./iinclusive/concrete.js";

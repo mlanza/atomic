@@ -1,2 +1,2 @@
-export * from "./iyankable/instance";
-export * from "./iyankable/concrete";
+export * from "./iyankable/instance.js";
+export * from "./iyankable/concrete.js";

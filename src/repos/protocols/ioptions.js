@@ -1,2 +1,2 @@
-export * from "./ioptions/instance";
-export * from "./ioptions/concrete";
+export * from "./ioptions/instance.js";
+export * from "./ioptions/concrete.js";

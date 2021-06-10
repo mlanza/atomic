@@ -1,4 +1,4 @@
-export * from "./and/construct";
-import {And} from "./and/construct";
-import {behaveAsAnd} from "./and/behave";
+export * from "./and/construct.js";
+import {And} from "./and/construct.js";
+import {behaveAsAnd} from "./and/behave.js";
 behaveAsAnd(And);

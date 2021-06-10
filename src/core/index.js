@@ -1,24 +1,24 @@
-import {overload, toggles, identity, obj, partly, doto, does, branch, unspread, applying, execute, noop, constantly, once} from "./core";
-import {IAppendable, IYankable, ICoerceable, IAssociative, IBounds, IInverse, ICloneable, ICollection, IComparable, ICounted, IDeref, IDisposable, IEmptyableCollection, IEquiv, IFind, IFn, IForkable, IFunctor, IHierarchy, IInclusive, IIndexed, IInsertable, IKVReduce, ILookup, IMap, IMapEntry, IMatchable, INext, IOtherwise, IPrependable, IReduce, IReset, ISeq, ISeqable, ISet, ISwap} from "./protocols";
-import {just, satisfies, spread, maybe, each, duration, remove, sort, flip, realized, comp, isNumber, isFunction, apply, realize, isNil, reFindAll, mapkv, period, selectKeys, mapVals, reMatches, test, date, emptyList, cons, days, recurrence, curry, second as _second} from "./types";
-import {filter} from "./types/lazy-seq";
-import {add, subtract, compact, matches, name, descendants, query, locate, deref, get, assoc, yank, conj, reducing, toArray, reducekv, includes, excludes, rest, count, between, reduce, divide, fmap, split} from "./protocols/concrete";
-import {isString, isBlank, str, replace} from "./types/string";
-import {isSome} from "./types/nil";
-import {implement} from "./types/protocol/concrete";
-import {into, detect, map, mapa, splice, drop, join, some, last, lazySeq} from "./types/lazy-seq";
-import {behaveAsSeries as _serieslike} from "./types/series/behave";
+import {overload, toggles, identity, obj, partly, doto, does, branch, unspread, applying, execute, noop, constantly, once} from "./core.js";
+import {IAppendable, IYankable, ICoerceable, IAssociative, IBounds, IInverse, ICloneable, ICollection, IComparable, ICounted, IDeref, IDisposable, IEmptyableCollection, IEquiv, IFind, IFn, IForkable, IFunctor, IHierarchy, IInclusive, IIndexed, IInsertable, IKVReduce, ILookup, IMap, IMapEntry, IMatchable, INext, IOtherwise, IPrependable, IReduce, IReset, ISeq, ISeqable, ISet, ISwap} from "./protocols.js";
+import {just, satisfies, spread, maybe, each, duration, remove, sort, flip, realized, comp, isNumber, isFunction, apply, realize, isNil, reFindAll, mapkv, period, selectKeys, mapVals, reMatches, test, date, emptyList, cons, days, recurrence, curry, second as _second} from "./types.js";
+import {filter} from "./types/lazy-seq.js";
+import {add, subtract, compact, matches, name, descendants, query, locate, deref, get, assoc, yank, conj, reducing, toArray, reducekv, includes, excludes, rest, count, between, reduce, divide, fmap, split} from "./protocols/concrete.js";
+import {isString, isBlank, str, replace} from "./types/string.js";
+import {isSome} from "./types/nil.js";
+import {implement} from "./types/protocol/concrete.js";
+import {into, detect, map, mapa, splice, drop, join, some, last, lazySeq} from "./types/lazy-seq.js";
+import {behaveAsSeries as _serieslike} from "./types/series/behave.js";
 export const serieslike = _serieslike;
-export {iterable} from "./types/lazy-seq/behave";
-export * from "./core";
-export * from "./types";
-export * from "./protocols";
-export * from "./protocols/concrete";
-export * from "./predicates";
-export * from "./associatives";
-export {filter} from "./types/lazy-seq"; //necessary due to odd rollup behavior
+export {iterable} from "./types/lazy-seq/behave.js";
+export * from "./core.js";
+export * from "./types.js";
+export * from "./protocols.js";
+export * from "./protocols/concrete.js";
+export * from "./predicates.js";
+export * from "./associatives.js";
+export {filter} from "./types/lazy-seq.js"; //necessary due to odd rollup behavior
 
-import Set from 'set';
+import Set from "set";
 
 export const numeric = test(/^\d+$/i, ?);
 

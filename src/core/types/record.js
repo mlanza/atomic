@@ -1,1 +1,1 @@
-export {behaveAsRecord as record} from "./record/behave";
+export {behaveAsRecord as record} from "./record/behave.js";

@@ -1,2 +1,2 @@
-export * from "./ipersistent/instance";
-export * from "./ipersistent/concrete";
+export * from "./ipersistent/instance.js";
+export * from "./ipersistent/concrete.js";

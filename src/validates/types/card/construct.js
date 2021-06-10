@@ -1,4 +1,4 @@
-import {fnil, pre, constructs, isInteger} from 'atomic/core';
+import {fnil, pre, constructs, isInteger} from "atomic/core";
 
 export function Cardinality(least, most){
   this.least = least;

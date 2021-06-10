@@ -1,11 +1,11 @@
-import {ISeqable} from '../../protocols/iseqable';
-import {ISeq} from '../../protocols/iseq';
-import {ICoerceable} from '../../protocols/icoerceable/instance';
-import {identity, overload, unspread} from "../../core";
-import {lazySeq} from "../../types/lazy-seq/construct";
-import {cons} from "../../types/list/construct";
-import {emptyList} from '../empty-list/construct';
-import Symbol from 'symbol';
+import {ISeqable} from "../../protocols/iseqable.js";
+import {ISeq} from "../../protocols/iseq.js";
+import {ICoerceable} from "../../protocols/icoerceable/instance.js";
+import {identity, overload, unspread} from "../../core.js";
+import {lazySeq} from "../../types/lazy-seq/construct.js";
+import {cons} from "../../types/list/construct.js";
+import {emptyList} from "../empty-list/construct.js";
+import Symbol from "symbol";
 
 //duplicated to break dependencies
 export function filter(pred, xs){

@@ -1,11 +1,11 @@
-import {implement} from '../protocol';
-import {identity, does} from '../../core';
-import {IEquiv, ICoerceable, IDescriptive, IFind, ICollection, IReduce, IKVReduce, INext, ISeq, ISeqable, IIndexed, ICounted, ILookup, IFn, IMap, ICloneable, IEmptyableCollection} from '../../protocols';
-import {lazySeq} from '../../types/lazy-seq/construct';
-import {cons} from '../../types/list/construct';
-import {remove, into} from '../../types/lazy-seq/concrete';
-import {emptyObject} from '../../types/object/construct';
-import {behaveAsEmptyList} from '../../types/empty-list/behave';
+import {implement} from "../protocol.js";
+import {identity, does} from "../../core.js";
+import {IEquiv, ICoerceable, IDescriptive, IFind, ICollection, IReduce, IKVReduce, INext, ISeq, ISeqable, IIndexed, ICounted, ILookup, IFn, IMap, ICloneable, IEmptyableCollection} from "../../protocols.js";
+import {lazySeq} from "../../types/lazy-seq/construct.js";
+import {cons} from "../../types/list/construct.js";
+import {remove, into} from "../../types/lazy-seq/concrete.js";
+import {emptyObject} from "../../types/object/construct.js";
+import {behaveAsEmptyList} from "../../types/empty-list/behave.js";
 
 function toObject(self){
   return into({}, self);

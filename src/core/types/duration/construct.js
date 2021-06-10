@@ -1,10 +1,10 @@
-import {overload, constructs} from "../../core";
-import {IAssociative} from "../../protocols";
-import {mult} from "../../protocols/imultipliable/concrete";
-import Symbol from 'symbol';
-import {isNumber} from "../number/concrete";
-import {branch} from "../../core";
-import {comp} from "../function/concrete";
+import {overload, constructs} from "../../core.js";
+import {IAssociative} from "../../protocols.js";
+import {mult} from "../../protocols/imultipliable/concrete.js";
+import Symbol from "symbol";
+import {isNumber} from "../number/concrete.js";
+import {branch} from "../../core.js";
+import {comp} from "../function/concrete.js";
 
 export function Duration(units){
   this.units = units;

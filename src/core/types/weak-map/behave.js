@@ -1,6 +1,6 @@
-import {does, identity} from '../../core';
-import {implement} from '../protocol';
-import {ICounted, IAssociative, ILookup, ICloneable} from '../../protocols';
+import {does, identity} from "../../core.js";
+import {implement} from "../protocol.js";
+import {ICounted, IAssociative, ILookup, ICloneable} from "../../protocols.js";
 
 function assoc(self, key, value){
   return self.set(key, value);

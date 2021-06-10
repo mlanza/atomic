@@ -1,2 +1,2 @@
-export * from "./itransientset/instance";
-export * from "./itransientset/concrete";
+export * from "./itransientset/instance.js";
+export * from "./itransientset/concrete.js";

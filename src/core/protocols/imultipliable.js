@@ -1,2 +1,2 @@
-export * from "./imultipliable/instance";
-export * from "./imultipliable/concrete";
+export * from "./imultipliable/instance.js";
+export * from "./imultipliable/concrete.js";

@@ -1,2 +1,2 @@
-import {ITransientYankable} from "./instance";
+import {ITransientYankable} from "./instance.js";
 export const yank = ITransientYankable.yank;

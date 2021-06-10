@@ -1,2 +1,2 @@
-import {IPublish} from "./instance";
+import {IPublish} from "./instance.js";
 export const pub = IPublish.pub;

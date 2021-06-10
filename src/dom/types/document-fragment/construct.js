@@ -1,6 +1,6 @@
-import {each} from 'atomic/core';
-import {DocumentFragment, document} from 'dom';
-import {embed} from "../../protocols/iembeddable/concrete";
+import {each} from "atomic/core";
+import {DocumentFragment, document} from "dom";
+import {embed} from "../../protocols/iembeddable/concrete.js";
 
 export function fragment(...contents){
   const frag = document.createDocumentFragment();

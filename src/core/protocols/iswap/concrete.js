@@ -1,5 +1,5 @@
-import {overload} from "../../core";
-import {ISwap} from "./instance";
+import {overload} from "../../core.js";
+import {ISwap} from "./instance.js";
 
 function swap3(self, f, a){
   return ISwap.swap(self, function(state){

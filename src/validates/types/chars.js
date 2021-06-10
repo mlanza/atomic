@@ -1,4 +1,4 @@
-export * from "./chars/construct";
-import {Characters} from "./chars/construct";
-import {behaveAsBounds} from "./bounds/behave";
+export * from "./chars/construct.js";
+import {Characters} from "./chars/construct.js";
+import {behaveAsBounds} from "./bounds/behave.js";
 behaveAsBounds(Characters);

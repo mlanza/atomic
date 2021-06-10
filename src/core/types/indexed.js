@@ -1,4 +1,4 @@
-export * from "./indexed/construct";
-import {Indexed} from "./indexed/construct";
-import {behaveAsIndexed} from "./indexed/behave";
+export * from "./indexed/construct.js";
+import {Indexed} from "./indexed/construct.js";
+import {behaveAsIndexed} from "./indexed/behave.js";
 behaveAsIndexed(Indexed);

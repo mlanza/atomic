@@ -1,2 +1,2 @@
-export * from "./iforkable/instance";
-export * from "./iforkable/concrete";
+export * from "./iforkable/instance.js";
+export * from "./iforkable/concrete.js";

@@ -1,2 +1,2 @@
-export * from "./isubscribe/instance";
-export * from "./isubscribe/concrete";
+export * from "./isubscribe/instance.js";
+export * from "./isubscribe/concrete.js";

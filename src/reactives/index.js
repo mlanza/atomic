@@ -35,21 +35,21 @@ import {
 import * as _ from "atomic/core";
 import Symbol from "symbol";
 import {weakMap} from "atomic/core";
-import {pub, sub, unsub, on, off, one, into} from "./protocols/concrete";
-import {IDispatch, IPublish, ISubscribe, IEvented} from "./protocols";
-import {AudienceDetector} from "./types/audience-detector/construct";
-import {Broadcast} from "./types/broadcast/construct";
-import {Cell} from "./types/cell/construct";
+import {pub, sub, unsub, on, off, one, into} from "./protocols/concrete.js";
+import {IDispatch, IPublish, ISubscribe, IEvented} from "./protocols.js";
+import {AudienceDetector} from "./types/audience-detector/construct.js";
+import {Broadcast} from "./types/broadcast/construct.js";
+import {Cell} from "./types/cell/construct.js";
 import {
   cell,
   readonly,
   audienceDetector,
   broadcast
-} from "./types";
+} from "./types.js";
 import * as t from "atomic/transducers";
-export * from "./types";
-export * from "./protocols";
-export * from "./protocols/concrete";
+export * from "./types.js";
+export * from "./protocols.js";
+export * from "./protocols/concrete.js";
 
 //TODO that promises could potentially return out of order is a problem!
 export function then2(f, source){

@@ -1,12 +1,12 @@
-import {ICoerceable}  from "../../protocols/icoerceable";
-import {IReduce}  from "../../protocols/ireduce";
-import {conj}  from "../../protocols/icollection";
-import {reduced} from "../../types/reduced/construct";
-import {overload, identity, partial, log, slice} from "../../core";
-import {isNil}  from "../nil";
-import {satisfies}  from "../protocol";
-import {isFunction}  from "./construct";
-export {partial} from "../../core";
+import {ICoerceable}  from "../../protocols/icoerceable.js";
+import {IReduce}  from "../../protocols/ireduce.js";
+import {conj}  from "../../protocols/icollection.js";
+import {reduced} from "../../types/reduced/construct.js";
+import {overload, identity, partial, log, slice} from "../../core.js";
+import {isNil}  from "../nil.js";
+import {satisfies}  from "../protocol.js";
+import {isFunction}  from "./construct.js";
+export {partial} from "../../core.js";
 
 export function spread(f){
   return function(args){

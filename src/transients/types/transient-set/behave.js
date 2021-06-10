@@ -1,6 +1,6 @@
 import {does, identity, implement, overload, assoc, cons, filter, lazyIterable, emptyList, apply, unreduced, ICoerceable, ISeq, IReduce, ISeqable, ISet, INext, ISequential, ICounted, ICollection, IEmptyableCollection, IInclusive, ICloneable} from "atomic/core";
-import {emptyTransientSet, transientSet} from './construct';
-import {IPersistent, ITransientSet, ITransientEmptyableCollection, ITransientCollection} from "../../protocols";
+import {emptyTransientSet, transientSet} from "./construct.js";
+import {IPersistent, ITransientSet, ITransientEmptyableCollection, ITransientCollection} from "../../protocols.js";
 
 function seq(self){
   return count(self) ? self : null;

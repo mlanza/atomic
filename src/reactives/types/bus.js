@@ -1,4 +1,4 @@
-export * from "./bus/construct";
-import {Bus} from "./bus/construct";
-import {behaveAsBus} from "./bus/behave";
+export * from "./bus/construct.js";
+import {Bus} from "./bus/construct.js";
+import {behaveAsBus} from "./bus/behave.js";
 behaveAsBus(Bus);

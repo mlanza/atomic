@@ -1,2 +1,2 @@
-export * from "./istatemachine/instance";
-export * from "./istatemachine/concrete";
+export * from "./istatemachine/instance.js";
+export * from "./istatemachine/concrete.js";

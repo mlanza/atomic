@@ -1,6 +1,6 @@
-import {IEmbeddable} from "./instance";
-import {satisfies, each, key, val, str, ISequential, IDescriptive} from 'atomic/core';
-import {assoc} from 'atomic/transients';
+import {IEmbeddable} from "./instance.js";
+import {satisfies, each, key, val, str, ISequential, IDescriptive} from "atomic/core";
+import {assoc} from "atomic/transients";
 
 export function embed(self, parent, referenceNode){
   if (satisfies(IEmbeddable, self)) {

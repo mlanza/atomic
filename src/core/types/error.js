@@ -1,3 +1,3 @@
-export * from "./error/construct";
-import {behaveAsError} from "./error/behave";
+export * from "./error/construct.js";
+import {behaveAsError} from "./error/behave.js";
 behaveAsError(Error);

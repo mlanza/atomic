@@ -1,7 +1,7 @@
-import {implement} from '../protocol';
-import {identity, does} from '../../core';
-import {right} from './construct';
-import {IFunctor, IOtherwise, IForkable, IDeref} from '../../protocols';
+import {implement} from "../protocol.js";
+import {identity, does} from "../../core.js";
+import {right} from "./construct.js";
+import {IFunctor, IOtherwise, IForkable, IDeref} from "../../protocols.js";
 
 function fmap(self, f){
   return right(f(self.value));

@@ -1,7 +1,7 @@
-import {overload, identity, constantly, partial} from "../../core";
-import {reduce, reducing} from "../ireduce/concrete";
-import {deref} from "../ideref/concrete";
-import {IFunctor} from "./instance";
+import {overload, identity, constantly, partial} from "../../core.js";
+import {reduce, reducing} from "../ireduce/concrete.js";
+import {deref} from "../ideref/concrete.js";
+import {IFunctor} from "./instance.js";
 
 export const fmap = overload(constantly(identity), IFunctor.fmap, reducing(IFunctor.fmap));
 

@@ -1,5 +1,5 @@
-import {overload} from "../../core";
-import {IKVReduce} from "./instance";
+import {overload} from "../../core.js";
+import {IKVReduce} from "./instance.js";
 
 export function reducekv2(xf, coll){
   return IKVReduce.reducekv(coll, xf, xf());

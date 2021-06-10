@@ -1,4 +1,4 @@
-export * from "./transient-object/construct";
-import {TransientObject} from "./transient-object/construct";
-import {behaveAsTransientObject} from "./transient-object/behave";
+export * from "./transient-object/construct.js";
+import {TransientObject} from "./transient-object/construct.js";
+import {behaveAsTransientObject} from "./transient-object/behave.js";
 behaveAsTransientObject(TransientObject);

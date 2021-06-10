@@ -1,4 +1,4 @@
-import {protocol} from "../../types/protocol";
+import {protocol} from "../../types/protocol.js";
 function fork(self, reject, resolve){
   return resolve(self);
 }

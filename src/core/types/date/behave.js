@@ -1,10 +1,10 @@
-import {does, overload, constantly, identity, partial} from '../../core';
-import {implement} from '../protocol';
-import {IAddable, IMergeable, IReduce, IKVReduce, ISeqable, IBounds, IMap, IDeref, ISeq, IComparable, IEquiv, ICloneable, ILookup, IAssociative, ICollection} from '../../protocols';
-import {isNumber} from '../number';
-import {add} from '../../protocols/iaddable/concrete';
-import {mergeWith} from '../../protocols/imergeable/instance';
-import {Duration, days} from '../duration';
+import {does, overload, constantly, identity, partial} from "../../core.js";
+import {implement} from "../protocol.js";
+import {IAddable, IMergeable, IReduce, IKVReduce, ISeqable, IBounds, IMap, IDeref, ISeq, IComparable, IEquiv, ICloneable, ILookup, IAssociative, ICollection} from "../../protocols.js";
+import {isNumber} from "../number.js";
+import {add} from "../../protocols/iaddable/concrete.js";
+import {mergeWith} from "../../protocols/imergeable/instance.js";
+import {Duration, days} from "../duration.js";
 
 function _add(self, other){
   return mergeWith(add, self, isNumber(other) ? days(other) : other);

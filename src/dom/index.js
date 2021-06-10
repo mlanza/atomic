@@ -1,17 +1,17 @@
 import {constantly, identity, isString, apply, noop, slice, partial, replace, concat, template, key, val, join, merge, filter, map, remove, isObject, specify, implement, doto, get, str, includes, overload, fmap, each, eachkv, obj, IReduce, first, query, locate, descendants, matches, Nil, ICoerceable, extend, doing} from "atomic/core";
 import * as _ from "atomic/core";
 import * as mut from "atomic/transients";
-import {element} from "./types/element/construct";
-import {mounts} from "./protocols/imountable/concrete";
-import {InvalidHostElementError} from "./types/invalid-host-element-error";
-import {IValue} from "./protocols/ivalue/instance";
-import {IEmbeddable} from "./protocols/iembeddable/instance";
+import {element} from "./types/element/construct.js";
+import {mounts} from "./protocols/imountable/concrete.js";
+import {InvalidHostElementError} from "./types/invalid-host-element-error.js";
+import {IValue} from "./protocols/ivalue/instance.js";
+import {IEmbeddable} from "./protocols/iembeddable/instance.js";
 import * as $ from "atomic/reactives";
 import Promise from "promise";
 
-export * from "./types";
-export * from "./protocols";
-export * from "./protocols/concrete";
+export * from "./types.js";
+export * from "./protocols.js";
+export * from "./protocols/concrete.js";
 export {append, prepend, before, after, yank, empty} from "atomic/transients";
 
 function attr2(self, key){

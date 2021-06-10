@@ -1,6 +1,6 @@
-import {does, doto, noop, reverse, reduce, specify, implement, ICollection} from 'atomic/core';
-import {ITransientCollection} from 'atomic/transients';
-import {IMiddleware} from "../../protocols/imiddleware/instance"
+import {does, doto, noop, reverse, reduce, specify, implement, ICollection} from "atomic/core";
+import {ITransientCollection} from "atomic/transients";
+import {IMiddleware} from "../../protocols/imiddleware/instance.js"
 
 function conj(self, handler){
   self.handlers = ICollection.conj(self.handlers, handler);

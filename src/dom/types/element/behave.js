@@ -56,7 +56,7 @@ import {
   IReduce,
   IEmptyableCollection,
   IHierarchy
-} from 'atomic/core';
+} from "atomic/core";
 import {
   ITransientAssociative,
   ITransientMap,
@@ -66,14 +66,14 @@ import {
   ITransientEmptyableCollection,
   ITransientInsertable,
   ITransientYankable
-} from 'atomic/transients';
+} from "atomic/transients";
 import {IEvented} from "atomic/reactives";
-import {isMountable} from "../../protocols/imountable/concrete"
-import {IHtml, IText, IValue, IContent, IHideable, IEmbeddable} from "../../protocols";
-import {embed as _embed} from "../../protocols/iembeddable/concrete";
-import {nestedAttrs} from "../nested-attrs/construct";
-import {isDocumentFragment} from "../document-fragment/construct";
-import {isElement} from "../element/construct";
+import {isMountable} from "../../protocols/imountable/concrete.js"
+import {IHtml, IText, IValue, IContent, IHideable, IEmbeddable} from "../../protocols.js";
+import {embed as _embed} from "../../protocols/iembeddable/concrete.js";
+import {nestedAttrs} from "../nested-attrs/construct.js";
+import {isDocumentFragment} from "../document-fragment/construct.js";
+import {isElement} from "../element/construct.js";
 import {Text} from "dom";
 
 const hides = ["display", "none"];

@@ -1,8 +1,8 @@
-import {overload} from '../../core';
-import {patch} from "../../associatives";
-import {sod, eod, isDate} from '../date/concrete';
-import {add} from '../../protocols/iaddable/concrete';
-import Symbol from 'symbol';
+import {overload} from "../../core.js";
+import {patch} from "../../associatives.js";
+import {sod, eod, isDate} from "../date/concrete.js";
+import {add} from "../../protocols/iaddable/concrete.js";
+import Symbol from "symbol";
 
 export function Period(start, end){
   this.start = start;

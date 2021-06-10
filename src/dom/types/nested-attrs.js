@@ -1,5 +1,5 @@
-export * from "./nested-attrs/construct";
-//export * from "./nested-attrs/concrete";
-import {NestedAttrs} from "./nested-attrs/construct";
-import {behaveAsNestedAttrs} from "./nested-attrs/behave";
+export * from "./nested-attrs/construct.js";
+//export * from "./nested-attrs/concrete.js";
+import {NestedAttrs} from "./nested-attrs/construct.js";
+import {behaveAsNestedAttrs} from "./nested-attrs/behave.js";
 behaveAsNestedAttrs(NestedAttrs);

@@ -1,2 +1,2 @@
-export * from "./imergeable/instance";
-export * from "./imergeable/concrete";
+export * from "./imergeable/instance.js";
+export * from "./imergeable/concrete.js";

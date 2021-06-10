@@ -1,2 +1,2 @@
-export * from "./ireset/instance";
-export * from "./ireset/concrete";
+export * from "./ireset/instance.js";
+export * from "./ireset/concrete.js";

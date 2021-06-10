@@ -1,7 +1,7 @@
 import {does, doto, partial, implement, filter, concat, IMatchable, ISeqable, IAppendable} from "atomic/core";
 import {ITransientCollection} from "atomic/transients";
-import {IDispatch, IEvented} from '../../protocols';
-import {handler} from '../router/concrete';
+import {IDispatch, IEvented} from "../../protocols.js";
+import {handler} from "../router/concrete.js";
 
 function on(self, pred, callback){
   conj(self, handler(pred, callback));

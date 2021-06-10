@@ -1,2 +1,2 @@
-export * from "./idispatch/instance";
-export * from "./idispatch/concrete";
+export * from "./idispatch/instance.js";
+export * from "./idispatch/concrete.js";

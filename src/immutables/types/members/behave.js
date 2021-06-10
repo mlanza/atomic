@@ -9,7 +9,7 @@ import {
   INext,
   ISequential
 } from "atomic/core";
-import {members, emptyMembers} from "./construct";
+import {members, emptyMembers} from "./construct.js";
 
 function fmap(self, f){
   return members(mapcat(function(item){

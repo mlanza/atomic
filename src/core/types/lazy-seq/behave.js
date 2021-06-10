@@ -1,14 +1,14 @@
-import {implement, packs as does} from '../protocol';
-import {IBlankable, ICompactable, ILocate, IQueryable, IFunctor, IReversible, IYankable, IMatchable, ICoerceable, IInclusive, IFind, IEquiv, ICollection, INext, ISeq, IReduce, IKVReduce, ISeqable, ISequential, IIndexed, IEmptyableCollection, ICounted, IAppendable, IPrependable} from '../../protocols';
-import {overload, identity, partial} from '../../core';
-import {Reduced, isReduced, reduced, unreduced} from "../reduced";
-import {concat} from "../concatenated/construct";
-import {comp} from "../function/concrete";
-import {cons} from "../list/construct";
-import {map, filter, detect} from "./concrete";
-import {emptyList} from '../empty-list/construct';
-import {behaveAsEmptyList} from '../empty-list/behave';
-import Symbol from 'symbol';
+import {implement, packs as does} from "../protocol.js";
+import {IBlankable, ICompactable, ILocate, IQueryable, IFunctor, IReversible, IYankable, IMatchable, ICoerceable, IInclusive, IFind, IEquiv, ICollection, INext, ISeq, IReduce, IKVReduce, ISeqable, ISequential, IIndexed, IEmptyableCollection, ICounted, IAppendable, IPrependable} from "../../protocols.js";
+import {overload, identity, partial} from "../../core.js";
+import {Reduced, isReduced, reduced, unreduced} from "../reduced.js";
+import {concat} from "../concatenated/construct.js";
+import {comp} from "../function/concrete.js";
+import {cons} from "../list/construct.js";
+import {map, filter, detect} from "./concrete.js";
+import {emptyList} from "../empty-list/construct.js";
+import {behaveAsEmptyList} from "../empty-list/behave.js";
+import Symbol from "symbol";
 
 const compact = partial(filter, identity);
 

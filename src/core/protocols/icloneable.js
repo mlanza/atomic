@@ -1,2 +1,2 @@
-export * from "./icloneable/instance";
-export * from "./icloneable/concrete";
+export * from "./icloneable/instance.js";
+export * from "./icloneable/concrete.js";

@@ -1,5 +1,5 @@
 import {IFn, doto, partial, specify, overload} from "atomic/core";
-import {ITransientCollection} from "../../protocols";
+import {ITransientCollection} from "../../protocols.js";
 
 function surrogate(f, substitute){
   return function(self, ...args){

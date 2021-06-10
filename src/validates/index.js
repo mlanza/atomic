@@ -1,10 +1,10 @@
 import {mapa, test, first, doto, specify, includes, identity, implement, constantly, branch, juxt, count, filled, get, eq, gte, lte, maybe, spread, compact, apply, isNil, Nil, isNumber, isString, isDate, isFunction, isRegExp} from "atomic/core";
-import {ICheckable, IExplains} from "./protocols";
-import {anno, map, scoped, issue, issuing, catches, pred, or, and, choice} from "./types";
+import {ICheckable, IExplains} from "./protocols.js";
+import {anno, map, scoped, issue, issuing, catches, pred, or, and, choice} from "./types.js";
 
-export * from "./types";
-export * from "./protocols";
-export * from "./protocols/concrete";
+export * from "./types.js";
+export * from "./protocols.js";
+export * from "./protocols/concrete.js";
 
 export function toPred(constraint){
   return function(obj){

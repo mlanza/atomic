@@ -1,2 +1,2 @@
-import {IAddress} from "./instance";
+import {IAddress} from "./instance.js";
 export const addr = IAddress.addr;

@@ -1,5 +1,5 @@
-import {overload, partial} from '../../core';
-import {thrush} from '../../protocols/ifunctor/concrete';
+import {overload, partial} from "../../core.js";
+import {thrush} from "../../protocols/ifunctor/concrete.js";
 
 export function Fluent(value){
   this.value = value;

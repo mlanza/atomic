@@ -1,2 +1,2 @@
-export * from "./ievented/instance";
-export * from "./ievented/concrete";
+export * from "./ievented/instance.js";
+export * from "./ievented/concrete.js";

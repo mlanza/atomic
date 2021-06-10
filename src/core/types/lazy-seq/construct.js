@@ -1,4 +1,4 @@
-import {once} from '../../core';
+import {once} from "../../core.js";
 
 export function LazySeq(perform){
   this.perform = perform;

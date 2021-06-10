@@ -1,4 +1,4 @@
-export * from "./maybe/construct";
-import {Maybe} from "./maybe/construct";
-import {behaveAsMaybe} from "./maybe/behave";
+export * from "./maybe/construct.js";
+import {Maybe} from "./maybe/construct.js";
+import {behaveAsMaybe} from "./maybe/behave.js";
 behaveAsMaybe(Maybe);

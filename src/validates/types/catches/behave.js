@@ -1,6 +1,6 @@
-import {implement, does} from 'atomic/core';
-import {ICheckable} from '../../protocols';
-import {issue} from '../issue';
+import {implement, does} from "atomic/core";
+import {ICheckable} from "../../protocols.js";
+import {issue} from "../issue.js";
 
 function check(self, obj){
   try {

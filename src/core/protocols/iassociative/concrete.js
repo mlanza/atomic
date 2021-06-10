@@ -1,9 +1,9 @@
-import {IAssociative} from "./instance";
-import {overload, slice, branch, identity} from "../../core";
-import {ISeq} from "../iseq";
-import {ICoerceable} from "../icoerceable/instance";
-import {ILookup} from "../ilookup";
-import {reduce} from "../ireduce";
+import {IAssociative} from "./instance.js";
+import {overload, slice, branch, identity} from "../../core.js";
+import {ISeq} from "../iseq.js";
+import {ICoerceable} from "../icoerceable/instance.js";
+import {ILookup} from "../ilookup.js";
+import {reduce} from "../ireduce.js";
 
 export const contains = IAssociative.contains;
 

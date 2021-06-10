@@ -1,5 +1,5 @@
-export * from "./benchmark/construct";
-import {Benchmark} from "./benchmark/construct";
-export * from "./benchmark/concrete";
-import {behaveAsBenchmark} from "./benchmark/behave";
+export * from "./benchmark/construct.js";
+import {Benchmark} from "./benchmark/construct.js";
+export * from "./benchmark/concrete.js";
+import {behaveAsBenchmark} from "./benchmark/behave.js";
 behaveAsBenchmark(Benchmark);

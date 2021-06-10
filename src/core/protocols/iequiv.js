@@ -1,2 +1,2 @@
-export * from "./iequiv/instance";
-export * from "./iequiv/concrete";
+export * from "./iequiv/instance.js";
+export * from "./iequiv/concrete.js";

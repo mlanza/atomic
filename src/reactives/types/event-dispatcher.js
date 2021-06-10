@@ -1,4 +1,4 @@
-export * from "./event-dispatcher/construct";
-import {EventDispatcher} from "./event-dispatcher/construct";
-import {behaveAsEventDispatcher} from "./event-dispatcher/behave";
+export * from "./event-dispatcher/construct.js";
+import {EventDispatcher} from "./event-dispatcher/construct.js";
+import {behaveAsEventDispatcher} from "./event-dispatcher/behave.js";
 behaveAsEventDispatcher(EventDispatcher);

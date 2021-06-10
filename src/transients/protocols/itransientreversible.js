@@ -1,2 +1,2 @@
-export * from "./itransientreversible/instance";
-export * from "./itransientreversible/concrete";
+export * from "./itransientreversible/instance.js";
+export * from "./itransientreversible/concrete.js";

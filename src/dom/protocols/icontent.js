@@ -1,2 +1,2 @@
-export * from "./icontent/instance";
-export * from "./icontent/concrete";
+export * from "./icontent/instance.js";
+export * from "./icontent/concrete.js";

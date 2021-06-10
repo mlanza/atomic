@@ -1,15 +1,15 @@
-import {overload} from "../../core";
-import {IHierarchy} from "./instance";
-import {ISeq, first} from "../iseq";
-import {count} from "../icounted/concrete";
-import {deref} from "../ideref/concrete";
-import {path} from "../ipath/concrete";
-import {lens} from "../../types/lens/construct";
-import {cons} from "../../types/list/construct";
-import {emptyList} from "../../types/empty-list/construct";
-import {map, mapcat, remove} from "../../types/lazy-seq/concrete";
-import {concat} from "../../types/concatenated/construct";
-import {comp, juxt} from "../../types/function/concrete";
+import {overload} from "../../core.js";
+import {IHierarchy} from "./instance.js";
+import {ISeq, first} from "../iseq.js";
+import {count} from "../icounted/concrete.js";
+import {deref} from "../ideref/concrete.js";
+import {path} from "../ipath/concrete.js";
+import {lens} from "../../types/lens/construct.js";
+import {cons} from "../../types/list/construct.js";
+import {emptyList} from "../../types/empty-list/construct.js";
+import {map, mapcat, remove} from "../../types/lazy-seq/concrete.js";
+import {concat} from "../../types/concatenated/construct.js";
+import {comp, juxt} from "../../types/function/concrete.js";
 
 export function downward(f){
   return function down(self){

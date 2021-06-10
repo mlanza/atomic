@@ -1,2 +1,2 @@
-export * from "./ifn/instance";
-export * from "./ifn/concrete";
+export * from "./ifn/instance.js";
+export * from "./ifn/concrete.js";

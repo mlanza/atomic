@@ -1,6 +1,6 @@
-import {implement, does, apply, IPath, IReset, ISwap, IDeref, IDisposable, ICounted} from 'atomic/core';
-import {IPublish, ISubscribe, IDispatch} from "../../protocols";
-import {sub as _sub, unsub as _unsub} from "../../protocols/concrete";
+import {implement, does, apply, IPath, IReset, ISwap, IDeref, IDisposable, ICounted} from "atomic/core";
+import {IPublish, ISubscribe, IDispatch} from "../../protocols.js";
+import {sub as _sub, unsub as _unsub} from "../../protocols/concrete.js";
 import * as _ from "atomic/core";
 
 function path(self){
