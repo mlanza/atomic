@@ -1,2 +1,2 @@
-export * from "./icomparable/instance";
-export * from "./icomparable/concrete";
+export * from "./icomparable/instance.js";
+export * from "./icomparable/concrete.js";

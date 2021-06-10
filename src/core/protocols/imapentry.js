@@ -1,2 +1,2 @@
-export * from "./imapentry/instance";
-export * from "./imapentry/concrete";
+export * from "./imapentry/instance.js";
+export * from "./imapentry/concrete.js";

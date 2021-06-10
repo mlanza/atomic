@@ -1,5 +1,5 @@
-import {IInsertable} from "./instance";
-import {overload, identity} from "../../core";
+import {IInsertable} from "./instance.js";
+import {overload, identity} from "../../core.js";
 
 function afterN(self, ...els) {
   let ref = self;

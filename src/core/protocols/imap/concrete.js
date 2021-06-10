@@ -1,6 +1,6 @@
-import {overload, identity} from "../../core";
-import {IMap} from "./instance";
-import {IReduce} from "../ireduce";
+import {overload, identity} from "../../core.js";
+import {IMap} from "./instance.js";
+import {IReduce} from "../ireduce.js";
 
 export const keys = IMap.keys;
 export const vals = IMap.vals;

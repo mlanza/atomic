@@ -1,2 +1,2 @@
-export * from "./iseqable/instance";
-export * from "./iseqable/concrete";
+export * from "./iseqable/instance.js";
+export * from "./iseqable/concrete.js";

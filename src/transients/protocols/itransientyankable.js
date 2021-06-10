@@ -1,2 +1,2 @@
-export * from "./itransientyankable/instance";
-export * from "./itransientyankable/concrete";
+export * from "./itransientyankable/instance.js";
+export * from "./itransientyankable/concrete.js";

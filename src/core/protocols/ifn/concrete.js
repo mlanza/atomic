@@ -1,2 +1,2 @@
-import {IFn} from "./instance";
+import {IFn} from "./instance.js";
 export const invoke = IFn.invoke;

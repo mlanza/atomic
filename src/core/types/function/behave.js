@@ -1,9 +1,9 @@
-import {does, partial} from '../../core';
-import {implement} from '../protocol';
-import {apply} from './concrete';
-import {get} from "../../protocols/ilookup/concrete";
-import {INameable, IFn, IAssociative, ILookup, IAppendable, IPrependable} from '../../protocols';
-import Symbol from 'symbol';
+import {does, partial} from "../../core.js";
+import {implement} from "../protocol.js";
+import {apply} from "./concrete.js";
+import {get} from "../../protocols/ilookup/concrete.js";
+import {INameable, IFn, IAssociative, ILookup, IAppendable, IPrependable} from "../../protocols.js";
+import Symbol from "symbol";
 
 export function append(f, ...applied){
   return function(...args){

@@ -1,2 +1,2 @@
-export * from "./idivisible/instance";
-export * from "./idivisible/concrete";
+export * from "./idivisible/instance.js";
+export * from "./idivisible/concrete.js";

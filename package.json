@@ -1,7 +1,11 @@
 {
   "name": "Atomic",
   "version": "1.0.0",
+  "scripts": {
+    "build": "babel src -d lib"
+  },
   "devDependencies": {
+    "@babel/cli": "^7.14.3",
     "@babel/core": "^7.14.3",
     "@babel/plugin-proposal-partial-application": "^7.12.13",
     "@babel/plugin-proposal-pipeline-operator": "^7.12.13",

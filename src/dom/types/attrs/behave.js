@@ -1,6 +1,6 @@
-import {does, implement, cons, IEmptyableCollection, ICoerceable, INext, ISeq, ISeqable, IMap, IAssociative, ILookup, ICounted, IInclusive} from 'atomic/core';
-import * as _ from 'atomic/core';
-import {ITransientAssociative, ITransientEmptyableCollection, ITransientMap} from 'atomic/transients';
+import {does, implement, cons, IEmptyableCollection, ICoerceable, INext, ISeq, ISeqable, IMap, IAssociative, ILookup, ICounted, IInclusive} from "atomic/core";
+import * as _ from "atomic/core";
+import {ITransientAssociative, ITransientEmptyableCollection, ITransientMap} from "atomic/transients";
 
 function toArray(self){
   return ICoerceable.toArray(next2(self, 0));

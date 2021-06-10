@@ -1,13 +1,13 @@
-import {identity, does} from '../../core';
-import {implement} from '../protocol';
-import {isReduced, unreduced} from '../reduced';
-import {ICoerceable, ICollection, INext, ISeq, ICounted, ISeqable, IIndexed, IReduce, IKVReduce, ISequential, IEmptyableCollection} from '../../protocols';
-import {apply} from '../function/concrete';
-import {EmptyList, emptyList} from '../empty-list';
-import {iterable, behaveAsLazySeq} from '../lazy-seq/behave';
-import {mapa} from '../lazy-seq/concrete';
-import {LazySeq} from '../lazy-seq/construct';
-import {concatenated, concat} from './construct';
+import {identity, does} from "../../core.js";
+import {implement} from "../protocol.js";
+import {isReduced, unreduced} from "../reduced.js";
+import {ICoerceable, ICollection, INext, ISeq, ICounted, ISeqable, IIndexed, IReduce, IKVReduce, ISequential, IEmptyableCollection} from "../../protocols.js";
+import {apply} from "../function/concrete.js";
+import {EmptyList, emptyList} from "../empty-list.js";
+import {iterable, behaveAsLazySeq} from "../lazy-seq/behave.js";
+import {mapa} from "../lazy-seq/concrete.js";
+import {LazySeq} from "../lazy-seq/construct.js";
+import {concatenated, concat} from "./construct.js";
 
 function conj(self, x){
   return new self.constructor(ICollection.conj(self.colls, [x]));

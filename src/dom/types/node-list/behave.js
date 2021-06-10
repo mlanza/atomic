@@ -1,5 +1,5 @@
-import {does, maybe, cons, implement, lazySeq, comp, iterable, ILookup, IIndexed, ICounted, ISeq, INext, ISeqable, ISequential, IHierarchy, IQueryable, ILocate, IReduce, ICoerceable} from 'atomic/core';
-import {IContent} from "../../protocols";
+import {does, maybe, cons, implement, lazySeq, comp, iterable, ILookup, IIndexed, ICounted, ISeq, INext, ISeqable, ISequential, IHierarchy, IQueryable, ILocate, IReduce, ICoerceable} from "atomic/core";
+import {IContent} from "../../protocols.js";
 
 function seq2(self, idx){
   return idx < self.length ? lazySeq(function(){

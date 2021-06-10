@@ -1,2 +1,2 @@
-export * from "./ireduce/instance";
-export * from "./ireduce/concrete";
+export * from "./ireduce/instance.js";
+export * from "./ireduce/concrete.js";

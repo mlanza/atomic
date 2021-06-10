@@ -1,4 +1,4 @@
-import {overload, deref} from 'atomic/core';
+import {overload, deref} from "atomic/core";
 
 export function TimeTraveler(pos, max, history, cell){
   this.pos = pos;

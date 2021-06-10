@@ -1,2 +1,2 @@
-export * from "./ichainable/instance";
-export * from "./ichainable/concrete";
+export * from "./ichainable/instance.js";
+export * from "./ichainable/concrete.js";

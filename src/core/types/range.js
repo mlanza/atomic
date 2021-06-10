@@ -1,5 +1,5 @@
-export * from "./range/construct";
-//export * from "./range/concrete";
-import {Range} from "./range/construct";
-import {behaveAsRange} from "./range/behave";
+export * from "./range/construct.js";
+//export * from "./range/concrete.js";
+import {Range} from "./range/construct.js";
+import {behaveAsRange} from "./range/behave.js";
 behaveAsRange(Range);

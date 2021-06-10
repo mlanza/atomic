@@ -1,6 +1,6 @@
-import {implement, does, map, detect, isSome, ISeqable, INext, IEmptyableCollection, ICollection, ISeq, IAppendable} from 'atomic/core';
-import {ICheckable} from '../../protocols';
-import {or} from './construct';
+import {implement, does, map, detect, isSome, ISeqable, INext, IEmptyableCollection, ICollection, ISeq, IAppendable} from "atomic/core";
+import {ICheckable} from "../../protocols.js";
+import {or} from "./construct.js";
 
 function check(self, value){
   return detect(isSome, map(ICheckable.check(?, value), self.constraints));

@@ -1,5 +1,5 @@
-import {ILookup} from "./instance";
-import {IReduce} from "../ireduce";
+import {ILookup} from "./instance.js";
+import {IReduce} from "../ireduce.js";
 
 export function get(self, key, notFound){
   const found = ILookup.lookup(self, key)

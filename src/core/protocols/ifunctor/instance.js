@@ -1,4 +1,4 @@
-import {protocol} from "../../types/protocol";
+import {protocol} from "../../types/protocol.js";
 function fmap(self, f){
   return f(self);
 }

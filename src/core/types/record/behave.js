@@ -1,8 +1,8 @@
-import {does, constructs} from '../../core';
-import {implement} from '../protocol';
-import {reduced} from "../reduced/construct";
-import {IReduce, IKVReduce, IEquiv, ICoerceable, IDescriptive, IAssociative, ISeqable, ILookup, ICounted, IMap, ISeq, IRecord, IEmptyableCollection} from '../../protocols';
-import Symbol from 'symbol';
+import {does, constructs} from "../../core.js";
+import {implement} from "../protocol.js";
+import {reduced} from "../reduced/construct.js";
+import {IReduce, IKVReduce, IEquiv, ICoerceable, IDescriptive, IAssociative, ISeqable, ILookup, ICounted, IMap, ISeq, IRecord, IEmptyableCollection} from "../../protocols.js";
+import Symbol from "symbol";
 
 function toObject(self){
   return self.attrs;

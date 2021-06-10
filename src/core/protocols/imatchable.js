@@ -1,2 +1,2 @@
-export * from "./imatchable/instance";
-export * from "./imatchable/concrete";
+export * from "./imatchable/instance.js";
+export * from "./imatchable/concrete.js";

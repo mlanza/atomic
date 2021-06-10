@@ -1,4 +1,4 @@
-export * from "./period/construct";
-import {Period} from "./period/construct";
-import {behaveAsPeriod} from "./period/behave";
+export * from "./period/construct.js";
+import {Period} from "./period/construct.js";
+import {behaveAsPeriod} from "./period/behave.js";
 behaveAsPeriod(Period);

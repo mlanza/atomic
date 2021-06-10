@@ -1,2 +1,2 @@
-export * from "./ipath/instance";
-export * from "./ipath/concrete";
+export * from "./ipath/instance.js";
+export * from "./ipath/concrete.js";

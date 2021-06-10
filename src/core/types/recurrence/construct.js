@@ -1,11 +1,11 @@
-import {overload, constantly} from '../../core';
-import {patch} from '../../associatives';
-import {days} from '../duration/construct';
-import {sod, eod, isDate} from '../date/concrete';
-import {filter} from '../lazy-seq/concrete';
-import {steps, directed} from '../../protocols/iaddable/concrete';
-import {compare} from '../../protocols/icomparable/concrete';
-import Symbol from 'symbol';
+import {overload, constantly} from "../../core.js";
+import {patch} from "../../associatives.js";
+import {days} from "../duration/construct.js";
+import {sod, eod, isDate} from "../date/concrete.js";
+import {filter} from "../lazy-seq/concrete.js";
+import {steps, directed} from "../../protocols/iaddable/concrete.js";
+import {compare} from "../../protocols/icomparable/concrete.js";
+import Symbol from "symbol";
 
 export function Recurrence(start, end, step, direction){
   this.start = start;

@@ -1,2 +1,2 @@
-export * from "./ikvreduce/instance";
-export * from "./ikvreduce/concrete";
+export * from "./ikvreduce/instance.js";
+export * from "./ikvreduce/concrete.js";

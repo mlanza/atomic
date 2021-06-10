@@ -1,2 +1,2 @@
-import {protocol} from "../../types/protocol";
+import {protocol} from "../../types/protocol.js";
 export const IRecord = protocol({});

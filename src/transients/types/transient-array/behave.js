@@ -1,6 +1,6 @@
 import {does, overload, doto, forwardTo, implement} from "atomic/core";
 import {ICoerceable, IFunctor, ILookup, IAssociative, IFind, IMapEntry, IYankable, ISeq, INext, ISeqable, ICounted, IInclusive, IEmptyableCollection, IMap, IReduce, IKVReduce, ICloneable, ISequential, ICollection} from "atomic/core";
-import {IPersistent, ITransientMap, ITransientInsertable, ITransientEmptyableCollection, ITransientReversible, ITransientYankable, ITransientAssociative, ITransientAppendable, ITransientPrependable, ITransientCollection} from "../../protocols";
+import {IPersistent, ITransientMap, ITransientInsertable, ITransientEmptyableCollection, ITransientReversible, ITransientYankable, ITransientAssociative, ITransientAppendable, ITransientPrependable, ITransientCollection} from "../../protocols.js";
 
 function before(self, reference, inserted){
   const pos = self.arr.indexOf(reference);

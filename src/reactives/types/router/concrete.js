@@ -1,5 +1,5 @@
 import {doto, overload, specify, IMatchable} from "atomic/core";
-import {IDispatch} from '../../protocols';
+import {IDispatch} from "../../protocols.js";
 
 function handler3(pred, callback, how){
   return handler2(how(pred, ?), how(callback, ?));

@@ -1,8 +1,8 @@
-import {overload, partial} from '../../core';
-import {ISeq} from '../../protocols';
-import {period} from '../period/construct';
-import {mapa, sort, asc} from '../lazy-seq/concrete';
-import {measure} from '../number/concrete';
+import {overload, partial} from "../../core.js";
+import {ISeq} from "../../protocols.js";
+import {period} from "../period/construct.js";
+import {mapa, sort, asc} from "../lazy-seq/concrete.js";
+import {measure} from "../number/concrete.js";
 import Promise from "promise";
 
 export function Benchmark(operation, result, period, duration){

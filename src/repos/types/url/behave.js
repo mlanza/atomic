@@ -1,6 +1,6 @@
 import * as _ from "atomic/core";
 import {ITemplate} from "atomic/core";
-import {IParams} from "../../protocols";
+import {IParams} from "../../protocols.js";
 
 function params(self, obj){
   const f = _.isFunction(obj) ? obj : _.merge(?, obj);

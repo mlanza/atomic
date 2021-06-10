@@ -1,2 +1,2 @@
-import {IFind} from "./instance";
+import {IFind} from "./instance.js";
 export const find = IFind.find;

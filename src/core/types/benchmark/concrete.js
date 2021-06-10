@@ -1,7 +1,7 @@
-import {overload} from '../../core';
-import {mapa, sort, asc} from '../lazy-seq/concrete';
-import {benchmark} from './construct';
-import {ISeq, INext} from '../../protocols';
+import {overload} from "../../core.js";
+import {mapa, sort, asc} from "../lazy-seq/concrete.js";
+import {benchmark} from "./construct.js";
+import {ISeq, INext} from "../../protocols.js";
 import Promise from "promise";
 
 function race1(operations){

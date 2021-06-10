@@ -1,4 +1,4 @@
-export * from "./function/construct";
-export * from "./function/concrete";
-import {behaveAsFunction} from "./function/behave";
+export * from "./function/construct.js";
+export * from "./function/concrete.js";
+import {behaveAsFunction} from "./function/behave.js";
 behaveAsFunction(Function);

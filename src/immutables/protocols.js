@@ -1,1 +1,1 @@
-export * from "./protocols/ihash/instance";
+export * from "./protocols/ihash/instance.js";

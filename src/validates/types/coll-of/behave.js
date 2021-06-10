@@ -1,6 +1,6 @@
-import {implement, does, constantly, conj, maybe, concatenated, map, mapIndexed, compact, blot, toArray} from 'atomic/core';
-import {ICheckable, IScope} from '../../protocols';
-import {issue} from '../issue';
+import {implement, does, constantly, conj, maybe, concatenated, map, mapIndexed, compact, blot, toArray} from "atomic/core";
+import {ICheckable, IScope} from "../../protocols.js";
+import {issue} from "../issue.js";
 
 function check(self, coll){
   return maybe(coll, mapIndexed(function(idx, item){

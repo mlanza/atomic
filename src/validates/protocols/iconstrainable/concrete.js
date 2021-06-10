@@ -1,5 +1,5 @@
-import {append, isFunction, overload} from 'atomic/core';
-import {IConstrainable} from "./instance";
+import {append, isFunction, overload} from "atomic/core";
+import {IConstrainable} from "./instance.js";
 
 function constraints2(self, f){
   return IConstrainable.constraints(self, isFunction(f) ? f(IConstrainable.constraints(self)) : f);

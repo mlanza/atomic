@@ -1,2 +1,2 @@
-export * from "./imap/instance";
-export * from "./imap/concrete";
+export * from "./imap/instance.js";
+export * from "./imap/concrete.js";

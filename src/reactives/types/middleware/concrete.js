@@ -1,16 +1,16 @@
 import {apply, comp, specify, updateIn, assoc, get, getIn, deref, doto, partial, overload, noop, identity, reset, each} from "atomic/core";
-import * as mut from 'atomic/transients';
-import {middleware} from "./construct";
-import {eventDispatcher} from "../event-dispatcher/construct";
-import {messageProcessor} from "../message-processor/construct";
-import {messageHandler} from "../message-handler/construct";
-import {bus} from "../bus/construct";
-import {events} from "../events/construct";
-import {broadcast} from "../broadcast/construct";
-import {IMiddleware} from "../../protocols/imiddleware/instance";
-import {IEventProvider} from "../../protocols/ieventprovider/instance";
-import {sub} from "../../protocols/isubscribe/concrete";
-import {dispatch} from "../../protocols/idispatch/concrete";
+import * as mut from "atomic/transients";
+import {middleware} from "./construct.js";
+import {eventDispatcher} from "../event-dispatcher/construct.js";
+import {messageProcessor} from "../message-processor/construct.js";
+import {messageHandler} from "../message-handler/construct.js";
+import {bus} from "../bus/construct.js";
+import {events} from "../events/construct.js";
+import {broadcast} from "../broadcast/construct.js";
+import {IMiddleware} from "../../protocols/imiddleware/instance.js";
+import {IEventProvider} from "../../protocols/ieventprovider/instance.js";
+import {sub} from "../../protocols/isubscribe/concrete.js";
+import {dispatch} from "../../protocols/idispatch/concrete.js";
 
 export function handles(handle){
   return doto({},

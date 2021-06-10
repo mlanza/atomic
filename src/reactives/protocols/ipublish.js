@@ -1,2 +1,2 @@
-export * from "./ipublish/instance";
-export * from "./ipublish/concrete";
+export * from "./ipublish/instance.js";
+export * from "./ipublish/concrete.js";

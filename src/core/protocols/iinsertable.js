@@ -1,2 +1,2 @@
-export * from "./iinsertable/instance";
-export * from "./iinsertable/concrete";
+export * from "./iinsertable/instance.js";
+export * from "./iinsertable/concrete.js";

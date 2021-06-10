@@ -1,2 +1,2 @@
-export * from "./icollection/instance";
-export * from "./icollection/concrete";
+export * from "./icollection/instance.js";
+export * from "./icollection/concrete.js";

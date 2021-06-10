@@ -1,5 +1,5 @@
 import {overload} from "atomic/core";
-import {broadcast} from "../broadcast/construct";
+import {broadcast} from "../broadcast/construct.js";
 
 export function Cell(state, observer, validate){
   this.state = state;

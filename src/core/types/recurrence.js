@@ -1,4 +1,4 @@
-export * from "./recurrence/construct";
-import {Recurrence} from "./recurrence/construct";
-import {behaveAsRecurrence} from "./recurrence/behave";
+export * from "./recurrence/construct.js";
+import {Recurrence} from "./recurrence/construct.js";
+import {behaveAsRecurrence} from "./recurrence/behave.js";
 behaveAsRecurrence(Recurrence);

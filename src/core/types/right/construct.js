@@ -1,5 +1,5 @@
-import {overload, partial} from '../../core';
-import {thrush, pipeline} from '../../protocols/ifunctor/concrete';
+import {overload, partial} from "../../core.js";
+import {thrush, pipeline} from "../../protocols/ifunctor/concrete.js";
 
 export function Right(value){
   this.value = value;

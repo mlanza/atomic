@@ -1,7 +1,7 @@
-import {IInclusive} from "./instance";
-import {branch} from "../../core";
-import {yank} from "../iyankable/concrete";
-import {conj} from "../icollection/concrete";
+import {IInclusive} from "./instance.js";
+import {branch} from "../../core.js";
+import {yank} from "../iyankable/concrete.js";
+import {conj} from "../icollection/concrete.js";
 
 export const includes = IInclusive.includes;
 export function excludes(self, value){

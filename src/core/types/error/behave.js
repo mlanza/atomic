@@ -1,6 +1,6 @@
-import {IFunctor, IForkable} from '../../protocols';
-import {identity, does} from '../../core';
-import {implement} from '../protocol';
+import {IFunctor, IForkable} from "../../protocols.js";
+import {identity, does} from "../../core.js";
+import {implement} from "../protocol.js";
 
 function fork(self, reject, resolve){
   return reject(self);

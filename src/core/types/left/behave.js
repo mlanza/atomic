@@ -1,6 +1,6 @@
-import {implement} from '../protocol';
-import {identity, does} from '../../core';
-import {IFunctor, IForkable, IDeref} from '../../protocols';
+import {implement} from "../protocol.js";
+import {identity, does} from "../../core.js";
+import {IFunctor, IForkable, IDeref} from "../../protocols.js";
 
 const fmap = identity;
 

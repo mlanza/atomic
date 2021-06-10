@@ -1,4 +1,4 @@
-import Symbol from 'symbol';
+import Symbol from "symbol";
 
 export function Nil(){
 }

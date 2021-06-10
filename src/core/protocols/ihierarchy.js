@@ -1,2 +1,2 @@
-export * from "./ihierarchy/instance";
-export * from "./ihierarchy/concrete";
+export * from "./ihierarchy/instance.js";
+export * from "./ihierarchy/concrete.js";

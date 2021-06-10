@@ -1,1 +1,1 @@
-export * from "./protocol-lookup-error/construct";
+export * from "./protocol-lookup-error/construct.js";

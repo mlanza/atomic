@@ -1,7 +1,7 @@
 import {satisfies, fsm, state, comp, partial, overload, specify, identity, noop, IDeref} from "atomic/core";
-import {sub, unsub, subscribed} from "../../protocols/isubscribe/concrete";
-import {pub} from "../../protocols/ipublish/concrete";
-import {cell} from "../cell";
+import {sub, unsub, subscribed} from "../../protocols/isubscribe/concrete.js";
+import {pub} from "../../protocols/ipublish/concrete.js";
+import {cell} from "../cell.js";
 
 function deref(self){
   if (subscribed(self) === 0) { //force refresh of sink state

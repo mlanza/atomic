@@ -1,2 +1,2 @@
-export * from "./iqueryable/instance";
-export * from "./iqueryable/concrete";
+export * from "./iqueryable/instance.js";
+export * from "./iqueryable/concrete.js";

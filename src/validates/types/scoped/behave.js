@@ -1,6 +1,6 @@
-import {implement, cons, toArray, does} from 'atomic/core';
-import {ICheckable} from '../../protocols';
-import {issue, issues} from '../issue';
+import {implement, cons, toArray, does} from "atomic/core";
+import {ICheckable} from "../../protocols.js";
+import {issue, issues} from "../issue.js";
 
 function check(self, value){
   return issues(ICheckable.check(self.constraint, value), function(iss){

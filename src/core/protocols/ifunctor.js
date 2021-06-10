@@ -1,2 +1,2 @@
-export * from "./ifunctor/instance";
-export * from "./ifunctor/concrete";
+export * from "./ifunctor/instance.js";
+export * from "./ifunctor/concrete.js";

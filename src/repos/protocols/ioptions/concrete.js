@@ -1,5 +1,5 @@
 import * as _ from "atomic/core";
-import {IOptions} from "./instance";
+import {IOptions} from "./instance.js";
 export const options = IOptions.options;
 
 export function json(req){

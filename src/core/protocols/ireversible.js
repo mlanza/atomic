@@ -1,2 +1,2 @@
-export * from "./ireversible/instance";
-export * from "./ireversible/concrete";
+export * from "./ireversible/instance.js";
+export * from "./ireversible/concrete.js";

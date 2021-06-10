@@ -1,4 +1,4 @@
-export * from "./reg-exp/construct";
-export * from "./reg-exp/concrete";
-import {behaveAsRegExp} from "./reg-exp/behave";
+export * from "./reg-exp/construct.js";
+export * from "./reg-exp/concrete.js";
+import {behaveAsRegExp} from "./reg-exp/behave.js";
 behaveAsRegExp(RegExp);

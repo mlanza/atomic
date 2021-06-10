@@ -1,8 +1,8 @@
 import {does, overload, doto, forwardTo} from "atomic/core";
 import {implement} from "atomic/core";
-import {transientObject} from "./construct";
+import {transientObject} from "./construct.js";
 import {ICoerceable, IEquiv, IFn, IComparable, IDescriptive, IMatchable, IFunctor, ILookup, IAssociative, IFind, IMapEntry, IYankable, ISeq, INext, ISeqable, ICounted, IInclusive, IEmptyableCollection, IMap, IReduce, IKVReduce, ICloneable, ISequential, ICollection} from "atomic/core";
-import {IPersistent, ITransientYankable, ITransientAssociative, ITransientEmptyableCollection, ITransientCollection, ITransientMap} from "../../protocols";
+import {IPersistent, ITransientYankable, ITransientAssociative, ITransientEmptyableCollection, ITransientCollection, ITransientMap} from "../../protocols.js";
 
 function yank(self, entry){
   const key = IMapEntry.key(entry);

@@ -1,2 +1,2 @@
-export * from "./ihideable/instance";
-export * from "./ihideable/concrete";
+export * from "./ihideable/instance.js";
+export * from "./ihideable/concrete.js";

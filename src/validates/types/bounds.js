@@ -1,4 +1,4 @@
-export * from "./bounds/construct";
-import {Bounds} from "./bounds/construct";
-import {behaveAsBounds} from "./bounds/behave";
+export * from "./bounds/construct.js";
+import {Bounds} from "./bounds/construct.js";
+import {behaveAsBounds} from "./bounds/behave.js";
 behaveAsBounds(Bounds);

@@ -1,4 +1,4 @@
-export * from "./when/construct";
-import {When} from "./when/construct";
-import {behaveAsWhen} from "./when/behave";
+export * from "./when/construct.js";
+import {When} from "./when/construct.js";
+import {behaveAsWhen} from "./when/behave.js";
 behaveAsWhen(When);

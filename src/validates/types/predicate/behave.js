@@ -1,6 +1,6 @@
-import {implement, does, assoc, apply, indexOf} from 'atomic/core';
-import {ICheckable} from '../../protocols';
-import {issue} from '../issue';
+import {implement, does, assoc, apply, indexOf} from "atomic/core";
+import {ICheckable} from "../../protocols.js";
+import {issue} from "../issue.js";
 
 function check(self, obj){
   const pos = indexOf(self.args, null),

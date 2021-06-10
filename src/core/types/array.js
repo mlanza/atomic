@@ -1,4 +1,4 @@
-export * from "./array/construct";
-import {behaveAsArray} from "./array/behave";
-export {behaveAsArray} from "./array/behave";
+export * from "./array/construct.js";
+import {behaveAsArray} from "./array/behave.js";
+export {behaveAsArray} from "./array/behave.js";
 behaveAsArray(Array);

@@ -1,4 +1,4 @@
-export * from "./list/construct";
-import {List} from "./list/construct";
-import {behaveAsList} from "./list/behave";
+export * from "./list/construct.js";
+import {List} from "./list/construct.js";
+import {behaveAsList} from "./list/behave.js";
 behaveAsList(List);

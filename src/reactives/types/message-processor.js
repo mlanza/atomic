@@ -1,4 +1,4 @@
-export * from "./message-processor/construct";
-import {MessageProcessor} from "./message-processor/construct";
-import {behaveAsMessageProcessor} from "./message-processor/behave";
+export * from "./message-processor/construct.js";
+import {MessageProcessor} from "./message-processor/construct.js";
+import {behaveAsMessageProcessor} from "./message-processor/behave.js";
 behaveAsMessageProcessor(MessageProcessor);

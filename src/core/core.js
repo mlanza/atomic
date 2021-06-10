@@ -1,4 +1,4 @@
-import Symbol from 'symbol';
+import Symbol from "symbol";
 export const unbind = Function.call.bind(Function.bind, Function.call);
 export const slice = unbind(Array.prototype.slice);
 export const indexOf = unbind(Array.prototype.indexOf);

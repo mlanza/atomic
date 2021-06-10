@@ -1,2 +1,2 @@
-export * from "./iotherwise/instance";
-export * from "./iotherwise/concrete";
+export * from "./iotherwise/instance.js";
+export * from "./iotherwise/concrete.js";

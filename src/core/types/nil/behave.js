@@ -1,10 +1,10 @@
-import {IMergeable, IBlankable, ICompactable, IMap, IAssociative, IInclusive, IOtherwise, IForkable, ICoerceable, IEquiv, ICollection, INext, ISeq, ISeqable, IIndexed, ICounted, ILookup, IReduce, IKVReduce, IEmptyableCollection, ISequential, ICloneable} from '../../protocols';
-import {emptyList} from '../empty-list/construct';
-import {cons} from '../list/construct';
-import {identity, constantly, does, overload, noop} from '../../core';
-import {implement} from '../protocol';
-import {emptyArray} from '../array/construct';
-import {nil} from './construct';
+import {IMergeable, IBlankable, ICompactable, IMap, IAssociative, IInclusive, IOtherwise, IForkable, ICoerceable, IEquiv, ICollection, INext, ISeq, ISeqable, IIndexed, ICounted, ILookup, IReduce, IKVReduce, IEmptyableCollection, ISequential, ICloneable} from "../../protocols.js";
+import {emptyList} from "../empty-list/construct.js";
+import {cons} from "../list/construct.js";
+import {identity, constantly, does, overload, noop} from "../../core.js";
+import {implement} from "../protocol.js";
+import {emptyArray} from "../array/construct.js";
+import {nil} from "./construct.js";
 
 function assoc(self, key, value){
   const obj = {};

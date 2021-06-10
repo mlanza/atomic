@@ -1,13 +1,13 @@
-import {unbind} from "../../core";
-import {count} from "../../protocols/icounted/concrete";
-import {first} from "../../protocols/iseq/concrete";
-import {get} from "../../protocols/ilookup/concrete";
-import {max} from "../../types/number/concrete";
-import {isString} from "../../types/string/construct";
-import {lazySeq} from "../../types/lazy-seq/construct";
-import {cons} from "../../types/list/construct";
-import {emptyList} from "../../types/empty-list/construct";
-import {isRegExp} from "./construct";
+import {unbind} from "../../core.js";
+import {count} from "../../protocols/icounted/concrete.js";
+import {first} from "../../protocols/iseq/concrete.js";
+import {get} from "../../protocols/ilookup/concrete.js";
+import {max} from "../../types/number/concrete.js";
+import {isString} from "../../types/string/construct.js";
+import {lazySeq} from "../../types/lazy-seq/construct.js";
+import {cons} from "../../types/list/construct.js";
+import {emptyList} from "../../types/empty-list/construct.js";
+import {isRegExp} from "./construct.js";
 
 export const test = unbind(RegExp.prototype.test);
 

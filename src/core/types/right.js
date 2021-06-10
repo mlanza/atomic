@@ -1,4 +1,4 @@
-export * from "./right/construct";
-import {Right} from "./right/construct";
-import {behaveAsRight} from "./right/behave";
+export * from "./right/construct.js";
+import {Right} from "./right/construct.js";
+import {behaveAsRight} from "./right/behave.js";
 behaveAsRight(Right);

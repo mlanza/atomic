@@ -1,6 +1,6 @@
-import {specify, satisfies, each, parent as _parent} from 'atomic/core';
+import {specify, satisfies, each, parent as _parent} from "atomic/core";
 import {trigger} from "atomic/reactives";
-import {IMountable} from "./instance";
+import {IMountable} from "./instance.js";
 
 export const isMountable = satisfies(IMountable, ?);
 

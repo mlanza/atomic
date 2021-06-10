@@ -1,10 +1,10 @@
-import {IFn, ISeq, IMap, IReduce, IKVReduce, ILookup, IInclusive, IAssociative, IEmptyableCollection} from "../../protocols";
-import {apply, isFunction} from "../function";
-import {reducing} from "../../protocols/ireduce/concrete";
-import {overload, branch} from "../../core";
-import {satisfies} from "../protocol/concrete";
-import {empty} from "../../protocols/iemptyablecollection";
-import {emptyObject} from "./construct";
+import {IFn, ISeq, IMap, IReduce, IKVReduce, ILookup, IInclusive, IAssociative, IEmptyableCollection} from "../../protocols.js";
+import {apply, isFunction} from "../function.js";
+import {reducing} from "../../protocols/ireduce/concrete.js";
+import {overload, branch} from "../../core.js";
+import {satisfies} from "../protocol/concrete.js";
+import {empty} from "../../protocols/iemptyablecollection.js";
+import {emptyObject} from "./construct.js";
 
 const emptied = branch(satisfies(IEmptyableCollection), empty, emptyObject);
 

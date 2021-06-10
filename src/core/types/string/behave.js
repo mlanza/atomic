@@ -1,13 +1,13 @@
-import {IBlankable, ISplittable, ITemplate, IKVReduce, IAssociative, ICompactable, ICoerceable, IMatchable, IReduce, ICollection, IIndexed, ISeqable, INext, ISeq, IInclusive, IAppendable, IPrependable, ICounted, ILookup, IFn, IComparable, IEmptyableCollection} from '../../protocols';
-import {does, identity, constantly, unbind, overload} from "../../core";
-import {implement} from '../protocol';
-import {isReduced, unreduced} from '../reduced';
-import {lazySeq} from '../lazy-seq/construct';
-import {cons} from '../list/construct';
-import {iindexed} from '../array/behave';
-import {rePattern} from '../reg-exp/concrete';
-import {emptyString, isString} from "./construct";
-import {replace} from "./concrete";
+import {IBlankable, ISplittable, ITemplate, IKVReduce, IAssociative, ICompactable, ICoerceable, IMatchable, IReduce, ICollection, IIndexed, ISeqable, INext, ISeq, IInclusive, IAppendable, IPrependable, ICounted, ILookup, IFn, IComparable, IEmptyableCollection} from "../../protocols.js";
+import {does, identity, constantly, unbind, overload} from "../../core.js";
+import {implement} from "../protocol.js";
+import {isReduced, unreduced} from "../reduced.js";
+import {lazySeq} from "../lazy-seq/construct.js";
+import {cons} from "../list/construct.js";
+import {iindexed} from "../array/behave.js";
+import {rePattern} from "../reg-exp/concrete.js";
+import {emptyString, isString} from "./construct.js";
+import {replace} from "./concrete.js";
 
 function split1(str){
   return str.split("");

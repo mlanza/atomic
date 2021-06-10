@@ -1,5 +1,5 @@
 import {overload} from "atomic/core";
-import {IEvented} from "./instance";
+import {IEvented} from "./instance.js";
 
 export const on = IEvented.on;
 export const off = IEvented.off;

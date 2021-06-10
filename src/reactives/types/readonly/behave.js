@@ -1,5 +1,5 @@
-import {does, implement} from 'atomic/core';
-import {ISubscribe} from "../../protocols";
+import {does, implement} from "atomic/core";
+import {ISubscribe} from "../../protocols.js";
 
 function sub(self, observer){
   ISubscribe.sub(self.source, observer);

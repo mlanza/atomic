@@ -1,7 +1,7 @@
-import {does, constructs} from "../../core";
-import {implement} from '../protocol';
-import {ICoerceable, IReduce, IIndexed, ISeqable, ISeq, INext, IInclusive, IAppendable, IPrependable, ICounted, ILookup, IFn, ISequential, IEmptyableCollection} from '../../protocols';
-import {iterable} from '../lazy-seq/behave';
+import {does, constructs} from "../../core.js";
+import {implement} from "../protocol.js";
+import {ICoerceable, IReduce, IIndexed, ISeqable, ISeq, INext, IInclusive, IAppendable, IPrependable, ICounted, ILookup, IFn, ISequential, IEmptyableCollection} from "../../protocols.js";
+import {iterable} from "../lazy-seq/behave.js";
 
 function seq(self){
   return ISeqable.seq(self.items);

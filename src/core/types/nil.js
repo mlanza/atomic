@@ -1,4 +1,4 @@
-export * from "./nil/construct";
-import {Nil} from "./nil/construct";
-import {behaveAsNil} from "./nil/behave";
+export * from "./nil/construct.js";
+import {Nil} from "./nil/construct.js";
+import {behaveAsNil} from "./nil/behave.js";
 behaveAsNil(Nil);

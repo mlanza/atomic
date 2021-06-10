@@ -1,8 +1,8 @@
-import {IFunctor, IForkable} from '../../protocols';
-import {does, overload} from '../../core';
-import {implement} from '../protocol';
-import {okay} from './construct';
-import {isError} from '../error/construct';
+import {IFunctor, IForkable} from "../../protocols.js";
+import {does, overload} from "../../core.js";
+import {implement} from "../protocol.js";
+import {okay} from "./construct.js";
+import {isError} from "../error/construct.js";
 
 function fmap(self, f){
   try{

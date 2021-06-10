@@ -1,5 +1,5 @@
-import {implement, does, noop, transition, satisfies, swap, IStateMachine, IDisposable} from 'atomic/core';
-import {ISubscribe} from "../../protocols/isubscribe/instance";
+import {implement, does, noop, transition, satisfies, swap, IStateMachine, IDisposable} from "atomic/core";
+import {ISubscribe} from "../../protocols/isubscribe/instance.js";
 
 function sub(self, observer){
   if (subscribed(self) === 0) {

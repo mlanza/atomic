@@ -1,5 +1,5 @@
-import {overload} from "../../core";
-import WeakMap from 'weak-map';
+import {overload} from "../../core.js";
+import WeakMap from "weak-map";
 
 export function isWeakMap(self){
   return self && self.constructor === WeakMap;

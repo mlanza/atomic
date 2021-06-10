@@ -1,6 +1,6 @@
-import {implement, does, isInteger, between, count, IBounds, IInclusive} from 'atomic/core';
-import {ICheckable} from '../../protocols';
-import {issue} from '../issue';
+import {implement, does, isInteger, between, count, IBounds, IInclusive} from "atomic/core";
+import {ICheckable} from "../../protocols.js";
+import {issue} from "../issue.js";
 
 function start(self){
   return self.start;

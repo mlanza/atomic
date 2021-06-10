@@ -1,4 +1,4 @@
-export * from "./scoped/construct";
-import {Scoped} from "./scoped/construct";
-import {behaveAsScoped} from "./scoped/behave";
+export * from "./scoped/construct.js";
+import {Scoped} from "./scoped/construct.js";
+import {behaveAsScoped} from "./scoped/behave.js";
 behaveAsScoped(Scoped);

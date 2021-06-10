@@ -1,4 +1,4 @@
-import {specify, IMatchable, isRegExp, isString, test, does} from 'atomic/core';
+import {specify, IMatchable, isRegExp, isString, test, does} from "atomic/core";
 import {IEvented} from "atomic/reactives";
 
 function matches(self, pattern){

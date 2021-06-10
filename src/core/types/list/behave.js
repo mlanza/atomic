@@ -1,8 +1,8 @@
-import {does, identity} from '../../core';
-import {implement} from '../protocol';
-import {ISeq, ISeqable} from '../../protocols';
-import {behaveAsLazySeq} from '../lazy-seq/behave';
-import Symbol from 'symbol';
+import {does, identity} from "../../core.js";
+import {implement} from "../protocol.js";
+import {ISeq, ISeqable} from "../../protocols.js";
+import {behaveAsLazySeq} from "../lazy-seq/behave.js";
+import Symbol from "symbol";
 
 function first(self){
   return self.head;

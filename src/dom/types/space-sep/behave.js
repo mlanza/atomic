@@ -1,5 +1,5 @@
-import {identity, does, implement, filtera, locate, ISequential, ISeq, IDeref, ICoerceable, ICounted, ICollection, IInclusive, IYankable} from 'atomic/core';
-import {ITransientCollection, ITransientYankable} from 'atomic/transients';
+import {identity, does, implement, filtera, locate, ISequential, ISeq, IDeref, ICoerceable, ICounted, ICollection, IInclusive, IYankable} from "atomic/core";
+import {ITransientCollection, ITransientYankable} from "atomic/transients";
 
 function seq(self){
   const text = self.element.getAttribute(self.key);

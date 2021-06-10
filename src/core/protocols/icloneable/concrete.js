@@ -1,2 +1,2 @@
-import {ICloneable} from "./instance";
+import {ICloneable} from "./instance.js";
 export const clone = ICloneable.clone;

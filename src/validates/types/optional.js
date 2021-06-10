@@ -1,4 +1,4 @@
-export * from "./optional/construct";
-import {Optional} from "./optional/construct";
-import {behaveAsOptional} from "./optional/behave";
+export * from "./optional/construct.js";
+import {Optional} from "./optional/construct.js";
+import {behaveAsOptional} from "./optional/behave.js";
 behaveAsOptional(Optional);

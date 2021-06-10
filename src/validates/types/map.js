@@ -1,4 +1,4 @@
-export * from "./map/construct";
-import {Map} from "./map/construct";
-import {behaveAsMap} from "./map/behave";
+export * from "./map/construct.js";
+import {Map} from "./map/construct.js";
+import {behaveAsMap} from "./map/behave.js";
 behaveAsMap(Map);

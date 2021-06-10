@@ -1,4 +1,4 @@
-export * from "./catches/construct";
-import {Catches} from "./catches/construct";
-import {behaveAsCatches} from "./catches/behave";
+export * from "./catches/construct.js";
+import {Catches} from "./catches/construct.js";
+import {behaveAsCatches} from "./catches/behave.js";
 behaveAsCatches(Catches);

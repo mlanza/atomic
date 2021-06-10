@@ -1,4 +1,4 @@
-import {ISeqable} from "../../protocols/iseqable";
+import {ISeqable} from "../../protocols/iseqable.js";
 
 export function AssociativeSubset(obj, keys){
   this.obj = obj;

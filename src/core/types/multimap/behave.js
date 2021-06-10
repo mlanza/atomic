@@ -1,11 +1,11 @@
-import {does} from '../../core';
-import {implement} from '../protocol';
-import {ISeq, ICoerceable, IReduce, IKVReduce, ICounted, ISeqable, ICollection, ILookup, IMap, IAssociative} from '../../protocols';
-import {map} from '../lazy-seq';
-import {comp} from '../function/concrete';
-import {emptyList} from '../empty-list/construct';
-import {concatenated} from '../concatenated/construct';
-import {behaveAsRecord} from '../record/behave';
+import {does} from "../../core.js";
+import {implement} from "../protocol.js";
+import {ISeq, ICoerceable, IReduce, IKVReduce, ICounted, ISeqable, ICollection, ILookup, IMap, IAssociative} from "../../protocols.js";
+import {map} from "../lazy-seq.js";
+import {comp} from "../function/concrete.js";
+import {emptyList} from "../empty-list/construct.js";
+import {concatenated} from "../concatenated/construct.js";
+import {behaveAsRecord} from "../record/behave.js";
 
 function keys(self){
   return Object.keys(self.attrs);

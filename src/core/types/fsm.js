@@ -1,4 +1,4 @@
-export * from "./fsm/construct";
-import {FiniteStateMachine} from "./fsm/construct";
-import {behaveAsFiniteStateMachine} from "./fsm/behave";
+export * from "./fsm/construct.js";
+import {FiniteStateMachine} from "./fsm/construct.js";
+import {behaveAsFiniteStateMachine} from "./fsm/behave.js";
 behaveAsFiniteStateMachine(FiniteStateMachine);

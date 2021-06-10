@@ -1,8 +1,8 @@
-import {implement, get, blank, does, IAppendable} from 'atomic/core';
-import {ICheckable, IScope} from '../../protocols';
-import {issue, issues} from '../issue';
-import {and} from '../and/construct';
-import {optional} from './construct';
+import {implement, get, blank, does, IAppendable} from "atomic/core";
+import {ICheckable, IScope} from "../../protocols.js";
+import {issue, issues} from "../issue.js";
+import {and} from "../and/construct.js";
+import {optional} from "./construct.js";
 
 function check(self, obj){
   const found = get(obj, self.key);

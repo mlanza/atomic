@@ -1,2 +1,2 @@
-export * from "./ihash/instance";
-export * from "./ihash/concrete";
+export * from "./ihash/instance.js";
+export * from "./ihash/concrete.js";

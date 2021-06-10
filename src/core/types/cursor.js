@@ -1,4 +1,4 @@
-export * from "./cursor/construct";
-import {Cursor} from "./cursor/construct";
-import {behaveAsCursor} from "./cursor/behave";
+export * from "./cursor/construct.js";
+import {Cursor} from "./cursor/construct.js";
+import {behaveAsCursor} from "./cursor/behave.js";
 behaveAsCursor(Cursor);

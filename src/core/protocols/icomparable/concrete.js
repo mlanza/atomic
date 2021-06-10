@@ -1,6 +1,6 @@
-import {IComparable} from "./instance";
-import {type} from "../../core";
-import {isNil} from "../../types/nil/construct";
+import {IComparable} from "./instance.js";
+import {type} from "../../core.js";
+import {isNil} from "../../types/nil/construct.js";
 
 export function compare(x, y){
   if (x === y) {

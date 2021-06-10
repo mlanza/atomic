@@ -1,2 +1,2 @@
-export * from "./itemplate/instance";
-export * from "./itemplate/concrete";
+export * from "./itemplate/instance.js";
+export * from "./itemplate/concrete.js";

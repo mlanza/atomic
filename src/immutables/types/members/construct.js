@@ -1,5 +1,5 @@
-import {ISequential, cons, satisfies} from 'atomic/core';
-import {distinct} from "../set/concrete";
+import {ISequential, cons, satisfies} from "atomic/core";
+import {distinct} from "../set/concrete.js";
 
 export function Members(items){
   this.items = items;

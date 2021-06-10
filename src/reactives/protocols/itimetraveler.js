@@ -1,2 +1,2 @@
-export * from "./itimetraveler/instance";
-export * from "./itimetraveler/concrete";
+export * from "./itimetraveler/instance.js";
+export * from "./itimetraveler/concrete.js";

@@ -20,13 +20,13 @@ import {
   IMergeable,
   IInclusive,
   ICloneable
-} from 'atomic/core';
+} from "atomic/core";
 import {
   ITransient,
   transientSet
-} from 'atomic/transients';
+} from "atomic/transients";
 
-import {emptySet} from "./construct";
+import {emptySet} from "./construct.js";
 
 function transient(self){
   return transientSet(toArray(self));

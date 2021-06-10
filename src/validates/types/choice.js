@@ -1,4 +1,4 @@
-export * from "./choice/construct";
-import {Choice} from "./choice/construct";
-import {behaveAsChoice} from "./choice/behave";
+export * from "./choice/construct.js";
+import {Choice} from "./choice/construct.js";
+import {behaveAsChoice} from "./choice/behave.js";
 behaveAsChoice(Choice);

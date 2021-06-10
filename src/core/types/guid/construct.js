@@ -1,6 +1,6 @@
-import {overload} from '../../core';
-import Symbol from 'symbol';
-import {rand} from '../number/concrete';
+import {overload} from "../../core.js";
+import Symbol from "symbol";
+import {rand} from "../number/concrete.js";
 
 export function GUID(id){
   this.id = id;

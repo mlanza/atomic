@@ -1,23 +1,23 @@
-import {ICompactable, IEquiv, IMap, ICoerceable, IAssociative, ILookup, IInclusive, IIndexed, ICollection, IComparable, ICounted, ISeq, ISeqable, INext, IHierarchy, IReduce, ISequential} from '../../protocols';
-import {trampoline, identity, constantly, overload, complement} from '../../core';
-import {EmptyList, emptyList} from '../empty-list/construct';
-import {emptyArray} from '../array/construct';
-import {randInt, isEven} from '../number/concrete';
-import {reduced} from '../reduced/construct';
-import {not} from '../boolean';
-import {isNil, isSome} from '../nil';
-import {cons} from '../list/construct';
-import {range} from '../range/construct';
-import {str} from '../string/concrete';
-import {juxt, comp, apply, partial} from '../function/concrete'; //MOD
-import {get, getIn} from "../../protocols/ilookup/concrete";
-import {lazySeq} from '../lazy-seq/construct';
-import {concat, concatenated} from "../concatenated/construct";
-import {satisfies} from '../protocol/concrete';
-import Symbol from 'symbol';
-import {update, assocIn} from "../../protocols/iassociative/concrete";
-import {first} from "../../protocols/iseq/concrete";
-import {inc} from '../../protocols/iaddable/concrete';
+import {ICompactable, IEquiv, IMap, ICoerceable, IAssociative, ILookup, IInclusive, IIndexed, ICollection, IComparable, ICounted, ISeq, ISeqable, INext, IHierarchy, IReduce, ISequential} from "../../protocols.js";
+import {trampoline, identity, constantly, overload, complement} from "../../core.js";
+import {EmptyList, emptyList} from "../empty-list/construct.js";
+import {emptyArray} from "../array/construct.js";
+import {randInt, isEven} from "../number/concrete.js";
+import {reduced} from "../reduced/construct.js";
+import {not} from "../boolean.js";
+import {isNil, isSome} from "../nil.js";
+import {cons} from "../list/construct.js";
+import {range} from "../range/construct.js";
+import {str} from "../string/concrete.js";
+import {juxt, comp, apply, partial} from "../function/concrete.js"; //MOD
+import {get, getIn} from "../../protocols/ilookup/concrete.js";
+import {lazySeq} from "../lazy-seq/construct.js";
+import {concat, concatenated} from "../concatenated/construct.js";
+import {satisfies} from "../protocol/concrete.js";
+import Symbol from "symbol";
+import {update, assocIn} from "../../protocols/iassociative/concrete.js";
+import {first} from "../../protocols/iseq/concrete.js";
+import {inc} from "../../protocols/iaddable/concrete.js";
 
 function map2(f, xs){
   return ISeqable.seq(xs) ? lazySeq(function(){

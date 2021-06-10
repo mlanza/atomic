@@ -1,7 +1,7 @@
-import {implement} from '../protocol';
-import {does} from '../../core';
-import {fluent} from './construct';
-import {IFunctor, IDeref} from '../../protocols';
+import {implement} from "../protocol.js";
+import {does} from "../../core.js";
+import {fluent} from "./construct.js";
+import {IFunctor, IDeref} from "../../protocols.js";
 
 function fmap(self, f){
   return fluent(f(self.value) || self.value);

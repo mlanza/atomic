@@ -1,5 +1,5 @@
-import {protocol} from "../../types/protocol";
-import {IMultipliable} from "../imultipliable";
+import {protocol} from "../../types/protocol.js";
+import {IMultipliable} from "../imultipliable.js";
 function inverse(self){
   return IMultipliable.mult(self, -1);
 }

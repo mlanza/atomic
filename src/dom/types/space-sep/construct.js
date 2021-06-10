@@ -1,4 +1,4 @@
-import {overload} from 'atomic/core';
+import {overload} from "atomic/core";
 
 export function SpaceSeparated(element, key){
   this.element = element;

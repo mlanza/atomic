@@ -1,5 +1,5 @@
 import {seq, first, rest, cons, conj, includes, lazySeq, emptyList} from "atomic/core";
-import {set} from "./construct";
+import {set} from "./construct.js";
 
 function distinct2(coll, seen){
   return seq(coll) ? lazySeq(function(){

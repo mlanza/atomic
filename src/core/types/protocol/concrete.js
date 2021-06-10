@@ -1,5 +1,5 @@
-import {unbind} from '../../core';
-import {Protocol} from "./construct";
+import {unbind} from "../../core.js";
+import {Protocol} from "./construct.js";
 
 export const extend    = unbind(Protocol.prototype.extend);
 export const satisfies = unbind(Protocol.prototype.satisfies);

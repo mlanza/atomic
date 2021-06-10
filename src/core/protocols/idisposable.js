@@ -1,2 +1,2 @@
-export * from "./idisposable/instance";
-export * from "./idisposable/concrete";
+export * from "./idisposable/instance.js";
+export * from "./idisposable/concrete.js";

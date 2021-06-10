@@ -1,2 +1,2 @@
-export * from "./ivalue/instance";
-export * from "./ivalue/concrete";
+export * from "./ivalue/instance.js";
+export * from "./ivalue/concrete.js";

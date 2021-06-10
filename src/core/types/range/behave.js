@@ -1,14 +1,14 @@
-import {does, kin} from '../../core';
-import {implement} from '../protocol';
-import {ICoerceable, IInverse, IAddable, ISequential, ICollection, IComparable, INext, IEquiv, IReduce, IKVReduce, ISeqable, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, ISeq, IInclusive, IIndexed} from '../../protocols';
-import {unreduced, isReduced} from '../reduced';
-import {drop} from '../lazy-seq';
-import {iterable} from '../lazy-seq/behave';
-import {emptyable} from "../record/behave";
-import {behaveAsEmptyList} from "../empty-list/behave";
-import {Range} from "./construct";
-import {directed} from '../../protocols/iaddable/concrete';
-import {alike} from '../../protocols/iequiv/concrete';
+import {does, kin} from "../../core.js";
+import {implement} from "../protocol.js";
+import {ICoerceable, IInverse, IAddable, ISequential, ICollection, IComparable, INext, IEquiv, IReduce, IKVReduce, ISeqable, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, ISeq, IInclusive, IIndexed} from "../../protocols.js";
+import {unreduced, isReduced} from "../reduced.js";
+import {drop} from "../lazy-seq.js";
+import {iterable} from "../lazy-seq/behave.js";
+import {emptyable} from "../record/behave.js";
+import {behaveAsEmptyList} from "../empty-list/behave.js";
+import {Range} from "./construct.js";
+import {directed} from "../../protocols/iaddable/concrete.js";
+import {alike} from "../../protocols/iequiv/concrete.js";
 
 function seq(self){
   return IEquiv.equiv(self.start, self.end) || (self.step == null && self.direction == null && self.start == null && self.end == null) ? null : self;

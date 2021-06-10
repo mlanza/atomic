@@ -1,1 +1,1 @@
-export * from "./transients/index";
+export * from "./transients/index.js";

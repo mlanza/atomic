@@ -1,2 +1,2 @@
-export * from "./ieventprovider/instance";
-export * from "./ieventprovider/concrete";
+export * from "./ieventprovider/instance.js";
+export * from "./ieventprovider/concrete.js";

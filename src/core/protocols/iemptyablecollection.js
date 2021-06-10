@@ -1,2 +1,2 @@
-export * from "./iemptyablecollection/instance";
-export * from "./iemptyablecollection/concrete";
+export * from "./iemptyablecollection/instance.js";
+export * from "./iemptyablecollection/concrete.js";

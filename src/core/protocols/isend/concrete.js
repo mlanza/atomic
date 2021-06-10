@@ -1,3 +1,3 @@
-import {ISend} from "./instance";
-import {overload} from "../../core";
+import {ISend} from "./instance.js";
+import {overload} from "../../core.js";
 export const send = ISend.send;

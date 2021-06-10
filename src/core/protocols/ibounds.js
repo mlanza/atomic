@@ -1,2 +1,2 @@
-export * from "./ibounds/instance";
-export * from "./ibounds/concrete";
+export * from "./ibounds/instance.js";
+export * from "./ibounds/concrete.js";

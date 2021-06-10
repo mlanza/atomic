@@ -1,5 +1,5 @@
 import {overload, filter} from "atomic/core";
-import {IContent} from "./instance";
+import {IContent} from "./instance.js";
 
 function contents2(self, type){
   return filter(function(node){

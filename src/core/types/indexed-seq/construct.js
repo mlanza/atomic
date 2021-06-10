@@ -1,7 +1,7 @@
-import {overload} from '../../core';
-import {emptyList} from "../empty-list";
-import Symbol from 'symbol';
-import {ICounted} from '../../protocols';
+import {overload} from "../../core.js";
+import {emptyList} from "../empty-list.js";
+import Symbol from "symbol";
+import {ICounted} from "../../protocols.js";
 
 export function IndexedSeq(seq, start){
   this.seq = seq;

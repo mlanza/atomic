@@ -1,2 +1,2 @@
-import {INameable} from "./instance";
+import {INameable} from "./instance.js";
 export const name = INameable.name;

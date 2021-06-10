@@ -1,12 +1,12 @@
-import {does, overload} from '../../core';
-import {implement} from '../protocol';
-import {emptyable} from "../record/behave";
-import {duration} from "../duration/construct";
-import {min, max} from "../number/concrete";
-import {recurrence} from "../recurrence/construct";
-import {period} from "./construct";
-import {map, take} from "../lazy-seq/concrete";
-import {ISplittable, ICoerceable, IAddable, IBounds, IComparable, IEquiv, IInclusive, IDivisible, IMergeable} from '../../protocols';
+import {does, overload} from "../../core.js";
+import {implement} from "../protocol.js";
+import {emptyable} from "../record/behave.js";
+import {duration} from "../duration/construct.js";
+import {min, max} from "../number/concrete.js";
+import {recurrence} from "../recurrence/construct.js";
+import {period} from "./construct.js";
+import {map, take} from "../lazy-seq/concrete.js";
+import {ISplittable, ICoerceable, IAddable, IBounds, IComparable, IEquiv, IInclusive, IDivisible, IMergeable} from "../../protocols.js";
 
 function split2(self, step){
   return map(period(?, step), recurrence(IBounds.start(self), IBounds.end(self), step));

@@ -1,4 +1,4 @@
-export * from "./broadcast/construct";
-import {Broadcast} from "./broadcast/construct";
-import {behaveAsBroadcast} from "./broadcast/behave";
+export * from "./broadcast/construct.js";
+import {Broadcast} from "./broadcast/construct.js";
+import {behaveAsBroadcast} from "./broadcast/behave.js";
 behaveAsBroadcast(Broadcast);

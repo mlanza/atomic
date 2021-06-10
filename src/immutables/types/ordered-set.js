@@ -1,4 +1,4 @@
-export * from "./ordered-set/construct";
-import {OrderedSet} from "./ordered-set/construct";
-import {behaveAsSet} from "./set/behave";
+export * from "./ordered-set/construct.js";
+import {OrderedSet} from "./ordered-set/construct.js";
+import {behaveAsSet} from "./set/behave.js";
 behaveAsSet(OrderedSet);

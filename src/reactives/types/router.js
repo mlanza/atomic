@@ -1,5 +1,5 @@
-export * from "./router/construct";
-export * from "./router/concrete";
-import {Router} from "./router/construct";
-import {behaveAsRouter} from "./router/behave";
+export * from "./router/construct.js";
+export * from "./router/concrete.js";
+import {Router} from "./router/construct.js";
+import {behaveAsRouter} from "./router/behave.js";
 behaveAsRouter(Router);

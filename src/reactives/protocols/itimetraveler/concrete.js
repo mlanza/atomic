@@ -1,4 +1,4 @@
-import {ITimeTraveler} from "./instance";
+import {ITimeTraveler} from "./instance.js";
 export const undo = ITimeTraveler.undo;
 export const undoable = ITimeTraveler.undoable;
 export const redo = ITimeTraveler.redo;

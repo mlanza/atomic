@@ -1,11 +1,11 @@
-import {overload, identity} from "../../core";
-import {reduce, reducing} from "../ireduce/concrete";
-import {conj} from "../icollection/concrete";
-import {includes} from "../iinclusive/concrete";
-import {empty} from "../iemptyablecollection/concrete"
-import {concat} from "../../types/concatenated/construct";
-import {every} from "../../types/lazy-seq/concrete";
-import {ISet} from "./instance";
+import {overload, identity} from "../../core.js";
+import {reduce, reducing} from "../ireduce/concrete.js";
+import {conj} from "../icollection/concrete.js";
+import {includes} from "../iinclusive/concrete.js";
+import {empty} from "../iemptyablecollection/concrete.js"
+import {concat} from "../../types/concatenated/construct.js";
+import {every} from "../../types/lazy-seq/concrete.js";
+import {ISet} from "./instance.js";
 
 export const disj = overload(null, identity, ISet.disj, reducing(ISet.disj));
 

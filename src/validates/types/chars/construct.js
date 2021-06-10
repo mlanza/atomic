@@ -1,4 +1,4 @@
-import {identity, overload, count} from 'atomic/core';
+import {identity, overload, count} from "atomic/core";
 
 export function Characters(start, end, f){
   this.start = start;

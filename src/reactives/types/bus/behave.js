@@ -1,5 +1,5 @@
-import {does, identity, implement, forwardTo, ILookup, ISwap, IReset, IDeref, IDisposable} from 'atomic/core';
-import {IMiddleware, ISubscribe, IDispatch} from "../../protocols"
+import {does, identity, implement, forwardTo, ILookup, ISwap, IReset, IDeref, IDisposable} from "atomic/core";
+import {IMiddleware, ISubscribe, IDispatch} from "../../protocols.js"
 
 function dispatch(self, command){
   IMiddleware.handle(self.handler, command);

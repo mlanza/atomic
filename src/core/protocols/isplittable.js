@@ -1,2 +1,2 @@
-export * from "./isplittable/instance";
-export * from "./isplittable/concrete";
+export * from "./isplittable/instance.js";
+export * from "./isplittable/concrete.js";

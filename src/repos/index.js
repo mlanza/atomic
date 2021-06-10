@@ -1,9 +1,9 @@
 import Promise from "promise";
 import * as _ from "atomic/core";
-export * from "./types";
-export * from "./protocols";
-export * from "./protocols/concrete";
-import {IParams} from "./protocols";
+export * from "./types.js";
+export * from "./protocols.js";
+export * from "./protocols/concrete.js";
+import {IParams} from "./protocols.js";
 
 export function text(req){
   return _.fmap(req, function(resp){

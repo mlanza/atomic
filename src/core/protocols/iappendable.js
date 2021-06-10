@@ -1,2 +1,2 @@
-export * from "./iappendable/instance";
-export * from "./iappendable/concrete";
+export * from "./iappendable/instance.js";
+export * from "./iappendable/concrete.js";

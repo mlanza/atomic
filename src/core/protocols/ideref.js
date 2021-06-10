@@ -1,2 +1,2 @@
-export * from "./ideref/instance";
-export * from "./ideref/concrete";
+export * from "./ideref/instance.js";
+export * from "./ideref/concrete.js";

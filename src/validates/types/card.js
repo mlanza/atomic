@@ -1,4 +1,4 @@
-export * from "./card/construct";
-import {Cardinality} from "./card/construct";
-import {behaveAsCardinality} from "./card/behave";
+export * from "./card/construct.js";
+import {Cardinality} from "./card/construct.js";
+import {behaveAsCardinality} from "./card/behave.js";
 behaveAsCardinality(Cardinality);
