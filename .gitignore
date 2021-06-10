@@ -3,6 +3,7 @@ node_modules/*
 public/assets/atomic/*
 public/assets/tests.js
 public/data/*
+lib
 _src
 .DS_Store
 package-lock.json
