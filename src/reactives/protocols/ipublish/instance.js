@@ -1,4 +1,6 @@
 import {protocol} from "atomic/core";
 export const IPublish = protocol({
-  pub: null
+  pub: null,
+  err: null,
+  complete: null
 });

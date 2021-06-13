@@ -41,6 +41,7 @@ export default {
     "qunit",
     "jquery",
     "dom",
+    "rxjs",
     "atomic",
     "atomic/core",
     "atomic/immutables",

@@ -1,11 +1,7 @@
-import {does, implement, satisfies, IReset, ISwap, IDeref, IDisposable} from "atomic/core";
+import {does, partial, implement, satisfies, IReset, ISwap, IDeref, IDisposable, ICloneable} from 'atomic/core';
 import {IPublish, ISubscribe} from "../../protocols.js";
 
-function deref(self){
-  return self.state;
-}
-
-function reset(self, value){
+function pub(self, value){
   if (value !== self.state){
     if (!self.validate || self.validate(value)) {
       self.state = value;
@@ -16,13 +12,17 @@ function reset(self, value){
   }
 }
 
-function swap(self, f){
-  reset(self, f(self.state));
+function err(self, observer){
+  IPublish.err(self.observer, observer);
+}
+
+function complete(self){
+  IPublish.complete(self.observer);
 }
 
 function sub(self, observer){
   IPublish.pub(observer, self.state); //to prime subscriber state
-  ISubscribe.sub(self.observer, observer);
+  return ISubscribe.sub(self.observer, observer); //return unsubscribe fn
 }
 
 function unsub(self, observer){
@@ -33,6 +33,14 @@ function subscribed(self){
   return ISubscribe.subscribed(self.observer);
 }
 
+function deref(self){
+  return self.state;
+}
+
+function swap(self, f){
+  pub(self, f(self.state));
+}
+
 function dispose(self){
   satisfies(IDisposable, self.observer) && IDisposable.dispose(self.observer);
 }
@@ -41,6 +49,6 @@ export const behaveAsCell = does(
   implement(IDisposable, {dispose}),
   implement(IDeref, {deref}),
   implement(ISubscribe, {sub, unsub, subscribed}),
-  implement(IPublish, {pub: reset}),
-  implement(IReset, {reset}),
+  implement(IPublish, {pub, err, complete}),
+  implement(IReset, {reset: pub}),
   implement(ISwap, {swap}));
