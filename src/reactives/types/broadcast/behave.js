@@ -1,8 +1,11 @@
-import {implement, does, each} from "atomic/core";
+import {implement, does, each, clone, ICounted} from "atomic/core";
 import {IPublish, ISubscribe} from "../../protocols.js";
 
 function sub(self, observer){
   self.observers.push(observer);
+  return function(){
+    unsub(self, observer);
+  }
 }
 
 function unsub(self, observer){
@@ -12,15 +15,28 @@ function unsub(self, observer){
   }
 }
 
-function subscribed(self){
-  return self.observers.length;
+function count(self){
+  return ICounted.count(self.observers);
 }
 
 function pub(self, message){
-  //copying prevents midstream changes to observers
-  each(IPublish.pub(?, message), self.observers.slice());
+  notify(self, IPublish.pub(?, message));
+}
+
+function err(self, error){
+  notify(self, IPublish.err(?, error));
+}
+
+function complete(self){
+  notify(self, IPublish.complete);
+}
+
+//copying prevents midstream changes to observers
+function notify(self, f){
+  each(f, clone(self.observers));
 }
 
 export const behaveAsBroadcast = does(
-  implement(ISubscribe, {sub, unsub, subscribed}),
-  implement(IPublish, {pub}));
+  implement(ICounted, {count}),
+  implement(ISubscribe, {sub, unsub, subscribed: count}),
+  implement(IPublish, {pub, err, complete}));
