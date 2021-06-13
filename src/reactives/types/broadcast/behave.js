@@ -6,8 +6,10 @@ function sub(self, observer){
 }
 
 function unsub(self, observer){
-  const pos = self.observers.indexOf(observer);
-  pos === -1 || self.observers.splice(pos, 1);
+  const pos = self.observers.lastIndexOf(observer);
+  if (pos > -1) {
+    self.observers.splice(pos, 1);
+  }
 }
 
 function subscribed(self){
@@ -15,7 +17,8 @@ function subscribed(self){
 }
 
 function pub(self, message){
-  each(IPublish.pub(?, message), self.observers);
+  //copying prevents midstream changes to observers
+  each(IPublish.pub(?, message), self.observers.slice());
 }
 
 export const behaveAsBroadcast = does(

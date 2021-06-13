@@ -15,6 +15,15 @@ export function tee(f){
   }
 }
 
+export function tap(other){
+  return function(xf){
+    return overload(xf, xf, function(memo, value){
+      xf(other, value);
+      return xf(memo, value);
+    });
+  }
+}
+
 export function map(f){
   return function(xf){
     return overload(xf, xf, function(memo, value){
@@ -89,9 +98,18 @@ export const dedupe = overload(dedupe0, dedupe1, dedupe2);
 
 export function take(n){
   return function(xf){
-    let taking = n;
+    let taking = n < 0 ? 0 : n;
     return overload(xf, xf, function(memo, value){
-      return taking-- > 0 ? xf(memo, value) : reduced(memo);
+      switch(taking){
+        case 0:
+          return reduced(memo)
+        case 1:
+          taking--;
+          return reduced(xf(memo, value));
+        default:
+          taking--;
+          return xf(memo, value);
+      }
     });
   }
 }

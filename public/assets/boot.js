@@ -10,9 +10,6 @@ requirejs.config({
     },
     'jquery': {
       exports: 'jQuery'
-    },
-    'qunit': {
-      exports: 'QUnit'
     }
   },
   paths: {
@@ -61,22 +58,22 @@ define('dom', [], function(){
   }
 });
 (function(mods){
-  define('atomic/core', ["/assets/" + mods[0] + ".js", 'polyfill'], function(core){
+  define('atomic/core', ["../../assets/" + mods[0] + ".js", 'polyfill'], function(core){
     return Object.assign(core.placeholder, core.impart(core, core.partly));
   });
   for (var i = 1; i < mods.length; i++) {
     var mod = mods[i];
-    define(mod, ["atomic/core", "/assets/" + mod + ".js"], function(core, tgt){
+    define(mod, ["atomic/core", "../../assets/" + mod + ".js"], function(core, tgt){
       return core.impart(tgt, core.partly);
     });
   }
   define('atomic', mods, function(core, dom, immutables, reactives, repos, transducers, transients, validates, draw){
     return { //exposed for in-browser repl use only.
-      core: core,
+      _: core,
+      $: reactives,
       dom: dom,
-      immutables: immutables,
-      reactives: reactives,
-      transducers: transducers,
+      imm: immutables,
+      t: transducers,
       transients: transients,
       validates: validates,
       draw: draw,
@@ -84,3 +81,9 @@ define('dom', [], function(){
     };
   });
 })(["atomic/core", "atomic/dom", "atomic/immutables", "atomic/reactives", "atomic/repos", "atomic/transducers", "atomic/transients", "atomic/validates", "atomic/draw"]);
+var cmd = function(target){
+  require(['atomic'], function(atomic){
+    Object.assign(target || window, atomic);
+    console.log("Commands loaded.");
+  });
+}
