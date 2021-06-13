@@ -1,4 +1,4 @@
-import {implement, does, each, once, ISwap, IReset, IDeref} from "atomic/core";
+import {implement, does, each, once, clone, ISwap, IReset, IDeref} from "atomic/core";
 import {IPublish, ISubscribe} from "../../protocols.js";
 
 function sub(self, observer){
@@ -17,16 +17,14 @@ function sub(self, observer){
 
 function pub(self, message){
   if (!self.terminated){
-    //copying prevents midstream changes to observers
-    each(IPublish.pub(?, message), self.observers.slice());
+    notify(self, IPublish.pub(?, message));
   }
 }
 
 function err(self, error){
   if (!self.terminated){
     self.terminated = {how: "error", error};
-    //copying prevents midstream changes to observers
-    each(IPublish.err(?, error), self.observers.slice());
+    notify(self, IPublish.err(?, error));
     self.observers = null; //release references
   }
 }
@@ -34,10 +32,14 @@ function err(self, error){
 function complete(self){
   if (!self.terminated){
     self.terminated = {how: "complete"};
-    //copying prevents midstream changes to observers
-    each(IPublish.complete, self.observers.slice());
+    notify(self, IPublish.complete);
     self.observers = null; //release references
   }
+}
+
+//copying prevents midstream changes to observers
+function notify(self, f){
+  each(f, clone(self.observers));
 }
 
 export const behaveAsSubject = does(
