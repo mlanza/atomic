@@ -49,64 +49,10 @@ import {
   audienceDetector,
   subject
 } from "./types.js";
-import * as rxjs from "rxjs";
 import * as t from "atomic/transducers";
 export * from "./types.js";
 export * from "./protocols.js";
 export * from "./protocols/concrete.js";
-
-(function(){
-
-  function sub(self, observer){
-    return self.subscribe(observer);
-  }
-
-  function pub(self, message){
-    self.next(message);
-  }
-
-  function err(self, error){
-    self.err(error);
-  }
-
-  function complete(self){
-    self.complete();
-  }
-
-  function deref(self){
-    return self.value;
-  }
-
-  function swap(self, f){
-    pub(self, f(deref(self)));
-  }
-
-  const behaveAsRxObservable = does(
-    implement(ISubscribe, {sub, err, complete}));
-
-  const behaveAsRxSubject = does(
-    behaveAsRxObservable,
-    implement(IPublish, {pub}));
-
-  const behaveAsRxBehaviorSubject = does(
-    behaveAsRxSubject,
-    implement(ISwap, {swap}),
-    implement(IReset, {reset: pub}),
-    implement(IDeref, {deref}));
-
-  //permit very basic rxjs integration for experimentation
-  if (rxjs.Observable) {
-    behaveAsRxObservable(rxjs.Observable);
-  }
-
-  if (rxjs.Subject){
-    behaveAsRxSubject(rxjs.Subject);
-  }
-  if (rxjs.BehaviorSubject) {
-    behaveAsRxBehaviorSubject(rxjs.BehaviorSubject);
-  }
-
-})();
 
 //TODO that promises could potentially return out of order is a problem!
 export function then2(f, source){

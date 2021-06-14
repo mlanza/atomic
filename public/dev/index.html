@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>Entities (Development)</title>
+  <title>Reactives (Development)</title>
   <meta name="description" content="Entities">
   <meta name="author" content="Mario T. Lanza">
   <script src="../assets/require.js"></script>
@@ -14,7 +14,7 @@
     /*require(["atomic", "../assets/ents"], function(atomic, ents){ //repl use
       Object.assign(window, atomic, {ents: ents});
     });*/
-    require(['atomic/core', 'atomic/dom', 'atomic/reactives', 'atomic/transducers', 'rxjs'], function(_, dom, $, t, rxjs){
+    require(['atomic/core', 'atomic/dom', 'atomic/reactives', 'atomic/transducers'], function(_, dom, $, t){
       var nums = $.Observable.from(_.range(5));
       var oth = $.pipe(nums, t.detect(_.gt(_, 2)));
       $.sub(oth, function(x){
