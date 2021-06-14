@@ -3,6 +3,7 @@ export const unbind = Function.call.bind(Function.bind, Function.call);
 export const slice = unbind(Array.prototype.slice);
 export const indexOf = unbind(Array.prototype.indexOf);
 export const log = console.log.bind(console);
+export const warn = console.warn.bind(console);
 
 export function noop(){
 }
@@ -260,6 +261,9 @@ export function forwardWith(g){
   }
 }
 
-export function deprecated(){
-  console.warn.apply(null, arguments);
+export function called(fn, message){
+  return function(){
+    warn(message, fn, arguments);
+    return fn.apply(this, arguments);
+  }
 }
