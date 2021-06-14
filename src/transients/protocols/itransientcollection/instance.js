@@ -1,4 +1,5 @@
 import {protocol} from "atomic/core";
 export const ITransientCollection = protocol({
-  conj: null
+  conj: null,
+  unconj: null
 });

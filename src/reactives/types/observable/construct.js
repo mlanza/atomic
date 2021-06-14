@@ -1,8 +1,8 @@
 import {pub, err, complete, sub} from "../../protocols/concrete.js";
-import {IReduce, comp, apply, mapa, each, noop, identity, overload, unreduced, isReduced} from "atomic/core";
-import {emptiable} from "../emptiable/construct.js";
+import {IReduce, comp, each, identity, overload, unreduced, isReduced} from "atomic/core";
 import {subject} from "../subject/construct.js";
 import {observe} from "../observer/construct.js";
+import {ISubscribe} from "../../protocols/isubscribe.js";
 
 export function Observable(subscribed){
   this.subscribed = subscribed;
@@ -55,19 +55,6 @@ export function fromEvent(el, key) {
   });
 }
 
-function mult(obs){
-  let unsub = noop;
-  const subj = subject(emptiable(function(emptied){
-    if (emptied){
-      unsub();
-    } else {
-      unsub = sub(obs, subj);
-    }
-  }));
-  return subj;
-}
-
-Observable.mult = mult;
 Observable.fromEvent = fromEvent;
 Observable.fromPromise = fromPromise;
 Observable.from = from;

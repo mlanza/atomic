@@ -18,12 +18,8 @@
       Object.assign(window, atomic, {ents: ents});
     });*/
     require(['atomic/core', 'atomic/dom', 'atomic/reactives', 'atomic/transducers', 'rxjs'], function(_, dom, $, t, rxjs){
-
       var nums = $.Observable.from(_.range(5));
-      var mult = $.pipe(nums, t.map(_.inc), t.take(2), t.map(_.str));
-      //$.sub(nums, _.see("nums"));
-      //$.sub(mult, _.see("mult"));
-
+      var two = $.pipe(nums, t.map(_.inc), t.take(2), t.map(_.str));
       var source = $.cell(0);
       var sink = $.cell(_.deref(source));
       $.sub(sink, _.see("sink"));
@@ -52,7 +48,7 @@
           _.see("dos/err"),
           _.see("dos/complete")));
 
-      Object.assign(window, {dos, mult, click, clicks});
+      Object.assign(window, {dos, two, click, clicks});
 
       //_.reduced = $.complete; // worked with transducer!
 
