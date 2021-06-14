@@ -17,7 +17,7 @@
     /*require(["atomic", "../assets/ents"], function(atomic, ents){ //repl use
       Object.assign(window, atomic, {ents: ents});
     });*/
-    require(['atomic/core', 'rxjs', 'atomic/dom', 'atomic/reactives', 'atomic/transducers'], function(_, rxjs, dom, $, t){
+    require(['atomic/core', 'atomic/dom', 'atomic/reactives', 'atomic/transducers', 'rxjs'], function(_, dom, $, t, rxjs){
       var nums = $.Observable.from(_.range(5));
       var mult = $.pipe(nums, t.map(_.inc), t.take(2), t.map(_.str));
       //$.sub(nums, _.see("nums"));
@@ -41,27 +41,10 @@
 
       //_.reduced = $.complete; // worked with transducer!
 
-      return;
-
-      var uc1 = $.sub(clk, _.see("c1"));
-      var uc2 = $.sub(clk, _.see("c2"));
-      setTimeout(function(){
-        uc1();uc2();
-      }, 5000)
-
-      var ob = $.Observable.mult(clicks);
-      var oba = $.sub(ob, _.see("oba"));
-      var obb = $.sub(ob, _.see("obb"));
-
-      setTimeout(function(){
-        oba(); obb();
-        var obc = $.sub(ob, _.see("obc"));
-
-      }, 5000)
-
+      //TODO useful pattern or are there better?
       function via(xform, source){
         var sink = _.clone(source);
-        return _.transduce(xform, $.pub, $.complete, sink, source);
+        return _.transduce(xform, $.pub, sink, source);
       }
 
     });

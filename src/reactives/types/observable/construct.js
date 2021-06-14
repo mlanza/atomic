@@ -1,7 +1,8 @@
-import {pub, complete, sub} from "../../protocols/concrete.js";
+import {pub, err, complete, sub} from "../../protocols/concrete.js";
 import {IReduce, comp, apply, mapa, each, noop, identity, overload, unreduced, isReduced} from "atomic/core";
 import {emptiable} from "../emptiable/construct.js";
 import {subject} from "../subject/construct.js";
+import {observe} from "../observer/construct.js";
 
 export function Observable(subscribed){
   this.subscribed = subscribed;
@@ -15,13 +16,13 @@ export function pipe(source, xf, ...xfs){
   const xform = xfs.length ? comp(xf, ...xfs) : xf,
         step = xform(pub);
   return observable(function(observer){
-    return sub(source, function(value){
+    return sub(source, observe(function(value){
       let memo = step(observer, value);
       if (isReduced(memo)){
         complete(unreduced(memo));
       }
       return memo;
-    });
+    }, observer));
   });
 }
 
