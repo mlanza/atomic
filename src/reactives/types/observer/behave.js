@@ -3,9 +3,8 @@ import {IPublish} from "../../protocols.js";
 
 function pub(self, message){
   if (!self.terminated) {
-    self.pub(message);
+    return self.pub(message); //unusual for a command but required by transducers
   }
-  return self; //unusual for a command but required by transducers
 }
 
 function err(self, error){

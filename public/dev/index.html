@@ -19,6 +19,10 @@
     });*/
     require(['atomic/core', 'atomic/dom', 'atomic/reactives', 'atomic/transducers', 'rxjs'], function(_, dom, $, t, rxjs){
       var nums = $.Observable.from(_.range(5));
+      var oth = $.pipe(nums, t.detect(_.gt(_, 2)));
+      $.sub(oth, function(x){
+        _.log("oth", x);
+      });
       var two = $.pipe(nums, t.map(_.inc), t.take(2), t.map(_.str));
       var source = $.cell(0);
       var sink = $.cell(_.deref(source));
