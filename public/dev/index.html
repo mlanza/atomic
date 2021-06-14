@@ -18,10 +18,25 @@
       Object.assign(window, atomic, {ents: ents});
     });*/
     require(['atomic/core', 'atomic/dom', 'atomic/reactives', 'atomic/transducers', 'rxjs'], function(_, dom, $, t, rxjs){
+
       var nums = $.Observable.from(_.range(5));
       var mult = $.pipe(nums, t.map(_.inc), t.take(2), t.map(_.str));
       //$.sub(nums, _.see("nums"));
       //$.sub(mult, _.see("mult"));
+
+      var source = $.cell(0);
+      var sink = $.cell(_.deref(source));
+      $.sub(sink, _.see("sink"));
+      var disconnect = $.connect(source, sink);
+      var stop = setInterval(function(){
+        _.swap(source, _.inc);
+        if (_.deref(source) === 2) {
+          disconnect();
+        }
+        if (_.deref(source) > 5) {
+          clearInterval(stop);
+        }
+      }, 1000);
 
       var button = dom.tag('button'),
           click = button("Click Me");
@@ -42,10 +57,6 @@
       //_.reduced = $.complete; // worked with transducer!
 
       //TODO useful pattern or are there better?
-      function via(xform, source){
-        var sink = _.clone(source);
-        return _.transduce(xform, $.pub, sink, source);
-      }
 
     });
   </script>
