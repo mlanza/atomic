@@ -1,4 +1,5 @@
 import {protocol} from "../../types/protocol.js";
 export const ICollection = protocol({
-  conj: null
+  conj: null,
+  unconj: null
 });

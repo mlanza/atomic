@@ -2,7 +2,6 @@ export * from "./types/audience-detector.js";
 export * from "./types/bus.js";
 export * from "./types/cell.js";
 export * from "./types/cursor.js";
-export * from "./types/emptiable.js";
 export * from "./types/events.js";
 export * from "./types/event-dispatcher.js";
 export * from "./types/message-handler.js";

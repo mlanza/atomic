@@ -24,6 +24,13 @@ function prepend(self, value){
   self.arr.unshift(value);
 }
 
+function unconj(self, value){
+  const pos = self.arr.lastIndexOf(value);
+  if (pos > -1) {
+    self.arr.splice(pos, 1);
+  }
+}
+
 function empty(self){
   self.arr = [];
 }
@@ -45,6 +52,10 @@ function yank(self, value){
   while ((pos = self.arr.indexOf(value)) > -1) {
     self.arr.splice(pos, 1);
   }
+}
+
+function clone(self){
+  return new self.constructor(ICloneable.clone(self.arr));
 }
 
 function persistent(self){
@@ -73,13 +84,14 @@ const next = forward(INext.next);
 
 export const behaveAsTransientArray = does(
   implement(ISequential),
+  implement(ICloneable, {clone}),
   implement(IPersistent, {persistent}),
   implement(ISeqable, {seq}),
   implement(ISeq, {first, rest}),
   implement(INext, {next}),
   implement(ICounted, {count}),
   implement(ITransientInsertable, {before, after}),
-  implement(ITransientCollection, {conj: append}),
+  implement(ITransientCollection, {conj: append, unconj}),
   implement(ITransientEmptyableCollection, {empty}),
   implement(IFind, {find}),
   implement(ITransientYankable, {yank}),

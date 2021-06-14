@@ -1,9 +1,10 @@
-import {does, implement, each, once, clone, IReduce} from "atomic/core";
+import {does, implement, each, once, clone, IReduce, ICounted} from "atomic/core";
+import {ITransientCollection, ITransientYankable} from "atomic/transients";
 import {IPublish, ISubscribe} from "../../protocols.js";
 
 function sub(self, observer){
   if (!self.terminated) {
-    self.observers.push(observer);
+    ITransientCollection.conj(self.observers, observer);
     return once(function(){
       unsub(self, observer);
     });
@@ -13,14 +14,11 @@ function sub(self, observer){
 }
 
 function unsub(self, observer){
-  const pos = self.observers.lastIndexOf(observer);
-  if (pos > -1) {
-    self.observers.splice(pos, 1);
-  }
+  ITransientCollection.unconj(self.observers, observer);
 }
 
 function subscribed(self){
-  return self.observers.length;
+  return ICounted.count(self.observers);
 }
 
 function pub(self, message){

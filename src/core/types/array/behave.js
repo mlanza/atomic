@@ -137,6 +137,13 @@ function seq(self){
   return self.length ? self : null;
 }
 
+function unconj(self, x){
+  let arr = Array.from(self);
+  const pos = arr.lastIndexOf(x);
+  arr.splice(pos, 1);
+  return arr;
+}
+
 function append(self, x){
   return self.concat([x]);
 }
@@ -219,6 +226,6 @@ export const behaveAsArray = does(
   implement(IAssociative, {assoc, contains}),
   implement(IBlankable, {blank}),
   implement(ISeqable, {seq}),
-  implement(ICollection, {conj: append}),
+  implement(ICollection, {conj: append, unconj}),
   implement(INext, {next}),
   implement(ISeq, {first, rest}));
