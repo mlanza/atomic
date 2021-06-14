@@ -39,13 +39,13 @@ import {weakMap} from "atomic/core";
 import {pub, sub, unsub, on, off, one, into} from "./protocols/concrete.js";
 import {IDispatch, IPublish, ISubscribe, IEvented} from "./protocols.js";
 import {AudienceDetector} from "./types/audience-detector/construct.js";
-import {Broadcast} from "./types/broadcast/construct.js";
+import {Subject} from "./types/subject/construct.js";
 import {Cell} from "./types/cell/construct.js";
 import {
   cell,
   readonly,
   audienceDetector,
-  broadcast
+  subject
 } from "./types.js";
 import * as rxjs from "rxjs";
 import * as t from "atomic/transducers";
@@ -145,7 +145,7 @@ function signal4(into, xf, init, source){
 export const signal = overload(null, signal1, signal2, signal3, signal4);
 
 function sink(source){
-  return satisfies(IDeref, source) ? cell() : broadcast();
+  return satisfies(IDeref, source) ? cell() : subject();
 }
 
 function via2(xf, source){
@@ -191,7 +191,7 @@ function fmap(source, f){
   return map(f, source);
 }
 
-each(implement(IFunctor, {fmap}), [AudienceDetector, Cell, Broadcast]);
+each(implement(IFunctor, {fmap}), [AudienceDetector, Cell, Subject]);
 
 export function mousemove(el){
   return signal(t.map(function(e){
@@ -227,7 +227,7 @@ export function pressed(el){
       memo = ICollection.conj(memo, value.key);
     }
     return memo;
-  }, [], join(broadcast(), keydown(el), keyup(el))));
+  }, [], join(subject(), keydown(el), keyup(el))));
 }
 
 export function hashchange(window){
@@ -302,7 +302,7 @@ function hist2(size, source){
 export const hist = overload(null, partial(hist2, 2), hist2);
 
 function event2(el, key){
-  const sink = broadcast(), callback = partial(IPublish.pub, sink);
+  const sink = subject(), callback = partial(IPublish.pub, sink);
   return audienceDetector(sink, function(status){
     const f = status === "active" ? on : off;
     f(el, key, callback);
@@ -310,7 +310,7 @@ function event2(el, key){
 }
 
 function event3(el, key, selector){
-  const sink = broadcast(), callback = partial(IPublish.pub, sink);
+  const sink = subject(), callback = partial(IPublish.pub, sink);
   return audienceDetector(sink, function(status){
     if (status === "active") {
       on(el, key, selector, callback);

@@ -1,18 +1,26 @@
-import {implement, does, each, once, clone, ISwap, IReset, IDeref} from "atomic/core";
+import {does, implement, each, once, clone} from "atomic/core";
 import {IPublish, ISubscribe} from "../../protocols.js";
 
 function sub(self, observer){
   if (!self.terminated) {
     self.observers.push(observer);
     return once(function(){
-      const pos = self.observers.lastIndexOf(observer);
-      if (pos > -1) {
-        self.observers.splice(pos, 1);
-      }
+      unsub(self, observer);
     });
   } else {
     throw new Error("Cannot subscribe to a terminated Subject.");
   }
+}
+
+function unsub(self, observer){
+  const pos = self.observers.lastIndexOf(observer);
+  if (pos > -1) {
+    self.observers.splice(pos, 1);
+  }
+}
+
+function subscribed(self){
+  return self.observers.length;
 }
 
 function pub(self, message){
@@ -43,5 +51,5 @@ function notify(self, f){
 }
 
 export const behaveAsSubject = does(
-  implement(ISubscribe, {sub}),
+  implement(ISubscribe, {sub, unsub, subscribed}),
   implement(IPublish, {pub, err, complete}));

@@ -6,7 +6,7 @@ import {messageProcessor} from "../message-processor/construct.js";
 import {messageHandler} from "../message-handler/construct.js";
 import {bus} from "../bus/construct.js";
 import {events} from "../events/construct.js";
-import {broadcast} from "../broadcast/construct.js";
+import {subject} from "../subject/construct.js";
 import {IMiddleware} from "../../protocols/imiddleware/instance.js";
 import {IEventProvider} from "../../protocols/ieventprovider/instance.js";
 import {sub} from "../../protocols/isubscribe/concrete.js";
@@ -52,7 +52,7 @@ export const affects = overload(null, null, affects2, affects3);
 function component2(state, callback){
   const evts = events(),
         ware = middleware(),
-        observer = broadcast();
+        observer = subject();
   return doto(bus(state, ware), function($bus){
     const maps = callback(partial(accepts, evts), partial(raises, evts, $bus), partial(affects, $bus));
     const commandMap = maps[0], eventMap = maps[1];
