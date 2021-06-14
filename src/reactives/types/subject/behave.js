@@ -1,10 +1,10 @@
 import {does, implement, each, once, clone, IReduce, ICounted} from "atomic/core";
-import {ITransientCollection, ITransientYankable} from "atomic/transients";
+import * as mut from "atomic/transients";
 import {IPublish, ISubscribe} from "../../protocols.js";
 
 function sub(self, observer){
   if (!self.terminated) {
-    ITransientCollection.conj(self.observers, observer);
+    mut.conj(self.observers, observer);
     return once(function(){
       unsub(self, observer);
     });
@@ -14,7 +14,7 @@ function sub(self, observer){
 }
 
 function unsub(self, observer){
-  ITransientCollection.unconj(self.observers, observer);
+  mut.unconj(self.observers, observer);
 }
 
 function subscribed(self){
