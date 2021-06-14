@@ -16,13 +16,14 @@ export function pipe(source, xf, ...xfs){
   const xform = xfs.length ? comp(xf, ...xfs) : xf,
         step = xform(pub);
   return observable(function(observer){
-    return sub(source, observe(function(value){
-      let memo = step(observer, value);
+    const obs = observe(function(value){
+      const memo = step(observer, value);
       if (isReduced(memo)){
-        complete(unreduced(memo));
+        complete(obs);
       }
-      return memo;
-    }, observer));
+      return observer;
+    }, observer);
+    return sub(source, obs);
   });
 }
 
