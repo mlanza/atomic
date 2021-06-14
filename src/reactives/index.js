@@ -31,6 +31,7 @@ import {
   satisfies,
   specify,
   slice,
+  transduce,
   noop
 } from "atomic/core";
 import * as _ from "atomic/core";
@@ -157,6 +158,16 @@ function viaN(xf, ...sources){
 }
 
 export const via = overload(null, null, via2, viaN);
+
+function connect2(source, sink){
+  return connect3(source, t.identity(), sink);
+}
+
+function connect3(source, xform, sink){
+  return transduce(xform, IPublish.pub, source, sink);
+}
+
+export const connect = overload(null, null, connect2, connect3); //successor to `via`, returns `disconnect` fn
 
 function map1(source){
   return map2(identity, source);

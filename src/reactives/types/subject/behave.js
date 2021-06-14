@@ -1,4 +1,4 @@
-import {does, implement, each, once, clone} from "atomic/core";
+import {does, implement, each, once, clone, IReduce} from "atomic/core";
 import {IPublish, ISubscribe} from "../../protocols.js";
 
 function sub(self, observer){
@@ -50,6 +50,11 @@ function notify(self, f){
   each(f, clone(self.observers));
 }
 
+function reduce(self, xf, init){
+  return ISubscribe.sub(init, xf(self, ?)); //TODO implement `sub` on arrays?
+}
+
 export const behaveAsSubject = does(
+  implement(IReduce, {reduce}),
   implement(ISubscribe, {sub, unsub, subscribed}),
   implement(IPublish, {pub, err, complete}));
