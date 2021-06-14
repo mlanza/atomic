@@ -32,6 +32,7 @@ import {
   specify,
   slice,
   transduce,
+  called,
   noop
 } from "atomic/core";
 import * as _ from "atomic/core";
@@ -331,7 +332,7 @@ function event3(el, key, selector){
   });
 }
 
-export const event = overload(null, null, event2, event3);
+export const event = called(overload(null, null, event2, event3), "`event` deprecated - use `fromEvent` instead.");
 
 export function click(el){
   return event(el, "click");

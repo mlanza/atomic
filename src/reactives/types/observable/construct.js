@@ -45,7 +45,7 @@ function fromPromise(promise){
   });
 }
 
-function fromEvent(el, key) {
+export function fromEvent(el, key) {
   return observable(function(observer){
     const handler = pub(observer, ?);
     el.addEventListener(key, handler);

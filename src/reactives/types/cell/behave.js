@@ -1,4 +1,4 @@
-import {does, partial, implement, satisfies, IReset, ISwap, IDeref, IDisposable, IReduce, ICloneable} from 'atomic/core';
+import {does, partial, implement, satisfies, once, IReset, ISwap, IDeref, IDisposable, IReduce, ICloneable} from 'atomic/core';
 import {IPublish, ISubscribe} from "../../protocols.js";
 
 function pub(self, value){
