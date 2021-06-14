@@ -2383,7 +2383,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
         events = $.events(),
         eventBus = bus(),
         commandBus = bus(),
-        emitter = $.broadcast();
+        emitter = $.subject();
 
     _.doto(eventBus,
       mut.conj(_,

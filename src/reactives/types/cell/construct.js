@@ -1,5 +1,5 @@
 import {overload} from "atomic/core";
-import {broadcast} from "../broadcast/construct.js";
+import {subject} from "../subject/construct.js";
 
 export function Cell(state, observer, validate){
   this.state = state;
@@ -12,7 +12,7 @@ function cell0(){
 }
 
 function cell1(init){
-  return cell2(init, broadcast());
+  return cell2(init, subject());
 }
 
 function cell2(init, observer){

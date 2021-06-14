@@ -356,7 +356,7 @@ QUnit.test("cell", function(assert){
   assert.equal(source |> _.deref, 1);
   assert.equal(sink   |> _.deref, 2);
   assert.equal(msink  |> _.deref, 2);
-  const bucket = $.cell([], $.broadcast(), _.pipe(_.get(?, 'length'), _.lt(?, 3))),
+  const bucket = $.cell([], $.subject(), _.pipe(_.get(?, 'length'), _.lt(?, 3))),
         states = $.cell([]);
   bucket |> $.sub(?, state => states |> _.swap(?, _.conj(?, state)));
   bucket |> _.swap(?, _.conj(?, "ice"));
