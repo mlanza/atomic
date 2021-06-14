@@ -61,29 +61,49 @@ define('dom', [], function(){
   define('atomic/core', ["../../assets/" + mods[0] + ".js", 'polyfill'], function(core){
     return Object.assign(core.placeholder, core.impart(core, core.partly));
   });
-  for (var i = 1; i < mods.length; i++) {
-    var mod = mods[i];
+  for (var idx in mods) {
+    var mod = mods[idx];
     define(mod, ["atomic/core", "../../assets/" + mod + ".js"], function(core, tgt){
       return core.impart(tgt, core.partly);
     });
   }
-  define('atomic', mods, function(core, dom, immutables, reactives, repos, transducers, transients, validates, draw){
-    return { //exposed for in-browser repl use only.
-      _: core,
-      $: reactives,
-      dom: dom,
-      imm: immutables,
-      t: transducers,
-      transients: transients,
-      validates: validates,
-      draw: draw,
-      repos: repos
-    };
-  });
 })(["atomic/core", "atomic/dom", "atomic/immutables", "atomic/reactives", "atomic/repos", "atomic/transducers", "atomic/transients", "atomic/validates", "atomic/draw"]);
-var cmd = function(target){
-  require(['atomic'], function(atomic){
-    Object.assign(target || window, atomic);
-    console.log("Commands loaded.");
-  });
-}
+define('atomic/imports', function(){
+  return {
+    "_": "atomic/core",
+    "$": "atomic/reactives",
+    "dom": "atomic/dom",
+    "imm": "atomic/immutables",
+    "t": "atomic/transducers",
+    "mut": "atomic/transients",
+    "vld": "atomic/validates",
+    "draw": "atomic/draw",
+    "repos": "atomic/repos"
+  }
+});
+define('cmd', ["atomic/core", "atomic/imports", "promise"], function(_, defaults, Promise){
+  function load(dest, name){
+    return new Promise(function(resolve, reject){
+      require([name], function(exported){
+        var out = {};
+        out[dest] = exported;
+        resolve(out);
+      });
+    });
+  }
+  return function cmd(others){
+    var target = this,
+        imports = Object.assign({}, defaults, others),
+        loading = [];
+    for(var dest in imports){
+      loading.push(load(dest, imports[dest]));
+    }
+    return _.fmap(Promise.all(loading), _.spread(Object.assign), _.tee(function(imported){
+      console.log("Commands loaded.");
+      Object.assign(target, imported);
+    }));
+  }
+});
+require(['cmd'], function(cmd){
+  window.cmd = cmd;
+});
