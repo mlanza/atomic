@@ -13,9 +13,11 @@ requirejs.config({
     }
   },
   paths: {
-    "text": "require/text",
-    "css": "require/css",
-    "promised": "require/promised"
+    "qunit": "vendor/qunit",
+    "immutable": "vendor/immutable",
+    "text": "vendor/require/text",
+    "css": "vendor/require/css",
+    "promised": "vendor/require/promised"
   }
 });
 define('polyfill', String.prototype.repeat && String.prototype.padStart && String.prototype.padEnd && String.prototype.trimLeft && String.prototype.trimRight && Object.assign && Object.values && location.origin && Element.prototype.matches ? [] : ["polyfills/base"]);
@@ -57,13 +59,16 @@ define('dom', [], function(){
     Location: Location
   }
 });
+define('jquery', ["../../assets/vendor/jquery"], function(){
+  return jQuery.noConflict();
+});
 (function(mods){
-  define('atomic/core', ["../../assets/" + mods[0] + ".js", 'polyfill'], function(core){
+  define('atomic/core', ["../../assets/vendor/" + mods[0], 'polyfill'], function(core){
     return Object.assign(core.placeholder, core.impart(core, core.partly));
   });
   for (var idx in mods) {
     var mod = mods[idx];
-    define(mod, ["atomic/core", "../../assets/" + mod + ".js"], function(core, tgt){
+    define(mod, ["atomic/core", "../../assets/vendor/" + mod], function(core, tgt){
       return core.impart(tgt, core.partly);
     });
   }
