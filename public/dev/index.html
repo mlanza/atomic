@@ -15,7 +15,7 @@
       Object.assign(window, atomic, {ents: ents});
     });*/
     require(['atomic/core', 'atomic/dom', 'atomic/reactives', 'atomic/transducers'], function(_, dom, $, t){
-      var nums = $.Observable.from(_.range(5));
+      /*var nums = $.Observable.from(_.range(5));
       var oth = $.pipe(nums, t.detect(_.gt(_, 2)));
       $.sub(oth, function(x){
         _.log("oth", x);
@@ -33,23 +33,35 @@
         if (_.deref(source) > 5) {
           clearInterval(stop);
         }
-      }, 1000);
+      }, 1000);*/
 
       var button = dom.tag('button'),
           click = button("Click Me");
 
       dom.append(document.body, click);
 
-      var clicks = $.fromEvent(click, "click");
+      var clicks = $.multiplex($.fromEvent(click, "click"));
       var dos = $.pipe(clicks, t.take(2));
+      _.log("dos");
+      //var m1 = $.sub(clicks, _.see("mult1"));
+      //var m2 = $.sub(clicks, _.see("mult2"));
 
-      $.sub(dos,
-        $.observer(
-          _.see("dos"),
-          _.see("dos/err"),
-          _.see("dos/complete")));
+      //setTimeout(m1, 3000);
+      //setTimeout(m2, 5000);
 
-      Object.assign(window, {dos, two, click, clicks});
+      function observe(text){
+        return $.observer(
+          _.see(text),
+          _.see(text + "/err"),
+          _.see(text + "/complete"));
+      }
+
+      $.sub(dos, observe("dos"));
+      $.sub(dos, observe("dos2"));
+
+
+
+      Object.assign(window, {dos, click, clicks});
 
       //_.reduced = $.complete; // worked with transducer!
 

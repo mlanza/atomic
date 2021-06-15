@@ -669,6 +669,13 @@ define(['exports', 'atomic/core', 'symbol', 'atomic/transients', 'atomic/transdu
 
   behaveAsMiddleware(Middleware);
 
+  function Observable(subscribed) {
+    this.subscribed = subscribed;
+  }
+  function observable(subscribed) {
+    return new Observable(subscribed);
+  }
+
   function Observer(pub, err, complete, terminated) {
     this.pub = pub;
     this.err = err;
@@ -678,42 +685,39 @@ define(['exports', 'atomic/core', 'symbol', 'atomic/transients', 'atomic/transdu
   function observer(pub, err, complete) {
     return new Observer(pub || _.noop, err || _.noop, complete || _.noop, null);
   }
-  function observe(pub, obs) {
-    var _obs, _IPublish$err, _IPublish;
 
-    return observer(pub, (_IPublish = IPublish, _IPublish$err = _IPublish.err, _obs = obs, function err(_argPlaceholder) {
-      return _IPublish$err.call(_IPublish, _obs, _argPlaceholder);
-    }), function () {
-      IPublish.complete(obs);
-    });
-  }
-
-  function Observable(subscribed) {
-    this.subscribed = subscribed;
-  }
-  function observable(subscribed) {
-    return new Observable(subscribed);
-  }
-  function pipe(source, xf) {
-    for (var _len = arguments.length, xfs = new Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
-      xfs[_key - 2] = arguments[_key];
+  function pipeN(source) {
+    for (var _len = arguments.length, xforms = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+      xforms[_key - 1] = arguments[_key];
     }
 
-    var xform = xfs.length ? _.comp.apply(void 0, [xf].concat(xfs)) : xf,
-        step = xform(pub$3);
-    return observable(function (observer) {
-      var obs = observe(function (value) {
-        var memo = step(observer, value);
+    return pipe2(source, _.comp.apply(void 0, xforms));
+  }
+
+  function pipe2(source, xform) {
+    return observable(function (obs) {
+      var step = xform(pub$3);
+      var wrapped = observer(function (value) {
+        var memo = step(obs, value);
 
         if (_.isReduced(memo)) {
-          complete$3(obs);
+          complete$3(wrapped);
         }
 
-        return observer;
-      }, observer);
-      return sub$8(source, obs);
+        return obs;
+      }, function (error) {
+        err$3(error);
+        unsub();
+      }, function () {
+        complete$3(obs);
+        unsub();
+      });
+      var unsub = sub$8(source, wrapped);
+      return unsub;
     });
   }
+
+  var pipe = _.overload(null, null, pipe2, pipeN);
 
   function from(coll) {
     return observable(function (observer) {
@@ -748,6 +752,31 @@ define(['exports', 'atomic/core', 'symbol', 'atomic/transients', 'atomic/transdu
       el.addEventListener(key, handler);
       return function () {
         el.removeEventListener(key, handler);
+      };
+    });
+  }
+  function multiplex(source) {
+    var subj = subject();
+    var disconnect = _.noop,
+        refs = 0;
+    return observable(function (observer) {
+      if (refs === 0) {
+        disconnect = sub$8(source, subj);
+      }
+
+      refs++;
+      console.log("inc refs", refs);
+      var unsub = sub$8(subj, observer);
+      return function () {
+        refs--;
+        console.log("dec refs", refs);
+
+        if (refs === 0) {
+          disconnect();
+          disconnect = _.noop;
+        }
+
+        unsub();
       };
     });
   }
@@ -1475,9 +1504,9 @@ define(['exports', 'atomic/core', 'symbol', 'atomic/transients', 'atomic/transdu
   exports.messageProcessor = messageProcessor;
   exports.middleware = middleware;
   exports.mousemove = mousemove;
+  exports.multiplex = multiplex;
   exports.mutate = mutate;
   exports.observable = observable;
-  exports.observe = observe;
   exports.observer = observer;
   exports.off = off;
   exports.on = on$1;
