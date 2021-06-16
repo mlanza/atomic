@@ -228,7 +228,7 @@ export function join(sink, ...sources){
 
 export const fixed = comp(readonly, cell);
 
-export function latest(sources){
+export const latest = called(function latest(sources){
   const sink = cell(mapa(constantly(null), sources));
   const fs = memoize(function(idx){
     return function(value){
@@ -241,7 +241,7 @@ export function latest(sources){
       f(source, fs(idx));
     }, sources));
   });
-}
+}, "`latest` is deprecated — use `spreadsInit` instead.");
 
 function hist2(size, source){
   const sink = cell([]);
