@@ -131,11 +131,11 @@ export function indexed(sources){
   })
 }
 
-function spreads1(sources){
-  return spreads2(sources, null);
+function _currents1(sources){
+  return _currents2(sources, null);
 }
 
-function spreads2(sources, blank){
+function _currents2(sources, blank){
   const source = indexed(sources);
   return observable(function(observer){
     let state = toArray(take(count(sources), repeat(blank)));
@@ -146,10 +146,11 @@ function spreads2(sources, blank){
   });
 }
 
-export const spreads = overload(null, spreads1, spreads2);
+const _currents = overload(null, _currents1, _currents2);
 
-export function spreadsInit(sources){
-  const nil = {}, source = spreads(sources, nil);
+//sources must provide an initial current value (e.g. immediately upon subscription as cells do).
+export function currents(sources){
+  const nil = {}, source = _currents(sources, nil);
   return observable(function(observer){
     let initialized = false;
     return sub(source, function(state){

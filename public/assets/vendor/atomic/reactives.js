@@ -844,11 +844,11 @@ define(['exports', 'atomic/core', 'atomic/transducers', 'symbol', 'atomic/transi
     });
   }
 
-  function spreads1(sources) {
-    return spreads2(sources, null);
+  function _currents1(sources) {
+    return _currents2(sources, null);
   }
 
-  function spreads2(sources, blank) {
+  function _currents2(sources, blank) {
     var source = indexed(sources);
     return observable(function (observer) {
       var state = _.toArray(_.take(_.count(sources), _.repeat(blank)));
@@ -859,10 +859,13 @@ define(['exports', 'atomic/core', 'atomic/transducers', 'symbol', 'atomic/transi
     });
   }
 
-  var spreads = _.overload(null, spreads1, spreads2);
-  function spreadsInit(sources) {
+  var _currents = _.overload(null, _currents1, _currents2); //sources must provide an initial current value (e.g. immediately upon subscription as cells do).
+
+
+  function currents(sources) {
     var nil = {},
-        source = spreads(sources, nil);
+        source = _currents(sources, nil);
+
     return observable(function (observer) {
       var initialized = false;
       return sub$8(source, function (state) {
@@ -1459,7 +1462,7 @@ define(['exports', 'atomic/core', 'atomic/transducers', 'symbol', 'atomic/transi
         f(source, fs(idx));
       }, sources));
     });
-  }, "`latest` is deprecated — use `spreadsInit` instead.");
+  }, "`latest` is deprecated — use `currents` instead.");
 
   function hist2(size, source) {
     var sink = cell([]);
@@ -1595,6 +1598,7 @@ define(['exports', 'atomic/core', 'atomic/transducers', 'symbol', 'atomic/transi
   exports.component = component;
   exports.computed = computed;
   exports.connect = connect;
+  exports.currents = currents;
   exports.cursor = cursor;
   exports.dispatch = dispatch$3;
   exports.err = err$3;
@@ -1644,8 +1648,6 @@ define(['exports', 'atomic/core', 'atomic/transducers', 'symbol', 'atomic/transi
   exports.router = router;
   exports.scan = scan;
   exports.signal = signal;
-  exports.spreads = spreads;
-  exports.spreadsInit = spreadsInit;
   exports.sub = sub$8;
   exports.subject = subject;
   exports.subscribed = subscribed$7;
