@@ -43,11 +43,11 @@
       var clicks = $.multiplex($.fromEvent(click, "click"));
       var dos = $.pipe(clicks, t.take(2));
       _.log("dos");
-      //var m1 = $.sub(clicks, _.see("mult1"));
-      //var m2 = $.sub(clicks, _.see("mult2"));
+      var m1 = $.sub(clicks, _.see("mult1"));
+      var m2 = $.sub(clicks, _.see("mult2"));
 
-      //setTimeout(m1, 3000);
-      //setTimeout(m2, 5000);
+      setTimeout(m1, 3000);
+      setTimeout(m2, 5000);
 
       function observe(text){
         return $.observer(

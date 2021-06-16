@@ -33,23 +33,27 @@ import {
   slice,
   transduce,
   called,
-  noop
+  noop,
+  weakMap
 } from "atomic/core";
 import * as _ from "atomic/core";
+import * as t from "atomic/transducers";
 import Symbol from "symbol";
-import {weakMap} from "atomic/core";
-import {pub, sub, unsub, on, off, one, into} from "./protocols/concrete.js";
+import {pub, err, complete, sub, unsub, on, off, one, into} from "./protocols/concrete.js";
 import {IDispatch, IPublish, ISubscribe, IEvented} from "./protocols.js";
-import {AudienceDetector} from "./types/audience-detector/construct.js";
-import {Subject} from "./types/subject/construct.js";
-import {Cell} from "./types/cell/construct.js";
 import {
+  Cell,
   cell,
   readonly,
+  AudienceDetector,
   audienceDetector,
-  subject
+  Subject,
+  subject,
+  Observable,
+  observable,
+  Observer,
+  observer
 } from "./types.js";
-import * as t from "atomic/transducers";
 export * from "./types.js";
 export * from "./protocols.js";
 export * from "./protocols/concrete.js";
@@ -104,7 +108,7 @@ function viaN(xf, ...sources){
   return via2(spread(xf), latest(sources));
 }
 
-export const via = overload(null, null, via2, viaN);
+export const via = called(overload(null, null, via2, viaN), "`via` is deprecated — use `connect` instead.");
 
 function connect2(source, sink){
   return connect3(source, t.identity(), sink);
@@ -114,11 +118,7 @@ function connect3(source, xform, sink){
   return transduce(xform, IPublish.pub, source, sink);
 }
 
-export const connect = overload(null, null, connect2, connect3); //successor to `via`, returns `disconnect` fn
-
-function map1(source){
-  return map2(identity, source);
-}
+export const connect = overload(null, null, connect2, connect3); //returns `disconnect` fn
 
 function map2(f, source){
   return via2(comp(t.map(f), t.dedupe()), source);
@@ -188,11 +188,11 @@ export function pressed(el){
   }, [], join(subject(), keydown(el), keyup(el))));
 }
 
-export function hashchange(window){
+export const hashchange = called(function hashchange(window){
   return signal(t.map(function(){
     return location.hash;
   }), location.hash, event(window, "hashchange"));
-}
+}, "`hashchange` is deprecated — use `hashChange` instead.");
 
 function fromPromise1(promise){
   return fromPromise2(promise, null);
@@ -258,6 +258,7 @@ function hist2(size, source){
 }
 
 export const hist = overload(null, partial(hist2, 2), hist2);
+
 
 function event2(el, key){
   const sink = subject(), callback = partial(IPublish.pub, sink);
