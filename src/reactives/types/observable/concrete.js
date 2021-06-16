@@ -1,4 +1,4 @@
-import {matches, comp, each, overload, noop, constantly, isReduced} from "atomic/core";
+import {just, slice, take, assoc, count, includes, repeat, matches, comp, each, overload, noop, mapIndexed, spread, does, toArray, isReduced} from "atomic/core";
 import * as dom from "atomic/dom";
 import {pub, err, complete, sub, unsub} from "../../protocols/concrete.js";
 import {Observable, observable} from "./construct.js";
@@ -115,6 +115,51 @@ export function calc(source, f){
 export function hashChange(window){
   return calc(fromEvent(window, "hashchange"), function(e){
     return location.hash;
+  });
+}
+
+export function indexed(sources){
+  return observable(function(observer){
+    return just(sources,
+      mapIndexed(function(key, source){
+        return sub(source, function(value){
+          pub(observer, {key, value});
+        });
+      }, ?),
+      toArray,
+      spread(does));
+  })
+}
+
+function spreads1(sources){
+  return spreads2(sources, null);
+}
+
+function spreads2(sources, blank){
+  const source = indexed(sources);
+  return observable(function(observer){
+    let state = toArray(take(count(sources), repeat(blank)));
+    return sub(source, function(msg){
+      state = assoc(state, msg.key, msg.value);
+      pub(observer, state);
+    });
+  });
+}
+
+export const spreads = overload(null, spreads1, spreads2);
+
+export function spreadsInit(sources){
+  const nil = {}, source = spreads(sources, nil);
+  return observable(function(observer){
+    let initialized = false;
+    return sub(source, function(state){
+      if (initialized) {
+        pub(observer, state);
+      } else if (!includes(state, nil)) {
+        initialized = true;
+        pub(observer, state);
+      }
+    });
   });
 }
 

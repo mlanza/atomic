@@ -827,13 +827,61 @@ define(['exports', 'atomic/core', 'atomic/transducers', 'symbol', 'atomic/transi
       return location.hash;
     });
   }
+  function indexed(sources) {
+    return observable(function (observer) {
+      var _param, _mapIndexed;
+
+      return _.just(sources, (_mapIndexed = _.mapIndexed, _param = function _param(key, source) {
+        return sub$8(source, function (value) {
+          pub$3(observer, {
+            key: key,
+            value: value
+          });
+        });
+      }, function mapIndexed(_argPlaceholder6) {
+        return _mapIndexed(_param, _argPlaceholder6);
+      }), _.toArray, _.spread(_.does));
+    });
+  }
+
+  function spreads1(sources) {
+    return spreads2(sources, null);
+  }
+
+  function spreads2(sources, blank) {
+    var source = indexed(sources);
+    return observable(function (observer) {
+      var state = _.toArray(_.take(_.count(sources), _.repeat(blank)));
+      return sub$8(source, function (msg) {
+        state = _.assoc(state, msg.key, msg.value);
+        pub$3(observer, state);
+      });
+    });
+  }
+
+  var spreads = _.overload(null, spreads1, spreads2);
+  function spreadsInit(sources) {
+    var nil = {},
+        source = spreads(sources, nil);
+    return observable(function (observer) {
+      var initialized = false;
+      return sub$8(source, function (state) {
+        if (initialized) {
+          pub$3(observer, state);
+        } else if (!_.includes(state, nil)) {
+          initialized = true;
+          pub$3(observer, state);
+        }
+      });
+    });
+  }
 
   function from(coll) {
     return observable(function (observer) {
       var _observer6, _pub5;
 
-      _.each((_pub5 = pub$3, _observer6 = observer, function pub(_argPlaceholder6) {
-        return _pub5(_observer6, _argPlaceholder6);
+      _.each((_pub5 = pub$3, _observer6 = observer, function pub(_argPlaceholder7) {
+        return _pub5(_observer6, _argPlaceholder7);
       }), coll);
       complete$3(observer);
     });
@@ -1394,7 +1442,7 @@ define(['exports', 'atomic/core', 'atomic/transducers', 'symbol', 'atomic/transi
     });
   }
   var fixed = _.comp(readonly, cell);
-  function latest(sources) {
+  var latest = _.called(function latest(sources) {
     var sink = cell(_.mapa(_.constantly(null), sources));
     var fs = _.memoize(function (idx) {
       return function (value) {
@@ -1411,7 +1459,7 @@ define(['exports', 'atomic/core', 'atomic/transducers', 'symbol', 'atomic/transi
         f(source, fs(idx));
       }, sources));
     });
-  }
+  }, "`latest` is deprecated — use `spreadsInit` instead.");
 
   function hist2(size, source) {
     var sink = cell([]);
@@ -1565,6 +1613,7 @@ define(['exports', 'atomic/core', 'atomic/transducers', 'symbol', 'atomic/transi
   exports.hashChange = hashChange;
   exports.hashchange = hashchange;
   exports.hist = hist;
+  exports.indexed = indexed;
   exports.initialized = initialized;
   exports.into = into;
   exports.join = join;
@@ -1595,6 +1644,8 @@ define(['exports', 'atomic/core', 'atomic/transducers', 'symbol', 'atomic/transi
   exports.router = router;
   exports.scan = scan;
   exports.signal = signal;
+  exports.spreads = spreads;
+  exports.spreadsInit = spreadsInit;
   exports.sub = sub$8;
   exports.subject = subject;
   exports.subscribed = subscribed$7;
