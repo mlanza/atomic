@@ -1,4 +1,4 @@
-define(['exports', 'atomic/core', 'symbol', 'atomic/transients', 'atomic/transducers'], function (exports, _, _Symbol, mut, t) { 'use strict';
+define(['exports', 'atomic/core', 'atomic/transducers', 'symbol', 'atomic/transients', 'atomic/dom'], function (exports, _, t$1, _Symbol, mut, dom) { 'use strict';
 
   var IDispatch = _.protocol({
     dispatch: null
@@ -706,70 +706,36 @@ define(['exports', 'atomic/core', 'symbol', 'atomic/transients', 'atomic/transdu
 
         return obs;
       }, function (error) {
-        err$3(error);
-        unsub();
+        err$3(obs, error);
+        unsub && unsub();
       }, function () {
         complete$3(obs);
-        unsub();
+        unsub && unsub();
       });
-      var unsub = sub$8(source, wrapped);
+      var unsub = sub$8(source, wrapped); //might complete before returning `unsub` fn
+
       return unsub;
     });
   }
 
   var pipe = _.overload(null, null, pipe2, pipeN);
 
-  function from(coll) {
-    return observable(function (observer) {
-      var _observer, _pub;
-
-      _.each((_pub = pub$3, _observer = observer, function pub(_argPlaceholder) {
-        return _pub(_observer, _argPlaceholder);
-      }), coll);
-      complete$3(observer);
-    });
+  function multiplex1(source) {
+    return multiplex2(source, subject());
   }
 
-  function fromPromise$1(promise) {
-    return observable(function (observer) {
-      promise.then(function (value) {
-        pub$3(observer, val);
-        complete$3(observer);
-      })["catch"](function (error) {
-        err$3(observer, error);
-        complete$3(observer);
-      });
-    });
-  }
-
-  function fromEvent(el, key) {
-    return observable(function (observer) {
-      var _observer2, _pub2;
-
-      var handler = (_pub2 = pub$3, _observer2 = observer, function pub(_argPlaceholder2) {
-        return _pub2(_observer2, _argPlaceholder2);
-      });
-      el.addEventListener(key, handler);
-      return function () {
-        el.removeEventListener(key, handler);
-      };
-    });
-  }
-  function multiplex(source) {
-    var subj = subject();
+  function multiplex2(source, sink) {
     var disconnect = _.noop,
         refs = 0;
     return observable(function (observer) {
       if (refs === 0) {
-        disconnect = sub$8(source, subj);
+        disconnect = sub$8(source, sink);
       }
 
       refs++;
-      console.log("inc refs", refs);
-      var unsub = sub$8(subj, observer);
+      var unsub = sub$8(sink, observer);
       return function () {
         refs--;
-        console.log("dec refs", refs);
 
         if (refs === 0) {
           disconnect();
@@ -780,13 +746,104 @@ define(['exports', 'atomic/core', 'symbol', 'atomic/transients', 'atomic/transdu
       };
     });
   }
-  Observable.fromEvent = fromEvent;
+
+  var multiplex = _.overload(null, multiplex1, multiplex2);
+
+  function fromEvent2(el, key) {
+    return observable(function (observer) {
+      var _observer, _pub;
+
+      var handler = (_pub = pub$3, _observer = observer, function pub(_argPlaceholder) {
+        return _pub(_observer, _argPlaceholder);
+      });
+      el.addEventListener(key, handler);
+      return function () {
+        el.removeEventListener(key, handler);
+      };
+    });
+  }
+
+  function fromEvent3(el, key, selector) {
+    return observable(function (observer) {
+      var _observer2, _pub2;
+
+      var handler = (_pub2 = pub$3, _observer2 = observer, function pub(_argPlaceholder2) {
+        return _pub2(_observer2, _argPlaceholder2);
+      });
+
+      function delegate(e) {
+        if (_.matches(e.target, selector)) {
+          handler(observer, e);
+        } else {
+          var found = dom.closest(e.target, selector);
+
+          if (found && el.contains(found)) {
+            handler(observer, Object.assign(Object.create(e), {
+              target: found
+            }));
+          }
+        }
+      }
+
+      el.addEventListener(key, delegate);
+      return function () {
+        el.removeEventListener(key, delegate);
+      };
+    });
+  }
+
+  var fromEvent = _.overload(null, null, fromEvent2, fromEvent3);
+  function initialized(source, init) {
+    return observable(function (observer) {
+      var _observer3, _pub3;
+
+      var handle = (_pub3 = pub$3, _observer3 = observer, function pub(_argPlaceholder3) {
+        return _pub3(_observer3, _argPlaceholder3);
+      });
+      handle(init());
+      return sub$8(source, handle);
+    });
+  }
+
+  function fromPromise$1(promise) {
+    return observable(function (observer) {
+      var _observer4, _pub4, _observer5, _err;
+
+      promise.then((_pub4 = pub$3, _observer4 = observer, function pub(_argPlaceholder4) {
+        return _pub4(_observer4, _argPlaceholder4);
+      }), (_err = err$3, _observer5 = observer, function err(_argPlaceholder5) {
+        return _err(_observer5, _argPlaceholder5);
+      })).then(function () {
+        complete$3(observer);
+      });
+    });
+  }
+
+  function calc(source, f) {
+    return initialized(pipe(source, t.map(f)), f);
+  }
+  function hashChange(window) {
+    return calc(fromEvent(window, "hashchange"), function (e) {
+      return location.hash;
+    });
+  }
+
+  function from(coll) {
+    return observable(function (observer) {
+      var _observer6, _pub5;
+
+      _.each((_pub5 = pub$3, _observer6 = observer, function pub(_argPlaceholder6) {
+        return _pub5(_observer6, _argPlaceholder6);
+      }), coll);
+      complete$3(observer);
+    });
+  }
+
   Observable.fromPromise = fromPromise$1;
   Observable.from = from;
-  Observable.pipe = pipe;
 
   function sub$3(self, observer) {
-    return self.subscribed(observer); //return unsubscribe fn
+    return _.once(self.subscribed(observer)); //return unsubscribe fn
   }
 
   function reduce$1(self, xf, init) {
@@ -797,7 +854,20 @@ define(['exports', 'atomic/core', 'symbol', 'atomic/transients', 'atomic/transdu
     }));
   }
 
-  var behaveAsObservable = _.does(_.implement(_.IReduce, {
+  function merge(self, other) {
+    return observable(function (observer) {
+      var _observer, _IPublish$pub, _IPublish;
+
+      var handle = (_IPublish = IPublish, _IPublish$pub = _IPublish.pub, _observer = observer, function pub(_argPlaceholder2) {
+        return _IPublish$pub.call(_IPublish, _observer, _argPlaceholder2);
+      });
+      return _.nullary(_.does(ISubscribe.sub(self, handle), ISubscribe.sub(other, handle)));
+    });
+  }
+
+  var behaveAsObservable = _.does(_.implement(_.IMergeable, {
+    merge: merge
+  }), _.implement(_.IReduce, {
     reduce: reduce$1
   }), _.implement(ISubscribe, {
     sub: sub$3
@@ -1159,7 +1229,7 @@ define(['exports', 'atomic/core', 'symbol', 'atomic/transients', 'atomic/transdu
   var then = _.overload(null, null, then2, thenN);
 
   function signal1(source) {
-    return signal2(t.map(_.identity), source);
+    return signal2(t$1.map(_.identity), source);
   }
 
   function signal2(xf, source) {
@@ -1192,20 +1262,20 @@ define(['exports', 'atomic/core', 'symbol', 'atomic/transients', 'atomic/transdu
     return via2(_.spread(xf), latest(sources));
   }
 
-  var via = _.overload(null, null, via2, viaN);
+  var via = _.called(_.overload(null, null, via2, viaN), "`via` is deprecated — use `connect` instead.");
 
   function connect2(source, sink) {
-    return connect3(source, t.identity(), sink);
+    return connect3(source, t$1.identity(), sink);
   }
 
   function connect3(source, xform, sink) {
     return _.transduce(xform, IPublish.pub, source, sink);
   }
 
-  var connect = _.overload(null, null, connect2, connect3); //successor to `via`, returns `disconnect` fn
+  var connect = _.overload(null, null, connect2, connect3); //returns `disconnect` fn
 
   function map2(f, source) {
-    return via2(_.comp(t.map(f), t.dedupe()), source);
+    return via2(_.comp(t$1.map(f), t$1.dedupe()), source);
   }
 
   function mapN(f) {
@@ -1244,7 +1314,7 @@ define(['exports', 'atomic/core', 'symbol', 'atomic/transients', 'atomic/transdu
     fmap: fmap
   }), [AudienceDetector, Cell, Subject]);
   function mousemove(el) {
-    return signal(t.map(function (e) {
+    return signal(t$1.map(function (e) {
       return [e.clientX, e.clientY];
     }), [], event(el, "mouseenter mousemove"));
   }
@@ -1259,13 +1329,13 @@ define(['exports', 'atomic/core', 'symbol', 'atomic/transients', 'atomic/transdu
   }
   function scan(f, init, source) {
     var memo = init;
-    return signal(t.map(function (value) {
+    return signal(t$1.map(function (value) {
       memo = f(memo, value);
       return memo;
     }), init, source);
   }
   function pressed(el) {
-    return signal(t.dedupe(), [], scan(function (memo, value) {
+    return signal(t$1.dedupe(), [], scan(function (memo, value) {
       if (value.type === "keyup") {
         memo = _.filtera(_.partial(_.notEq, value.key), memo);
       } else if (memo.indexOf(value.key) === -1) {
@@ -1275,11 +1345,11 @@ define(['exports', 'atomic/core', 'symbol', 'atomic/transients', 'atomic/transdu
       return memo;
     }, [], join(subject(), keydown(el), keyup(el))));
   }
-  function hashchange(window) {
-    return signal(t.map(function () {
+  var hashchange = _.called(function hashchange(window) {
+    return signal(t$1.map(function () {
       return location.hash;
     }), location.hash, event(window, "hashchange"));
-  }
+  }, "`hashchange` is deprecated — use `hashChange` instead.");
 
   function fromPromise1(promise) {
     return fromPromise2(promise, null);
@@ -1297,12 +1367,12 @@ define(['exports', 'atomic/core', 'symbol', 'atomic/transients', 'atomic/transdu
 
   var fromPromise = _.overload(null, fromPromise1, fromPromise2);
   function fromElement(events, f, el) {
-    return signal(t.map(function () {
+    return signal(t$1.map(function () {
       return f(el);
     }), f(el), event(el, events));
   }
   function focus(el) {
-    return join(cell(el === document.activeElement), via(t.map(_.constantly(true)), event(el, "focus")), via(t.map(_.constantly(false)), event(el, "blur")));
+    return join(cell(el === document.activeElement), via(t$1.map(_.constantly(true)), event(el, "focus")), via(t$1.map(_.constantly(false)), event(el, "blur")));
   }
   function join(sink) {
     var _sink2, _IPublish$pub2, _IPublish2;
@@ -1470,6 +1540,7 @@ define(['exports', 'atomic/core', 'symbol', 'atomic/transients', 'atomic/transdu
   exports.audienceDetector = audienceDetector;
   exports.broadcast = broadcast;
   exports.bus = bus;
+  exports.calc = calc;
   exports.cell = cell;
   exports.click = click;
   exports.complete = complete$3;
@@ -1491,8 +1562,10 @@ define(['exports', 'atomic/core', 'symbol', 'atomic/transients', 'atomic/transdu
   exports.handle = handle$4;
   exports.handler = handler;
   exports.handles = handles;
+  exports.hashChange = hashChange;
   exports.hashchange = hashchange;
   exports.hist = hist;
+  exports.initialized = initialized;
   exports.into = into;
   exports.join = join;
   exports.keydown = keydown;
