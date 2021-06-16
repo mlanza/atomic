@@ -241,7 +241,7 @@ export const latest = called(function latest(sources){
       f(source, fs(idx));
     }, sources));
   });
-}, "`latest` is deprecated — use `spreadsInit` instead.");
+}, "`latest` is deprecated — use `currents` instead.");
 
 function hist2(size, source){
   const sink = cell([]);
