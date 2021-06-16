@@ -130,7 +130,7 @@ function mapN(f, ...sources){
 
 export const map = overload(null, null, map2, mapN);
 
-export function computed(f, source){
+export const computed = called(function computed(f, source){
   const sink = cell(f(source));
   function callback(){
     IReset.reset(sink, f(source));
@@ -143,7 +143,7 @@ export function computed(f, source){
     f(source, callback);
   }),
     specify(IPublish, {pub}));
-}
+}, "`computed` is deprecated — use `computes` instead.");
 
 function fmap(source, f){
   return map(f, source);
@@ -151,23 +151,23 @@ function fmap(source, f){
 
 each(implement(IFunctor, {fmap}), [AudienceDetector, Cell, Subject]);
 
-export function mousemove(el){
+export const mousemove = called(function mousemove(el){
   return signal(t.map(function(e){
     return [e.clientX, e.clientY];
   }), [], event(el, "mouseenter mousemove"));
-}
+}, "`mousemove` is deprecated.");
 
-export function keydown(el){
+export const keydown = called(function keydown(el){
   return signal(event(el, "keydown"));
-}
+}, "`keydown` is deprecated — use `fromEvent` and perhaps `initialized(null)` instead.");
 
-export function keyup(el){
+export const keyup = called(function keyup(el){
   return signal(event(el, "keyup"));
-}
+}, "`keyup` is deprecated — use `fromEvent` and perhaps `initialized(null)` instead.");
 
-export function keypress(el){
+export const keypress = called(function keypress(el){
   return signal(event(el, "keypress"));
-}
+}, "`keypress` is deprecated — use `fromEvent` and perhaps `initialized(null)` instead.");
 
 export function scan(f, init, source){
   let memo = init;
@@ -258,7 +258,6 @@ function hist2(size, source){
 }
 
 export const hist = overload(null, partial(hist2, 2), hist2);
-
 
 function event2(el, key){
   const sink = subject(), callback = partial(IPublish.pub, sink);

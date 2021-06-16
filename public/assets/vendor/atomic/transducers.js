@@ -19,6 +19,13 @@ define(['exports', 'atomic/core', 'set'], function (exports, _, Set) { 'use stri
       });
     };
   }
+  function constantly(value) {
+    return function (xf) {
+      return _.overload(xf, xf, function (memo, _) {
+        return xf(memo, value);
+      });
+    };
+  }
   function map(f) {
     return function (xf) {
       return _.overload(xf, xf, function (memo, value) {
@@ -176,6 +183,7 @@ define(['exports', 'atomic/core', 'set'], function (exports, _, Set) { 'use stri
 
   exports.cat = cat;
   exports.compact = compact;
+  exports.constantly = constantly;
   exports.dedupe = dedupe;
   exports.detect = detect;
   exports.distinct = distinct;

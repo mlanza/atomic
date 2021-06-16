@@ -24,6 +24,14 @@ export function tap(other){
   }
 }
 
+export function constantly(value){
+  return function(xf){
+    return overload(xf, xf, function(memo, _){
+      return xf(memo, value);
+    });
+  }
+}
+
 export function map(f){
   return function(xf){
     return overload(xf, xf, function(memo, value){

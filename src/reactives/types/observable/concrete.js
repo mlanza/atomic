@@ -1,5 +1,6 @@
-import {just, slice, take, assoc, count, includes, repeat, matches, comp, each, overload, noop, mapIndexed, spread, does, toArray, isReduced} from "atomic/core";
+import {just, slice, split, take, assoc, count, includes, constantly, repeat, matches, comp, each, merge, map, apply, overload, noop, mapIndexed, spread, does, toArray, isReduced} from "atomic/core";
 import * as dom from "atomic/dom";
+import * as t from "atomic/transducers";
 import {pub, err, complete, sub, unsub} from "../../protocols/concrete.js";
 import {Observable, observable} from "./construct.js";
 import {Observer, observer} from "../observer/construct.js";
@@ -88,7 +89,17 @@ function fromEvent3(el, key, selector){
   });
 }
 
-export const fromEvent = overload(null, null, fromEvent2, fromEvent3)
+//const fromEvent = overload(null, null, fromEvent2, fromEvent3)
+
+function fromEvents2(el, keys){
+  return apply(merge, map(fromEvent2(el, ?), split(keys, ' ')));
+}
+
+function fromEvents3(el, keys, selector){
+  return apply(merge, map(fromEvent3(el, ?, selector), split(keys, ' ')));
+}
+
+export const fromEvent = overload(null, null, fromEvents2, fromEvents3)
 
 export function initialized(source, init){
   return observable(function(observer){
@@ -108,12 +119,18 @@ function fromPromise(promise){
   });
 }
 
-export function calc(source, f){
+export function computes(source, f){
   return initialized(pipe(source, t.map(f)), f);
 }
 
+function fromElement(el, key, f){
+  return computes(fromEvent(el, key), function(){
+    return f(el);
+  });
+}
+
 export function hashChange(window){
-  return calc(fromEvent(window, "hashchange"), function(e){
+  return computes(fromEvent(window, "hashchange"), function(e){
     return location.hash;
   });
 }
@@ -164,6 +181,45 @@ export function currents(sources){
   });
 }
 
+function toggles(el, on, off, init){
+  return initialized(
+    merge(
+        pipe(fromEvent(el, on), t.constantly(true)),
+        pipe(fromEvent(el, off), t.constantly(false))),
+      init);
+}
+
+function focus(el){
+  return toggles(el, "focus", "blur", function(){
+    return el === document.activeElement;
+  });
+}
+
+function click(el){
+  return fromEvent(el, "click");
+}
+
+function hover(el){
+  return toggles(el, "mouseover", "mouseout", constantly(false));
+}
+
+function fixed(value){
+  return observable(function(observer){
+    pub(observer, value);
+    complete(observer);
+  });
+}
+
+function map2(f, source){
+  return pipe(source, t.map(f), t.dedupe());
+}
+
+function mapN(f, ...sources){
+  return map2(spread(f), currents(sources));
+}
+
+const _map = overload(null, null, map2, mapN);
+
 function from(coll){
   return observable(function(observer){
     each(pub(observer, ?), coll);
@@ -171,5 +227,12 @@ function from(coll){
   });
 }
 
+Observable.map = _map;
+Observable.fromElement = fromElement;
+Observable.click = click;
+Observable.fixed = fixed;
+Observable.hover = hover;
+Observable.focus = focus;
+Observable.toggles = toggles;
 Observable.fromPromise = fromPromise;
 Observable.from = from;

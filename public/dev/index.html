@@ -36,9 +36,13 @@
       }, 1000);*/
 
       var button = dom.tag('button'),
-          click = button("Click Me");
+          input = dom.tag('input', {type: 'text'}),
+          click = button("Click Me", {id: "click-me"}),
+          name = input({id: "name"});
 
-      dom.append(document.body, click);
+      dom.append(document.body, name, click);
+      var inp = $.Observable.fromElement(name, "input change", dom.value);
+      $.sub(inp, _.see('inp'));
 
       var clicks = $.multiplex($.fromEvent(click, "click"));
       var dos = $.pipe(clicks, t.take(2));
@@ -59,9 +63,7 @@
       $.sub(dos, observe("dos"));
       $.sub(dos, observe("dos2"));
 
-
-
-      Object.assign(window, {dos, click, clicks});
+      Object.assign(window, {dos, inp, click, clicks});
 
       //_.reduced = $.complete; // worked with transducer!
 

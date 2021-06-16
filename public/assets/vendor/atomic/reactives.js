@@ -1,4 +1,4 @@
-define(['exports', 'atomic/core', 'atomic/transducers', 'symbol', 'atomic/transients', 'atomic/dom'], function (exports, _, t$1, _Symbol, mut, dom) { 'use strict';
+define(['exports', 'atomic/core', 'atomic/transducers', 'symbol', 'atomic/transients', 'atomic/dom'], function (exports, _, t, _Symbol, mut, dom) { 'use strict';
 
   var IDispatch = _.protocol({
     dispatch: null
@@ -790,15 +790,32 @@ define(['exports', 'atomic/core', 'atomic/transducers', 'symbol', 'atomic/transi
         el.removeEventListener(key, delegate);
       };
     });
+  } //const fromEvent = overload(null, null, fromEvent2, fromEvent3)
+
+
+  function fromEvents2(el, keys) {
+    var _el, _fromEvent;
+
+    return _.apply(_.merge, _.map((_fromEvent = fromEvent2, _el = el, function fromEvent2(_argPlaceholder3) {
+      return _fromEvent(_el, _argPlaceholder3);
+    }), _.split(keys, ' ')));
   }
 
-  var fromEvent = _.overload(null, null, fromEvent2, fromEvent3);
+  function fromEvents3(el, keys, selector) {
+    var _el2, _selector, _fromEvent2;
+
+    return _.apply(_.merge, _.map((_fromEvent2 = fromEvent3, _el2 = el, _selector = selector, function fromEvent3(_argPlaceholder4) {
+      return _fromEvent2(_el2, _argPlaceholder4, _selector);
+    }), _.split(keys, ' ')));
+  }
+
+  var fromEvent = _.overload(null, null, fromEvents2, fromEvents3);
   function initialized(source, init) {
     return observable(function (observer) {
       var _observer3, _pub3;
 
-      var handle = (_pub3 = pub$3, _observer3 = observer, function pub(_argPlaceholder3) {
-        return _pub3(_observer3, _argPlaceholder3);
+      var handle = (_pub3 = pub$3, _observer3 = observer, function pub(_argPlaceholder5) {
+        return _pub3(_observer3, _argPlaceholder5);
       });
       handle(init());
       return sub$8(source, handle);
@@ -809,21 +826,28 @@ define(['exports', 'atomic/core', 'atomic/transducers', 'symbol', 'atomic/transi
     return observable(function (observer) {
       var _observer4, _pub4, _observer5, _err;
 
-      promise.then((_pub4 = pub$3, _observer4 = observer, function pub(_argPlaceholder4) {
-        return _pub4(_observer4, _argPlaceholder4);
-      }), (_err = err$3, _observer5 = observer, function err(_argPlaceholder5) {
-        return _err(_observer5, _argPlaceholder5);
+      promise.then((_pub4 = pub$3, _observer4 = observer, function pub(_argPlaceholder6) {
+        return _pub4(_observer4, _argPlaceholder6);
+      }), (_err = err$3, _observer5 = observer, function err(_argPlaceholder7) {
+        return _err(_observer5, _argPlaceholder7);
       })).then(function () {
         complete$3(observer);
       });
     });
   }
 
-  function calc(source, f) {
+  function computes(source, f) {
     return initialized(pipe(source, t.map(f)), f);
   }
+
+  function fromElement$1(el, key, f) {
+    return computes(fromEvent(el, key), function () {
+      return f(el);
+    });
+  }
+
   function hashChange(window) {
-    return calc(fromEvent(window, "hashchange"), function (e) {
+    return computes(fromEvent(window, "hashchange"), function (e) {
       return location.hash;
     });
   }
@@ -838,8 +862,8 @@ define(['exports', 'atomic/core', 'atomic/transducers', 'symbol', 'atomic/transi
             value: value
           });
         });
-      }, function mapIndexed(_argPlaceholder6) {
-        return _mapIndexed(_param, _argPlaceholder6);
+      }, function mapIndexed(_argPlaceholder8) {
+        return _mapIndexed(_param, _argPlaceholder8);
       }), _.toArray, _.spread(_.does));
     });
   }
@@ -879,22 +903,68 @@ define(['exports', 'atomic/core', 'atomic/transducers', 'symbol', 'atomic/transi
     });
   }
 
+  function toggles(el, on, off, init) {
+    return initialized(_.merge(pipe(fromEvent(el, on), t.constantly(true)), pipe(fromEvent(el, off), t.constantly(false))), init);
+  }
+
+  function focus$1(el) {
+    return toggles(el, "focus", "blur", function () {
+      return el === document.activeElement;
+    });
+  }
+
+  function click$1(el) {
+    return fromEvent(el, "click");
+  }
+
+  function hover(el) {
+    return toggles(el, "mouseover", "mouseout", _.constantly(false));
+  }
+
+  function fixed$1(value) {
+    return observable(function (observer) {
+      pub$3(observer, value);
+      complete$3(observer);
+    });
+  }
+
+  function map2$1(f, source) {
+    return pipe(source, t.map(f), t.dedupe());
+  }
+
+  function mapN$1(f) {
+    for (var _len2 = arguments.length, sources = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
+      sources[_key2 - 1] = arguments[_key2];
+    }
+
+    return map2$1(_.spread(f), currents(sources));
+  }
+
+  var _map = _.overload(null, null, map2$1, mapN$1);
+
   function from(coll) {
     return observable(function (observer) {
       var _observer6, _pub5;
 
-      _.each((_pub5 = pub$3, _observer6 = observer, function pub(_argPlaceholder7) {
-        return _pub5(_observer6, _argPlaceholder7);
+      _.each((_pub5 = pub$3, _observer6 = observer, function pub(_argPlaceholder9) {
+        return _pub5(_observer6, _argPlaceholder9);
       }), coll);
       complete$3(observer);
     });
   }
 
+  Observable.map = _map;
+  Observable.fromElement = fromElement$1;
+  Observable.click = click$1;
+  Observable.fixed = fixed$1;
+  Observable.hover = hover;
+  Observable.focus = focus$1;
+  Observable.toggles = toggles;
   Observable.fromPromise = fromPromise$1;
   Observable.from = from;
 
   function sub$3(self, observer) {
-    return _.once(self.subscribed(observer)); //return unsubscribe fn
+    return _.once(self.subscribed(observer) || _.noop); //return unsubscribe fn
   }
 
   function reduce$1(self, xf, init) {
@@ -1280,7 +1350,7 @@ define(['exports', 'atomic/core', 'atomic/transducers', 'symbol', 'atomic/transi
   var then = _.overload(null, null, then2, thenN);
 
   function signal1(source) {
-    return signal2(t$1.map(_.identity), source);
+    return signal2(t.map(_.identity), source);
   }
 
   function signal2(xf, source) {
@@ -1316,7 +1386,7 @@ define(['exports', 'atomic/core', 'atomic/transducers', 'symbol', 'atomic/transi
   var via = _.called(_.overload(null, null, via2, viaN), "`via` is deprecated — use `connect` instead.");
 
   function connect2(source, sink) {
-    return connect3(source, t$1.identity(), sink);
+    return connect3(source, t.identity(), sink);
   }
 
   function connect3(source, xform, sink) {
@@ -1326,7 +1396,7 @@ define(['exports', 'atomic/core', 'atomic/transducers', 'symbol', 'atomic/transi
   var connect = _.overload(null, null, connect2, connect3); //returns `disconnect` fn
 
   function map2(f, source) {
-    return via2(_.comp(t$1.map(f), t$1.dedupe()), source);
+    return via2(_.comp(t.map(f), t.dedupe()), source);
   }
 
   function mapN(f) {
@@ -1338,7 +1408,7 @@ define(['exports', 'atomic/core', 'atomic/transducers', 'symbol', 'atomic/transi
   }
 
   var map = _.overload(null, null, map2, mapN);
-  function computed(f, source) {
+  var computed = _.called(function computed(f, source) {
     var sink = cell(f(source));
 
     function callback() {
@@ -1355,7 +1425,7 @@ define(['exports', 'atomic/core', 'atomic/transducers', 'symbol', 'atomic/transi
     }), _.specify(IPublish, {
       pub: pub
     }));
-  }
+  }, "`computed` is deprecated — use `computes` instead.");
 
   function fmap(source, f) {
     return map(f, source);
@@ -1364,29 +1434,29 @@ define(['exports', 'atomic/core', 'atomic/transducers', 'symbol', 'atomic/transi
   _.each(_.implement(_.IFunctor, {
     fmap: fmap
   }), [AudienceDetector, Cell, Subject]);
-  function mousemove(el) {
-    return signal(t$1.map(function (e) {
+  var mousemove = _.called(function mousemove(el) {
+    return signal(t.map(function (e) {
       return [e.clientX, e.clientY];
     }), [], event(el, "mouseenter mousemove"));
-  }
-  function keydown(el) {
+  }, "`mousemove` is deprecated.");
+  var keydown = _.called(function keydown(el) {
     return signal(event(el, "keydown"));
-  }
-  function keyup(el) {
+  }, "`keydown` is deprecated — use `fromEvent` and perhaps `initialized(null)` instead.");
+  var keyup = _.called(function keyup(el) {
     return signal(event(el, "keyup"));
-  }
-  function keypress(el) {
+  }, "`keyup` is deprecated — use `fromEvent` and perhaps `initialized(null)` instead.");
+  var keypress = _.called(function keypress(el) {
     return signal(event(el, "keypress"));
-  }
+  }, "`keypress` is deprecated — use `fromEvent` and perhaps `initialized(null)` instead.");
   function scan(f, init, source) {
     var memo = init;
-    return signal(t$1.map(function (value) {
+    return signal(t.map(function (value) {
       memo = f(memo, value);
       return memo;
     }), init, source);
   }
   function pressed(el) {
-    return signal(t$1.dedupe(), [], scan(function (memo, value) {
+    return signal(t.dedupe(), [], scan(function (memo, value) {
       if (value.type === "keyup") {
         memo = _.filtera(_.partial(_.notEq, value.key), memo);
       } else if (memo.indexOf(value.key) === -1) {
@@ -1397,7 +1467,7 @@ define(['exports', 'atomic/core', 'atomic/transducers', 'symbol', 'atomic/transi
     }, [], join(subject(), keydown(el), keyup(el))));
   }
   var hashchange = _.called(function hashchange(window) {
-    return signal(t$1.map(function () {
+    return signal(t.map(function () {
       return location.hash;
     }), location.hash, event(window, "hashchange"));
   }, "`hashchange` is deprecated — use `hashChange` instead.");
@@ -1418,12 +1488,12 @@ define(['exports', 'atomic/core', 'atomic/transducers', 'symbol', 'atomic/transi
 
   var fromPromise = _.overload(null, fromPromise1, fromPromise2);
   function fromElement(events, f, el) {
-    return signal(t$1.map(function () {
+    return signal(t.map(function () {
       return f(el);
     }), f(el), event(el, events));
   }
   function focus(el) {
-    return join(cell(el === document.activeElement), via(t$1.map(_.constantly(true)), event(el, "focus")), via(t$1.map(_.constantly(false)), event(el, "blur")));
+    return join(cell(el === document.activeElement), via(t.map(_.constantly(true)), event(el, "focus")), via(t.map(_.constantly(false)), event(el, "blur")));
   }
   function join(sink) {
     var _sink2, _IPublish$pub2, _IPublish2;
@@ -1591,12 +1661,12 @@ define(['exports', 'atomic/core', 'atomic/transducers', 'symbol', 'atomic/transi
   exports.audienceDetector = audienceDetector;
   exports.broadcast = broadcast;
   exports.bus = bus;
-  exports.calc = calc;
   exports.cell = cell;
   exports.click = click;
   exports.complete = complete$3;
   exports.component = component;
   exports.computed = computed;
+  exports.computes = computes;
   exports.connect = connect;
   exports.currents = currents;
   exports.cursor = cursor;
