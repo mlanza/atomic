@@ -1,4 +1,4 @@
-import {just, slice, split, take, assoc, count, includes, constantly, repeat, matches, comp, each, merge, map, apply, overload, noop, mapIndexed, spread, does, toArray, isReduced} from "atomic/core";
+import {just, slice, split, take, conj, array, assoc, count, includes, notEq, constantly, repeat, filtera, matches, comp, each, merge, map, apply, overload, noop, mapIndexed, spread, does, toArray, isReduced} from "atomic/core";
 import * as dom from "atomic/dom";
 import * as t from "atomic/transducers";
 import {pub, err, complete, sub, unsub} from "../../protocols/concrete.js";
@@ -129,7 +129,7 @@ function fromElement(el, key, f){
   });
 }
 
-export function hashChange(window){
+export function hash(window){
   return computes(fromEvent(window, "hashchange"), function(e){
     return location.hash;
   });
@@ -220,11 +220,33 @@ function mapN(f, ...sources){
 
 const _map = overload(null, null, map2, mapN);
 
+//calling this may spark sad thoughts
+export function depressed(el){
+  return initialized(
+    pipe(
+      fromEvent(el, "keydown keyup"),
+        t.scan(function(memo, e){
+          if (e.type === "keyup") {
+            memo = filtera(notEq(e.key, ?), memo);
+          } else if (!includes(memo, e.key)) {
+            memo = conj(memo, e.key);
+          }
+          return memo;
+        }),
+        t.dedupe()),
+    array);
+}
+
 function from(coll){
   return observable(function(observer){
     each(pub(observer, ?), coll);
     complete(observer);
   });
+}
+
+//useful for making readonly (e.g. covering over IPublish protocol)
+export function toObservable(source){
+  return source instanceof Observable ? source : observable(sub(source, ?));
 }
 
 Observable.map = _map;

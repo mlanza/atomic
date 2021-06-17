@@ -1,4 +1,4 @@
-import {overload, complement, comp, first, rest, partial, isSome, reduced, seq, equiv, IReduce} from "atomic/core";
+import {overload, complement, clone, comp, first, rest, partial, isSome, reduced, seq, equiv, IReduce} from "atomic/core";
 import * as _ from "atomic/core";
 import Set from "set";
 
@@ -20,6 +20,16 @@ export function tap(other){
     return overload(xf, xf, function(memo, value){
       xf(other, value);
       return xf(memo, value);
+    });
+  }
+}
+
+export function scan(step, init){
+  return function(xf){
+    let acc = init;
+    return overload(xf, xf, function(memo, value){
+      acc = step(acc, value)
+      return xf(memo, acc);
     });
   }
 }
@@ -200,4 +210,17 @@ export function cat(xf){
   return overload(xf, xf, function(memo, value){
     return IReduce.reduce(memo, xf, value);
   });
+}
+
+export function hist(size){
+  return function(xf){
+    let history = new Array(size || 2);
+    return overload(xf, xf, function(memo, value){
+      const revised = clone(history);
+      revised.unshift(value);
+      revised.pop();
+      history = revised;
+      return xf(memo, history);
+    });
+  }
 }

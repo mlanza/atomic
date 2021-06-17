@@ -19,6 +19,15 @@ define(['exports', 'atomic/core', 'set'], function (exports, _, Set) { 'use stri
       });
     };
   }
+  function scan(step, init) {
+    return function (xf) {
+      var acc = init;
+      return _.overload(xf, xf, function (memo, value) {
+        acc = step(acc, value);
+        return xf(memo, acc);
+      });
+    };
+  }
   function constantly(value) {
     return function (xf) {
       return _.overload(xf, xf, function (memo, _) {
@@ -180,6 +189,18 @@ define(['exports', 'atomic/core', 'set'], function (exports, _, Set) { 'use stri
       return _.IReduce.reduce(memo, xf, value);
     });
   }
+  function hist(size) {
+    return function (xf) {
+      var history = new Array(size || 2);
+      return _.overload(xf, xf, function (memo, value) {
+        var revised = _.clone(history);
+        revised.unshift(value);
+        revised.pop();
+        history = revised;
+        return xf(memo, history);
+      });
+    };
+  }
 
   exports.cat = cat;
   exports.compact = compact;
@@ -190,6 +211,7 @@ define(['exports', 'atomic/core', 'set'], function (exports, _, Set) { 'use stri
   exports.drop = drop;
   exports.dropWhile = dropWhile;
   exports.filter = filter;
+  exports.hist = hist;
   exports.identity = identity;
   exports.interpose = interpose;
   exports.keep = keep;
@@ -199,6 +221,7 @@ define(['exports', 'atomic/core', 'set'], function (exports, _, Set) { 'use stri
   exports.mapSome = mapSome;
   exports.mapcat = mapcat;
   exports.remove = remove;
+  exports.scan = scan;
   exports.splay = splay;
   exports.take = take;
   exports.takeNth = takeNth;

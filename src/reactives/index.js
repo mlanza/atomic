@@ -169,15 +169,15 @@ export const keypress = called(function keypress(el){
   return signal(event(el, "keypress"));
 }, "`keypress` is deprecated — use `fromEvent` and perhaps `initialized(null)` instead.");
 
-export function scan(f, init, source){
+export const scan = called(function scan(f, init, source){
   let memo = init;
   return signal(t.map(function(value){
     memo = f(memo, value);
     return memo;
   }), init, source);
-}
+}, "`scan` is deprecated — use `scan` transducer instead.");
 
-export function pressed(el){
+export const pressed = called(function pressed(el){
   return signal(t.dedupe(), [], scan(function(memo, value){
     if (value.type === "keyup") {
       memo = filtera(partial(notEq, value.key), memo);
@@ -186,13 +186,13 @@ export function pressed(el){
     }
     return memo;
   }, [], join(subject(), keydown(el), keyup(el))));
-}
+}, "`pressed` is deprecated — use `depressed` instead.");
 
 export const hashchange = called(function hashchange(window){
   return signal(t.map(function(){
     return location.hash;
   }), location.hash, event(window, "hashchange"));
-}, "`hashchange` is deprecated — use `hashChange` instead.");
+}, "`hashchange` is deprecated — use `hash` instead.");
 
 function fromPromise1(promise){
   return fromPromise2(promise, null);
@@ -257,7 +257,7 @@ function hist2(size, source){
   return sink;
 }
 
-export const hist = overload(null, partial(hist2, 2), hist2);
+export const hist = called(overload(null, partial(hist2, 2), hist2), "`hist` is deprecated — use `hist` transducer instead.");
 
 function event2(el, key){
   const sink = subject(), callback = partial(IPublish.pub, sink);
