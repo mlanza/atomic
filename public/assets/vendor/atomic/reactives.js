@@ -846,7 +846,7 @@ define(['exports', 'atomic/core', 'atomic/transducers', 'symbol', 'atomic/transi
     });
   }
 
-  function hashChange(window) {
+  function hash(window) {
     return computes(fromEvent(window, "hashchange"), function (e) {
       return location.hash;
     });
@@ -942,17 +942,41 @@ define(['exports', 'atomic/core', 'atomic/transducers', 'symbol', 'atomic/transi
 
   var _map = _.overload(null, null, map2$1, mapN$1);
 
+  function depressed(el) {
+    return initialized(pipe(fromEvent(el, "keydown keyup"), t.scan(function (memo, e) {
+      if (e.type === "keyup") {
+        var _e$key, _notEq;
+
+        memo = _.filtera((_notEq = _.notEq, _e$key = e.key, function notEq(_argPlaceholder9) {
+          return _notEq(_e$key, _argPlaceholder9);
+        }), memo);
+      } else if (!_.includes(memo, e.key)) {
+        memo = _.conj(memo, e.key);
+      }
+
+      return memo;
+    }), t.dedupe()), _.array);
+  }
+
   function from(coll) {
     return observable(function (observer) {
       var _observer6, _pub5;
 
-      _.each((_pub5 = pub$3, _observer6 = observer, function pub(_argPlaceholder9) {
-        return _pub5(_observer6, _argPlaceholder9);
+      _.each((_pub5 = pub$3, _observer6 = observer, function pub(_argPlaceholder10) {
+        return _pub5(_observer6, _argPlaceholder10);
       }), coll);
       complete$3(observer);
     });
-  }
+  } //useful for making readonly (e.g. covering over IPublish protocol)
 
+
+  function toObservable(source) {
+    var _source, _sub;
+
+    return source instanceof Observable ? source : observable((_sub = sub$8, _source = source, function sub(_argPlaceholder11) {
+      return _sub(_source, _argPlaceholder11);
+    }));
+  }
   Observable.map = _map;
   Observable.fromElement = fromElement$1;
   Observable.click = click$1;
@@ -1448,14 +1472,14 @@ define(['exports', 'atomic/core', 'atomic/transducers', 'symbol', 'atomic/transi
   var keypress = _.called(function keypress(el) {
     return signal(event(el, "keypress"));
   }, "`keypress` is deprecated — use `fromEvent` and perhaps `initialized(null)` instead.");
-  function scan(f, init, source) {
+  var scan = _.called(function scan(f, init, source) {
     var memo = init;
     return signal(t.map(function (value) {
       memo = f(memo, value);
       return memo;
     }), init, source);
-  }
-  function pressed(el) {
+  }, "`scan` is deprecated — use `scan` transducer instead.");
+  var pressed = _.called(function pressed(el) {
     return signal(t.dedupe(), [], scan(function (memo, value) {
       if (value.type === "keyup") {
         memo = _.filtera(_.partial(_.notEq, value.key), memo);
@@ -1465,12 +1489,12 @@ define(['exports', 'atomic/core', 'atomic/transducers', 'symbol', 'atomic/transi
 
       return memo;
     }, [], join(subject(), keydown(el), keyup(el))));
-  }
+  }, "`pressed` is deprecated — use `depressed` instead.");
   var hashchange = _.called(function hashchange(window) {
     return signal(t.map(function () {
       return location.hash;
     }), location.hash, event(window, "hashchange"));
-  }, "`hashchange` is deprecated — use `hashChange` instead.");
+  }, "`hashchange` is deprecated — use `hash` instead.");
 
   function fromPromise1(promise) {
     return fromPromise2(promise, null);
@@ -1550,7 +1574,7 @@ define(['exports', 'atomic/core', 'atomic/transducers', 'symbol', 'atomic/transi
     return sink;
   }
 
-  var hist = _.overload(null, _.partial(hist2, 2), hist2);
+  var hist = _.called(_.overload(null, _.partial(hist2, 2), hist2), "`hist` is deprecated — use `hist` transducer instead.");
 
   function event2(el, key) {
     var sink = subject(),
@@ -1670,6 +1694,7 @@ define(['exports', 'atomic/core', 'atomic/transducers', 'symbol', 'atomic/transi
   exports.connect = connect;
   exports.currents = currents;
   exports.cursor = cursor;
+  exports.depressed = depressed;
   exports.dispatch = dispatch$3;
   exports.err = err$3;
   exports.event = event;
@@ -1684,7 +1709,7 @@ define(['exports', 'atomic/core', 'atomic/transducers', 'symbol', 'atomic/transi
   exports.handle = handle$4;
   exports.handler = handler;
   exports.handles = handles;
-  exports.hashChange = hashChange;
+  exports.hash = hash;
   exports.hashchange = hashchange;
   exports.hist = hist;
   exports.indexed = indexed;
@@ -1724,6 +1749,7 @@ define(['exports', 'atomic/core', 'atomic/transducers', 'symbol', 'atomic/transi
   exports.then = then;
   exports.then2 = then2;
   exports.timeTraveler = timeTraveler;
+  exports.toObservable = toObservable;
   exports.trigger = trigger;
   exports.undo = undo$1;
   exports.undoable = undoable$1;
