@@ -159,15 +159,15 @@ export const mousemove = called(function mousemove(el){
 
 export const keydown = called(function keydown(el){
   return signal(event(el, "keydown"));
-}, "`keydown` is deprecated — use `fromEvent` and perhaps `initialized(null)` instead.");
+}, "`keydown` is deprecated — use `fromEvent` and perhaps `seed` instead.");
 
 export const keyup = called(function keyup(el){
   return signal(event(el, "keyup"));
-}, "`keyup` is deprecated — use `fromEvent` and perhaps `initialized(null)` instead.");
+}, "`keyup` is deprecated — use `fromEvent` and perhaps `seed` instead.");
 
 export const keypress = called(function keypress(el){
   return signal(event(el, "keypress"));
-}, "`keypress` is deprecated — use `fromEvent` and perhaps `initialized(null)` instead.");
+}, "`keypress` is deprecated — use `fromEvent` and perhaps `seed` instead.");
 
 export const scan = called(function scan(f, init, source){
   let memo = init;

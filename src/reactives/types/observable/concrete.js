@@ -1,4 +1,4 @@
-import {just, slice, split, take, conj, array, assoc, count, includes, notEq, constantly, repeat, filtera, matches, comp, each, merge, map, apply, overload, noop, mapIndexed, spread, does, toArray, isReduced} from "atomic/core";
+import {just, slice, split, take, conj, assoc, count, includes, notEq, constantly, repeat, filtera, matches, comp, each, merge, map, apply, overload, noop, mapIndexed, spread, does, toArray, isReduced} from "atomic/core";
 import * as dom from "atomic/dom";
 import * as t from "atomic/transducers";
 import {pub, err, complete, sub, unsub} from "../../protocols/concrete.js";
@@ -101,7 +101,7 @@ function fromEvents3(el, keys, selector){
 
 export const fromEvent = overload(null, null, fromEvents2, fromEvents3)
 
-export function initialized(source, init){
+export function seed(init, source){
   return observable(function(observer){
     const handle = pub(observer, ?);
     handle(init());
@@ -120,7 +120,7 @@ function fromPromise(promise){
 }
 
 export function computes(source, f){
-  return initialized(pipe(source, t.map(f)), f);
+  return seed(f, pipe(source, t.map(f)));
 }
 
 function fromElement(el, key, f){
@@ -169,12 +169,12 @@ const _currents = overload(null, _currents1, _currents2);
 export function currents(sources){
   const nil = {}, source = _currents(sources, nil);
   return observable(function(observer){
-    let initialized = false;
+    let init = false;
     return sub(source, function(state){
-      if (initialized) {
+      if (init) {
         pub(observer, state);
       } else if (!includes(state, nil)) {
-        initialized = true;
+        init = true;
         pub(observer, state);
       }
     });
@@ -182,11 +182,11 @@ export function currents(sources){
 }
 
 function toggles(el, on, off, init){
-  return initialized(
+  return seed(
+    init,
     merge(
         pipe(fromEvent(el, on), t.constantly(true)),
-        pipe(fromEvent(el, off), t.constantly(false))),
-      init);
+        pipe(fromEvent(el, off), t.constantly(false))));
 }
 
 function focus(el){
@@ -222,7 +222,8 @@ const _map = overload(null, null, map2, mapN);
 
 //calling this may spark sad thoughts
 export function depressed(el){
-  return initialized(
+  return seed(
+    constantly([]),
     pipe(
       fromEvent(el, "keydown keyup"),
         t.scan(function(memo, e){
@@ -232,9 +233,8 @@ export function depressed(el){
             memo = conj(memo, e.key);
           }
           return memo;
-        }),
-        t.dedupe()),
-    array);
+        }, []),
+        t.dedupe()));
 }
 
 function from(coll){
