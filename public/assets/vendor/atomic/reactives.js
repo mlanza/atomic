@@ -810,7 +810,7 @@ define(['exports', 'atomic/core', 'atomic/transducers', 'symbol', 'atomic/transi
   }
 
   var fromEvent = _.overload(null, null, fromEvents2, fromEvents3);
-  function initialized(source, init) {
+  function seed(init, source) {
     return observable(function (observer) {
       var _observer3, _pub3;
 
@@ -837,7 +837,7 @@ define(['exports', 'atomic/core', 'atomic/transducers', 'symbol', 'atomic/transi
   }
 
   function computes(source, f) {
-    return initialized(pipe(source, t.map(f)), f);
+    return seed(f, pipe(source, t.map(f)));
   }
 
   function fromElement$1(el, key, f) {
@@ -891,12 +891,12 @@ define(['exports', 'atomic/core', 'atomic/transducers', 'symbol', 'atomic/transi
         source = _currents(sources, nil);
 
     return observable(function (observer) {
-      var initialized = false;
+      var init = false;
       return sub$8(source, function (state) {
-        if (initialized) {
+        if (init) {
           pub$3(observer, state);
         } else if (!_.includes(state, nil)) {
-          initialized = true;
+          init = true;
           pub$3(observer, state);
         }
       });
@@ -904,7 +904,7 @@ define(['exports', 'atomic/core', 'atomic/transducers', 'symbol', 'atomic/transi
   }
 
   function toggles(el, on, off, init) {
-    return initialized(_.merge(pipe(fromEvent(el, on), t.constantly(true)), pipe(fromEvent(el, off), t.constantly(false))), init);
+    return seed(init, _.merge(pipe(fromEvent(el, on), t.constantly(true)), pipe(fromEvent(el, off), t.constantly(false))));
   }
 
   function focus$1(el) {
@@ -940,10 +940,11 @@ define(['exports', 'atomic/core', 'atomic/transducers', 'symbol', 'atomic/transi
     return map2$1(_.spread(f), currents(sources));
   }
 
-  var _map = _.overload(null, null, map2$1, mapN$1);
+  var _map = _.overload(null, null, map2$1, mapN$1); //calling this may spark sad thoughts
+
 
   function depressed(el) {
-    return initialized(pipe(fromEvent(el, "keydown keyup"), t.scan(function (memo, e) {
+    return seed(_.constantly([]), pipe(fromEvent(el, "keydown keyup"), t.scan(function (memo, e) {
       if (e.type === "keyup") {
         var _e$key, _notEq;
 
@@ -955,7 +956,7 @@ define(['exports', 'atomic/core', 'atomic/transducers', 'symbol', 'atomic/transi
       }
 
       return memo;
-    }), t.dedupe()), _.array);
+    }, []), t.dedupe()));
   }
 
   function from(coll) {
@@ -1465,13 +1466,13 @@ define(['exports', 'atomic/core', 'atomic/transducers', 'symbol', 'atomic/transi
   }, "`mousemove` is deprecated.");
   var keydown = _.called(function keydown(el) {
     return signal(event(el, "keydown"));
-  }, "`keydown` is deprecated — use `fromEvent` and perhaps `initialized(null)` instead.");
+  }, "`keydown` is deprecated — use `fromEvent` and perhaps `seed` instead.");
   var keyup = _.called(function keyup(el) {
     return signal(event(el, "keyup"));
-  }, "`keyup` is deprecated — use `fromEvent` and perhaps `initialized(null)` instead.");
+  }, "`keyup` is deprecated — use `fromEvent` and perhaps `seed` instead.");
   var keypress = _.called(function keypress(el) {
     return signal(event(el, "keypress"));
-  }, "`keypress` is deprecated — use `fromEvent` and perhaps `initialized(null)` instead.");
+  }, "`keypress` is deprecated — use `fromEvent` and perhaps `seed` instead.");
   var scan = _.called(function scan(f, init, source) {
     var memo = init;
     return signal(t.map(function (value) {
@@ -1713,7 +1714,6 @@ define(['exports', 'atomic/core', 'atomic/transducers', 'symbol', 'atomic/transi
   exports.hashchange = hashchange;
   exports.hist = hist;
   exports.indexed = indexed;
-  exports.initialized = initialized;
   exports.into = into;
   exports.join = join;
   exports.keydown = keydown;
@@ -1742,6 +1742,7 @@ define(['exports', 'atomic/core', 'atomic/transducers', 'symbol', 'atomic/transi
   exports.release = release$1;
   exports.router = router;
   exports.scan = scan;
+  exports.seed = seed;
   exports.signal = signal;
   exports.sub = sub$8;
   exports.subject = subject;
