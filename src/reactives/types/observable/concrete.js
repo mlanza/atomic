@@ -1,4 +1,4 @@
-import {just, slice, split, take, conj, assoc, count, includes, notEq, constantly, repeat, filtera, matches, comp, each, merge, map, apply, overload, noop, mapIndexed, spread, does, toArray, isReduced} from "atomic/core";
+import {just, slice, split, take, conj, assoc, count, includes, notEq, constantly, repeat, filtera, matches, comp, each, merge, map, apply, overload, noop, mapIndexed, spread, does, toArray, unreduced, isReduced} from "atomic/core";
 import * as dom from "atomic/dom";
 import * as t from "atomic/transducers";
 import {pub, err, complete, sub, unsub} from "../../protocols/concrete.js";
@@ -17,8 +17,9 @@ function pipe2(source, xform){
       const memo = step(obs, value);
       if (isReduced(memo)){
         complete(wrapped);
+        return unreduced(memo);
       }
-      return obs;
+      return memo;
     }, function(error){
       err(obs, error);
       unsub && unsub();
