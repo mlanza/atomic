@@ -15,15 +15,6 @@ export function tee(f){
   }
 }
 
-export function tap(other){
-  return function(xf){
-    return overload(xf, xf, function(memo, value){
-      xf(other, value);
-      return xf(memo, value);
-    });
-  }
-}
-
 export function scan(step, init){
   return function(xf){
     let acc = init;

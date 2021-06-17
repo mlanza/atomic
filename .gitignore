@@ -1,6 +1,6 @@
 npm-debug.log
 node_modules/*
-public/assets/atomic/*
+public/assets/vendor/atomic/*
 public/assets/tests.js
 public/data/*
 lib
