@@ -2,6 +2,7 @@ import {
   IDeref,
   ICollection,
   IDisposable,
+  IReduce,
   IReset,
   ISwap,
   IAssociative,
@@ -151,49 +152,6 @@ function fmap(source, f){
 
 each(implement(IFunctor, {fmap}), [AudienceDetector, Cell, Subject]);
 
-export const mousemove = called(function mousemove(el){
-  return signal(t.map(function(e){
-    return [e.clientX, e.clientY];
-  }), [], event(el, "mouseenter mousemove"));
-}, "`mousemove` is deprecated.");
-
-export const keydown = called(function keydown(el){
-  return signal(event(el, "keydown"));
-}, "`keydown` is deprecated — use `fromEvent` and perhaps `seed` instead.");
-
-export const keyup = called(function keyup(el){
-  return signal(event(el, "keyup"));
-}, "`keyup` is deprecated — use `fromEvent` and perhaps `seed` instead.");
-
-export const keypress = called(function keypress(el){
-  return signal(event(el, "keypress"));
-}, "`keypress` is deprecated — use `fromEvent` and perhaps `seed` instead.");
-
-export const scan = called(function scan(f, init, source){
-  let memo = init;
-  return signal(t.map(function(value){
-    memo = f(memo, value);
-    return memo;
-  }), init, source);
-}, "`scan` is deprecated — use `scan` transducer instead.");
-
-export const pressed = called(function pressed(el){
-  return signal(t.dedupe(), [], scan(function(memo, value){
-    if (value.type === "keyup") {
-      memo = filtera(partial(notEq, value.key), memo);
-    } else if (memo.indexOf(value.key) === -1) {
-      memo = ICollection.conj(memo, value.key);
-    }
-    return memo;
-  }, [], join(subject(), keydown(el), keyup(el))));
-}, "`pressed` is deprecated — use `depressed` instead.");
-
-export const hashchange = called(function hashchange(window){
-  return signal(t.map(function(){
-    return location.hash;
-  }), location.hash, event(window, "hashchange"));
-}, "`hashchange` is deprecated — use `hash` instead.");
-
 function fromPromise1(promise){
   return fromPromise2(promise, null);
 }
@@ -206,27 +164,21 @@ function fromPromise2(promise, init){
 
 export const fromPromise = overload(null, fromPromise1, fromPromise2);
 
-export function fromElement(events, f, el){
+export const fromElement = called(function fromElement(events, f, el){
   return signal(t.map(function(){
     return f(el);
   }), f(el), event(el, events));
-}
+}, "`fromElement` is deprecated — use `interact` instead.");
 
-export function focus(el){
-  return join(cell(el === document.activeElement),
-    via(t.map(constantly(true)), event(el, "focus")),
-    via(t.map(constantly(false)), event(el, "blur")));
-}
-
-export function join(sink, ...sources){
+export const join = called(function join(sink, ...sources){
   const callback = IPublish.pub(sink, ?);
   return audienceDetector(sink, function(state){
     const f = state === "active" ? ISubscribe.sub : ISubscribe.unsub;
     each(f(?, callback), sources);
   });
-}
+}, "`join` is deprecated — use `merge` instead.");
 
-export const fixed = comp(readonly, cell);
+export const fixed = called(comp(readonly, cell), "`fixed` is deprecated — use `always instead.");
 
 export const latest = called(function latest(sources){
   const sink = cell(mapa(constantly(null), sources));
@@ -280,10 +232,6 @@ function event3(el, key, selector){
 
 export const event = called(overload(null, null, event2, event3), "`event` deprecated - use `fromEvent` instead.");
 
-export function click(el){
-  return event(el, "click");
-}
-
 //enforce sequential nature of operations
 function isolate(f){ //TODO treat operations as promises
   const queue = [];
@@ -325,7 +273,12 @@ export const mutate = overload(null, null, mutate2, mutate3);
     self(msg);
   }
 
+  function reduce(self, xf, init){ //makes fns work as observers like `cell`, e.g. `$.connect($.tick(3000), _.see("foo"))`
+    return ISubscribe.sub(init, xf(self, ?));
+  }
+
   doto(Function,
+    implement(IReduce, {reduce}),
     implement(IPublish, {pub, err: noop, complete: noop}),
     implement(IDispatch, {dispatch}));
 

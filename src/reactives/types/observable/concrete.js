@@ -1,4 +1,4 @@
-import {just, slice, split, take, conj, assoc, count, includes, notEq, constantly, repeat, filtera, matches, comp, each, merge, map, apply, overload, noop, mapIndexed, spread, does, toArray, unreduced, isReduced} from "atomic/core";
+import {just, doto, specify, slice, split, take, conj, assoc, count, includes, notEq, constantly, repeat, filtera, matches, comp, each, merge, map, apply, overload, noop, mapIndexed, spread, does, toArray, unreduced, isReduced, IDeref} from "atomic/core";
 import * as dom from "atomic/dom";
 import * as t from "atomic/transducers";
 import {pub, err, complete, sub, unsub} from "../../protocols/concrete.js";
@@ -102,12 +102,14 @@ function fromEvents3(el, keys, selector){
 
 export const fromEvent = overload(null, null, fromEvents2, fromEvents3)
 
+//adds an immediate value upon subscription as with cells.
 export function seed(init, source){
-  return observable(function(observer){
+  return doto(observable(function(observer){
     const handle = pub(observer, ?);
     handle(init());
     return sub(source, handle);
-  });
+  }),
+    specify(IDeref, {deref: init})); //TODO remove after migration, this is for `sink` compatibility only
 }
 
 function fromPromise(promise){
@@ -124,7 +126,7 @@ export function computes(source, f){
   return seed(f, pipe(source, t.map(f)));
 }
 
-function fromElement(el, key, f){
+export function interact(el, key, f){
   return computes(fromEvent(el, key), function(){
     return f(el);
   });
@@ -182,7 +184,7 @@ export function currents(sources){
   });
 }
 
-function toggles(el, on, off, init){
+export function toggles(el, on, off, init){
   return seed(
     init,
     merge(
@@ -190,24 +192,35 @@ function toggles(el, on, off, init){
         pipe(fromEvent(el, off), t.constantly(false))));
 }
 
-function focus(el){
+export function focus(el){
   return toggles(el, "focus", "blur", function(){
     return el === document.activeElement;
   });
 }
 
-function click(el){
+export function click(el){
   return fromEvent(el, "click");
 }
 
-function hover(el){
+export function hover(el){
   return toggles(el, "mouseover", "mouseout", constantly(false));
 }
 
-function fixed(value){
+export function always(value){
   return observable(function(observer){
     pub(observer, value);
     complete(observer);
+  });
+}
+
+export function tick(interval){
+  return observable(function(observer){
+    const iv = setInterval(function(){
+      pub(observer, (new Date()).getTime());
+    }, interval);
+    return function(){
+      clearInterval(iv);
+    }
   });
 }
 
