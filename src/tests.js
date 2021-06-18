@@ -341,20 +341,22 @@ QUnit.test("cell", function(assert){
   tally.click();
   assert.equal(clicks |> _.deref, 0);
   const tallied = $.click(tally);
-  $.sub(tallied, function(){
+  var unsub = $.sub(tallied, function(){
     _.swap(clicks, _.inc);
   });
   $.sub(tallied, _.noop);
   tally.click();
-  _.dispose(tallied);
+  unsub();
   tally.click();
   const source = $.cell(0);
-  const sink   = $.signal(t.map(_.inc), source);
+  const dest = $.cell();
+  const sink   = $.pipe(source, t.map(_.inc), t.tee($.pub(dest, ?)));
+  $.connect(sink, $.subject());
   const msink  = _.fmap(source, _.inc);
-  source |> _.swap(?, _.inc);
+  _.swap(source, _.inc);
   assert.equal(clicks |> _.deref, 1);
   assert.equal(source |> _.deref, 1);
-  assert.equal(sink   |> _.deref, 2);
+  assert.equal(dest   |> _.deref, 2);
   assert.equal(msink  |> _.deref, 2);
   const bucket = $.cell([], $.subject(), _.pipe(_.get(?, 'length'), _.lt(?, 3))),
         states = $.cell([]);

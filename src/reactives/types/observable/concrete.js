@@ -264,11 +264,5 @@ export function toObservable(source){
 }
 
 Observable.map = _map;
-Observable.fromElement = fromElement;
-Observable.click = click;
-Observable.fixed = fixed;
-Observable.hover = hover;
-Observable.focus = focus;
-Observable.toggles = toggles;
 Observable.fromPromise = fromPromise;
 Observable.from = from;
