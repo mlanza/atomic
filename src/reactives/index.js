@@ -43,6 +43,7 @@ import Symbol from "symbol";
 import {pub, err, complete, sub, unsub, on, off, one, into} from "./protocols/concrete.js";
 import {IDispatch, IPublish, ISubscribe, IEvented} from "./protocols.js";
 import {
+  interact,
   Cell,
   cell,
   readonly,
@@ -95,7 +96,14 @@ function signal4(into, xf, init, source){
   return into(cell(init), xf, source);
 }
 
-export const signal = overload(null, signal1, signal2, signal3, signal4);
+export const signal = called(overload(null, signal1, signal2, signal3, signal4), "`signal` is deprecated.");
+
+export const fromElement = called(function fromElement(events, f, el){
+  //return interact(el, key, f);
+  return signal(t.map(function(){
+    return f(el);
+  }), f(el), event(el, events));
+}, "`fromElement` is deprecated — use `interact` instead.");
 
 function sink(source){
   return satisfies(IDeref, source) ? cell() : subject();
@@ -119,7 +127,7 @@ function connect3(source, xform, sink){
   return transduce(xform, IPublish.pub, source, sink);
 }
 
-export const connect = overload(null, null, connect2, connect3); //returns `disconnect` fn
+export const connect = overload(null, null, connect2, connect3); //returns `unsub` fn
 
 function map2(f, source){
   return via2(comp(t.map(f), t.dedupe()), source);
@@ -164,12 +172,6 @@ function fromPromise2(promise, init){
 
 export const fromPromise = overload(null, fromPromise1, fromPromise2);
 
-export const fromElement = called(function fromElement(events, f, el){
-  return signal(t.map(function(){
-    return f(el);
-  }), f(el), event(el, events));
-}, "`fromElement` is deprecated — use `interact` instead.");
-
 export const join = called(function join(sink, ...sources){
   const callback = IPublish.pub(sink, ?);
   return audienceDetector(sink, function(state){
@@ -193,7 +195,7 @@ export const latest = called(function latest(sources){
       f(source, fs(idx));
     }, sources));
   });
-}, "`latest` is deprecated — use `currents` instead.");
+}, "`latest` is deprecated — use `currents` instead."); //TODO after migration rename back to `latest`
 
 function hist2(size, source){
   const sink = cell([]);
