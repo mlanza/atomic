@@ -1,6 +1,7 @@
 import {just, doto, specify, slice, split, take, conj, assoc, count, includes, notEq, constantly, repeat, filtera, matches, comp, each, merge, map, apply, overload, noop, mapIndexed, spread, does, toArray, unreduced, isReduced, satisfies, ISequential, IDeref} from "atomic/core";
 import * as dom from "atomic/dom";
 import * as t from "atomic/transducers";
+import Promise from "promise";
 import {pub, err, complete, sub, unsub} from "../../protocols/concrete.js";
 import {Observable, observable} from "./construct.js";
 import {Observer, observer} from "../observer/construct.js";
@@ -102,8 +103,7 @@ function fromEvents3(el, keys, selector){
 
 export const fromEvent = overload(null, null, fromEvents2, fromEvents3)
 
-//adds an immediate value upon subscription as with cells.
-export function seed(init, source){
+function seed2(init, source){
   return doto(observable(function(observer){
     const handle = pub(observer, ?);
     handle(init());
@@ -111,6 +111,13 @@ export function seed(init, source){
   }),
     specify(IDeref, {deref: init})); //TODO remove after migration, this is for `sink` compatibility only
 }
+
+function seed1(source){
+  return seed2(constantly(null), source);
+}
+
+//adds an immediate value upon subscription as with cells.
+export const seed = overload(null, seed1, seed2);
 
 export function computes(source, f){
   return seed(f, pipe(source, t.map(f)));
@@ -223,6 +230,21 @@ function mapN(f, ...sources){
 }
 
 export const calc = overload(null, null, map2, mapN); //TODO revert to `map` after migration.
+
+function then2(f, source){
+  const src = map2(f, source);
+  return observable(function(observer){
+    return sub(src, function(value){
+      Promise.resolve(value).then(pub(observer, ?));
+    });
+  });
+}
+
+function thenN(f, ...sources){
+  return then2(spread(f), current(sources));
+}
+
+export const andThen = overload(null, null, then2, thenN);
 
 //calling this may spark sad thoughts
 export function depressed(el){

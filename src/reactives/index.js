@@ -8,7 +8,6 @@ import {
   IAssociative,
   IFunctor,
   ICounted,
-  Promise,
   doto,
   does,
   deref,
@@ -35,11 +34,13 @@ import {
   transduce,
   called,
   noop,
+  conj,
   weakMap
 } from "atomic/core";
 import * as _ from "atomic/core";
 import * as t from "atomic/transducers";
 import Symbol from "symbol";
+import Promise from "promise";
 import {pub, err, complete, sub, unsub, on, off, one, into} from "./protocols/concrete.js";
 import {IDispatch, IPublish, ISubscribe, IEvented} from "./protocols.js";
 import {
@@ -78,7 +79,13 @@ function thenN(f, ...sources){
   return then2(spread(f), latest(sources));
 }
 
-export const then = overload(null, null, then2, thenN);
+export const then = called(overload(null, null, then2, thenN), "`then` is deprecated — use `andThen` and `seed` instead.");
+
+export function collect(cell){
+  return function(value){ //return observer
+    ISwap.swap(cell, conj(?, value));
+  }
+}
 
 function signal1(source){
   return signal2(t.map(identity), source);

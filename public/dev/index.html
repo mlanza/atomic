@@ -15,19 +15,28 @@
       Object.assign(window, atomic, {ents: ents});
     });*/
     require(['atomic/core', 'atomic/dom', 'atomic/reactives', 'atomic/transducers'], function(_, dom, $, t){
-      var button = dom.tag('button'),
-          input = dom.tag('input', {type: 'text'}),
-          btn = button("Click Me", {id: "click-me"}),
-          text = input({id: "text"}),
-          clicked = $.seed(_.constantly(0), $.pipe($.click(btn), t.constantly(1), t.scan(_.add, 0)));
-          entered = $.interact(text, "input change", dom.value);
+      function getNumber(girl){
+        return Promise.resolve("867-5309");
+      }
+
+      const button = dom.tag('button'),
+            input = dom.tag('input', {type: 'text'}),
+            btn = button("Click Me", {id: "click-me"}),
+            text = input({id: "text"}),
+            clicked = $.seed(_.constantly(0), $.pipe($.click(btn), t.constantly(1), t.scan(_.add, 0)));
+            entered = $.interact("input change", dom.value, text),
+            amanda = $.seed($.andThen(getNumber, $.always("Amanda"))),
+            rosanna = $.then(getNumber, $.fixed("Rosanna"));
 
       dom.append(document.body, text, btn);
+
+      const amandac = _.doto($.cell([]), _.pipe($.collect, $.sub(amanda, _))),
+            rosannac = _.doto($.cell([]), _.pipe($.collect, $.sub(rosanna, _)));
 
       $.sub(entered, _.see('entered'));
       $.sub(clicked, _.see("clicked"));
 
-      Object.assign(window, {text, btn, entered, clicked});
+      Object.assign(window, {amandac, rosannac, text, btn, entered, clicked});
     });
   </script>
 </head>
