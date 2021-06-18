@@ -1,4 +1,4 @@
-import {just, doto, specify, slice, split, take, conj, assoc, count, includes, notEq, constantly, repeat, filtera, matches, comp, each, merge, map, apply, overload, noop, mapIndexed, spread, does, toArray, unreduced, isReduced, IDeref} from "atomic/core";
+import {just, doto, specify, slice, split, take, conj, assoc, count, includes, notEq, constantly, repeat, filtera, matches, comp, each, merge, map, apply, overload, noop, mapIndexed, spread, does, toArray, unreduced, isReduced, satisfies, ISequential, IDeref} from "atomic/core";
 import * as dom from "atomic/dom";
 import * as t from "atomic/transducers";
 import {pub, err, complete, sub, unsub} from "../../protocols/concrete.js";
@@ -112,16 +112,6 @@ export function seed(init, source){
     specify(IDeref, {deref: init})); //TODO remove after migration, this is for `sink` compatibility only
 }
 
-function fromPromise(promise){
-  return observable(function(observer){
-    promise.
-      then(pub(observer, ?), err(observer, ?)).
-      then(function(){
-        complete(observer);
-      });
-  });
-}
-
 export function computes(source, f){
   return seed(f, pipe(source, t.map(f)));
 }
@@ -232,7 +222,7 @@ function mapN(f, ...sources){
   return map2(spread(f), currents(sources));
 }
 
-const _map = overload(null, null, map2, mapN);
+export const calc = overload(null, null, map2, mapN); //TODO rename back to `map` after migration.
 
 //calling this may spark sad thoughts
 export function depressed(el){
@@ -251,18 +241,37 @@ export function depressed(el){
         t.dedupe()));
 }
 
-function from(coll){
+function fromCollection(coll){
   return observable(function(observer){
     each(pub(observer, ?), coll);
     complete(observer);
   });
 }
 
-//useful for making readonly (e.g. covering over IPublish protocol)
-export function toObservable(source){
-  return source instanceof Observable ? source : observable(sub(source, ?));
+function fromPromise(promise){
+  return observable(function(observer){
+    promise.
+      then(pub(observer, ?), err(observer, ?)).
+      then(function(){
+        complete(observer);
+      });
+  });
 }
 
-Observable.map = _map;
-Observable.fromPromise = fromPromise;
+function fromSource(source){ //useful for making readonly (e.g. covering over IPublish protocol)
+  return observable(sub(source, ?));
+}
+
+function from(obj){ //TODO `ICoerce.toObservable`?
+  if (obj instanceof Observable) {
+    return obj;
+  } else if (satisfies(ISequential, obj)) {
+    return fromCollection(obj);
+  } else if (obj instanceof Promise){
+    return fromPromise(obj);
+  } else {
+    return fromSource(obj);
+  }
+}
+
 Observable.from = from;

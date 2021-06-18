@@ -117,7 +117,7 @@ function viaN(xf, ...sources){
   return via2(spread(xf), latest(sources));
 }
 
-export const via = called(overload(null, null, via2, viaN), "`via` is deprecated — use `connect` instead.");
+export const via = called(overload(null, null, via2, viaN), "`via` is deprecated.");
 
 function connect2(source, sink){
   return connect3(source, t.identity(), sink);
@@ -137,7 +137,7 @@ function mapN(f, ...sources){
   return map2(spread(f), latest(sources));
 }
 
-export const map = overload(null, null, map2, mapN);
+export const map = called(overload(null, null, map2, mapN), "`map` is deprecated — use `calc` instead.");
 
 export const computed = called(function computed(f, source){
   const sink = cell(f(source));
@@ -170,7 +170,7 @@ function fromPromise2(promise, init){
   return sink;
 }
 
-export const fromPromise = overload(null, fromPromise1, fromPromise2);
+export const fromPromise = called(overload(null, fromPromise1, fromPromise2), "`fromPromise` is deprecated — use `Observable.from` and `seed` instead.");
 
 export const join = called(function join(sink, ...sources){
   const callback = IPublish.pub(sink, ?);
@@ -180,7 +180,7 @@ export const join = called(function join(sink, ...sources){
   });
 }, "`join` is deprecated — use `merge` instead.");
 
-export const fixed = called(comp(readonly, cell), "`fixed` is deprecated — use `always instead.");
+export const fixed = called(comp(readonly, cell), "`fixed` is deprecated — use `always` instead.");
 
 export const latest = called(function latest(sources){
   const sink = cell(mapa(constantly(null), sources));
@@ -195,7 +195,7 @@ export const latest = called(function latest(sources){
       f(source, fs(idx));
     }, sources));
   });
-}, "`latest` is deprecated — use `currents` instead."); //TODO after migration rename back to `latest`
+}, "`latest` is deprecated — use `currents` instead."); //TODO after migration revert to `latest`
 
 function hist2(size, source){
   const sink = cell([]);
