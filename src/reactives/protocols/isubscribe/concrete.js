@@ -22,8 +22,14 @@ function into4(decorate, sink, xf, source){
 }
 
 function sub3(source, xf, sink){
+  return ISubscribe.transducing(source, xf, sink);
+}
+
+function transducing(source, xf, sink){
   return into4(identity, sink, xf, source);
 }
+
+ISubscribe.transducing = transducing; //temporarily exposed to allow feature flag override
 
 export const into = overload(null, null, into2, into3, into4);
 export const sub = overload(null, null, ISubscribe.sub, sub3);
