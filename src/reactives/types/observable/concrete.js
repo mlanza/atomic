@@ -116,7 +116,7 @@ export function computes(source, f){
   return seed(f, pipe(source, t.map(f)));
 }
 
-export function interact(el, key, f){
+export function interact(key, f, el){
   return computes(fromEvent(el, key), function(){
     return f(el);
   });
@@ -159,7 +159,7 @@ function _currents2(sources, blank){
 const _currents = overload(null, _currents1, _currents2);
 
 //sources must provide an initial current value (e.g. immediately upon subscription as cells do).
-export function currents(sources){
+export function current(sources){
   const nil = {}, source = _currents(sources, nil);
   return observable(function(observer){
     let init = false;
@@ -219,10 +219,10 @@ function map2(f, source){
 }
 
 function mapN(f, ...sources){
-  return map2(spread(f), currents(sources));
+  return map2(spread(f), current(sources));
 }
 
-export const calc = overload(null, null, map2, mapN); //TODO rename back to `map` after migration.
+export const calc = overload(null, null, map2, mapN); //TODO revert to `map` after migration.
 
 //calling this may spark sad thoughts
 export function depressed(el){

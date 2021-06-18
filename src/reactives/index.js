@@ -99,7 +99,6 @@ function signal4(into, xf, init, source){
 export const signal = called(overload(null, signal1, signal2, signal3, signal4), "`signal` is deprecated.");
 
 export const fromElement = called(function fromElement(events, f, el){
-  //return interact(el, key, f);
   return signal(t.map(function(){
     return f(el);
   }), f(el), event(el, events));
@@ -195,7 +194,7 @@ export const latest = called(function latest(sources){
       f(source, fs(idx));
     }, sources));
   });
-}, "`latest` is deprecated — use `currents` instead."); //TODO after migration revert to `latest`
+}, "`latest` is deprecated — use `current` instead."); //TODO after migration revert to `latest`
 
 function hist2(size, source){
   const sink = cell([]);
