@@ -4,7 +4,25 @@ import {IPublish} from "../../protocols/ipublish.js";
 import {observable} from "./construct.js";
 
 function sub(self, observer){
-  return once(self.subscribed(observer) || noop); //return unsubscribe fn
+  self.subscriptions.unshift({observer, unsub: once(self.subscribe(observer) || noop)});
+  return function(){
+    return unsub(self, observer);
+  }
+}
+
+function unsub(self, observer){ //TODO added for cross compatibility, may remove post migration
+  for(var n in self.subscriptions){
+    let subscription = self.subscriptions[n];
+    if (subscription.observer === observer){
+      subscription.unsub();
+      self.subscriptions.splice(n, 1);
+      return;
+    }
+  }
+}
+
+function subscribed(){
+  return self.subscriptions.length;
 }
 
 function reduce(self, xf, init){
@@ -21,4 +39,4 @@ function merge(self, other){
 export const behaveAsObservable = does(
   implement(IMergeable, {merge}),
   implement(IReduce, {reduce}),
-  implement(ISubscribe, {sub}));
+  implement(ISubscribe, {sub, unsub, subscribed}));

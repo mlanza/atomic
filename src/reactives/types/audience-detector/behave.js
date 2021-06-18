@@ -1,4 +1,4 @@
-import {implement, does, noop, transition, satisfies, swap, IStateMachine, IDisposable} from "atomic/core";
+import {implement, does, once, noop, transition, satisfies, swap, IStateMachine, IDisposable} from "atomic/core";
 import {ISubscribe} from "../../protocols/isubscribe/instance.js";
 
 function sub(self, observer){
@@ -6,6 +6,9 @@ function sub(self, observer){
     swap(self.state, transition(?, "activate"));
   }
   ISubscribe.sub(self.sink, observer);
+  return once(function(){
+    return unsub(self, observer);
+  });
 }
 
 function unsub(self, observer){
