@@ -129,11 +129,17 @@ function connect2(source, sink){
   return connect3(source, t.identity(), sink);
 }
 
-function connect3(source, xform, sink){
-  return transduce(xform, IPublish.pub, source, sink);
+function connect3(source, xf, sink){
+  return transduce(xf, IPublish.pub, source, sink);
 }
 
-export const connect = overload(null, null, connect2, connect3); //returns `unsub` fn
+function connectN(source){
+  const sink = arguments[arguments.length - 1],
+        xfs = slice(arguments, 1, arguments.length - 1);
+  return connect3(source, comp(...xfs), sink);
+}
+
+export const connect = overload(null, null, connect2, connect3, connectN); //returns `unsub` fn
 
 function map2(f, source){
   return via2(comp(t.map(f), t.dedupe()), source);
