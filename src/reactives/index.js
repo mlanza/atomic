@@ -43,6 +43,7 @@ import Symbol from "symbol";
 import Promise from "promise";
 import {pub, err, complete, sub, unsub, on, off, one, into} from "./protocols/concrete.js";
 import {IDispatch, IPublish, ISubscribe, IEvented} from "./protocols.js";
+import {ireduce} from "./shared.js";
 import {
   interact,
   Cell,
@@ -287,12 +288,8 @@ export const mutate = overload(null, null, mutate2, mutate3);
     self(msg);
   }
 
-  function reduce(self, xf, init){ //makes fns work as observers like `cell`, e.g. `$.connect($.tick(3000), _.see("foo"))`
-    return ISubscribe.sub(init, xf(self, ?));
-  }
-
   doto(Function,
-    implement(IReduce, {reduce}),
+    ireduce, //makes fns work as observers like `cell`, e.g. `$.connect($.tick(3000), _.see("foo"))`
     implement(IPublish, {pub, err: noop, complete: noop}),
     implement(IDispatch, {dispatch}));
 

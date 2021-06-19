@@ -1,7 +1,8 @@
-import {does, nullary, once, mapa, noop, implement, IReduce, IMergeable} from "atomic/core";
+import {does, nullary, once, mapa, noop, implement, IMergeable} from "atomic/core";
 import {ISubscribe} from "../../protocols/isubscribe.js";
 import {IPublish} from "../../protocols/ipublish.js";
-import {observable} from "./construct.js";
+import {Observable, observable} from "./construct.js";
+import {ireduce} from "../../shared.js";
 
 function sub(self, observer){
   self.subscriptions.unshift({observer, unsub: once(self.subscribe(observer) || noop)});
@@ -25,9 +26,6 @@ function subscribed(){
   return self.subscriptions.length;
 }
 
-function reduce(self, xf, init){
-  return ISubscribe.sub(init, xf(self, ?));
-}
 
 function merge(self, other){
   return observable(function(observer){
@@ -37,6 +35,6 @@ function merge(self, other){
 }
 
 export const behaveAsObservable = does(
+  ireduce,
   implement(IMergeable, {merge}),
-  implement(IReduce, {reduce}),
   implement(ISubscribe, {sub, unsub, subscribed}));
