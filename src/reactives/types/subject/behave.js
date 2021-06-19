@@ -1,6 +1,7 @@
-import {does, implement, each, once, clone, IReduce, ICounted} from "atomic/core";
+import {does, implement, each, once, clone, ICounted} from "atomic/core";
 import * as mut from "atomic/transients";
 import {IPublish, ISubscribe} from "../../protocols.js";
+import {ireduce} from "../../shared.js";
 
 function sub(self, observer){
   if (!self.terminated) {
@@ -48,11 +49,7 @@ function notify(self, f){
   each(f, clone(self.observers));
 }
 
-function reduce(self, xf, init){
-  return ISubscribe.sub(init, xf(self, ?)); //TODO implement `sub` on arrays?
-}
-
 export const behaveAsSubject = does(
-  implement(IReduce, {reduce}),
+  ireduce,
   implement(ISubscribe, {sub, unsub, subscribed}),
   implement(IPublish, {pub, err, complete}));
