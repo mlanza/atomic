@@ -164,7 +164,7 @@ function fmap(source, f){
   return map(f, source);
 }
 
-each(implement(IFunctor, {fmap}), [AudienceDetector, Cell, Subject]);
+each(implement(IFunctor, {fmap}), [AudienceDetector, Cell, Subject, Observable]);
 
 function fromPromise1(promise){
   return fromPromise2(promise, null);

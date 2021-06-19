@@ -63,14 +63,51 @@ define('jquery', ["../../assets/vendor/jquery"], function(){
   return jQuery.noConflict();
 });
 (function(mods){
+  var useFeat = location.href.indexOf("feature=next") > -1;
+  function identity(f){
+    return f;
+  }
+  var feature = useFeat ? function feature(f){
+    return function(_, $){
+      function fromPromise(promise, init){
+        return $.seed(constantly(init || null), $.Observable.from(promise));
+      }
+      function then(){
+        return $.seed($.andThen.apply(this, arguments));
+      }
+      function computed(f, source){
+        return $.computes(source, function(){
+          return f(source);
+        });
+      }
+      function fmap(source, f){
+        return $.calc(f, source);
+      }
+      $.map = $.calc;
+      $.then = then;
+      $.event = $.fromEvent;
+      $.fromElement = $.interact;
+      $.fixed = $.always;
+      $.hashchange = $.hash;
+      $.latest = $.current;
+      $.computed = computed;
+      $.fromPromise = fromPromise;
+      $.readonly = _.identity; //ignore
+      //$.ISubscribe.transducing = $.current;
+      //_.each(_.implement(_.IFunctor, {fmap: fmap}), [$.AudienceDetector, $.Cell, $.Subject, $.Observable]);
+      console.log("Next features applied!");
+      return f(_, $);
+    }
+  } : identity;
   define('atomic/core', ["../../assets/vendor/" + mods[0], 'polyfill'], function(core){
     return Object.assign(core.placeholder, core.impart(core, core.partly));
   });
   for (var idx in mods) {
     var mod = mods[idx];
-    define(mod, ["atomic/core", "../../assets/vendor/" + mod], function(core, tgt){
+    var f = mod === "atomic/reactives" ? feature : identity;
+    define(mod, ["atomic/core", "../../assets/vendor/" + mod], f(function(core, tgt){
       return core.impart(tgt, core.partly);
-    });
+    }));
   }
 })(["atomic/core", "atomic/dom", "atomic/immutables", "atomic/reactives", "atomic/repos", "atomic/transducers", "atomic/transients", "atomic/validates", "atomic/draw"]);
 define('atomic/imports', function(){
