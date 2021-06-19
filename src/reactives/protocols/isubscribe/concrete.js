@@ -1,4 +1,4 @@
-import {overload, partial, doto, specify, identity, IDisposable} from "atomic/core";
+import {overload, partial, doto, slice, comp, specify, identity, IDisposable} from "atomic/core";
 import {pub} from "../../protocols/ipublish/concrete.js";
 import {readonly} from "../../types/readonly/construct.js";
 import {ISubscribe} from "./instance.js";
@@ -25,6 +25,12 @@ function sub3(source, xf, sink){
   return ISubscribe.transducing(source, xf, sink);
 }
 
+function subN(source){
+  const sink = arguments[arguments.length - 1],
+        xfs = slice(arguments, 1, arguments.length - 1);
+  return sub3(source, comp(...xfs), sink);
+}
+
 function transducing(source, xf, sink){
   return into4(identity, sink, xf, source);
 }
@@ -32,6 +38,6 @@ function transducing(source, xf, sink){
 ISubscribe.transducing = transducing; //temporarily exposed to allow feature flag override
 
 export const into = overload(null, null, into2, into3, into4);
-export const sub = overload(null, null, ISubscribe.sub, sub3);
+export const sub = overload(null, null, ISubscribe.sub, sub3, subN);
 export const unsub = overload(null, null, ISubscribe.unsub);
 export const subscribed = ISubscribe.subscribed;
