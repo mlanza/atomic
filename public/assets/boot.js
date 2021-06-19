@@ -93,8 +93,8 @@ define('jquery', ["../../assets/vendor/jquery"], function(){
       $.computed = computed;
       $.fromPromise = fromPromise;
       $.readonly = _.identity; //ignore
-      //$.ISubscribe.transducing = $.current;
-      //_.each(_.implement(_.IFunctor, {fmap: fmap}), [$.AudienceDetector, $.Cell, $.Subject, $.Observable]);
+      $.ISubscribe.transducing = $.connect;
+      _.each(_.implement(_.IFunctor, {fmap: fmap}), [$.AudienceDetector, $.Cell, $.Subject, $.Observable]);
       console.log("Next features applied!");
       return f(_, $);
     }

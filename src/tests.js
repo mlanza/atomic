@@ -405,11 +405,13 @@ QUnit.test("cell", function(assert){
   const sink   = $.pipe(source, t.map(_.inc), t.tee($.pub(dest, ?)));
   $.connect(sink, $.subject());
   const msink  = _.fmap(source, _.inc);
+  const msinkc = $.cell();
+  $.sub(msink, msinkc);
   _.swap(source, _.inc);
   assert.equal(clicks |> _.deref, 1);
   assert.equal(source |> _.deref, 1);
   assert.equal(dest   |> _.deref, 2);
-  assert.equal(msink  |> _.deref, 2);
+  assert.equal(msinkc |> _.deref, 2);
   const bucket = $.cell([], $.subject(), _.pipe(_.get(?, 'length'), _.lt(?, 3))),
         states = $.cell([]);
   bucket |> $.sub(?, state => states |> _.swap(?, _.conj(?, state)));
