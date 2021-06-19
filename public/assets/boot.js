@@ -13,6 +13,8 @@ requirejs.config({
     }
   },
   paths: {
+    "assets": "../assets/",
+    "vendor": "../assets/vendor",
     "qunit": "vendor/qunit",
     "immutable": "vendor/immutable",
     "text": "vendor/require/text",
@@ -59,7 +61,7 @@ define('dom', [], function(){
     Location: Location
   }
 });
-define('jquery', ["../../assets/vendor/jquery"], function(){
+define('jquery', ["vendor/jquery"], function(){
   return jQuery.noConflict();
 });
 (function(mods){
@@ -99,13 +101,13 @@ define('jquery', ["../../assets/vendor/jquery"], function(){
       return f(_, $);
     }
   } : identity;
-  define('atomic/core', ["../../assets/vendor/" + mods[0], 'polyfill'], function(core){
+  define('atomic/core', ["vendor/" + mods[0], 'polyfill'], function(core){
     return Object.assign(core.placeholder, core.impart(core, core.partly));
   });
   for (var idx in mods) {
     var mod = mods[idx];
     var f = mod === "atomic/reactives" ? feature : identity;
-    define(mod, ["atomic/core", "../../assets/vendor/" + mod], f(function(core, tgt){
+    define(mod, ["atomic/core", "vendor/" + mod], f(function(core, tgt){
       return core.impart(tgt, core.partly);
     }));
   }
