@@ -15,13 +15,19 @@ export * from "./protocols.js";
 export * from "./protocols/concrete.js";
 export {append, prepend, before, after, yank, empty} from "atomic/transients";
 
-export function ready(callback) {
+function ready2(document, callback) {
   if (document.readyState !== 'loading') {
-    callback(null);
+    callback();
   } else {
     document.addEventListener("DOMContentLoaded", callback);
   }
 }
+
+function ready1(callback){
+  return ready2(document, callback);
+}
+
+const export ready = overload(null, ready1, ready2);
 
 function attr2(self, key){
   if (isString(key)) {
