@@ -27,7 +27,7 @@ function ready1(callback){
   return ready2(document, callback);
 }
 
-const export ready = overload(null, ready1, ready2);
+export const ready = overload(null, ready1, ready2);
 
 function attr2(self, key){
   if (isString(key)) {
