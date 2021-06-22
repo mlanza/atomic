@@ -72,7 +72,7 @@ define('jquery', ["vendor/jquery"], function(){
   var feature = useFeat ? function feature(f){
     return function(_, $){
       function fromPromise(promise, init){
-        return $.seed(constantly(init || null), $.Observable.from(promise));
+        return $.seed(_.constantly(init || null), $.Observable.from(promise));
       }
       function then(){
         return $.seed($.andThen.apply(this, arguments));
