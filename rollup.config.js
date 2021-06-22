@@ -57,7 +57,7 @@ export default {
     resolve(),
     babel({
       exclude: 'node_modules/**',
-      babelHelpers: 'bundled'
+      babelHelpers: 'inline'
     }),
     json()
   ]
