@@ -112,7 +112,7 @@ define('jquery', ["vendor/jquery"], function(){
     }));
   }
 })(["atomic/core", "atomic/dom", "atomic/immutables", "atomic/reactives", "atomic/repos", "atomic/transducers", "atomic/transients", "atomic/validates", "atomic/draw"]);
-define('atomic/imports', function(){
+define('cmd/imports', function(){
   return {
     "_": "atomic/core",
     "$": "atomic/reactives",
@@ -120,12 +120,12 @@ define('atomic/imports', function(){
     "imm": "atomic/immutables",
     "t": "atomic/transducers",
     "mut": "atomic/transients",
-    "vld": "atomic/validates",
+    "vd": "atomic/validates",
     "draw": "atomic/draw",
     "repos": "atomic/repos"
   }
 });
-define('cmd', ["atomic/core", "atomic/imports", "promise"], function(_, defaults, Promise){
+define('cmd', ["atomic/core", "cmd/imports", "promise"], function(_, defaults, Promise){
   function load(dest, name){
     return new Promise(function(resolve, reject){
       require([name], function(exported){
