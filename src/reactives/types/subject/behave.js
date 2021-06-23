@@ -1,7 +1,7 @@
 import {does, implement, each, once, clone, ICounted} from "atomic/core";
 import * as mut from "atomic/transients";
 import {IPublish, ISubscribe} from "../../protocols.js";
-import {ireduce} from "../../shared.js";
+import {ireduce, imergeable} from "../../shared.js";
 
 function sub(self, observer){
   if (!self.terminated) {
@@ -51,5 +51,6 @@ function notify(self, f){
 
 export const behaveAsSubject = does(
   ireduce,
+  imergeable,
   implement(ISubscribe, {sub, unsub, subscribed}),
   implement(IPublish, {pub, err, complete}));
