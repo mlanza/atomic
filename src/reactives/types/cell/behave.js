@@ -1,6 +1,6 @@
 import {does, partial, implement, satisfies, once, IReset, ISwap, IDeref, IDisposable, ICloneable} from 'atomic/core';
 import {IPublish, ISubscribe} from "../../protocols.js";
-import {ireduce} from "../../shared.js";
+import {ireduce, imergeable} from "../../shared.js";
 
 function pub(self, value){
   if (value !== self.state){
@@ -48,6 +48,7 @@ function dispose(self){
 
 export const behaveAsCell = does(
   ireduce,
+  imergeable,
   implement(IDisposable, {dispose}),
   implement(IDeref, {deref}),
   implement(ISubscribe, {sub, unsub, subscribed}),
