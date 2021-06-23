@@ -1,5 +1,4 @@
-import {just, doto, specify, slice, split, take, conj, assoc, count, includes, notEq, constantly, repeat, filtera, matches, comp, each, merge, map, apply, overload, noop, mapIndexed, spread, does, toArray, unreduced, isReduced, satisfies, ISequential, IDeref} from "atomic/core";
-import * as dom from "atomic/dom";
+import {just, doto, specify, slice, split, take, conj, assoc, count, includes, notEq, constantly, repeat, filtera, matches, comp, each, merge, map, apply, overload, noop, mapIndexed, spread, does, toArray, unreduced, isReduced, satisfies, ISequential, IDeref, IHierarchy} from "atomic/core";
 import * as t from "atomic/transducers";
 import Promise from "promise";
 import {pub, err, complete, sub, unsub} from "../../protocols/concrete.js";
@@ -78,7 +77,7 @@ function fromEvent3(el, key, selector){
       if (matches(e.target, selector)) {
         handler(observer, e);
       } else {
-        const found = dom.closest(e.target, selector);
+        const found = IHierarchy.closest(e.target, selector);
         if (found && el.contains(found)) {
           handler(observer, Object.assign(Object.create(e), {target: found}));
         }
