@@ -1,7 +1,7 @@
-import {protocol, overload, identity} from "atomic/core";
+import {protocol, overload} from "atomic/core";
 
 function on2(self, f){
-  on3(self, identity, f);
+  f(self);
 }
 
 function on3(self, pred, f){
