@@ -1,4 +1,4 @@
-import {does, identity, implement, forwardTo, ILookup, ISwap, IReset, IDeref, IDisposable} from "atomic/core";
+import {does, identity, implement, forwardTo, IReduce, ILookup, ISwap, IReset, IDeref, IDisposable} from "atomic/core";
 import {IMiddleware, ISubscribe, IDispatch} from "../../protocols.js"
 
 function dispatch(self, command){
@@ -17,8 +17,10 @@ const subscribed = forward(ISubscribe.subscribed);
 const deref = forward(IDeref.deref);
 const reset = forward(IReset.reset);
 const swap = forward(ISwap.swap);
+const reduce = forward(IReduce.reduce);
 
 export const behaveAsBus = does(
+  implement(IReduce, {reduce}),
   implement(IDeref, {deref}),
   implement(IReset, {reset}),
   implement(ISwap, {swap}),
