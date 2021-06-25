@@ -25,6 +25,18 @@ export function scan(step, init){
   }
 }
 
+export function best(better, init) {
+  return function(xf){
+    let result = init;
+    return overload(xf, function(memo){
+      return xf(memo, result);
+    }, function(memo, value){
+      result = better(result, value)
+      return memo;
+    });
+  }
+}
+
 export function constantly(value){
   return function(xf){
     return overload(xf, xf, function(memo, _){

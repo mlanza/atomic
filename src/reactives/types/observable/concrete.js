@@ -24,6 +24,7 @@ function pipe2(source, xform){
       err(obs, error);
       unsub && unsub();
     }, function(){
+      step(obs);
       complete(obs);
       unsub && unsub();
     });
