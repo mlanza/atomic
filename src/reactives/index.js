@@ -31,7 +31,6 @@ import {
   satisfies,
   specify,
   slice,
-  transduce,
   called,
   noop,
   conj,
@@ -131,7 +130,7 @@ function connect2(source, sink){
 }
 
 function connect3(source, xf, sink){
-  return transduce(xf, IPublish.pub, source, sink);
+  return IReduce.reduce(sink, xf(IPublish.pub), source);
 }
 
 function connectN(source){

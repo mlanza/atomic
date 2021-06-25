@@ -4,6 +4,8 @@ export const slice = unbind(Array.prototype.slice);
 export const indexOf = unbind(Array.prototype.indexOf);
 export const log = console.log.bind(console);
 export const warn = console.warn.bind(console);
+export const info = console.info.bind(console);
+export const debug = console.debug.bind(console);
 
 export function noop(){
 }
@@ -261,9 +263,20 @@ export function forwardWith(g){
   }
 }
 
-export function called(fn, message){
+function called4(fn, message, context, log){
   return function(){
-    warn(message, fn, arguments);
-    return fn.apply(this, arguments);
+    const results = fn.apply(this, arguments);
+    log(message, Object.assign({}, context, {fn, arguments, results}));
+    return results;
   }
 }
+
+function called3(fn, message, context){
+  return called4(fn, message, context, warn);
+}
+
+function called2(fn, message){
+  return called3(fn, message, {});
+}
+
+export const called = overload(null, null, called2, called3, called4);

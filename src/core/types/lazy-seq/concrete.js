@@ -63,7 +63,8 @@ function transduce3(xform, f, coll){
 }
 
 function transduce4(xform, f, init, coll){
-  return IReduce.reduce(coll, xform(f), init);
+  const step = xform(f);
+  return step(IReduce.reduce(coll, step, init));
 }
 
 export const transduce = overload(null, null, null, transduce3, transduce4);
