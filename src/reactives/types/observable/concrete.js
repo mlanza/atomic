@@ -1,4 +1,4 @@
-import {just, doto, specify, slice, split, take, conj, assoc, count, includes, notEq, constantly, repeat, filtera, matches, comp, each, merge, map, apply, overload, noop, mapIndexed, spread, does, toArray, unreduced, isReduced, satisfies, ISequential, IDeref, IHierarchy} from "atomic/core";
+import {just, doto, debug, called, once, specify, slice, split, take, conj, assoc, count, includes, notEq, constantly, repeat, filtera, matches, comp, each, merge, map, apply, overload, noop, mapIndexed, spread, does, toArray, unreduced, isReduced, satisfies, ISequential, IDeref, IHierarchy} from "atomic/core";
 import * as t from "atomic/transducers";
 import Promise from "promise";
 import {pub, err, complete, sub, unsub} from "../../protocols/concrete.js";
@@ -12,23 +12,32 @@ function pipeN(source, ...xforms){
 
 function pipe2(source, xform){
   return observable(function(obs){
-    const step = xform(pub);
-    const wrapped = observer(function(value){
-      const memo = step(obs, value);
-      if (isReduced(memo)){
-        complete(wrapped);
-        return unreduced(memo);
-      }
+    let memo = null, unsub = noop;
+    const step = called(xform(overload(null, once(function(memo){
+      pub(obs, memo);
+      complete(obs);
+      unsub();
+    }), function(memo, value){
+      pub(obs, value);
       return memo;
+    })), "stepping", {source: source, observable: obs}, debug);
+    const wrapped = observer(function(value){
+      memo = step(memo, value);
+      if (isReduced(memo)){
+        step(unreduced(memo));
+      }
     }, function(error){
       err(obs, error);
-      unsub && unsub();
+      unsub();
     }, function(){
-      //step(obs);
-      complete(obs);
-      unsub && unsub();
+      if (memo != null) {
+        step(memo);
+      } else {
+        complete(obs);
+        unsub();
+      }
     });
-    const unsub = sub(source, wrapped); //might complete before returning `unsub` fn
+    unsub = sub(source, wrapped); //may complete `unsub` is assigned!
     return unsub;
   });
 }

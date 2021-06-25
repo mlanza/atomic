@@ -1,4 +1,4 @@
-import {overload, complement, clone, comp, first, rest, partial, isSome, reduced, seq, equiv, IReduce} from "atomic/core";
+import {overload, complement, called, clone, comp, first, rest, partial, isSome, reduced, seq, equiv, IReduce} from "atomic/core";
 import * as _ from "atomic/core";
 import Set from "set";
 
@@ -25,17 +25,25 @@ export function scan(step, init){
   }
 }
 
-export function best(better, init) {
+function best2(better, init) {
   return function(xf){
     let result = init;
     return overload(xf, function(memo){
-      return xf(memo, result);
+      return xf(memo);
     }, function(memo, value){
       result = better(result, value)
       return memo;
     });
   }
 }
+
+function best1(better){
+  return function(xf){
+    return overload(xf, xf, better);
+  }
+}
+
+export const best = overload(null, best1, best2);
 
 export function constantly(value){
   return function(xf){
