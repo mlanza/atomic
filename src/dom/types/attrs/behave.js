@@ -66,7 +66,7 @@ function empty(self){
   }
 }
 
-export const behaveAsAttrs = does(
+export default does(
   implement(ITransientEmptyableCollection, {empty}),
   implement(ICoerceable, {toArray}),
   implement(ICounted, {count}),

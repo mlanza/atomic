@@ -5,5 +5,5 @@ function embed(self, parent) {
   parent.appendChild(self);
 }
 
-export const behaveAsComment = does(
+export default does(
   implement(IEmbeddable, {embed}));

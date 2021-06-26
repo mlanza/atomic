@@ -21,5 +21,5 @@ function complete(self){
   }
 }
 
-export const behaveAsObserver = does(
+export default does(
   implement(IPublish, {pub, err, complete}));

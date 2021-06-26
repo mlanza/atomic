@@ -55,7 +55,7 @@ function divide(a, b){
   return a.valueOf() / b.valueOf();
 }
 
-export const behaveAsDuration = does(
+export default does(
   implement(IKVReduce, {reducekv}),
   implement(IAddable, {add: merge}),
   implement(IMergable, {merge}),

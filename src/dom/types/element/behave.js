@@ -407,7 +407,7 @@ export const ievented = implement(IEvented, {on, off, trigger});
 export const ilocate = implement(ILocate, {locate});
 export const iquery = implement(IQueryable, {query});
 
-export const behaveAsElement = does(
+export default does(
   ihierarchy,
   icontents,
   ievented,

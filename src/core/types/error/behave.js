@@ -6,6 +6,6 @@ function fork(self, reject, resolve){
   return reject(self);
 }
 
-export const behaveAsError = does(
+export default does(
   implement(IForkable, {fork}),
   implement(IFunctor, {fmap: identity}));

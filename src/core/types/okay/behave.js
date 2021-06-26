@@ -16,6 +16,6 @@ function fork(self, reject, resolve){
   return resolve(self);
 }
 
-export const behaveAsOkay = does(
+export default does(
   implement(IForkable, {fork}),
   implement(IFunctor, {fmap}));

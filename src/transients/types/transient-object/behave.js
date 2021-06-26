@@ -55,7 +55,7 @@ function persistent(self){
   return obj;
 }
 
-export const behaveAsTransientObject = does(
+export default does(
   forward("obj", IMap, IMatchable, IFind, IInclusive, ILookup, ISeq, INext, IAssociative, ISeqable, ICounted, IReduce, IKVReduce, ICoerceable),
   implement(IDescriptive),
   implement(IPersistent, {persistent}),

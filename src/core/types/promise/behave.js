@@ -17,7 +17,7 @@ function otherwise(self, other){
   });
 }
 
-export const behaveAsPromise = does(
+export default does(
   implement(IOtherwise, {otherwise}),
   implement(IForkable, {fork}),
   implement(IFunctor, {fmap}));

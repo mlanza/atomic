@@ -11,5 +11,5 @@ function handle(self, command, next){
   }, release(self.events));
 }
 
-export const behaveAsEventDispatcher = does(
+export default does(
   implement(IMiddleware, {handle}));

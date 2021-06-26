@@ -84,7 +84,7 @@ export function emptyable(Type){
   implement(IEmptyableCollection, {empty}, Type);
 }
 
-export const behaveAsRecord = does(
+export default does(
   construction,
   emptyable,
   implement(IRecord),

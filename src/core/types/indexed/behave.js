@@ -4,7 +4,7 @@ import {implement} from "../protocol.js";
 import {indexedSeq} from "../indexed-seq/construct.js";
 import {emptyList} from "../empty-list/construct.js";
 import {some} from "../lazy-seq/concrete.js";
-import {iterable, behaveAsLazySeq} from "../lazy-seq/behave.js";
+import ilazyseq, {iterable} from "../lazy-seq/behave.js";
 
 function count(self){
   return self.obj.length;
@@ -36,10 +36,10 @@ function includes(self, value){
   }, self);
 }
 
-export const behaveAsIndexed = does(
+export default does(
   iterable,
-  implement(IReduce, behaveAsLazySeq),
-  implement(IKVReduce, behaveAsLazySeq),
+  implement(IReduce, ilazyseq),
+  implement(IKVReduce, ilazyseq),
   implement(ISequential),
   implement(IInclusive, {includes}),
   implement(IIndexed, {nth}),

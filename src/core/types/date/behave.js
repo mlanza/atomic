@@ -113,7 +113,7 @@ function deref(self){
   return self.valueOf();
 }
 
-export const behaveAsDate = does(
+export default does(
   implement(IAddable, {add: _add}),
   implement(IDeref, {deref}),
   implement(IBounds, {start: identity, end: identity}),

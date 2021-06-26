@@ -58,7 +58,7 @@ function next(self){
   return ISeqable.seq(ISeq.rest(self));
 }
 
-export const behaveAsMap = does(
+export default does(
   iterable,
   implement(IKVReduce, {reducekv}),
   implement(ICoerceable, {toArray}),

@@ -1,1 +1,2 @@
-export {behaveAsRecord as record} from "./record/behave.js";
+import behave from "./record/behave.js";
+export const record = behave;

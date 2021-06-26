@@ -65,7 +65,7 @@ function reduce3(coll, f, init){
 
 const reduce = overload(null, null, reduce2, reduce3);
 
-export const behaveAsRevSeq = does(
+export default does(
   iterable,
   implement(ISequential),
   implement(ICounted, {count}),

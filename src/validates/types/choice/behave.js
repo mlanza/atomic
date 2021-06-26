@@ -10,6 +10,6 @@ function check(self, value){
   return includes(self.options, value) ? null : [issue(self)];
 }
 
-export const behaveAsChoice = does(
+export default does(
   implement(ISelection, {options}),
   implement(ICheckable, {check}));

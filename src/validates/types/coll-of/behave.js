@@ -8,5 +8,5 @@ function check(self, coll){
   }, ?), concatenated, compact, toArray, blot);
 }
 
-export const behaveAsCollOf = does(
+export default does(
   implement(ICheckable, {check}));

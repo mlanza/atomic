@@ -54,7 +54,7 @@ function compare(self, other){ //TODO test with sort of periods
   return IComparable.compare(other.start, self.start) || IComparable.compare(other.end, self.end);
 }
 
-export const behaveAsPeriod = does(
+export default does(
   emptyable,
   implement(ISplittable, {split}),
   implement(IAddable, {add}),

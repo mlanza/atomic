@@ -49,7 +49,7 @@ function notify(self, f){
   each(f, clone(self.observers));
 }
 
-export const behaveAsSubject = does(
+export default does(
   ireduce,
   imergable,
   implement(ISubscribe, {sub, unsub, subscribed}),

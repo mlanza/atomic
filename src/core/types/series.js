@@ -1,1 +1,2 @@
-export {behaveAsSeries as series} from "./series/behave.js";
+import behave from "./series/behave.js";
+export default behave;

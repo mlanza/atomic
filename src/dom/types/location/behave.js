@@ -16,6 +16,6 @@ function on(self, pattern, callback){
   }
 }
 
-export const behaveAsLocation = does(
+export default does(
   specify(IEvented, {on}),
   specify(IMatchable, {matches}));

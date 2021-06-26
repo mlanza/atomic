@@ -16,7 +16,7 @@ function equiv(xs, ys){
     && IEquiv.equiv(INext.next(xs), INext.next(ys));
 }
 
-export const behaveAsEmptyList = does(
+export default does(
   implement(IEquiv, {equiv}),
   implement(ISequential),
   implement(IBlankable, {blank: constantly(true)}),

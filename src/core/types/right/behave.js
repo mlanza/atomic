@@ -19,7 +19,7 @@ function deref(self){
   return self.value;
 }
 
-export const behaveAsRight = does(
+export default does(
   implement(IDeref, {deref}),
   implement(IForkable, {fork}),
   implement(IOtherwise, {otherwise}),

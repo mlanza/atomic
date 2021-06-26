@@ -10,6 +10,6 @@ function inverse(self){
   return !self;
 }
 
-export const behaveAsBoolean = does(
+export default does(
   implement(IComparable, {compare}),
   implement(IInverse, {inverse}));

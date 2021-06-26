@@ -1,4 +1,4 @@
 export * from "./indexed-seq/construct.js";
 import {IndexedSeq} from "./indexed-seq/construct.js";
-import {behaveAsIndexedSeq} from "./indexed-seq/behave.js";
-behaveAsIndexedSeq(IndexedSeq);
+import behave from "./indexed-seq/behave.js";
+behave(IndexedSeq);

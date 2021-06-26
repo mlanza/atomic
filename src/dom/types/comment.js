@@ -1,3 +1,3 @@
 import {Comment} from "dom";
-import {behaveAsComment} from "./comment/behave.js";
-behaveAsComment(Comment);
+import behave from "./comment/behave.js";
+behave(Comment);

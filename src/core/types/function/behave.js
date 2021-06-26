@@ -19,7 +19,7 @@ function name(self){
   return self.name ? self.name : get(/function (.+)\s?\(/.exec(self.toString()), 1); //latter is for IE
 }
 
-export const behaveAsFunction = does(
+export default does(
   implement(INameable, {name}),
   implement(IAppendable, {append}),
   implement(IPrependable, {prepend: partial}),

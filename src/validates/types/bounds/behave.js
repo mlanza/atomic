@@ -19,7 +19,7 @@ function check(self, obj){
   return (self.start != null && value <= self.start) || (self.end != null && value >= self.end) ? [issue(self)] : null;
 }
 
-export const behaveAsBounds = does(
+export default does(
   implement(ICheckable, {check}),
   implement(IInclusive, {includes}),
   implement(IBounds, {start, end}));

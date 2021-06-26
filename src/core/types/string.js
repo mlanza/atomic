@@ -1,4 +1,4 @@
 export * from "./string/construct.js";
 export * from "./string/concrete.js";
-import {behaveAsString} from "./string/behave.js";
-behaveAsString(String);
+import behave from "./string/behave.js";
+behave(String);

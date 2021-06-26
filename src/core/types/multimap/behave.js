@@ -5,7 +5,7 @@ import {map} from "../lazy-seq.js";
 import {comp} from "../function/concrete.js";
 import {emptyList} from "../empty-list/construct.js";
 import {concatenated} from "../concatenated/construct.js";
-import {behaveAsRecord} from "../record/behave.js";
+import irecord from "../record/behave.js";
 
 function keys(self){
   return Object.keys(self.attrs);
@@ -56,8 +56,8 @@ function reducekv(self, xf, init){
   }, init);
 }
 
-export const behaveAsMultimap = does(
-  behaveAsRecord,
+export default does(
+  irecord,
   implement(IMap, {keys}),
   implement(ICoerceable, {toArray: comp(Array.from, seq)}),
   implement(IReduce, {reduce}),
