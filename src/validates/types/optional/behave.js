@@ -17,6 +17,6 @@ function append(self, constraint){
   return optional(self.key, and(self.constraint, constraint));
 }
 
-export const behaveAsOptional = does(
+export default does(
   implement(IAppendable, {append}),
   implement(ICheckable, {check}));

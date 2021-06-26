@@ -6,5 +6,5 @@ function keys(self){
   return self.keys();
 }
 
-export const behaveAsProtocol = does(
+export default does(
   implement(IMap, {keys}));

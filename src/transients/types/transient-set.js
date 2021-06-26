@@ -1,4 +1,4 @@
 export * from "./transient-set/construct.js";
 import {TransientSet} from "./transient-set/construct.js";
-import {behaveAsTransientSet} from "./transient-set/behave.js";
-behaveAsTransientSet(TransientSet);
+import behave from "./transient-set/behave.js";
+behave(TransientSet);

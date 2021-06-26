@@ -7,7 +7,7 @@ import {comp} from "../function/concrete.js";
 import {cons} from "../list/construct.js";
 import {map, filter, detect} from "./concrete.js";
 import {emptyList} from "../empty-list/construct.js";
-import {behaveAsEmptyList} from "../empty-list/behave.js";
+import iemptylist from "../empty-list/behave.js";
 import Symbol from "symbol";
 
 const compact = partial(filter, identity);
@@ -155,9 +155,9 @@ function includes(self, value){
 
 const reverse = comp(IReversible.reverse, toArray);
 
-export const behaveAsLazySeq = does(
+export default does(
   iterable,
-  implement(IEquiv, behaveAsEmptyList),
+  implement(IEquiv, iemptylist),
   implement(IReduce, {reduce}),
   implement(IKVReduce, {reducekv}),
   implement(ISequential),

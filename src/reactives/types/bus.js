@@ -1,4 +1,4 @@
 export * from "./bus/construct.js";
 import {Bus} from "./bus/construct.js";
-import {behaveAsBus} from "./bus/behave.js";
-behaveAsBus(Bus);
+import behave from "./bus/behave.js";
+behave(Bus);

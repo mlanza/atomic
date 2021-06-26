@@ -1,4 +1,4 @@
 export * from "./events/construct.js";
 import {Events} from "./events/construct.js";
-import {behaveAsEvents} from "./events/behave.js";
-behaveAsEvents(Events);
+import behave from "./events/behave.js";
+behave(Events);

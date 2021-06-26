@@ -25,7 +25,7 @@ function divide(self, n){
 const start = identity,
       end   = identity;
 
-export const behaveAsNumber = does(
+export default does(
   implement(IDivisible, {divide}),
   implement(IMultipliable, {mult}),
   implement(IBounds, {start, end}),

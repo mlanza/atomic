@@ -1,3 +1,3 @@
-import {behaveAsMap} from "../map/behave.js";
+import behave from "../map/behave.js";
 
-export const behaveAsOrderedMap = behaveAsMap;
+export default behave;

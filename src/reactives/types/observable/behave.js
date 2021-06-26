@@ -26,7 +26,7 @@ function subscribed(){
   return self.subscriptions.length;
 }
 
-export const behaveAsObservable = does(
+export default does(
   ireduce,
   imergable,
   implement(ISubscribe, {sub, unsub, subscribed}));

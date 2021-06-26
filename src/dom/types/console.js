@@ -1,2 +1,2 @@
-import {behaveAsConsole} from "./console/behave.js";
-behaveAsConsole(console);
+import behave from "./console/behave.js";
+behave(console);

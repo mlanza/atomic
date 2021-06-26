@@ -7,5 +7,5 @@ function equiv(self, other){
   return other && other.constructor === self.constructor && self.id === other.id;
 }
 
-export const behaveAsGuid = does(
+export default does(
   implement(IEquiv, {equiv}));

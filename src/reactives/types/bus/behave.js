@@ -10,7 +10,7 @@ function dispose(self){
   satisfies(IDisposable, self.handler) && IDisposable.dispose(self.handler);
 }
 
-export const behaveAsBus = does(
+export default does(
   forward("state", ISubscribe, IDeref, IReset, ISwap, IReduce),
   implement(IDispatch, {dispatch}),
   implement(IDisposable, {dispose}));

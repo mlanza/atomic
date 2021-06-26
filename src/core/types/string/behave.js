@@ -106,7 +106,7 @@ function matches(self, re){
   return rePattern(re).test(self);
 }
 
-export const behaveAsString = does(
+export default does(
   iindexed,
   implement(ISplittable, {split}),
   implement(ICompactable, {compact}),

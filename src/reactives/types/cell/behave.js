@@ -46,7 +46,7 @@ function dispose(self){
   satisfies(IDisposable, self.observer) && IDisposable.dispose(self.observer);
 }
 
-export const behaveAsCell = does(
+export default does(
   ireduce,
   imergable,
   implement(IDisposable, {dispose}),

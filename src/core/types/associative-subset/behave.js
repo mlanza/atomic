@@ -5,7 +5,7 @@ import {lazySeq} from "../../types/lazy-seq/construct.js";
 import {cons} from "../../types/list/construct.js";
 import {remove, into} from "../../types/lazy-seq/concrete.js";
 import {emptyObject} from "../../types/object/construct.js";
-import {behaveAsEmptyList} from "../../types/empty-list/behave.js";
+import iemptylist from "../../types/empty-list/behave.js";
 
 function toObject(self){
   return into({}, self);
@@ -63,9 +63,9 @@ function reducekv(self, xf, init){
   }, init);
 }
 
-export const behaveAsAssociativeSubset = does(
+export default does(
   implement(IDescriptive),
-  implement(IEquiv, behaveAsEmptyList),
+  implement(IEquiv, iemptylist),
   implement(ICoerceable, {toObject}),
   implement(IFind, {find}),
   implement(IMap, {dissoc, keys, vals}),

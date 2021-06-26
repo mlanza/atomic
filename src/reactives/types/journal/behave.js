@@ -59,7 +59,7 @@ function redoable(self){
   return self.pos > 0;
 }
 
-export const behaveAsJournal = does(
+export default does(
   implement(IRevertible, {undo, redo, flush, undoable, redoable}),
   implement(IDeref, {deref}),
   implement(IReset, {reset}),

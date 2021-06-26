@@ -6,5 +6,5 @@ function handle(self, message, next){
   next(message);
 }
 
-export const behaveAsMessageProcessor = does(
+export default does(
   implement(IMiddleware, {handle}));

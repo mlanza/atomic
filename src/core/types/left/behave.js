@@ -12,7 +12,7 @@ function deref(self){
   return self.value;
 }
 
-export const behaveAsLeft = does(
+export default does(
   implement(IDeref, {deref}),
   implement(IForkable, {fork}),
   implement(IFunctor, {fmap}));

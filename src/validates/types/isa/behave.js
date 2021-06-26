@@ -10,6 +10,6 @@ function options(self){
   return self.types;
 }
 
-export const behaveAsIsa = does(
+export default does(
   implement(ISelection, {options}),
   implement(ICheckable, {check}));

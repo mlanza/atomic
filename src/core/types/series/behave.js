@@ -55,7 +55,7 @@ function construction(Type){
   }
 }
 
-export const behaveAsSeries = does(
+export default does(
   construction,
   iterable,
   implement(ISequential),

@@ -16,5 +16,5 @@ function subscribed(self){
   return ISubscribe.subscribed(self.source);
 }
 
-export const behaveAsReadonly = does(
+export default does(
   implement(ISubscribe, {sub, unsub, subscribed}));

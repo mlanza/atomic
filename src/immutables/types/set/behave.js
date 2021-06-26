@@ -88,7 +88,7 @@ function equiv(self, other){
   return ICounted.count(union(self, other)) === ICounted.count(self);
 }
 
-export const behaveAsSet = does(
+export default does(
   iterable,
   implement(ISequential),
   implement(IEquiv, {equiv: equiv}),

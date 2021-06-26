@@ -17,6 +17,6 @@ function append(self, constraint){
   return required(self.key, and(self.constraint, constraint));
 }
 
-export const behaveAsRequired = does(
+export default does(
   implement(IAppendable, {append}),
   implement(ICheckable, {check}));

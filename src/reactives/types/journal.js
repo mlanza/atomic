@@ -1,4 +1,4 @@
 export * from "./journal/construct.js";
 import {Journal} from "./journal/construct.js";
-import {behaveAsJournal} from "./journal/behave.js";
-behaveAsJournal(Journal);
+import behave from "./journal/behave.js";
+behave(Journal);

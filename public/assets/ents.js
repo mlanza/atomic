@@ -448,7 +448,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
 
   })();
 
-  var behaveAsEntity = (function(){
+  var ientity = (function(){
 
     function assertions(self){
       var id = IEntity.id(self);
@@ -916,7 +916,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
   }
 
   _.doto(Tiddler,
-    behaveAsEntity,
+    ientity,
     tiddlerBehavior("title", "text"));
 
   function Task(topic, attrs){
@@ -925,7 +925,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
   }
 
   _.doto(Task,
-    behaveAsEntity,
+    ientity,
     tiddlerBehavior("title", "text"));
 
   var defaults = _.conj(schema(),

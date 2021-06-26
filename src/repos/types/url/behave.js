@@ -14,6 +14,6 @@ function fill(self, params){
   return ITemplate.fill(_.str(self), params);
 }
 
-export const behaveAsURL = _.does(
+export default _.does(
   _.implement(IParams, {params}),
   _.implement(ITemplate, {fill}));

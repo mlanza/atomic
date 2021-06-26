@@ -1,4 +1,4 @@
 export * from "./duration/construct.js";
 import {Duration} from "./duration/construct.js";
-import {behaveAsDuration} from "./duration/behave.js";
-behaveAsDuration(Duration);
+import behave from "./duration/behave.js";
+behave(Duration);

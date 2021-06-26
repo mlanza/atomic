@@ -6,5 +6,5 @@ function matches(self, text){
   return self.test(text);
 }
 
-export const behaveAsRegExp = does(
+export default does(
   implement(IMatchable, {matches}));

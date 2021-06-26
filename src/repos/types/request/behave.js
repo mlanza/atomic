@@ -77,7 +77,7 @@ function fork(self, reject, resolve){
     });
 }
 
-export const behaveAsRequest = _.does(
+export default _.does(
   _.implement(ITemplate, {fill}),
   _.implement(IClonable, {clone}),
   _.implement(ICoerceable, {toPromise: fromTask}),

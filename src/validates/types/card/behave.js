@@ -19,7 +19,7 @@ function check(self, coll){
   return n < self.least || n > self.most ? [issue(self)] : null;
 }
 
-export const behaveAsCardinality = does(
+export default does(
   implement(ICheckable, {check}),
   implement(IInclusive, {includes}),
   implement(IBounds, {start, end}));

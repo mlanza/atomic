@@ -5,7 +5,7 @@ import {reduced, unreduced, isReduced} from "../reduced.js";
 import {indexedSeq} from "../indexed-seq.js";
 import {replace} from "../string/concrete.js";
 import {range} from "../range/construct.js";
-import {behaveAsEmptyList} from "../empty-list/behave.js";
+import iemptylist from "../empty-list/behave.js";
 import {concat} from "../concatenated/construct.js";
 import {revSeq} from "../rev-seq.js";
 import {filter, mapa} from "../lazy-seq.js";
@@ -200,9 +200,9 @@ export const iindexed = does(
   implement(IIndexed, {nth, idx}),
   implement(ICounted, {count: length}));
 
-export const behaveAsArray = does(
+export default does(
   iindexed,
-  implement(IEquiv, behaveAsEmptyList),
+  implement(IEquiv, iemptylist),
   implement(IQueryable, {query}),
   implement(ISequential),
   implement(IMap, {dissoc, keys, vals: identity}),

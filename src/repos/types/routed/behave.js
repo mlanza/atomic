@@ -33,7 +33,7 @@ function rest(self){
   return _.rest(self.requests);
 }
 
-export const behaveAsRouted = _.does(
+export default _.does(
   _.implement(IClonable, {clone}),
   _.implement(ICoerceable, {toPromise: fromTask}),
   _.implement(IForkable, {fork}),

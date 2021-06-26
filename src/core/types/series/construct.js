@@ -1,9 +1,9 @@
 import {doto, overload} from "../../core.js";
 import {constructs} from "../../types/function.js";
-import {behaveAsSeries} from "./behave.js";
+import iseries from "./behave.js";
 
 function extend(Type){
-  behaveAsSeries(Type);
+  iseries(Type);
   Type.create = constructs(Type);
   Type.from = function(items){
     return Object.assign(Object.create(Type.prototype), {items: items});

@@ -10,5 +10,5 @@ function check(self, obj){
   }
 }
 
-export const behaveAsCatches = does(
+export default does(
   implement(ICheckable, {check}));

@@ -178,7 +178,7 @@ function toArray(self){
   }, []);
 }
 
-export const behaveAsObject = does(
+export default does(
   implement(IDescriptive),
   implement(ITemplate, {fill}),
   implement(IBlankable, {blank}),

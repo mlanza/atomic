@@ -5,7 +5,7 @@ import {unreduced, isReduced} from "../reduced.js";
 import {drop} from "../lazy-seq.js";
 import {iterable} from "../lazy-seq/behave.js";
 import {emptyable} from "../record/behave.js";
-import {behaveAsEmptyList} from "../empty-list/behave.js";
+import iemptylist from "../empty-list/behave.js";
 import {Range} from "./construct.js";
 import {directed} from "../../protocols/iaddable/concrete.js";
 import {alike} from "../../protocols/iequiv/concrete.js";
@@ -28,7 +28,7 @@ function next(self){
   return self.end == null || (IComparable.compare(stepped, self.end) * self.direction) < 0 ? new self.constructor(stepped, self.end, self.step, self.direction) : null;
 }
 
-const _equiv = implement(IEquiv, behaveAsEmptyList).behavior.equiv;
+const _equiv = implement(IEquiv, iemptylist).behavior.equiv;
 
 function equiv(self, other){
   return kin(self, other) ? alike(self, other) : _equiv(self, other);
@@ -107,7 +107,7 @@ function includes(self, value){
   return false;
 }
 
-export const behaveAsRange = does(
+export default does(
   iterable,
   emptyable,
   implement(ISequential),

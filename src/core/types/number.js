@@ -1,3 +1,3 @@
 export * from "./number/concrete.js";
-import {behaveAsNumber} from "./number/behave.js";
-behaveAsNumber(Number);
+import behave from "./number/behave.js";
+behave(Number);

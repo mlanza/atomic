@@ -1,4 +1,4 @@
 export * from "./routed/construct.js";
 import {Routed} from "./routed/construct.js";
-import {behaveAsRouted} from "./routed/behave.js";
-behaveAsRouted(Routed);
+import behave from "./routed/behave.js";
+behave(Routed);

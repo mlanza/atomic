@@ -9,7 +9,7 @@ import {concat} from "../../types/concatenated/construct.js";
 import {iterable} from "../lazy-seq/behave.js";
 import {drop, filter} from "../lazy-seq/concrete.js";
 import {emptyArray} from "../../types/array/construct.js";
-import {behaveAsEmptyList} from "../../types/empty-list/behave.js";
+import iemptylist from "../../types/empty-list/behave.js";
 
 function reverse(self){
   let c = ICounted.count(self);
@@ -115,9 +115,9 @@ function query(self, pred){
   return filter(pred, self);
 }
 
-export const behaveAsIndexedSeq = does(
+export default does(
   iterable,
-  implement(IEquiv, behaveAsEmptyList),
+  implement(IEquiv, iemptylist),
   implement(IQueryable, {query}),
   implement(ISequential),
   implement(IIndexed, {nth, idx}),

@@ -49,7 +49,7 @@ function count(self){
   return self.length;
 }
 
-export const behaveAsNodeList = does(
+export default does(
   iterable,
   implement(ILookup, {lookup}),
   implement(IIndexed, {nth: lookup}),

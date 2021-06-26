@@ -19,7 +19,7 @@ function deref(self){
   return self.value == null ? null : self.value;
 }
 
-export const behaveAsMaybe = does(
+export default does(
   implement(IDeref, {deref}),
   implement(IForkable, {fork}),
   implement(IOtherwise, {otherwise}),

@@ -10,5 +10,5 @@ function send3(self, message, address){
 
 const send = overload(null, null, send2, send3);
 
-export const behaveAsConsole = does(
+export default does(
   specify(ISend, {send}));

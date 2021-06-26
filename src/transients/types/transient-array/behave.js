@@ -64,7 +64,7 @@ function persistent(self){
   return arr;
 }
 
-export const behaveAsTransientArray = does(
+export default does(
   forward("arr", IFind, IMapEntry, IAssociative, IMap, ICoerceable, ILookup, IReduce, IKVReduce, IFunctor, IInclusive, ICounted, ISeq, INext),
   implement(ISequential),
   implement(IClonable, {clone}),

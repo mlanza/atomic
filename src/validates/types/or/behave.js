@@ -30,7 +30,7 @@ function next(self){
   return seq(rest(self));
 }
 
-export const behaveAsOr = does(
+export default does(
   implement(ISeqable, {seq}),
   implement(INext, {next}),
   implement(IEmptyableCollection, {empty}),

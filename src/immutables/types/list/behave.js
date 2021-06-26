@@ -66,7 +66,7 @@ function merge(self, other){
   return reduce(other, _.conj, self);
 }
 
-export const behaveAsList = does(
+export default does(
   iterable,
   implement(IEquiv, {equiv}),
   implement(IInclusive, {includes}),

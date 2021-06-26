@@ -31,7 +31,7 @@ function state(self){
   return IStateMachine.state(IDeref.deref(self.state));
 }
 
-export const behaveAsAudienceDetector = does(
+export default does(
   ireduce,
   imergable,
   implement(IDisposable, {dispose}),

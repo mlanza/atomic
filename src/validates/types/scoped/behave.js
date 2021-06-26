@@ -8,5 +8,5 @@ function check(self, value){
   })
 }
 
-export const behaveAsScoped = does(
+export default does(
   implement(ICheckable, {check}));

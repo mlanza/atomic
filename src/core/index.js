@@ -7,8 +7,8 @@ import {isString, isBlank, str, replace} from "./types/string.js";
 import {isSome} from "./types/nil.js";
 import {implement} from "./types/protocol/concrete.js";
 import {into, detect, map, mapa, splice, drop, join, some, last, lazySeq} from "./types/lazy-seq.js";
-import {behaveAsSeries as _serieslike} from "./types/series/behave.js";
-export const serieslike = _serieslike;
+import iseries from "./types/series/behave.js";
+export const serieslike = iseries;
 export {iterable} from "./types/lazy-seq/behave.js";
 export * from "./core.js";
 export * from "./types.js";
@@ -19,10 +19,10 @@ export * from "./associatives.js";
 export {filter} from "./types/lazy-seq.js"; //necessary due to odd rollup behavior
 import Set from "set";
 import {Protocol} from "./types/protocol/construct.js";
-import {behaveAsProtocol} from "./types/protocol/behave.js";
+import iprotocol from "./types/protocol/behave.js";
 export const numeric = test(/^\d+$/i, ?);
 
-behaveAsProtocol(Protocol);
+iprotocol(Protocol);
 
 function forward1(key){
   return function forward(f){

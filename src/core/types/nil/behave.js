@@ -36,7 +36,7 @@ function merge(self, ...xs){
   return ICounted.count(xs) ? IMergable.merge.apply(null, Array.from(xs)) : null;
 }
 
-export const behaveAsNil = does(
+export default does(
   implement(IClonable, {clone: identity}),
   implement(ICompactable, {compact: identity}),
   implement(ICollection, {conj}),

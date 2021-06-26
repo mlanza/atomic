@@ -1,4 +1,4 @@
 export * from "./date/construct.js";
 export * from "./date/concrete.js";
-import {behaveAsDate} from "./date/behave.js";
-behaveAsDate(Date);
+import behave from "./date/behave.js";
+behave(Date);
