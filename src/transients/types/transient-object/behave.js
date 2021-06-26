@@ -1,4 +1,4 @@
-import {does, overload, doto, forwardTo} from "atomic/core";
+import {does, overload, doto, forward} from "atomic/core";
 import {implement} from "atomic/core";
 import {transientObject} from "./construct.js";
 import {ICoerceable, IEquiv, IFn, IComparable, IDescriptive, IMatchable, IFunctor, ILookup, IAssociative, IFind, IMapEntry, IYankable, ISeq, INext, ISeqable, ICounted, IInclusive, IEmptyableCollection, IMap, IReduce, IKVReduce, ICloneable, ISequential, ICollection} from "atomic/core";
@@ -55,44 +55,17 @@ function persistent(self){
   return obj;
 }
 
-const forward = forwardTo("obj");
-const keys = forward(IMap.keys);
-const vals = forward(IMap.vals);
-const matches = forward(IMatchable.matches);
-const find = forward(IFind.find);
-const includes = forward(IInclusive.includes);
-const lookup = forward(ILookup.lookup);
-const first = forward(ISeq.first);
-const rest = forward(ISeq.rest);
-const next = forward(INext.next);
-const contains = forward(IAssociative.contains);
-const seq = forward(ISeqable.seq);
-const count = forward(ICounted.count);
-const reduce = forward(IReduce.reduce);
-const reducekv = forward(IKVReduce.reducekv);
-const toArray = forward(ICoerceable.toArray);
-
 export const behaveAsTransientObject = does(
+  forward("obj", IMap, IMatchable, IFind, IInclusive, ILookup, ISeq, INext, IAssociative, ISeqable, ICounted, IReduce, IKVReduce, ICoerceable),
   implement(IDescriptive),
   implement(IPersistent, {persistent}),
   implement(ITransientCollection, {conj}),
   implement(IComparable, {compare}),
   implement(ITransientEmptyableCollection, {empty}),
-  implement(ICoerceable, {toArray, toObject}),
-  implement(IFn, {invoke: lookup}),
-  implement(IReduce, {reduce}),
-  implement(IKVReduce, {reducekv}),
-  implement(ICounted, {count}),
+  implement(ICoerceable, {toObject}),
+  implement(IFn, {invoke: ILookup.lookup}),
   implement(ICloneable, {clone}),
-  implement(ISeqable, {seq}),
-  implement(ISeq, {first, rest}),
-  implement(INext, {next}),
-  implement(IFind, {find}),
   implement(ILookup, {lookup}),
-  implement(IAssociative, {contains}),
   implement(ITransientAssociative, {assoc}),
-  implement(IInclusive, {includes}),
   implement(IEquiv, {equiv}),
-  implement(IMap, {keys, vals}),
-  implement(ITransientMap, {dissoc}),
-  implement(IMatchable, {matches}));
+  implement(ITransientMap, {dissoc}));
