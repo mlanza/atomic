@@ -17,9 +17,9 @@ import {
   ICollection,
   IAssociative,
   IEmptyableCollection,
-  IMergeable,
+  IMergable,
   IInclusive,
-  ICloneable
+  IClonable
 } from "atomic/core";
 import {
   ITransient,
@@ -93,14 +93,14 @@ export const behaveAsSet = does(
   implement(ISequential),
   implement(IEquiv, {equiv: equiv}),
   implement(IAssociative, {contains: includes}),
-  implement(IMergeable, {merge}),
+  implement(IMergable, {merge}),
   implement(ITransient, {transient}),
   implement(IReduce, {reduce}),
   implement(ICoerceable, {toArray}),
   implement(ISeqable, {seq}),
   implement(IInclusive, {includes}),
   implement(ISet, {disj, unite: conj}),
-  implement(ICloneable, {clone: identity}),
+  implement(IClonable, {clone: identity}),
   implement(IEmptyableCollection, {empty: emptySet}),
   implement(ICollection, {conj}),
   implement(ICounted, {count}),

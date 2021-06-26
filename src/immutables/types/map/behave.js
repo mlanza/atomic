@@ -1,4 +1,4 @@
-import {does, identity, implement, iterable, lazyIterable, ISeq, ISeqable, INext, IReduce, IMergeable, ICoerceable, IKVReduce, IMap, ICounted, IAssociative, ILookup, ICloneable} from "atomic/core";
+import {does, identity, implement, iterable, lazyIterable, ISeq, ISeqable, INext, IReduce, IMergable, ICoerceable, IKVReduce, IMap, ICounted, IAssociative, ILookup, IClonable} from "atomic/core";
 
 function assoc(self, key, value){
   return self.set(key, value);
@@ -62,12 +62,12 @@ export const behaveAsMap = does(
   iterable,
   implement(IKVReduce, {reducekv}),
   implement(ICoerceable, {toArray}),
-  implement(IMergeable, {merge}),
+  implement(IMergable, {merge}),
   implement(INext, {next}),
   implement(ISeq, {first, rest}),
   implement(ISeqable, {seq}),
   implement(IMap, {keys, vals, dissoc}),
-  implement(ICloneable, {clone: identity}),
+  implement(IClonable, {clone: identity}),
   implement(ICounted, {count}),
   implement(ILookup, {lookup}),
   implement(IAssociative, {assoc, contains}));

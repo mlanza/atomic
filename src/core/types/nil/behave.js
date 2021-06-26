@@ -1,4 +1,4 @@
-import {IMergeable, IBlankable, ICompactable, IMap, IAssociative, IInclusive, IOtherwise, IForkable, ICoerceable, IEquiv, ICollection, INext, ISeq, ISeqable, IIndexed, ICounted, ILookup, IReduce, IKVReduce, IEmptyableCollection, ISequential, ICloneable} from "../../protocols.js";
+import {IMergable, IBlankable, ICompactable, IMap, IAssociative, IInclusive, IOtherwise, IForkable, ICoerceable, IEquiv, ICollection, INext, ISeq, ISeqable, IIndexed, ICounted, ILookup, IReduce, IKVReduce, IEmptyableCollection, ISequential, IClonable} from "../../protocols.js";
 import {emptyList} from "../empty-list/construct.js";
 import {cons} from "../list/construct.js";
 import {identity, constantly, does, overload, noop} from "../../core.js";
@@ -33,15 +33,15 @@ function conj(self, value){
 }
 
 function merge(self, ...xs){
-  return ICounted.count(xs) ? IMergeable.merge.apply(null, Array.from(xs)) : null;
+  return ICounted.count(xs) ? IMergable.merge.apply(null, Array.from(xs)) : null;
 }
 
 export const behaveAsNil = does(
-  implement(ICloneable, {clone: identity}),
+  implement(IClonable, {clone: identity}),
   implement(ICompactable, {compact: identity}),
   implement(ICollection, {conj}),
   implement(IBlankable, {blank: constantly(true)}),
-  implement(IMergeable, {merge}),
+  implement(IMergable, {merge}),
   implement(IMap, {keys: nil, vals: nil, dissoc: nil}),
   implement(IForkable, {fork}),
   implement(IEmptyableCollection, {empty: identity}),

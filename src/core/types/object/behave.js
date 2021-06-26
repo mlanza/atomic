@@ -1,6 +1,6 @@
 import {does, identity, constructs, branch} from "../../core.js";
 import {implement} from "../protocol.js";
-import {IMergeable, IBlankable, ICompactable, IComparable, IYankable, IMatchable, INext, ICollection, IEquiv, IMapEntry, IReduce, IKVReduce, ISeqable, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, IFn, IMap, ISeq, IDescriptive, ICoerceable, ICloneable, IInclusive, ITemplate} from "../../protocols.js";
+import {IMergable, IBlankable, ICompactable, IComparable, IYankable, IMatchable, INext, ICollection, IEquiv, IMapEntry, IReduce, IKVReduce, ISeqable, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, IFn, IMap, ISeq, IDescriptive, ICoerceable, IClonable, IInclusive, ITemplate} from "../../protocols.js";
 import {reduced} from "../reduced.js";
 import {lazySeq, into, map} from "../lazy-seq.js";
 import {cons} from "../list.js";
@@ -71,7 +71,7 @@ function compare(self, other){ //assume like keys, otherwise use your own compar
 function conj(self, entry){
   const key = IMapEntry.key(entry),
         val = IMapEntry.val(entry);
-  const result = ICloneable.clone(self);
+  const result = IClonable.clone(self);
   result[key] = val;
   return result;
 }
@@ -182,7 +182,7 @@ export const behaveAsObject = does(
   implement(IDescriptive),
   implement(ITemplate, {fill}),
   implement(IBlankable, {blank}),
-  implement(IMergeable, {merge}),
+  implement(IMergable, {merge}),
   implement(ICompactable, {compact}),
   implement(IEquiv, {equiv}),
   implement(ICoerceable, {toArray: toArray, toObject: identity}),
@@ -191,7 +191,7 @@ export const behaveAsObject = does(
   implement(IMatchable, {matches}),
   implement(IInclusive, {includes}),
   implement(ICollection, {conj}),
-  implement(ICloneable, {clone}),
+  implement(IClonable, {clone}),
   implement(IComparable, {compare}),
   implement(IReduce, {reduce}),
   implement(IKVReduce, {reducekv}),

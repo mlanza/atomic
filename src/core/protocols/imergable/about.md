@@ -1,4 +1,4 @@
-# IMergeable
+# IMergable
 
 Provides a lossy means of combining objects which share similar or identical behavior and/or interface.
 

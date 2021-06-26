@@ -1,5 +1,5 @@
 import {does, overload, doto, forward, implement} from "atomic/core";
-import {ICoerceable, IFunctor, ILookup, IAssociative, IFind, IMapEntry, IYankable, ISeq, INext, ISeqable, ICounted, IInclusive, IEmptyableCollection, IMap, IReduce, IKVReduce, ICloneable, ISequential, ICollection} from "atomic/core";
+import {ICoerceable, IFunctor, ILookup, IAssociative, IFind, IMapEntry, IYankable, ISeq, INext, ISeqable, ICounted, IInclusive, IEmptyableCollection, IMap, IReduce, IKVReduce, IClonable, ISequential, ICollection} from "atomic/core";
 import {IPersistent, ITransientMap, ITransientInsertable, ITransientEmptyableCollection, ITransientReversible, ITransientYankable, ITransientAssociative, ITransientAppendable, ITransientPrependable, ITransientCollection} from "../../protocols.js";
 
 function before(self, reference, inserted){
@@ -55,7 +55,7 @@ function yank(self, value){
 }
 
 function clone(self){
-  return new self.constructor(ICloneable.clone(self.arr));
+  return new self.constructor(IClonable.clone(self.arr));
 }
 
 function persistent(self){
@@ -67,7 +67,7 @@ function persistent(self){
 export const behaveAsTransientArray = does(
   forward("arr", IFind, IMapEntry, IAssociative, IMap, ICoerceable, ILookup, IReduce, IKVReduce, IFunctor, IInclusive, ICounted, ISeq, INext),
   implement(ISequential),
-  implement(ICloneable, {clone}),
+  implement(IClonable, {clone}),
   implement(IPersistent, {persistent}),
   implement(ISeqable, {seq}),
   implement(ITransientInsertable, {before, after}),

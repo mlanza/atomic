@@ -1,5 +1,5 @@
 import {does, implement, ICounted, IDeref, IReset, ISwap} from "atomic/core";
-import {ISubscribe, ITimeTraveler} from "../../protocols.js";
+import {ISubscribe, IRevertible} from "../../protocols.js";
 
 function deref(self){
   return IDeref.deref(self.cell);
@@ -59,8 +59,8 @@ function redoable(self){
   return self.pos > 0;
 }
 
-export const behaveAsTimeTraveler = does(
-  implement(ITimeTraveler, {undo, redo, flush, undoable, redoable}),
+export const behaveAsJournal = does(
+  implement(IRevertible, {undo, redo, flush, undoable, redoable}),
   implement(IDeref, {deref}),
   implement(IReset, {reset}),
   implement(ISwap, {swap}),

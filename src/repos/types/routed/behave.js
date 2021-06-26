@@ -1,6 +1,6 @@
 import * as _ from "atomic/core";
 import {IParams, IOptions, IAddress, IIntercept} from "../../protocols.js";
-import {ICloneable, ITemplate, IFunctor, IQueryable, ICoerceable, IForkable, ISeq, IAssociative, IMap, ICollection, fromTask} from "atomic/core";
+import {IClonable, ITemplate, IFunctor, IQueryable, ICoerceable, IForkable, ISeq, IAssociative, IMap, ICollection, fromTask} from "atomic/core";
 import {query} from "../request/behave.js";
 
 function xform(xf){
@@ -34,7 +34,7 @@ function rest(self){
 }
 
 export const behaveAsRouted = _.does(
-  _.implement(ICloneable, {clone}),
+  _.implement(IClonable, {clone}),
   _.implement(ICoerceable, {toPromise: fromTask}),
   _.implement(IForkable, {fork}),
   _.implement(IQueryable, {query}),

@@ -1,4 +1,4 @@
-import {does, identity, implement, iterable, unreduced, IEquiv, IInclusive, ILookup, IAssociative, IReduce, IMergeable, ICoerceable, IEmptyableCollection, ICounted, ISeqable, ISeq, INext, ICollection, ICloneable} from "atomic/core";
+import {does, identity, implement, iterable, unreduced, IEquiv, IInclusive, ILookup, IAssociative, IReduce, IMergable, ICoerceable, IEmptyableCollection, ICounted, ISeqable, ISeq, INext, ICollection, IClonable} from "atomic/core";
 
 function equiv(self, other){
   return self.equals(other);
@@ -75,9 +75,9 @@ export const behaveAsList = does(
   implement(IReduce, {reduce}),
   implement(INext, {next}),
   implement(ICoerceable, {toArray}),
-  implement(IMergeable, {merge}),
+  implement(IMergable, {merge}),
   implement(IEmptyableCollection, {empty}),
-  implement(ICloneable, {clone: identity}),
+  implement(IClonable, {clone: identity}),
   implement(ISeqable, {seq}),
   implement(ICounted, {count}),
   implement(ICollection, {conj}),

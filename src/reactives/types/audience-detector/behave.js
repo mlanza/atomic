@@ -1,6 +1,6 @@
 import {implement, does, once, noop, transition, satisfies, swap, IStateMachine, IDisposable} from "atomic/core";
 import {ISubscribe} from "../../protocols/isubscribe/instance.js";
-import {ireduce, imergeable} from "../../shared.js";
+import {ireduce, imergable} from "../../shared.js";
 
 function sub(self, observer){
   if (subscribed(self) === 0) {
@@ -33,7 +33,7 @@ function state(self){
 
 export const behaveAsAudienceDetector = does(
   ireduce,
-  imergeable,
+  imergable,
   implement(IDisposable, {dispose}),
   implement(IStateMachine, {state}),
   implement(ISubscribe, {sub, unsub, subscribed}));
