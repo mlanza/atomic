@@ -172,15 +172,6 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
 
   (function(){
 
-    var forward = _.forwardTo("coll");
-    var first = forward(ISeq.first);
-    var rest = forward(ISeq.rest);
-    var next = forward(INext.next);
-    var includes = forward(IInclusive.includes);
-    var count = forward(ICounted.count);
-    var nth = forward(IIndexed.nth);
-    var contains = forward(IAssociative.contains);
-
     function reduce(self, xf, init){
       var memo = init,
           ys = self;
@@ -237,21 +228,17 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
     var constraints = _.overload(null, constraints1, constraints2);
 
     _.doto(ConstrainedCollection,
+      _.forward("coll", ISeq, INext, IInclusive, ICounted, IIndexed, IAssociative),
       _.implement(IEmptyableCollection, {empty: empty}),
       _.implement(IFunctor, {fmap: fmap}),
       _.implement(IConstrainable, {constraints: constraints}),
-      _.implement(ILookup, {lookup: nth}),
-      _.implement(IAssociative, {assoc: assoc, contains: contains}),
+      _.implement(ILookup, {lookup: IIndexed.nth}),
+      _.implement(IAssociative, {assoc: assoc}),
       _.implement(IDeref, {deref: deref}),
-      _.implement(ICounted, {count: count}),
       _.implement(IReduce, {reduce: reduce}),
       _.implement(IKVReduce, {reducekv: reducekv}),
-      _.implement(ISeq, {first: first, rest: rest}),
-      _.implement(INext, {next: next}),
       _.implement(IEquiv, {equiv: equiv}),
-      _.implement(IInclusive, {includes: includes}),
       _.implement(ICollection, {conj: conj}),
-      _.implement(IIndexed, {nth: nth}),
       _.implement(ISeqable, {seq: seq}));
 
   })();
@@ -262,20 +249,6 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
   }
 
   (function(){
-
-    var forward = _.forwardTo("coll");
-    var first = forward(ISeq.first);
-    var rest = forward(ISeq.rest);
-    var next = forward(INext.next);
-    var includes = forward(IInclusive.includes);
-    var count = forward(ICounted.count);
-    var nth = forward(IIndexed.nth);
-    var contains = forward(IAssociative.contains);
-    var seq = forward(ISeqable.seq);
-    var deref = forward(IDeref.deref);
-    var fmap = forward(IFunctor.fmap);
-    var reduce = forward(IReduce.reduce);
-    var reducekv = forward(IKVReduce.reducekv);
 
     function conj(self, value){
       return new self.constructor(self.constraints, _.conj(self.coll, value));
@@ -304,22 +277,13 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
     }
 
     _.doto(ResolvingCollection,
+      _.forward("coll", ISeq, INext, IInclusive, ICounted, IIndexed, IAssociative, ISeqable, IDeref, IFunctor, IReduce, IKVReduce),
       _.implement(IResolveable, {resolved: resolved}),
       _.implement(IEmptyableCollection, {empty: empty}),
-      _.implement(IFunctor, {fmap: fmap}),
       _.implement(IConstrainable, {constraints: constraints}),
-      _.implement(ILookup, {lookup: nth}),
-      _.implement(IAssociative, {assoc: assoc, contains: contains}),
-      _.implement(IDeref, {deref: deref}),
-      _.implement(ICounted, {count: count}),
-      _.implement(IReduce, {reduce: reduce}),
-      _.implement(IKVReduce, {reducekv: reducekv}),
-      _.implement(ISeq, {first: first, rest: rest}),
-      _.implement(INext, {next: next}),
-      _.implement(IInclusive, {includes: includes}),
-      _.implement(ICollection, {conj: conj}),
-      _.implement(IIndexed, {nth: nth}),
-      _.implement(ISeqable, {seq: seq}));
+      _.implement(ILookup, {lookup: IIndexed.nth}),
+      _.implement(IAssociative, {assoc: assoc}),
+      _.implement(ICollection, {conj: conj}));
 
   })();
 
@@ -341,20 +305,6 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
   var clampedCollection = _.overload(null, clampedCollection1, clampedCollection2);
 
   (function(){
-
-    var forward = _.forwardTo("coll");
-    var reduce = forward(IReduce.reduce);
-    var reducekv = forward(IKVReduce.reducekv);
-    var first = forward(ISeq.first);
-    var rest = forward(ISeq.rest);
-    var next = forward(INext.next);
-    var count = forward(ICounted.count);
-    var includes = forward(IInclusive.includes);
-    var equiv = forward(IEquiv.equiv);
-    var nth = forward(IIndexed.nth);
-    var contains = forward(IAssociative.contains);
-    var seq = forward(ISeqable.seq);
-    var deref = forward(IDeref.deref);
 
     function fmap(self, f){
       return new self.constructor(self.cardinality, _.fmap(self.coll, f));
@@ -384,22 +334,13 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
     var constraints = _.overload(null, constraints1, constraints2);
 
     _.doto(ClampedCollection,
+      _.forward("coll", IReduce, IKVReduce, ISeq, INext, ICounted, IInclusive, IEquiv, IIndexed, IAssociative, ISeqable, IDeref),
       _.implement(IEmptyableCollection, {empty: empty}),
       _.implement(IFunctor, {fmap: fmap}),
       _.implement(IConstrainable, {constraints: constraints}),
-      _.implement(ILookup, {lookup: nth}),
-      _.implement(IAssociative, {assoc: assoc, contains: contains}),
-      _.implement(IDeref, {deref: deref}),
-      _.implement(ICounted, {count: count}),
-      _.implement(IReduce, {reduce: reduce}),
-      _.implement(IKVReduce, {reducekv: reducekv}),
-      _.implement(ISeq, {first: first, rest: rest}),
-      _.implement(INext, {next: next}),
-      _.implement(IEquiv, {equiv: equiv}),
-      _.implement(IInclusive, {includes: includes}),
-      _.implement(ICollection, {conj: conj}),
-      _.implement(IIndexed, {nth: nth}),
-      _.implement(ISeqable, {seq: seq}));
+      _.implement(ILookup, {lookup: IIndexed.nth}),
+      _.implement(IAssociative, {assoc: assoc}),
+      _.implement(ICollection, {conj: conj}));
 
   })();
 
@@ -461,11 +402,8 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
 
   (function(){
 
-    var forward = _.forwardTo("attrs");
-    var hash = forward(IHash.hash);
-
     _.doto(Assertion,
-      _.implement(IHash, {hash: hash}),
+      _.forward("attrs", IHash),
       _.record);
 
   })();
@@ -1298,8 +1236,6 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
 
   (function(){ // TODO implement indexing
 
-    var forward = _.forwardTo("workspace");
-
     function query(self, plan){
       return IQueryable.query(self.workspace, plan);
     }
@@ -1321,46 +1257,15 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
       return new self.constructor(self.indexes, IBuffer.destroy(self.workspace, entities));
     }
 
-    var dirty = forward(IBuffer.dirty);
-    var changes = forward(IBuffer.changes);
-    var includes = forward(IInclusive.includes);
-    var first = forward(ISeq.first);
-    var rest = forward(ISeq.rest);
-    var next = forward(INext.next);
-    var seq = forward(ISeqable.seq);
-    var lookup = forward(ILookup.lookup);
-    var reduce = forward(IReduce.reduce);
-
     function dissoc(self, id){
       return new self.constructor(self.indexes, IMap.dissoc(self.workspace, id));
     }
 
-    var keys = forward(IMap.keys);
-    var vals = forward(IMap.vals);
-    var count = forward(ICounted.count);
-    var contains = forward(IAssociative.contains);
-    var id = forward(IEntity.id);
-    var commands = forward(ITransaction.commands);
-    var resolve = forward(IResolver.resolve);
-    var touched = forward(IBuffer.touched);
-    var nth = forward(IIndexed.nth);
-
     _.doto(IndexedEntityWorkspace,
-      _.implement(IResolver, {resolve: resolve}),
-      _.implement(IIndexed, {nth: nth}),
-      _.implement(IEntity, {id: id}),
+      _.forward("workspace", IMap, ISeq, INext, ISeqable, ILookup, IReduce, ICounted, IInclusive, IAssociative, IEntity, ITransaction, IResolver, IBuffer, IIndexed),
       _.implement(IQueryable, {query: query}),
-      _.implement(ITransaction, {commands: commands}),
-      _.implement(IBuffer, {dirty: dirty, load: load, add: add, edit: edit, destroy: destroy, changes: changes, touched: touched}),
-      _.implement(ICounted, {count: count}),
-      _.implement(IAssociative, {contains: contains}),
-      _.implement(IMap, {keys: keys, vals: vals, dissoc: dissoc}),
-      _.implement(IReduce, {reduce: reduce}),
-      _.implement(ILookup, {lookup: lookup}),
-      _.implement(ISeq, {first: first, rest: rest}),
-      _.implement(INext, {next: next}),
-      _.implement(ISeqable, {seq: seq}),
-      _.implement(IInclusive, {includes: includes}),
+      _.implement(IBuffer, {load: load, add: add, edit: edit, destroy: destroy}),
+      _.implement(IMap, {dissoc: dissoc}),
       _.implement(IEmptyableCollection, {empty: buffer}));
 
   })();
@@ -2315,8 +2220,6 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
 
   (function(){
 
-    var forward = _.forwardTo("workspace");
-
     function make(self, attrs){
       return IFactory.make(self.repo, attrs);
     }
@@ -2345,19 +2248,11 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
       return IRepository.commit(self.repo, self.workspace); //TODO return outcome status?
     }
 
-    var swap = forward(ISwap.swap);
-    var undo = forward(ITimeTraveler.undo);
-    var redo = forward(ITimeTraveler.redo);
-    var flush = forward(ITimeTraveler.flush);
-    var undoable = forward(ITimeTraveler.undoable);
-    var redoable = forward(ITimeTraveler.redoable);
-
     _.doto(Buffer,
-      _.implement(ITimeTraveler, {undo: undo, redo: redo, flush: flush, undoable: undoable, redoable: redoable}),
+      _.forward("workspace", ISwap, ITimeTraveler),
       _.implement(IPersistable, {save: save}),
       _.implement(IFactory, {make: make}),
       _.implement(ILookup, {lookup: lookup}),
-      _.implement(ISwap, {swap: swap}),
       _.implement(IBuffer, {load: load, edit: edit}), //TODO ITransientBuffer.load
       _.implement(IQueryable, {query: query}));
 
