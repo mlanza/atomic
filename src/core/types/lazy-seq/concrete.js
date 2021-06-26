@@ -11,6 +11,7 @@ import {range} from "../range/construct.js";
 import {str} from "../string/concrete.js";
 import {juxt, comp, apply, partial} from "../function/concrete.js"; //MOD
 import {get, getIn} from "../../protocols/ilookup/concrete.js";
+import {conj} from "../../protocols/icollection/concrete.js";
 import {lazySeq} from "../lazy-seq/construct.js";
 import {concat, concatenated} from "../concatenated/construct.js";
 import {satisfies} from "../protocol/concrete.js";
@@ -70,11 +71,11 @@ function transduce4(xform, f, init, coll){
 export const transduce = overload(null, null, null, transduce3, transduce4);
 
 function into2(to, from){
-  return IReduce.reduce(from, ICollection.conj, to);
+  return IReduce.reduce(from, conj, to);
 }
 
 function into3(to, xform, from){
-  return transduce(xform, ICollection.conj, to, from);
+  return transduce(xform, conj, to, from);
 }
 
 export const into = overload(emptyArray, identity, into2, into3);
@@ -717,7 +718,7 @@ export function countBy(f, coll){
 function groupBy3(init, f, coll){
   return IReduce.reduce(coll, function(memo, value){
     return update(memo, f(value), function(group){
-      return ICollection.conj(group || [], value);
+      return conj(group || [], value);
     });
   }, init);
 }
