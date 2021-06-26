@@ -46,6 +46,10 @@ Protocol.prototype.generate = function(){
   }
 }
 
+Protocol.prototype.keys = function(){
+  return Object.keys(this[TEMPLATE]);
+}
+
 function addMeta(target, key, value){
   try {
     Object.defineProperty(target, key, { //unsupported on some objects like Location
