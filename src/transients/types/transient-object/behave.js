@@ -65,7 +65,6 @@ export const behaveAsTransientObject = does(
   implement(ICoerceable, {toObject}),
   implement(IFn, {invoke: ILookup.lookup}),
   implement(ICloneable, {clone}),
-  implement(ILookup, {lookup}),
   implement(ITransientAssociative, {assoc}),
   implement(IEquiv, {equiv}),
   implement(ITransientMap, {dissoc}));
