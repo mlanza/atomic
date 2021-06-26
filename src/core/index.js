@@ -1,4 +1,4 @@
-import {overload, toggles, identity, obj, partly, doto, does, branch, unspread, applying, execute, noop, constantly, once, forwardTo} from "./core.js";
+import {overload, called, toggles, identity, obj, partly, doto, does, branch, unspread, applying, execute, noop, constantly, once} from "./core.js";
 import {IAppendable, IYankable, ICoerceable, IAssociative, IBounds, IInverse, ICloneable, ICollection, IComparable, ICounted, IDeref, IDisposable, IEmptyableCollection, IEquiv, IFind, IFn, IForkable, IFunctor, IHierarchy, IInclusive, IIndexed, IInsertable, IKVReduce, ILookup, IMap, IMapEntry, IMatchable, INext, IOtherwise, IPrependable, IReduce, IReset, ISeq, ISeqable, ISet, ISwap} from "./protocols.js";
 import {just, satisfies, spread, maybe, each, duration, remove, sort, flip, realized, comp, isNumber, isFunction, apply, realize, isNil, reFindAll, mapkv, period, selectKeys, mapVals, reMatches, test, date, emptyList, cons, days, recurrence, curry, second as _second} from "./types.js";
 import {filter} from "./types/lazy-seq.js";
@@ -24,8 +24,16 @@ export const numeric = test(/^\d+$/i, ?);
 
 behaveAsProtocol(Protocol);
 
-export function forward(target, ...protocols){
-  const fwd = forwardTo(target);
+function forward1(key){
+  return function forward(f){
+    return function(self, ...args){
+      return f.apply(this, [self[key], ...args]);
+    }
+  }
+}
+
+function forwardN(target, ...protocols){
+  const fwd = forward1(target);
   const behavior = mapa(function(protocol){
     return implement(protocol, reduce(function(memo, key){
       return assoc(memo, key, fwd(protocol[key]));
@@ -33,6 +41,10 @@ export function forward(target, ...protocols){
   }, protocols);
   return does(...behavior);
 }
+
+export const forward = overload(null, forward1, forwardN);
+
+export const forwardTo = called(forward, "`forwardTo` is deprecated — use `forward` instead.");
 
 function recurs2(pd, step) {
   return recurrence(IBounds.start(pd), IBounds.end(pd), step);

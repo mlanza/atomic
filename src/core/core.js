@@ -247,22 +247,6 @@ function trampolineN(f, ...args){
 
 export const trampoline = overload(null, trampoline1, trampolineN);
 
-export function forwardTo(key){
-  return function forward(f){
-    return function(self, ...args){
-      return f.apply(this, [self[key], ...args]);
-    }
-  }
-}
-
-export function forwardWith(g){
-  return function forward(f){
-    return function(self, ...args){
-      return f.apply(this, [g(self), ...args]);
-    }
-  }
-}
-
 function called4(fn, message, context, log){
   return function(){
     const results = fn.apply(this, arguments);
