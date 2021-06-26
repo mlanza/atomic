@@ -1,6 +1,6 @@
 import {implement} from "../protocol.js";
 import {identity, does} from "../../core.js";
-import {IEquiv, ICoerceable, IDescriptive, IFind, ICollection, IReduce, IKVReduce, INext, ISeq, ISeqable, IIndexed, ICounted, ILookup, IFn, IMap, ICloneable, IEmptyableCollection} from "../../protocols.js";
+import {IEquiv, ICoerceable, IDescriptive, IFind, ICollection, IReduce, IKVReduce, INext, ISeq, ISeqable, IIndexed, ICounted, ILookup, IFn, IMap, IClonable, IEmptyableCollection} from "../../protocols.js";
 import {lazySeq} from "../../types/lazy-seq/construct.js";
 import {cons} from "../../types/list/construct.js";
 import {remove, into} from "../../types/lazy-seq/concrete.js";
@@ -71,7 +71,7 @@ export const behaveAsAssociativeSubset = does(
   implement(IMap, {dissoc, keys, vals}),
   implement(IReduce, {reduce}),
   implement(IKVReduce, {reducekv}),
-  implement(ICloneable, {clone}),
+  implement(IClonable, {clone}),
   implement(IEmptyableCollection, {empty: emptyObject}),
   implement(IFn, {invoke: lookup}),
   implement(ILookup, {lookup}),

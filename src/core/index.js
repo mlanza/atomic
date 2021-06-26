@@ -1,5 +1,5 @@
 import {overload, called, toggles, identity, obj, partly, doto, does, branch, unspread, applying, execute, noop, constantly, once} from "./core.js";
-import {IAppendable, IYankable, ICoerceable, IAssociative, IBounds, IInverse, ICloneable, ICollection, IComparable, ICounted, IDeref, IDisposable, IEmptyableCollection, IEquiv, IFind, IFn, IForkable, IFunctor, IHierarchy, IInclusive, IIndexed, IInsertable, IKVReduce, ILookup, IMap, IMapEntry, IMatchable, INext, IOtherwise, IPrependable, IReduce, IReset, ISeq, ISeqable, ISet, ISwap} from "./protocols.js";
+import {IAppendable, IYankable, ICoerceable, IAssociative, IBounds, IInverse, IClonable, ICollection, IComparable, ICounted, IDeref, IDisposable, IEmptyableCollection, IEquiv, IFind, IFn, IForkable, IFunctor, IHierarchy, IInclusive, IIndexed, IInsertable, IKVReduce, ILookup, IMap, IMapEntry, IMatchable, INext, IOtherwise, IPrependable, IReduce, IReset, ISeq, ISeqable, ISet, ISwap} from "./protocols.js";
 import {just, satisfies, spread, maybe, each, duration, remove, sort, flip, realized, comp, isNumber, isFunction, apply, realize, isNil, reFindAll, mapkv, period, selectKeys, mapVals, reMatches, test, date, emptyList, cons, days, recurrence, curry, second as _second} from "./types.js";
 import {filter} from "./types/lazy-seq.js";
 import {add, subtract, compact, matches, name, descendants, query, locate, deref, get, assoc, yank, conj, reducing, toArray, reducekv, includes, excludes, rest, count, between, reduce, divide, fmap, split} from "./protocols/concrete.js";
@@ -81,7 +81,7 @@ const mod = overload(null, null, null, mod3, modN);
 
 //Has the api of `assoc` and behaves like `update` persistently updating object attributes.  Depends on `clone` but not `lookup` or `assoc`.
 export function edit(obj, ...args){
-  const copy = ICloneable.clone(obj);
+  const copy = IClonable.clone(obj);
   args.unshift(copy);
   return modN.apply(copy, args);
 }
@@ -230,6 +230,6 @@ export function writable(keys){
     return tgt;
   }
   return does(
-    implement(ICloneable, {clone}),
+    implement(IClonable, {clone}),
     implement(IAssociative, {assoc, contains}));
 }

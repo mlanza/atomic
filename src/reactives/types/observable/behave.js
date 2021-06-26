@@ -2,7 +2,7 @@ import {does, once, mapa, noop, implement} from "atomic/core";
 import {ISubscribe} from "../../protocols/isubscribe.js";
 import {IPublish} from "../../protocols/ipublish.js";
 import {Observable, observable} from "./construct.js";
-import {imergeable, ireduce} from "../../shared.js";
+import {imergable, ireduce} from "../../shared.js";
 
 function sub(self, observer){
   self.subscriptions.unshift({observer, unsub: once(self.subscribe(observer) || noop)});
@@ -28,5 +28,5 @@ function subscribed(){
 
 export const behaveAsObservable = does(
   ireduce,
-  imergeable,
+  imergable,
   implement(ISubscribe, {sub, unsub, subscribed}));

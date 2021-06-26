@@ -1,7 +1,7 @@
 import {does, overload, doto, forward} from "atomic/core";
 import {implement} from "atomic/core";
 import {transientObject} from "./construct.js";
-import {ICoerceable, IEquiv, IFn, IComparable, IDescriptive, IMatchable, IFunctor, ILookup, IAssociative, IFind, IMapEntry, IYankable, ISeq, INext, ISeqable, ICounted, IInclusive, IEmptyableCollection, IMap, IReduce, IKVReduce, ICloneable, ISequential, ICollection} from "atomic/core";
+import {ICoerceable, IEquiv, IFn, IComparable, IDescriptive, IMatchable, IFunctor, ILookup, IAssociative, IFind, IMapEntry, IYankable, ISeq, INext, ISeqable, ICounted, IInclusive, IEmptyableCollection, IMap, IReduce, IKVReduce, IClonable, ISequential, ICollection} from "atomic/core";
 import {IPersistent, ITransientYankable, ITransientAssociative, ITransientEmptyableCollection, ITransientCollection, ITransientMap} from "../../protocols.js";
 
 function yank(self, entry){
@@ -30,7 +30,7 @@ function assoc(self, key, value){
 }
 
 function clone(self){
-  return transientObject(ICloneable.clone(self.obj));
+  return transientObject(IClonable.clone(self.obj));
 }
 
 function compare(a, b){
@@ -64,7 +64,7 @@ export const behaveAsTransientObject = does(
   implement(ITransientEmptyableCollection, {empty}),
   implement(ICoerceable, {toObject}),
   implement(IFn, {invoke: ILookup.lookup}),
-  implement(ICloneable, {clone}),
+  implement(IClonable, {clone}),
   implement(ITransientAssociative, {assoc}),
   implement(IEquiv, {equiv}),
   implement(ITransientMap, {dissoc}));

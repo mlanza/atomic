@@ -1,6 +1,6 @@
 import {does, identity, overload, doto, complement} from "../../core.js";
 import {implement, satisfies} from "../protocol.js";
-import {IMergeable, IBlankable, IMap, IQueryable, ICoerceable, IFunctor, IInsertable, IYankable, IReversible, IMapEntry, IEquiv, IReduce, IKVReduce, IAppendable, IPrependable, IInclusive, ICollection, INext, ISeq, IFind, ISeqable, IIndexed, IAssociative, ISequential, IEmptyableCollection, IFn, ICounted, ILookup, ICloneable} from "../../protocols.js";
+import {IMergable, IBlankable, IMap, IQueryable, ICoerceable, IFunctor, IInsertable, IYankable, IReversible, IMapEntry, IEquiv, IReduce, IKVReduce, IAppendable, IPrependable, IInclusive, ICollection, INext, ISeq, IFind, ISeqable, IIndexed, IAssociative, ISequential, IEmptyableCollection, IFn, ICounted, ILookup, IClonable} from "../../protocols.js";
 import {reduced, unreduced, isReduced} from "../reduced.js";
 import {indexedSeq} from "../indexed-seq.js";
 import {replace} from "../string/concrete.js";
@@ -206,7 +206,7 @@ export const behaveAsArray = does(
   implement(IQueryable, {query}),
   implement(ISequential),
   implement(IMap, {dissoc, keys, vals: identity}),
-  implement(IMergeable, {merge: concat}),
+  implement(IMergable, {merge: concat}),
   implement(IInsertable, {before, after}),
   implement(IFunctor, {fmap}),
   implement(ICoerceable, {toObject, toArray: identity}),
@@ -217,7 +217,7 @@ export const behaveAsArray = does(
   implement(IInclusive, {includes}),
   implement(IAppendable, {append}),
   implement(IPrependable, {prepend}),
-  implement(ICloneable, {clone}),
+  implement(IClonable, {clone}),
   implement(IFn, {invoke: lookup}),
   implement(IEmptyableCollection, {empty: emptyArray}),
   implement(IReduce, {reduce}),

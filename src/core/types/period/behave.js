@@ -6,7 +6,7 @@ import {min, max} from "../number/concrete.js";
 import {recurrence} from "../recurrence/construct.js";
 import {period} from "./construct.js";
 import {map, take} from "../lazy-seq/concrete.js";
-import {ISplittable, ICoerceable, IAddable, IBounds, IComparable, IEquiv, IInclusive, IDivisible, IMergeable} from "../../protocols.js";
+import {ISplittable, ICoerceable, IAddable, IBounds, IComparable, IEquiv, IInclusive, IDivisible, IMergable} from "../../protocols.js";
 
 function split2(self, step){
   return map(period(?, step), recurrence(IBounds.start(self), IBounds.end(self), step));
@@ -58,7 +58,7 @@ export const behaveAsPeriod = does(
   emptyable,
   implement(ISplittable, {split}),
   implement(IAddable, {add}),
-  implement(IMergeable, {merge}),
+  implement(IMergable, {merge}),
   implement(IDivisible, {divide}),
   implement(IComparable, {compare}),
   implement(ICoerceable, {toDuration}),

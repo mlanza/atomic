@@ -8,14 +8,14 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
 
   var IAssociative = _.IAssociative,
       ISwap = _.ISwap,
-      IMergeable = _.IMergeable,
+      IMergable = _.IMergable,
       IHash = imm.IHash,
       ISet = _.ISet,
       INameable = _.INameable,
       ITransientAssociative = mut.ITransientAssociative,
       IDispatch = $.IDispatch,
       ISubscribe = $.ISubscribe,
-      ITimeTraveler = $.ITimeTraveler,
+      IRevertible = $.IRevertible,
       IEmptyableCollection = _.IEmptyableCollection,
       ICheckable = vd.ICheckable,
       IConstrainable = vd.IConstrainable,
@@ -731,7 +731,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
     }
 
     _.doto(Schema,
-      _.implement(IMergeable, {merge: merge}),
+      _.implement(IMergable, {merge: merge}),
       _.implement(IMap, {keys: keys, vals: vals, dissoc: dissoc}),
       _.implement(ILookup, {lookup: lookup}),
       _.implement(ICollection, {conj: conj}));
@@ -771,7 +771,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
     }
 
     _.doto(Ontology,
-      _.implement(IMergeable, {merge: merge}),
+      _.implement(IMergable, {merge: merge}),
       _.implement(IMap, {keys: keys, vals: vals, dissoc: dissoc}),
       _.implement(ILookup, {lookup: lookup}),
       _.implement(ICollection, {conj: conj}));
@@ -1638,7 +1638,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
 
   })();
 
-  function timeTravels(able, effect, event){
+  function journals(able, effect, event){
 
     function handle(self, command, next){
       if (able(self.buffer)){
@@ -1681,7 +1681,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
   identifiableRecord(UndoneEvent, "undone");
 
   _.doto(UndoHandler,
-    timeTravels(ITimeTraveler.undoable, ITimeTraveler.undo, undoneEvent()));
+    journals(IRevertible.undoable, IRevertible.undo, undoneEvent()));
 
   function RedoCommand(attrs){
     this.attrs = attrs;
@@ -1711,7 +1711,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
   identifiableRecord(RedoneEvent, "redone");
 
   _.doto(RedoHandler,
-    timeTravels(ITimeTraveler.redoable, ITimeTraveler.redo, redoneEvent()));
+    journals(IRevertible.redoable, IRevertible.redo, redoneEvent()));
 
   function FlushCommand(attrs){
     this.attrs = attrs;
@@ -1741,7 +1741,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
   identifiableRecord(FlushedEvent, "flushed");
 
   _.doto(FlushHandler,
-    timeTravels(_.constantly(true), ITimeTraveler.flush, flushedEvent()));
+    journals(_.constantly(true), IRevertible.flush, flushedEvent()));
 
   function AssertCommand(attrs){
     this.attrs = attrs;
@@ -2249,7 +2249,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
     }
 
     _.doto(Buffer,
-      _.forward("workspace", ISwap, ITimeTraveler),
+      _.forward("workspace", ISwap, IRevertible),
       _.implement(IPersistable, {save: save}),
       _.implement(IFactory, {make: make}),
       _.implement(ILookup, {lookup: lookup}),

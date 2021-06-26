@@ -1,8 +1,8 @@
 import {implement} from "../protocol.js";
 import {does, identity, partial} from "../../core.js";
-import {IAddable, IKVReduce, IReduce, IFunctor, IMergeable, ICoerceable, IMultipliable, IDivisible, IMap, IAssociative, ILookup, IInclusive} from "../../protocols.js";
+import {IAddable, IKVReduce, IReduce, IFunctor, IMergable, ICoerceable, IMultipliable, IDivisible, IMap, IAssociative, ILookup, IInclusive} from "../../protocols.js";
 import {add} from "../../protocols/iaddable/concrete.js";
-import {mergeWith} from "../../protocols/imergeable/instance.js";
+import {mergeWith} from "../../protocols/imergable/instance.js";
 import {Duration} from "../duration/construct.js";
 
 function reducekv(self, xf, init){
@@ -58,7 +58,7 @@ function divide(a, b){
 export const behaveAsDuration = does(
   implement(IKVReduce, {reducekv}),
   implement(IAddable, {add: merge}),
-  implement(IMergeable, {merge}),
+  implement(IMergable, {merge}),
   implement(IFunctor, {fmap}),
   implement(IAssociative, {assoc, contains}),
   implement(ILookup, {lookup}),

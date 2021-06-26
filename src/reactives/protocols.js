@@ -4,4 +4,4 @@ export * from "./protocols/ieventprovider/instance.js";
 export * from "./protocols/imiddleware/instance.js";
 export * from "./protocols/ipublish/instance.js";
 export * from "./protocols/isubscribe/instance.js";
-export * from "./protocols/itimetraveler/instance.js";
+export * from "./protocols/irevertible/instance.js";

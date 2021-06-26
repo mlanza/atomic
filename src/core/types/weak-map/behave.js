@@ -1,6 +1,6 @@
 import {does, identity} from "../../core.js";
 import {implement} from "../protocol.js";
-import {ICounted, IAssociative, ILookup, ICloneable} from "../../protocols.js";
+import {ICounted, IAssociative, ILookup, IClonable} from "../../protocols.js";
 
 function assoc(self, key, value){
   return self.set(key, value);
@@ -19,7 +19,7 @@ function count(self){
 }
 
 export const behaveAsWeakMap = does(
-  implement(ICloneable, {clone: identity}),
+  implement(IClonable, {clone: identity}),
   implement(ICounted, {count}),
   implement(ILookup, {lookup}),
   implement(IAssociative, {assoc, contains}));

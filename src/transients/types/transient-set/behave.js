@@ -1,4 +1,4 @@
-import {does, identity, implement, overload, assoc, cons, filter, lazyIterable, emptyList, apply, unreduced, ICoerceable, ISeq, IReduce, ISeqable, ISet, INext, ISequential, ICounted, ICollection, IEmptyableCollection, IInclusive, ICloneable} from "atomic/core";
+import {does, identity, implement, overload, assoc, cons, filter, lazyIterable, emptyList, apply, unreduced, ICoerceable, ISeq, IReduce, ISeqable, ISet, INext, ISequential, ICounted, ICollection, IEmptyableCollection, IInclusive, IClonable} from "atomic/core";
 import {emptyTransientSet, transientSet} from "./construct.js";
 import {IPersistent, ITransientSet, ITransientEmptyableCollection, ITransientCollection} from "../../protocols.js";
 
@@ -66,7 +66,7 @@ export const behaveAsTransientSet = does(
   implement(ICoerceable, {toArray}),
   implement(ISeqable, {seq}),
   implement(IInclusive, {includes}),
-  implement(ICloneable, {clone}),
+  implement(IClonable, {clone}),
   implement(ITransientEmptyableCollection, {empty}),
   implement(ICounted, {count}),
   implement(INext, {next}),

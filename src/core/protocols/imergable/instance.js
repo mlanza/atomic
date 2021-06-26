@@ -21,6 +21,6 @@ function mergeWithN(xf, init, ...xs){
 
 export const mergeWith = overload(null, null, null, mergeWith3, mergeWithN);
 
-export const IMergeable = protocol({
+export const IMergable = protocol({
   merge
 });

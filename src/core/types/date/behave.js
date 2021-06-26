@@ -1,9 +1,9 @@
 import {does, overload, constantly, identity, partial} from "../../core.js";
 import {implement} from "../protocol.js";
-import {IAddable, IMergeable, IReduce, IKVReduce, ISeqable, IBounds, IMap, IDeref, ISeq, IComparable, IEquiv, ICloneable, ILookup, IAssociative, ICollection} from "../../protocols.js";
+import {IAddable, IMergable, IReduce, IKVReduce, ISeqable, IBounds, IMap, IDeref, ISeq, IComparable, IEquiv, IClonable, ILookup, IAssociative, ICollection} from "../../protocols.js";
 import {isNumber} from "../number.js";
 import {add} from "../../protocols/iaddable/concrete.js";
-import {mergeWith} from "../../protocols/imergeable/instance.js";
+import {mergeWith} from "../../protocols/imergable/instance.js";
 import {Duration, days} from "../duration.js";
 
 function _add(self, other){
@@ -126,4 +126,4 @@ export const behaveAsDate = does(
   implement(ICollection, {conj}),
   implement(IAssociative, {assoc, contains}),
   implement(ILookup, {lookup}),
-  implement(ICloneable, {clone}));
+  implement(IClonable, {clone}));
