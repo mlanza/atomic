@@ -17,6 +17,7 @@ requirejs.config({
     "vendor": "../assets/vendor",
     "qunit": "vendor/qunit",
     "immutable": "vendor/immutable",
+    "rxjs": "vendor/rxjs",
     "text": "vendor/require/text",
     "css": "vendor/require/css",
     "promised": "vendor/require/promised"
