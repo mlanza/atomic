@@ -1,7 +1,7 @@
 import {just, identity, reduced, doto, debug, called, once, specify, slice, split, take, conj, assoc, count, includes, notEq, constantly, repeat, filtera, matches, comp, each, merge, map, apply, overload, noop, mapIndexed, spread, does, toArray, unreduced, isReduced, satisfies, ISequential, IDeref, IHierarchy} from "atomic/core";
 import * as t from "atomic/transducers";
 import Promise from "promise";
-import {pub, err, complete, sub, unsub} from "../../protocols/concrete.js";
+import {pub, err, complete, closed, sub, unsub} from "../../protocols/concrete.js";
 import {Observable, observable} from "./construct.js";
 import {Observer, observer} from "../observer/construct.js";
 import {Subject, subject} from "../subject/construct.js";
@@ -30,6 +30,10 @@ function pipe2(source, xform){
       unsub && unsub();
     });
     const unsub = sub(source, sink); //might complete before returning `unsub` fn
+    if (closed(sink)) {
+      unsub();
+      return noop;
+    }
     return unsub;
   });
 }
@@ -266,7 +270,12 @@ export function depressed(el){
 
 function fromCollection(coll){
   return observable(function(observer){
-    each(pub(observer, ?), coll);
+    for (var item of coll) {
+      pub(observer, item);
+      if (closed(observer)) {
+        return;
+      }
+    }
     complete(observer);
   });
 }

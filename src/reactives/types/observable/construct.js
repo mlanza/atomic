@@ -1,8 +1,7 @@
-export function Observable(subscribe, subscriptions){
+export function Observable(subscribe){
   this.subscribe = subscribe;
-  this.subscriptions = subscriptions;
 }
 
 export function observable(subscribe){
-  return new Observable(subscribe, []);
+  return new Observable(subscribe);
 }
