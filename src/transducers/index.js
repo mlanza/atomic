@@ -1,9 +1,37 @@
-import {overload, complement, called, clone, comp, first, rest, partial, isSome, reduced, seq, equiv, IReduce} from "atomic/core";
+import {overload, complement, called, clone, comp, rest, partial, isSome, reduced, seq, equiv, IReduce} from "atomic/core";
 import * as _ from "atomic/core";
 import Set from "set";
 
 export function identity(){
   return _.identity;
+}
+
+export function first(){
+  return function(xf){
+    return overload(xf, xf, function(memo, value){
+      return reduced(xf(xf(memo, value)));
+    });
+  }
+}
+
+export function last(n){
+  const size = n || 1;
+  return function(xf){
+    let prior = [];
+    return overload(xf, function(memo){
+      let acc = memo;
+      for (var x of prior){
+        acc = xf(acc, x);
+      }
+      return xf(acc);
+    }, function(memo, value){
+      prior.push(value);
+      while (prior.length > size) {
+        prior.shift();
+      }
+      return memo;
+    });
+  }
 }
 
 export function tee(f){
@@ -29,7 +57,7 @@ function best2(better, init) {
   return function(xf){
     let result = init;
     return overload(xf, function(memo){
-      return xf(memo);
+      return reduced(xf(xf(memo, result)));
     }, function(memo, value){
       result = better(result, value)
       return memo;

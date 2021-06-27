@@ -1,4 +1,4 @@
-import {just, doto, debug, called, once, specify, slice, split, take, conj, assoc, count, includes, notEq, constantly, repeat, filtera, matches, comp, each, merge, map, apply, overload, noop, mapIndexed, spread, does, toArray, unreduced, isReduced, satisfies, ISequential, IDeref, IHierarchy} from "atomic/core";
+import {just, reduced, doto, debug, called, once, specify, slice, split, take, conj, assoc, count, includes, notEq, constantly, repeat, filtera, matches, comp, each, merge, map, apply, overload, noop, mapIndexed, spread, does, toArray, unreduced, isReduced, satisfies, ISequential, IDeref, IHierarchy} from "atomic/core";
 import * as t from "atomic/transducers";
 import Promise from "promise";
 import {pub, err, complete, sub, unsub} from "../../protocols/concrete.js";
@@ -12,32 +12,24 @@ function pipeN(source, ...xforms){
 
 function pipe2(source, xform){
   return observable(function(obs){
-    let memo = null, unsub = noop;
-    const step = called(xform(overload(null, once(function(memo){
-      pub(obs, memo);
-      complete(obs);
-      unsub();
-    }), function(memo, value){
-      pub(obs, value);
+    const step = called(xform(overload(null, reduced, function(memo, value){
+      pub(memo, value);
       return memo;
     })), "stepping", {source: source, observable: obs}, debug);
-    const wrapped = observer(function(value){
-      memo = step(memo, value);
+    const outer = observer(function(value){
+      const memo = step(obs, value);
       if (isReduced(memo)){
-        step(unreduced(memo));
+        complete(outer);
       }
     }, function(error){
       err(obs, error);
-      unsub();
+      unsub && unsub();
     }, function(){
-      if (memo != null) {
-        step(memo);
-      } else {
-        complete(obs);
-        unsub();
-      }
+      step(obs);
+      complete(obs);
+      unsub && unsub();
     });
-    unsub = sub(source, wrapped); //may complete `unsub` is assigned!
+    const unsub = sub(source, outer); //might complete before returning `unsub` fn
     return unsub;
   });
 }
