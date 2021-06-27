@@ -16,10 +16,10 @@ function pipe2(source, xform){
       pub(memo, value);
       return memo;
     })), "stepping", {source: source, observable: obs}, debug);
-    const outer = observer(function(value){
+    const sink = observer(function(value){
       const memo = step(obs, value);
       if (isReduced(memo)){
-        complete(outer);
+        complete(sink);
       }
     }, function(error){
       err(obs, error);
@@ -29,7 +29,7 @@ function pipe2(source, xform){
       complete(obs);
       unsub && unsub();
     });
-    const unsub = sub(source, outer); //might complete before returning `unsub` fn
+    const unsub = sub(source, sink); //might complete before returning `unsub` fn
     return unsub;
   });
 }

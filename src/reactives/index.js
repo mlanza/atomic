@@ -60,6 +60,7 @@ import {
 export * from "./types.js";
 export * from "./protocols.js";
 export * from "./protocols/concrete.js";
+import {pipe} from "./types/observable/concrete.js";
 
 //TODO that promises could potentially return out of order is a problem!
 export function then2(f, source){
@@ -129,8 +130,8 @@ function connect2(source, sink){
   return connect3(source, t.identity(), sink);
 }
 
-function connect3(source, xf, sink){
-  return IReduce.reduce(sink, xf(IPublish.pub), source);
+function connect3(source, xform, sink){
+  return sub(pipe(source, xform), sink);
 }
 
 function connectN(source){
