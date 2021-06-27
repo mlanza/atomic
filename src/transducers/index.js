@@ -263,3 +263,25 @@ export function hist(size){
     });
   }
 }
+
+//regulates message processing so, if there are side effects, each is processed before the next begins
+export function isolate(){
+  return function(xf){
+    let queue = [];
+    return overload(xf, xf, function(memo, value){
+      let acc = memo;
+      const ready = queue.length === 0;
+      queue.push(value);
+      if (ready){
+        while (queue.length) {
+          try {
+            acc = xf(acc, queue[0]);
+          } finally {
+            queue.shift();
+          }
+        }
+      }
+      return acc;
+    });
+  }
+}
