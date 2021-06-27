@@ -249,9 +249,9 @@ export const trampoline = overload(null, trampoline1, trampolineN);
 
 function called4(fn, message, context, log){
   return function(){
-    const results = fn.apply(this, arguments);
-    log(message, Object.assign({}, context, {fn, arguments, results}));
-    return results;
+    const meta = Object.assign({}, context, {fn, arguments});
+    log(message, meta);
+    return meta.results = fn.apply(this, arguments);
   }
 }
 
