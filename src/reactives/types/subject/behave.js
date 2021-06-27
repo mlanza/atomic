@@ -44,6 +44,10 @@ function complete(self){
   }
 }
 
+function closed(self){
+  return self.terminated;
+}
+
 //copying prevents midstream changes to observers
 function notify(self, f){
   each(f, clone(self.observers));
@@ -53,4 +57,4 @@ export default does(
   ireduce,
   imergable,
   implement(ISubscribe, {sub, unsub, subscribed}),
-  implement(IPublish, {pub, err, complete}));
+  implement(IPublish, {pub, err, complete, closed}));

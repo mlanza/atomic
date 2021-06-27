@@ -304,7 +304,7 @@ export function mutatesDiff(el, obs, f){
 
   doto(Function,
     ireduce, //makes fns work as observers like `cell`, e.g. `$.connect($.tick(3000), _.see("foo"))`
-    implement(IPublish, {pub, err: noop, complete: noop}),
+    implement(IPublish, {pub, err: noop, complete: noop, closed: noop}),
     implement(IDispatch, {dispatch}));
 
 })();

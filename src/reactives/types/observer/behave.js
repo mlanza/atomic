@@ -21,5 +21,9 @@ function complete(self){
   }
 }
 
+function closed(self){
+  return self.terminated;
+}
+
 export default does(
-  implement(IPublish, {pub, err, complete}));
+  implement(IPublish, {pub, err, complete, closed}));
