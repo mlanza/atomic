@@ -285,6 +285,13 @@ export function mutates(el, obs, f){
   });
 }
 
+export function mutatesDiff(el, obs, f){
+  return sub(obs, t.hist(), t.isolate(), spread(function(state, was){
+    f(el, state, was);
+    IEvented.trigger(el, "mutate", {bubbles: true});
+  }));
+}
+
 (function(){
 
   function dispatch(self, args){
