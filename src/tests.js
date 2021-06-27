@@ -141,24 +141,23 @@ QUnit.test("lazy-seq", function(assert){
 });
 
 QUnit.test("transducers", function(assert){
-
+  var useFeat = location.href.indexOf("feature=next") > -1;
   function compare(source, xf, expect, desc){
-    var $c = $.cell([]),
-        $o = $.pipe($.Observable.from(source), xf);
-    $.sub($o, $.collect($c))
+    var $b = $.cell([]);
+    $.sub($.Observable.from(source), xf, $.collect($b));
     var a = _.transduce(xf, _.conj, [], source),
-        b = _.deref($c);
+        b = _.deref($b);
     //compare for rough equivalence
     assert.deepEqual(a, expect, "transduce " + desc);
     assert.deepEqual(b, expect, "observe " + desc);
   }
   var special = [8, 6, 7, 5, 3, 0, 9];
-  compare(special, t.first(), [8], "first");
-  compare(special, t.last(), [9], "last");
-  compare(special, t.last(2), [0, 9], "last 2");
-  compare(special, t.filter(_.isOdd), [7, 5, 3, 9], "odd only");
+  useFeat && compare(special, t.first(), [8], "first");
+  useFeat && compare(special, t.last(), [9], "last");
+  useFeat && compare(special, t.last(2), [0, 9], "last 2");
   compare(special, t.map(_.inc), [9, 7, 8, 6, 4, 1, 10], "increased");
-
+  compare(special, t.filter(_.isOdd), [7, 5, 3, 9], "odd only");
+  compare(special, _.comp(t.filter(_.isOdd), t.map(_.inc)), [8, 6, 4, 10], "odd increased");
   assert.deepEqual([1, 2, 3] |> _.cycle |> _.into([], _.comp(t.take(4), t.map(_.inc)), ?), [2, 3, 4, 2]);
   assert.deepEqual([1, 3, 2, 2, 3] |> _.into([], t.dedupe(), ?), [1, 3, 2, 3]);
   assert.deepEqual([1, 3, 2, 2, 3] |> _.into([], t.filter(_.isEven), ?), [2, 2]);
