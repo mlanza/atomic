@@ -127,7 +127,7 @@ function viaN(xf, ...sources){
 export const via = called(overload(null, null, via2, viaN), "`via` is deprecated.");
 
 function connect2(source, sink){
-  return connect3(source, t.identity(), sink);
+  return sub(source, sink);
 }
 
 function connect3(source, xform, sink){
@@ -136,8 +136,8 @@ function connect3(source, xform, sink){
 
 function connectN(source){
   const sink = arguments[arguments.length - 1],
-        xfs = slice(arguments, 1, arguments.length - 1);
-  return connect3(source, comp(...xfs), sink);
+        xforms = slice(arguments, 1, arguments.length - 1);
+  return sub(pipe(source, ...xforms), sink);
 }
 
 export const connect = overload(null, null, connect2, connect3, connectN); //returns `unsub` fn
@@ -276,7 +276,14 @@ function mutate2(state, f){
   return mutate3(?, state, f);
 }
 
-export const mutate = overload(null, null, mutate2, mutate3);
+export const mutate = called(overload(null, null, mutate2, mutate3), "`mutate` is deprecated — use `mutates` instead.");
+
+export function mutates(el, obs, f){
+  return sub(obs, t.isolate(), function(state){
+    f(el, state);
+    IEvented.trigger(el, "mutate", {bubbles: true});
+  });
+}
 
 (function(){
 

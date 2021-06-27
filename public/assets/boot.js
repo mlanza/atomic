@@ -86,6 +86,7 @@ define('jquery', ["vendor/jquery"], function(){
       function fmap(source, f){
         return $.calc(f, source);
       }
+      $.mutate = $.mutates;
       $.map = $.calc;
       $.then = then;
       $.event = $.fromEvent;
