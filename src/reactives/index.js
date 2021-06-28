@@ -276,20 +276,14 @@ function mutate2(state, f){
   return mutate3(?, state, f);
 }
 
-export const mutate = called(overload(null, null, mutate2, mutate3), "`mutate` is deprecated — use `mutates` instead.");
+export const mutate = called(overload(null, null, mutate2, mutate3), "`mutate` is deprecated — use `render` instead.");
 
-export function mutates(el, obs, f){
-  return sub(obs, t.isolate(), function(state){
-    f(el, state);
-    IEvented.trigger(el, "mutate", {bubbles: true});
+export function render(el, obs, f){
+  return sub(obs, t.hist(2), t.isolate(), function(history){
+    const args = [el].concat(history);
+    f.apply(this, args); //overload arity 2 & 3 for initial and diff rendering
+    IEvented.trigger(el, "mutate", {bubbles: true}); //TODO rename
   });
-}
-
-export function mutatesDiff(el, obs, f){
-  return sub(obs, t.hist(), t.isolate(), spread(function(state, was){
-    f(el, state, was);
-    IEvented.trigger(el, "mutate", {bubbles: true});
-  }));
 }
 
 (function(){
