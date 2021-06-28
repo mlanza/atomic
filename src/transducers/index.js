@@ -251,13 +251,15 @@ export function cat(xf){
   });
 }
 
-export function hist(size){
+export function hist(limit){
   return function(xf){
-    let history = new Array(size || 2);
+    let history = [];
     return overload(xf, xf, function(memo, value){
       const revised = clone(history);
       revised.unshift(value);
-      revised.pop();
+      if (history.length > limit) {
+        revised.pop();
+      }
       history = revised;
       return xf(memo, history);
     });
