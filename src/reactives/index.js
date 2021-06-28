@@ -279,9 +279,8 @@ function mutate2(state, f){
 export const mutate = called(overload(null, null, mutate2, mutate3), "`mutate` is deprecated — use `render` instead.");
 
 function render3(el, obs, f){
-  return sub(obs, t.hist(2), t.isolate(), function(history){
-    const args = [el].concat(history);
-    f.apply(this, args); //overload arity 2 & 3 for initial and diff rendering
+  return sub(obs, t.isolate(), function(state){
+    f(el, state);
     IEvented.trigger(el, "mutate", {bubbles: true}); //TODO rename
   });
 }
@@ -291,6 +290,21 @@ function render2(state, f){
 }
 
 export const render = overload(null, null, render2, render3);
+
+function renderDiff3(el, obs, f){
+  return sub(obs, t.isolate(), t.hist(2), function(history){
+    const args = [el].concat(history);
+    f.apply(this, args); //overload arity 2 & 3 for initial and diff rendering
+    IEvented.trigger(el, "mutate", {bubbles: true}); //TODO rename
+  });
+}
+
+function renderDiff2(state, f){
+  return renderDiff3(?, state, f);
+}
+
+//TODO replace render after migration
+export const renderDiff = overload(null, null, renderDiff2, renderDiff3);
 
 (function(){
 
