@@ -5,8 +5,6 @@ import {ICoerceable} from "../icoerceable/instance.js";
 import {ILookup} from "../ilookup.js";
 import {reduce} from "../ireduce.js";
 
-export const contains = IAssociative.contains;
-
 function assocN(self, key, value, ...args){
   const instance = IAssociative.assoc(self, key, value);
   return args.length > 0 ? assocN(instance, ...args) : instance;
@@ -76,5 +74,10 @@ function updateInN(self, keys, f) {
   });
 }
 
+function contains3(self, key, value){
+  return IAssociative.contains(self, key) && ILookup.lookup(self, key) === value;
+}
+
+export const contains = overload(null, null, IAssociative.contains, contains3);
 export const updateIn = overload(null, null, null, updateIn3, updateIn4, updateIn5, updateIn6, updateInN);
-export const rewrite = branch(contains, update, identity);
+export const rewrite = branch(IAssociative.contains, update, identity);
