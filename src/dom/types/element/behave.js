@@ -75,7 +75,7 @@ import {embed as _embed} from "../../protocols/iembeddable/concrete.js";
 import {nestedAttrs} from "../nested-attrs/construct.js";
 import {isDocumentFragment} from "../document-fragment/construct.js";
 import {isElement} from "../element/construct.js";
-import {Text} from "dom";
+import {Text, document} from "dom";
 
 const hides = ["display", "none"];
 export const hidden = comp(IInclusive.includes(?, hides), nestedAttrs(?, "style"));
