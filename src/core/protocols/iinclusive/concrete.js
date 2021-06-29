@@ -1,10 +1,30 @@
 import {IInclusive} from "./instance.js";
-import {branch} from "../../core.js";
+import {branch, constantly, overload} from "../../core.js";
 import {yank} from "../iyankable/concrete.js";
 import {conj} from "../icollection/concrete.js";
 
-export const includes = IInclusive.includes;
-export function excludes(self, value){
-  return !includes(self, value);
+function excludes2(self, value){
+  return !IInclusive.includes(self, value);
 }
-export const transpose = branch(includes, yank, conj);
+
+function includesN(self, ...args){
+  for(let arg of args){
+    if (!IInclusive.includes(self, arg)){
+      return false;
+    }
+  }
+  return true;
+}
+
+function excludesN(self, ...args){
+  for(let arg of args){
+    if (IInclusive.includes(self, arg)){
+      return false;
+    }
+  }
+  return true;
+}
+
+export const includes = overload(null, constantly(true), IInclusive.includes, includesN);
+export const excludes = overload(null, constantly(false), excludes2, excludesN);
+export const transpose = branch(IInclusive.includes, yank, conj);
