@@ -73,9 +73,8 @@ import {isMountable} from "../../protocols/imountable/concrete.js"
 import {IHtml, IText, IValue, IContent, IHideable, IEmbeddable} from "../../protocols.js";
 import {embed as _embed} from "../../protocols/iembeddable/concrete.js";
 import {nestedAttrs} from "../nested-attrs/construct.js";
-import {isDocumentFragment} from "../document-fragment/construct.js";
 import {isElement} from "../element/construct.js";
-import {Text, document} from "dom";
+import {Text} from "dom";
 
 const hides = ["display", "none"];
 export const hidden = comp(IInclusive.includes(?, hides), nestedAttrs(?, "style"));
@@ -195,7 +194,7 @@ function trigger(self, key, options){
   try {
     event = new Event(key, options);
   } catch (ex) {
-    event = document.createEvent('HTMLEvents');
+    event = self.ownerDocument.createEvent('HTMLEvents');
     event.initEvent(key, options.bubbles || false, options.cancelable || false);
     event.detail = options.detail;
   }

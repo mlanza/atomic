@@ -15,19 +15,13 @@ export * from "./protocols.js";
 export * from "./protocols/concrete.js";
 export {append, prepend, before, after, yank, empty} from "atomic/transients";
 
-function ready2(document, callback) {
+export function ready(document, callback) {
   if (document.readyState !== 'loading') {
     callback();
   } else {
     document.addEventListener("DOMContentLoaded", callback);
   }
 }
-
-function ready1(callback){
-  return ready2(document, callback);
-}
-
-export const ready = overload(null, ready1, ready2);
 
 function attr2(self, key){
   if (isString(key)) {
@@ -207,7 +201,7 @@ export const toFragment = ICoerceable.toFragment;
 (function(){
 
   function embed(self, parent, nextSibling) {
-    IEmbeddable.embed(document.createTextNode(self), parent, nextSibling);
+    IEmbeddable.embed(parent.ownerDocument.createTextNode(self), parent, nextSibling);
   }
 
   function toFragment(self){
