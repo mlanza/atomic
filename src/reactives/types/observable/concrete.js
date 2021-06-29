@@ -196,7 +196,7 @@ export function toggles(el, on, off, init){
 
 export function focus(el){
   return toggles(el, "focus", "blur", function(){
-    return el === document.activeElement;
+    return el === el.ownerDocument.activeElement;
   });
 }
 
