@@ -1,4 +1,4 @@
-define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'atomic/validates', 'atomic/immutables', 'context'], function(fetch, _, dom, mut, $, vd, imm, context){
+define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/reactives', 'atomic/validates', 'atomic/immutables', 'atomic/repos', 'context'], function(fetch, _, dom, mut, $, vd, imm, repos, context){
 
   //TODO Apply effects (destruction, modification, addition) to datastore.
   //TODO Improve efficiency (with an index decorator?) of looking up an entity in a buffer by pk rather than guid.
@@ -26,7 +26,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
       IKVReduce = _.IKVReduce,
       IAppendable = _.IAppendable,
       IPrependable = _.IPrependable,
-      IQueryable = _.IQueryable,
+      IQueryable = repos.IQueryable,
       INext = _.INext,
       ISeq = _.ISeq,
       IDeref = _.IDeref,
