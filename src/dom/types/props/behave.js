@@ -1,4 +1,4 @@
-import {identity, does, implement, key, val, ISeqable, IMap, IAssociative, ILookup, IDeref, ICounted, ICollection, IReduce, IInclusive, IOmissible} from "atomic/core";
+import {identity, does, implement, key, val, ISeqable, IMap, IAssociative, ILookup, IDeref, ICounted, ICollection, IReduce, IInclusive} from "atomic/core";
 import {ITransientCollection, ITransientAssociative, ITransientMap, ITransientOmissible} from "atomic/transients";
 
 function lookup(self, key){

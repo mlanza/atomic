@@ -41,7 +41,6 @@ import {
   isIdentical,
   ISequential,
   IMatchable,
-  IOmissible,
   IInclusive,
   ICoerceable,
   IAssociative,

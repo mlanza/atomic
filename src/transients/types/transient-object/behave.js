@@ -1,7 +1,7 @@
 import {does, overload, doto, forward} from "atomic/core";
 import {implement} from "atomic/core";
 import {transientObject} from "./construct.js";
-import {ICoerceable, IEquiv, IFn, IComparable, IMatchable, IFunctor, ILookup, IAssociative, IFind, IMapEntry, IOmissible, ISeq, INext, ISeqable, ICounted, IInclusive, IEmptyableCollection, IMap, IReduce, IKVReduce, IClonable, ISequential, ICollection} from "atomic/core";
+import {ICoerceable, IEquiv, IFn, IComparable, IMatchable, IFunctor, ILookup, IAssociative, IFind, IMapEntry, ISeq, INext, ISeqable, ICounted, IInclusive, IEmptyableCollection, IMap, IReduce, IKVReduce, IClonable, ISequential, ICollection} from "atomic/core";
 import {IPersistent, ITransientOmissible, ITransientAssociative, ITransientEmptyableCollection, ITransientCollection, ITransientMap} from "../../protocols.js";
 
 function omit(self, entry){
