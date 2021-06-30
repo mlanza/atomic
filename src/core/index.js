@@ -1,13 +1,13 @@
 import {overload, called, toggles, identity, obj, partly, doto, does, branch, unspread, applying, execute, noop, constantly, once} from "./core.js";
 import {IAppendable, IYankable, ICoerceable, IAssociative, IBounds, IInverse, IClonable, ICollection, IComparable, ICounted, IDeref, IDisposable, IEmptyableCollection, IEquiv, IFind, IFn, IForkable, IFunctor, IHierarchy, IInclusive, IIndexed, IInsertable, IKVReduce, ILookup, IMap, IMapEntry, IMatchable, INext, IOtherwise, IPrependable, IReduce, IReset, ISeq, ISeqable, ISet, ISwap} from "./protocols.js";
 import {just, satisfies, spread, maybe, each, duration, remove, sort, flip, realized, comp, isNumber, isFunction, apply, realize, isNil, reFindAll, mapkv, period, selectKeys, mapVals, reMatches, test, date, emptyList, cons, days, recurrence, curry, second as _second} from "./types.js";
-import {filter} from "./types/lazy-seq.js";
-import {add, subtract, compact, matches, name, descendants, query, locate, deref, get, assoc, yank, conj, reducing, toArray, reducekv, includes, excludes, rest, count, between, reduce, divide, fmap, split} from "./protocols/concrete.js";
+import {add, subtract, compact, name, downward, upward, deref, get, assoc, yank, conj, reducing, toArray, reducekv, includes, excludes, rest, count, between, reduce, divide, fmap, split} from "./protocols/concrete.js";
 import {isString, isBlank, str, replace} from "./types/string.js";
 import {isSome} from "./types/nil.js";
 import {implement} from "./types/protocol/concrete.js";
-import {into, detect, map, mapa, splice, drop, join, some, last, lazySeq} from "./types/lazy-seq.js";
+import {into, detect, map, mapa, splice, drop, join, some, last, takeWhile, dropWhile, filter, lazySeq} from "./types/lazy-seq.js";
 import iseries from "./types/series/behave.js";
+export {filter} from "./types/lazy-seq.js";
 export const serieslike = iseries;
 export {iterable} from "./types/lazy-seq/behave.js";
 export * from "./core.js";
@@ -16,13 +16,49 @@ export * from "./protocols.js";
 export * from "./protocols/concrete.js";
 export * from "./predicates.js";
 export * from "./associatives.js";
-export {filter} from "./types/lazy-seq.js"; //necessary due to odd rollup behavior
 import Set from "set";
+import {extend} from "./types/protocol/concrete.js";
 import {Protocol} from "./types/protocol/construct.js";
 import iprotocol from "./types/protocol/behave.js";
+
 export const numeric = test(/^\d+$/i, ?);
 
 iprotocol(Protocol);
+
+function siblings(self){
+  const parent = IHierarchy.parent(self);
+  if (parent){
+    return filter(function(sibling){
+      return sibling !== self;
+    }, IHierarchy.children(parent));
+  } else {
+    return emptyList();
+  }
+}
+
+function prevSiblings(self){
+  return reverse(takeWhile(function(sibling){
+    return sibling !== self;
+  }, siblings(self)));
+}
+
+function nextSiblings(self){
+  return rest(dropWhile(function(sibling){
+    return sibling !== self;
+  }, siblings(self)));
+}
+
+const prevSibling = comp(ISeq.first, IHierarchy.prevSiblings);
+const nextSibling = comp(ISeq.first, IHierarchy.nextSiblings);
+const parents = upward(IHierarchy.parent);
+const descendants = downward(IHierarchy.children);
+const root = comp(last, parents);
+
+function closest(self, pred){
+  return detect(pred, cons(self, IHierarchy.parents(self)));
+}
+
+extend(IHierarchy, {siblings, prevSibling, nextSibling, prevSiblings, nextSiblings, parents, closest, root});
 
 function forward1(key){
   return function forward(f){
@@ -43,7 +79,6 @@ function forwardN(target, ...protocols){
 }
 
 export const forward = overload(null, forward1, forwardN);
-
 export const forwardTo = called(forward, "`forwardTo` is deprecated — use `forward` instead.");
 
 function recurs2(pd, step) {
@@ -116,7 +151,7 @@ export const second = branch(satisfies(ISeq, ?), comp(ISeq.first, INext.next), _
 
 export function expands(f){
   function expand(...contents){
-    return locate(contents, isFunction) ? postpone(...contents) : f(...contents);
+    return detect(isFunction, contents) ? postpone(...contents) : f(...contents);
   }
   function postpone(...contents){
     return function(value){

@@ -11,7 +11,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
       IMergable = _.IMergable,
       IHash = imm.IHash,
       ISet = _.ISet,
-      INameable = _.INameable,
+      INamable = _.INamable,
       ITransientAssociative = mut.ITransientAssociative,
       IDispatch = $.IDispatch,
       ISubscribe = $.ISubscribe,
@@ -873,7 +873,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
       _.implement(ILookup, {lookup: lookup}),
       _.implement(IAssociative, {assoc: assoc, contains: contains}),
       _.implement(IKind, {field: field}),
-      _.implement(INameable, {name: name}),
+      _.implement(INamable, {name: name}),
       _.implement(IIdentifiable, {identifier: identifier}),
       _.implement(IMap, {keys: keys}),
       _.implement(IFactory, {make: make}));
@@ -2258,7 +2258,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
 
   })();
 
-  //NOTE a view is capable of returning a seq of all possible `IView.interactions` each implementing `IIdentifiable` and `INameable`.
+  //NOTE a view is capable of returning a seq of all possible `IView.interactions` each implementing `IIdentifiable` and `INamable`.
   //NOTE an interaction is a persistent, validatable object with field schema.  It will be flagged as command or query which will help with processing esp. pipelining.  When successfully validated it has all that it needs to be handled by the handler.  That it can be introspected allows for the UI to help will completing them.
   function Outline(buffer, model, commandBus, eventBus, emitter, options){
     this.buffer = buffer;

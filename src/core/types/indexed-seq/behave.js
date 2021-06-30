@@ -3,11 +3,10 @@ import {implement} from "../protocol.js";
 import {indexedSeq} from "./construct.js";
 import {revSeq} from "../../types/rev-seq/construct.js";
 import {isReduced, unreduced} from "../../types/reduced.js";
-import {ICoerceable, IQueryable, IEquiv, IReversible, IMapEntry, IFind, IInclusive, IAssociative, IAppendable, IPrependable, ICollection, INext, ICounted, IReduce, IKVReduce, ISeq, ISeqable, ISequential, IIndexed, ILookup, IFn, IEmptyableCollection} from "../../protocols.js";
-import {locate} from "../../protocols/ilocate/concrete.js";
+import {ICoerceable, IEquiv, IReversible, IMapEntry, IFind, IInclusive, IAssociative, IAppendable, IPrependable, ICollection, INext, ICounted, IReduce, IKVReduce, ISeq, ISeqable, ISequential, IIndexed, ILookup, IFn, IEmptyableCollection} from "../../protocols.js";
 import {concat} from "../../types/concatenated/construct.js";
 import {iterable} from "../lazy-seq/behave.js";
-import {drop, filter} from "../lazy-seq/concrete.js";
+import {drop, detect} from "../lazy-seq/concrete.js";
 import {emptyArray} from "../../types/array/construct.js";
 import iemptylist from "../../types/empty-list/behave.js";
 
@@ -106,19 +105,12 @@ function reducekv(self, xf, init){
 }
 
 function includes(self, x){
-  return locate(drop(self.start, self.seq), function(y){
-    return IEquiv.equiv(x, y);
-  });
-}
-
-function query(self, pred){
-  return filter(pred, self);
+  return detect(IEquiv.equiv(x, ?), drop(self.start, self.seq));
 }
 
 export default does(
   iterable,
   implement(IEquiv, iemptylist),
-  implement(IQueryable, {query}),
   implement(ISequential),
   implement(IIndexed, {nth, idx}),
   implement(IReversible, {reverse}),

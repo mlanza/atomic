@@ -2,7 +2,7 @@ import {does, partial} from "../../core.js";
 import {implement} from "../protocol.js";
 import {apply} from "./concrete.js";
 import {get} from "../../protocols/ilookup/concrete.js";
-import {INameable, IFn, IAssociative, ILookup, IAppendable, IPrependable} from "../../protocols.js";
+import {INamable, IFn, IAssociative, ILookup, IAppendable, IPrependable} from "../../protocols.js";
 import Symbol from "symbol";
 
 export function append(f, ...applied){
@@ -20,7 +20,7 @@ function name(self){
 }
 
 export default does(
-  implement(INameable, {name}),
+  implement(INamable, {name}),
   implement(IAppendable, {append}),
   implement(IPrependable, {prepend: partial}),
   implement(IFn, {invoke}));

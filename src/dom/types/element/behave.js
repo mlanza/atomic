@@ -24,15 +24,16 @@ import {
   map,
   compact,
   filter,
+  detect,
   last,
   comp,
   isObject,
   isString,
-  isFunction,
   isNumber,
   trim,
   split,
   str,
+  pre,
   apply,
   emptyList,
   weakMap,
@@ -126,9 +127,13 @@ function after(self, content){
 
 const conj = append;
 
-function matches(self, selector){
-  return (isString(selector) && self.matches(selector)) || (isFunction(selector) && selector(self));
+function check(self, selector){
+  return isString(selector);
 }
+
+const matches = pre(function matches(self, selector){
+  return self.matches(selector);
+}, check);
 
 function isText(self){
   return self && self.constructor === Text;
@@ -263,11 +268,11 @@ export function closest(self, selector){
 }
 
 function query(self, selector){
-  return self.querySelectorAll && isString(selector) ? self.querySelectorAll(selector) : filter(IMatchable.matches(?, selector), IHierarchy.descendants(self));
+  return self.querySelectorAll(selector);
 }
 
 function locate(self, selector){
-  return isFunction(selector) ? ISeq.first(IQueryable.query(self, selector)) : self.querySelector(selector);
+  return self.querySelector(selector);
 }
 
 function children(self){
@@ -324,7 +329,7 @@ export const yank = overload(null, yank1, yank2);
 
 function includes(self, target){
   if (isElement(target)) {
-    return ILocate.locate(children(self), isIdentical(target, ?));
+    return detect(isIdentical(target, ?), children(self));
   } else if (satisfies(ISequential, target)){
     const keys = target;
     return IReduce.reduce(keys, function(memo, key){
@@ -335,11 +340,11 @@ function includes(self, target){
       return memo ? lookup(self, key) == value : reduced(memo);
     }, true);
   } else {
-    return ILocate.locate(contents(self), isString(target) ? function(node){
+    return detect(isString(target) ? function(node){
       return node.nodeType === Node.TEXT_NODE && node.data === target;
     } : function(node){
       return node === target;
-    });
+    }, contents(self));
   }
 }
 
