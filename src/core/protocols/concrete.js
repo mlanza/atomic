@@ -37,7 +37,6 @@ export * from "./iotherwise/concrete.js";
 export * from "./ipath/concrete.js";
 export * from "./iprependable/concrete.js";
 export * from "./iqueryable/concrete.js";
-export * from "./irecord/concrete.js";
 export * from "./ireduce/concrete.js";
 export * from "./ireset/concrete.js";
 export * from "./ireversible/concrete.js";
