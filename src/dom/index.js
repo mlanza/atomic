@@ -1,4 +1,4 @@
-import {constantly, identity, isString, apply, noop, slice, partial, replace, concat, template, key, val, join, merge, filter, map, remove, isObject, specify, implement, doto, get, str, includes, overload, fmap, each, eachkv, obj, IReduce, first, matches, Nil, ICoerceable, extend, doing} from "atomic/core";
+import {constantly, called, identity, isString, apply, noop, slice, partial, replace, concat, template, key, val, join, merge, filter, map, remove, isObject, specify, implement, doto, get, str, includes, overload, fmap, each, eachkv, obj, IReduce, first, matches, Nil, ICoerceable, extend, doing} from "atomic/core";
 import * as _ from "atomic/core";
 import * as mut from "atomic/transients";
 import {element} from "./types/element/construct.js";
@@ -137,9 +137,9 @@ export const markup = obj(function(name, ...contents){
   return join("", concat(["<" + name + " " + join(" ", attrs) + ">"], content, "</" + name + ">"));
 }, Infinity);
 
-export function tag(){
+export const tag = called(function tag(){
   return apply(partial, element, slice(arguments));
-}
+}, "`tag` is deprecated — use `factory` instead.");
 
 export function checkbox(...args){
   const checkbox = tag('input', {type: "checkbox"});

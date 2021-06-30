@@ -75,9 +75,9 @@ export function partly(f){
   return partial(plug, f);
 }
 
-export function deferring(fn){
+export function deferring(f){
   return function(...args){
-    return partial(fn, ...args);
+    return partial(f, ...args);
   }
 }
 
