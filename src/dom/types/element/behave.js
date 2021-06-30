@@ -38,8 +38,6 @@ import {
   emptyList,
   weakMap,
   isIdentical,
-  ILocate,
-  IQueryable,
   ISequential,
   IMatchable,
   IYankable,
@@ -71,7 +69,7 @@ import {
 } from "atomic/transients";
 import {IEvented} from "atomic/reactives";
 import {isMountable} from "../../protocols/imountable/concrete.js"
-import {IHtml, IText, IValue, IContent, IHideable, IEmbeddable} from "../../protocols.js";
+import {IHtml, IText, IValue, IContent, IHideable, IEmbeddable, ISelectable} from "../../protocols.js";
 import {embed as _embed} from "../../protocols/iembeddable/concrete.js";
 import {nestedAttrs} from "../nested-attrs/construct.js";
 import {isElement} from "../element/construct.js";
@@ -267,11 +265,11 @@ export function closest(self, selector){
   }
 }
 
-function query(self, selector){
+function sel(self, selector){
   return self.querySelectorAll(selector);
 }
 
-function locate(self, selector){
+function sel1(self, selector){
   return self.querySelector(selector);
 }
 
@@ -408,15 +406,13 @@ function reduce(self, xf, init){
 export const ihierarchy = implement(IHierarchy, {root, parent, parents, closest, children, descendants, nextSibling, nextSiblings, prevSibling, prevSiblings, siblings});
 export const icontents = implement(IContent, {contents});
 export const ievented = implement(IEvented, {on, off, trigger});
-export const ilocate = implement(ILocate, {locate});
-export const iquery = implement(IQueryable, {query});
+export const iselectable = implement(ISelectable, {sel, sel1});
 
 export default does(
   ihierarchy,
   icontents,
   ievented,
-  iquery,
-  ilocate,
+  iselectable,
   implement(IReduce, {reduce}),
   implement(IText, {text}),
   implement(IHtml, {html}),

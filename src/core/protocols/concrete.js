@@ -25,7 +25,6 @@ export * from "./iindexed/concrete.js";
 export * from "./iinclusive/concrete.js";
 export * from "./iinsertable/concrete.js";
 export * from "./ikvreduce/concrete.js";
-export * from "./ilocate/concrete.js";
 export * from "./ilookup/concrete.js";
 export * from "./imap/concrete.js";
 export * from "./imapentry/concrete.js";

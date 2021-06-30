@@ -1,5 +1,5 @@
-import {does, maybe, cons, implement, lazySeq, filter, comp, iterable, IMatches, ILookup, IIndexed, ICounted, ISeq, INext, ISeqable, ISequential, IHierarchy, IQueryable, IReduce, ICoerceable} from "atomic/core";
-import {IContent} from "../../protocols.js";
+import {does, maybe, cons, implement, lazySeq, filter, comp, iterable, IMatches, ILookup, IIndexed, ICounted, ISeq, INext, ISeqable, ISequential, IHierarchy, IReduce, ICoerceable} from "atomic/core";
+import {IContent, ISelectable} from "../../protocols.js";
 
 function seq2(self, idx){
   return idx < self.length ? lazySeq(function(){
@@ -29,7 +29,7 @@ const parent = comp(IHierarchy.parent, seq);
 const parents = comp(IHierarchy.parents, seq);
 const contents = comp(IContent.contents, seq);
 
-function query(self, selector){
+function sel(self, selector){
   return maybe(self, seq, filter(IMatches.matches(?, selector), ?));
 }
 
@@ -55,7 +55,7 @@ export default does(
   implement(INext, {next}),
   implement(IContent, {contents}),
   implement(ICoerceable, {toArray: Array.from}),
-  implement(IQueryable, {query}),
+  implement(ISelectable, {sel}),
   implement(IHierarchy, {parent, parents, closest, nextSiblings, nextSibling, prevSiblings, prevSibling, siblings, children, descendants}),
   implement(ISequential),
   implement(ISeqable, {seq}));
