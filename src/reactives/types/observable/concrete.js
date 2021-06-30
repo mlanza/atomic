@@ -1,4 +1,4 @@
-import {just, identity, reduced, doto, debug, called, once, specify, slice, split, take, conj, assoc, count, includes, notEq, constantly, repeat, filtera, matches, comp, each, merge, map, apply, overload, noop, mapIndexed, spread, does, toArray, unreduced, isReduced, satisfies, ISequential, IDeref, IHierarchy} from "atomic/core";
+import {just, identity, reduced, doto, once, specify, slice, split, take, conj, assoc, count, includes, notEq, constantly, repeat, filtera, matches, comp, each, merge, map, apply, overload, noop, mapIndexed, spread, does, toArray, unreduced, isReduced, satisfies, ISequential, IDeref, IHierarchy} from "atomic/core";
 import * as t from "atomic/transducers";
 import Promise from "promise";
 import {pub, err, complete, closed, sub, unsub} from "../../protocols/concrete.js";
@@ -12,10 +12,10 @@ function pipeN(source, ...xforms){
 
 function pipe2(source, xform){
   return observable(function(obs){
-    const step = called(xform(overload(null, reduced, function(memo, value){
+    const step = xform(overload(null, reduced, function(memo, value){
       pub(memo, value);
       return memo;
-    })), "stepping", {source: source, observable: obs}, debug);
+    }));
     const sink = observer(function(value){
       const memo = step(obs, value);
       if (isReduced(memo)){

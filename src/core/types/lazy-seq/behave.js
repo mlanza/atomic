@@ -1,5 +1,5 @@
 import {implement, packs as does} from "../protocol.js";
-import {IBlankable, ICompactable, ILocate, IQueryable, IFunctor, IReversible, IYankable, IMatchable, ICoerceable, IInclusive, IFind, IEquiv, ICollection, INext, ISeq, IReduce, IKVReduce, ISeqable, ISequential, IIndexed, IEmptyableCollection, ICounted, IAppendable, IPrependable} from "../../protocols.js";
+import {IBlankable, ICompactable, IFunctor, IReversible, IYankable, IMatchable, ICoerceable, IInclusive, IFind, IEquiv, ICollection, INext, ISeq, IReduce, IKVReduce, ISeqable, ISequential, IIndexed, IEmptyableCollection, ICounted, IAppendable, IPrependable} from "../../protocols.js";
 import {overload, identity, partial} from "../../core.js";
 import {Reduced, isReduced, reduced, unreduced} from "../reduced.js";
 import {concat} from "../concatenated/construct.js";
@@ -11,14 +11,6 @@ import iemptylist from "../empty-list/behave.js";
 import Symbol from "symbol";
 
 const compact = partial(filter, identity);
-
-function query(self, pred){
-  return filter(pred, self);
-}
-
-function locate(self, pred){
-  return detect(pred, self);
-}
 
 function fmap(self, f){
   return map(f, self);
@@ -148,9 +140,9 @@ function yank(self, value){
 }
 
 function includes(self, value){
-  return ILocate.locate(self, function(x){
+  return detect(function(x){
     return x === value;
-  });
+  }, self);
 }
 
 const reverse = comp(IReversible.reverse, toArray);
@@ -166,8 +158,6 @@ export default does(
   implement(IBlankable, {blank}),
   implement(ICompactable, {compact}),
   implement(IInclusive, {includes}),
-  implement(IQueryable, {query}),
-  implement(ILocate, {locate}),
   implement(IYankable, {yank}),
   implement(IFunctor, {fmap}),
   implement(ICollection, {conj}),

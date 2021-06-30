@@ -1,4 +1,4 @@
-import {identity, does, implement, filtera, locate, ISequential, ISeq, IDeref, ICoerceable, ICounted, ICollection, IInclusive, IYankable} from "atomic/core";
+import {identity, does, implement, filtera, filter, ISequential, ISeq, IDeref, ICoerceable, ICounted, ICollection, IInclusive, IYankable} from "atomic/core";
 import {ITransientCollection, ITransientYankable} from "atomic/transients";
 
 function seq(self){
@@ -8,9 +8,9 @@ function seq(self){
 
 function includes(self, text){
   const xs = seq(self);
-  return xs && locate(xs, function(t){
+  return xs && filter(function(t){
     return t == text;
-  });
+  }, xs);
 }
 
 function conj(self, text){

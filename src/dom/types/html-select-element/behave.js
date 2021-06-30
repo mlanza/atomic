@@ -1,12 +1,12 @@
-import {overload, does, implement, locate, query, each, maybe, comp, either} from "atomic/core";
+import {overload, does, implement, detect, query, each, maybe, comp, either} from "atomic/core";
 import {IValue, IText} from "../../protocols.js";
 
 function access(f, g){
 
   function _value1(self){
-    return maybe(query(self, "option"), locate(?, function(option){
+    return maybe(query(self, "option"), detect(function(option){
       return option.selected;
-    }), f);
+    }, ?), f);
   }
 
   const value1 = g ? comp(g, _value1) : _value1;

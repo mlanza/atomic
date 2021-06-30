@@ -158,22 +158,3 @@ export function everyPred(...preds){
     }, true)
   }
 }
-
-export function pre(f, pred){
-  return function(){
-    if (!pred.apply(this, arguments)) {
-      throw new TypeError("Failed pre-condition.");
-    }
-    return f.apply(this, arguments);
-  }
-}
-
-export function post(f, pred){
-  return function(){
-    let result = f.apply(this, arguments);
-    if (!pred(result)) {
-      throw new TypeError("Failed post-condition.");
-    }
-    return result;
-  }
-}

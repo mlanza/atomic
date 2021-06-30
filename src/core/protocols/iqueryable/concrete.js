@@ -1,2 +1,9 @@
 import {IQueryable} from "./instance.js";
-export const query = IQueryable.query;
+import {pre} from "../../core.js";
+import {isString} from "../../types/string/construct.js";
+
+function check(self, selector){
+  return isString(selector);
+}
+
+export const query = pre(IQueryable.query, check);

@@ -1,4 +1,4 @@
 import {protocol} from "../../types/protocol.js";
-export const INameable = protocol({
+export const INamable = protocol({
   name: null
 });

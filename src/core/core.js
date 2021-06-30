@@ -247,6 +247,25 @@ function trampolineN(f, ...args){
 
 export const trampoline = overload(null, trampoline1, trampolineN);
 
+export function pre(f, pred){
+  return function(){
+    if (!pred.apply(this, arguments)) {
+      throw new TypeError("Failed pre-condition.");
+    }
+    return f.apply(this, arguments);
+  }
+}
+
+export function post(f, pred){
+  return function(){
+    let result = f.apply(this, arguments);
+    if (!pred(result)) {
+      throw new TypeError("Failed post-condition.");
+    }
+    return result;
+  }
+}
+
 function called4(fn, message, context, log){
   return function(){
     const meta = Object.assign({}, context, {fn, arguments});

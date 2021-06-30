@@ -1,4 +1,4 @@
-import {does, maybe, cons, implement, lazySeq, comp, iterable, ILookup, IIndexed, ICounted, ISeq, INext, ISeqable, ISequential, IHierarchy, IQueryable, ILocate, IReduce, ICoerceable} from "atomic/core";
+import {does, maybe, cons, implement, lazySeq, filter, comp, iterable, IMatches, ILookup, IIndexed, ICounted, ISeq, INext, ISeqable, ISequential, IHierarchy, IQueryable, IReduce, ICoerceable} from "atomic/core";
 import {IContent} from "../../protocols.js";
 
 function seq2(self, idx){
@@ -30,11 +30,7 @@ const parents = comp(IHierarchy.parents, seq);
 const contents = comp(IContent.contents, seq);
 
 function query(self, selector){
-  return maybe(self, seq, IQueryable.query(?, selector)) || [];
-}
-
-function locate(self, selector){
-  return maybe(self, seq, ILocate.locate(?, selector));
+  return maybe(self, seq, filter(IMatches.matches(?, selector), ?));
 }
 
 function closest(self, selector){
@@ -60,7 +56,6 @@ export default does(
   implement(IContent, {contents}),
   implement(ICoerceable, {toArray: Array.from}),
   implement(IQueryable, {query}),
-  implement(ILocate, {locate}),
   implement(IHierarchy, {parent, parents, closest, nextSiblings, nextSibling, prevSiblings, prevSibling, siblings, children, descendants}),
   implement(ISequential),
   implement(ISeqable, {seq}));
