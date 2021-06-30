@@ -1,5 +1,5 @@
-import {identity, does, implement, filtera, filter, ISequential, ISeq, IDeref, ICoerceable, ICounted, ICollection, IInclusive, IYankable} from "atomic/core";
-import {ITransientCollection, ITransientYankable} from "atomic/transients";
+import {identity, does, implement, filtera, filter, ISequential, ISeq, IDeref, ICoerceable, ICounted, ICollection, IInclusive, IOmissible} from "atomic/core";
+import {ITransientCollection, ITransientOmissible} from "atomic/transients";
 
 function seq(self){
   const text = self.element.getAttribute(self.key);
@@ -17,7 +17,7 @@ function conj(self, text){
   self.element.setAttribute(self.key, deref(self).concat(text).join(" "));
 }
 
-function yank(self, text){
+function omit(self, text){
   self.element.setAttribute(self.key, filtera(function(t){
     return t !== text;
   }, seq(self)).join(" "));
@@ -36,7 +36,7 @@ export default does(
   implement(ISeq, {seq}),
   implement(IDeref, {deref}),
   implement(IInclusive, {includes}),
-  implement(ITransientYankable, {yank}),
+  implement(ITransientOmissible, {omit}),
   implement(ICounted, {count}),
   implement(ITransientCollection, {conj}),
   implement(ICoerceable, {toArray: deref}));

@@ -49,4 +49,4 @@ export * from "./istatemachine/concrete.js";
 export * from "./isplittable/concrete.js";
 export * from "./iswap/concrete.js";
 export * from "./itemplate/concrete.js";
-export * from "./iyankable/concrete.js";
+export * from "./iomissible/concrete.js";

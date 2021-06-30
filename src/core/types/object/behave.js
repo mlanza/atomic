@@ -1,6 +1,6 @@
 import {does, identity, constructs, branch} from "../../core.js";
 import {implement} from "../protocol.js";
-import {IMergable, IBlankable, ICompactible, IComparable, IYankable, IMatchable, INext, ICollection, IEquiv, IMapEntry, IReduce, IKVReduce, ISeqable, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, IFn, IMap, ISeq, ICoerceable, IClonable, IInclusive, ITemplate} from "../../protocols.js";
+import {IMergable, IBlankable, ICompactible, IComparable, IOmissible, IMatchable, INext, ICollection, IEquiv, IMapEntry, IReduce, IKVReduce, ISeqable, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, IFn, IMap, ISeq, ICoerceable, IClonable, IInclusive, ITemplate} from "../../protocols.js";
 import {reduced} from "../reduced.js";
 import {lazySeq, into, map} from "../lazy-seq.js";
 import {cons} from "../list.js";
@@ -51,7 +51,7 @@ function matches(self, template){
   }, true);
 }
 
-function yank(self, entry){
+function omit(self, entry){
   const key = IMapEntry.key(entry),
         val = IMapEntry.val(entry);
   if (includes(self, entry)) {
@@ -187,7 +187,7 @@ export default does(
   implement(IEquiv, {equiv}),
   implement(ICoerceable, {toArray: toArray, toObject: identity}),
   implement(IFind, {find}),
-  implement(IYankable, {yank}),
+  implement(IOmissible, {omit}),
   implement(IMatchable, {matches}),
   implement(IInclusive, {includes}),
   implement(ICollection, {conj}),

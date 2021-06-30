@@ -1,6 +1,6 @@
 import {does, identity, overload, doto, complement} from "../../core.js";
 import {implement, satisfies} from "../protocol.js";
-import {IMergable, IBlankable, IMap, ICoerceable, IFunctor, IInsertable, IYankable, IReversible, IMapEntry, IEquiv, IReduce, IKVReduce, IAppendable, IPrependable, IInclusive, ICollection, INext, ISeq, IFind, ISeqable, IIndexed, IAssociative, ISequential, IEmptyableCollection, IFn, ICounted, ILookup, IClonable} from "../../protocols.js";
+import {IMergable, IBlankable, IMap, ICoerceable, IFunctor, IInsertable, IOmissible, IReversible, IMapEntry, IEquiv, IReduce, IKVReduce, IAppendable, IPrependable, IInclusive, ICollection, INext, ISeq, IFind, ISeqable, IIndexed, IAssociative, ISequential, IEmptyableCollection, IFn, ICounted, ILookup, IClonable} from "../../protocols.js";
 import {reduced, unreduced, isReduced} from "../reduced.js";
 import {indexedSeq} from "../indexed-seq.js";
 import {replace} from "../string/concrete.js";
@@ -93,7 +93,7 @@ function reducekv(xs, xf, init, from){
   return unreduced(memo);
 }
 
-function yank(self, value){
+function omit(self, value){
   return filter(function(x){
     return x !== value;
   }, self);
@@ -205,7 +205,7 @@ export default does(
   implement(IInsertable, {before, after}),
   implement(IFunctor, {fmap}),
   implement(ICoerceable, {toObject, toArray: identity}),
-  implement(IYankable, {yank}),
+  implement(IOmissible, {omit}),
   implement(IReversible, {reverse}),
   implement(IFind, {find}),
   implement(IMapEntry, {key, val}),

@@ -7,6 +7,6 @@ export * from "./protocols/itransientmap/instance.js";
 export * from "./protocols/itransientset/instance.js";
 export * from "./protocols/itransientappendable/instance.js";
 export * from "./protocols/itransientprependable/instance.js";
-export * from "./protocols/itransientyankable/instance.js";
+export * from "./protocols/itransientomissible/instance.js";
 export * from "./protocols/itransientinsertable/instance.js";
 export * from "./protocols/itransientreversible/instance.js";

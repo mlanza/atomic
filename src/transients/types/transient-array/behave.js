@@ -1,6 +1,6 @@
 import {does, overload, doto, forward, implement} from "atomic/core";
-import {ICoerceable, IFunctor, ILookup, IAssociative, IFind, IMapEntry, IYankable, ISeq, INext, ISeqable, ICounted, IInclusive, IEmptyableCollection, IMap, IReduce, IKVReduce, IClonable, ISequential, ICollection} from "atomic/core";
-import {IPersistent, ITransientMap, ITransientInsertable, ITransientEmptyableCollection, ITransientReversible, ITransientYankable, ITransientAssociative, ITransientAppendable, ITransientPrependable, ITransientCollection} from "../../protocols.js";
+import {ICoerceable, IFunctor, ILookup, IAssociative, IFind, IMapEntry, IOmissible, ISeq, INext, ISeqable, ICounted, IInclusive, IEmptyableCollection, IMap, IReduce, IKVReduce, IClonable, ISequential, ICollection} from "atomic/core";
+import {IPersistent, ITransientMap, ITransientInsertable, ITransientEmptyableCollection, ITransientReversible, ITransientOmissible, ITransientAssociative, ITransientAppendable, ITransientPrependable, ITransientCollection} from "../../protocols.js";
 
 function before(self, reference, inserted){
   const pos = self.arr.indexOf(reference);
@@ -47,7 +47,7 @@ function dissoc(self, idx){
   self.arr.splice(idx, 1);
 }
 
-function yank(self, value){
+function omit(self, value){
   let pos;
   while ((pos = self.arr.indexOf(value)) > -1) {
     self.arr.splice(pos, 1);
@@ -73,7 +73,7 @@ export default does(
   implement(ITransientInsertable, {before, after}),
   implement(ITransientCollection, {conj: append, unconj}),
   implement(ITransientEmptyableCollection, {empty}),
-  implement(ITransientYankable, {yank}),
+  implement(ITransientOmissible, {omit}),
   implement(ITransientAssociative, {assoc}),
   implement(ITransientReversible, {reverse}),
   implement(ITransientMap, {dissoc}),

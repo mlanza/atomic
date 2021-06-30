@@ -49,4 +49,4 @@ export * from "./protocols/istatemachine/instance.js";
 export * from "./protocols/isplittable/instance.js";
 export * from "./protocols/iswap/instance.js";
 export * from "./protocols/itemplate/instance.js";
-export * from "./protocols/iyankable/instance.js";
+export * from "./protocols/iomissible/instance.js";
