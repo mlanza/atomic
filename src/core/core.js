@@ -75,6 +75,16 @@ export function partly(f){
   return partial(plug, f);
 }
 
+export function deferring(fn){
+  return function(...args){
+    return partial(fn, ...args);
+  }
+}
+
+export function factory(f, ...args){
+  return deferring(partial(f, ...args));
+}
+
 export function identity(x){
   return x;
 }
