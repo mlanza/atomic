@@ -1,4 +1,4 @@
-import {identity, does, implement, filtera, filter, ISequential, ISeq, IDeref, ICoerceable, ICounted, ICollection, IInclusive, IOmissible} from "atomic/core";
+import {identity, does, implement, filtera, filter, ISequential, ISeq, IDeref, ICoerceable, ICounted, ICollection, IInclusive} from "atomic/core";
 import {ITransientCollection, ITransientOmissible} from "atomic/transients";
 
 function seq(self){

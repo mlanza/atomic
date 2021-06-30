@@ -1,5 +1,5 @@
 import {overload, called, toggles, identity, obj, partly, doto, does, branch, unspread, applying, execute, noop, constantly, once} from "./core.js";
-import {IAppendable, IOmissible, ICoerceable, IAssociative, IBounds, IInverse, IClonable, ICollection, IComparable, ICounted, IDeref, IDisposable, IEmptyableCollection, IEquiv, IFind, IFn, IForkable, IFunctor, IHierarchy, IInclusive, IIndexed, IInsertable, IKVReduce, ILookup, IMap, IMapEntry, INext, IOtherwise, IPrependable, IReduce, IReset, ISeq, ISeqable, ISet, ISwap} from "./protocols.js";
+import {IAppendable, ICoerceable, IAssociative, IBounds, IInverse, IClonable, ICollection, IComparable, ICounted, IDeref, IDisposable, IEmptyableCollection, IEquiv, IFind, IFn, IForkable, IFunctor, IHierarchy, IInclusive, IIndexed, IInsertable, IKVReduce, ILookup, IMap, IMapEntry, INext, IOtherwise, IPrependable, IReduce, IReset, ISeq, ISeqable, ISet, ISwap} from "./protocols.js";
 import {just, satisfies, spread, maybe, each, duration, remove, sort, flip, realized, comp, isNumber, isFunction, apply, realize, isNil, reFindAll, mapkv, period, selectKeys, mapVals, reMatches, test, date, emptyList, cons, days, recurrence, curry, second as _second} from "./types.js";
 import {add, subtract, compact, name, downward, upward, deref, get, assoc, omit, conj, reducing, toArray, reducekv, includes, excludes, rest, count, between, reduce, divide, fmap, split} from "./protocols/concrete.js";
 import {isString, isBlank, str, replace} from "./types/string.js";
@@ -21,6 +21,7 @@ import {extend} from "./types/protocol/concrete.js";
 import {Protocol} from "./types/protocol/construct.js";
 import iprotocol from "./types/protocol/behave.js";
 
+export const yank = called(omit, "`yank` is deprecated — use `omit` instead.");
 export const numeric = test(/^\d+$/i, ?);
 
 iprotocol(Protocol);
