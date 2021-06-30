@@ -1,5 +1,5 @@
-import {constantly, identity, does, overload, implement, mapa, compact, trim, split, str, ICoerceable, ISeqable, IMap, IAssociative, ILookup, IDeref, ICounted, ICollection, IReduce, IInclusive, IYankable} from "atomic/core";
-import {ITransientYankable, ITransientAssociative, ITransientMap, ITransientCollection} from "atomic/transients";
+import {constantly, identity, does, overload, implement, mapa, compact, trim, split, str, ICoerceable, ISeqable, IMap, IAssociative, ILookup, IDeref, ICounted, ICollection, IReduce, IInclusive, IOmissible} from "atomic/core";
+import {ITransientOmissible, ITransientAssociative, ITransientMap, ITransientCollection} from "atomic/transients";
 
 function asText(obj){
   return mapa(function(entry){
@@ -45,8 +45,8 @@ function includes(self, pair){
   return IInclusive.includes(deref(self), pair);
 }
 
-function yank(self, pair){
-  self.element.setAttribute(self.key, asText(IYankable.yank(deref(self), pair)));
+function omit(self, pair){
+  self.element.setAttribute(self.key, asText(IOmissible.omit(deref(self), pair)));
 }
 
 function conj(self, pair){
@@ -61,6 +61,6 @@ export default does(
   implement(IAssociative, {contains}),
   implement(ITransientAssociative, {assoc}),
   implement(ILookup, {lookup}),
-  implement(ITransientYankable, {yank}),
+  implement(ITransientOmissible, {omit}),
   implement(ITransientCollection, {conj}),
   implement(ICoerceable, {toObject: deref}));

@@ -1,7 +1,7 @@
 import {overload, called, toggles, identity, obj, partly, doto, does, branch, unspread, applying, execute, noop, constantly, once} from "./core.js";
-import {IAppendable, IYankable, ICoerceable, IAssociative, IBounds, IInverse, IClonable, ICollection, IComparable, ICounted, IDeref, IDisposable, IEmptyableCollection, IEquiv, IFind, IFn, IForkable, IFunctor, IHierarchy, IInclusive, IIndexed, IInsertable, IKVReduce, ILookup, IMap, IMapEntry, INext, IOtherwise, IPrependable, IReduce, IReset, ISeq, ISeqable, ISet, ISwap} from "./protocols.js";
+import {IAppendable, IOmissible, ICoerceable, IAssociative, IBounds, IInverse, IClonable, ICollection, IComparable, ICounted, IDeref, IDisposable, IEmptyableCollection, IEquiv, IFind, IFn, IForkable, IFunctor, IHierarchy, IInclusive, IIndexed, IInsertable, IKVReduce, ILookup, IMap, IMapEntry, INext, IOtherwise, IPrependable, IReduce, IReset, ISeq, ISeqable, ISet, ISwap} from "./protocols.js";
 import {just, satisfies, spread, maybe, each, duration, remove, sort, flip, realized, comp, isNumber, isFunction, apply, realize, isNil, reFindAll, mapkv, period, selectKeys, mapVals, reMatches, test, date, emptyList, cons, days, recurrence, curry, second as _second} from "./types.js";
-import {add, subtract, compact, name, downward, upward, deref, get, assoc, yank, conj, reducing, toArray, reducekv, includes, excludes, rest, count, between, reduce, divide, fmap, split} from "./protocols/concrete.js";
+import {add, subtract, compact, name, downward, upward, deref, get, assoc, omit, conj, reducing, toArray, reducekv, includes, excludes, rest, count, between, reduce, divide, fmap, split} from "./protocols/concrete.js";
 import {isString, isBlank, str, replace} from "./types/string.js";
 import {isSome} from "./types/nil.js";
 import {implement} from "./types/protocol/concrete.js";
@@ -209,11 +209,11 @@ export function impart(self, f){ //set retraction to identity to curb retraction
 }
 
 function include2(self, value){
-  return toggles(conj(?, value), yank(?, value), includes(?, value), self);
+  return toggles(conj(?, value), omit(?, value), includes(?, value), self);
 }
 
 function include3(self, value, want){
-  return toggles(conj(?, value), yank(?, value), includes(?, value), self, want);
+  return toggles(conj(?, value), omit(?, value), includes(?, value), self, want);
 }
 
 export const include = overload(null, null, include2, include3);

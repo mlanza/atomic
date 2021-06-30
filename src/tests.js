@@ -110,7 +110,7 @@ QUnit.test("dom", function(assert){
   dom.show(greeting);
   assert.deepEqual(greeting |> dom.style |> _.deref, {}, "Shown");
   const branding = stooges |> dom.sel("#branding", ?) |> _.first;
-  dom.yank(branding);
+  dom.omit(branding);
   assert.equal(branding |> _.parent |> _.first, null, "Removed");
 });
 

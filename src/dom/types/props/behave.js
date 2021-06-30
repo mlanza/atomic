@@ -1,5 +1,5 @@
-import {identity, does, implement, key, val, ISeqable, IMap, IAssociative, ILookup, IDeref, ICounted, ICollection, IReduce, IInclusive, IYankable} from "atomic/core";
-import {ITransientCollection, ITransientAssociative, ITransientMap, ITransientYankable} from "atomic/transients";
+import {identity, does, implement, key, val, ISeqable, IMap, IAssociative, ILookup, IDeref, ICounted, ICollection, IReduce, IInclusive, IOmissible} from "atomic/core";
+import {ITransientCollection, ITransientAssociative, ITransientMap, ITransientOmissible} from "atomic/transients";
 
 function lookup(self, key){
   return self.node[key];
@@ -21,7 +21,7 @@ function includes(self, entry){
   return self.node[key(entry)] === val(entry);
 }
 
-function yank(self, entry){
+function omit(self, entry){
   includes(self, entry) && _dissoc(self, key(entry));
 }
 
@@ -36,5 +36,5 @@ export default does(
   implement(ITransientAssociative, {assoc}),
   implement(IAssociative, {contains}),
   implement(ILookup, {lookup}),
-  implement(ITransientYankable, {yank}),
+  implement(ITransientOmissible, {omit}),
   implement(ITransientCollection, {conj}));

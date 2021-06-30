@@ -1,10 +1,10 @@
 import {does, overload, doto, forward} from "atomic/core";
 import {implement} from "atomic/core";
 import {transientObject} from "./construct.js";
-import {ICoerceable, IEquiv, IFn, IComparable, IMatchable, IFunctor, ILookup, IAssociative, IFind, IMapEntry, IYankable, ISeq, INext, ISeqable, ICounted, IInclusive, IEmptyableCollection, IMap, IReduce, IKVReduce, IClonable, ISequential, ICollection} from "atomic/core";
-import {IPersistent, ITransientYankable, ITransientAssociative, ITransientEmptyableCollection, ITransientCollection, ITransientMap} from "../../protocols.js";
+import {ICoerceable, IEquiv, IFn, IComparable, IMatchable, IFunctor, ILookup, IAssociative, IFind, IMapEntry, IOmissible, ISeq, INext, ISeqable, ICounted, IInclusive, IEmptyableCollection, IMap, IReduce, IKVReduce, IClonable, ISequential, ICollection} from "atomic/core";
+import {IPersistent, ITransientOmissible, ITransientAssociative, ITransientEmptyableCollection, ITransientCollection, ITransientMap} from "../../protocols.js";
 
-function yank(self, entry){
+function omit(self, entry){
   const key = IMapEntry.key(entry);
   if (includes(self, entry)) {
     delete self.obj[key];

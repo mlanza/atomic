@@ -41,7 +41,7 @@ import {
   isIdentical,
   ISequential,
   IMatchable,
-  IYankable,
+  IOmissible,
   IInclusive,
   ICoerceable,
   IAssociative,
@@ -65,7 +65,7 @@ import {
   ITransientCollection,
   ITransientEmptyableCollection,
   ITransientInsertable,
-  ITransientYankable
+  ITransientOmissible
 } from "atomic/transients";
 import {IEvented} from "atomic/reactives";
 import {isMountable} from "../../protocols/imountable/concrete.js"
@@ -84,7 +84,7 @@ function hide(self){
 }
 
 function show(self){
-  ITransientYankable.yank(nestedAttrs(self, "style"), hides);
+  ITransientOmissible.omit(nestedAttrs(self, "style"), hides);
 }
 
 function embed(self, parent, referenceNode) {
@@ -323,7 +323,7 @@ function yank2(self, node){
   }
 }
 
-export const yank = overload(null, yank1, yank2);
+export const omit = overload(null, yank1, yank2);
 
 function includes(self, target){
   if (isElement(target)) {
@@ -422,7 +422,7 @@ export default does(
   implement(ITransientInsertable, {before, after}),
   implement(IInclusive, {includes}),
   implement(IHideable, {show, hide, toggle}),
-  implement(ITransientYankable, {yank}),
+  implement(ITransientOmissible, {omit}),
   implement(IMatchable, {matches}),
   implement(IClonable, {clone}),
   implement(ITransientAppendable, {append}),

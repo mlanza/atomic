@@ -7,6 +7,6 @@ export * from "./itransientcollection/concrete.js";
 export * from "./itransientemptyablecollection/concrete.js";
 export * from "./itransientappendable/concrete.js";
 export * from "./itransientprependable/concrete.js";
-export * from "./itransientyankable/concrete.js";
+export * from "./itransientomissible/concrete.js";
 export * from "./itransientinsertable/concrete.js";
 export * from "./itransientreversible/concrete.js";

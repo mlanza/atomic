@@ -13,7 +13,7 @@ import {document} from "dom";
 export * from "./types.js";
 export * from "./protocols.js";
 export * from "./protocols/concrete.js";
-export {append, prepend, before, after, yank, empty} from "atomic/transients";
+export {append, prepend, before, after, omit, empty} from "atomic/transients";
 
 export function ready(document, callback) {
   if (document.readyState !== 'loading') {
