@@ -13,6 +13,7 @@ import {
   getIn,
   key,
   val,
+  descriptive,
   implement,
   satisfies,
   downward,
@@ -44,7 +45,6 @@ import {
   IInclusive,
   ICoerceable,
   IAssociative,
-  IDescriptive,
   IMap,
   IClonable,
   ICollection,
@@ -138,7 +138,7 @@ function isText(self){
 }
 
 function isAttrs(self){
-  return !(self instanceof Node) && satisfies(IDescriptive, self);
+  return !(self instanceof Node) && descriptive(self);
 }
 
 function eventContext(catalog){

@@ -1,7 +1,7 @@
 import {does, constructs} from "../../core.js";
 import {implement} from "../protocol.js";
 import {reduced} from "../reduced/construct.js";
-import {IReduce, IKVReduce, IEquiv, ICoerceable, IDescriptive, IAssociative, ISeqable, ILookup, ICounted, IMap, ISeq, IRecord, IEmptyableCollection} from "../../protocols.js";
+import {IReduce, IKVReduce, IEquiv, ICoerceable, IAssociative, ISeqable, ILookup, ICounted, IMap, ISeq, IRecord, IEmptyableCollection} from "../../protocols.js";
 import Symbol from "symbol";
 
 function toObject(self){
@@ -88,7 +88,6 @@ export default does(
   construction,
   emptyable,
   implement(IRecord),
-  implement(IDescriptive),
   implement(IReduce, {reduce}),
   implement(IKVReduce, {reducekv}),
   implement(IEquiv, {equiv}),

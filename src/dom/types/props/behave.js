@@ -1,4 +1,4 @@
-import {identity, does, implement, key, val, IDescriptive, ISeqable, IMap, IAssociative, ILookup, IDeref, ICounted, ICollection, IReduce, IInclusive, IYankable} from "atomic/core";
+import {identity, does, implement, key, val, ISeqable, IMap, IAssociative, ILookup, IDeref, ICounted, ICollection, IReduce, IInclusive, IYankable} from "atomic/core";
 import {ITransientCollection, ITransientAssociative, ITransientMap, ITransientYankable} from "atomic/transients";
 
 function lookup(self, key){
@@ -30,7 +30,6 @@ function conj(self, entry){
 }
 
 export default does(
-  implement(IDescriptive),
   implement(ITransientMap, {dissoc}),
   implement(IMap, {keys: Object.keys, vals: Object.values}),
   implement(IInclusive, {includes}),

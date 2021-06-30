@@ -1,5 +1,5 @@
 import {overload, identity, partial, constantly, slice} from "./core.js";
-import {IDescriptive, ISeqable, ISequential, IAssociative, ILookup, IReduce, IKVReduce, IEmptyableCollection} from "./protocols.js";
+import {ISeqable, ISequential, IAssociative, ILookup, IReduce, IKVReduce, IEmptyableCollection} from "./protocols.js";
 import {some, into, best} from "./types/lazy-seq/concrete.js";
 import {apply} from "./types/function/concrete.js";
 import {isFunction} from "./types/function/construct.js";
@@ -8,6 +8,7 @@ import {concat} from "./types/concatenated.js";
 import {update} from "./protocols/iassociative/concrete.js";
 import {reducing} from "./protocols/ireduce/concrete.js";
 import {gt, lt} from "./predicates.js";
+import {descriptive} from "./types/object/concrete.js";
 
 function scanKey1(better){
   return partial(scanKey, better);
@@ -46,7 +47,7 @@ function absorb2(tgt, src){
     let absorbed;
     if (was == null) {
       absorbed = value;
-    } else if (satisfies(IDescriptive, value)) {
+    } else if (descriptive(value)) {
       absorbed = into(IEmptyableCollection.empty(was), absorb(was, value));
     } else if (satisfies(ISequential, value)) {
       absorbed = into(IEmptyableCollection.empty(was), concat(was, value));

@@ -1,10 +1,15 @@
-import {IFn, ISeq, IMap, IReduce, IKVReduce, ILookup, IInclusive, IAssociative, IEmptyableCollection} from "../../protocols.js";
+import {IFn, ISeq, IMap, IIndexed, IReduce, IKVReduce, ILookup, IInclusive, IAssociative, IEmptyableCollection} from "../../protocols.js";
 import {apply, isFunction} from "../function.js";
 import {reducing} from "../../protocols/ireduce/concrete.js";
 import {overload, branch} from "../../core.js";
 import {satisfies} from "../protocol/concrete.js";
 import {empty} from "../../protocols/iemptyablecollection.js";
 import {emptyObject} from "./construct.js";
+
+//an entity is has descriptive key/value pairs whereas an array does not.
+export function descriptive(self){
+  return satisfies(ILookup, self) && satisfies(IMap, self) && !satisfies(IIndexed, self);
+}
 
 const emptied = branch(satisfies(IEmptyableCollection), empty, emptyObject);
 

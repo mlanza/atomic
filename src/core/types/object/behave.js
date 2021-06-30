@@ -1,6 +1,6 @@
 import {does, identity, constructs, branch} from "../../core.js";
 import {implement} from "../protocol.js";
-import {IMergable, IBlankable, ICompactable, IComparable, IYankable, IMatchable, INext, ICollection, IEquiv, IMapEntry, IReduce, IKVReduce, ISeqable, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, IFn, IMap, ISeq, IDescriptive, ICoerceable, IClonable, IInclusive, ITemplate} from "../../protocols.js";
+import {IMergable, IBlankable, ICompactable, IComparable, IYankable, IMatchable, INext, ICollection, IEquiv, IMapEntry, IReduce, IKVReduce, ISeqable, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, IFn, IMap, ISeq, ICoerceable, IClonable, IInclusive, ITemplate} from "../../protocols.js";
 import {reduced} from "../reduced.js";
 import {lazySeq, into, map} from "../lazy-seq.js";
 import {cons} from "../list.js";
@@ -9,6 +9,7 @@ import {isString} from "../string/construct.js";
 import {satisfies} from "../protocol/concrete.js";
 import {update} from "../../protocols/iassociative/concrete.js";
 import {emptyObject, isObject} from "../object/construct.js";
+import {descriptive} from "../object/concrete.js";
 
 const keys = Object.keys;
 const vals = Object.values;
@@ -63,7 +64,7 @@ function yank(self, entry){
 }
 
 function compare(self, other){ //assume like keys, otherwise use your own comparator!
-  return IEquiv.equiv(self, other) ? 0 : satisfies(IDescriptive, other) ? IReduce.reduce(IMap.keys(self), function(memo, key){
+  return IEquiv.equiv(self, other) ? 0 : descriptive(other) ? IReduce.reduce(IMap.keys(self), function(memo, key){
     return memo == 0 ? IComparable.compare(ILookup.lookup(self, key), ILookup.lookup(other, key)) : reduced(memo);
   }, 0) : -1;
 }
@@ -77,7 +78,7 @@ function conj(self, entry){
 }
 
 function equiv(self, other){
-  return self === other ? true : satisfies(IDescriptive, other) && ICounted.count(IMap.keys(self)) === ICounted.count(IMap.keys(other)) && IReduce.reduce(IMap.keys(self), function(memo, key){
+  return self === other ? true : descriptive(other) && ICounted.count(IMap.keys(self)) === ICounted.count(IMap.keys(other)) && IReduce.reduce(IMap.keys(self), function(memo, key){
     return memo ? IEquiv.equiv(ILookup.lookup(self, key), ILookup.lookup(other, key)) : reduced(memo);
   }, true);
 }
@@ -179,7 +180,6 @@ function toArray(self){
 }
 
 export default does(
-  implement(IDescriptive),
   implement(ITemplate, {fill}),
   implement(IBlankable, {blank}),
   implement(IMergable, {merge}),
