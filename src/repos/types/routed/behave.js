@@ -1,6 +1,6 @@
 import * as _ from "atomic/core";
-import {IParams, IOptions, IAddress, IIntercept} from "../../protocols.js";
-import {IClonable, ITemplate, IFunctor, IQueryable, ICoerceable, IForkable, ISeq, IAssociative, IMap, ICollection, fromTask} from "atomic/core";
+import {IQueryable, IParams, IOptions, IAddress, IIntercept} from "../../protocols.js";
+import {IClonable, ITemplate, IFunctor, ICoerceable, IForkable, ISeq, IAssociative, IMap, ICollection, fromTask} from "atomic/core";
 import {query} from "../request/behave.js";
 
 function xform(xf){
