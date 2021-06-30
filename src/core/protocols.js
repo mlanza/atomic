@@ -37,7 +37,6 @@ export * from "./protocols/iotherwise/instance.js";
 export * from "./protocols/ipath/instance.js";
 export * from "./protocols/iprependable/instance.js";
 export * from "./protocols/iqueryable/instance.js";
-export * from "./protocols/irecord/instance.js";
 export * from "./protocols/ireduce/instance.js";
 export * from "./protocols/ireset/instance.js";
 export * from "./protocols/ireversible/instance.js";
