@@ -1,4 +1,4 @@
-# ICompactable
+# ICompactible
 
 Eliminates untruthy (or otherwise insignificant or blank) values from a collection.
 

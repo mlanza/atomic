@@ -1,4 +1,4 @@
-import {IBlankable, ISplittable, ITemplate, IKVReduce, IAssociative, ICompactable, ICoerceable, IMatchable, IReduce, ICollection, IIndexed, ISeqable, INext, ISeq, IInclusive, IAppendable, IPrependable, ICounted, ILookup, IFn, IComparable, IEmptyableCollection} from "../../protocols.js";
+import {IBlankable, ISplittable, ITemplate, IKVReduce, IAssociative, ICompactible, ICoerceable, IMatchable, IReduce, ICollection, IIndexed, ISeqable, INext, ISeq, IInclusive, IAppendable, IPrependable, ICounted, ILookup, IFn, IComparable, IEmptyableCollection} from "../../protocols.js";
 import {does, identity, constantly, unbind, overload} from "../../core.js";
 import {implement} from "../protocol.js";
 import {isReduced, unreduced} from "../reduced.js";
@@ -109,7 +109,7 @@ function matches(self, re){
 export default does(
   iindexed,
   implement(ISplittable, {split}),
-  implement(ICompactable, {compact}),
+  implement(ICompactible, {compact}),
   implement(IBlankable, {blank}),
   implement(ITemplate, {fill}),
   implement(IMatchable, {matches}),
