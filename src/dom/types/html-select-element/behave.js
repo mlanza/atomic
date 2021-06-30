@@ -1,10 +1,10 @@
-import {overload, does, implement, detect, query, each, maybe, comp, either} from "atomic/core";
-import {IValue, IText} from "../../protocols.js";
+import {overload, does, implement, detect, each, maybe, comp, either} from "atomic/core";
+import {IValue, IText, ISelectable} from "../../protocols.js";
 
 function access(f, g){
 
   function _value1(self){
-    return maybe(query(self, "option"), detect(function(option){
+    return maybe(ISelectable.sel(self, "option"), detect(function(option){
       return option.selected;
     }, ?), f);
   }
@@ -17,7 +17,7 @@ function access(f, g){
       if (option.selected != selected) {
         option.selected = selected;
       }
-    }, query(self, "option"));
+    }, ISelectable.sel(self, "option"));
   }
 
   return overload(null, value1, value2);

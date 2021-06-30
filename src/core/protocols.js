@@ -26,7 +26,6 @@ export * from "./protocols/iinclusive/instance.js";
 export * from "./protocols/iindexed/instance.js";
 export * from "./protocols/iinsertable/instance.js";
 export * from "./protocols/ikvreduce/instance.js";
-export * from "./protocols/ilocate/instance.js";
 export * from "./protocols/ilookup/instance.js";
 export * from "./protocols/imap/instance.js";
 export * from "./protocols/imapentry/instance.js";

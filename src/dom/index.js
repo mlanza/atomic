@@ -1,4 +1,4 @@
-import {constantly, identity, isString, apply, noop, slice, partial, replace, concat, template, key, val, join, merge, filter, map, remove, isObject, specify, implement, doto, get, str, includes, overload, fmap, each, eachkv, obj, IReduce, first, query, locate, descendants, matches, Nil, ICoerceable, extend, doing} from "atomic/core";
+import {constantly, identity, isString, apply, noop, slice, partial, replace, concat, template, key, val, join, merge, filter, map, remove, isObject, specify, implement, doto, get, str, includes, overload, fmap, each, eachkv, obj, IReduce, first, matches, Nil, ICoerceable, extend, doing} from "atomic/core";
 import * as _ from "atomic/core";
 import * as mut from "atomic/transients";
 import {element} from "./types/element/construct.js";
@@ -140,34 +140,6 @@ export const markup = obj(function(name, ...contents){
 export function tag(){
   return apply(partial, element, slice(arguments));
 }
-
-function sel02(selector, context){
-  return query(context, context.querySelectorAll ? selector : v => matches(v, selector));
-}
-
-function sel01(selector){
-  return sel02(selector, document);
-}
-
-function sel00(){
-  return descendants(document);
-}
-
-export const sel = overload(sel00, sel01, sel02);
-
-function sel12(selector, context){
-  return locate(context, selector);
-}
-
-function sel11(selector){
-  return sel12(selector, document);
-}
-
-function sel10(){
-  return first(descendants(document));
-}
-
-export const sel1 = overload(sel10, sel11, sel12);
 
 export function checkbox(...args){
   const checkbox = tag('input', {type: "checkbox"});
