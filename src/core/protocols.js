@@ -12,7 +12,6 @@ export * from "./protocols/icomparable/instance.js";
 export * from "./protocols/iinverse/instance.js";
 export * from "./protocols/icounted/instance.js";
 export * from "./protocols/ideref/instance.js";
-export * from "./protocols/idescriptive/instance.js";
 export * from "./protocols/idisposable/instance.js";
 export * from "./protocols/idivisible/instance.js";
 export * from "./protocols/iemptyablecollection/instance.js";

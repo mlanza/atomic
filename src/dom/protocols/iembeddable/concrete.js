@@ -1,5 +1,5 @@
 import {IEmbeddable} from "./instance.js";
-import {satisfies, each, key, val, str, ISequential, IDescriptive} from "atomic/core";
+import {satisfies, each, key, val, str, descriptive, ISequential} from "atomic/core";
 import {assoc} from "atomic/transients";
 
 export function embed(self, parent, referenceNode){
@@ -7,7 +7,7 @@ export function embed(self, parent, referenceNode){
     IEmbeddable.embed(self, parent, referenceNode);
   } else if (satisfies(ISequential, self)) {
     each(embed(?, parent, referenceNode), self);
-  } else if (satisfies(IDescriptive, self)){
+  } else if (descriptive(self)){
     each(function(entry){
       assoc(parent, key(entry), val(entry));
     }, self);
