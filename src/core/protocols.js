@@ -7,7 +7,7 @@ export * from "./protocols/ichainable/instance.js";
 export * from "./protocols/iclonable/instance.js";
 export * from "./protocols/icoerceable/instance.js";
 export * from "./protocols/icollection/instance.js";
-export * from "./protocols/icompactable/instance.js";
+export * from "./protocols/icompactible/instance.js";
 export * from "./protocols/icomparable/instance.js";
 export * from "./protocols/iinverse/instance.js";
 export * from "./protocols/icounted/instance.js";

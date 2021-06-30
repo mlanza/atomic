@@ -1,4 +1,4 @@
-import {IClonable, ICompactable} from "../../protocols.js";
+import {IClonable, ICompactible} from "../../protocols.js";
 import {inc, dec} from "../../protocols/iaddable/concrete.js";
 import {prop, patch} from "../../associatives.js";
 import {overload, identity} from "../../core.js";

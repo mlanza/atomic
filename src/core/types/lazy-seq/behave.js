@@ -1,5 +1,5 @@
 import {implement, packs as does} from "../protocol.js";
-import {IBlankable, ICompactable, IFunctor, IReversible, IYankable, ICoerceable, IInclusive, IFind, IEquiv, ICollection, INext, ISeq, IReduce, IKVReduce, ISeqable, ISequential, IIndexed, IEmptyableCollection, ICounted, IAppendable, IPrependable} from "../../protocols.js";
+import {IBlankable, ICompactible, IFunctor, IReversible, IYankable, ICoerceable, IInclusive, IFind, IEquiv, ICollection, INext, ISeq, IReduce, IKVReduce, ISeqable, ISequential, IIndexed, IEmptyableCollection, ICounted, IAppendable, IPrependable} from "../../protocols.js";
 import {overload, identity, partial} from "../../core.js";
 import {Reduced, isReduced, reduced, unreduced} from "../reduced.js";
 import {concat} from "../concatenated/construct.js";
@@ -156,7 +156,7 @@ export default does(
   implement(IIndexed, {nth, idx}),
   implement(IReversible, {reverse}),
   implement(IBlankable, {blank}),
-  implement(ICompactable, {compact}),
+  implement(ICompactible, {compact}),
   implement(IInclusive, {includes}),
   implement(IYankable, {yank}),
   implement(IFunctor, {fmap}),

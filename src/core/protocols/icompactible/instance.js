@@ -1,4 +1,4 @@
 import {protocol} from "../../types/protocol.js";
-export const ICompactable = protocol({
+export const ICompactible = protocol({
   compact: null
 });

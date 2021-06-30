@@ -1,4 +1,4 @@
-import {ICompactable, IEquiv, IMap, ICoerceable, IAssociative, ILookup, IInclusive, IIndexed, ICollection, IComparable, ICounted, ISeq, ISeqable, INext, IHierarchy, IReduce, ISequential} from "../../protocols.js";
+import {ICompactible, IEquiv, IMap, ICoerceable, IAssociative, ILookup, IInclusive, IIndexed, ICollection, IComparable, ICounted, ISeq, ISeqable, INext, IHierarchy, IReduce, ISequential} from "../../protocols.js";
 import {trampoline, identity, constantly, overload, complement} from "../../core.js";
 import {EmptyList, emptyList} from "../empty-list/construct.js";
 import {emptyArray} from "../array/construct.js";
