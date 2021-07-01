@@ -294,11 +294,11 @@ export function siblings(self){
   return concat(prevSiblings(self), nextSiblings(self));
 }
 
-function yank1(self){ //no jokes, please!
-  yank2(parent(self), self);
+function omit1(self){
+  omit2(parent(self), self);
 }
 
-function yank2(self, node){
+function omit2(self, node){
   if (isElement(node)) {
     self.removeChild(node);
   } else if (satisfies(ISequential, node)) {
@@ -322,7 +322,7 @@ function yank2(self, node){
   }
 }
 
-export const omit = overload(null, yank1, yank2);
+export const omit = overload(null, omit1, omit2);
 
 function includes(self, target){
   if (isElement(target)) {
