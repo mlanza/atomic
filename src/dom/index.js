@@ -137,9 +137,9 @@ export const markup = obj(function(name, ...contents){
   return join("", concat(["<" + name + " " + join(" ", attrs) + ">"], content, "</" + name + ">"));
 }, Infinity);
 
-export const tag = called(function tag(){
+export function tag(){
   return apply(partial, element, slice(arguments));
-}, "`tag` is deprecated — use `factory` instead.");
+}
 
 export function checkbox(...args){
   const checkbox = tag('input', {type: "checkbox"});
