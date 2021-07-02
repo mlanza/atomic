@@ -106,6 +106,18 @@ define('jquery', ["vendor/jquery"], function(){
   define('atomic/core', ["vendor/" + mods[0], 'polyfill'], function(core){
     return Object.assign(core.placeholder, core.impart(core, core.partly));
   });
+  define('atomic/behave', mods, function(){
+    var modules = arguments;
+    return function behave(env){
+      for(var i in modules){
+        var mod = modules[i],
+            behave = mod["behave"];
+        if (behave){
+          behave(env);
+        }
+      }
+    }
+  });
   for (var idx in mods) {
     var mod = mods[idx];
     var f = mod === "atomic/reactives" ? feature : identity;

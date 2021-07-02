@@ -1,4 +1,4 @@
-import {unbind} from "../../core.js";
+import {unbind, log} from "../../core.js";
 import {Protocol} from "./construct.js";
 
 export const extend    = unbind(Protocol.prototype.extend);
@@ -12,4 +12,15 @@ export function reifiable(properties){
     Object.assign(this, properties);
   }
   return new Reifiable(properties || {});
+}
+
+export function behaves(behaviors, env){
+  for(var key in behaviors) {
+    if (key in env) {
+      const type = env[key],
+            behave = behaviors[key];
+      log(`extending behavior of ${key}`);
+      behave(type);
+    }
+  }
 }

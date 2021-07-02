@@ -1,4 +1,4 @@
-import {specify, IMatchable, isRegExp, isString, test, does} from "atomic/core";
+import {implement, IMatchable, isRegExp, isString, test, does} from "atomic/core";
 import {IEvented} from "atomic/reactives";
 
 function matches(self, pattern){
@@ -17,5 +17,5 @@ function on(self, pattern, callback){
 }
 
 export default does(
-  specify(IEvented, {on}),
-  specify(IMatchable, {matches}));
+  implement(IEvented, {on}),
+  implement(IMatchable, {matches}));

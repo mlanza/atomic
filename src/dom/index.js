@@ -1,4 +1,4 @@
-import {constantly, pre, handle, factory, called, identity, isString, apply, noop, slice, partial, replace, concat, template, key, val, join, merge, filter, map, remove, isObject, specify, implement, doto, get, str, includes, overload, fmap, each, eachkv, obj, IReduce, first, matches, Nil, ICoerceable, extend, doing} from "atomic/core";
+import {behaves, constantly, pre, handle, factory, called, identity, isString, apply, noop, slice, partial, replace, concat, template, key, val, join, merge, filter, map, remove, isObject, specify, implement, doto, get, str, includes, overload, fmap, each, eachkv, obj, IReduce, first, matches, Nil, ICoerceable, extend, doing} from "atomic/core";
 import {element} from "./types/element/construct.js";
 import {mounts} from "./protocols/imountable/concrete.js";
 import {InvalidHostElementError} from "./types/invalid-host-element-error.js";
@@ -10,11 +10,14 @@ import {passDocumentDefault} from "./types/html-document/construct.js";
 import * as _ from "atomic/core";
 import * as mut from "atomic/transients";
 import * as $ from "atomic/reactives";
-
 export * from "./types.js";
 export * from "./protocols.js";
 export * from "./protocols/concrete.js";
 export {append, prepend, before, after, omit, empty} from "atomic/transients"; //TODO is reexporting a good idea?
+
+import {behaviors} from "./behaviors.js";
+export * from "./behaviors.js";
+export const behave = behaves(behaviors, ?);
 
 export function ready(document, callback) {
   if (document.readyState !== 'loading') {
