@@ -1,19 +1,20 @@
-import {constantly, called, identity, isString, apply, noop, slice, partial, replace, concat, template, key, val, join, merge, filter, map, remove, isObject, specify, implement, doto, get, str, includes, overload, fmap, each, eachkv, obj, IReduce, first, matches, Nil, ICoerceable, extend, doing} from "atomic/core";
-import * as _ from "atomic/core";
-import * as mut from "atomic/transients";
+import {constantly, pre, factory, called, identity, isString, apply, noop, slice, partial, replace, concat, template, key, val, join, merge, filter, map, remove, isObject, specify, implement, doto, get, str, includes, overload, fmap, each, eachkv, obj, IReduce, first, matches, Nil, ICoerceable, extend, doing} from "atomic/core";
 import {element} from "./types/element/construct.js";
 import {mounts} from "./protocols/imountable/concrete.js";
 import {InvalidHostElementError} from "./types/invalid-host-element-error.js";
 import {IValue} from "./protocols/ivalue/instance.js";
 import {IEmbeddable} from "./protocols/iembeddable/instance.js";
-import * as $ from "atomic/reactives";
 import Promise from "promise";
 import {document} from "dom";
+import {isHTMLDocument} from "./types/html-document/construct.js";
+import * as _ from "atomic/core";
+import * as mut from "atomic/transients";
+import * as $ from "atomic/reactives";
 
 export * from "./types.js";
 export * from "./protocols.js";
 export * from "./protocols/concrete.js";
-export {append, prepend, before, after, omit, empty} from "atomic/transients";
+export {append, prepend, before, after, omit, empty} from "atomic/transients"; //TODO is reexporting a good idea?
 
 export function ready(document, callback) {
   if (document.readyState !== 'loading') {
@@ -137,12 +138,14 @@ export const markup = obj(function(name, ...contents){
   return join("", concat(["<" + name + " " + join(" ", attrs) + ">"], content, "</" + name + ">"));
 }, Infinity);
 
-export function tag(){
-  return apply(partial, element, slice(arguments));
+export function tags(document){
+  return factory(element(document));
 }
 
-export function checkbox(...args){
-  const checkbox = tag('input', {type: "checkbox"});
+export const tag = called(tags(document), "`tag` is deprecated — use `tags` instead.");
+
+export const checkbox = pre(function checkbox(document, ...args){
+  const el = element(document, 'input', {type: "checkbox"}, ...args);
   function value1(el){
     return el.checked;
   }
@@ -150,21 +153,26 @@ export function checkbox(...args){
     el.checked = checked;
   }
   const value = overload(null, value1, value2);
-  return doto(checkbox(...args),
+  return doto(el,
     specify(IValue, {value: value}));
-}
+}, isHTMLDocument);
 
-export function select(options, ...args){
-  const select = tag('select'),
-        option = tag('option'),
-        el = select(...args);
+export const select = pre(function select(document, options, ...args){
+  const tag = tags(document),
+    select = tag('select'),
+    option = tag('option'),
+    el = select(...args);
   each(function(entry){
     mut.append(el, option({value: key(entry)}, val(entry)));
   }, options);
   return el;
-}
+}, isHTMLDocument);
 
-export const textbox = tag('input', {type: "text"});
+export const input = pre(function textbox(document, ...args){
+  return element(document, 'input', {type: "text"}, ...args);
+}, isHTMLDocument);
+
+export const textbox = input;
 
 extend(ICoerceable, {toFragment: null});
 

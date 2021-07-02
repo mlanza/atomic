@@ -45,7 +45,7 @@ export function signature(...preds){
   }
 }
 
-export function osignature(...preds){
+export function signatureHead(...preds){
   return function(...values){
     return IKVReduce.reducekv(values, function(memo, idx, value){
       let pred = preds[idx];
