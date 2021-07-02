@@ -136,7 +136,7 @@ export function interact(key, f, el){
 
 export function hash(window){
   return computes(fromEvent(window, "hashchange"), function(e){
-    return location.hash;
+    return window.location.hash;
   });
 }
 

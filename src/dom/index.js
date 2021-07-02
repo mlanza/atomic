@@ -184,7 +184,7 @@ export const toFragment = ICoerceable.toFragment;
     IEmbeddable.embed(parent.ownerDocument.createTextNode(self), parent, nextSibling);
   }
 
-  function toFragment(self){
+  function toFragment(self, document){
     return document.createRange().createContextualFragment(self);
   }
 
@@ -197,7 +197,7 @@ export const toFragment = ICoerceable.toFragment;
 (function(){
 
   function embed(self, parent, nextSibling) {
-    IEmbeddable.embed(document.createTextNode(str(self)), parent, nextSibling);
+    IEmbeddable.embed(parent.ownerDocument.createTextNode(str(self)), parent, nextSibling);
   }
 
   doto(Number, implement(IEmbeddable, {embed}));
@@ -218,7 +218,7 @@ export const toFragment = ICoerceable.toFragment;
 
 (function(){
 
-  function toFragment(_){
+  function toFragment(_, document){
     return document.createRange().createContextualFragment("");
   }
 
