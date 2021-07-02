@@ -4,7 +4,7 @@ import {just, satisfies, spread, maybe, each, duration, remove, sort, flip, real
 import {add, subtract, compact, name, downward, upward, deref, get, assoc, omit, conj, reducing, toArray, reducekv, includes, excludes, rest, count, between, reduce, divide, fmap, split} from "./protocols/concrete.js";
 import {isString, isBlank, str, replace} from "./types/string.js";
 import {isSome} from "./types/nil.js";
-import {implement} from "./types/protocol/concrete.js";
+import {implement, behaves} from "./types/protocol/concrete.js";
 import {into, detect, map, mapa, splice, drop, join, some, last, takeWhile, dropWhile, filter, lazySeq} from "./types/lazy-seq.js";
 import iseries from "./types/series/behave.js";
 export {filter} from "./types/lazy-seq.js";
@@ -20,11 +20,14 @@ import Set from "set";
 import {extend} from "./types/protocol/concrete.js";
 import {Protocol} from "./types/protocol/construct.js";
 import iprotocol from "./types/protocol/behave.js";
+iprotocol(Protocol);
+
+import {behaviors} from "./behaviors.js";
+export * from "./behaviors.js";
+export const behave = behaves(behaviors, ?);
 
 export const yank = called(omit, "`yank` is deprecated — use `omit` instead.");
 export const numeric = test(/^\d+$/i, ?);
-
-iprotocol(Protocol);
 
 function siblings(self){
   const parent = IHierarchy.parent(self);
