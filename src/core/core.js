@@ -32,6 +32,21 @@ export function overload(){
   }
 }
 
+export function handle(){
+  const handlers = slice(arguments, 0, arguments.length - 1),
+        fallback = arguments[arguments.length -1];
+  return function(){
+    for(let handler of handlers){
+      const check = handler[0];
+      if (check.apply(this, arguments)) {
+        const fn = handler[1];
+        return fn.apply(this, arguments);
+      }
+    }
+    return fallback.apply(this, arguments);
+  }
+}
+
 export function subj(f, len){ //subjective
   const length = len || f.length;
   return function(...ys){

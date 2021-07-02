@@ -1,4 +1,4 @@
-import {constantly, pre, factory, called, identity, isString, apply, noop, slice, partial, replace, concat, template, key, val, join, merge, filter, map, remove, isObject, specify, implement, doto, get, str, includes, overload, fmap, each, eachkv, obj, IReduce, first, matches, Nil, ICoerceable, extend, doing} from "atomic/core";
+import {constantly, pre, handle, factory, called, identity, isString, apply, noop, slice, partial, replace, concat, template, key, val, join, merge, filter, map, remove, isObject, specify, implement, doto, get, str, includes, overload, fmap, each, eachkv, obj, IReduce, first, matches, Nil, ICoerceable, extend, doing} from "atomic/core";
 import {element} from "./types/element/construct.js";
 import {mounts} from "./protocols/imountable/concrete.js";
 import {InvalidHostElementError} from "./types/invalid-host-element-error.js";
@@ -6,7 +6,7 @@ import {IValue} from "./protocols/ivalue/instance.js";
 import {IEmbeddable} from "./protocols/iembeddable/instance.js";
 import Promise from "promise";
 import {document} from "dom";
-import {isHTMLDocument} from "./types/html-document/construct.js";
+import {passDocumentDefault} from "./types/html-document/construct.js";
 import * as _ from "atomic/core";
 import * as mut from "atomic/transients";
 import * as $ from "atomic/reactives";
@@ -139,12 +139,12 @@ export const markup = obj(function(name, ...contents){
 }, Infinity);
 
 export function tags(document){
-  return factory(element(document));
+  return factory(partial(element, document));
 }
 
-export const tag = called(tags(document), "`tag` is deprecated — use `tags` instead.");
+export const tag = tags(document);
 
-export const checkbox = pre(function checkbox(document, ...args){
+export const checkbox = passDocumentDefault(function checkbox(document, ...args){
   const el = element(document, 'input', {type: "checkbox"}, ...args);
   function value1(el){
     return el.checked;
@@ -155,9 +155,9 @@ export const checkbox = pre(function checkbox(document, ...args){
   const value = overload(null, value1, value2);
   return doto(el,
     specify(IValue, {value: value}));
-}, isHTMLDocument);
+});
 
-export const select = pre(function select(document, options, ...args){
+export const select = passDocumentDefault(function select(document, options, ...args){
   const tag = tags(document),
     select = tag('select'),
     option = tag('option'),
@@ -166,11 +166,11 @@ export const select = pre(function select(document, options, ...args){
     mut.append(el, option({value: key(entry)}, val(entry)));
   }, options);
   return el;
-}, isHTMLDocument);
+});
 
-export const input = pre(function textbox(document, ...args){
+export const input = passDocumentDefault(function input(document, ...args){
   return element(document, 'input', {type: "text"}, ...args);
-}, isHTMLDocument);
+});
 
 export const textbox = input;
 
