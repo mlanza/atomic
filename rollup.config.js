@@ -12,7 +12,7 @@ export default {
     'src/transients.js',
     'src/repos.js',
     'src/validates.js',
-    'src/draw.js'
+    'src/svg.js'
   ],
   output: {
     dir: 'public/assets/vendor/atomic',
@@ -50,7 +50,7 @@ export default {
     "atomic/transients",
     "atomic/repos",
     "atomic/validates",
-    "atomic/draw",
+    "atomic/svg",
     "atomic/dom"
   ],
   plugins: [
