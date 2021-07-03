@@ -1,4 +1,4 @@
-import {does, identity, constructs, branch} from "../../core.js";
+import {does, identity, constructs, branch, overload} from "../../core.js";
 import {implement} from "../protocol.js";
 import {IMergable, IBlankable, ICompactible, IComparable, IOmissible, IMatchable, INext, ICollection, IEquiv, IMapEntry, IReduce, IKVReduce, ISeqable, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, IFn, IMap, ISeq, ICoerceable, IClonable, IInclusive, ITemplate} from "../../protocols.js";
 import {reduced} from "../reduced.js";
@@ -39,11 +39,19 @@ function blank(self){
   return keys(self).length === 0;
 }
 
-function compact(self){
+function compact1(self){
+  return compact2(self, function([_, value]){
+    return value == null;
+  });
+}
+
+function compact2(self, pred){
   return IKVReduce.reducekv(self, function(memo, key, value){
-    return value == null ? memo : IAssociative.assoc(memo, key, value);
+    return pred([key, value]) ? memo : IAssociative.assoc(memo, key, value);
   }, {});
 }
+
+const compact = overload(null, compact1, compact2);
 
 function matches(self, template){
   return IKVReduce.reducekv(template, function(memo, key, value){
@@ -52,8 +60,7 @@ function matches(self, template){
 }
 
 function omit(self, entry){
-  const key = IMapEntry.key(entry),
-        val = IMapEntry.val(entry);
+  const key = IMapEntry.key(entry);
   if (includes(self, entry)) {
     const result = clone(self);
     delete result[key];

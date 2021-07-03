@@ -10,7 +10,13 @@ import {emptyList} from "../empty-list/construct.js";
 import iemptylist from "../empty-list/behave.js";
 import Symbol from "symbol";
 
-const compact = partial(filter, identity);
+const compact1 = partial(filter, identity);
+
+function compact2(self, pred){
+  return remove(pred, self);
+}
+
+const compact = overload(null, compact1, compact2);
 
 function fmap(self, f){
   return map(f, self);
