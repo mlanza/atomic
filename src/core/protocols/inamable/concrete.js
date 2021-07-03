@@ -19,9 +19,6 @@ export function type(self){
   return self == null ? Nil : self.constructor;
 }
 
-//tool for overcoming cross-frame type checking
-// see: https://github.com/mrdoob/three.js/issues/5886
-// see: http://perfectionkills.com/instanceof-considered-harmful-or-how-to-write-a-robust-isarray/
 const what1 = post(comp(name, type), isSymbol);
 
 //e.g. what([], Array) === true
