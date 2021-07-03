@@ -26,7 +26,6 @@ export * from "./types/associative-subset.js";
 export * from "./types/period.js";
 export * from "./types/promise.js";
 export * from "./types/protocol.js";
-export * from "./types/protocol-lookup-error.js";
 export * from "./types/range.js";
 export * from "./types/record.js";
 export * from "./types/recurrence.js";
