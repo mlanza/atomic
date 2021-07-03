@@ -1,5 +1,4 @@
 import {overload, does} from "../../core.js";
-import {protocolLookupError} from "../protocol-lookup-error/construct.js";
 import {Nil} from "../nil/construct.js";
 import Symbol from "symbol";
 import Map from "map";
@@ -31,7 +30,7 @@ Protocol.prototype.dispatch = function(method){
   return function(self, ...args){
     const f = satisfies2.call(protocol, method, self);
     if (!f) {
-      throw protocolLookupError(protocol, method, self, args);
+      throw new ProtocolLookupError(protocol, method, self, args);
     }
     return f.apply(null, [self].concat(args));
   }
@@ -149,4 +148,16 @@ export function packs(...args){ //same api as `does` but promotes sharing behavi
     }
   }
   return Object.assign(does.apply(this, fs), {behaves});
+}
+
+export function ProtocolLookupError(protocol, method, subject, args) {
+  this.protocol = protocol;
+  this.method = method;
+  this.subject = subject;
+  this.args = args;
+}
+
+ProtocolLookupError.prototype = new Error();
+ProtocolLookupError.prototype.toString = function(){
+  return `Protocol lookup for ${this.method} failed.`;
 }
