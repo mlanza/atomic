@@ -20,10 +20,6 @@ export function invokes(self, method, ...args){
   return self[method].apply(self, args);
 }
 
-export function type(self){
-  return self == null ? null : self.constructor;
-}
-
 export function overload(){
   const fs = arguments, fallback = fs[fs.length - 1];
   return function(){
