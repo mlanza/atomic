@@ -19,13 +19,13 @@ import {behaviors} from "./behaviors.js";
 export * from "./behaviors.js";
 export const behave = behaves(behaviors, ?);
 
-export function ready(document, callback) {
+export const ready = passDocumentDefault(function ready(document, callback) {
   if (document.readyState !== 'loading') {
     callback();
   } else {
     document.addEventListener("DOMContentLoaded", callback);
   }
-}
+});
 
 function attr2(self, key){
   if (isString(key)) {

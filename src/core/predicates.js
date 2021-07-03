@@ -1,4 +1,4 @@
-import {overload, constantly, identity, type, branch, slice} from "./core.js";
+import {overload, constantly, identity, branch, slice} from "./core.js";
 import {IReduce, IKVReduce, ICounted, IComparable, IEquiv} from "./protocols.js";
 import {reduced} from "./types/reduced.js";
 import {comp, partial, apply} from "./types/function/concrete.js";

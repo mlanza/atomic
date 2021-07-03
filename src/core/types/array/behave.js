@@ -10,6 +10,8 @@ import {concat} from "../concatenated/construct.js";
 import {revSeq} from "../rev-seq.js";
 import {filter, mapa} from "../lazy-seq.js";
 import {emptyArray} from "./construct.js";
+import {naming} from "../../protocols/inamable/concrete.js";
+import Symbol from "symbol";
 
 const clone = Array.from;
 
@@ -197,6 +199,7 @@ export const iindexed = does(
   implement(ICounted, {count: length}));
 
 export default does(
+  naming(?, Symbol("Array")),
   iindexed,
   implement(IEquiv, iemptylist),
   implement(ISequential),
