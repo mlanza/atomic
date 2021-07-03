@@ -40,6 +40,7 @@ export default {
     "atomic/transducers",
     "atomic/transients",
     "atomic/validates",
+    "atomic/html",
     "atomic/svg",
     "atomic/dom"
   ]

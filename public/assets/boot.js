@@ -125,7 +125,7 @@ define('jquery', ["vendor/jquery"], function(){
       return core.impart(tgt, core.partly);
     }));
   }
-})(["atomic/core", "atomic/dom", "atomic/immutables", "atomic/reactives", "atomic/repos", "atomic/transducers", "atomic/transients", "atomic/validates", "atomic/svg"]);
+})(["atomic/core", "atomic/dom", "atomic/immutables", "atomic/reactives", "atomic/repos", "atomic/transducers", "atomic/transients", "atomic/validates", "atomic/html", "atomic/svg"]);
 define('cmd/imports', function(){
   return {
     "_": "atomic/core",
@@ -135,6 +135,7 @@ define('cmd/imports', function(){
     "t": "atomic/transducers",
     "mut": "atomic/transients",
     "vd": "atomic/validates",
+    "html": "atomic/html",
     "svg": "atomic/svg",
     "repos": "atomic/repos"
   }
