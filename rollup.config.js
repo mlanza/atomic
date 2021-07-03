@@ -12,6 +12,7 @@ export default {
     'src/transients.js',
     'src/repos.js',
     'src/validates.js',
+    'src/html.js',
     'src/svg.js'
   ],
   output: {
@@ -50,6 +51,7 @@ export default {
     "atomic/transients",
     "atomic/repos",
     "atomic/validates",
+    "atomic/html",
     "atomic/svg",
     "atomic/dom"
   ],
