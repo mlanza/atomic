@@ -1,4 +1,4 @@
-import {behaves, constantly, pre, handle, factory, called, identity, isString, apply, noop, slice, partial, replace, concat, template, key, val, join, merge, filter, map, remove, isObject, specify, implement, doto, get, str, includes, overload, fmap, each, eachkv, obj, IReduce, first, matches, Nil, ICoerceable, extend, doing} from "atomic/core";
+import {behaves, constantly, pre, handle, factory, called, identity, isString, apply, noop, slice, partial, replace, concat, template, key, val, join, merge, filter, map, remove, isObject, specify, implement, doto, get, str, includes, overload, fmap, each, eachkv, obj, IReduce, first, matches, Nil, ICoerceable, extend, doing, reduce} from "atomic/core";
 import {element} from "./types/element/construct.js";
 import {mounts} from "./protocols/imountable/concrete.js";
 import {InvalidHostElementError} from "./types/invalid-host-element-error.js";
@@ -141,11 +141,26 @@ export const markup = obj(function(name, ...contents){
   return join("", concat(["<" + name + " " + join(" ", attrs) + ">"], content, "</" + name + ">"));
 }, Infinity);
 
-export function tags(document){
-  return factory(partial(element, document));
+function tags0(){
+  return tags1(element(document));
 }
 
-export const tag = tags(document);
+const tags1 = factory;
+
+function tags2(engine, keys){
+  return tags3(engine, identity, keys);
+}
+
+function tags3(engine, f, keys){
+  const tag = tags1(engine);
+  return reduce(function(memo, key){
+    memo[key] = f(tag(key));
+    return memo;
+  }, {}, keys);
+}
+
+export const tags = overload(tags0, tags1, tags2, tags3);
+export const tag = tags();
 
 export const checkbox = passDocumentDefault(function checkbox(document, ...args){
   const el = element(document, 'input', {type: "checkbox"}, ...args);
@@ -161,7 +176,7 @@ export const checkbox = passDocumentDefault(function checkbox(document, ...args)
 });
 
 export const select = passDocumentDefault(function select(document, options, ...args){
-  const tag = tags(document),
+  const tag = tags(element(document)),
     select = tag('select'),
     option = tag('option'),
     el = select(...args);

@@ -1,28 +1,13 @@
 import {factory} from "atomic/core";
-import {elementns, embeds} from "atomic/dom";
+import {elementns, embeds, tags} from "atomic/dom";
+import {document} from "dom";
 
-const ns = elementns(document, "http://www.w3.org/2000/svg");
-const tag = factory(ns);
-
-export const svg = tag("svg");
-export const g = tag("g");
-export const symbol = tag("symbol");
+export const ns = elementns(document, "http://www.w3.org/2000/svg");
+export const svgTags = ["svg", "g", "symbol", "defs", "clipPath", "metadata", "path", "line", "circle", "rect", "ellipse", "polygon", "polyline", "image", "text", "tspan"];
+export const {svg, g, symbol, defs, clipPath, metadata, path, line, circle, rect, ellipse, polygon, polyline, image, text, tspan} = tags(ns, svgTags);
 export function use(link, ...contents){
   const el = ns("use");
   el.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', link);
   embeds(el, ...contents);
   return el;
 }
-export const defs = tag("defs");
-export const clipPath = tag("clipPath");
-export const metadata = tag("metadata");
-export const path = tag("path");
-export const line = tag("line");
-export const circle = tag("circle");
-export const rect = tag("rect");
-export const ellipse = tag("ellipse");
-export const polygon = tag("polygon");
-export const polyline = tag("polyline");
-export const image = tag("image");
-export const text = tag("text");
-export const tspan = tag("tspan");
