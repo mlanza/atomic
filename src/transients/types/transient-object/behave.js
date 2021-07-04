@@ -1,30 +1,28 @@
-import {does, overload, doto, forward} from "atomic/core";
-import {implement} from "atomic/core";
+import * as _ from "atomic/core";
 import {transientObject} from "./construct.js";
-import {ICoerceable, IEquiv, IFn, IComparable, IMatchable, IFunctor, ILookup, IAssociative, IFind, IMapEntry, ISeq, INext, ISeqable, ICounted, IInclusive, IEmptyableCollection, IMap, IReduce, IKVReduce, IClonable, ISequential, ICollection} from "atomic/core";
 import {IPersistent, ITransientOmissible, ITransientAssociative, ITransientEmptyableCollection, ITransientCollection, ITransientMap} from "../../protocols.js";
 
 function omit(self, entry){
-  const key = IMapEntry.key(entry);
-  if (includes(self, entry)) {
+  const key = _.key(entry);
+  if (_.includes(self, entry)) {
     delete self.obj[key];
   }
 }
 
 function conj(self, entry){
-  const key = IMapEntry.key(entry),
-        val = IMapEntry.val(entry);
+  const key = _.key(entry),
+        val = _.val(entry);
   self.obj[key] = val;
 }
 
 function dissoc(self, key){
-  if (contains(self, key)) {
+  if (_.contains(self, key)) {
     delete self.obj[key];
   }
 }
 
 function assoc(self, key, value){
-  if (!contains(self, key) || !IEquiv.equiv(lookup(self, key), value)) {
+  if (!_.contains(self, key) || !_.equiv(_.lookup(self, key), value)) {
     self.obj[key] = value;
   }
 }
@@ -34,11 +32,11 @@ function clone(self){
 }
 
 function compare(a, b){
-  return IComparable.compare(a.obj, b == null ? null : b.obj);
+  return _.compare(a.obj, b == null ? null : b.obj);
 }
 
 function equiv(a, b){
-  return IEquiv.equiv(a.obj, b == null ? null : b.obj);
+  return _.equiv(a.obj, b == null ? null : b.obj);
 }
 
 function toObject(self){
@@ -55,15 +53,15 @@ function persistent(self){
   return obj;
 }
 
-export default does(
-  forward("obj", IMap, IMatchable, IFind, IInclusive, ILookup, ISeq, INext, IAssociative, ISeqable, ICounted, IReduce, IKVReduce, ICoerceable),
-  implement(IPersistent, {persistent}),
-  implement(ITransientCollection, {conj}),
-  implement(IComparable, {compare}),
-  implement(ITransientEmptyableCollection, {empty}),
-  implement(ICoerceable, {toObject}),
-  implement(IFn, {invoke: ILookup.lookup}),
-  implement(IClonable, {clone}),
-  implement(ITransientAssociative, {assoc}),
-  implement(IEquiv, {equiv}),
-  implement(ITransientMap, {dissoc}));
+export default _.does(
+  _.forward("obj", _.IMap, _.IMatchable, _.IFind, _.IInclusive, _.ILookup, _.ISeq, _.INext, _.IAssociative, _.ISeqable, _.ICounted, _.IReduce, _.IKVReduce, _.ICoerceable),
+  _.implement(_.IComparable, {compare}),
+  _.implement(_.ICoerceable, {toObject}),
+  _.implement(_.IFn, {invoke: _.lookup}),
+  _.implement(_.IClonable, {clone}),
+  _.implement(_.IEquiv, {equiv}),
+  _.implement(IPersistent, {persistent}),
+  _.implement(ITransientCollection, {conj}),
+  _.implement(ITransientEmptyableCollection, {empty}),
+  _.implement(ITransientAssociative, {assoc}),
+  _.implement(ITransientMap, {dissoc}));

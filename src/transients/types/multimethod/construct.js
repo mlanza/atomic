@@ -1,4 +1,4 @@
-import {IFn, doto, partial, specify, overload} from "atomic/core";
+import * as _ from "atomic/core";
 import {ITransientCollection} from "../../protocols.js";
 
 function surrogate(f, substitute){
@@ -15,8 +15,8 @@ export function Multimethod(methods, fallback){
 
 export function multimethod(fallback){
   const instance = new Multimethod([], fallback),
-        fn = partial(IFn.invoke, instance),
+        fn = _.partial(_.invoke, instance),
         conj = surrogate(ITransientCollection.conj, instance);
-  return doto(fn,
-    specify(ITransientCollection, {conj}));
+  return _.doto(fn,
+    _.specify(ITransientCollection, {conj}));
 }

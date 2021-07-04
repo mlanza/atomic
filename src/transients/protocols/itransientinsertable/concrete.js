@@ -1,5 +1,5 @@
+import * as _ from "atomic/core";
 import {ITransientInsertable} from "./instance.js";
-import {overload, noop} from "atomic/core";
 
 function afterN(self, ...els) {
   let ref = self;
@@ -10,7 +10,7 @@ function afterN(self, ...els) {
   }
 }
 
-export const after = overload(null, noop, ITransientInsertable.after, afterN);
+export const after = _.overload(null, _.noop, ITransientInsertable.after, afterN);
 
 function beforeN(self, ...els) {
   let ref = self;
@@ -21,4 +21,4 @@ function beforeN(self, ...els) {
   }
 }
 
-export const before = overload(null, noop, ITransientInsertable.before, beforeN);
+export const before = _.overload(null, _.noop, ITransientInsertable.before, beforeN);

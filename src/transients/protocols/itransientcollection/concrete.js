@@ -1,4 +1,4 @@
+import * as _ from "atomic/core";
 import {ITransientCollection} from "./instance.js";
-import {noop, overload, doing} from "atomic/core";
-export const conj = overload(null, noop, ITransientCollection.conj, doing(ITransientCollection.conj));
-export const unconj = overload(null, noop, ITransientCollection.unconj, doing(ITransientCollection.unconj));
+export const conj = _.overload(null, _.noop, ITransientCollection.conj, _.doing(ITransientCollection.conj));
+export const unconj = _.overload(null, _.noop, ITransientCollection.unconj, _.doing(ITransientCollection.unconj));

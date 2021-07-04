@@ -1,19 +1,19 @@
+import * as _ from "atomic/core";
 export * from "./protocols.js";
 export * from "./protocols/concrete.js";
 export * from "./types.js";
 import {IPersistent, ITransient} from "./protocols.js";
 import {transientObject, transientArray, transientSet} from "./types.js";
-import {each, doto, clone, implement} from "atomic/core";
 import Set from "set";
 
 function toTransient(Type, construct){
 
   function transient(self){
-    return construct(clone(self));
+    return construct(_.clone(self));
   }
 
-  doto(Type,
-    implement(ITransient, {transient}))
+  _.doto(Type,
+    _.implement(ITransient, {transient}))
 
 }
 

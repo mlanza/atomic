@@ -1,3 +1,3 @@
+import * as _ from "atomic/core";
 import {ITransientAppendable} from "./instance.js";
-import {overload, noop, doing} from "atomic/core";
-export const append = overload(null, noop, ITransientAppendable.append, doing(ITransientAppendable.append));
+export const append = _.overload(null, _.noop, ITransientAppendable.append, _.doing(ITransientAppendable.append));

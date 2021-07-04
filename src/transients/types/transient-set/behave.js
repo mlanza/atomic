@@ -1,4 +1,4 @@
-import {does, identity, implement, overload, assoc, cons, filter, lazyIterable, emptyList, apply, unreduced, ICoerceable, ISeq, IReduce, ISeqable, ISet, INext, ISequential, ICounted, ICollection, IEmptyableCollection, IInclusive, IClonable} from "atomic/core";
+import * as _ from "atomic/core";
 import {emptyTransientSet, transientSet} from "./construct.js";
 import {IPersistent, ITransientSet, ITransientEmptyableCollection, ITransientCollection} from "../../protocols.js";
 
@@ -29,13 +29,13 @@ function first(self){
 function rest(self){
   const iter = self.values();
   iter.next();
-  return lazyIterable(iter);
+  return _.lazyIterable(iter);
 }
 
 function next(self){
   const iter = self.values();
   iter.next();
-  return lazyIterable(iter, null);
+  return _.lazyIterable(iter, null);
 }
 
 function count(self){
@@ -55,19 +55,19 @@ function reduce(self, xf, init){
     memo = xf(memo, first(coll));
     coll = next(coll);
   }
-  return unreduced(memo);
+  return _.unreduced(memo);
 }
 
-export default does(
-  implement(ISequential),
-  implement(ITransientCollection, {conj}),
-  implement(ITransientSet, {disj}), //TODO unite
-  implement(IReduce, {reduce}),
-  implement(ICoerceable, {toArray}),
-  implement(ISeqable, {seq}),
-  implement(IInclusive, {includes}),
-  implement(IClonable, {clone}),
-  implement(ITransientEmptyableCollection, {empty}),
-  implement(ICounted, {count}),
-  implement(INext, {next}),
-  implement(ISeq, {first, rest}))
+export default _.does(
+  _.implement(_.ISequential),
+  _.implement(_.IReduce, {reduce}),
+  _.implement(_.ICoerceable, {toArray}),
+  _.implement(_.ISeqable, {seq}),
+  _.implement(_.IInclusive, {includes}),
+  _.implement(_.IClonable, {clone}),
+  _.implement(_.ICounted, {count}),
+  _.implement(_.INext, {next}),
+  _.implement(_.ISeq, {first, rest}),
+  _.implement(ITransientEmptyableCollection, {empty}),
+  _.implement(ITransientCollection, {conj}),
+  _.implement(ITransientSet, {disj})); //TODO unite

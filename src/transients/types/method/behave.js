@@ -1,13 +1,13 @@
-import {does, implement, apply, IFn, IMatchable} from "atomic/core";
+import * as _ from "atomic/core";
 
 function invoke(self, args){
-  return apply(self.f, args);
+  return _.apply(self.f, args);
 }
 
 function matches(self, args){
-  return apply(self.pred, args);
+  return _.apply(self.pred, args);
 }
 
-export default does(
-  implement(IMatchable, {matches}),
-  implement(IFn, {invoke}));
+export default _.does(
+  _.implement(_.IMatchable, {matches}),
+  _.implement(_.IFn, {invoke}));
