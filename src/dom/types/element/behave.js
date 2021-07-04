@@ -52,7 +52,6 @@ import {
   ICounted,
   ILookup,
   IReduce,
-  IEmptyableCollection,
   IHierarchy
 } from "atomic/core";
 import {

@@ -1,6 +1,6 @@
 import {does, kin} from "../../core.js";
 import {implement} from "../protocol.js";
-import {ICoerceable, IInverse, IAddable, ISequential, ICollection, IComparable, INext, IEquiv, IReduce, IKVReduce, ISeqable, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, ISeq, IInclusive, IIndexed} from "../../protocols.js";
+import {ICoerceable, IInverse, IAddable, ISequential, ICollection, IComparable, INext, IEquiv, IReduce, IKVReduce, ISeqable, IFind, ICounted, IAssociative, ILookup, ISeq, IInclusive, IIndexed} from "../../protocols.js";
 import {unreduced, isReduced} from "../reduced.js";
 import {drop} from "../lazy-seq.js";
 import {iterable} from "../lazy-seq/behave.js";

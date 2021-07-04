@@ -1,25 +1,15 @@
-import {
-  serieslike as behave,
-  does,
-  implement,
-  satisfies,
-  mapcat,
-  IFunctor,
-  ISeq,
-  INext,
-  ISequential
-} from "atomic/core";
+import * as _ from "atomic/core";
 import {members, emptyMembers} from "./construct.js";
 
 function fmap(self, f){
-  return members(mapcat(function(item){
+  return members(_.mapcat(function(item){
     const result = f(item);
-    return satisfies(ISequential, result) ? result : [result];
+    return _.satisfies(_.ISequential, result) ? result : [result];
   }, self.items));
 }
 
 function first(self){
-  return ISeq.first(self.items);
+  return _.first(self.items);
 }
 
 function rest(self){
@@ -28,12 +18,12 @@ function rest(self){
 }
 
 function next(self){
-  const result = INext.next(self.items);
+  const result = _.next(self.items);
   return result ? members(result) : null;
 }
 
-export default does(
-  behave,
-  implement(INext, {next}),
-  implement(ISeq, {first, rest}),
-  implement(IFunctor, {fmap}));
+export default _.does(
+  _.serieslike,
+  _.implement(_.INext, {next}),
+  _.implement(_.ISeq, {first, rest}),
+  _.implement(_.IFunctor, {fmap}));

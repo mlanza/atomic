@@ -1,35 +1,9 @@
-import {
-  does,
-  identity,
-  iterable,
-  implement,
-  unreduced,
-  union,
-  ICoerceable,
-  ISeq,
-  IEquiv,
-  IReduce,
-  ISeqable,
-  ISet,
-  INext,
-  ISequential,
-  ICounted,
-  ICollection,
-  IAssociative,
-  IEmptyableCollection,
-  IMergable,
-  IInclusive,
-  IClonable
-} from "atomic/core";
-import {
-  ITransient,
-  transientSet
-} from "atomic/transients";
-
+import * as _ from "atomic/core";
+import * as mut from "atomic/transients";
 import {emptySet} from "./construct.js";
 
 function transient(self){
-  return transientSet(toArray(self));
+  return mut.transientSet(toArray(self));
 }
 
 function seq(self){
@@ -72,12 +46,12 @@ function count(self){
 
 function reduce(self, xf, init){
   let memo = init;
-  let coll = seq(self);
+  let coll = _.seq(self);
   while(coll){
-    memo = xf(memo, first(coll));
-    coll = next(coll);
+    memo = xf(memo, _.first(coll));
+    coll = _.next(coll);
   }
-  return unreduced(memo);
+  return _.unreduced(memo);
 }
 
 function merge(self, other){
@@ -85,24 +59,24 @@ function merge(self, other){
 }
 
 function equiv(self, other){
-  return ICounted.count(union(self, other)) === ICounted.count(self);
+  return _.count(_.union(self, other)) === count(self);
 }
 
-export default does(
-  iterable,
-  implement(ISequential),
-  implement(IEquiv, {equiv: equiv}),
-  implement(IAssociative, {contains: includes}),
-  implement(IMergable, {merge}),
-  implement(ITransient, {transient}),
-  implement(IReduce, {reduce}),
-  implement(ICoerceable, {toArray}),
-  implement(ISeqable, {seq}),
-  implement(IInclusive, {includes}),
-  implement(ISet, {disj, unite: conj}),
-  implement(IClonable, {clone: identity}),
-  implement(IEmptyableCollection, {empty: emptySet}),
-  implement(ICollection, {conj}),
-  implement(ICounted, {count}),
-  implement(INext, {next}),
-  implement(ISeq, {first, rest}))
+export default _.does(
+  _.iterable,
+  _.implement(_.ISequential),
+  _.implement(_.IEquiv, {equiv: equiv}),
+  _.implement(_.IAssociative, {contains: includes}),
+  _.implement(_.IMergable, {merge}),
+  _.implement(mut.ITransient, {transient}),
+  _.implement(_.IReduce, {reduce}),
+  _.implement(_.ICoerceable, {toArray}),
+  _.implement(_.ISeqable, {seq}),
+  _.implement(_.IInclusive, {includes}),
+  _.implement(_.ISet, {disj, unite: conj}),
+  _.implement(_.IClonable, {clone: _.identity}),
+  _.implement(_.IEmptyableCollection, {empty: emptySet}),
+  _.implement(_.ICollection, {conj}),
+  _.implement(_.ICounted, {count}),
+  _.implement(_.INext, {next}),
+  _.implement(_.ISeq, {first, rest}))
