@@ -1,12 +1,12 @@
-import {implement, get, blank, does, IAppendable} from "atomic/core";
+import * as _ from "atomic/core";
 import {ICheckable, IScope} from "../../protocols.js";
 import {issue, issues} from "../issue.js";
 import {and} from "../and/construct.js";
 import {optional} from "./construct.js";
 
 function check(self, obj){
-  const found = get(obj, self.key);
-  if (blank(found)) {
+  const found = _.get(obj, self.key);
+  if (_.blank(found)) {
     return null;
   } else {
     return issues(ICheckable.check(self.constraint, found), IScope.scope(?, self.key));
@@ -17,6 +17,6 @@ function append(self, constraint){
   return optional(self.key, and(self.constraint, constraint));
 }
 
-export default does(
-  implement(IAppendable, {append}),
-  implement(ICheckable, {check}));
+export default _.does(
+  _.implement(_.IAppendable, {append}),
+  _.implement(ICheckable, {check}));

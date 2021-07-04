@@ -1,4 +1,4 @@
-import {implement, does} from "atomic/core";
+import * as _ from "atomic/core";
 import {ICheckable} from "../../protocols.js";
 import {issue} from "../issue.js";
 
@@ -10,5 +10,5 @@ function check(self, obj){
   }
 }
 
-export default does(
-  implement(ICheckable, {check}));
+export default _.does(
+  _.implement(ICheckable, {check}));
