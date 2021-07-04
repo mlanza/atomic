@@ -1,4 +1,4 @@
-import {does, identity, implement, iterable, unreduced, IEquiv, IInclusive, ILookup, IAssociative, IReduce, IMergable, ICoerceable, IEmptyableCollection, ICounted, ISeqable, ISeq, INext, ICollection, IClonable} from "atomic/core";
+import * as _ from "atomic/core";
 
 function equiv(self, other){
   return self.equals(other);
@@ -33,7 +33,7 @@ function rest(self){
 }
 
 function next(self){
-  return ISeqable.seq(ISeq.rest(self));
+  return _.seq(rest(self));
 }
 
 function empty(self){
@@ -54,31 +54,31 @@ function toArray(self){
 
 function reduce(self, xf, init){
   let memo = init;
-  let coll = seq(self);
+  let coll = _.seq(self);
   while(coll){
-    memo = xf(memo, first(coll));
-    coll = next(coll);
+    memo = xf(memo, _.first(coll));
+    coll = _.next(coll);
   }
-  return unreduced(memo);
+  return _.unreduced(memo);
 }
 
 function merge(self, other){
-  return reduce(other, _.conj, self);
+  return _.reduce(_.conj, self, other);
 }
 
-export default does(
-  iterable,
-  implement(IEquiv, {equiv}),
-  implement(IInclusive, {includes}),
-  implement(IAssociative, {assoc, contains}),
-  implement(ILookup, {lookup}),
-  implement(IReduce, {reduce}),
-  implement(INext, {next}),
-  implement(ICoerceable, {toArray}),
-  implement(IMergable, {merge}),
-  implement(IEmptyableCollection, {empty}),
-  implement(IClonable, {clone: identity}),
-  implement(ISeqable, {seq}),
-  implement(ICounted, {count}),
-  implement(ICollection, {conj}),
-  implement(ISeq, {first, rest}));
+export default _.does(
+  _.iterable,
+  _.implement(_.IEquiv, {equiv}),
+  _.implement(_.IInclusive, {includes}),
+  _.implement(_.IAssociative, {assoc, contains}),
+  _.implement(_.ILookup, {lookup}),
+  _.implement(_.IReduce, {reduce}),
+  _.implement(_.INext, {next}),
+  _.implement(_.ICoerceable, {toArray}),
+  _.implement(_.IMergable, {merge}),
+  _.implement(_.IEmptyableCollection, {empty}),
+  _.implement(_.IClonable, {clone: _.identity}),
+  _.implement(_.ISeqable, {seq}),
+  _.implement(_.ICounted, {count}),
+  _.implement(_.ICollection, {conj}),
+  _.implement(_.ISeq, {first, rest}));

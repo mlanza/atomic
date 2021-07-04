@@ -1,9 +1,9 @@
+import * as _ from "atomic/core";
 import {OrderedSet} from "immutable";
-import {ICoerceable} from "atomic/core";
 export {OrderedSet} from "immutable";
 
 export function orderedSet(coll){
-  return coll instanceof OrderedSet ? coll : new OrderedSet(ICoerceable.toArray(coll));
+  return coll instanceof OrderedSet ? coll : new OrderedSet(_.toArray(coll));
 }
 
 export function emptyOrderedSet(){

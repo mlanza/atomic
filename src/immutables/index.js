@@ -1,11 +1,10 @@
-import {doto, overload, implement, generate, positives, weakMap, toArray, constantly, reduce, str, map, each, assoc, get, contains, keys, sort, IEquiv, ICounted, IMap} from "atomic/core";
-import {GUID, AssociativeSubset, Concatenated, EmptyList, List, Indexed, IndexedSeq, Nil} from "atomic/core";
-import {IPersistent, TransientSet} from "atomic/transients";
+import * as _ from "atomic/core";
+import * as mut from "atomic/transients";
+import * as imm from "immutable";
 import {set} from "./types/set/construct.js";
 import {map as _map} from "./types/map/construct.js";
 import {IHash} from "./protocols/ihash/instance.js";
 import Symbol from "symbol";
-import * as imm from "immutable";
 
 export * from "./types.js";
 export * from "./protocols.js";
@@ -16,8 +15,8 @@ function memoize2(f, hash){
   return function(self){
     const cache  = self[c] || _map(),
           key    = hash.apply(self, arguments),
-          result = contains(cache, key) ? get(cache, key) : f.apply(self, arguments);
-    self[c] = assoc(cache, key, result);
+          result = _.contains(cache, key) ? _.get(cache, key) : f.apply(self, arguments);
+    self[c] = _.assoc(cache, key, result);
     return result;
   }
 }
@@ -28,16 +27,16 @@ function memoize1(f){
   });
 }
 
-export const memoize = overload(null, memoize1, memoize2);
+export const memoize = _.overload(null, memoize1, memoize2);
 
 (function(){
 
   function persistent(self){
-    return set(toArray(self));
+    return set(_.toArray(self));
   }
 
-  doto(TransientSet,
-    implement(IPersistent, {persistent}));
+  _.doto(mut.TransientSet,
+    _.implement(mut.IPersistent, {persistent}));
 
 })();
 
@@ -56,7 +55,7 @@ function hashCode(){
 }
 
 function equals(other){
-  return IEquiv.equiv(this, other);
+  return _.equiv(this, other);
 }
 
 function addProp(obj, key, value){
@@ -86,17 +85,17 @@ export function hashable(){
     }
     return hashing(content);
   }
-  return implement(IHash, {hash});
+  return _.implement(IHash, {hash});
 }
 
 export function hashed(hs){
-  return reduce(function(h1, h2){
+  return _.reduce(function(h1, h2){
     return 3 * h1 + h2;
   }, 0, hs);
 }
 
 export function hashing(os){
-  return hashed(map(IHash.hash, os));
+  return hashed(_.map(IHash.hash, os));
 }
 
 (function(){
@@ -105,29 +104,29 @@ export function hashing(os){
     return self.valueOf();
   }
 
-  each(implement(IHash, {hash}),
+  _.each(_.implement(IHash, {hash}),
     [Date]);
 
 })();
 
 (function(){
 
-  each(implement(IHash, {hash: hashing}),
-    [Array, Concatenated, List, EmptyList]);
+  _.each(_.implement(IHash, {hash: hashing}),
+    [Array, _.Concatenated, _.List, _.EmptyList]);
 
 })();
 
 (function(){
 
-  each(implement(IHash, {hash: constantly(imm.hash(null))}),
-    [Nil]);
+  _.each(_.implement(IHash, {hash: _.constantly(imm.hash(null))}),
+    [_.Nil]);
 
 })();
 
 (function(){
 
-  const seed = generate(positives);
-  const uniques = weakMap();
+  const seed = _.generate(_.positives);
+  const uniques = _.weakMap();
 
   function hash(self){
     if (!uniques.has(self)) {
@@ -136,7 +135,7 @@ export function hashing(os){
     return uniques.get(self);
   }
 
-  each(implement(IHash, {hash}),
+  _.each(_.implement(IHash, {hash}),
     [Function]);
 
 })();
@@ -144,19 +143,19 @@ export function hashing(os){
 (function(){
 
   function hash(self){
-    return reduce(function(memo, key){
-      return hashing([memo, key, get(self, key)]);
-    }, 0, sort(keys(self)));
+    return _.reduce(function(memo, key){
+      return hashing([memo, key, _.get(self, key)]);
+    }, 0, _.sort(_.keys(self)));
   }
 
-  each(implement(IHash, {hash}),
-    [Object, AssociativeSubset, Indexed, IndexedSeq]);
+  _.each(_.implement(IHash, {hash}),
+    [Object, _.AssociativeSubset, _.Indexed, _.IndexedSeq]);
 
 })();
 
 (function(){
 
-  each(implement(IHash, {hash: imm.hash}),
+  _.each(_.implement(IHash, {hash: imm.hash}),
     [String, Number, Boolean]);
 
 })();
@@ -167,7 +166,7 @@ export function hashing(os){
     return IHash.hash(self.id);
   }
 
-  doto(GUID,
-    implement(IHash, {hash}));
+  _.doto(_.GUID,
+    _.implement(IHash, {hash}));
 
 })();

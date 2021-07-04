@@ -1,4 +1,4 @@
-import {does, identity, implement, iterable, lazyIterable, ISeq, ISeqable, INext, IReduce, IMergable, ICoerceable, IKVReduce, IMap, ICounted, IAssociative, ILookup, IClonable} from "atomic/core";
+import * as _ from "atomic/core";
 
 function assoc(self, key, value){
   return self.set(key, value);
@@ -17,11 +17,11 @@ function count(self){
 }
 
 function keys(self){
-  return lazyIterable(self.keys());
+  return _.lazyIterable(self.keys());
 }
 
 function vals(self){
-  return lazyIterable(self.values());
+  return _.lazyIterable(self.values());
 }
 
 function dissoc(self, key){
@@ -29,9 +29,9 @@ function dissoc(self, key){
 }
 
 function reducekv(self, xf, init){
-  return IReduce.reduce(keys(self), function(memo, key){
-    return xf(memo, key, lookup(self, key));
-  }, init);
+  return _.reduce(function(memo, key){
+    return xf(memo, key, _.lookup(self, key));
+  }, init, keys(self));
 }
 
 function toArray(self){
@@ -39,35 +39,35 @@ function toArray(self){
 }
 
 function merge(self, other){
-  return reducekv(other, _.assoc, self);
+  return _.reducekv(_.assoc, self, other);
 }
 
 function seq(self){
-  return self.size ? lazyIterable(self.entries()) : null;
+  return self.size ? _.lazyIterable(self.entries()) : null;
 }
 
 function first(self){
-  return ISeq.first(seq(self));
+  return _.first(seq(self));
 }
 
 function rest(self){
-  return ISeq.rest(ISeqable.seq(self));
+  return _.rest(seq(self));
 }
 
 function next(self){
-  return ISeqable.seq(ISeq.rest(self));
+  return _.seq(rest(self));
 }
 
-export default does(
-  iterable,
-  implement(IKVReduce, {reducekv}),
-  implement(ICoerceable, {toArray}),
-  implement(IMergable, {merge}),
-  implement(INext, {next}),
-  implement(ISeq, {first, rest}),
-  implement(ISeqable, {seq}),
-  implement(IMap, {keys, vals, dissoc}),
-  implement(IClonable, {clone: identity}),
-  implement(ICounted, {count}),
-  implement(ILookup, {lookup}),
-  implement(IAssociative, {assoc, contains}));
+export default _.does(
+  _.iterable,
+  _.implement(_.IKVReduce, {reducekv}),
+  _.implement(_.ICoerceable, {toArray}),
+  _.implement(_.IMergable, {merge}),
+  _.implement(_.INext, {next}),
+  _.implement(_.ISeq, {first, rest}),
+  _.implement(_.ISeqable, {seq}),
+  _.implement(_.IMap, {keys, vals, dissoc}),
+  _.implement(_.IClonable, {clone: _.identity}),
+  _.implement(_.ICounted, {count}),
+  _.implement(_.ILookup, {lookup}),
+  _.implement(_.IAssociative, {assoc, contains}));

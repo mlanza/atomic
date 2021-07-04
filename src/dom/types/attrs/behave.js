@@ -1,4 +1,4 @@
-import {does, implement, cons, IEmptyableCollection, ICoerceable, INext, ISeq, ISeqable, IMap, IAssociative, ILookup, ICounted, IInclusive} from "atomic/core";
+import {does, implement, cons, ICoerceable, INext, ISeq, ISeqable, IMap, IAssociative, ILookup, ICounted, IInclusive} from "atomic/core";
 import * as _ from "atomic/core";
 import {ITransientAssociative, ITransientEmptyableCollection, ITransientMap} from "atomic/transients";
 
