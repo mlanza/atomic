@@ -1,4 +1,4 @@
-import {protocol} from "atomic/core";
-export const IIntercept = protocol({
+import * as _ from "atomic/core";
+export const IIntercept = _.protocol({
   intercept: null
 });

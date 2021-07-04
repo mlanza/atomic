@@ -1,4 +1,4 @@
-import {protocol, identity} from "atomic/core";
-export const IAddress = protocol({
-  addr: identity
+import * as _ from "atomic/core";
+export const IAddress = _.protocol({
+  addr: _.identity
 });

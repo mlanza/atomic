@@ -1,5 +1,4 @@
 import * as _ from "atomic/core";
-import {ITemplate} from "atomic/core";
 import {IParams} from "../../protocols.js";
 
 function params(self, obj){
@@ -16,4 +15,4 @@ function fill(self, params){
 
 export default _.does(
   _.implement(IParams, {params}),
-  _.implement(ITemplate, {fill}));
+  _.implement(_.ITemplate, {fill}));
