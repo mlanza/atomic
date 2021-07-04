@@ -1,4 +1,4 @@
-import {mapa, test, first, doto, specify, includes, identity, implement, constantly, branch, juxt, count, filled, get, eq, gte, lte, maybe, spread, compact, apply, isNil, Nil, isNumber, isString, isDate, isFunction, isRegExp} from "atomic/core";
+import * as _ from "atomic/core";
 import {ICheckable, IExplains} from "./protocols.js";
 import {anno, map, scoped, issue, issuing, catches, pred, or, and, choice} from "./types.js";
 
@@ -14,48 +14,48 @@ export function toPred(constraint){
 }
 
 export function present(constraint){
-  return or(isNil, constraint);
+  return or(_.isNil, constraint);
 }
 
 export function atLeast(n){
   return anno({type: 'at-least', n},
-    map(count, pred(gte, null, n)));
+    map(_.count, pred(_.gte, null, n)));
 }
 
 export function atMost(n){
   return anno({type: 'at-most', n},
-    map(count, pred(lte, null, n)));
+    map(_.count, pred(_.lte, null, n)));
 }
 
 export function exactly(n){
   return anno({type: 'exactly', n},
-    map(count, pred(eq, null, n)));
+    map(_.count, pred(_.eq, null, n)));
 }
 
 export function between(min, max){
   return min == max ?
     anno({type: 'equal', value: min},
-      pred(eq, null, min)) :
+      pred(_.eq, null, min)) :
     anno({type: 'between', min, max},
       or(
-        anno({type: 'min', min}, pred(gte, null, min)),
-        anno({type: 'max', max}, pred(lte, null, max))));
+        anno({type: 'min', min}, pred(_.gte, null, min)),
+        anno({type: 'max', max}, pred(_.lte, null, max))));
 }
 
 export function keyed(keys){
-  return apply(juxt, mapa(function(key){
-    return get(?, key);
+  return _.apply(_.juxt, _.mapa(function(key){
+    return _.get(?, key);
   }, keys));
 }
 
 export function supplied(cond, keys){
-  return scoped(first(keys),
-    map(keyed(keys), spread(filled(cond, constantly(true)))));
+  return scoped(_.first(keys),
+    map(keyed(keys), _.spread(_.filled(cond, _.constantly(true)))));
 }
 
 export function range(start, end){
   return anno({type: 'range', start, end},
-    supplied(lte, [start, end]));
+    supplied(_.lte, [start, end]));
 }
 
 export const email =
@@ -76,10 +76,10 @@ export const zipCode =
 
 (function(){
 
-  const check = constantly(null);
+  const check = _.constantly(null);
 
-  doto(Nil,
-    implement(ICheckable, {check}));
+  _.doto(_.Nil,
+    _.implement(ICheckable, {check}));
 
 })();
 
@@ -89,20 +89,20 @@ export function datatype(Type, pred, type){
     return pred(value) ? null : [issue(Type)];
   }
 
-  const explain = constantly({type});
+  const explain = _.constantly({type});
 
-  doto(Type,
-    specify(IExplains, {explain}),
-    specify(ICheckable, {check}));
+  _.doto(Type,
+    _.specify(IExplains, {explain}),
+    _.specify(ICheckable, {check}));
 
 }
 
-datatype(Function, isFunction, "function");
-datatype(Number, isNumber, "number");
-datatype(Date, isDate, "date");
-datatype(String, isString, "string");
-datatype(RegExp, isRegExp, "regexp");
-datatype(Nil, isNil, "nil");
+datatype(Function, _.isFunction, "function");
+datatype(Number, _.isNumber, "number");
+datatype(Date, _.isDate, "date");
+datatype(String, _.isString, "string");
+datatype(RegExp, _.isRegExp, "regexp");
+datatype(_.Nil, _.isNil, "nil");
 
 (function(){
 
@@ -110,9 +110,9 @@ datatype(Nil, isNil, "nil");
     return self.test(value) ? null : [issue(self)];
   }
 
-  doto(RegExp,
-    implement(IExplains, {explain: constantly({type: "pattern"})}),
-    implement(ICheckable, {check}));
+  _.doto(RegExp,
+    _.implement(IExplains, {explain: _.constantly({type: "pattern"})}),
+    _.implement(ICheckable, {check}));
 
 })();
 
@@ -123,8 +123,8 @@ datatype(Nil, isNil, "nil");
     return issuing(self(value), issue(self));
   }
 
-  doto(Function,
-    implement(IExplains, {explain: constantly({type: "predicate"})}),
-    implement(ICheckable, {check}));
+  _.doto(Function,
+    _.implement(IExplains, {explain: _.constantly({type: "predicate"})}),
+    _.implement(ICheckable, {check}));
 
 })();

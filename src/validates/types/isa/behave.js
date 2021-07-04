@@ -1,15 +1,15 @@
-import {implement, does, some, is} from "atomic/core";
+import * as _ from "atomic/core";
 import {ICheckable, ISelection} from "../../protocols.js";
 import {issue} from "../issue.js";
 
 function check(self, obj){
-  return some(is(obj, ?), self.types) ? null : [issue(self)];
+  return _.some(_.is(obj, ?), self.types) ? null : [issue(self)];
 }
 
 function options(self){
   return self.types;
 }
 
-export default does(
-  implement(ISelection, {options}),
-  implement(ICheckable, {check}));
+export default _.does(
+  _.implement(ISelection, {options}),
+  _.implement(ICheckable, {check}));

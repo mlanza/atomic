@@ -1,4 +1,4 @@
-import {implement, does, isInteger, between, count, IBounds, IInclusive} from "atomic/core";
+import * as _ from "atomic/core";
 import {ICheckable} from "../../protocols.js";
 import {issue} from "../issue.js";
 
@@ -11,7 +11,7 @@ function end(self){
 }
 
 function includes(self, value){
-  return between(self, value);
+  return _.between(self, value);
 }
 
 function check(self, obj){
@@ -19,7 +19,7 @@ function check(self, obj){
   return (self.start != null && value <= self.start) || (self.end != null && value >= self.end) ? [issue(self)] : null;
 }
 
-export default does(
-  implement(ICheckable, {check}),
-  implement(IInclusive, {includes}),
-  implement(IBounds, {start, end}));
+export default _.does(
+  _.implement(ICheckable, {check}),
+  _.implement(_.IInclusive, {includes}),
+  _.implement(_.IBounds, {start, end}));

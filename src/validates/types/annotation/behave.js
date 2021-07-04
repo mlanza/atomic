@@ -1,4 +1,4 @@
-import {implement, does, IDeref, IAppendable} from "atomic/core";
+import * as _ from "atomic/core";
 import {ICheckable, IExplains} from "../../protocols.js";
 import {issue, issues} from "../issue.js";
 import {anno} from "./construct.js";
@@ -18,11 +18,11 @@ function check(self, value){
 }
 
 function append(self, constraint){
-  return anno(self.note, IAppendable.append(self.constraint, constraint));
+  return anno(self.note, _.append(self.constraint, constraint));
 }
 
-export default does(
-  implement(IDeref, {deref}),
-  implement(IExplains, {explain}),
-  implement(IAppendable, {append}),
-  implement(ICheckable, {check}));
+export default _.does(
+  _.implement(_.IDeref, {deref}),
+  _.implement(IExplains, {explain}),
+  _.implement(_.IAppendable, {append}),
+  _.implement(ICheckable, {check}));

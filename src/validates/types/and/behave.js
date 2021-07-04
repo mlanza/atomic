@@ -1,4 +1,4 @@
-import {implement, does, map, blot, compact, apply, ISeqable, INext, IEmptyableCollection, ISeq, IAppendable, ICollection} from "atomic/core";
+import * as _ from "atomic/core";
 import {ICheckable} from "../../protocols.js";
 import {and} from "./construct.js";
 import {issue, issues} from "../issue.js";
@@ -8,15 +8,15 @@ function check(self, value){
 }
 
 function conj(self, constraint){
-  return apply(and, ICollection.conj(self.constraints, constraint));
+  return _.apply(and, _.conj(self.constraints, constraint));
 }
 
 function first(self){
-  return ISeq.first(self.constraints);
+  return _.first(self.constraints);
 }
 
 function rest(self){
-  return ISeq.rest(self.constraints);
+  return _.rest(self.constraints);
 }
 
 function empty(self){
@@ -24,18 +24,18 @@ function empty(self){
 }
 
 function seq(self){
-  return ISeqable.seq(self.constraints) ? self : null;
+  return _.seq(self.constraints) ? self : null;
 }
 
 function next(self){
-  return seq(rest(self));
+  return _.seq(rest(self));
 }
 
-export default does(
-  implement(ISeqable, {seq}),
-  implement(INext, {next}),
-  implement(IEmptyableCollection, {empty}),
-  implement(ICollection, {conj}),
-  implement(ISeq, {first, rest}),
-  implement(IAppendable, {append: conj}),
-  implement(ICheckable, {check}));
+export default _.does(
+  _.implement(_.ISeqable, {seq}),
+  _.implement(_.INext, {next}),
+  _.implement(_.IEmptyableCollection, {empty}),
+  _.implement(_.ICollection, {conj}),
+  _.implement(_.ISeq, {first, rest}),
+  _.implement(_.IAppendable, {append: conj}),
+  _.implement(ICheckable, {check}));

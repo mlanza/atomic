@@ -30,7 +30,6 @@ import {
   comp,
   isObject,
   isString,
-  isNumber,
   trim,
   split,
   str,
