@@ -1,4 +1,3 @@
-import {overload, complement, called, clone, comp, rest, partial, isSome, reduced, seq, equiv, IReduce} from "atomic/core";
 import * as _ from "atomic/core";
 import Set from "set";
 
@@ -8,8 +7,8 @@ export function identity(){
 
 export function first(){
   return function(xf){
-    return overload(xf, xf, function(memo, value){
-      return reduced(xf(xf(memo, value)));
+    return _.overload(xf, xf, function(memo, value){
+      return _.reduced(xf(xf(memo, value)));
     });
   }
 }
@@ -18,7 +17,7 @@ export function last(n){
   const size = n || 1;
   return function(xf){
     let prior = [];
-    return overload(xf, function(memo){
+    return _.overload(xf, function(memo){
       let acc = memo;
       for (var x of prior){
         acc = xf(acc, x);
@@ -36,7 +35,7 @@ export function last(n){
 
 export function tee(f){
   return function(xf){
-    return overload(xf, xf, function(memo, value){
+    return _.overload(xf, xf, function(memo, value){
       f(value);
       return xf(memo, value);
     });
@@ -46,7 +45,7 @@ export function tee(f){
 export function scan(step, init){
   return function(xf){
     let acc = init;
-    return overload(xf, xf, function(memo, value){
+    return _.overload(xf, xf, function(memo, value){
       acc = step(acc, value)
       return xf(memo, acc);
     });
@@ -56,8 +55,8 @@ export function scan(step, init){
 function best2(better, init) {
   return function(xf){
     let result = init;
-    return overload(xf, function(memo){
-      return reduced(xf(xf(memo, result)));
+    return _.overload(xf, function(memo){
+      return _.reduced(xf(xf(memo, result)));
     }, function(memo, value){
       result = better(result, value)
       return memo;
@@ -67,15 +66,15 @@ function best2(better, init) {
 
 function best1(better){
   return function(xf){
-    return overload(xf, xf, better);
+    return _.overload(xf, xf, better);
   }
 }
 
-export const best = overload(null, best1, best2);
+export const best = _.overload(null, best1, best2);
 
 export function constantly(value){
   return function(xf){
-    return overload(xf, xf, function(memo, _){
+    return _.overload(xf, xf, function(memo, _){
       return xf(memo, value);
     });
   }
@@ -83,7 +82,7 @@ export function constantly(value){
 
 export function map(f){
   return function(xf){
-    return overload(xf, xf, function(memo, value){
+    return _.overload(xf, xf, function(memo, value){
       return xf(memo, f(value));
     });
   }
@@ -91,20 +90,20 @@ export function map(f){
 
 export function mapSome(f, pred){
   return function(xf){
-    return overload(xf, xf, function(memo, value){
+    return _.overload(xf, xf, function(memo, value){
       return xf(memo, pred(value) ? f(value) : value);
     });
   }
 }
 
 export function mapcat(f){
-  return comp(map(f), cat);
+  return _.comp(map(f), cat);
 }
 
 export function mapIndexed(f){
   return function(xf){
     let idx = -1;
-    return overload(xf, xf, function(memo, value){
+    return _.overload(xf, xf, function(memo, value){
       return xf(memo, f(++idx, value));
     });
   }
@@ -112,18 +111,18 @@ export function mapIndexed(f){
 
 export function filter(pred){
   return function(xf){
-    return overload(xf, xf, function(memo, value){
+    return _.overload(xf, xf, function(memo, value){
       return pred(value) ? xf(memo, value) : memo;
     });
   }
 }
 
-export const remove = comp(filter, complement);
+export const remove = _.comp(filter, _.complement);
 
 export function detect(pred){
   return function(xf){
-    return overload(xf, xf, function(memo, value){
-      return pred(value) ? reduced(xf(memo, value)) : memo;
+    return _.overload(xf, xf, function(memo, value){
+      return pred(value) ? _.reduced(xf(memo, value)) : memo;
     });
   }
 }
@@ -137,13 +136,13 @@ function dedupe0(){
 }
 
 function dedupe1(f){
-  return dedupe2(f, equiv);
+  return dedupe2(f, _.equiv);
 }
 
 function dedupe2(f, equiv){
   return function(xf){
     let last;
-    return overload(xf, xf, function(memo, value){
+    return _.overload(xf, xf, function(memo, value){
       const result = equiv(f(value), f(last)) ? memo : xf(memo, value);
       last = value;
       return result;
@@ -151,18 +150,18 @@ function dedupe2(f, equiv){
   }
 }
 
-export const dedupe = overload(dedupe0, dedupe1, dedupe2);
+export const dedupe = _.overload(dedupe0, dedupe1, dedupe2);
 
 export function take(n){
   return function(xf){
     let taking = n < 0 ? 0 : n;
-    return overload(xf, xf, function(memo, value){
+    return _.overload(xf, xf, function(memo, value){
       switch(taking){
         case 0:
-          return reduced(memo)
+          return _.reduced(memo)
         case 1:
           taking--;
-          return reduced(xf(memo, value));
+          return _.reduced(xf(memo, value));
         default:
           taking--;
           return xf(memo, value);
@@ -174,7 +173,7 @@ export function take(n){
 export function drop(n){
   return function(xf){
     let dropping = n;
-    return overload(xf, xf, function(memo, value){
+    return _.overload(xf, xf, function(memo, value){
       return dropping-- > 0 ? memo : xf(memo, value);
     });
   }
@@ -182,8 +181,8 @@ export function drop(n){
 
 export function interpose(sep){
   return function(xf){
-    return overload(xf, xf, function(memo, value){
-      return xf(seq(memo) ? xf(memo, sep) : memo, value);
+    return _.overload(xf, xf, function(memo, value){
+      return xf(_.seq(memo) ? xf(memo, sep) : memo, value);
     });
   }
 }
@@ -191,7 +190,7 @@ export function interpose(sep){
 export function dropWhile(pred){
   return function(xf){
     let dropping = true;
-    return overload(xf, xf, function(memo, value){
+    return _.overload(xf, xf, function(memo, value){
       !dropping || (dropping = pred(value));
       return dropping ? memo : xf(memo, value);
     });
@@ -199,17 +198,17 @@ export function dropWhile(pred){
 }
 
 export function keep(f){
-  return comp(map(f), filter(isSome));
+  return _.comp(map(f), filter(_.isSome));
 }
 
 export function keepIndexed(f){
-  return comp(mapIndexed1(f), filter(isSome));
+  return _.comp(mapIndexed1(f), filter(_.isSome));
 }
 
 export function takeWhile(pred){
   return function(xf){
-    return overload(xf, xf, function(memo, value){
-      return pred(value) ? xf(memo, value) : reduced(memo);
+    return _.overload(xf, xf, function(memo, value){
+      return pred(value) ? xf(memo, value) : _.reduced(memo);
     });
   }
 }
@@ -217,7 +216,7 @@ export function takeWhile(pred){
 export function takeNth(n){
   return function(xf){
     let x = -1;
-    return overload(xf, xf, function(memo, value){
+    return _.overload(xf, xf, function(memo, value){
       x++;
       return x === 0 || x % n === 0 ? xf(memo, value) : memo;
     });
@@ -226,7 +225,7 @@ export function takeNth(n){
 
 export function splay(f){
   return function(xf){
-    return overload(xf, xf, function(memo, value){
+    return _.overload(xf, xf, function(memo, value){
       return xf(memo, f.apply(null, value));
     });
   }
@@ -235,7 +234,7 @@ export function splay(f){
 export function distinct(){
   return function(xf){
     const seen = new Set();
-    return overload(xf, xf, function(memo, value){
+    return _.overload(xf, xf, function(memo, value){
       if (seen.has(value)) {
         return memo;
       }
@@ -246,16 +245,16 @@ export function distinct(){
 }
 
 export function cat(xf){
-  return overload(xf, xf, function(memo, value){
-    return IReduce.reduce(memo, xf, value);
+  return _.overload(xf, xf, function(memo, value){
+    return _.reduce(memo, xf, value);
   });
 }
 
 export function hist(limit){
   return function(xf){
     let history = [];
-    return overload(xf, xf, function(memo, value){
-      const revised = clone(history);
+    return _.overload(xf, xf, function(memo, value){
+      const revised = _.clone(history);
       revised.unshift(value);
       if (history.length > limit) {
         revised.pop();
@@ -270,7 +269,7 @@ export function hist(limit){
 export function isolate(){
   return function(xf){
     let queue = [];
-    return overload(xf, xf, function(memo, value){
+    return _.overload(xf, xf, function(memo, value){
       let acc = memo;
       const ready = queue.length === 0;
       queue.push(value);

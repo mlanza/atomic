@@ -1,4 +1,4 @@
-import {overload} from "atomic/core";
+import * as _ from "atomic/core";
 import * as dom from "atomic/dom";
 import {document} from "dom";
 
@@ -23,5 +23,5 @@ function tags1(document){
   return tags2(document, taglist);
 }
 
-export const tags = overload(null, tags1, tags2);
+export const tags = _.overload(null, tags1, tags2);
 export const {svg, g, symbol, defs, clipPath, metadata, path, line, circle, rect, ellipse, polygon, polyline, image, text, tspan, use} = tags(document);
