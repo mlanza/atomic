@@ -1,4 +1,4 @@
-import {protocol} from "atomic/core";
-export const IPersistent = protocol({
+import * as _ from "atomic/core";
+export const IPersistent = _.protocol({
   persistent: null
 });

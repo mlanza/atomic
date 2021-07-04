@@ -1,4 +1,4 @@
-import {protocol} from "atomic/core";
-export const ITransient = protocol({
+import * as _ from "atomic/core";
+export const ITransient = _.protocol({
   transient: null
 });

@@ -1,4 +1,4 @@
-import {protocol} from "atomic/core";
-export const ITransientReversible = protocol({
+import * as _ from "atomic/core";
+export const ITransientReversible = _.protocol({
   reverse: null
 });

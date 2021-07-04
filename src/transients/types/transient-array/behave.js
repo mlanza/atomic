@@ -1,5 +1,4 @@
-import {does, overload, doto, forward, implement} from "atomic/core";
-import {ICoerceable, IFunctor, ILookup, IAssociative, IFind, IMapEntry, ISeq, INext, ISeqable, ICounted, IInclusive, IEmptyableCollection, IMap, IReduce, IKVReduce, IClonable, ISequential, ICollection} from "atomic/core";
+import * as _ from "atomic/core";
 import {IPersistent, ITransientMap, ITransientInsertable, ITransientEmptyableCollection, ITransientReversible, ITransientOmissible, ITransientAssociative, ITransientAppendable, ITransientPrependable, ITransientCollection} from "../../protocols.js";
 
 function before(self, reference, inserted){
@@ -55,7 +54,7 @@ function omit(self, value){
 }
 
 function clone(self){
-  return new self.constructor(IClonable.clone(self.arr));
+  return new self.constructor(_.clone(self.arr));
 }
 
 function persistent(self){
@@ -64,18 +63,18 @@ function persistent(self){
   return arr;
 }
 
-export default does(
-  forward("arr", IFind, IMapEntry, IAssociative, IMap, ICoerceable, ILookup, IReduce, IKVReduce, IFunctor, IInclusive, ICounted, ISeq, INext),
-  implement(ISequential),
-  implement(IClonable, {clone}),
-  implement(IPersistent, {persistent}),
-  implement(ISeqable, {seq}),
-  implement(ITransientInsertable, {before, after}),
-  implement(ITransientCollection, {conj: append, unconj}),
-  implement(ITransientEmptyableCollection, {empty}),
-  implement(ITransientOmissible, {omit}),
-  implement(ITransientAssociative, {assoc}),
-  implement(ITransientReversible, {reverse}),
-  implement(ITransientMap, {dissoc}),
-  implement(ITransientAppendable, {append}),
-  implement(ITransientPrependable, {prepend}));
+export default _.does(
+  _.forward("arr", _.IFind, _.IMapEntry, _.IAssociative, _.IMap, _.ICoerceable, _.ILookup, _.IReduce, _.IKVReduce, _.IFunctor, _.IInclusive, _.ICounted, _.ISeq, _.INext),
+  _.implement(_.ISequential),
+  _.implement(_.IClonable, {clone}),
+  _.implement(_.ISeqable, {seq}),
+  _.implement(IPersistent, {persistent}),
+  _.implement(ITransientInsertable, {before, after}),
+  _.implement(ITransientCollection, {conj: append, unconj}),
+  _.implement(ITransientEmptyableCollection, {empty}),
+  _.implement(ITransientOmissible, {omit}),
+  _.implement(ITransientAssociative, {assoc}),
+  _.implement(ITransientReversible, {reverse}),
+  _.implement(ITransientMap, {dissoc}),
+  _.implement(ITransientAppendable, {append}),
+  _.implement(ITransientPrependable, {prepend}));

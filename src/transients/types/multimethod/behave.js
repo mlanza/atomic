@@ -1,4 +1,4 @@
-import {IFn, does, matches, implement, detect} from "atomic/core";
+import * as _ from "atomic/core";
 import {ITransientCollection} from "../../protocols.js";
 
 function conj(self, method){
@@ -6,9 +6,9 @@ function conj(self, method){
 }
 
 function invoke(self, ...args){
-  const method = detect(matches(?, args), self.methods);
+  const method = _.detect(_.matches(?, args), self.methods);
   if (method) {
-    return IFn.invoke(method, args);
+    return _.invoke(method, args);
   } else if (self.fallback) {
     return self.fallback(...args);
   } else {
@@ -16,6 +16,6 @@ function invoke(self, ...args){
   }
 }
 
-export default does(
-  implement(IFn, {invoke}),
-  implement(ITransientCollection, {conj}));
+export default _.does(
+  _.implement(_.IFn, {invoke}),
+  _.implement(ITransientCollection, {conj}));

@@ -1,4 +1,4 @@
-import {protocol} from "atomic/core";
-export const ITransientOmissible = protocol({
+import * as _ from "atomic/core";
+export const ITransientOmissible = _.protocol({
   omit: null
 });

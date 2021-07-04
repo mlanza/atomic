@@ -1,4 +1,4 @@
-import {protocol} from "atomic/core";
-export const ICheckable = protocol({
+import * as _ from "atomic/core";
+export const ICheckable = _.protocol({
   check: null
 });
