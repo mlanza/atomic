@@ -1,7 +1,7 @@
-import {constructs} from "atomic/core";
+import * as _ from "atomic/core";
 
 export function Routed(requests){
   this.requests = requests;
 }
 
-export const routed = constructs(Routed);
+export const routed = _.constructs(Routed);
