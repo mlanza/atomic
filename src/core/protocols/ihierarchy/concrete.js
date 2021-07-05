@@ -1,6 +1,6 @@
 import {overload} from "../../core.js";
 import {IHierarchy} from "./instance.js";
-import {ISeq, first} from "../iseq.js";
+import {first} from "../iseq.js";
 import {count} from "../icounted/concrete.js";
 import {deref} from "../ideref/concrete.js";
 import {path} from "../ipath/concrete.js";

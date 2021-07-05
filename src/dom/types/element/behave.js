@@ -1,67 +1,6 @@
-import {
-  assoc as _assoc,
-  identity,
-  toggles,
-  constantly,
-  does,
-  overload,
-  partial,
-  doto,
-  get,
-  key,
-  val,
-  descriptive,
-  implement,
-  satisfies,
-  downward,
-  upward,
-  concat,
-  cons,
-  lazySeq,
-  each,
-  map,
-  compact,
-  filter,
-  detect,
-  last,
-  comp,
-  isObject,
-  isString,
-  trim,
-  split,
-  str,
-  pre,
-  apply,
-  emptyList,
-  weakMap,
-  isIdentical,
-  ISequential,
-  IMatchable,
-  IInclusive,
-  ICoerceable,
-  IAssociative,
-  IMap,
-  IClonable,
-  ICollection,
-  INext,
-  ISeq,
-  ISeqable,
-  ICounted,
-  ILookup,
-  IReduce,
-  IHierarchy
-} from "atomic/core";
-import {
-  ITransientAssociative,
-  ITransientMap,
-  ITransientAppendable,
-  ITransientPrependable,
-  ITransientCollection,
-  ITransientEmptyableCollection,
-  ITransientInsertable,
-  ITransientOmissible
-} from "atomic/transients";
-import {IEvented} from "atomic/reactives";
+import * as _ from "atomic/core";
+import * as $ from "atomic/reactives";
+import * as mut from "atomic/transients";
 import {isMountable} from "../../protocols/imountable/concrete.js"
 import {IHtml, IText, IValue, IContent, IHideable, IEmbeddable, ISelectable} from "../../protocols.js";
 import {embed as _embed} from "../../protocols/iembeddable/concrete.js";
@@ -70,27 +9,27 @@ import {isElement} from "../element/construct.js";
 import {Text} from "dom";
 
 const hides = ["display", "none"];
-export const hidden = comp(IInclusive.includes(?, hides), nestedAttrs(?, "style"));
-const toggle = partial(toggles, show, hide, hidden);
+export const hidden = _.comp(_.includes(?, hides), nestedAttrs(?, "style"));
+const toggle = _.partial(_.toggles, show, hide, hidden);
 
 function hide(self){
-  ITransientCollection.conj(nestedAttrs(self, "style"), hides);
+  mut.conj(nestedAttrs(self, "style"), hides);
 }
 
 function show(self){
-  ITransientOmissible.omit(nestedAttrs(self, "style"), hides);
+  mut.omit(nestedAttrs(self, "style"), hides); //TODO mut unconj
 }
 
 function embed(self, parent, referenceNode) {
   if (isMountable(self)) {
     const detail = {parent};
-    IEvented.trigger(self, "mounting", {bubbles: true, detail});
+    $.trigger(self, "mounting", {bubbles: true, detail});
     if (referenceNode) {
       parent.insertBefore(self, referenceNode);
     } else {
       parent.appendChild(self);
     }
-    IEvented.trigger(self, "mounted" , {bubbles: true, detail});
+    $.trigger(self, "mounted" , {bubbles: true, detail});
   } else {
     if (referenceNode) {
       parent.insertBefore(self, referenceNode);
@@ -110,20 +49,20 @@ function prepend(self, content){
 }
 
 function before(self, content){
-  IEmbeddable.embed(content, IHierarchy.parent(self), self);
+  IEmbeddable.embed(content, _.parent(self), self);
 }
 
 function after(self, content){
-  IEmbeddable.embed(content, IHierarchy.parent(self), IHierarchy.nextSibling(self));
+  IEmbeddable.embed(content, _.parent(self), _.nextSibling(self));
 }
 
 const conj = append;
 
 function check(self, selector){
-  return isString(selector);
+  return _.isString(selector);
 }
 
-const matches = pre(function matches(self, selector){
+const matches = _.pre(function matches(self, selector){
   return self.matches(selector);
 }, check);
 
@@ -132,42 +71,42 @@ function isText(self){
 }
 
 function isAttrs(self){
-  return !(self instanceof Node) && descriptive(self);
+  return !(self instanceof Node) && _.descriptive(self);
 }
 
 function eventContext(catalog){
   function on3(self, key, callback){
-    isString(key) ? each(function(key){
+    _.isString(key) ? _.each(function(key){
       self.addEventListener(key, callback);
-    }, compact(key.split(" "))) : self.addEventListener(key, callback);
+    }, _.compact(key.split(" "))) : self.addEventListener(key, callback);
     return self;
   }
 
   function on4(self, key, selector, callback){
-    on3(self, key, doto(function(e){
-      if (IMatchable.matches(e.target, selector)) {
+    on3(self, key, _.doto(function(e){
+      if (_.matches(e.target, selector)) {
         callback.call(e.target, e);
       } else {
-        const found = closest(e.target, selector);
+        const found = _.closest(e.target, selector);
         if (found && self.contains(found)) {
           callback.call(found, e);
         }
       }
-    }, _assoc(catalog, callback, ?)));
+    }, _.assoc(catalog, callback, ?)));
     return self;
   }
 
-  const on = overload(null, null, null, on3, on4);
+  const on = _.overload(null, null, null, on3, on4);
 
   function off(self, key, callback){
-    self.removeEventListener(key, get(catalog, callback, callback));
+    self.removeEventListener(key, _.get(catalog, callback, callback));
     return self;
   }
 
   return {on, off};
 }
 
-const {on, off} = eventContext(weakMap());
+const {on, off} = eventContext(_.weakMap());
 
 const eventConstructors = {
   "click": MouseEvent,
@@ -200,11 +139,11 @@ function trigger(self, key, options){
 }
 
 function contents(self){
-  return self.contentDocument || ISeqable.seq(self.childNodes);
+  return self.contentDocument || _.seq(self.childNodes);
 }
 
 function assoc(self, key, value){
-  self.setAttribute(key, str(value));
+  self.setAttribute(key, _.str(value));
 }
 
 function dissoc(self, key){
@@ -212,9 +151,9 @@ function dissoc(self, key){
 }
 
 function keys2(self, idx){
-  return idx < self.attributes.length ? lazySeq(function(){
-    return cons(self.attributes[idx].name, keys2(self, idx + 1));
-  }) : emptyList();
+  return idx < self.attributes.length ? _.lazySeq(function(){
+    return _.cons(self.attributes[idx].name, keys2(self, idx + 1));
+  }) : _.emptyList();
 }
 
 function keys(self){
@@ -222,9 +161,9 @@ function keys(self){
 }
 
 function vals2(self, idx){
-  return idx < self.attributes.length ? lazySeq(function(){
-    return cons(self.attributes[idx].value, keys2(self, idx + 1));
-  }) : emptyList();
+  return idx < self.attributes.length ? _.lazySeq(function(){
+    return _.cons(self.attributes[idx].value, keys2(self, idx + 1));
+  }) : _.emptyList();
 }
 
 function vals(self){
@@ -243,19 +182,19 @@ function parent(self){
   return self && self.parentNode;
 }
 
-const parents = upward(function(self){
+const parents = _.upward(function(self){
   return self && self.parentElement;
 });
 
-const root = comp(last, upward(parent));
+const root = _.comp(_.last, _.upward(parent));
 
 export function closest(self, selector){
   let target = self;
   while(target){
-    if (IMatchable.matches(target, selector)){
+    if (_.matches(target, selector)){
       return target;
     }
-    target = IHierarchy.parent(target);
+    target = _.parent(target);
   }
 }
 
@@ -268,25 +207,25 @@ function sel1(self, selector){
 }
 
 function children(self){
-  return ISeqable.seq(self.children || filter(isElement, self.childNodes)); //IE has no children on document fragment
+  return _.seq(self.children || _.filter(isElement, self.childNodes)); //IE has no children on document fragment
 }
 
-const descendants = downward(IHierarchy.children);
+const descendants = _.downward(_.children);
 
 function nextSibling(self){
   return self.nextElementSibling;
 }
 
-const nextSiblings = upward(IHierarchy.nextSibling);
+const nextSiblings = _.upward(_.nextSibling);
 
 function prevSibling(self){
   return self.previousElementSibling;
 }
 
-const prevSiblings = upward(IHierarchy.prevSibling);
+const prevSiblings = _.upward(_.prevSibling);
 
 export function siblings(self){
-  return concat(prevSiblings(self), nextSiblings(self));
+  return _.concat(prevSiblings(self), nextSiblings(self));
 }
 
 function omit1(self){
@@ -296,43 +235,43 @@ function omit1(self){
 function omit2(self, node){
   if (isElement(node)) {
     self.removeChild(node);
-  } else if (satisfies(ISequential, node)) {
+  } else if (_.satisfies(_.ISequential, node)) {
     const keys = node;
-    each(self.removeAttribute.bind(self), keys);
+    _.each(self.removeAttribute.bind(self), keys);
   } else if (isAttrs(node)) {
     const attrs = node;
-    each(function(entry){
+    _.each(function(entry){
       const key = entry[0], value = entry[1];
       let curr = lookup(self, key);
-      if (isObject(curr)){
+      if (_.isObject(curr)){
         curr = mapa(function(pair){
           return pair.join(": ") + "; ";
-        }, ICoerceable.toArray(curr)).join("").trim();
+        }, _.toArray(curr)).join("").trim();
       }
       curr == value && dissoc(self, key);
     }, attrs);
-  } else if (isString(node)) {
+  } else if (_.isString(node)) {
     node = includes(self, node);
     self.removeChild(node);
   }
 }
 
-export const omit = overload(null, omit1, omit2);
+export const omit = _.overload(null, omit1, omit2);
 
 function includes(self, target){
   if (isElement(target)) {
-    return detect(isIdentical(target, ?), children(self));
-  } else if (satisfies(ISequential, target)){
+    return _.detect(_.isIdentical(target, ?), children(self));
+  } else if (_.satisfies(_.ISequential, target)){
     const keys = target;
-    return IReduce.reduce(keys, function(memo, key){
+    return _.reduce(function(memo, key){
       return memo ? self.hasAttribute(key) : reduced(memo);
-    }, true)
+    }, true, keys);
   } else if (isAttrs(target)) {
     return IKVReduce.reducekv(target, function(memo, key, value){
       return memo ? lookup(self, key) == value : reduced(memo);
     }, true);
   } else {
-    return detect(isString(target) ? function(node){
+    return _.detect(_.isString(target) ? function(node){
       return node.nodeType === Node.TEXT_NODE && node.data === target;
     } : function(node){
       return node === target;
@@ -358,14 +297,14 @@ function text2(self, text){
   self.textContent = text == null ? "" : text;
 }
 
-export const text = overload(null, text1, text2);
+export const text = _.overload(null, text1, text2);
 
 function html1(self){
   return self.innerHTML;
 }
 
 function html2(self, html){
-  if (isString(html)){
+  if (_.isString(html)){
     self.innerHTML = html;
   } else {
     empty(self);
@@ -374,7 +313,7 @@ function html2(self, html){
   return self;
 }
 
-export const html = overload(null, html1, html2);
+export const html = _.overload(null, html1, html2);
 
 function value1(self){
   return "value" in self ? self.value : null;
@@ -391,39 +330,39 @@ function value2(self, value){
   }
 }
 
-export const value = overload(null, value1, value2);
+export const value = _.overload(null, value1, value2);
 
 function reduce(self, xf, init){
-  return IReduce.reduce(IHierarchy.descendants(self), xf, init);
+  return _.reduce(xf, init, _.descendants(self));
 }
 
-export const ihierarchy = implement(IHierarchy, {root, parent, parents, closest, children, descendants, nextSibling, nextSiblings, prevSibling, prevSiblings, siblings});
-export const icontents = implement(IContent, {contents});
-export const ievented = implement(IEvented, {on, off, trigger});
-export const iselectable = implement(ISelectable, {sel, sel1});
+export const ihierarchy = _.implement(_.IHierarchy, {root, parent, parents, closest, children, descendants, nextSibling, nextSiblings, prevSibling, prevSiblings, siblings});
+export const icontents = _.implement(IContent, {contents});
+export const ievented = _.implement($.IEvented, {on, off, trigger});
+export const iselectable = _.implement(ISelectable, {sel, sel1});
 
-export default does(
+export default _.does(
   ihierarchy,
   icontents,
   ievented,
   iselectable,
-  implement(IReduce, {reduce}),
-  implement(IText, {text}),
-  implement(IHtml, {html}),
-  implement(IValue, {value}),
-  implement(IEmbeddable, {embed}),
-  implement(ITransientEmptyableCollection, {empty}),
-  implement(ITransientInsertable, {before, after}),
-  implement(IInclusive, {includes}),
-  implement(IHideable, {show, hide, toggle}),
-  implement(ITransientOmissible, {omit}),
-  implement(IMatchable, {matches}),
-  implement(IClonable, {clone}),
-  implement(ITransientAppendable, {append}),
-  implement(ITransientPrependable, {prepend}),
-  implement(ITransientCollection, {conj}),
-  implement(ILookup, {lookup}),
-  implement(IMap, {keys, vals}),
-  implement(ITransientMap, {dissoc}),
-  implement(IAssociative, {contains}),
-  implement(ITransientAssociative, {assoc}));
+  _.implement(_.IReduce, {reduce}),
+  _.implement(IText, {text}),
+  _.implement(IHtml, {html}),
+  _.implement(IValue, {value}),
+  _.implement(IEmbeddable, {embed}),
+  _.implement(mut.ITransientEmptyableCollection, {empty}),
+  _.implement(mut.ITransientInsertable, {before, after}),
+  _.implement(_.IInclusive, {includes}),
+  _.implement(IHideable, {show, hide, toggle}),
+  _.implement(mut.ITransientOmissible, {omit}),
+  _.implement(_.IMatchable, {matches}),
+  _.implement(_.IClonable, {clone}),
+  _.implement(mut.ITransientAppendable, {append}),
+  _.implement(mut.ITransientPrependable, {prepend}),
+  _.implement(mut.ITransientCollection, {conj}),
+  _.implement(_.ILookup, {lookup}),
+  _.implement(_.IMap, {keys, vals}),
+  _.implement(mut.ITransientMap, {dissoc}),
+  _.implement(_.IAssociative, {contains}),
+  _.implement(mut.ITransientAssociative, {assoc}));

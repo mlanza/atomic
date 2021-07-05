@@ -1,6 +1,5 @@
 import * as _ from "atomic/core";
 import {IQueryable, IParams, IOptions, IAddress, IIntercept} from "../../protocols.js";
-import {IClonable, ITemplate, IFunctor, ICoerceable, IForkable, ISeq, IAssociative, IMap, ICollection, fromTask} from "atomic/core";
 import {query} from "../request/behave.js";
 
 function xform(xf){
@@ -18,7 +17,7 @@ function filled(self){
 }
 
 function fork(self, reject, resolve){
-  return IForkable.fork(_.detect(filled, self.requests), reject, resolve);
+  return _.fork(_.detect(filled, self.requests), reject, resolve);
 }
 
 function addr(self){
@@ -34,17 +33,17 @@ function rest(self){
 }
 
 export default _.does(
-  _.implement(IClonable, {clone}),
-  _.implement(_.ICoerceable, {toPromise: fromTask}),
+  _.implement(_.IClonable, {clone}),
+  _.implement(_.ICoerceable, {toPromise: _.fromTask}),
   _.implement(_.IForkable, {fork}),
-  _.implement(IQueryable, {query}),
   _.implement(_.ISeq, {first, rest}),
-  _.implement(IAddress, {addr}),
-  _.implement(ITemplate, {fill: xform(ITemplate.fill)}),
+  _.implement(_.ITemplate, {fill: xform(_.fill)}),
   _.implement(_.ICollection, {conj: xform(_.conj)}),
-  _.implement(IIntercept, {intercept: xform(IIntercept.intercept)}),
   _.implement(_.IFunctor, {fmap: xform(_.fmap)}),
   _.implement(_.IAssociative, {assoc: xform(_.assoc)}),
   _.implement(_.IMap, {dissoc: xform(_.dissoc)}),
+  _.implement(IQueryable, {query}),
+  _.implement(IAddress, {addr}),
+  _.implement(IIntercept, {intercept: xform(IIntercept.intercept)}),
   _.implement(IParams, {params: xform(IParams.params)}),
   _.implement(IOptions, {options: xform(IOptions.options)}));

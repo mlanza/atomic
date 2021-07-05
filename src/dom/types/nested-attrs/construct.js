@@ -1,4 +1,4 @@
-import {overload} from "atomic/core";
+import * as _ from "atomic/core";
 
 export function NestedAttrs(element, key){
   this.element = element;
@@ -15,5 +15,5 @@ function nestedAttrs1(key){
   }
 }
 
-export const nestedAttrs = overload(null, nestedAttrs1, nestedAttrs2);
+export const nestedAttrs = _.overload(null, nestedAttrs1, nestedAttrs2);
 export const style = nestedAttrs1("style");

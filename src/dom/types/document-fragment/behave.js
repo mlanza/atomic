@@ -1,9 +1,9 @@
-import {identity, constantly, does, doto, overload, implement, cons, emptyList, IReduce, ISeqable, ISeq, INext, IHierarchy, ICoerceable} from "atomic/core";
+import * as _ from "atomic/core";
 import ielement from "../element/behave.js";
 
-export default does(
+export default _.does(
   ielement,
-  implement(IHierarchy, {nextSibling: constantly(null), nextSiblings: emptyList, prevSibling: constantly(null), prevSiblings: emptyList, siblings: emptyList, parent: constantly(null), parents: emptyList}),
-  implement(INext, {next: constantly(null)}),
-  implement(ISeq, {first: identity, rest: emptyList}),
-  implement(ISeqable, {seq: cons}));
+  _.implement(_.IHierarchy, {nextSibling: _.constantly(null), nextSiblings: _.emptyList, prevSibling: _.constantly(null), prevSiblings: _.emptyList, siblings: _.emptyList, parent: _.constantly(null), parents: _.emptyList}),
+  _.implement(_.INext, {next: _.constantly(null)}),
+  _.implement(_.ISeq, {first: _.identity, rest: _.emptyList}),
+  _.implement(_.ISeqable, {seq: _.cons}));

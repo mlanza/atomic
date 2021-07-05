@@ -1,10 +1,10 @@
-import {implement, IMatchable, isRegExp, isString, test, does} from "atomic/core";
-import {IEvented} from "atomic/reactives";
+import * as _ from "atomic/core";
+import * as $ from "atomic/reactives";
 
 function matches(self, pattern){
-  if (isRegExp(pattern)){
-    return test(pattern, decodeURI(self.pathname));
-  } else if (isString(pattern)) {
+  if (_.isRegExp(pattern)){
+    return _.test(pattern, decodeURI(self.pathname));
+  } else if (_.isString(pattern)) {
     return matches(self, new RegExp(pattern, "i"));
   }
 }
@@ -16,6 +16,6 @@ function on(self, pattern, callback){
   }
 }
 
-export default does(
-  implement(IEvented, {on}),
-  implement(IMatchable, {matches}));
+export default _.does(
+  _.implement($.IEvented, {on}),
+  _.implement(_.IMatchable, {matches}));

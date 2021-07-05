@@ -1,17 +1,17 @@
+import * as _ from "atomic/core";
+import * as mut from "atomic/transients";
 import {IEmbeddable} from "./instance.js";
-import {satisfies, each, key, val, str, descriptive, ISequential} from "atomic/core";
-import {assoc} from "atomic/transients";
 
 export function embed(self, parent, referenceNode){
-  if (satisfies(IEmbeddable, self)) {
+  if (_.satisfies(IEmbeddable, self)) {
     IEmbeddable.embed(self, parent, referenceNode);
-  } else if (satisfies(ISequential, self)) {
-    each(embed(?, parent, referenceNode), self);
-  } else if (descriptive(self)){
-    each(function(entry){
-      assoc(parent, key(entry), val(entry));
+  } else if (_.satisfies(_.ISequential, self)) {
+    _.each(embed(?, parent, referenceNode), self);
+  } else if (_.descriptive(self)){
+    _.each(function(entry){
+      mut.assoc(parent, _.key(entry), _.val(entry));
     }, self);
   } else {
-    IEmbeddable.embed(str(self), parent, referenceNode);
+    IEmbeddable.embed(_.str(self), parent, referenceNode);
   }
 }

@@ -1,4 +1,4 @@
-import {protocol} from "atomic/core";
-export const IValue = protocol({
+import * as _ from "atomic/core";
+export const IValue = _.protocol({
   value: null
 });

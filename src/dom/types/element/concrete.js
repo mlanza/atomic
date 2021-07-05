@@ -1,15 +1,15 @@
-import {IHierarchy, isString} from "atomic/core";
-import {append} from "atomic/transients";
+import * as _ from "atomic/core";
+import * as mut from "atomic/transients";
 
 export function replaceWith(self, other){
-  const parent = IHierarchy.parent(self),
-        replacement = isString(other) ? self.ownerDocument.createTextNode(other) : other;
+  const parent = _.parent(self),
+        replacement = _.isString(other) ? self.ownerDocument.createTextNode(other) : other;
   parent.replaceChild(replacement, self);
 }
 
 export function wrap(self, other){
   replaceWith(self, other);
-  append(other, self);
+  mut.append(other, self);
 }
 
 export function isVisible(el){
