@@ -1,7 +1,9 @@
 import * as _ from "atomic/core";
+import * as p from "./protocols/concrete.js";
 export * from "./protocols.js";
 export * from "./protocols/concrete.js";
 export * from "./types.js";
+
 import {IPersistent, ITransient} from "./protocols.js";
 import {transientObject, transientArray, transientSet} from "./types.js";
 import Set from "set";
@@ -22,5 +24,5 @@ toTransient(Array, transientArray);
 toTransient(Set, transientSet);
 
 export function withMutations(self, f){
-  return IPersistent.persistent(f(ITransient.transient(self)));
+  return p.persistent(f(p.transient(self)));
 }

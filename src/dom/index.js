@@ -1,4 +1,4 @@
-import {behaves, constantly, pre, handle, factory, identity, isString, apply, replace, concat, template, key, val, join, merge, filter, map, remove, isObject, specify, implement, doto, get, str, overload, each, eachkv, obj, IReduce, first, matches, Nil, ICoerceable, extend, doing, reduce} from "atomic/core";
+import {behaves, constantly, pre, factory, identity, isString, apply, replace, concat, template, key, val, join, merge, filter, map, remove, isObject, specify, implement, doto, get, str, overload, each, eachkv, obj, IReduce, first, matches, Nil, ICoerceable, extend, doing, reduce, assume} from "atomic/core";
 import {element} from "./types/element/construct.js";
 import {mounts} from "./protocols/imountable/concrete.js";
 import {InvalidHostElementError} from "./types/invalid-host-element-error.js";
@@ -6,7 +6,7 @@ import {IValue} from "./protocols/ivalue/instance.js";
 import {IEmbeddable} from "./protocols/iembeddable/instance.js";
 import Promise from "promise";
 import {document} from "dom";
-import {passDocumentDefault} from "./types/html-document/construct.js";
+import {isHTMLDocument} from "./types/html-document/construct.js";
 import * as _ from "atomic/core";
 import * as mut from "atomic/transients";
 import * as $ from "atomic/reactives";
@@ -19,7 +19,7 @@ import {behaviors} from "./behaviors.js";
 export * from "./behaviors.js";
 export const behave = behaves(behaviors, ?);
 
-export const ready = passDocumentDefault(function ready(document, callback) {
+export const ready = assume(isHTMLDocument, document, function ready(document, callback) {
   if (document.readyState !== 'loading') {
     callback();
   } else {
@@ -162,7 +162,7 @@ function tags3(engine, f, keys){
 export const tags = overload(tags0, tags1, tags2, tags3);
 export const tag = tags();
 
-export const checkbox = passDocumentDefault(function checkbox(document, ...args){
+export const checkbox = assume(isHTMLDocument, document, function checkbox(document, ...args){
   const el = element(document, 'input', {type: "checkbox"}, ...args);
   function value1(el){
     return el.checked;
@@ -175,7 +175,7 @@ export const checkbox = passDocumentDefault(function checkbox(document, ...args)
     specify(IValue, {value: value}));
 });
 
-export const select = passDocumentDefault(function select(document, options, ...args){
+export const select = assume(isHTMLDocument, document, function select(document, options, ...args){
   const tag = tags(element(document)),
     select = tag('select'),
     option = tag('option'),
@@ -186,7 +186,7 @@ export const select = passDocumentDefault(function select(document, options, ...
   return el;
 });
 
-export const input = passDocumentDefault(function input(document, ...args){
+export const input = assume(isHTMLDocument, document, function input(document, ...args){
   return element(document, 'input', {type: "text"}, ...args);
 });
 

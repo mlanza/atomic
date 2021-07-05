@@ -43,6 +43,10 @@ export function handle(){
   }
 }
 
+export function assume(pred, obj, f){
+  return handle([pred, f], partial(f, obj));
+}
+
 export function subj(f, len){ //subjective
   const length = len || f.length;
   return function(...ys){
