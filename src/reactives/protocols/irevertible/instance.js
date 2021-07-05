@@ -1,5 +1,5 @@
-import {protocol} from "atomic/core";
-export const IRevertible = protocol({
+import * as _ from "atomic/core";
+export const IRevertible = _.protocol({
   undo: null,
   redo: null,
   flush: null,

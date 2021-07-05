@@ -1,4 +1,4 @@
-import {protocol, overload} from "atomic/core";
+import * as _ from "atomic/core";
 
 function on2(self, f){
   f(self);
@@ -10,9 +10,9 @@ function on3(self, pred, f){
   }
 }
 
-const on = overload(null, null, on2, on3);
+const on = _.overload(null, null, on2, on3);
 
-export const IEvented = protocol({
+export const IEvented = _.protocol({
   on: on,
   off: null,
   trigger: null

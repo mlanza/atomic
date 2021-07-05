@@ -1,11 +1,12 @@
-import {does, implement, ILookup} from "atomic/core";
+import * as _ from "atomic/core";
+import * as p from "../../protocols/concrete";
 import {IMiddleware} from "../../protocols/imiddleware/instance.js"
 
 function handle(self, command, next){
-  const type = ILookup.lookup(command, "type");
-  const handler = ILookup.lookup(self.handlers, type) || self.fallback;
-  IMiddleware.handle(handler, command, next);
+  const type = _.get(command, "type");
+  const handler = _.get(self.handlers, type, self.fallback);
+  p.handle(handler, command, next);
 }
 
-export default does(
-  implement(IMiddleware, {handle}));
+export default _.does(
+  _.implement(IMiddleware, {handle}));

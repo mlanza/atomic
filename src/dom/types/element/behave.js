@@ -1,6 +1,5 @@
 import {
   assoc as _assoc,
-  called,
   identity,
   toggles,
   constantly,
@@ -8,9 +7,7 @@ import {
   overload,
   partial,
   doto,
-  noop,
   get,
-  getIn,
   key,
   val,
   descriptive,

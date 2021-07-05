@@ -1,10 +1,10 @@
-import {doto, conj, apply} from "atomic/core";
+import * as _ from "atomic/core";
 
 export function Middleware(handlers){
   this.handlers = handlers;
 }
 
 export function middleware(handlers){
-  return doto(new Middleware(handlers || []),
-    apply(conj, ?, handlers));
+  return _.doto(new Middleware(handlers || []),
+    _.apply(_.conj, ?, handlers));
 }

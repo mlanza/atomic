@@ -1,14 +1,14 @@
-import {satisfies, fsm, state, comp, partial, overload, specify, identity, noop, IDeref} from "atomic/core";
+import * as _ from "atomic/core";
 import {sub, unsub, subscribed} from "../../protocols/isubscribe/concrete.js";
 import {pub} from "../../protocols/ipublish/concrete.js";
 import {cell} from "../cell.js";
 
 function deref(self){
   if (subscribed(self) === 0) { //force refresh of sink state
-    sub(self, noop);
-    unsub(self, noop);
+    sub(self, _.noop);
+    unsub(self, _.noop);
   }
-  return IDeref.deref(self.sink);
+  return _.deref(self.sink);
 }
 
 export function AudienceDetector(sink, state){
@@ -18,21 +18,21 @@ export function AudienceDetector(sink, state){
 
 function audienceDetector2(sink, detected){
   const init = subscribed(sink) === 0 ? "idle" : "active";
-  const $state = cell(fsm(init, {idle: {activate: "active"}, active: {deactivate: "idle"}}));
-  sub($state, comp(detected, state));
+  const $state = cell(_.fsm(init, {idle: {activate: "active"}, active: {deactivate: "idle"}}));
+  sub($state, _.comp(detected, _.state));
   const result = new AudienceDetector(sink, $state);
-  if (satisfies(IDeref, sink)) {
-    specify(IDeref, {deref}, result);
+  if (_.satisfies(_.IDeref, sink)) {
+    _.specify(_.IDeref, {deref}, result);
   }
   return result;
 }
 
 function audienceDetector3(sink, xf, source){
-  const observer = partial(xf(pub), sink);
+  const observer = _.partial(xf(pub), sink);
   return audienceDetector2(sink, function(state) {
     const f = state === "active" ? sub : unsub;
     f(source, observer);
   });
 }
 
-export const audienceDetector = overload(null, null, audienceDetector2, audienceDetector3);
+export const audienceDetector = _.overload(null, null, audienceDetector2, audienceDetector3);

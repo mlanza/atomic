@@ -1,4 +1,5 @@
-import {does, partial, implement, satisfies, once, IReset, ISwap, IDeref, IDisposable, IClonable} from 'atomic/core';
+import * as _ from 'atomic/core';
+import * as p from "../../protocols/concrete.js";
 import {IPublish, ISubscribe} from "../../protocols.js";
 import {ireduce, imergable} from "../../shared.js";
 
@@ -6,7 +7,7 @@ function pub(self, value){
   if (value !== self.state){
     if (!self.validate || self.validate(value)) {
       self.state = value;
-      IPublish.pub(self.observer, value);
+      p.pub(self.observer, value);
     } else {
       throw new Error("Cell update failed - invalid value.");
     }
@@ -14,24 +15,24 @@ function pub(self, value){
 }
 
 function err(self, observer){
-  IPublish.err(self.observer, observer);
+  p.err(self.observer, observer);
 }
 
 function complete(self){
-  IPublish.complete(self.observer);
+  p.complete(self.observer);
 }
 
 function sub(self, observer){
-  IPublish.pub(observer, self.state); //to prime subscriber state
+  p.pub(observer, self.state); //to prime subscriber state
   return ISubscribe.sub(self.observer, observer); //return unsubscribe fn
 }
 
 function unsub(self, observer){
-  ISubscribe.unsub(self.observer, observer);
+  p.unsub(self.observer, observer);
 }
 
 function subscribed(self){
-  return ISubscribe.subscribed(self.observer);
+  return p.subscribed(self.observer);
 }
 
 function deref(self){
@@ -43,15 +44,15 @@ function swap(self, f){
 }
 
 function dispose(self){
-  satisfies(IDisposable, self.observer) && IDisposable.dispose(self.observer);
+  _.satisfies(_.IDisposable, self.observer) && _.dispose(self.observer);
 }
 
-export default does(
+export default _.does(
   ireduce,
   imergable,
-  implement(IDisposable, {dispose}),
-  implement(IDeref, {deref}),
-  implement(ISubscribe, {sub, unsub, subscribed}),
-  implement(IPublish, {pub, err, complete}),
-  implement(IReset, {reset: pub}),
-  implement(ISwap, {swap}));
+  _.implement(_.IDisposable, {dispose}),
+  _.implement(_.IDeref, {deref}),
+  _.implement(_.IReset, {reset: pub}),
+  _.implement(_.ISwap, {swap}),
+  _.implement(ISubscribe, {sub, unsub, subscribed}),
+  _.implement(IPublish, {pub, err, complete}));

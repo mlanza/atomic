@@ -1,5 +1,5 @@
-import {does, doto, partial, implement, filter, concat, IMatchable, ISeqable, IAppendable} from "atomic/core";
-import {ITransientCollection} from "atomic/transients";
+import * as _ from "atomic/core";
+import * as mut from "atomic/transients";
 import {IDispatch, IEvented} from "../../protocols.js";
 import {handler} from "../router/concrete.js";
 
@@ -16,16 +16,16 @@ function dispatch(self, message){
 }
 
 function matches(self, message){
-  const xs = filter(IMatchable.matches(?, message), self.handlers);
-  return ISeqable.seq(xs) ? xs : self.fallback ? [self.fallback] : [];
+  const xs = _.filter(_.matches(?, message), self.handlers);
+  return _.seq(xs) ? xs : self.fallback ? [self.fallback] : [];
 }
 
 function conj(self, handler){
-  self.handlers = IAppendable.append(self.handlers, handler);
+  self.handlers = _.append(self.handlers, handler);
 }
 
-export default does(
-  implement(IEvented, {on}),
-  implement(IDispatch, {dispatch}),
-  implement(IMatchable, {matches}),
-  implement(ITransientCollection, {conj}));
+export default _.does(
+  _.implement(IEvented, {on}),
+  _.implement(IDispatch, {dispatch}),
+  _.implement(_.IMatchable, {matches}),
+  _.implement(mut.ITransientCollection, {conj}));

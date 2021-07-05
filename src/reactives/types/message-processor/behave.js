@@ -1,4 +1,4 @@
-import {does, implement} from "atomic/core";
+import * as _ from "atomic/core";
 import {IMiddleware} from "../../protocols/imiddleware/instance.js"
 
 function handle(self, message, next){
@@ -6,5 +6,5 @@ function handle(self, message, next){
   next(message);
 }
 
-export default does(
-  implement(IMiddleware, {handle}));
+export default _.does(
+  _.implement(IMiddleware, {handle}));

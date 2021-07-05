@@ -1,4 +1,4 @@
-import {overload, deref} from "atomic/core";
+import * as _ from "atomic/core";
 
 export function Journal(pos, max, history, cell){
   this.pos = pos;
@@ -8,11 +8,11 @@ export function Journal(pos, max, history, cell){
 }
 
 function journal2(max, cell){
-  return new Journal(0, max, [deref(cell)], cell);
+  return new Journal(0, max, [_.deref(cell)], cell);
 }
 
 function journal1(cell){
   return journal2(Infinity, cell);
 }
 
-export const journal = overload(null, journal1, journal2);
+export const journal = _.overload(null, journal1, journal2);

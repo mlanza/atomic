@@ -1,4 +1,4 @@
-import {doto, overload, specify, IMatchable} from "atomic/core";
+import * as _ from "atomic/core";
 import {IDispatch} from "../../protocols.js";
 
 function handler3(pred, callback, how){
@@ -6,15 +6,15 @@ function handler3(pred, callback, how){
 }
 
 function handler2(pred, callback){
-  function matches(_, message){
+  function matches(x, message){
     return pred(message);
   }
-  function dispatch(_, message){
+  function dispatch(x, message){
     return callback(message);
   }
-  return doto({pred, callback},
-    specify(IMatchable, {matches}),
-    specify(IDispatch, {dispatch}));
+  return _.doto({pred, callback},
+    _.specify(_.IMatchable, {matches}),
+    _.specify(IDispatch, {dispatch}));
 }
 
-export const handler = overload(null, null, handler2, handler3);
+export const handler = _.overload(null, null, handler2, handler3);

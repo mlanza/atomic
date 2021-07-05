@@ -1,4 +1,4 @@
-import {overload} from "atomic/core";
+import * as _ from "atomic/core";
 import {IEvented} from "./instance.js";
 
 export const on = IEvented.on;
@@ -23,4 +23,4 @@ function one4(self, key, selector, callback){
   return on(self, key, selector, cb);
 }
 
-export const one = overload(null, null, null, one3, one4);
+export const one = _.overload(null, null, null, one3, one4);

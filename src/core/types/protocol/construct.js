@@ -70,6 +70,9 @@ function specify1(behavior){
 }
 
 function specify2(behavior, target){
+  if (!behavior) {
+    throw new Error("A behavior must be specified.");
+  }
   const keys = this.generate();
   addMeta(target, keys("__marker__"), this);
   for(let method in behavior){
