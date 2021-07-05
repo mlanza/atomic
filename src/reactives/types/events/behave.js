@@ -1,4 +1,4 @@
-import {does, implement} from "atomic/core";
+import * as _ from "atomic/core";
 import {IEventProvider} from "../../protocols/ieventprovider/instance.js"
 
 function raise(self, event){
@@ -11,5 +11,5 @@ function release(self){
   return released;
 }
 
-export default does(
-  implement(IEventProvider, {raise, release}));
+export default _.does(
+  _.implement(IEventProvider, {raise, release}));

@@ -35,16 +35,16 @@ function rest(self){
 
 export default _.does(
   _.implement(IClonable, {clone}),
-  _.implement(ICoerceable, {toPromise: fromTask}),
-  _.implement(IForkable, {fork}),
+  _.implement(_.ICoerceable, {toPromise: fromTask}),
+  _.implement(_.IForkable, {fork}),
   _.implement(IQueryable, {query}),
-  _.implement(ISeq, {first, rest}),
+  _.implement(_.ISeq, {first, rest}),
   _.implement(IAddress, {addr}),
   _.implement(ITemplate, {fill: xform(ITemplate.fill)}),
-  _.implement(ICollection, {conj: xform(ICollection.conj)}),
+  _.implement(_.ICollection, {conj: xform(_.conj)}),
   _.implement(IIntercept, {intercept: xform(IIntercept.intercept)}),
-  _.implement(IFunctor, {fmap: xform(IFunctor.fmap)}),
-  _.implement(IAssociative, {assoc: xform(IAssociative.assoc)}),
-  _.implement(IMap, {dissoc: xform(IMap.dissoc)}),
+  _.implement(_.IFunctor, {fmap: xform(_.fmap)}),
+  _.implement(_.IAssociative, {assoc: xform(_.assoc)}),
+  _.implement(_.IMap, {dissoc: xform(_.dissoc)}),
   _.implement(IParams, {params: xform(IParams.params)}),
   _.implement(IOptions, {options: xform(IOptions.options)}));

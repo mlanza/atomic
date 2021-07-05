@@ -1,4 +1,4 @@
-import {does, identity, implement, forward, IReduce, ILookup, ISwap, IReset, IDeref, IDisposable} from "atomic/core";
+import * as _ from "atomic/core";
 import {IMiddleware, ISubscribe, IDispatch} from "../../protocols.js"
 
 function dispatch(self, command){
@@ -6,11 +6,11 @@ function dispatch(self, command){
 }
 
 function dispose(self){
-  satisfies(IDisposable, self.state) && IDisposable.dispose(self.state);
-  satisfies(IDisposable, self.handler) && IDisposable.dispose(self.handler);
+  _.satisfies(_.IDisposable, self.state) && _.dispose(self.state);
+  _.satisfies(_.IDisposable, self.handler) && _.dispose(self.handler);
 }
 
-export default does(
-  forward("state", ISubscribe, IDeref, IReset, ISwap, IReduce),
-  implement(IDispatch, {dispatch}),
-  implement(IDisposable, {dispose}));
+export default _.does(
+  _.forward("state", ISubscribe, _.IDeref, _.IReset, _.ISwap, _.IReduce),
+  _.implement(IDispatch, {dispatch}),
+  _.implement(_.IDisposable, {dispose}));

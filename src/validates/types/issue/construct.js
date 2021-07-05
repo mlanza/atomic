@@ -1,6 +1,5 @@
-import {overload, identity, fmap, map, blot, compact, flatten, toArray, satisfies, isPromise, detect, seq, ISeq} from "atomic/core";
-import {ICheckable} from "../../protocols/icheckable/instance.js";
-import {IConstrainable} from "../../protocols/iconstrainable/instance.js";
+import * as _ from "atomic/core";
+import * as p from "../../protocols/concrete.js";
 import Promise from "promise";
 
 export function Issue(constraint, path){
@@ -13,30 +12,30 @@ export function issue(constraint, path){
 }
 
 function issues1(obj){
-  return seq(ICheckable.check(IConstrainable.constraints(obj), obj));
+  return _.seq(p.check(p.constraints(obj), obj));
 }
 
 function issues2(xs, f) {
   if (xs == null) {
     return null;
-  } else if (isPromise(xs)) {
-    return fmap(xs, function(x){
+  } else if (_.isPromise(xs)) {
+    return _.fmap(xs, function(x){
       return issues2(x, f);
     });
-  } else if (satisfies(ISeq, xs)) {
-    return map(f, xs) |> flatten |> compact |> blot;
+  } else if (_.satisfies(_.ISeqable, xs)) {
+    return xs |> _.seq |> _.map(f, ?) |> _.flatten |> _.compact |> _.blot;
   }
 }
 
-export const issues = overload(null, issues1, issues2);
+export const issues = _.overload(null, issues1, issues2);
 
 function issuing2(x, issue){
-  return issuing3(x, identity, issue);
+  return issuing3(x, _.identity, issue);
 }
 
 function issuing3(x, valid, issue){
-  if (isPromise(x)) {
-    return fmap(x, valid, issuing(?, valid, issue));
+  if (_.isPromise(x)) {
+    return _.fmap(x, valid, issuing(?, valid, issue));
   } else if (valid(x)) {
     return null;
   } else {
@@ -44,4 +43,4 @@ function issuing3(x, valid, issue){
   }
 }
 
-export const issuing = overload(null, null, issuing2, issuing3);
+export const issuing = _.overload(null, null, issuing2, issuing3);

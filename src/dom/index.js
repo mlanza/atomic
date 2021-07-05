@@ -1,4 +1,4 @@
-import {behaves, constantly, pre, handle, factory, called, identity, isString, apply, noop, slice, partial, replace, concat, template, key, val, join, merge, filter, map, remove, isObject, specify, implement, doto, get, str, includes, overload, fmap, each, eachkv, obj, IReduce, first, matches, Nil, ICoerceable, extend, doing, reduce} from "atomic/core";
+import {behaves, constantly, pre, handle, factory, identity, isString, apply, replace, concat, template, key, val, join, merge, filter, map, remove, isObject, specify, implement, doto, get, str, overload, each, eachkv, obj, IReduce, first, matches, Nil, ICoerceable, extend, doing, reduce} from "atomic/core";
 import {element} from "./types/element/construct.js";
 import {mounts} from "./protocols/imountable/concrete.js";
 import {InvalidHostElementError} from "./types/invalid-host-element-error.js";

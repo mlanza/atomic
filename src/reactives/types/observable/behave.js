@@ -1,14 +1,14 @@
-import {does, constantly, noop, implement} from "atomic/core";
+import * as _ from "atomic/core";
 import {ISubscribe} from "../../protocols/isubscribe.js";
 import {closed} from "../../protocols/ipublish.js";
 import {imergable, ireduce} from "../../shared.js";
 
 function sub(self, observer){
-  const unsub = self.subscribe(observer) || noop;
-  return closed(observer) ? (unsub(), noop) : unsub;
+  const unsub = self.subscribe(observer) || _.noop;
+  return closed(observer) ? (unsub(), _.noop) : unsub;
 }
 
-export default does(
+export default _.does(
   ireduce,
   imergable,
-  implement(ISubscribe, {sub, unsub: noop, subscribed: constantly(1)})); //TODO  `unsub` and `subscribed` mock implementations are for cross compatibility and may be removed post migration
+  _.implement(ISubscribe, {sub, unsub: _.noop, subscribed: _.constantly(1)})); //TODO  `unsub` and `subscribed` mock implementations are for cross compatibility and may be removed post migration

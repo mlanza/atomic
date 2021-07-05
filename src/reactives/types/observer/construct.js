@@ -1,4 +1,4 @@
-import {noop} from "atomic/core";
+import * as _ from "atomic/core";
 
 export function Observer(pub, err, complete, terminated){
   this.pub = pub;
@@ -8,5 +8,5 @@ export function Observer(pub, err, complete, terminated){
 }
 
 export function observer(pub, err, complete){
-  return new Observer(pub || noop, err || noop, complete || noop, null);
+  return new Observer(pub || _.noop, err || _.noop, complete || _.noop, null);
 }

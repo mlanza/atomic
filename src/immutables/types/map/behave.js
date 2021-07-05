@@ -30,7 +30,7 @@ function dissoc(self, key){
 
 function reducekv(self, xf, init){
   return _.reduce(function(memo, key){
-    return xf(memo, key, _.lookup(self, key));
+    return xf(memo, key, _.get(self, key));
   }, init, keys(self));
 }
 

@@ -1,19 +1,20 @@
-import {does, implement, ICounted, IDeref, IReset, ISwap} from "atomic/core";
+import * as _ from "atomic/core";
+import * as p from "../../protocols/concrete.js";
 import {ISubscribe, IRevertible} from "../../protocols.js";
 
 function deref(self){
-  return IDeref.deref(self.cell);
+  return _.deref(self.cell);
 }
 
 function reset(self, state){
   const history = self.pos ? self.history.slice(self.pos) : self.history;
   history.unshift(state);
-  while(ICounted.count(history) > self.max) {
+  while(_.count(history) > self.max) {
     history.pop();
   }
   self.history = history;
   self.pos = 0;
-  IReset.reset(self.cell, state);
+  _.reset(self.cell, state);
 }
 
 function swap(self, f){
@@ -21,28 +22,28 @@ function swap(self, f){
 }
 
 function sub(self, observer){
-  ISubscribe.sub(self.cell, observer);
+  p.sub(self.cell, observer);
 }
 
 function unsub(self, observer){
-  ISubscribe.unsub(self.cell, observer);
+  p.unsub(self.cell, observer);
 }
 
 function subscribed(self){
-  return ISubscribe.subscribed(self.cell);
+  return p.subscribed(self.cell);
 }
 
 function undo(self){
   if (undoable(self)) {
     self.pos += 1;
-    IReset.reset(self.cell, self.history[self.pos]);
+    _.reset(self.cell, self.history[self.pos]);
   }
 }
 
 function redo(self){
   if (redoable(self)) {
     self.pos -= 1;
-    IReset.reset(self.cell, self.history[self.pos]);
+    _.reset(self.cell, self.history[self.pos]);
   }
 }
 
@@ -52,16 +53,16 @@ function flush(self){
 }
 
 function undoable(self){
-  return self.pos < ICounted.count(self.history);
+  return self.pos < _.count(self.history);
 }
 
 function redoable(self){
   return self.pos > 0;
 }
 
-export default does(
-  implement(IRevertible, {undo, redo, flush, undoable, redoable}),
-  implement(IDeref, {deref}),
-  implement(IReset, {reset}),
-  implement(ISwap, {swap}),
-  implement(ISubscribe, {sub, unsub, subscribed}));
+export default _.does(
+  _.implement(_.IDeref, {deref}),
+  _.implement(_.IReset, {reset}),
+  _.implement(_.ISwap, {swap}),
+  _.implement(IRevertible, {undo, redo, flush, undoable, redoable}),
+  _.implement(ISubscribe, {sub, unsub, subscribed}));

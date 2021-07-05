@@ -1,4 +1,4 @@
-import {weakMap} from "atomic/core";
+import * as _ from "atomic/core";
 
 export function Cursor(source, path, callbacks){
   this.source = source;
@@ -7,5 +7,5 @@ export function Cursor(source, path, callbacks){
 }
 
 export function cursor(source, path){
-  return new Cursor(source, path, weakMap());
+  return new Cursor(source, path, _.weakMap());
 }

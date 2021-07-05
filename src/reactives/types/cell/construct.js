@@ -1,4 +1,4 @@
-import {overload} from "atomic/core";
+import * as _ from "atomic/core";
 import {subject} from "../subject/construct.js";
 
 export function Cell(state, observer, validate){
@@ -23,4 +23,4 @@ function cell3(init, observer, validate){
   return new Cell(init, observer, validate);
 }
 
-export const cell = overload(cell0, cell1, cell2, cell3);
+export const cell = _.overload(cell0, cell1, cell2, cell3);

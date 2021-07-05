@@ -10,7 +10,6 @@ import {cons} from "../list/construct.js";
 import {range} from "../range/construct.js";
 import {str} from "../string/concrete.js";
 import {juxt, comp, apply, partial} from "../function/concrete.js"; //MOD
-import {get, getIn} from "../../protocols/ilookup/concrete.js";
 import {conj} from "../../protocols/icollection/concrete.js";
 import {lazySeq} from "../lazy-seq/construct.js";
 import {concat, concatenated} from "../concatenated/construct.js";

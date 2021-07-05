@@ -1,7 +1,6 @@
-import {implement, does, apply, IPath, IReset, ISwap, IDeref, IDisposable, ICounted} from "atomic/core";
-import {IPublish, ISubscribe, IDispatch} from "../../protocols.js";
-import {sub as _sub, unsub as _unsub} from "../../protocols/concrete.js";
 import * as _ from "atomic/core";
+import * as p from "../../protocols/concrete.js";
+import {IPublish, ISubscribe, IDispatch} from "../../protocols.js";
 
 function path(self){
   return self.path;
@@ -25,34 +24,34 @@ function swap(self, f){
 
 function sub(self, observer){
   function observe(state){
-    IPublish.pub(observer, _.getIn(state, self.path));
+    p.pub(observer, _.getIn(state, self.path));
   }
   self.callbacks.set(observer, observe);
-  _sub(self.source, observe);
+  p.sub(self.source, observe);
 }
 
 function unsub(self, observer){
   const observe = self.callbacks.get(observer);
-  _unsub(self.source, observe);
+  p.unsub(self.source, observe);
   observe && self.callbacks.delete(observer);
 }
 
 function subscribed(self){
-  return ICounted.count(self.callbacks);
+  return _.count(self.callbacks);
 }
 
 function dispatch(self, command){
-  IDispatch.dispatch(self.source, _.update(command, "path", function(path){
-    return apply(_.conj, self.path, path || []);
+  p.dispatch(self.source, _.update(command, "path", function(path){
+    return _.apply(_.conj, self.path, path || []);
   }));
 }
 
-export default does(
-  //implement(IDisposable, {dispose}), TODO
-  implement(IPath, {path}),
-  implement(IDispatch, {dispatch}),
-  implement(IDeref, {deref}),
-  implement(ISubscribe, {sub, unsub, subscribed}),
-  implement(IPublish, {pub: reset}),
-  implement(IReset, {reset}),
-  implement(ISwap, {swap}));
+export default _.does(
+  //_.implement(_.IDisposable, {dispose}), TODO
+  _.implement(_.IPath, {path}),
+  _.implement(_.IDeref, {deref}),
+  _.implement(_.IReset, {reset}),
+  _.implement(_.ISwap, {swap}),
+  _.implement(IDispatch, {dispatch}),
+  _.implement(ISubscribe, {sub, unsub, subscribed}),
+  _.implement(IPublish, {pub: reset}));

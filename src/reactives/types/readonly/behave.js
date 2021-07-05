@@ -1,20 +1,21 @@
-import {does, implement, once} from "atomic/core";
+import * as _ from "atomic/core";
+import * as p from "../../protocols/concrete.js";
 import {ISubscribe} from "../../protocols.js";
 
 function sub(self, observer){
-  ISubscribe.sub(self.source, observer);
-  return once(function(){
+  p.sub(self.source, observer);
+  return _.once(function(){
     unsub(self, observer);
   });
 }
 
 function unsub(self, observer){
-  ISubscribe.unsub(self.source, observer);
+  p.unsub(self.source, observer);
 }
 
 function subscribed(self){
-  return ISubscribe.subscribed(self.source);
+  return p.subscribed(self.source);
 }
 
-export default does(
-  implement(ISubscribe, {sub, unsub, subscribed}));
+export default _.does(
+  _.implement(ISubscribe, {sub, unsub, subscribed}));

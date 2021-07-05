@@ -1,13 +1,13 @@
-import {implement, does, once, noop, transition, satisfies, swap, IStateMachine, IDisposable} from "atomic/core";
+import * as _ from "atomic/core";
 import {ISubscribe} from "../../protocols/isubscribe/instance.js";
 import {ireduce, imergable} from "../../shared.js";
 
 function sub(self, observer){
   if (subscribed(self) === 0) {
-    swap(self.state, transition(?, "activate"));
+    _.swap(self.state, _.transition(?, "activate"));
   }
   ISubscribe.sub(self.sink, observer);
-  return once(function(){
+  return _.once(function(){
     return unsub(self, observer);
   });
 }
@@ -15,7 +15,7 @@ function sub(self, observer){
 function unsub(self, observer){
   ISubscribe.unsub(self.sink, observer);
   if (subscribed(self) === 0) {
-    swap(self.state, transition(?, "deactivate"));
+    _.swap(self.state, _.transition(?, "deactivate"));
   }
 }
 
@@ -24,16 +24,16 @@ function subscribed(self){
 }
 
 function dispose(self){
-  swap(self.state, transition(?, "deactivate"));
+  _.swap(self.state, _.transition(?, "deactivate"));
 }
 
 function state(self){
-  return IStateMachine.state(IDeref.deref(self.state));
+  return _.state(_.deref(self.state));
 }
 
-export default does(
+export default _.does(
   ireduce,
   imergable,
-  implement(IDisposable, {dispose}),
-  implement(IStateMachine, {state}),
-  implement(ISubscribe, {sub, unsub, subscribed}));
+  _.implement(_.IDisposable, {dispose}),
+  _.implement(_.IStateMachine, {state}),
+  _.implement(ISubscribe, {sub, unsub, subscribed}));

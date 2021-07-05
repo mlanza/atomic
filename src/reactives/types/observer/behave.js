@@ -1,4 +1,4 @@
-import {does, implement} from "atomic/core";
+import * as _ from "atomic/core";
 import {IPublish} from "../../protocols.js";
 
 function pub(self, message){
@@ -25,5 +25,5 @@ function closed(self){
   return self.terminated;
 }
 
-export default does(
-  implement(IPublish, {pub, err, complete, closed}));
+export default _.does(
+  _.implement(IPublish, {pub, err, complete, closed}));

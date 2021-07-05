@@ -1,4 +1,4 @@
-import {just, identity, reduced, doto, once, specify, slice, split, take, conj, assoc, count, includes, notEq, constantly, repeat, filtera, matches, comp, each, merge, map, apply, overload, noop, mapIndexed, spread, does, toArray, isReduced, satisfies, ISequential, IDeref, IHierarchy} from "atomic/core";
+import * as _ from "atomic/core";
 import * as t from "atomic/transducers";
 import Promise from "promise";
 import {pub, err, complete, closed, sub, unsub} from "../../protocols/concrete.js";
@@ -7,18 +7,18 @@ import {Observer, observer} from "../observer/construct.js";
 import {Subject, subject} from "../subject/construct.js";
 
 function pipeN(source, ...xforms){
-  return pipe2(source, comp(...xforms));
+  return pipe2(source, _.comp(...xforms));
 }
 
 function pipe2(source, xform){
   return observable(function(obs){
-    const step = xform(overload(null, reduced, function(memo, value){
+    const step = xform(_.overload(null, _.reduced, function(memo, value){
       pub(memo, value);
       return memo;
     }));
     const sink = observer(function(value){
       const memo = step(obs, value);
-      if (isReduced(memo)){
+      if (_.isReduced(memo)){
         complete(sink);
       }
     }, function(error){
@@ -32,20 +32,20 @@ function pipe2(source, xform){
     const unsub = sub(source, sink); //might complete before returning `unsub` fn
     if (closed(sink)) {
       unsub();
-      return noop;
+      return _.noop;
     }
     return unsub;
   });
 }
 
-export const pipe = overload(null, identity, pipe2, pipeN);
+export const pipe = _.overload(null, _.identity, pipe2, pipeN);
 
 function multiplex1(source){
   return multiplex2(source, subject());
 }
 
 function multiplex2(source, sink){
-  let disconnect = noop,
+  let disconnect = _.noop,
       refs = 0;
   return observable(function(observer){
     if (refs === 0) {
@@ -57,14 +57,14 @@ function multiplex2(source, sink){
       refs--;
       if (refs === 0){
         disconnect();
-        disconnect = noop;
+        disconnect = _.noop;
       }
       unsub();
     }
   });
 }
 
-export const multiplex = overload(null, multiplex1, multiplex2);
+export const multiplex = _.overload(null, multiplex1, multiplex2);
 
 function fromEvent2(el, key) {
   return observable(function(observer){
@@ -80,10 +80,10 @@ function fromEvent3(el, key, selector){
   return observable(function(observer){
     const handler = pub(observer, ?);
     function delegate(e){
-      if (matches(e.target, selector)) {
+      if (_.matches(e.target, selector)) {
         handler(observer, e);
       } else {
-        const found = IHierarchy.closest(e.target, selector);
+        const found = _.closest(e.target, selector);
         if (found && el.contains(found)) {
           handler(observer, Object.assign(Object.create(e), {target: found}));
         }
@@ -96,33 +96,33 @@ function fromEvent3(el, key, selector){
   });
 }
 
-//const fromEvent = overload(null, null, fromEvent2, fromEvent3)
+//const fromEvent = _.overload(null, null, fromEvent2, fromEvent3)
 
 function fromEvents2(el, keys){
-  return apply(merge, map(fromEvent2(el, ?), split(keys, ' ')));
+  return _.apply(_.merge, _.map(fromEvent2(el, ?), _.split(keys, ' ')));
 }
 
 function fromEvents3(el, keys, selector){
-  return apply(merge, map(fromEvent3(el, ?, selector), split(keys, ' ')));
+  return _.apply(_.merge, _.map(fromEvent3(el, ?, selector), _.split(keys, ' ')));
 }
 
-export const fromEvent = overload(null, null, fromEvents2, fromEvents3)
+export const fromEvent = _.overload(null, null, fromEvents2, fromEvents3)
 
 function seed2(init, source){
-  return doto(observable(function(observer){
+  return _.doto(observable(function(observer){
     const handle = pub(observer, ?);
     handle(init());
     return sub(source, handle);
   }),
-    specify(IDeref, {deref: init})); //TODO remove after migration, this is for `sink` compatibility only
+    _.specify(_.IDeref, {deref: init})); //TODO remove after migration, this is for `sink` compatibility only
 }
 
 function seed1(source){
-  return seed2(constantly(null), source);
+  return seed2(_.constantly(null), source);
 }
 
 //adds an immediate value upon subscription as with cells.
-export const seed = overload(null, seed1, seed2);
+export const seed = _.overload(null, seed1, seed2);
 
 export function computes(source, f){
   return seed(f, pipe(source, t.map(f)));
@@ -142,14 +142,14 @@ export function hash(window){
 
 export function indexed(sources){
   return observable(function(observer){
-    return just(sources,
-      mapIndexed(function(key, source){
+    return _.just(sources,
+      _.mapIndexed(function(key, source){
         return sub(source, function(value){
           pub(observer, {key, value});
         });
       }, ?),
-      toArray,
-      spread(does));
+      _.toArray,
+      _.spread(_.does));
   })
 }
 
@@ -160,15 +160,15 @@ function _currents1(sources){
 function _currents2(sources, blank){
   const source = indexed(sources);
   return observable(function(observer){
-    let state = toArray(take(count(sources), repeat(blank)));
+    let state = _.toArray(_.take(_.count(sources), _.repeat(blank)));
     return sub(source, function(msg){
-      state = assoc(state, msg.key, msg.value);
+      state = _.assoc(state, msg.key, msg.value);
       pub(observer, state);
     });
   });
 }
 
-const _currents = overload(null, _currents1, _currents2);
+const _currents = _.overload(null, _currents1, _currents2);
 
 //sources must provide an initial current value (e.g. immediately upon subscription as cells do).
 export function current(sources){
@@ -178,7 +178,7 @@ export function current(sources){
     return sub(source, function(state){
       if (init) {
         pub(observer, state);
-      } else if (!includes(state, nil)) {
+      } else if (!_.includes(state, nil)) {
         init = true;
         pub(observer, state);
       }
@@ -189,7 +189,7 @@ export function current(sources){
 export function toggles(el, on, off, init){
   return seed(
     init,
-    merge(
+    _.merge(
         pipe(fromEvent(el, on), t.constantly(true)),
         pipe(fromEvent(el, off), t.constantly(false))));
 }
@@ -205,7 +205,7 @@ export function click(el){
 }
 
 export function hover(el){
-  return toggles(el, "mouseover", "mouseout", constantly(false));
+  return toggles(el, "mouseover", "mouseout", _.constantly(false));
 }
 
 export function always(value){
@@ -231,10 +231,10 @@ function map2(f, source){
 }
 
 function mapN(f, ...sources){
-  return map2(spread(f), current(sources));
+  return map2(_.spread(f), current(sources));
 }
 
-export const calc = overload(null, null, map2, mapN); //TODO revert to `map` after migration.
+export const calc = _.overload(null, null, map2, mapN); //TODO revert to `map` after migration.
 
 function then2(f, source){
   const src = map2(f, source);
@@ -246,22 +246,22 @@ function then2(f, source){
 }
 
 function thenN(f, ...sources){
-  return then2(spread(f), current(sources));
+  return then2(_.spread(f), current(sources));
 }
 
-export const andThen = overload(null, null, then2, thenN);
+export const andThen = _.overload(null, null, then2, thenN);
 
 //calling this may spark sad thoughts
 export function depressed(el){
   return seed(
-    constantly([]),
+    _.constantly([]),
     pipe(
       fromEvent(el, "keydown keyup"),
         t.scan(function(memo, e){
           if (e.type === "keyup") {
-            memo = filtera(notEq(e.key, ?), memo);
-          } else if (!includes(memo, e.key)) {
-            memo = conj(memo, e.key);
+            memo = _.filtera(_.notEq(e.key, ?), memo);
+          } else if (!_.includes(memo, e.key)) {
+            memo = _.conj(memo, e.key);
           }
           return memo;
         }, []),
@@ -297,7 +297,7 @@ function fromSource(source){ //useful for making readonly (e.g. covering over IP
 function from(obj){ //TODO `ICoerce.toObservable`?
   if (obj instanceof Observable) {
     return obj;
-  } else if (satisfies(ISequential, obj)) {
+  } else if (_.satisfies(_.ISequential, obj)) {
     return fromCollection(obj);
   } else if (obj instanceof Promise){
     return fromPromise(obj);

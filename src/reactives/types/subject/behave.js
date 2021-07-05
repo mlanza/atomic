@@ -1,4 +1,4 @@
-import {does, implement, each, once, clone, ICounted} from "atomic/core";
+import * as _ from "atomic/core";
 import * as mut from "atomic/transients";
 import {IPublish, ISubscribe} from "../../protocols.js";
 import {ireduce, imergable} from "../../shared.js";
@@ -6,7 +6,7 @@ import {ireduce, imergable} from "../../shared.js";
 function sub(self, observer){
   if (!self.terminated) {
     mut.conj(self.observers, observer);
-    return once(function(){
+    return _.once(function(){
       unsub(self, observer);
     });
   } else {
@@ -19,7 +19,7 @@ function unsub(self, observer){
 }
 
 function subscribed(self){
-  return ICounted.count(self.observers);
+  return _.count(self.observers);
 }
 
 function pub(self, message){
@@ -50,11 +50,11 @@ function closed(self){
 
 //copying prevents midstream changes to observers
 function notify(self, f){
-  each(f, clone(self.observers));
+  _.each(f, _.clone(self.observers));
 }
 
-export default does(
+export default _.does(
   ireduce,
   imergable,
-  implement(ISubscribe, {sub, unsub, subscribed}),
-  implement(IPublish, {pub, err, complete, closed}));
+  _.implement(ISubscribe, {sub, unsub, subscribed}),
+  _.implement(IPublish, {pub, err, complete, closed}));
