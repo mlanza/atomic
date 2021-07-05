@@ -1,11 +1,11 @@
-import {each, pre} from "atomic/core";
+import * as _ from "atomic/core";
 import {DocumentFragment, document} from "dom";
 import {embed} from "../../protocols/iembeddable/concrete.js";
-import {passDocumentDefault} from "../html-document/construct.js";
+import {isHTMLDocument} from "../html-document/construct.js";
 
-export const fragment = passDocumentDefault(function fragment(document, ...contents){
+export const fragment = _.assume(isHTMLDocument, document, function fragment(document, ...contents){
   const frag = document.createDocumentFragment();
-  each(embed(?, frag), contents);
+  _.each(embed(?, frag), contents);
   return frag;
 });
 
