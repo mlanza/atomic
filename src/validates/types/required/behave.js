@@ -1,4 +1,5 @@
 import * as _ from "atomic/core";
+import * as p from "../../protocols/concrete.js";
 import {ICheckable, IScope} from "../../protocols.js";
 import {issue, issues} from "../issue.js";
 import {and} from "../and/construct.js";
@@ -9,7 +10,7 @@ function check(self, obj){
   if (_.blank(found)) {
     return [issue(self, [self.key])];
   } else {
-    return issues(ICheckable.check(self.constraint, found), IScope.scope(?, self.key));
+    return issues(p.check(self.constraint, found), p.scope(?, self.key));
   }
 }
 

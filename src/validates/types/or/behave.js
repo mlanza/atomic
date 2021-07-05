@@ -1,9 +1,10 @@
 import * as _ from "atomic/core";
+import * as p from "../../protocols/concrete.js";
 import {ICheckable} from "../../protocols.js";
 import {or} from "./construct.js";
 
 function check(self, value){
-  return _.detect(_.isSome, _.map(ICheckable.check(?, value), self.constraints));
+  return _.detect(_.isSome, _.map(p.check(?, value), self.constraints));
 }
 
 function conj(self, constraint){

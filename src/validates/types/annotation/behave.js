@@ -1,4 +1,5 @@
 import * as _ from "atomic/core";
+import * as p from "../../protocols/concrete.js";
 import {ICheckable, IExplains} from "../../protocols.js";
 import {issue, issues} from "../issue.js";
 import {anno} from "./construct.js";
@@ -12,7 +13,7 @@ function explain(self){
 }
 
 function check(self, value){
-  return issues(ICheckable.check(self.constraint, value), function(iss){
+  return issues(p.check(self.constraint, value), function(iss){
     return issue(anno(self.note, iss.constraint), iss.path);
   });
 }
