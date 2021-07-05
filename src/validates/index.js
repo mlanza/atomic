@@ -1,4 +1,5 @@
 import * as _ from "atomic/core";
+import * as p from "./protocols/concrete.js";
 import {ICheckable, IExplains} from "./protocols.js";
 import {anno, map, scoped, issue, issuing, catches, pred, or, and, choice} from "./types.js";
 
@@ -8,7 +9,7 @@ export * from "./protocols/concrete.js";
 
 export function toPred(constraint){
   return function(obj){
-    const issues = ICheckable.check(constraint, obj);
+    const issues = p.check(constraint, obj);
     return !issues;
   }
 }
