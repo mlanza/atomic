@@ -1,2 +1,2 @@
-import {protocol} from "atomic/core";
-export const IMountable = protocol({});
+import * as _ from "atomic/core";
+export const IMountable = _.protocol({});

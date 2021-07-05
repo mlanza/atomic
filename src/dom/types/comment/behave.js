@@ -1,9 +1,9 @@
-import {does, implement} from "atomic/core";
+import * as _ from "atomic/core";
 import {IEmbeddable} from "../../protocols.js";
 
 function embed(self, parent) {
   parent.appendChild(self);
 }
 
-export default does(
-  implement(IEmbeddable, {embed}));
+export default _.does(
+  _.implement(IEmbeddable, {embed}));

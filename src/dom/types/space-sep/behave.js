@@ -1,5 +1,5 @@
-import {identity, does, implement, filtera, filter, ISequential, ISeq, IDeref, ICoerceable, ICounted, ICollection, IInclusive} from "atomic/core";
-import {ITransientCollection, ITransientOmissible} from "atomic/transients";
+import * as _ from "atomic/core";
+import * as mut from "atomic/transients";
 
 function seq(self){
   const text = self.element.getAttribute(self.key);
@@ -8,7 +8,7 @@ function seq(self){
 
 function includes(self, text){
   const xs = seq(self);
-  return xs && filter(function(t){
+  return xs && _.filter(function(t){
     return t == text;
   }, xs);
 }
@@ -18,7 +18,7 @@ function conj(self, text){
 }
 
 function omit(self, text){
-  self.element.setAttribute(self.key, filtera(function(t){
+  self.element.setAttribute(self.key, _.filtera(function(t){
     return t !== text;
   }, seq(self)).join(" "));
 }
@@ -31,12 +31,12 @@ function count(self){
   return deref(self).length;
 }
 
-export default does(
-  implement(ISequential),
-  implement(ISeq, {seq}),
-  implement(IDeref, {deref}),
-  implement(IInclusive, {includes}),
-  implement(ITransientOmissible, {omit}),
-  implement(ICounted, {count}),
-  implement(ITransientCollection, {conj}),
-  implement(ICoerceable, {toArray: deref}));
+export default _.does(
+  _.implement(_.ISequential),
+  _.implement(_.ISeq, {seq}),
+  _.implement(_.IDeref, {deref}),
+  _.implement(_.IInclusive, {includes}),
+  _.implement(_.ICoerceable, {toArray: deref}),
+  _.implement(_.ICounted, {count}),
+  _.implement(mut.ITransientOmissible, {omit}),
+  _.implement(mut.ITransientCollection, {conj}));

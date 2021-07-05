@@ -1,6 +1,6 @@
 import {identity, constantly} from "../../core.js";
 import {satisfies, implement, packs as does} from "../protocol.js";
-import {IEquiv, IBlankable, ICoerceable, IInclusive, IReversible, ICollection, INext, ISeq, ISeqable, ISequential, IAssociative, IIndexed, IEmptyableCollection, IKVReduce, IReduce, ICounted} from "../../protocols.js";
+import {IEquiv, IBlankable, ICoerceable, IInclusive, IReversible, INext, ISeq, ISeqable, ISequential, IAssociative, IIndexed, IEmptyableCollection, IKVReduce, IReduce, ICounted} from "../../protocols.js";
 import {emptyList, EmptyList} from "../../types/empty-list/construct.js";
 import {emptyArray} from "../../types/array/construct.js";
 import Symbol from "symbol";

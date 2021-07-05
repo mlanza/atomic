@@ -1,6 +1,6 @@
 import {implement} from "../protocol.js";
 import {identity, does} from "../../core.js";
-import {IEquiv, ICoerceable, IFind, ICollection, IReduce, IKVReduce, INext, ISeq, ISeqable, IIndexed, ICounted, ILookup, IFn, IMap, IClonable, IEmptyableCollection} from "../../protocols.js";
+import {IEquiv, ICoerceable, IFind, IReduce, IKVReduce, INext, ISeq, ISeqable, IIndexed, ICounted, ILookup, IFn, IMap, IClonable, IEmptyableCollection} from "../../protocols.js";
 import {lazySeq} from "../../types/lazy-seq/construct.js";
 import {cons} from "../../types/list/construct.js";
 import {remove, into} from "../../types/lazy-seq/concrete.js";

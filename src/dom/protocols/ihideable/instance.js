@@ -1,5 +1,5 @@
-import {protocol} from "atomic/core";
-export const IHideable = protocol({
+import * as _ from "atomic/core";
+export const IHideable = _.protocol({
   hide: null,
   show: null,
   toggle: null

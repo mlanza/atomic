@@ -1,5 +1,5 @@
-import {identity, does, implement, key, val, ISeqable, IMap, IAssociative, ILookup, IDeref, ICounted, ICollection, IReduce, IInclusive} from "atomic/core";
-import {ITransientCollection, ITransientAssociative, ITransientMap, ITransientOmissible} from "atomic/transients";
+import * as _ from "atomic/core";
+import * as mut from "atomic/transients";
 
 function lookup(self, key){
   return self.node[key];
@@ -18,23 +18,23 @@ function dissoc(self, key){
 }
 
 function includes(self, entry){
-  return self.node[key(entry)] === val(entry);
+  return self.node[_.key(entry)] === _.val(entry);
 }
 
 function omit(self, entry){
-  includes(self, entry) && _dissoc(self, key(entry));
+  includes(self, entry) && _dissoc(self, _.key(entry));
 }
 
 function conj(self, entry){
-  assoc(self, key(entry), val(entry));
+  assoc(self, _.key(entry), _.val(entry));
 }
 
-export default does(
-  implement(ITransientMap, {dissoc}),
-  implement(IMap, {keys: Object.keys, vals: Object.values}),
-  implement(IInclusive, {includes}),
-  implement(ITransientAssociative, {assoc}),
-  implement(IAssociative, {contains}),
-  implement(ILookup, {lookup}),
-  implement(ITransientOmissible, {omit}),
-  implement(ITransientCollection, {conj}));
+export default _.does(
+  _.implement(_.IMap, {keys: Object.keys, vals: Object.values}),
+  _.implement(_.IInclusive, {includes}),
+  _.implement(_.IAssociative, {contains}),
+  _.implement(_.ILookup, {lookup}),
+  _.implement(mut.ITransientAssociative, {assoc}),
+  _.implement(mut.ITransientMap, {dissoc}),
+  _.implement(mut.ITransientOmissible, {omit}),
+  _.implement(mut.ITransientCollection, {conj}));

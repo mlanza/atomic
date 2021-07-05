@@ -1,9 +1,8 @@
-import {does, implement, cons, ICoerceable, INext, ISeq, ISeqable, IMap, IAssociative, ILookup, ICounted, IInclusive} from "atomic/core";
 import * as _ from "atomic/core";
-import {ITransientAssociative, ITransientEmptyableCollection, ITransientMap} from "atomic/transients";
+import * as mut from "atomic/transients";
 
 function toArray(self){
-  return ICoerceable.toArray(next2(self, 0));
+  return _.toArray(next2(self, 0));
 }
 
 function count(self){
@@ -36,7 +35,7 @@ function rest(self) {
 
 function next2(self, idx) {
   return idx < count(self) ? _.lazySeq(function(){
-    return cons([self.node.attributes[idx].name, self.node.attributes[idx].value], next2(self, idx + 1));
+    return _.cons([self.node.attributes[idx].name, self.node.attributes[idx].value], next2(self, idx + 1));
   }) : null;
 }
 
@@ -66,16 +65,16 @@ function empty(self){
   }
 }
 
-export default does(
-  implement(ITransientEmptyableCollection, {empty}),
-  implement(ICoerceable, {toArray}),
-  implement(ICounted, {count}),
-  implement(ISeqable, {seq}),
-  implement(INext, {next}),
-  implement(ISeq, {first, rest}),
-  implement(IMap, {keys, vals}),
-  implement(ITransientMap, {dissoc}),
-  implement(IInclusive, {includes}),
-  implement(IAssociative, {contains}),
-  implement(ITransientAssociative, {assoc}),
-  implement(ILookup, {lookup}));
+export default _.does(
+  _.implement(_.ICoerceable, {toArray}),
+  _.implement(_.ICounted, {count}),
+  _.implement(_.ISeqable, {seq}),
+  _.implement(_.INext, {next}),
+  _.implement(_.ISeq, {first, rest}),
+  _.implement(_.IMap, {keys, vals}),
+  _.implement(_.IInclusive, {includes}),
+  _.implement(_.IAssociative, {contains}),
+  _.implement(_.ILookup, {lookup}),
+  _.implement(mut.ITransientMap, {dissoc}),
+  _.implement(mut.ITransientEmptyableCollection, {empty}),
+  _.implement(mut.ITransientAssociative, {assoc}));

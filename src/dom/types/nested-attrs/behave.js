@@ -1,66 +1,66 @@
-import {constantly, identity, does, overload, implement, mapa, compact, trim, split, str, ICoerceable, ISeqable, IMap, IAssociative, ILookup, IDeref, ICounted, ICollection, IReduce, IInclusive, IOmissible} from "atomic/core";
-import {ITransientOmissible, ITransientAssociative, ITransientMap, ITransientCollection} from "atomic/transients";
+import * as _ from "atomic/core";
+import * as mut from "atomic/transients";
 
 function asText(obj){
-  return mapa(function(entry){
+  return _.mapa(function(entry){
     const key = entry[0], value = entry[1];
-    return str(key, ": ", value, ";");
-  }, ISeqable.seq(obj)).join(" ");
+    return _.str(key, ": ", value, ";");
+  }, _.seq(obj)).join(" ");
 }
 
 function deref(self){
   const text = self.element.getAttribute(self.key)
-  return text == null ? {} : IReduce.reduce(mapa(function(text){
-    return mapa(trim, split(text, ":"));
-  }, compact(split(text, ";"))), function(memo, pair){
-    return ICollection.conj(memo, pair);
-  }, {});
+  return text == null ? {} : _.reduce(function(memo, pair){
+    return _.conj(memo, pair);
+  }, {}, _.mapa(function(text){
+    return _.mapa(_.trim, _.split(text, ":"));
+  }, _.compact(_.split(text, ";"))));
 }
 
 function lookup(self, key){
-  return ILookup.lookup(deref(self), key);
+  return _.get(deref(self), key);
 }
 
 function contains(self, key){
-  return IAssociative.contains(deref(self), key);
+  return _.contains(deref(self), key);
 }
 
 function assoc(self, key, value){
-  self.element.setAttribute(self.key, asText(IAssociative.assoc(deref(self), key, value)));
+  self.element.setAttribute(self.key, asText(_.assoc(deref(self), key, value)));
 }
 
 function dissoc(self, key){
-  self.element.setAttribute(self.key, asText(IMap.dissoc(deref(self), key)));
+  self.element.setAttribute(self.key, asText(_.dissoc(deref(self), key)));
 }
 
 function keys(self){
-  return IMap.keys(deref(self));
+  return _.keys(deref(self));
 }
 
 function vals(self){
-  return IMap.vals(deref(self));
+  return _.vals(deref(self));
 }
 
 function includes(self, pair){
-  return IInclusive.includes(deref(self), pair);
+  return _.includes(deref(self), pair);
 }
 
 function omit(self, pair){
-  self.element.setAttribute(self.key, asText(IOmissible.omit(deref(self), pair)));
+  self.element.setAttribute(self.key, asText(_.omit(deref(self), pair)));
 }
 
 function conj(self, pair){
-  self.element.setAttribute(self.key, asText(ICollection.conj(deref(self), pair)));
+  self.element.setAttribute(self.key, asText(_.conj(deref(self), pair)));
 }
 
-export default does(
-  implement(IDeref, {deref}),
-  implement(IMap, {keys, vals}),
-  implement(ITransientMap, {dissoc}),
-  implement(IInclusive, {includes}),
-  implement(IAssociative, {contains}),
-  implement(ITransientAssociative, {assoc}),
-  implement(ILookup, {lookup}),
-  implement(ITransientOmissible, {omit}),
-  implement(ITransientCollection, {conj}),
-  implement(ICoerceable, {toObject: deref}));
+export default _.does(
+  _.implement(_.IDeref, {deref}),
+  _.implement(_.IMap, {keys, vals}),
+  _.implement(_.IInclusive, {includes}),
+  _.implement(_.IAssociative, {contains}),
+  _.implement(_.ILookup, {lookup}),
+  _.implement(_.ICoerceable, {toObject: deref}),
+  _.implement(mut.ITransientMap, {dissoc}),
+  _.implement(mut.ITransientAssociative, {assoc}),
+  _.implement(mut.ITransientOmissible, {omit}),
+  _.implement(mut.ITransientCollection, {conj}));
