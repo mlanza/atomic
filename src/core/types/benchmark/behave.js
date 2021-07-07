@@ -1,13 +1,14 @@
 import {implement} from "../protocol.js";
 import {does} from "../../core.js";
-import {IBounds} from "../../protocols.js";
+import {IBounds} from "../../protocols/ibounds.js";
+import * as p from "./protocols.js";
 
 function start(self){
-  return IBounds.start(self.period);
+  return p.start(self.period);
 }
 
 function end(self){
-  return IBounds.start(self.period);
+  return p.end(self.period);
 }
 
 export default does(

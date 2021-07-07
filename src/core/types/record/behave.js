@@ -3,6 +3,7 @@ import {implement} from "../protocol.js";
 import {reduced} from "../reduced/construct.js";
 import {IReduce, IKVReduce, IEquiv, ICoerceable, IAssociative, ISeqable, ILookup, ICounted, IMap, ISeq, IEmptyableCollection} from "../../protocols.js";
 import Symbol from "symbol";
+import * as p from "./protocols.js";
 
 function toObject(self){
   return self.attrs;
@@ -13,44 +14,44 @@ function contains(self, key){
 }
 
 function lookup(self, key){
-  return ILookup.lookup(self.attrs, key);
+  return p.get(self.attrs, key);
 }
 
 function seq(self){
-  return ISeqable.seq(self.attrs);
+  return p.seq(self.attrs);
 }
 
 function count(self){
-  return ICounted.count(self.attrs);
+  return p.count(self.attrs);
 }
 
 function first(self){
-  return ISeq.first(seq(self));
+  return p.first(seq(self));
 }
 
 function rest(self){
-  return ISeq.rest(seq(self));
+  return p.rest(seq(self));
 }
 
 function keys(self){
-  return IMap.keys(self.attrs);
+  return p.keys(self.attrs);
 }
 
 function vals(self){
-  return IMap.vals(self.attrs);
+  return p.vals(self.attrs);
 }
 
 function assoc(self, key, value){
-  return self.constructor.from(IAssociative.assoc(self.attrs, key, value));
+  return self.constructor.from(p.assoc(self.attrs, key, value));
 }
 
 function dissoc(self, key){
-  return self.constructor.from(IMap.dissoc(self.attrs, key));
+  return self.constructor.from(p.dissoc(self.attrs, key));
 }
 
 function equiv(self, other){
-  return ICounted.count(self) === ICounted.count(other) && reducekv(self, function(memo, key, value){
-    return memo ? IEquiv.equiv(ILookup.lookup(other, key), value) : reduced(memo);
+  return p.count(self) === p.count(other) && reducekv(self, function(memo, key, value){
+    return memo ? p.equiv(p.get(other, key), value) : reduced(memo);
   }, true);
 }
 
@@ -59,15 +60,15 @@ function empty(self){
 }
 
 function reduce(self, xf, init){
-  return IReduce.reduce(IMap.keys(self), function(memo, key){
+  return p.reduce(function(memo, key){
     return xf(memo, [key, lookup(self, key)]);
-  }, init);
+  }, init, p.keys(self));
 }
 
 function reducekv(self, xf, init){
-  return IReduce.reduce(IMap.keys(self), function(memo, key){
+  return p.reduce(function(memo, key){
     return xf(memo, key, lookup(self, key));
-  }, init);
+  }, init, p.keys(self));
 }
 
 function construction(Type){

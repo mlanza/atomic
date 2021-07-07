@@ -1,22 +1,22 @@
 import {overload, identity} from "../../core.js";
 import {protocol} from "../../types/protocol.js";
-import {IReduce} from "../../protocols/ireduce.js";
-import {IKVReduce} from "../../protocols/ikvreduce.js";
-import {ILookup} from "../../protocols/ilookup.js";
-import {IAssociative} from "../../protocols/iassociative.js";
+import {assoc, contains} from "../../protocols/iassociative/concrete.js";
+import {reduce} from "../../protocols/ireduce/concrete.js";
+import {reducekv} from "../../protocols/ikvreduce/concrete.js";
+import {get} from "../../protocols/ilookup/concrete.js";
 
 function merge(target, source){
-  return IKVReduce.reducekv(source, IAssociative.assoc, target);
+  return reducekv(assoc, target, source);
 }
 
 function mergeWith3(xf, init, x){
-  return IKVReduce.reducekv(x, function(memo, key, value){
-    return IAssociative.assoc(memo, key, IAssociative.contains(memo, key) ? xf(ILookup.lookup(memo, key), value) : xf(value));
-  }, init);
+  return reducekv(function(memo, key, value){
+    return assoc(memo, key, contains(memo, key) ? xf(get(memo, key), value) : xf(value));
+  }, init, x);
 }
 
 function mergeWithN(xf, init, ...xs){
-  return IReduce.reduce(xs, mergeWith3(xf, ?, ?), init);
+  return reduce(mergeWith3(xf, ?, ?), init, xs);
 }
 
 export const mergeWith = overload(null, null, null, mergeWith3, mergeWithN);

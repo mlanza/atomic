@@ -1,13 +1,13 @@
 import {does, overload, constantly, identity, partial} from "../../core.js";
 import {implement} from "../protocol.js";
-import {IAddable, IMergable, IReduce, IKVReduce, ISeqable, IBounds, IMap, IDeref, IComparable, IEquiv, IClonable, ILookup, IAssociative, ICollection} from "../../protocols.js";
 import {isNumber} from "../number.js";
-import {add} from "../../protocols/iaddable/concrete.js";
 import {mergeWith} from "../../protocols/imergable/instance.js";
 import {Duration, days} from "../duration.js";
+import {IAddable, IReduce, IKVReduce, ISeqable, IBounds, IMap, IDeref, IComparable, IEquiv, IClonable, ILookup, IAssociative, ICollection} from "../../protocols.js";
+import * as p from "./protocols.js";
 
-function _add(self, other){
-  return mergeWith(add, self, isNumber(other) ? days(other) : other);
+function add(self, other){
+  return mergeWith(p.add, self, isNumber(other) ? days(other) : other);
 }
 
 function lookup(self, key){
@@ -43,10 +43,10 @@ function keys(self){
 }
 
 function vals(self){
-  return IReduce.reduce(keys(self), function(memo, key){
-    memo.push(ILookup.lookup(self, key));
+  return p.reduce(function(memo, key){
+    memo.push(p.get(self, key));
     return memo;
-  }, []);
+  }, [], keys(self));
 }
 
 function conj(self, [key, value]){
@@ -89,18 +89,18 @@ function clone(self){
 }
 
 function equiv(self, other){
-  return other != null && IDeref.deref(self) === IDeref.deref(other);
+  return other != null && deref(self) === p.deref(other);
 }
 
 function compare(self, other){
-  return other == null ? -1 : IDeref.deref(self) - IDeref.deref(other);
+  return other == null ? -1 : deref(self) - p.deref(other);
 }
 
 function reduce(self, xf, init){
-  return IReduce.reduce(keys(self), function(memo, key){
-    const value = ILookup.lookup(self, key);
+  return p.reduce(function(memo, key){
+    const value = p.get(self, key);
     return xf(memo, [key, value]);
-  }, init);
+  }, init, keys(self));
 }
 
 function reducekv(self, xf, init){
@@ -114,7 +114,7 @@ function deref(self){
 }
 
 export default does(
-  implement(IAddable, {add: _add}),
+  implement(IAddable, {add}),
   implement(IDeref, {deref}),
   implement(IBounds, {start: identity, end: identity}),
   implement(ISeqable, {seq: identity}),

@@ -1,11 +1,13 @@
 import {overload, identity, partial, constantly, slice} from "./core.js";
-import {ISeqable, ISequential, IAssociative, ILookup, IReduce, IKVReduce, IEmptyableCollection} from "./protocols.js";
+import {ISeqable, ISequential, ILookup, IReduce, IKVReduce, IEmptyableCollection} from "./protocols.js";
+import * as p from "./protocols/concrete.js";
 import {some, into, best} from "./types/lazy-seq/concrete.js";
 import {apply} from "./types/function/concrete.js";
 import {isFunction} from "./types/function/construct.js";
 import {satisfies} from "./types/protocol/concrete.js";
 import {concat} from "./types/concatenated.js";
 import {update} from "./protocols/iassociative/concrete.js";
+import * as Associative from "./protocols/iassociative/concrete.js";
 import {reducing} from "./protocols/ireduce/concrete.js";
 import {gt, lt} from "./predicates.js";
 import {descriptive} from "./types/object/concrete.js";
@@ -30,12 +32,12 @@ export const scanKey = overload(null, scanKey1, null, scanKey3, scanKey4, scanKe
 export const maxKey  = scanKey(gt);
 export const minKey  = scanKey(lt);
 export const prop    = overload(null, function(key){
-    return overload(null, v => ILookup.lookup(v, key), v => IAssociative.assoc(v, key, v));
-}, ILookup.lookup, IAssociative.assoc);
+    return overload(null, v => ILookup.lookup(v, key), v => Associative.assoc(v, key, v));
+}, ILookup.lookup, Associative.assoc);
 
 function patch2(target, source){
   return IKVReduce.reducekv(source, function(memo, key, value){
-    return IAssociative.assoc(memo, key, typeof value === "function" ? value(ILookup.lookup(memo, key)) : value);
+    return Associative.assoc(memo, key, typeof value === "function" ? value(ILookup.lookup(memo, key)) : value);
   }, target);
 }
 
@@ -54,7 +56,7 @@ function absorb2(tgt, src){
     } else {
       absorbed = value;
     }
-    return IAssociative.assoc(memo, key, absorbed);
+    return Associative.assoc(memo, key, absorbed);
   }, tgt);
 }
 

@@ -1,7 +1,7 @@
 import {overload} from "../../core.js";
 import {emptyList} from "../empty-list.js";
 import Symbol from "symbol";
-import {ICounted} from "../../protocols.js";
+import * as p from "./protocols.js";
 
 export function IndexedSeq(seq, start){
   this.seq = seq;
@@ -13,7 +13,7 @@ function indexedSeq1(seq){
 }
 
 function indexedSeq2(seq, start){
-  return start < ICounted.count(seq) ? new IndexedSeq(seq, start) : emptyList();
+  return start < p.count(seq) ? new IndexedSeq(seq, start) : emptyList();
 }
 
 export const indexedSeq = overload(null, indexedSeq1, indexedSeq2);

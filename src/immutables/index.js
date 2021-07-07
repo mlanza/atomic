@@ -2,7 +2,7 @@ import * as _ from "atomic/core";
 import * as mut from "atomic/transients";
 import * as imm from "immutable";
 import {set} from "./types/set/construct.js";
-import {map as _map} from "./types/map/construct.js";
+import {map} from "./types/map/construct.js";
 import {IHash} from "./protocols/ihash/instance.js";
 import Symbol from "symbol";
 
@@ -13,7 +13,7 @@ export * from "./protocols/concrete.js";
 function memoize2(f, hash){
   const c = Symbol("cache");
   return function(self){
-    const cache  = self[c] || _map(),
+    const cache  = self[c] || map(),
           key    = hash.apply(self, arguments),
           result = _.contains(cache, key) ? _.get(cache, key) : f.apply(self, arguments);
     self[c] = _.assoc(cache, key, result);

@@ -1,54 +1,54 @@
 import {implement} from "../protocol.js";
 import {does, identity, partial} from "../../core.js";
-import {IAddable, IKVReduce, IReduce, IFunctor, IMergable, ICoerceable, IMultipliable, IDivisible, IMap, IAssociative, ILookup, IInclusive} from "../../protocols.js";
-import {add} from "../../protocols/iaddable/concrete.js";
 import {mergeWith} from "../../protocols/imergable/instance.js";
 import {Duration} from "../duration/construct.js";
+import {IAddable, IKVReduce, IFunctor, IMergable, ICoerceable, IMultipliable, IDivisible, IMap, IAssociative, ILookup} from "../../protocols.js";
+import * as p from "./protocols.js";
 
 function reducekv(self, xf, init){
-  return IReduce.reduce(keys(self), function(memo, key){
-    return xf(memo, key, ILookup.lookup(self, key));
-  }, init);
+  return p.reduce(function(memo, key){
+    return xf(memo, key, lookup(self, key));
+  }, init, keys(self));
 }
 
-const merge = partial(mergeWith, add);
+const merge = partial(mergeWith, p.add);
 
 function mult(self, n){
-  return IFunctor.fmap(self, function(value){
+  return fmap(self, function(value){
     return value * n;
   });
 }
 
 function fmap(self, f){
-  return new self.constructor(IKVReduce.reducekv(self, function(memo, key, value){
-    return IAssociative.assoc(memo, key, f(value));
+  return new self.constructor(reducekv(self, function(memo, key, value){
+    return p.assoc(memo, key, f(value));
   }, {}));
 }
 
 function keys(self){
-  return IMap.keys(self.units);
+  return p.keys(self.units);
 }
 
 function dissoc(self, key){
-  return new self.constructor(IMap.dissoc(self.units, key));
+  return new self.constructor(p.dissoc(self.units, key));
 }
 
 function lookup(self, key){
-  if (!IInclusive.includes(Duration.units, key)){
+  if (!p.includes(Duration.units, key)){
     throw new Error("Invalid unit.");
   }
-  return ILookup.lookup(self.units, key);
+  return p.get(self.units, key);
 }
 
 function contains(self, key){
-  return IAssociative.contains(self.units, key);
+  return p.contains(self.units, key);
 }
 
 function assoc(self, key, value){
-  if (!IInclusive.includes(Duration.units, key)){
+  if (!p.includes(Duration.units, key)){
     throw new Error("Invalid unit.");
   }
-  return new self.constructor(IAssociative.assoc(self.units, key, value));
+  return new self.constructor(p.assoc(self.units, key, value));
 }
 
 function divide(a, b){

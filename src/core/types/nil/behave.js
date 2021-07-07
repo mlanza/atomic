@@ -1,10 +1,11 @@
-import {IMergable, IBlankable, ICompactible, IMap, IAssociative, IInclusive, IOtherwise, IForkable, ICoerceable, IEquiv, ICollection, INext, ISeq, ISeqable, IIndexed, ICounted, ILookup, IReduce, IKVReduce, IEmptyableCollection, ISequential, IClonable} from "../../protocols.js";
+import {IMergable, IBlankable, ICompactible, IMap, IAssociative, IInclusive, IOtherwise, IForkable, ICoerceable, IEquiv, ICollection, INext, ISeq, ISeqable, IIndexed, ICounted, ILookup, IReduce, IKVReduce, IEmptyableCollection, IClonable} from "../../protocols.js";
 import {emptyList} from "../empty-list/construct.js";
 import {cons} from "../list/construct.js";
 import {identity, constantly, does, overload, noop} from "../../core.js";
 import {implement} from "../protocol.js";
 import {emptyArray} from "../array/construct.js";
 import {nil} from "./construct.js";
+import * as p from "./protocols.js";
 
 function assoc(self, key, value){
   const obj = {};
@@ -33,7 +34,7 @@ function conj(self, value){
 }
 
 function merge(self, ...xs){
-  return ICounted.count(xs) ? IMergable.merge.apply(null, Array.from(xs)) : null;
+  return p.count(xs) ? p.merge.apply(null, Array.from(xs)) : null;
 }
 
 export default does(

@@ -1,9 +1,10 @@
 import {identity, constantly} from "../../core.js";
 import {satisfies, implement, packs as does} from "../protocol.js";
-import {IEquiv, IBlankable, ICoerceable, IInclusive, IReversible, INext, ISeq, ISeqable, ISequential, IAssociative, IIndexed, IEmptyableCollection, IKVReduce, IReduce, ICounted} from "../../protocols.js";
+import {IEquiv, IBlankable, ICoerceable, IInclusive, IReversible, INext, ISeq, ISeqable, ISequential, IEmptyableCollection, IKVReduce, IReduce, ICounted} from "../../protocols.js";
 import {emptyList, EmptyList} from "../../types/empty-list/construct.js";
 import {emptyArray} from "../../types/array/construct.js";
 import Symbol from "symbol";
+import * as p from "./protocols.js";
 
 function reduce(self, f, init){
   return init;
@@ -11,9 +12,9 @@ function reduce(self, f, init){
 
 function equiv(xs, ys){
   return !!satisfies(ISequential, xs) === !!satisfies(ISequential, ys)
-    && ICounted.count(xs) === ICounted.count(ys)
-    && IEquiv.equiv(ISeq.first(xs), ISeq.first(ys))
-    && IEquiv.equiv(INext.next(xs), INext.next(ys));
+    && p.count(xs) === p.count(ys)
+    && p.equiv(p.first(xs), p.first(ys))
+    && p.equiv(p.next(xs), p.next(ys));
 }
 
 export default does(

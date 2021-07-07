@@ -1,8 +1,8 @@
 import {overload} from "../../core.js";
 import {mapa, sort, asc} from "../lazy-seq/concrete.js";
 import {benchmark} from "./construct.js";
-import {ISeq, INext} from "../../protocols.js";
 import Promise from "promise";
+import * as p from "./protocols.js";
 
 function race1(operations){
   return race2(10, operations);
@@ -15,9 +15,9 @@ function race2(n, operations){
 }
 
 function race3(n, operations, measures){
-  return Promise.all([measures, benchmark(n, ISeq.first(operations))]).then(function([xs, x]){
+  return Promise.all([measures, benchmark(n, p.first(operations))]).then(function([xs, x]){
     const measures = xs.concat(x);
-    return INext.next(operations) ? race3(n, INext.next(operations), measures) : measures;
+    return p.next(operations) ? race3(n, p.next(operations), measures) : measures;
   })
 }
 

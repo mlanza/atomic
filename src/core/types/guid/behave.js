@@ -1,6 +1,6 @@
 import {does} from "../../core.js";
 import {implement} from "../protocol.js";
-import {IEquiv, IAssociative} from "../../protocols.js";
+import {IEquiv} from "../../protocols.js";
 import Symbol from "symbol";
 
 function equiv(self, other){

@@ -1,7 +1,6 @@
 import {overload, called, toggles, identity, obj, partly, doto, does, branch, unspread, applying, execute, noop, constantly, once} from "./core.js";
-import {IAppendable, ICoerceable, IAssociative, IBounds, IInverse, IClonable, IComparable, ICounted, IDeref, IDisposable, IEquiv, IFind, IFn, IForkable, IFunctor, IHierarchy, IInclusive, IIndexed, IInsertable, IKVReduce, ILookup, IMap, IMapEntry, INext, IOtherwise, IPrependable, IReduce, IReset, ISeq, ISeqable, ISet, ISwap} from "./protocols.js";
+import {IAssociative, IClonable, IHierarchy, ILookup, ISeq} from "./protocols.js";
 import {just, satisfies, spread, maybe, each, duration, remove, sort, flip, realized, comp, isFunction, apply, realize, isNil, reFindAll, mapkv, period, selectKeys, mapVals, reMatches, test, date, emptyList, cons, days, recurrence, curry, second as _second, Nil} from "./types.js";
-import {add, subtract, compact, name, downward, upward, deref, get, assoc, omit, conj, reducing, toArray, reducekv, includes, excludes, rest, count, between, reduce, divide, fmap, split} from "./protocols/concrete.js";
 import {isString, isBlank, str, replace} from "./types/string.js";
 import {isSome} from "./types/nil.js";
 import {implement, behaves} from "./types/protocol/concrete.js";
@@ -16,6 +15,7 @@ export * from "./protocols.js";
 export * from "./protocols/concrete.js";
 export * from "./predicates.js";
 export * from "./associatives.js";
+import * as p from "./protocols/concrete.js";
 import Set from "set";
 import {extend} from "./types/protocol/concrete.js";
 import {Protocol} from "./types/protocol/construct.js";
@@ -26,7 +26,7 @@ import {behaviors} from "./behaviors.js";
 export * from "./behaviors.js";
 export const behave = behaves(behaviors, ?);
 
-export const yank = called(omit, "`yank` is deprecated — use `omit` instead.");
+export const yank = called(p.omit, "`yank` is deprecated — use `omit` instead.");
 export const numeric = test(/^\d+$/i, ?);
 
 function siblings(self){
@@ -47,19 +47,19 @@ function prevSiblings(self){
 }
 
 function nextSiblings(self){
-  return rest(dropWhile(function(sibling){
+  return p.rest(dropWhile(function(sibling){
     return sibling !== self;
   }, siblings(self)));
 }
 
-const prevSibling = comp(ISeq.first, IHierarchy.prevSiblings);
-const nextSibling = comp(ISeq.first, IHierarchy.nextSiblings);
-const parents = upward(IHierarchy.parent);
-const descendants = downward(IHierarchy.children);
+const prevSibling = comp(p.first, p.prevSiblings);
+const nextSibling = comp(p.first, p.nextSiblings);
+const parents = p.upward(p.parent);
+const descendants = p.downward(p.children);
 const root = comp(last, parents);
 
 function closest(self, pred){
-  return detect(pred, cons(self, IHierarchy.parents(self)));
+  return detect(pred, cons(self, p.parents(self)));
 }
 
 extend(IHierarchy, {siblings, prevSibling, nextSibling, prevSiblings, nextSiblings, parents, closest, root});
@@ -75,9 +75,9 @@ function forward1(key){
 function forwardN(target, ...protocols){
   const fwd = forward1(target);
   const behavior = mapa(function(protocol){
-    return implement(protocol, reduce(function(memo, key){
-      return assoc(memo, key, fwd(protocol[key]));
-    }, {}, IMap.keys(protocol)));
+    return implement(protocol, p.reduce(function(memo, key){
+      return p.assoc(memo, key, fwd(protocol[key]));
+    }, {}, p.keys(protocol)));
   }, protocols);
   return does(...behavior);
 }
@@ -86,13 +86,13 @@ export const forward = overload(null, forward1, forwardN);
 export const forwardTo = called(forward, "`forwardTo` is deprecated — use `forward` instead.");
 
 function recurs2(pd, step) {
-  return recurrence(IBounds.start(pd), IBounds.end(pd), step);
+  return recurrence(p.start(pd), p.end(pd), step);
 }
 
 export const recurs = overload(null, recurs2(?, days(1)), recurs2);
 
 export function inclusive(self){
-  return new self.constructor(self.start, add(self.end, self.step), self.step, self.direction);
+  return new self.constructor(self.start, p.add(self.end, self.step), self.step, self.direction);
 }
 
 function cleanlyN(f, ...args){
@@ -128,8 +128,8 @@ export function edit(obj, ...args){
 export function deconstruct(dur, ...units){
   let memo = dur;
   return mapa(function(unit){
-    const n = fmap(divide(memo, unit), Math.floor);
-    memo = subtract(memo, fmap(unit, constantly(n)));
+    const n = p.fmap(p.divide(memo, unit), Math.floor);
+    memo = p.subtract(memo, p.fmap(unit, constantly(n)));
     return n;
   }, units);
 }
@@ -148,10 +148,10 @@ export function fromQueryString(url){
 }
 
 export function unique(xs){
-  return toArray(new Set(toArray(xs)));
+  return p.toArray(new Set(p.toArray(xs)));
 }
 
-export const second = branch(satisfies(ISeq, ?), comp(ISeq.first, INext.next), _second);
+export const second = branch(satisfies(ISeq, ?), comp(p.first, p.next), _second);
 
 export function expands(f){
   function expand(...contents){
@@ -183,7 +183,7 @@ export function xargs(f, ...fs){
 
 function filled2(f, g){
   return function(...args){
-    return ISeqable.seq(filter(isNil, args)) ? g(...args) : f(...args);
+    return p.seq(filter(isNil, args)) ? g(...args) : f(...args);
   }
 }
 
@@ -194,7 +194,7 @@ function filled1(f){
 export const filled = overload(null, filled1, filled2);
 
 export function elapsed(self){
-  return duration(end(self) - start(self));
+  return duration(p.end(self) - p.start(self));
 }
 
 export function collapse(...args){
@@ -202,22 +202,22 @@ export function collapse(...args){
 }
 
 function isNotConstructor(f){
-  return isFunction(f) && !/^[A-Z]./.test(name(f));
+  return isFunction(f) && !/^[A-Z]./.test(p.name(f));
 }
 
 //convenience for wrapping batches of functions.
 export function impart(self, f){ //set retraction to identity to curb retraction overhead
-  return reducekv(function(memo, key, value){
-    return assoc(memo, key, isNotConstructor(value) ? f(value) : value);
+  return p.reducekv(function(memo, key, value){
+    return p.assoc(memo, key, isNotConstructor(value) ? f(value) : value);
   }, {}, self);
 }
 
 function include2(self, value){
-  return toggles(conj(?, value), omit(?, value), includes(?, value), self);
+  return toggles(p.conj(?, value), p.omit(?, value), p.includes(?, value), self);
 }
 
 function include3(self, value, want){
-  return toggles(conj(?, value), omit(?, value), includes(?, value), self, want);
+  return toggles(p.conj(?, value), p.omit(?, value), p.includes(?, value), self, want);
 }
 
 export const include = overload(null, null, include2, include3);
@@ -236,7 +236,7 @@ export function when(pred, ...xs) {
 
 export function readable(keys){
   const lookup = keys ? function(self, key){
-    if (!includes(keys, key)) {
+    if (!p.includes(keys, key)) {
       throw new Error("Cannot read from " + key);
     }
     return self[key];
@@ -254,7 +254,7 @@ export function writable(keys){
     return self.hasOwnProperty(key);
   }
   const assoc = keys ? function(self, key, value){
-    if (!includes(keys, key) || !contains(self, key)) {
+    if (!p.includes(keys, key) || !contains(self, key)) {
       throw new Error("Cannot write to " + key);
     }
     var tgt = clone(self);

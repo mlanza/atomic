@@ -6,48 +6,49 @@ import {comp} from "../function/concrete.js";
 import {emptyList} from "../empty-list/construct.js";
 import {concatenated} from "../concatenated/construct.js";
 import irecord from "../record/behave.js";
+import * as p from "./protocols.js";
 
 function keys(self){
   return Object.keys(self.attrs);
 }
 
 function count(self){
-  return ICounted.count(seq(self));
+  return p.count(seq(self));
 }
 
 function seq(self){
   return concatenated(map(function(key){
     return map(function(value){
       return [key, value];
-    }, ISeqable.seq(ILookup.lookup(self, key)) || emptyList());
+    }, p.seq(p.get(self, key)) || emptyList());
   }, keys(self)));
 }
 
 function first(self){
-  return ISeq.first(seq(self));
+  return p.first(seq(self));
 }
 
 function rest(self){
-  return ISeq.rest(seq(self));
+  return p.rest(seq(self));
 }
 
 function lookup(self, key){
-  return ILookup.lookup(self.attrs, key);
+  return p.get(self.attrs, key);
 }
 
 function assoc(self, key, value){
   const values = lookup(self, key) || self.empty(key);
-  return new self.constructor(IAssociative.assoc(self.attrs, key, ICollection.conj(values, value)), self.empty);
+  return new self.constructor(p.assoc(self.attrs, key, p.conj(values, value)), self.empty);
 }
 
 function contains(self, key){
-  return IAssociative.contains(self.attrs, key);
+  return p.contains(self.attrs, key);
 }
 
 function reduce(self, xf, init){
-  return IReduce.reduce(seq(self), function(memo, pair){
+  return p.reduce(function(memo, pair){
     return xf(memo, pair);
-  }, init);
+  }, init, seq(self));
 }
 
 function reducekv(self, xf, init){

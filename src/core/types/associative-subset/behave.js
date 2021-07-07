@@ -1,22 +1,23 @@
 import {implement} from "../protocol.js";
 import {identity, does} from "../../core.js";
-import {IEquiv, ICoerceable, IFind, IReduce, IKVReduce, INext, ISeq, ISeqable, IIndexed, ICounted, ILookup, IFn, IMap, IClonable, IEmptyableCollection} from "../../protocols.js";
 import {lazySeq} from "../../types/lazy-seq/construct.js";
 import {cons} from "../../types/list/construct.js";
 import {remove, into} from "../../types/lazy-seq/concrete.js";
 import {emptyObject} from "../../types/object/construct.js";
 import iemptylist from "../../types/empty-list/behave.js";
+import {IEquiv, ICoerceable, IFind, IReduce, IKVReduce, ISeqable, ICounted, ILookup, IFn, IMap, IClonable, IEmptyableCollection} from "../../protocols.js";
+import * as p from "./protocols.js";
 
 function toObject(self){
   return into({}, self);
 }
 
 function find(self, key){
-  return IInclusive.includes(IMap.keys(self), key) ? [key, ILookup.lookup(self.obj, key)] : null;
+  return p.includes(p.keys(self), key) ? [key, p.get(self.obj, key)] : null;
 }
 
 function lookup(self, key){
-  return IInclusive.includes(IMap.keys(self), key) ? self.obj[key] : null;
+  return p.includes(p.keys(self), key) ? self.obj[key] : null;
 }
 
 function dissoc(self, key){
@@ -30,21 +31,21 @@ function keys(self){
 }
 
 function vals(self){
-  const key = ISeq.first(self.keys);
+  const key = p.first(self.keys);
   return lazySeq(function(){
-    return cons(lookup(self, key), vals(new self.constructor(self.obj, ISeq.rest(self.keys))));
+    return cons(lookup(self, key), vals(new self.constructor(self.obj, p.rest(self.keys))));
   });
 }
 
 function seq(self){
-  const key = ISeq.first(self.keys);
+  const key = p.first(self.keys);
   return lazySeq(function(){
-    return cons([key, lookup(self, key)], new self.constructor(self.obj, ISeq.rest(self.keys)));
+    return cons([key, lookup(self, key)], new self.constructor(self.obj, p.rest(self.keys)));
   });
 }
 
 function count(self){
-  return ICounted.count(self.keys);
+  return p.count(self.keys);
 }
 
 function clone(self){
@@ -52,15 +53,15 @@ function clone(self){
 }
 
 function reduce(self, xf, init){
-  return IReduce.reduce(keys(self), function(memo, key){
+  return p.reduce(function(memo, key){
     return xf(memo, [key, lookup(self, key)]);
-  }, init);
+  }, init, keys(self));
 }
 
 function reducekv(self, xf, init){
-  return IReduce.reduce(keys(self), function(memo, key){
+  return p.reduce(function(memo, key){
     return xf(memo, key, lookup(self, key));
-  }, init);
+  }, init, keys(self));
 }
 
 export default does(

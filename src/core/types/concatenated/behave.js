@@ -1,29 +1,30 @@
 import {identity, does} from "../../core.js";
 import {implement} from "../protocol.js";
 import {isReduced, unreduced} from "../reduced.js";
-import {ICoerceable, ICollection, INext, ISeq, ICounted, ISeqable, IIndexed, IReduce, IKVReduce, ISequential, IEmptyableCollection} from "../../protocols.js";
 import {apply} from "../function/concrete.js";
 import {EmptyList, emptyList} from "../empty-list.js";
 import ilazyseq, {iterable} from "../lazy-seq/behave.js";
 import {mapa} from "../lazy-seq/concrete.js";
 import {LazySeq} from "../lazy-seq/construct.js";
 import {concatenated, concat} from "./construct.js";
+import {ICoerceable, ICollection, INext, ISeq, ICounted, ISeqable, IIndexed, IReduce, IKVReduce, ISequential, IEmptyableCollection} from "../../protocols.js";
+import * as p from "./protocols.js";
 
 function conj(self, x){
-  return new self.constructor(ICollection.conj(self.colls, [x]));
+  return new self.constructor(p.conj(self.colls, [x]));
 }
 
 function next(self){
-  const tail = ISeq.rest(self);
-  return ISeqable.seq(tail) ? tail : null;
+  const tail = p.rest(self);
+  return p.seq(tail) ? tail : null;
 }
 
 function first(self){
-  return ISeq.first(ISeq.first(self.colls));
+  return p.first(p.first(self.colls));
 }
 
 function rest(self){
-  return apply(concat, ISeq.rest(ISeq.first(self.colls)), ISeq.rest(self.colls));
+  return apply(concat, p.rest(p.first(self.colls)), p.rest(self.colls));
 }
 
 function toArray(self){
@@ -36,9 +37,9 @@ function toArray(self){
 function reduce(self, xf, init){
   let memo = init,
       remaining = self;
-  while(!isReduced(memo) && ISeqable.seq(remaining)){
-    memo = xf(memo, ISeq.first(remaining))
-    remaining = INext.next(remaining);
+  while(!isReduced(memo) && p.seq(remaining)){
+    memo = xf(memo, p.first(remaining))
+    remaining = p.next(remaining);
   }
   return unreduced(memo);
 }
@@ -47,9 +48,9 @@ function reducekv(self, xf, init){
   let memo = init,
       remaining = self,
       idx = 0;
-  while(!isReduced(memo) && ISeqable.seq(remaining)){
-    memo = xf(memo, idx, ISeq.first(remaining))
-    remaining = INext.next(remaining);
+  while(!isReduced(memo) && p.seq(remaining)){
+    memo = xf(memo, idx, p.first(remaining))
+    remaining = p.next(remaining);
     idx++;
   }
   return unreduced(memo);

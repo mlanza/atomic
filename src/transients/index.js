@@ -4,7 +4,7 @@ export * from "./protocols.js";
 export * from "./protocols/concrete.js";
 export * from "./types.js";
 
-import {IPersistent, ITransient} from "./protocols.js";
+import {ITransient} from "./protocols.js";
 import {transientObject, transientArray, transientSet} from "./types.js";
 import Set from "set";
 

@@ -1,5 +1,5 @@
 import {ILookup} from "./instance.js";
-import {IReduce} from "../ireduce.js";
+import {reduce} from "../ireduce/concrete.js";
 
 export function get(self, key, notFound){
   const found = ILookup.lookup(self, key)
@@ -7,6 +7,6 @@ export function get(self, key, notFound){
 }
 
 export function getIn(self, keys, notFound){
-  const found = IReduce.reduce(keys, get, self);
+  const found = reduce(get, self, keys);
   return found == null ? (notFound == null ? null : notFound) : found;
 }

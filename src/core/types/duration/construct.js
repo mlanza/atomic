@@ -1,10 +1,10 @@
 import {overload, constructs} from "../../core.js";
-import {IAssociative} from "../../protocols.js";
 import {mult} from "../../protocols/imultipliable/concrete.js";
-import Symbol from "symbol";
 import {isNumber} from "../number/concrete.js";
 import {branch} from "../../core.js";
 import {comp} from "../function/concrete.js";
+import Symbol from "symbol";
+import * as p from "./protocols.js";
 
 export function Duration(units){
   this.units = units;
@@ -28,7 +28,7 @@ function from(obj){
 
 function unit(key){
   return function(n){
-    return new Duration(IAssociative.assoc({}, key, n));
+    return new Duration(p.assoc({}, key, n));
   }
 }
 

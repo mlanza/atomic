@@ -1,8 +1,7 @@
 import {overload} from "../../core.js";
-import {reducing} from "../../protocols/ireduce/concrete.js";
 import {EmptyList, emptyList} from "../../types/empty-list.js";
-import {IReduce} from "../../protocols/ireduce.js";
 import Symbol from "symbol";
+import * as p from "./protocols.js";
 
 export function List(head, tail){
   this.head = head;
@@ -17,7 +16,7 @@ function cons2(head, tail){
   return new List(head, tail || emptyList());
 }
 
-const _consN = reducing(cons2);
+const _consN = p.reducing(cons2);
 
 function consN(...args){
   return _consN.apply(this, args.concat([emptyList()]));
@@ -33,7 +32,7 @@ export function isList(self){
 }
 
 export function list(...args){
-  return IReduce.reduce(args.reverse(), function(memo, value){
+  return p.reduce(function(memo, value){
     return cons(value, memo);
-  }, emptyList());
+  }, emptyList(), args.reverse());
 }

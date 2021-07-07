@@ -38,7 +38,7 @@ function after(self, reference, inserted){
 }
 
 function keys(self){
-  return range(ICounted.count(self));
+  return range(count(self));
 }
 
 function _dissoc(self, idx){
@@ -102,7 +102,7 @@ function omit(self, value){
 }
 
 function reverse(self){
-  let c = ICounted.count(self);
+  let c = count(self);
   return c > 0 ? revSeq(self, c - 1) : null;
 }
 
@@ -115,7 +115,7 @@ function val(self){
 }
 
 function find(self, key){
-  return IAssociative.contains(self, key) ? [key, ILookup.lookup(self, key)] : null;
+  return contains(self, key) ? [key, lookup(self, key)] : null;
 }
 
 function lookup(self, key){
@@ -155,7 +155,7 @@ function prepend(self, x){
 }
 
 function next(self){
-  return self.length > 1 ? ISeq.rest(self) : null;
+  return self.length > 1 ? rest(self) : null;
 }
 
 function first(self){
@@ -170,7 +170,7 @@ function includes(self, x){
   return self.indexOf(x) > -1;
 }
 
-function length(self){
+function count(self){
   return self.length;
 }
 
@@ -196,7 +196,7 @@ const blank = complement(seq);
 
 export const iindexed = does(
   implement(IIndexed, {nth, idx}),
-  implement(ICounted, {count: length}));
+  implement(ICounted, {count}));
 
 export default does(
   naming(?, Symbol("Array")),

@@ -1,9 +1,9 @@
 import {overload, partial} from "../../core.js";
-import {ISeq} from "../../protocols.js";
 import {period} from "../period/construct.js";
 import {mapa, sort, asc} from "../lazy-seq/concrete.js";
 import {measure} from "../number/concrete.js";
 import Promise from "promise";
+import * as p from "./protocols.js";
 
 export function Benchmark(operation, result, period, duration){
   this.operation = operation;
@@ -26,7 +26,7 @@ function benchmark2(n, operation){
   }).then(function(xs){
     return Object.assign({
       source: xs,
-      operation: ISeq.first(xs).operation
+      operation: p.first(xs).operation
     }, measure(mapa(duration, xs)));
   });
 }
