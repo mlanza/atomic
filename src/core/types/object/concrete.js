@@ -52,7 +52,7 @@ function mapVals3(init, f, pred){
 export const mapVals = overload(null, null, mapVals2, mapVals3);
 
 function defaults2(self, defaults){
-  return p.reducekv(self, p.assoc, defaults);
+  return p.reducekv(p.assoc, defaults, self);
 }
 
 export const defaults = overload(null, null, defaults2, reducing(defaults2));

@@ -1,14 +1,11 @@
-import {overload, constantly, identity, branch, slice} from "./core.js";
-import {IReduce, IKVReduce, ICounted, IComparable, IEquiv} from "./protocols.js";
-import {reduced} from "./types/reduced.js";
-import {comp, partial, apply} from "./types/function/concrete.js";
-import {mapa} from "./types/lazy-seq/concrete.js";
-import {reducing} from "./protocols/ireduce/concrete.js";
-import {compare} from "./protocols/icomparable/concrete.js";
-import {isNil} from "./types/nil/construct.js";
-import {indexed} from "./types/indexed/construct.js";
-import {maybe} from "./types/maybe/construct.js";
-import {equiv as eq2} from "./protocols/iequiv/concrete.js";
+import {overload, constantly, identity, slice} from "../core.js";
+import {reduced} from "../types/reduced.js";
+import {apply} from "../types/function/concrete.js";
+import {mapa} from "../types/lazy-seq/concrete.js";
+import {isNil} from "../types/nil/construct.js";
+import {indexed} from "../types/indexed/construct.js";
+import {maybe} from "../types/maybe/construct.js";
+import * as p from "./protocols.js";
 
 export function both(memo, value){
   return memo && value;
@@ -18,39 +15,39 @@ export function either(memo, value){
   return memo || value;
 }
 
-export const all = overload(null, identity, both  , reducing(both));
-export const any = overload(null, identity, either, reducing(either));
+export const all = overload(null, identity, both  , p.reducing(both));
+export const any = overload(null, identity, either, p.reducing(either));
 
 export function and(...preds){
   return function(...args){
-    return IReduce.reduce(preds, function(memo, pred){
+    return p.reduce(function(memo, pred){
       return memo ? pred(...args) : reduced(memo);
-    }, true);
+    }, true, preds);
   }
 }
 
 export function or(...preds){
   return function(...args){
-    return IReduce.reduce(preds, function(memo, pred){
+    return p.reduce(function(memo, pred){
       return memo ? reduced(memo) : pred(...args);
-    }, false);
+    }, false, preds);
   }
 }
 
 export function signature(...preds){
   return function(...values){
-    return IKVReduce.reducekv(preds, function(memo, idx, pred){
+    return p.reducekv(function(memo, idx, pred){
       return memo ? !pred || pred(values[idx]) : reduced(memo);
-    }, ICounted.count(preds) === ICounted.count(values));
+    }, p.count(preds) === p.count(values), preds);
   }
 }
 
 export function signatureHead(...preds){
   return function(...values){
-    return IKVReduce.reducekv(values, function(memo, idx, value){
+    return p.reducekv(function(memo, idx, value){
       let pred = preds[idx];
       return memo ? !pred || pred(value) : reduced(memo);
-    }, true);
+    }, true, values);
   }
 }
 
@@ -83,10 +80,10 @@ function someFn3(a, b, c){
 
 function someFnN(...preds){
   return function(...args){
-    return IReduce.reduce(preds, function(result, pred){
+    return p.reduce(function(result, pred){
       let r = apply(pred, args);
       return r ? reduced(r) : result;
-    }, false);
+    }, false, preds);
   }
 }
 
@@ -97,7 +94,7 @@ export function isIdentical(x, y){
 }
 
 function lt2(a, b){
-  return compare(a, b) < 0;
+  return p.compare(a, b) < 0;
 }
 
 function ltN(...args){
@@ -106,7 +103,7 @@ function ltN(...args){
 
 export const lt = overload(constantly(false), constantly(true), lt2, ltN);
 
-const lte2 = or(lt2, eq2);
+const lte2 = or(lt2, p.equiv);
 
 function lteN(...args){
   return everyPair(lte2, args);
@@ -115,7 +112,7 @@ function lteN(...args){
 export const lte = overload(constantly(false), constantly(true), lte2, lteN);
 
 function gt2(a, b){
-  return compare(a, b) > 0;
+  return p.compare(a, b) > 0;
 }
 
 function gtN(...args){
@@ -124,7 +121,7 @@ function gtN(...args){
 
 export const gt = overload(constantly(false), constantly(true), gt2, gtN);
 
-const gte2 = or(eq2, gt2);
+const gte2 = or(p.equiv, gt2);
 
 function gteN(...args){
   return everyPair(gte2, args);
@@ -133,10 +130,10 @@ function gteN(...args){
 export const gte = overload(constantly(false), constantly(true), gte2, gteN);
 
 function eqN(...args){
-  return everyPair(eq2, args);
+  return everyPair(p.equiv, args);
 }
 
-export const eq = overload(constantly(true), constantly(true), eq2, eqN);
+export const eq = overload(constantly(true), constantly(true), p.equiv, eqN);
 
 export function notEq(...args){
   return !eq(...args);
@@ -150,11 +147,11 @@ export function mapArgs(xf, f){
 
 export function everyPred(...preds){
   return function(){
-    return IReduce.reduce(slice(arguments), function(memo, arg){
-      return IReduce.reduce(preds, function(memo, pred){
+    return p.reduce(function(memo, arg){
+      return p.reduce(function(memo, pred){
         let result = memo && pred(arg);
         return result ? result : reduced(result);
-      }, memo);
-    }, true)
+      }, memo, preds);
+    }, true, slice(arguments));
   }
 }

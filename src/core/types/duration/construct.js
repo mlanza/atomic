@@ -1,8 +1,6 @@
-import {overload, constructs} from "../../core.js";
+import {overload, comp, constructs, branch} from "../../core.js";
 import {mult} from "../../protocols/imultipliable/concrete.js";
 import {isNumber} from "../number/concrete.js";
-import {branch} from "../../core.js";
-import {comp} from "../function/concrete.js";
 import Symbol from "symbol";
 import * as p from "./protocols.js";
 
