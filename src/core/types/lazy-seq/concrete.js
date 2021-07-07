@@ -1,5 +1,5 @@
 import {ISequential} from "../../protocols.js";
-import {trampoline, identity, constantly, overload, complement} from "../../core.js";
+import {trampoline, identity, constantly, overload, complement, comp, partial} from "../../core.js";
 import {EmptyList, emptyList} from "../empty-list/construct.js";
 import {emptyArray} from "../array/construct.js";
 import {randInt, isEven} from "../number/concrete.js";
@@ -9,7 +9,7 @@ import {isNil, isSome} from "../nil.js";
 import {cons} from "../list/construct.js";
 import {range} from "../range/construct.js";
 import {str} from "../string/concrete.js";
-import {juxt, comp, apply, partial} from "../function/concrete.js"; //MOD
+import {juxt, apply} from "../function/concrete.js"; //MOD
 import {lazySeq} from "../lazy-seq/construct.js";
 import {concat, concatenated} from "../concatenated/construct.js";
 import {satisfies} from "../protocol/concrete.js";

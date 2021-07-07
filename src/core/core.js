@@ -20,6 +20,29 @@ export function invokes(self, method, ...args){
   return self[method].apply(self, args);
 }
 
+export function comp(){
+  const fs = arguments, start = fs.length - 2, f = fs[fs.length - 1];
+  return function(){
+    let memo = f.apply(this, arguments);
+    for(let i = start; i > -1; i--) {
+      const f = fs[i];
+      memo = f.call(this, memo);
+    }
+    return memo;
+  }
+}
+
+export function pipe(f, ...fs){
+  return arguments.length ? function(){
+    let memo = f.apply(this, arguments);
+    for(let i = 0; i < fs.length; i++) {
+      const f = fs[i];
+      memo = f.call(this, memo);
+    }
+    return memo;
+  } : identity;
+}
+
 export function overload(){
   const fs = arguments, fallback = fs[fs.length - 1];
   return function(){
@@ -64,6 +87,25 @@ export function obj(f, len){ //objective
     }
   }
 }
+
+function curry1(f){
+  return curry2(f, f.length);
+}
+
+function curry2(f, minimum){
+  return function(){
+    const applied = arguments.length ? slice(arguments) : [undefined]; //each invocation assumes advancement
+    if (applied.length >= minimum) {
+      return f.apply(this, applied);
+    } else {
+      return curry2(function(){
+        return f.apply(this, applied.concat(slice(arguments)));
+      }, minimum - applied.length);
+    }
+  }
+}
+
+export const curry = overload(null, curry1, curry2);
 
 export const placeholder = {};
 
@@ -308,3 +350,43 @@ function called2(fn, message){
 }
 
 export const called = overload(null, null, called2, called3, called4);
+
+export function nullary(f){
+  return function(){
+    return f();
+  }
+}
+
+export function unary(f){
+  return function(a){
+    return f(a);
+  }
+}
+
+export function binary(f){
+  return function(a, b){
+    return f(a, b);
+  }
+}
+
+export function ternary(f){
+  return function(a, b, c){
+    return f(a, b, c);
+  }
+}
+
+export function quaternary(f){
+  return function(a, b, c, d){
+    return f(a, b, c, d);
+  }
+}
+
+export function nary(f, length){
+  return function(){
+    return f(...slice(arguments, 0, length));
+  }
+}
+
+export function arity(f, length){
+  return ([nullary, unary, binary, ternary, quaternary][length] || nary)(f, length);
+}

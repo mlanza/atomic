@@ -1,8 +1,7 @@
 import {IFunctor, IForkable, IChainable} from "../../protocols.js";
-import {identity, does, overload, noop} from "../../core.js";
+import {identity, does, overload, noop, comp} from "../../core.js";
 import {implement} from "../protocol.js";
 import {task} from "./construct.js";
-import {comp} from "../function/concrete.js";
 import * as p from "./protocols.js";
 
 function fmap(self, f){
