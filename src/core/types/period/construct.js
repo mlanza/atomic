@@ -1,8 +1,8 @@
 import {overload} from "../../core.js";
 import {patch} from "../../associatives.js";
 import {sod, eod, isDate} from "../date/concrete.js";
-import {add} from "../../protocols/iaddable/concrete.js";
 import Symbol from "symbol";
+import * as p from "./protocols.js";
 
 export function Period(start, end){
   this.start = start;
@@ -22,7 +22,7 @@ export function period1(obj){
 }
 
 function period2(start, end){ //end could be a duration (e.g. `minutes(30)`).
-  const pd = new Period(start, end == null || isDate(end) ? end : add(start, end));
+  const pd = new Period(start, end == null || isDate(end) ? end : p.add(start, end));
   if (!(pd.start == null || isDate(pd.start))) {
     throw new Error("Invalid start of period.");
   }

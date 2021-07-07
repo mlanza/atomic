@@ -2,54 +2,46 @@ import {does} from "../../core.js";
 import {implement, satisfies} from "../protocol.js";
 import {comp} from "../function/concrete.js";
 import {butlast, last, detect, map, lazySeq, remove, drop, dropWhile, take, takeWhile} from "../lazy-seq.js";
-import {seq} from "../../protocols/iseqable/concrete.js";
-import {get, getIn} from "../../protocols/ilookup/concrete.js";
-import {includes} from "../../protocols/iinclusive/concrete.js";
-import {first} from "../../protocols/iseq/concrete.js";
-import {toArray} from "../../protocols/icoerceable/concrete.js";
-import {reverse} from "../../protocols/ireversible/concrete.js";
-import {downward} from "../../protocols/ihierarchy/concrete.js";
-import * as icollection from "../../protocols/icollection/concrete.js";
 import {emptyList} from "../../types/empty-list/construct.js";
 import {cons} from "../../types/list/construct.js";
 import {concat} from "../../types/concatenated/construct.js";
-import {updateIn, assocIn} from "../../protocols/iassociative/concrete.js";
-import {IFn, IPath, ISwap, IReset, IDeref, IMap, IHierarchy, ILookup, IAssociative, ICollection} from "../../protocols.js";
+import {IPath, ISwap, IReset, IDeref, IMap, IHierarchy, ILookup, IAssociative, ICollection} from "../../protocols.js";
+import * as p from "./protocols.js";
 
 function path(self){
   return self.path;
 }
 
 function deref(self){
-  return getIn(self.root, self.path);
+  return p.getIn(self.root, self.path);
 }
 
 function conj(self, value){
-  return swap(self, icollection.conj(?, value));
+  return swap(self, p.conj(?, value));
 }
 
 function lookup(self, key){
-  return self.constructor.create(self.root, icollection.conj(self.path, key));
+  return self.constructor.create(self.root, p.conj(self.path, key));
 }
 
 function assoc(self, key, value){
-  return swap(self, IAssociative.assoc(?, key, value));
+  return swap(self, p.assoc(?, key, value));
 }
 
 function contains(self, key){
-  return includes(keys(self), key);
+  return p.includes(keys(self), key);
 }
 
 function dissoc(self, key){
-  return swap(self, IMap.dissoc(?, key));
+  return swap(self, p.dissoc(?, key));
 }
 
 function reset(self, value){
-  return self.constructor.create(assocIn(self.root, self.path, value), self.path);
+  return self.constructor.create(p.assocIn(self.root, self.path, value), self.path);
 }
 
 function swap(self, f){
-  return self.constructor.create(updateIn(self.root, self.path, f), self.path);
+  return self.constructor.create(p.updateIn(self.root, self.path, f), self.path);
 }
 
 function root(self){
@@ -58,26 +50,26 @@ function root(self){
 
 function children(self){
   return map(function(key){
-    return self.constructor.create(self.root, icollection.conj(self.path, key));
+    return self.constructor.create(self.root, p.conj(self.path, key));
   }, keys(self));
 }
 
 function keys(self){
   const value = deref(self);
-  return satisfies(IMap, value) ? IMap.keys(value) : emptyList();
+  return satisfies(IMap, value) ? p.keys(value) : emptyList();
 }
 
 function vals(self){
   const value = deref(self);
-  return map(get(value, ?), keys(self));
+  return map(p.get(value, ?), keys(self));
 }
 
 function siblings(self){
   const p = parent(self),
-        ctx = toArray(butlast(self.path)),
+        ctx = p.toArray(butlast(self.path)),
         key = last(self.path);
   return map(function(key){
-    return self.constructor.create(self.root, icollection.conj(ctx, key));
+    return self.constructor.create(self.root, p.conj(ctx, key));
   }, remove(function(k){
     return k === key;
   }, p ? keys(p) : []));
@@ -85,31 +77,31 @@ function siblings(self){
 
 function prevSiblings(self){
   const p = parent(self),
-        ctx = toArray(butlast(self.path)),
+        ctx = p.toArray(butlast(self.path)),
         key = last(self.path);
   return map(function(key){
-    return self.constructor.create(self.root, icollection.conj(ctx, key));
-  }, reverse(toArray(take(1, takeWhile(function(k){
+    return self.constructor.create(self.root, p.conj(ctx, key));
+  }, p.reverse(p.toArray(take(1, takeWhile(function(k){
     return k !== key;
   }, p ? keys(p) : [])))));
 }
 
 function nextSiblings(self){
   const p = parent(self),
-        ctx = toArray(butlast(self.path)),
+        ctx = p.toArray(butlast(self.path)),
         key = last(self.path);
   return map(function(key){
-    return self.constructor.create(self.root, icollection.conj(ctx, key));
+    return self.constructor.create(self.root, p.conj(ctx, key));
   }, drop(1, dropWhile(function(k){
     return k !== key;
   }, p ? keys(p) : [])));
 }
 
-const prevSibling = comp(first, prevSiblings);
-const nextSibling = comp(first, nextSiblings);
+const prevSibling = comp(p.first, prevSiblings);
+const nextSibling = comp(p.first, nextSiblings);
 
 function parent(self){
-  return seq(self.path) ? self.constructor.create(self.root, butlast(self.path)) : null;
+  return p.seq(self.path) ? self.constructor.create(self.root, butlast(self.path)) : null;
 }
 
 function parents(self){
@@ -123,7 +115,7 @@ function closest(self, pred){
   return detect(comp(pred, deref), cons(self, parents(self)));
 }
 
-const descendants = downward(children);
+const descendants = p.downward(children);
 
 export default does(
   implement(IPath, {path}),

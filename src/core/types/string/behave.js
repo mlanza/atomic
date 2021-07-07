@@ -1,4 +1,4 @@
-import {IBlankable, ISplittable, ITemplate, IKVReduce, IAssociative, ICoerceable, IMatchable, IReduce, ICollection, IIndexed, ISeqable, INext, ISeq, IInclusive, IAppendable, IPrependable, ICounted, ILookup, IFn, IComparable, IEmptyableCollection} from "../../protocols.js";
+import {IBlankable, ISplittable, ITemplate, ICoerceable, IMatchable, IReduce, ICollection, ISeqable, INext, ISeq, IInclusive, IAppendable, IPrependable, ILookup, IFn, IComparable, IEmptyableCollection} from "../../protocols.js";
 import {does, identity, constantly, unbind, overload} from "../../core.js";
 import {implement} from "../protocol.js";
 import {isReduced, unreduced} from "../reduced.js";
@@ -8,6 +8,7 @@ import {iindexed} from "../array/behave.js";
 import {rePattern} from "../reg-exp/concrete.js";
 import {emptyString, isString} from "./construct.js";
 import {replace} from "./concrete.js";
+import * as p from "./protocols.js";
 
 function split1(str){
   return str.split("");
@@ -33,9 +34,9 @@ function split3(str, pattern, n){
 const split = overload(null, split1, unbind(String.prototype.split), split3)
 
 function fill(self, params){
-  return IKVReduce.reducekv(params, function(text, key, value){
+  return p.reducekv(function(text, key, value){
     return replace(text, new RegExp("\\{" + key + "\\}", 'ig'), value);
-  }, self);
+  }, self, params);
 }
 
 function blank(self){
@@ -90,10 +91,10 @@ function toArray(self){
 
 function reduce(self, xf, init){
   let memo = init;
-  let coll = ISeqable.seq(self);
+  let coll = p.seq(self);
   while(coll && !isReduced(memo)){
-    memo = xf(memo, ISeq.first(coll));
-    coll = INext.next(coll);
+    memo = xf(memo, p.first(coll));
+    coll = p.next(coll);
   }
   return unreduced(memo);
 }

@@ -1,5 +1,5 @@
 import {IBounds} from "./instance.js";
-import {IComparable} from "../../protocols/icomparable.js";
+import {compare} from "../../protocols/icomparable.js";
 import {isNil} from "../../types/nil.js";
 import {constructs} from "../../core.js";
 import {gt, lt, lte} from "../../predicates.js";
@@ -9,7 +9,7 @@ export const end = IBounds.end;
 
 function chronology(item){
   const s = start(item), e = end(item);
-  return s == null || e == null ? [s, e] : [s, e].sort(IComparable.compare);
+  return s == null || e == null ? [s, e] : [s, e].sort(compare);
 }
 
 //The end range value must also be the start range value of the next successive range to avoid infinitisimally small gaps.
@@ -22,7 +22,7 @@ export function inside(sr, er, b){
   if (sr == null && er == null) {
     return true;
   }
-  return (sr == null || IComparable.compare(b, sr) >= 0) && (er == null || IComparable.compare(b, er) < 0);
+  return (sr == null || compare(b, sr) >= 0) && (er == null || compare(b, er) < 0);
 }
 
 export function between(a, b){

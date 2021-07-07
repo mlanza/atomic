@@ -1,18 +1,19 @@
 import {does, constructs} from "../../core.js";
 import {implement} from "../protocol.js";
-import {ICoerceable, IReduce, IIndexed, ISeqable, ISeq, INext, IInclusive, IAppendable, IPrependable, ICounted, ILookup, IFn, ISequential, IEmptyableCollection} from "../../protocols.js";
+import {ICoerceable, IReduce, ISeqable, ISeq, INext, IInclusive, IAppendable, IPrependable, ICounted, ISequential, IEmptyableCollection} from "../../protocols.js";
 import {iterable} from "../lazy-seq/behave.js";
+import * as p from "./protocols.js";
 
 function seq(self){
-  return ISeqable.seq(self.items);
+  return p.seq(self.items);
 }
 
 function toArray(self){
-  return ICoerceable.toArray(self.items);
+  return p.toArray(self.items);
 }
 
 function first(self){
-  return ISeq.first(self.items);
+  return p.first(self.items);
 }
 
 function rest(self){
@@ -20,24 +21,24 @@ function rest(self){
 }
 
 function next(self){
-  const args = INext.next(self.items);
-  return args ? self.constructor.from(args) : null;
+  const items = p.next(self.items);
+  return items ? self.constructor.from(items) : null;
 }
 
 function append(self, other){
-  return self.constructor.from(IAppendable.append(self.items, other));
+  return self.constructor.from(p.append(self.items, other));
 }
 
 function prepend(self, other){
-  return self.constructor.from(IPrependable.prepend(self.items, other));
+  return self.constructor.from(p.prepend(self.items, other));
 }
 
 function includes(self, name){
-  return IInclusive.includes(self.items, name);
+  return p.includes(self.items, name);
 }
 
 function count(self){
-  return ICounted.count(self.items);
+  return p.count(self.items);
 }
 
 function empty(self){
@@ -45,7 +46,7 @@ function empty(self){
 }
 
 function reduce(self, xf, init){
-  return IReduce.reduce(self.items, xf, init);
+  return p.reduce(xf, init, self.items);
 }
 
 function construction(Type){

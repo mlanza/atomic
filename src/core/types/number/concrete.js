@@ -1,7 +1,7 @@
 import {overload, identity, constantly, complement} from "../../core.js";
 import {IReduce, ICounted, IComparable, IAddable} from "../../protocols.js";
 import {partial, unary} from "../function.js";
-import {reducing} from "../../protocols/ireduce/concrete.js";
+import * as p from "./protocols.js";
 
 export function number(...args){
   return Number(...args);
@@ -34,15 +34,15 @@ export function mod(n, div){
 }
 
 function min2(x, y){
-  return IComparable.compare(x, y) < 0 ? x : y;
+  return p.compare(x, y) < 0 ? x : y;
 }
 
 function max2(x, y){
-  return IComparable.compare(x, y) > 0 ? x : y;
+  return p.compare(x, y) > 0 ? x : y;
 }
 
-export const min = overload(null, identity, min2, reducing(min2));
-export const max = overload(null, identity, max2, reducing(max2));
+export const min = overload(null, identity, min2, p.reducing(min2));
+export const max = overload(null, identity, max2, p.reducing(max2));
 
 export function isZero(x){
   return x === 0;
@@ -81,24 +81,24 @@ export function randInt(n){
 }
 
 export function sum(ns){
-  return IReduce.reduce(ns, IAddable.add, 0);
+  return p.reduce(p.add, 0, ns);
 }
 
 export function least(ns){
-  return IReduce.reduce(ns, min, Number.POSITIVE_INFINITY);
+  return p.reduce(min, Number.POSITIVE_INFINITY, ns);
 }
 
 export function most(ns){
-  return IReduce.reduce(ns, max, Number.NEGATIVE_INFINITY);
+  return p.reduce(max, Number.NEGATIVE_INFINITY, ns);
 }
 
 export function average(ns){
-  return sum(ns) / ICounted.count(ns);
+  return sum(ns) / p.count(ns);
 }
 
 export function measure(ns){
   return {
-    count: ICounted.count(ns),
+    count: p.count(ns),
     sum: sum(ns),
     least: least(ns),
     most: most(ns),

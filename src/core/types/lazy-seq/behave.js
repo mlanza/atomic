@@ -9,6 +9,7 @@ import {map, filter, detect} from "./concrete.js";
 import {emptyList} from "../empty-list/construct.js";
 import iemptylist from "../empty-list/behave.js";
 import Symbol from "symbol";
+import * as p from "./protocols.js";
 
 const compact1 = partial(filter, identity);
 
@@ -27,7 +28,7 @@ function conj(self, value){
 }
 
 function seq(self){
-  return ISeqable.seq(self.perform());
+  return p.seq(self.perform());
 }
 
 function blank(self){
@@ -38,8 +39,8 @@ function iterate(self){
   let state = self;
   return {
     next: function(){
-      let result = ISeqable.seq(state) ? {value: ISeq.first(state), done: false} : {done: true};
-      state = INext.next(state);
+      let result = p.seq(state) ? {value: p.first(state), done: false} : {done: true};
+      state = p.next(state);
       return result;
     }
   };
@@ -60,61 +61,61 @@ export function find(coll, key){
 }
 
 function first(self){
-  return ISeq.first(self.perform());
+  return p.first(self.perform());
 }
 
 function rest(self){
-  return ISeq.rest(self.perform());
+  return p.rest(self.perform());
 }
 
 function next(self){
-  return ISeqable.seq(ISeq.rest(self));
+  return p.seq(p.rest(self));
 }
 
 function nth(self, n){
   let xs  = self,
       idx = 0;
   while(xs){
-    let x = ISeq.first(xs);
+    let x = p.first(xs);
     if (idx === n) {
       return x;
     }
     idx++;
-    xs = INext.next(xs);
+    xs = p.next(xs);
   }
   return null;
 }
 
 function idx(self, x){
-  let xs = ISeqable.seq(self),
+  let xs = p.seq(self),
       n  = 0;
   while(xs){
-    if (x === ISeq.first(xs)) {
+    if (x === p.first(xs)) {
       return n;
     }
     n++;
-    xs = INext.next(xs);
+    xs = p.next(xs);
   }
   return null;
 }
 
 function reduce(xs, xf, init){
   let memo = init,
-      ys = ISeqable.seq(xs);
+      ys = p.seq(xs);
   while(ys && !(memo instanceof Reduced)){
-    memo = xf(memo, ISeq.first(ys));
-    ys = INext.next(ys);
+    memo = xf(memo, p.first(ys));
+    ys = p.next(ys);
   }
   return memo instanceof Reduced ? memo.valueOf() : memo;
 }
 
 function reducekv(xs, xf, init){
   let memo = init,
-      ys = ISeqable.seq(xs),
+      ys = p.seq(xs),
       idx = 0;
   while(ys && !(memo instanceof Reduced)){
-    memo = xf(memo, idx++, ISeq.first(ys));
-    ys = INext.next(ys);
+    memo = xf(memo, idx++, p.first(ys));
+    ys = p.next(ys);
   }
   return memo instanceof Reduced ? memo.valueOf() : memo;
 }
@@ -122,9 +123,9 @@ function reducekv(xs, xf, init){
 function toArray(xs){
   let ys = xs;
   const zs = [];
-  while (ISeqable.seq(ys) != null) {
-    zs.push(ISeq.first(ys));
-    ys = ISeq.rest(ys);
+  while (p.seq(ys) != null) {
+    zs.push(p.first(ys));
+    ys = p.rest(ys);
   }
   return zs;
 }
@@ -151,7 +152,7 @@ function includes(self, value){
   }, self);
 }
 
-const reverse = comp(IReversible.reverse, toArray);
+const reverse = comp(p.reverse, toArray);
 
 export default does(
   iterable,
@@ -170,7 +171,6 @@ export default does(
   implement(ICoerceable, {toArray}),
   implement(IAppendable, {append}),
   implement(IPrependable, {prepend: conj}),
-  implement(IReduce, {reduce}),
   implement(ICounted, {count}),
   implement(IFind, {find}),
   implement(IEmptyableCollection, {empty: emptyList}),

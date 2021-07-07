@@ -8,13 +8,14 @@ import {ISequential, ICoerceable, ILookup, IMap, IClonable, IReduce, ICollection
 import {revSeq} from "./construct.js";
 import {iterable} from "../lazy-seq/behave.js";
 import {map} from "../lazy-seq/concrete.js";
+import * as p from "./protocols.js";
 
 function clone(self){
   return new revSeq(self.coll, self.idx);
 }
 
 function count(self){
-  return ICounted.count(self.coll);
+  return p.count(self.coll);
 }
 
 function keys(self){
@@ -26,15 +27,15 @@ function vals(self){
 }
 
 function nth(self, idx){
-  return IIndexed.nth(self.coll, count(self) - 1 - idx);
+  return p.nth(self.coll, count(self) - 1 - idx);
 }
 
 function first(self){
-  return IIndexed.nth(self.coll, self.idx);
+  return p.nth(self.coll, self.idx);
 }
 
 function rest(self){
-  return INext.next(self) || emptyList();
+  return p.next(self) || emptyList();
 }
 
 function next(self){
@@ -46,19 +47,19 @@ function conj(self, value){
 }
 
 function reduce2(coll, f){
-  let xs = ISeqable.seq(coll);
-  return xs ? IReduce.reduce(INext.next(xs), f, ISeq.first(xs)) : f();
+  let xs = p.seq(coll);
+  return xs ? p.reduce(f, p.first(xs), p.next(xs)) : f();
 }
 
 function reduce3(coll, f, init){
   let memo = init,
-      xs   = ISeqable.seq(coll);
+      xs   = p.seq(coll);
   while(xs){
-    memo = f(memo, ISeq.first(xs));
+    memo = f(memo, p.first(xs));
     if (memo instanceof Reduced) {
       return unreduced(memo);
     }
-    xs = INext.next(xs);
+    xs = p.next(xs);
   }
   return memo;
 }

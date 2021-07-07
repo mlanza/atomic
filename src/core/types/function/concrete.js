@@ -1,16 +1,14 @@
-import {ICoerceable}  from "../../protocols/icoerceable.js";
-import {IReduce}  from "../../protocols/ireduce.js";
-import {conj}  from "../../protocols/icollection.js";
-import {reduced} from "../../types/reduced/construct.js";
 import {overload, identity, partial, log, slice} from "../../core.js";
+export {partial} from "../../core.js";
 import {isNil}  from "../nil.js";
 import {satisfies}  from "../protocol.js";
 import {isFunction}  from "./construct.js";
-export {partial} from "../../core.js";
+import {IReduce}  from "../../protocols/ireduce.js";
+import * as p from "./protocols.js";
 
 export function spread(f){
   return function(args){
-    return f(...ICoerceable.toArray(args));
+    return f(...p.toArray(args));
   }
 }
 
@@ -20,56 +18,56 @@ export function realize(g){
 
 export function realized(f){
   return function(...args){
-    return apply(f, IReduce.reduce(args, function(memo, arg){
+    return apply(f, p.reduce(function(memo, arg){
       memo.push(realize(arg));
       return memo;
-    }, []));
+    }, [], args));
   }
 }
 
 export function juxt(...fs){
   return function(...args){
-    return IReduce.reduce(fs, function(memo, f){
+    return p.reduce(function(memo, f){
       return memo.concat([f.apply(this, args)]);
-    }, []);
+    }, [], fs);
   }
 }
 
 export function pipe(f, ...fs){
   return arguments.length ? function(){
-    return IReduce.reduce(fs, function(memo, f){
+    return p.reduce(function(memo, f){
       return f(memo);
-    }, f.apply(null, arguments));
+    }, f.apply(null, arguments), fs);
   } : identity;
 }
 
 export function comp(...fs){
   const last = fs.length - 1, f = fs[last];
   return function(){
-    return IReduce.reduce(fs, function(memo, f){
+    return IReduce.reduce(fs, function(memo, f){ //TODO use concrete
       return f(memo);
     }, f.apply(null, arguments), last - 1, 0);
   }
 }
 
 function apply2(f, args){
-  return f.apply(null, ICoerceable.toArray(args));
+  return f.apply(null, p.toArray(args));
 }
 
 function apply3(f, a, args){
-  return f.apply(null, [a].concat(ICoerceable.toArray(args)));
+  return f.apply(null, [a].concat(p.toArray(args)));
 }
 
 function apply4(f, a, b, args){
-  return f.apply(null, [a, b].concat(ICoerceable.toArray(args)));
+  return f.apply(null, [a, b].concat(p.toArray(args)));
 }
 
 function apply5(f, a, b, c, args){
-  return f.apply(null, [a, b, c].concat(ICoerceable.toArray(args)));
+  return f.apply(null, [a, b, c].concat(p.toArray(args)));
 }
 
 function applyN(f, a, b, c, d, args){
-  return f.apply(null, [a, b, c, d].concat(ICoerceable.toArray(args)));
+  return f.apply(null, [a, b, c, d].concat(p.toArray(args)));
 }
 
 export const apply = overload(null, null, apply2, apply3, apply4, apply5, applyN);
@@ -112,7 +110,7 @@ export function tee(f){
 
 export function see(...args){
   return tee(function(obj){
-    apply(log, conj(args, obj));
+    apply(log, p.conj(args, obj));
   });
 }
 

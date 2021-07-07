@@ -1,7 +1,7 @@
 import {overload} from "../../core.js";
-import {steps} from "../../protocols/iaddable/concrete.js";
 import {isNumber} from "../number/concrete.js";
 import Symbol from "symbol";
+import * as p from "./protocols.js";
 
 export function Range(start, end, step, direction){
   this.start = start;
@@ -30,7 +30,7 @@ function range2(start, end){
   return range3(start, end, 1);
 }
 
-const range3 = steps(Range, isNumber);
+const range3 = p.steps(Range, isNumber);
 
 export const range = overload(range0, range1, range2, range3);
 

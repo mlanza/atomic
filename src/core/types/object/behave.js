@@ -1,6 +1,6 @@
 import {does, identity, constructs, branch, overload} from "../../core.js";
 import {implement} from "../protocol.js";
-import {IMergable, IBlankable, ICompactible, IComparable, IOmissible, IMatchable, INext, ICollection, IEquiv, IMapEntry, IReduce, IKVReduce, ISeqable, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, IFn, IMap, ISeq, ICoerceable, IClonable, IInclusive, ITemplate} from "../../protocols.js";
+import {IMergable, IBlankable, ICompactible, IComparable, IOmissible, IMatchable, INext, ICollection, IEquiv, IReduce, IKVReduce, ISeqable, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, IFn, IMap, ISeq, ICoerceable, IClonable, IInclusive, ITemplate} from "../../protocols.js";
 import {reduced} from "../reduced.js";
 import {lazySeq, into, map} from "../lazy-seq.js";
 import {cons} from "../list.js";
@@ -10,29 +10,30 @@ import {satisfies} from "../protocol/concrete.js";
 import {update} from "../../protocols/iassociative/concrete.js";
 import {emptyObject, isObject} from "../object/construct.js";
 import {descriptive} from "../object/concrete.js";
+import * as p from "./protocols.js";
 
 const keys = Object.keys;
 const vals = Object.values;
 
-Object.from = ICoerceable.toObject;
+Object.from = p.toObject;
 
 function fill(self, params){
-  return IKVReduce.reducekv(self, function(memo, key, value){
-    return IAssociative.assoc(memo, key,
+  return p.reducekv(function(memo, key, value){
+    return p.assoc(memo, key,
       value |> branch(
-        isString, ITemplate.fill(?, params),
+        isString, p.fill(?, params),
         isObject, fill(?, params),
         identity));
-  }, {});
+  }, {}, self);
 }
 
 function merge(...maps){
-  return IReduce.reduce(maps, function(memo, map){
-    return IReduce.reduce(ISeqable.seq(map), function(memo, [key, value]){
+  return p.reduce(function(memo, map){
+    return p.reduce(function(memo, [key, value]){
       memo[key] = value;
       return memo;
-    }, memo);
-  }, {});
+    }, memo, p.seq(map));
+  }, {}, maps);
 }
 
 function blank(self){
@@ -46,21 +47,21 @@ function compact1(self){
 }
 
 function compact2(self, pred){
-  return IKVReduce.reducekv(self, function(memo, key, value){
-    return pred([key, value]) ? memo : IAssociative.assoc(memo, key, value);
-  }, {});
+  return p.reducekv(function(memo, key, value){
+    return pred([key, value]) ? memo : p.assoc(memo, key, value);
+  }, {}, self);
 }
 
 const compact = overload(null, compact1, compact2);
 
 function matches(self, template){
-  return IKVReduce.reducekv(template, function(memo, key, value){
-    return memo ? IEquiv.equiv(ILookup.lookup(self, key), value) : reduced(memo);
-  }, true);
+  return p.reducekv(function(memo, key, value){
+    return memo ? p.equiv(p.get(self, key), value) : reduced(memo);
+  }, true, template);
 }
 
 function omit(self, entry){
-  const key = IMapEntry.key(entry);
+  const key = p.key(entry);
   if (includes(self, entry)) {
     const result = clone(self);
     delete result[key];
@@ -71,23 +72,23 @@ function omit(self, entry){
 }
 
 function compare(self, other){ //assume like keys, otherwise use your own comparator!
-  return IEquiv.equiv(self, other) ? 0 : descriptive(other) ? IReduce.reduce(IMap.keys(self), function(memo, key){
-    return memo == 0 ? IComparable.compare(ILookup.lookup(self, key), ILookup.lookup(other, key)) : reduced(memo);
-  }, 0) : -1;
+  return p.equiv(self, other) ? 0 : descriptive(other) ? p.reduce(function(memo, key){
+    return memo == 0 ? p.compare(p.get(self, key), p.get(other, key)) : reduced(memo);
+  }, 0, p.keys(self)) : -1;
 }
 
 function conj(self, entry){
-  const key = IMapEntry.key(entry),
-        val = IMapEntry.val(entry);
-  const result = IClonable.clone(self);
+  const key = p.key(entry),
+        val = p.val(entry);
+  const result = p.clone(self);
   result[key] = val;
   return result;
 }
 
 function equiv(self, other){
-  return self === other ? true : descriptive(other) && ICounted.count(IMap.keys(self)) === ICounted.count(IMap.keys(other)) && IReduce.reduce(IMap.keys(self), function(memo, key){
-    return memo ? IEquiv.equiv(ILookup.lookup(self, key), ILookup.lookup(other, key)) : reduced(memo);
-  }, true);
+  return self === other ? true : descriptive(other) && p.count(p.keys(self)) === p.count(p.keys(other)) && p.reduce(function(memo, key){
+    return memo ? p.equiv(p.get(self, key), p.get(other, key)) : reduced(memo);
+  }, true, p.keys(self));
 }
 
 function find(self, key){
@@ -95,8 +96,8 @@ function find(self, key){
 }
 
 function includes(self, entry){
-  const key = IMapEntry.key(entry),
-        val = IMapEntry.val(entry);
+  const key = p.key(entry),
+        val = p.val(entry);
   return self[key] === val;
 }
 
@@ -105,7 +106,7 @@ function lookup(self, key){
 }
 
 function first(self){
-  const key = ISeq.first(keys(self));
+  const key = p.first(keys(self));
   return key ? [key, lookup(self, key)] : null;
 }
 
@@ -114,10 +115,10 @@ function rest(self){
 }
 
 function next2(self, keys){
-  if (ISeqable.seq(keys)) {
+  if (p.seq(keys)) {
     return lazySeq(function(){
-      const key = ISeq.first(keys);
-      return cons([key, lookup(self, key)], next2(self, INext.next(keys)));
+      const key = p.first(keys);
+      return cons([key, lookup(self, key)], next2(self, p.next(keys)));
     });
   } else {
     return null;
@@ -125,11 +126,11 @@ function next2(self, keys){
 }
 
 function next(self){
-  return next2(self, INext.next(keys(self)));
+  return next2(self, p.next(keys(self)));
 }
 
 function dissoc(self, key){
-  if (IAssociative.contains(self, key)) {
+  if (p.contains(self, key)) {
     const result = clone(self);
     delete result[key];
     return result;
@@ -139,7 +140,7 @@ function dissoc(self, key){
 }
 
 function assoc(self, key, value){
-  if (ILookup.lookup(self, key) === value) {
+  if (p.get(self, key) === value) {
     return self;
   } else {
     const result = clone(self);
@@ -168,15 +169,15 @@ function clone(self){
 }
 
 function reduce(self, xf, init){
-  return IReduce.reduce(keys(self), function(memo, key){
+  return p.reduce(function(memo, key){
     return xf(memo, [key, lookup(self, key)]);
-  }, init);
+  }, init, keys(self));
 }
 
 function reducekv(self, xf, init){
-  return IReduce.reduce(keys(self), function(memo, key){
+  return p.reduce(function(memo, key){
     return xf(memo, key, lookup(self, key));
-  }, init);
+  }, init, keys(self));
 }
 
 function toArray(self){

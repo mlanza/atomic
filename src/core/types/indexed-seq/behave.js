@@ -3,15 +3,16 @@ import {implement} from "../protocol.js";
 import {indexedSeq} from "./construct.js";
 import {revSeq} from "../../types/rev-seq/construct.js";
 import {isReduced, unreduced} from "../../types/reduced.js";
-import {ICoerceable, IEquiv, IReversible, IMapEntry, IFind, IInclusive, IAssociative, IAppendable, IPrependable, ICollection, INext, ICounted, IReduce, IKVReduce, ISeq, ISeqable, ISequential, IIndexed, ILookup, IFn, IEmptyableCollection} from "../../protocols.js";
 import {concat} from "../../types/concatenated/construct.js";
-import {iterable} from "../lazy-seq/behave.js";
 import {drop, detect} from "../lazy-seq/concrete.js";
 import {emptyArray} from "../../types/array/construct.js";
 import iemptylist from "../../types/empty-list/behave.js";
+import {iterable} from "../lazy-seq/behave.js";
+import {ICoerceable, IEquiv, IReversible, IMapEntry, IFind, IInclusive, IAssociative, IAppendable, IPrependable, ICollection, INext, ICounted, IReduce, IKVReduce, ISeq, ISeqable, ISequential, IIndexed, ILookup, IFn, IEmptyableCollection} from "../../protocols.js";
+import * as p from "./protocols.js";
 
 function reverse(self){
-  let c = ICounted.count(self);
+  let c = count(self);
   return c > 0 ? revSeq(self, c - 1) : null;
 }
 
@@ -24,15 +25,15 @@ function val(self){
 }
 
 function find(self, key){
-  return IAssociative.contains(self, key) ? [key, ILookup.lookup(self, key)] : null;
+  return contains(self, key) ? [key, lookup(self, key)] : null;
 }
 
 function contains(self, key){
-  return key < ICounted.count(self.seq) - self.start;
+  return key < p.count(self.seq) - self.start;
 }
 
 function lookup(self, key){
-  return ILookup.lookup(self.seq, self.start + key);
+  return p.get(self.seq, self.start + key);
 }
 
 function append(self, x){
@@ -45,11 +46,11 @@ function prepend(self, x){
 
 function next(self){
   const pos = self.start + 1;
-  return pos < ICounted.count(self.seq) ? indexedSeq(self.seq, pos) : null;
+  return pos < p.count(self.seq) ? indexedSeq(self.seq, pos) : null;
 }
 
 function nth(self, idx){
-  return IIndexed.nth(self.seq, idx + self.start);
+  return p.nth(self.seq, idx + self.start);
 }
 
 function idx2(self, x){
@@ -82,15 +83,15 @@ function toArray(self){
 }
 
 function count(self){
-  return ICounted.count(self.seq) - self.start;
+  return p.count(self.seq) - self.start;
 }
 
 function reduce(self, xf, init){
   let memo = init,
-      coll = ISeqable.seq(self);
+      coll = p.seq(self);
   while (coll && !isReduced(memo)){
-    memo = xf(memo, ISeq.first(coll));
-    coll = INext.next(coll);
+    memo = xf(memo, p.first(coll));
+    coll = p.next(coll);
   }
   return unreduced(memo);
 }
@@ -105,7 +106,7 @@ function reducekv(self, xf, init){
 }
 
 function includes(self, x){
-  return detect(IEquiv.equiv(x, ?), drop(self.start, self.seq));
+  return detect(p.equiv(x, ?), drop(self.start, self.seq));
 }
 
 export default does(

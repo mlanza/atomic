@@ -1,7 +1,7 @@
-import {IClonable} from "../../protocols.js";
 import {inc, dec} from "../../protocols/iaddable/concrete.js";
 import {prop, patch} from "../../associatives.js";
 import {overload, identity} from "../../core.js";
+import * as p from "./protocols.js";
 
 export function monthDays(self){
   return patch(self, {
@@ -52,7 +52,7 @@ export function pm(self){
 //dow = 0-6 if day is in first week.  Add 7 for every additional week.
 //e.g. Second Saturday is 13 (6 + 7), First Sunday is 0, Second Sunday is 7.
 export function rdow(self, n){
-  let dt = IClonable.clone(self);
+  let dt = p.clone(self);
 
   while (n < 0) {
     dt = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate() - 7, dt.getHours(), dt.getMinutes(), dt.getSeconds(), dt.getMilliseconds());

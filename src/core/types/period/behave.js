@@ -7,9 +7,10 @@ import {recurrence} from "../recurrence/construct.js";
 import {period} from "./construct.js";
 import {map, take} from "../lazy-seq/concrete.js";
 import {ISplittable, ICoerceable, IAddable, IBounds, IComparable, IEquiv, IInclusive, IDivisible, IMergable} from "../../protocols.js";
+import * as p from "./protocols.js";
 
 function split2(self, step){
-  return map(period(?, step), recurrence(IBounds.start(self), IBounds.end(self), step));
+  return map(period(?, step), recurrence(p.start(self), p.end(self), step));
 }
 
 function split3(self, step, n){
@@ -19,15 +20,15 @@ function split3(self, step, n){
 const split = overload(null, null, split2, split3);
 
 function add(self, dur){
-  return IBounds.end(self) ? new self.constructor(IBounds.start(self), self |> IBounds.end |> IAddable.add(?, dur)) : self;
+  return p.end(self) ? new self.constructor(p.start(self), self |> p.end |> p.add(?, dur)) : self;
 }
 
 function merge(self, other){
-  return other == null ? self : new self.constructor(min(IBounds.start(self), IBounds.start(other)), max(IBounds.end(other), IBounds.end(other)));
+  return other == null ? self : new self.constructor(min(p.start(self), p.start(other)), max(p.end(other), p.end(other)));
 }
 
 function divide(self, step){
-  return IDivisible.divide(ICoerceable.toDuration(self), step);
+  return p.divide(p.toDuration(self), step);
 }
 
 function start(self){
@@ -39,11 +40,11 @@ function end(self){
 }
 
 function includes(self, dt) {
-  return dt != null && (self.start == null || IComparable.compare(dt, self.start) >= 0) && (self.end == null || IComparable.compare(dt, self.end) < 0);
+  return dt != null && (self.start == null || p.compare(dt, self.start) >= 0) && (self.end == null || p.compare(dt, self.end) < 0);
 }
 
 function equiv(self, other){
-  return other != null && IEquiv.equiv(self.start, other.start) && IEquiv.equiv(self.end, other.end);
+  return other != null && p.equiv(self.start, other.start) && p.equiv(self.end, other.end);
 }
 
 function toDuration(self){
@@ -51,7 +52,7 @@ function toDuration(self){
 }
 
 function compare(self, other){ //TODO test with sort of periods
-  return IComparable.compare(other.start, self.start) || IComparable.compare(other.end, self.end);
+  return p.compare(other.start, self.start) || p.compare(other.end, self.end);
 }
 
 export default does(
