@@ -61,7 +61,7 @@ function reduce(self, xf, init){
 export default _.does(
   _.implement(_.ISequential),
   _.implement(_.IReduce, {reduce}),
-  _.implement(_.ICoerceable, {toArray}),
+  _.implement(_.ICoercible, {toArray}),
   _.implement(_.ISeqable, {seq}),
   _.implement(_.IInclusive, {includes}),
   _.implement(_.IClonable, {clone}),

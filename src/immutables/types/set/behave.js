@@ -70,7 +70,7 @@ export default _.does(
   _.implement(_.IMergable, {merge}),
   _.implement(mut.ITransient, {transient}),
   _.implement(_.IReduce, {reduce}),
-  _.implement(_.ICoerceable, {toArray}),
+  _.implement(_.ICoercible, {toArray}),
   _.implement(_.ISeqable, {seq}),
   _.implement(_.IInclusive, {includes}),
   _.implement(_.ISet, {disj, unite: conj}),

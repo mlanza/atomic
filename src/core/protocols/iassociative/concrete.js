@@ -1,6 +1,6 @@
 import {IAssociative} from "./instance.js";
 import {overload, slice, branch, identity} from "../../core.js";
-import {toArray} from "../icoerceable.js";
+import {toArray} from "../icoercible.js";
 import {rest} from "../iseq.js";
 import {get} from "../ilookup.js";
 

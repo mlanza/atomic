@@ -190,7 +190,7 @@ export const input = _.assume(isHTMLDocument, document, function input(document,
 
 export const textbox = input;
 
-_.extend(_.ICoerceable, {toFragment: null});
+_.extend(_.ICoercible, {toFragment: null});
 
 export const toFragment = _.toFragment;
 
@@ -205,7 +205,7 @@ export const toFragment = _.toFragment;
   }
 
   _.doto(String,
-    _.implement(_.ICoerceable, {toFragment}),
+    _.implement(_.ICoercible, {toFragment}),
     _.implement(IEmbeddable, {embed}));
 
 })();
@@ -239,7 +239,7 @@ export const toFragment = _.toFragment;
   };
 
   _.doto(_.Nil,
-    _.implement(_.ICoerceable, {toFragment}),
+    _.implement(_.ICoercible, {toFragment}),
     _.implement(IEmbeddable, {embed: _.identity}));
 
 })();

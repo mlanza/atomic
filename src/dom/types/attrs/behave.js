@@ -66,7 +66,7 @@ function empty(self){
 }
 
 export default _.does(
-  _.implement(_.ICoerceable, {toArray}),
+  _.implement(_.ICoercible, {toArray}),
   _.implement(_.ICounted, {count}),
   _.implement(_.ISeqable, {seq}),
   _.implement(_.INext, {next}),
