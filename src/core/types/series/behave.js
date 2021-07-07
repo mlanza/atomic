@@ -1,6 +1,6 @@
 import {does, constructs} from "../../core.js";
 import {implement} from "../protocol.js";
-import {ICoerceable, IReduce, ISeqable, ISeq, INext, IInclusive, IAppendable, IPrependable, ICounted, ISequential, IEmptyableCollection} from "../../protocols.js";
+import {ICoercible, IReduce, ISeqable, ISeq, INext, IInclusive, IAppendable, IPrependable, ICounted, ISequential, IEmptyableCollection} from "../../protocols.js";
 import {iterable} from "../lazy-seq/behave.js";
 import * as p from "./protocols.js";
 
@@ -65,7 +65,7 @@ export default does(
   implement(IAppendable, {append}),
   implement(IPrependable, {prepend}),
   implement(IEmptyableCollection, {empty}),
-  implement(ICoerceable, {toArray}),
+  implement(ICoercible, {toArray}),
   implement(ISeqable, {seq}),
   implement(INext, {next}),
   implement(IReduce, {reduce}),

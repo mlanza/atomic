@@ -1,6 +1,6 @@
 import {does, identity, overload, doto, complement} from "../../core.js";
 import {implement, satisfies} from "../protocol.js";
-import {IMergable, IBlankable, IMap, ICoerceable, IFunctor, IInsertable, IOmissible, IReversible, IMapEntry, IEquiv, IReduce, IKVReduce, IAppendable, IPrependable, IInclusive, ICollection, INext, ISeq, IFind, ISeqable, IIndexed, IAssociative, ISequential, IEmptyableCollection, IFn, ICounted, ILookup, IClonable} from "../../protocols.js";
+import {IMergable, IBlankable, IMap, ICoercible, IFunctor, IInsertable, IOmissible, IReversible, IMapEntry, IEquiv, IReduce, IKVReduce, IAppendable, IPrependable, IInclusive, ICollection, INext, ISeq, IFind, ISeqable, IIndexed, IAssociative, ISequential, IEmptyableCollection, IFn, ICounted, ILookup, IClonable} from "../../protocols.js";
 import {reduced, unreduced, isReduced} from "../reduced.js";
 import {indexedSeq} from "../indexed-seq.js";
 import {replace} from "../string/concrete.js";
@@ -207,7 +207,7 @@ export default does(
   implement(IMergable, {merge: concat}),
   implement(IInsertable, {before, after}),
   implement(IFunctor, {fmap}),
-  implement(ICoerceable, {toObject, toArray: identity}),
+  implement(ICoercible, {toObject, toArray: identity}),
   implement(IOmissible, {omit}),
   implement(IReversible, {reverse}),
   implement(IFind, {find}),

@@ -1,6 +1,6 @@
 import {identity, constantly} from "../../core.js";
 import {satisfies, implement, packs as does} from "../protocol.js";
-import {IEquiv, IBlankable, ICoerceable, IInclusive, IReversible, INext, ISeq, ISeqable, ISequential, IEmptyableCollection, IKVReduce, IReduce, ICounted} from "../../protocols.js";
+import {IEquiv, IBlankable, ICoercible, IInclusive, IReversible, INext, ISeq, ISeqable, ISequential, IEmptyableCollection, IKVReduce, IReduce, ICounted} from "../../protocols.js";
 import {emptyList, EmptyList} from "../../types/empty-list/construct.js";
 import {emptyArray} from "../../types/array/construct.js";
 import Symbol from "symbol";
@@ -27,7 +27,7 @@ export default does(
   implement(IInclusive, {includes: constantly(false)}),
   implement(IKVReduce, {reducekv: reduce}),
   implement(IReduce, {reduce}),
-  implement(ICoerceable, {toArray: emptyArray}),
+  implement(ICoercible, {toArray: emptyArray}),
   implement(ISeq, {first: constantly(null), rest: emptyList}),
   implement(INext, {next: constantly(null)}),
   implement(ISeqable, {seq: constantly(null)}));

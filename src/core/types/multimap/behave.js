@@ -1,6 +1,6 @@
 import {does, comp} from "../../core.js";
 import {implement} from "../protocol.js";
-import {ISeq, ICoerceable, IReduce, IKVReduce, ICounted, ISeqable, ICollection, ILookup, IMap, IAssociative} from "../../protocols.js";
+import {ISeq, ICoercible, IReduce, IKVReduce, ICounted, ISeqable, ICollection, ILookup, IMap, IAssociative} from "../../protocols.js";
 import {map} from "../lazy-seq.js";
 import {emptyList} from "../empty-list/construct.js";
 import {concatenated} from "../concatenated/construct.js";
@@ -59,7 +59,7 @@ function reducekv(self, xf, init){
 export default does(
   irecord,
   implement(IMap, {keys}),
-  implement(ICoerceable, {toArray: comp(Array.from, seq)}),
+  implement(ICoercible, {toArray: comp(Array.from, seq)}),
   implement(IReduce, {reduce}),
   implement(IKVReduce, {reducekv}),
   implement(ICounted, {count}),

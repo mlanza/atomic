@@ -15,4 +15,4 @@ export * from "../../protocols/iinclusive/concrete.js";
 export * from "../../protocols/iemptyablecollection/concrete.js";
 export * from "../../protocols/ifn/concrete.js";
 export * from "../../protocols/inext/concrete.js";
-export * from "../../protocols/icoerceable/concrete.js";
+export * from "../../protocols/icoercible/concrete.js";

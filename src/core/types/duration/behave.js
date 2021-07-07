@@ -2,7 +2,7 @@ import {implement} from "../protocol.js";
 import {does, identity, partial} from "../../core.js";
 import {mergeWith} from "../../protocols/imergable/instance.js";
 import {Duration} from "../duration/construct.js";
-import {IAddable, IKVReduce, IFunctor, IMergable, ICoerceable, IMultipliable, IDivisible, IMap, IAssociative, ILookup} from "../../protocols.js";
+import {IAddable, IKVReduce, IFunctor, IMergable, ICoercible, IMultipliable, IDivisible, IMap, IAssociative, ILookup} from "../../protocols.js";
 import * as p from "./protocols.js";
 
 function reducekv(self, xf, init){
@@ -65,4 +65,4 @@ export default does(
   implement(IMap, {keys, dissoc}),
   implement(IDivisible, {divide}),
   implement(IMultipliable, {mult}),
-  implement(ICoerceable, {toDuration: identity}));
+  implement(ICoercible, {toDuration: identity}));

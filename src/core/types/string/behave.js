@@ -1,4 +1,4 @@
-import {IBlankable, ISplittable, ITemplate, ICoerceable, IMatchable, IReduce, ICollection, ISeqable, INext, ISeq, IInclusive, IAppendable, IPrependable, ILookup, IFn, IComparable, IEmptyableCollection} from "../../protocols.js";
+import {IBlankable, ISplittable, ITemplate, ICoercible, IMatchable, IReduce, ICollection, ISeqable, INext, ISeq, IInclusive, IAppendable, IPrependable, ILookup, IFn, IComparable, IEmptyableCollection} from "../../protocols.js";
 import {does, identity, constantly, unbind, overload} from "../../core.js";
 import {implement} from "../protocol.js";
 import {isReduced, unreduced} from "../reduced.js";
@@ -111,7 +111,7 @@ export default does(
   implement(IMatchable, {matches}),
   implement(ICollection, {conj}),
   implement(IReduce, {reduce}),
-  implement(ICoerceable, {toArray}),
+  implement(ICoercible, {toArray}),
   implement(IComparable, {compare}),
   implement(IInclusive, {includes}),
   implement(IAppendable, {append: conj}),

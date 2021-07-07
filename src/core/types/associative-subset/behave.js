@@ -5,7 +5,7 @@ import {cons} from "../../types/list/construct.js";
 import {remove, into} from "../../types/lazy-seq/concrete.js";
 import {emptyObject} from "../../types/object/construct.js";
 import iemptylist from "../../types/empty-list/behave.js";
-import {IEquiv, ICoerceable, IFind, IReduce, IKVReduce, ISeqable, ICounted, ILookup, IFn, IMap, IClonable, IEmptyableCollection} from "../../protocols.js";
+import {IEquiv, ICoercible, IFind, IReduce, IKVReduce, ISeqable, ICounted, ILookup, IFn, IMap, IClonable, IEmptyableCollection} from "../../protocols.js";
 import * as p from "./protocols.js";
 
 function toObject(self){
@@ -66,7 +66,7 @@ function reducekv(self, xf, init){
 
 export default does(
   implement(IEquiv, iemptylist),
-  implement(ICoerceable, {toObject}),
+  implement(ICoercible, {toObject}),
   implement(IFind, {find}),
   implement(IMap, {dissoc, keys, vals}),
   implement(IReduce, {reduce}),
