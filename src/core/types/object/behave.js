@@ -1,6 +1,6 @@
 import {does, identity, constructs, branch, overload} from "../../core.js";
 import {implement} from "../protocol.js";
-import {IMergable, IBlankable, ICompactible, IComparable, IOmissible, IMatchable, INext, ICollection, IEquiv, IReduce, IKVReduce, ISeqable, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, IFn, IMap, ISeq, ICoercible, IClonable, IInclusive, ITemplate} from "../../protocols.js";
+import {IMergable, IBlankable, ICompactible, IComparable, IOmissible, INext, ICollection, IEquiv, IReduce, IKVReduce, ISeqable, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, IFn, IMap, ISeq, ICoercible, IClonable, IInclusive, ITemplate} from "../../protocols.js";
 import {reduced} from "../reduced.js";
 import {lazySeq, into, map} from "../lazy-seq.js";
 import {cons} from "../list.js";
@@ -53,12 +53,6 @@ function compact2(self, pred){
 }
 
 const compact = overload(null, compact1, compact2);
-
-function matches(self, template){
-  return p.reducekv(function(memo, key, value){
-    return memo ? p.equiv(p.get(self, key), value) : reduced(memo);
-  }, true, template);
-}
 
 function omit(self, entry){
   const key = p.key(entry);
@@ -196,7 +190,6 @@ export default does(
   implement(ICoercible, {toArray: toArray, toObject: identity}),
   implement(IFind, {find}),
   implement(IOmissible, {omit}),
-  implement(IMatchable, {matches}),
   implement(IInclusive, {includes}),
   implement(ICollection, {conj}),
   implement(IClonable, {clone}),
