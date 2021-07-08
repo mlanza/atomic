@@ -17,4 +17,8 @@ function handler2(pred, callback){
     _.specify(IDispatch, {dispatch}));
 }
 
-export const handler = _.overload(null, null, handler2, handler3);
+function handler1(callback){
+  return handler2(_.constantly(true), callback);
+}
+
+export const handler = _.overload(null, handler1, handler2, handler3);

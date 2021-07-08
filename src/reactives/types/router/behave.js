@@ -7,17 +7,16 @@ function on(self, pred, callback){
   conj(self, handler(pred, callback));
 }
 
-function dispatch(self, message){
-  const receiver = self.receives(matches(self, message));
-  if (!receiver) {
-    throw new Error("No receiver for message.");
-  }
-  return IDispatch.dispatch(receiver, message);
+function handles(self, message){
+  return _.detect(_.matches(?, message), self.handlers);
 }
 
-function matches(self, message){
-  const xs = _.filter(_.matches(?, message), self.handlers);
-  return _.seq(xs) ? xs : self.fallback ? [self.fallback] : [];
+function dispatch(self, message){
+  const handler = handles(self, message);
+  if (!handler) {
+    throw new Error("No suitable handler for message.");
+  }
+  return IDispatch.dispatch(handler, message);
 }
 
 function conj(self, handler){
@@ -27,5 +26,4 @@ function conj(self, handler){
 export default _.does(
   _.implement(IEvented, {on}),
   _.implement(IDispatch, {dispatch}),
-  _.implement(_.IMatchable, {matches}),
   _.implement(mut.ITransientCollection, {conj}));
