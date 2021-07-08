@@ -12,7 +12,7 @@ import {IEventProvider} from "../../protocols/ieventprovider/instance.js";
 import {sub} from "../../protocols/isubscribe/concrete.js";
 import {dispatch} from "../../protocols/idispatch/concrete.js";
 
-export function handles(handle){
+function handles(handle){
   return _.doto({},
     _.specify(IMiddleware, {handle}));
 }

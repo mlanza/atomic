@@ -6,14 +6,15 @@ function handler3(pred, callback, how){
 }
 
 function handler2(pred, callback){
-  function matches(x, message){
-    return pred(message);
+  const handler = {pred, callback};
+  function handles(_, message){
+    return pred(message) ? handler : null;
   }
-  function dispatch(x, message){
+  function dispatch(_, message){
     return callback(message);
   }
-  return _.doto({pred, callback},
-    _.specify(_.IMatchable, {matches}),
+  return _.doto(handler,
+    _.specify(_.IHandler, {handles}),
     _.specify(IDispatch, {dispatch}));
 }
 
