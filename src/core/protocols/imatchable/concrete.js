@@ -1,2 +1,10 @@
 import {IMatchable} from "./instance.js";
-export const matches = IMatchable.matches;
+import {pre} from "../../core.js";
+import {isString} from "../../types/string/construct.js";
+import {isRegExp} from "../../types/reg-exp/construct.js";
+
+function checkPattern(_, pattern){
+  return isString(pattern) || isRegExp(pattern);
+}
+
+export const matches = pre(IMatchable.matches, checkPattern);
