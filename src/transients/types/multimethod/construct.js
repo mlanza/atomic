@@ -1,4 +1,5 @@
 import * as _ from "atomic/core";
+import * as p from "../../protocols/concrete.js";
 import {ITransientCollection} from "../../protocols.js";
 import {method} from "../method/construct.js";
 
@@ -17,7 +18,7 @@ export function Multimethod(methods, fallback){
 export function multimethod(fallback){
   const instance = new Multimethod([], fallback ? method(_.constantly(true), fallback) : null),
         fn = _.partial(_.invoke, instance),
-        conj = surrogate(ITransientCollection.conj, instance);
+        conj = surrogate(p.conj, instance);
   return _.doto(fn,
     _.specify(ITransientCollection, {conj}));
 }

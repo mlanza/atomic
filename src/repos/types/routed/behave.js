@@ -1,4 +1,5 @@
 import * as _ from "atomic/core";
+import * as p from "../../protocols/concrete.js";
 import {IQueryable, IParams, IOptions, IAddress, IIntercept} from "../../protocols.js";
 import {query} from "../request/behave.js";
 
@@ -13,7 +14,7 @@ function clone(self){
 }
 
 function filled(self){
-  return _.maybe(self, IAddress.addr, _.test(/\{[^{}]+\}/, ?), _.not);
+  return _.maybe(self, p.addr, _.test(/\{[^{}]+\}/, ?), _.not);
 }
 
 function fork(self, reject, resolve){
@@ -21,7 +22,7 @@ function fork(self, reject, resolve){
 }
 
 function addr(self){
-  return IAddress.addr(_.detect(filled, self.requests));
+  return p.addr(_.detect(filled, self.requests));
 }
 
 function first(self){
@@ -44,6 +45,6 @@ export default _.does(
   _.implement(_.IMap, {dissoc: xform(_.dissoc)}),
   _.implement(IQueryable, {query}),
   _.implement(IAddress, {addr}),
-  _.implement(IIntercept, {intercept: xform(IIntercept.intercept)}),
-  _.implement(IParams, {params: xform(IParams.params)}),
-  _.implement(IOptions, {options: xform(IOptions.options)}));
+  _.implement(IIntercept, {intercept: xform(p.intercept)}),
+  _.implement(IParams, {params: xform(p.params)}),
+  _.implement(IOptions, {options: xform(p.options)}));

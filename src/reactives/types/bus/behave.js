@@ -1,8 +1,9 @@
 import * as _ from "atomic/core";
-import {IMiddleware, ISubscribe, IDispatch} from "../../protocols.js"
+import * as p from "../../protocols/concrete.js";
+import {IMiddleware, ISubscribe, IDispatch} from "../../protocols.js";
 
 function dispatch(self, command){
-  IMiddleware.handle(self.handler, command);
+  p.handle(self.handler, command);
 }
 
 function dispose(self){

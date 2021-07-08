@@ -1,4 +1,5 @@
 import * as _ from "atomic/core";
+import * as p from "../../protocols/concrete.js";
 import {ISubscribe} from "../../protocols/isubscribe/instance.js";
 import {ireduce, imergable} from "../../shared.js";
 
@@ -6,21 +7,21 @@ function sub(self, observer){
   if (subscribed(self) === 0) {
     _.swap(self.state, _.transition(?, "activate"));
   }
-  ISubscribe.sub(self.sink, observer);
+  p.sub(self.sink, observer);
   return _.once(function(){
     return unsub(self, observer);
   });
 }
 
 function unsub(self, observer){
-  ISubscribe.unsub(self.sink, observer);
+  p.unsub(self.sink, observer);
   if (subscribed(self) === 0) {
     _.swap(self.state, _.transition(?, "deactivate"));
   }
 }
 
 function subscribed(self){
-  return ISubscribe.subscribed(self.sink);
+  return p.subscribed(self.sink);
 }
 
 function dispose(self){

@@ -1,17 +1,16 @@
 import {implement, does, IMergable, IReduce} from "atomic/core";
 import {observable} from "./types/observable/construct.js"
-import {ISubscribe} from "./protocols/isubscribe/instance.js";
-import {IPublish} from "./protocols/ipublish/instance.js";
+import * as p from "./protocols/concrete.js";
 
 function merge(self, other){
   return observable(function(observer){
-    const handle = IPublish.pub(observer, ?);
-    return does(ISubscribe.sub(self, handle), ISubscribe.sub(other, handle));
+    const handle = p.pub(observer, ?);
+    return does(p.sub(self, handle), p.sub(other, handle));
   });
 }
 
 function reduce(self, xf, init){
-  return ISubscribe.sub(init, xf(self, ?));
+  return p.sub(init, xf(self, ?));
 }
 
 export const imergable = implement(IMergable, {merge});

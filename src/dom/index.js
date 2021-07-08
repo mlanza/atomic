@@ -1,6 +1,7 @@
 import * as _ from "atomic/core";
 import * as $ from "atomic/reactives";
 import * as mut from "atomic/transients";
+import * as p from "./protocols/concrete.js";
 import {element} from "./types/element/construct.js";
 import {mounts} from "./protocols/imountable/concrete.js";
 import {InvalidHostElementError} from "./types/invalid-host-element-error.js";

@@ -1,9 +1,9 @@
 import * as _ from "atomic/core";
+import * as p from "./protocols/concrete.js";
 import * as t from "atomic/transducers";
 import Symbol from "symbol";
 import Promise from "promise";
-import {pub, err, complete, sub, unsub, on, off, one, into} from "./protocols/concrete.js";
-import {IDispatch, IPublish, ISubscribe, IEvented} from "./protocols.js";
+import {IDispatch, IPublish} from "./protocols.js";
 import {ireduce} from "./shared.js";
 import {
   interact,
@@ -31,9 +31,9 @@ export function then2(f, source){
     _.fmap(Promise.resolve(f(value)), _.partial(pub, sink));
   }
   function dispose(self){
-    ISubscribe.unsub(source, observe);
+    p.unsub(source, observe);
   }
-  ISubscribe.sub(source, observe);
+  p.sub(source, observe);
   return _.doto(readonly(sink),
     _.specify(_.IDisposable, {dispose}));
 }
@@ -79,7 +79,7 @@ function sink(source){
 }
 
 function via2(xf, source){
-  return into(sink(source), xf, source);
+  return p.into(sink(source), xf, source);
 }
 
 function viaN(xf, ...sources){
@@ -89,17 +89,17 @@ function viaN(xf, ...sources){
 export const via = _.called(_.overload(null, null, via2, viaN), "`via` is deprecated.");
 
 function connect2(source, sink){
-  return sub(source, sink);
+  return p.sub(source, sink);
 }
 
 function connect3(source, xform, sink){
-  return sub(pipe(source, xform), sink);
+  return p.sub(pipe(source, xform), sink);
 }
 
 function connectN(source){
   const sink = arguments[arguments.length - 1],
         xforms = _.slice(arguments, 1, arguments.length - 1);
-  return sub(pipe(source, ...xforms), sink);
+  return p.sub(pipe(source, ...xforms), sink);
 }
 
 export const connect = _.overload(null, null, connect2, connect3, connectN); //returns `unsub` fn
@@ -120,10 +120,10 @@ export const computed = _.called(function computed(f, source){
     _.reset(sink, f(source));
   }
   function pub(self, value){
-    IPublish.pub(source, value);
+    p.pub(source, value);
   }
   return _.doto(audienceDetector(sink, function(state){
-    const f = state == "active" ? ISubscribe.sub : ISubscribe.unsub;
+    const f = state == "active" ? p.sub : p.unsub;
     f(source, callback);
   }),
     _.specify(IPublish, {pub}));
@@ -141,16 +141,16 @@ function fromPromise1(promise){
 
 function fromPromise2(promise, init){
   const sink = cell(init);
-  _.fmap(promise, IPublish.pub(sink, ?));
+  _.fmap(promise, p.pub(sink, ?));
   return sink;
 }
 
 export const fromPromise = _.called(_.overload(null, fromPromise1, fromPromise2), "`fromPromise` is deprecated — use `Observable.from` and `seed` instead.");
 
 export const join = _.called(function join(sink, ...sources){
-  const callback = IPublish.pub(sink, ?);
+  const callback = p.pub(sink, ?);
   return audienceDetector(sink, function(state){
-    const f = state === "active" ? ISubscribe.sub : ISubscribe.unsub;
+    const f = state === "active" ? p.sub : p.unsub;
     _.each(f(?, callback), sources);
   });
 }, "`join` is deprecated — use `merge` instead.");
@@ -165,7 +165,7 @@ export const latest = _.called(function latest(sources){
     }
   }, _.str);
   return audienceDetector(sink, function(state){
-    const f = state === "active" ? ISubscribe.sub : ISubscribe.unsub;
+    const f = state === "active" ? p.sub : p.unsub;
     _.doall(_.mapIndexed(function(idx, source){
       f(source, fs(idx));
     }, sources));
@@ -175,13 +175,13 @@ export const latest = _.called(function latest(sources){
 function hist2(size, source){
   const sink = cell([]);
   let history = [];
-  ISubscribe.sub(source, function(value){
+  p.sub(source, function(value){
     history = _.slice(history);
     history.unshift(value);
     if (history.length > size){
       history.pop();
     }
-    IPublish.pub(sink, history);
+    p.pub(sink, history);
   });
   return sink;
 }
@@ -189,20 +189,20 @@ function hist2(size, source){
 export const hist = _.called(_.overload(null, _.partial(hist2, 2), hist2), "`hist` is deprecated — use `hist` transducer instead.");
 
 function event2(el, key){
-  const sink = subject(), callback = _.partial(IPublish.pub, sink);
+  const sink = subject(), callback = _.partial(p.pub, sink);
   return audienceDetector(sink, function(status){
-    const f = status === "active" ? on : off;
+    const f = status === "active" ? p.on : p.off;
     f(el, key, callback);
   });
 }
 
 function event3(el, key, selector){
-  const sink = subject(), callback = _.partial(IPublish.pub, sink);
+  const sink = subject(), callback = _.partial(p.pub, sink);
   return audienceDetector(sink, function(status){
     if (status === "active") {
-      on(el, key, selector, callback);
+      p.on(el, key, selector, callback);
     } else {
-      off(el, key, callback);
+      p.off(el, key, callback);
     }
   });
 }
@@ -220,7 +220,7 @@ function isolate(f){ //TODO treat operations as promises
         const args = _.first(queue);
         try {
           f.apply(null, args);
-          IEvented.trigger(args[0], "mutate", {bubbles: true});
+          p.trigger(args[0], "mutate", {bubbles: true});
         } finally {
           queue.shift();
         }
@@ -230,7 +230,7 @@ function isolate(f){ //TODO treat operations as promises
 }
 
 function mutate3(self, state, f){
-  ISubscribe.sub(state, _.partial(isolate(f), self));
+  p.sub(state, _.partial(isolate(f), self));
   return self;
 }
 
@@ -241,9 +241,9 @@ function mutate2(state, f){
 export const mutate = _.called(_.overload(null, null, mutate2, mutate3), "`mutate` is deprecated — use `render` instead.");
 
 function render3(el, obs, f){
-  return sub(obs, t.isolate(), function(state){
+  return p.sub(obs, t.isolate(), function(state){
     f(el, state);
-    IEvented.trigger(el, "mutate", {bubbles: true}); //TODO rename
+    p.trigger(el, "mutate", {bubbles: true}); //TODO rename
   });
 }
 
@@ -254,10 +254,10 @@ function render2(state, f){
 export const render = _.overload(null, null, render2, render3);
 
 function renderDiff3(el, obs, f){
-  return sub(obs, t.isolate(), t.hist(2), function(history){
+  return p.sub(obs, t.isolate(), t.hist(2), function(history){
     const args = [el].concat(history);
     f.apply(this, args); //overload arity 2 & 3 for initial and diff rendering
-    IEvented.trigger(el, "mutate", {bubbles: true}); //TODO rename
+    p.trigger(el, "mutate", {bubbles: true}); //TODO rename
   });
 }
 

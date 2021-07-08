@@ -120,7 +120,7 @@ const mod = overload(null, null, null, mod3, modN);
 
 //Has the api of `assoc` and behaves like `update` persistently updating object attributes.  Depends on `clone` but not `lookup` or `assoc`.
 export function edit(obj, ...args){
-  const copy = IClonable.clone(obj);
+  const copy = p.clone(obj);
   args.unshift(copy);
   return modN.apply(copy, args);
 }
