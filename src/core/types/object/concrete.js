@@ -11,6 +11,12 @@ export function descriptive(self){
   return satisfies(ILookup, self) && satisfies(IMap, self) && !satisfies(IIndexed, self);
 }
 
+export function subsumes(self, other){
+  return p.reducekv(function(memo, key, value){
+    return memo ? p.contains(self, key, value) : reduced(memo);
+  }, true, other);
+}
+
 const emptied = branch(satisfies(IEmptyableCollection), p.empty, emptyObject);
 
 export function juxtVals(self, value){

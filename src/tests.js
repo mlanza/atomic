@@ -520,7 +520,7 @@ QUnit.test("coersion", function(assert){
 });
 
 QUnit.test("predicates", function(assert){
-  assert.ok({ace: 1, king: 2, queen: 3} |> _.matches(?, {ace: 1, king: 2}));
+  assert.ok({ace: 1, king: 2, queen: 3} |> _.subsumes(?, {ace: 1, king: 2}));
   assert.equal(_.any(3, 1), 3);
   assert.equal(_.any(null, 1), 1);
   assert.equal(_.all(3, 1), 1);
