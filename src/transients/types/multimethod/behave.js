@@ -5,14 +5,16 @@ function conj(self, method){
   self.methods.push(method);
 }
 
+function handles(self, args){
+  return _.detect(_.handles(?, args), self.methods) || self.fallback;
+}
+
 function invoke(self, ...args){
-  const method = _.detect(_.matches(?, args), self.methods);
+  const method = handles(self, args);
   if (method) {
     return _.invoke(method, args);
-  } else if (self.fallback) {
-    return self.fallback(...args);
   } else {
-    throw new Error("No handler for these args.");
+    throw new Error("No suitable method for args.");
   }
 }
 
