@@ -5,7 +5,7 @@ export * from "./protocols/iblankable/instance.js";
 export * from "./protocols/ibounds/instance.js";
 export * from "./protocols/ichainable/instance.js";
 export * from "./protocols/iclonable/instance.js";
-export * from "./protocols/icoerceable/instance.js";
+export * from "./protocols/icoercible/instance.js";
 export * from "./protocols/icollection/instance.js";
 export * from "./protocols/icompactible/instance.js";
 export * from "./protocols/icomparable/instance.js";

@@ -1,6 +1,6 @@
-import {overload, called, toggles, identity, obj, partly, doto, does, branch, unspread, applying, execute, noop, constantly, once} from "./core.js";
+import {overload, curry, called, toggles, identity, obj, partly, comp, doto, does, branch, unspread, applying, execute, noop, constantly, once} from "./core.js";
 import {IAssociative, IClonable, IHierarchy, ILookup, ISeq} from "./protocols.js";
-import {just, satisfies, spread, maybe, each, duration, remove, sort, flip, realized, comp, isFunction, apply, realize, isNil, reFindAll, mapkv, period, selectKeys, mapVals, reMatches, test, date, emptyList, cons, days, recurrence, curry, second as _second, Nil} from "./types.js";
+import {just, satisfies, spread, maybe, each, duration, remove, sort, flip, realized, isFunction, apply, realize, isNil, reFindAll, mapkv, period, selectKeys, mapVals, reMatches, test, date, emptyList, cons, days, recurrence, second as _second, Nil} from "./types.js";
 import {isString, isBlank, str, replace} from "./types/string.js";
 import {isSome} from "./types/nil.js";
 import {implement, behaves} from "./types/protocol/concrete.js";
@@ -13,7 +13,7 @@ export * from "./core.js";
 export * from "./types.js";
 export * from "./protocols.js";
 export * from "./protocols/concrete.js";
-export * from "./predicates.js";
+export * from "./predicates/index.js";
 export * from "./associatives.js";
 import * as p from "./protocols/concrete.js";
 import Set from "set";
@@ -30,11 +30,11 @@ export const yank = called(p.omit, "`yank` is deprecated — use `omit` instead.
 export const numeric = test(/^\d+$/i, ?);
 
 function siblings(self){
-  const parent = IHierarchy.parent(self);
+  const parent = p.parent(self);
   if (parent){
     return filter(function(sibling){
       return sibling !== self;
-    }, IHierarchy.children(parent));
+    }, p.children(parent));
   } else {
     return emptyList();
   }

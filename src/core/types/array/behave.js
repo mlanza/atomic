@@ -1,6 +1,6 @@
 import {does, identity, overload, doto, complement} from "../../core.js";
 import {implement, satisfies} from "../protocol.js";
-import {IMergable, IBlankable, IMap, ICoerceable, IFunctor, IInsertable, IOmissible, IReversible, IMapEntry, IEquiv, IReduce, IKVReduce, IAppendable, IPrependable, IInclusive, ICollection, INext, ISeq, IFind, ISeqable, IIndexed, IAssociative, ISequential, IEmptyableCollection, IFn, ICounted, ILookup, IClonable} from "../../protocols.js";
+import {IMergable, IBlankable, IMap, ICoercible, IFunctor, IInsertable, IOmissible, IReversible, IMapEntry, IEquiv, IReduce, IKVReduce, IAppendable, IPrependable, IInclusive, ICollection, INext, ISeq, IFind, ISeqable, IIndexed, IAssociative, ISequential, IEmptyableCollection, IFn, ICounted, ILookup, IClonable} from "../../protocols.js";
 import {reduced, unreduced, isReduced} from "../reduced.js";
 import {indexedSeq} from "../indexed-seq.js";
 import {replace} from "../string/concrete.js";
@@ -51,7 +51,7 @@ function dissoc(self, idx){
   return arr;
 }
 
-function reduce3(xs, xf, init){
+function reduce(xs, xf, init){
   let memo = init, to = xs.length - 1;
   for(let i = 0; i <= to; i++){
     if (isReduced(memo))
@@ -61,33 +61,9 @@ function reduce3(xs, xf, init){
   return unreduced(memo);
 }
 
-function reduce4(xs, xf, init, from){
-  return reduce5(xs, xf, init, from, xs.length - 1);
-}
-
-function reduce5(xs, xf, init, from, to){
-  let memo = init;
-  if (from <= to) {
-    for(let i = from; i <= to; i++){
-      if (isReduced(memo))
-        break;
-      memo = xf(memo, xs[i]);
-    }
-  } else {
-    for(let i = from; i >= to; i--){
-      if (isReduced(memo))
-        break;
-      memo = xf(memo, xs[i]);
-    }
-  }
-  return unreduced(memo);
-}
-
-const reduce = overload(null, null, null, reduce3, reduce4, reduce5);
-
-function reducekv(xs, xf, init, from){
+function reducekv(xs, xf, init){
   let memo = init, len = xs.length;
-  for(let i = from || 0; i < len; i++){
+  for(let i = 0; i < len; i++){
     if (isReduced(memo))
       break;
     memo = xf(memo, i, xs[i]);
@@ -207,7 +183,7 @@ export default does(
   implement(IMergable, {merge: concat}),
   implement(IInsertable, {before, after}),
   implement(IFunctor, {fmap}),
-  implement(ICoerceable, {toObject, toArray: identity}),
+  implement(ICoercible, {toObject, toArray: identity}),
   implement(IOmissible, {omit}),
   implement(IReversible, {reverse}),
   implement(IFind, {find}),

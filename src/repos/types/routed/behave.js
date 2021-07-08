@@ -34,7 +34,7 @@ function rest(self){
 
 export default _.does(
   _.implement(_.IClonable, {clone}),
-  _.implement(_.ICoerceable, {toPromise: _.fromTask}),
+  _.implement(_.ICoercible, {toPromise: _.fromTask}),
   _.implement(_.IForkable, {fork}),
   _.implement(_.ISeq, {first, rest}),
   _.implement(_.ITemplate, {fill: xform(_.fill)}),

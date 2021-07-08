@@ -8,7 +8,7 @@ import {drop, detect} from "../lazy-seq/concrete.js";
 import {emptyArray} from "../../types/array/construct.js";
 import iemptylist from "../../types/empty-list/behave.js";
 import {iterable} from "../lazy-seq/behave.js";
-import {ICoerceable, IEquiv, IReversible, IMapEntry, IFind, IInclusive, IAssociative, IAppendable, IPrependable, ICollection, INext, ICounted, IReduce, IKVReduce, ISeq, ISeqable, ISequential, IIndexed, ILookup, IFn, IEmptyableCollection} from "../../protocols.js";
+import {ICoercible, IEquiv, IReversible, IMapEntry, IFind, IInclusive, IAssociative, IAppendable, IPrependable, ICollection, INext, ICounted, IReduce, IKVReduce, ISeq, ISeqable, ISequential, IIndexed, ILookup, IFn, IEmptyableCollection} from "../../protocols.js";
 import * as p from "./protocols.js";
 
 function reverse(self){
@@ -128,7 +128,7 @@ export default does(
   implement(ILookup, {lookup}),
   implement(ICollection, {conj: append}),
   implement(INext, {next}),
-  implement(ICoerceable, {toArray}),
+  implement(ICoercible, {toArray}),
   implement(ISeq, {first, rest}),
   implement(ISeqable, {seq: identity}),
   implement(ICounted, {count}));

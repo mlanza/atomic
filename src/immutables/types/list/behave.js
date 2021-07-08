@@ -74,7 +74,7 @@ export default _.does(
   _.implement(_.ILookup, {lookup}),
   _.implement(_.IReduce, {reduce}),
   _.implement(_.INext, {next}),
-  _.implement(_.ICoerceable, {toArray}),
+  _.implement(_.ICoercible, {toArray}),
   _.implement(_.IMergable, {merge}),
   _.implement(_.IEmptyableCollection, {empty}),
   _.implement(_.IClonable, {clone: _.identity}),

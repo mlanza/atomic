@@ -1,6 +1,6 @@
 import {does, kin} from "../../core.js";
 import {implement} from "../protocol.js";
-import {ICoerceable, IInverse, ISequential, INext, IEquiv, IReduce, IKVReduce, ISeqable, ICounted, ISeq, IInclusive, IIndexed} from "../../protocols.js";
+import {ICoercible, IInverse, ISequential, INext, IEquiv, IReduce, IKVReduce, ISeqable, ICounted, ISeq, IInclusive, IIndexed} from "../../protocols.js";
 import {unreduced, isReduced} from "../reduced.js";
 import {drop} from "../lazy-seq.js";
 import {iterable} from "../lazy-seq/behave.js";
@@ -115,7 +115,7 @@ export default does(
   implement(ICounted, {count}),
   implement(IInclusive, {includes}),
   implement(ISeqable, {seq}),
-  implement(ICoerceable, {toArray}),
+  implement(ICoercible, {toArray}),
   implement(IReduce, {reduce}),
   implement(IKVReduce, {reducekv}),
   implement(INext, {next}),

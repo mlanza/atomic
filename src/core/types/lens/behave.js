@@ -1,6 +1,5 @@
-import {does} from "../../core.js";
+import {does, comp} from "../../core.js";
 import {implement, satisfies} from "../protocol.js";
-import {comp} from "../function/concrete.js";
 import {butlast, last, detect, map, lazySeq, remove, drop, dropWhile, take, takeWhile} from "../lazy-seq.js";
 import {emptyList} from "../../types/empty-list/construct.js";
 import {cons} from "../../types/list/construct.js";

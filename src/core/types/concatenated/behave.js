@@ -7,7 +7,7 @@ import ilazyseq, {iterable} from "../lazy-seq/behave.js";
 import {mapa} from "../lazy-seq/concrete.js";
 import {LazySeq} from "../lazy-seq/construct.js";
 import {concatenated, concat} from "./construct.js";
-import {ICoerceable, ICollection, INext, ISeq, ICounted, ISeqable, IIndexed, IReduce, IKVReduce, ISequential, IEmptyableCollection} from "../../protocols.js";
+import {ICoercible, ICollection, INext, ISeq, ICounted, ISeqable, IIndexed, IReduce, IKVReduce, ISequential, IEmptyableCollection} from "../../protocols.js";
 import * as p from "./protocols.js";
 
 function conj(self, x){
@@ -73,6 +73,6 @@ export default does(
   implement(ICollection, {conj}),
   implement(INext, {next}),
   implement(ISeq, {first, rest}),
-  implement(ICoerceable, {toArray}),
+  implement(ICoercible, {toArray}),
   implement(ISeqable, {seq: identity}),
   implement(ICounted, {count}));

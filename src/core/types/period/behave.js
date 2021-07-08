@@ -6,7 +6,7 @@ import {min, max} from "../number/concrete.js";
 import {recurrence} from "../recurrence/construct.js";
 import {period} from "./construct.js";
 import {map, take} from "../lazy-seq/concrete.js";
-import {ISplittable, ICoerceable, IAddable, IBounds, IComparable, IEquiv, IInclusive, IDivisible, IMergable} from "../../protocols.js";
+import {ISplittable, ICoercible, IAddable, IBounds, IComparable, IEquiv, IInclusive, IDivisible, IMergable} from "../../protocols.js";
 import * as p from "./protocols.js";
 
 function split2(self, step){
@@ -62,7 +62,7 @@ export default does(
   implement(IMergable, {merge}),
   implement(IDivisible, {divide}),
   implement(IComparable, {compare}),
-  implement(ICoerceable, {toDuration}),
+  implement(ICoercible, {toDuration}),
   implement(IInclusive, {includes}),
   implement(IBounds, {start, end}),
   implement(IEquiv, {equiv}));

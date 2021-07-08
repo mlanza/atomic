@@ -54,9 +54,9 @@ function persistent(self){
 }
 
 export default _.does(
-  _.forward("obj", _.IMap, _.IMatchable, _.IFind, _.IInclusive, _.ILookup, _.ISeq, _.INext, _.IAssociative, _.ISeqable, _.ICounted, _.IReduce, _.IKVReduce, _.ICoerceable),
+  _.forward("obj", _.IMap, _.IMatchable, _.IFind, _.IInclusive, _.ILookup, _.ISeq, _.INext, _.IAssociative, _.ISeqable, _.ICounted, _.IReduce, _.IKVReduce, _.ICoercible),
   _.implement(_.IComparable, {compare}),
-  _.implement(_.ICoerceable, {toObject}),
+  _.implement(_.ICoercible, {toObject}),
   _.implement(_.IFn, {invoke: _.ILookup.lookup}),
   _.implement(_.IClonable, {clone}),
   _.implement(_.IEquiv, {equiv}),
