@@ -1,5 +1,6 @@
 import * as _ from "atomic/core";
 import * as mut from "atomic/transients";
+import * as p from "../../protocols/concrete.js";
 import {IDispatch, IEvented} from "../../protocols.js";
 import {handler} from "../router/concrete.js";
 
@@ -16,7 +17,7 @@ function dispatch(self, message){
   if (!handler) {
     throw new Error("No suitable handler for message.");
   }
-  return IDispatch.dispatch(handler, message);
+  return p.dispatch(handler, message);
 }
 
 function conj(self, handler){

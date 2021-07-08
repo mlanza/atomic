@@ -10,7 +10,7 @@ function params(self, obj){
 }
 
 function fill(self, params){
-  return ITemplate.fill(_.str(self), params);
+  return _.fill(_.str(self), params);
 }
 
 export default _.does(

@@ -1,5 +1,6 @@
 import * as _ from "atomic/core";
 import * as mut from "atomic/transients";
+import * as p from "../../protocols/concrete.js";
 import {IPublish, ISubscribe} from "../../protocols.js";
 import {ireduce, imergable} from "../../shared.js";
 
@@ -24,14 +25,14 @@ function subscribed(self){
 
 function pub(self, message){
   if (!self.terminated){
-    notify(self, IPublish.pub(?, message));
+    notify(self, p.pub(?, message));
   }
 }
 
 function err(self, error){
   if (!self.terminated){
     self.terminated = {how: "error", error};
-    notify(self, IPublish.err(?, error));
+    notify(self, p.err(?, error));
     self.observers = null; //release references
   }
 }
@@ -39,7 +40,7 @@ function err(self, error){
 function complete(self){
   if (!self.terminated){
     self.terminated = {how: "complete"};
-    notify(self, IPublish.complete);
+    notify(self, p.complete);
     self.observers = null; //release references
   }
 }

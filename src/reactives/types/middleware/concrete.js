@@ -1,5 +1,6 @@
 import * as _ from "atomic/core";
 import * as mut from "atomic/transients";
+import * as p from "../../protocols/concrete.js";
 import {middleware} from "./construct.js";
 import {eventDispatcher} from "../event-dispatcher/construct.js";
 import {messageProcessor} from "../message-processor/construct.js";
@@ -8,9 +9,6 @@ import {bus} from "../bus/construct.js";
 import {events} from "../events/construct.js";
 import {subject} from "../subject/construct.js";
 import {IMiddleware} from "../../protocols/imiddleware/instance.js";
-import {IEventProvider} from "../../protocols/ieventprovider/instance.js";
-import {sub} from "../../protocols/isubscribe/concrete.js";
-import {dispatch} from "../../protocols/idispatch/concrete.js";
 
 function handles(handle){
   return _.doto({},
@@ -18,7 +16,7 @@ function handles(handle){
 }
 
 function accepts(events, type){
-  const raise = _.partial(IEventProvider.raise, events);
+  const raise = _.partial(p.raise, events);
   return handles(function(x, command, next){
     raise(_.assoc(command, "type", type));
     next(command);
@@ -26,7 +24,7 @@ function accepts(events, type){
 }
 
 function raises(events, bus, callback){
-  const raise = _.partial(IEventProvider.raise, events);
+  const raise = _.partial(p.raise, events);
   return handles(function(x, command, next){
     callback(bus, command, next, raise);
   });

@@ -18,7 +18,7 @@ function reset(self, state){
 }
 
 function swap(self, f){
-  reset(self, f(IDeref.deref(self.cell)));
+  reset(self, f(_.deref(self.cell)));
 }
 
 function sub(self, observer){

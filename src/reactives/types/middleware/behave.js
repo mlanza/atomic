@@ -1,5 +1,6 @@
 import * as _ from "atomic/core";
 import * as mut from "atomic/transients";
+import * as p from "../../protocols/concrete.js";
 import {IMiddleware} from "../../protocols/imiddleware/instance.js"
 
 function conj(self, handler){
@@ -10,7 +11,7 @@ function conj(self, handler){
 function combine(handlers){
   const f = _.reduce(function(memo, handler){
     return function(command){
-      return IMiddleware.handle(handler, command, memo);
+      return p.handle(handler, command, memo);
     }
   }, _.noop, _.reverse(handlers));
   function handle(x, command){
@@ -21,7 +22,7 @@ function combine(handlers){
 }
 
 function handle(self, command, next){
-  IMiddleware.handle(self.handler, command, next);
+  p.handle(self.handler, command, next);
 }
 
 export default _.does(

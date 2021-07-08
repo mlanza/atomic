@@ -1,10 +1,11 @@
 import * as _ from "atomic/core";
+import * as p from "../../protocols/concrete.js";
 import {ICheckable} from "../../protocols.js";
 import {issue} from "../issue.js";
 
 function check(self, obj){
   try {
-    return ICheckable.check(self.constraint, obj);
+    return p.check(self.constraint, obj);
   } catch (ex) {
     return [issue(self)];
   }

@@ -1,10 +1,11 @@
 import * as _ from "atomic/core";
+import * as p from "../../protocols/concrete.js";
 import {IValue, IText, ISelectable} from "../../protocols.js";
 
 function access(f, g){
 
   function _value1(self){
-    return _.maybe(ISelectable.sel(self, "option"), _.detect(function(option){
+    return _.maybe(p.sel(self, "option"), _.detect(function(option){
       return option.selected;
     }, ?), f);
   }
@@ -17,15 +18,15 @@ function access(f, g){
       if (option.selected != selected) {
         option.selected = selected;
       }
-    }, ISelectable.sel(self, "option"));
+    }, p.sel(self, "option"));
   }
 
   return _.overload(null, value1, value2);
 
 }
 
-const text  = access(IText.text, _.either(?, "")),
-      value = access(IValue.value);
+const text  = access(p.text, _.either(?, "")),
+      value = access(p.value);
 
 export default _.does(
   _.implement(IValue, {value}),

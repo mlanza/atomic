@@ -267,9 +267,9 @@ function includes(self, target){
       return memo ? self.hasAttribute(key) : reduced(memo);
     }, true, keys);
   } else if (isAttrs(target)) {
-    return IKVReduce.reducekv(target, function(memo, key, value){
+    return _.reducekv(function(memo, key, value){
       return memo ? lookup(self, key) == value : reduced(memo);
-    }, true);
+    }, true, target);
   } else {
     return _.detect(_.isString(target) ? function(node){
       return node.nodeType === Node.TEXT_NODE && node.data === target;

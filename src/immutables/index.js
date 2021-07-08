@@ -9,6 +9,7 @@ import Symbol from "symbol";
 export * from "./types.js";
 export * from "./protocols.js";
 export * from "./protocols/concrete.js";
+import * as p from "./protocols/concrete.js";
 
 function memoize2(f, hash){
   const c = Symbol("cache");
@@ -43,7 +44,7 @@ export const memoize = _.overload(null, memoize1, memoize2);
 const cache = Symbol.for("hashCode");
 
 function cachedHashCode(){
-  const result = this[cache] || IHash.hash(this);
+  const result = this[cache] || p.hash(this);
   if (!Object.isFrozen(this) && this[cache] == null) {
     this[cache] = result;
   }
@@ -51,7 +52,7 @@ function cachedHashCode(){
 }
 
 function hashCode(){
-  return IHash.hash(this);
+  return p.hash(this);
 }
 
 function equals(other){
@@ -95,7 +96,7 @@ export function hashed(hs){
 }
 
 export function hashing(os){
-  return hashed(_.map(IHash.hash, os));
+  return hashed(_.map(p.hash, os));
 }
 
 (function(){
@@ -163,7 +164,7 @@ export function hashing(os){
 (function(){
 
   function hash(self){
-    return IHash.hash(self.id);
+    return p.hash(self.id);
   }
 
   _.doto(_.GUID,

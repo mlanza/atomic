@@ -24,7 +24,7 @@ function complete(self){
 
 function sub(self, observer){
   p.pub(observer, self.state); //to prime subscriber state
-  return ISubscribe.sub(self.observer, observer); //return unsubscribe fn
+  return p.sub(self.observer, observer); //return unsubscribe fn
 }
 
 function unsub(self, observer){

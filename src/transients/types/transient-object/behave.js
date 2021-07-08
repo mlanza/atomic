@@ -28,7 +28,7 @@ function assoc(self, key, value){
 }
 
 function clone(self){
-  return transientObject(IClonable.clone(self.obj));
+  return transientObject(_.clone(self.obj));
 }
 
 function compare(a, b){
@@ -57,7 +57,7 @@ export default _.does(
   _.forward("obj", _.IMap, _.IFind, _.IInclusive, _.ILookup, _.ISeq, _.INext, _.IAssociative, _.ISeqable, _.ICounted, _.IReduce, _.IKVReduce, _.ICoercible),
   _.implement(_.IComparable, {compare}),
   _.implement(_.ICoercible, {toObject}),
-  _.implement(_.IFn, {invoke: _.ILookup.lookup}),
+  _.implement(_.IFn, {invoke: _.get}),
   _.implement(_.IClonable, {clone}),
   _.implement(_.IEquiv, {equiv}),
   _.implement(IPersistent, {persistent}),
