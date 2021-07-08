@@ -8,7 +8,7 @@ function on(self, pred, callback){
 }
 
 function handles(self, message){
-  return _.detect(_.matches(?, message), self.handlers);
+  return _.detect(_.handles(?, message), self.handlers);
 }
 
 function dispatch(self, message){
@@ -26,4 +26,5 @@ function conj(self, handler){
 export default _.does(
   _.implement(IEvented, {on}),
   _.implement(IDispatch, {dispatch}),
+  _.implement(_.IHandler, {handles}),
   _.implement(mut.ITransientCollection, {conj}));
