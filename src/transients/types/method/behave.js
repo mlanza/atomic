@@ -4,10 +4,10 @@ function invoke(self, args){
   return _.apply(self.f, args);
 }
 
-function matches(self, args){
+function handles(self, args){
   return _.apply(self.pred, args);
 }
 
 export default _.does(
-  _.implement(_.IMatchable, {matches}),
+  _.implement(_.IHandler, {handles}),
   _.implement(_.IFn, {invoke}));
