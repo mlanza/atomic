@@ -1,6 +1,6 @@
+import {overload, identity, partial, comp} from "../../core.js";
 import {implement, packs as does} from "../protocol.js";
 import {IBlankable, ICompactible, IFunctor, IReversible, IOmissible, ICoercible, IInclusive, IFind, IEquiv, ICollection, INext, ISeq, IReduce, IKVReduce, ISeqable, ISequential, IIndexed, IEmptyableCollection, ICounted, IAppendable, IPrependable} from "../../protocols.js";
-import {overload, identity, partial, comp} from "../../core.js";
 import {Reduced, isReduced, reduced} from "../reduced.js";
 import {concat} from "../concatenated/construct.js";
 import {cons} from "../list/construct.js";

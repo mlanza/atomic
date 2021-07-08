@@ -30,11 +30,11 @@ export const yank = called(p.omit, "`yank` is deprecated — use `omit` instead.
 export const numeric = test(/^\d+$/i, ?);
 
 function siblings(self){
-  const parent = IHierarchy.parent(self);
+  const parent = p.parent(self);
   if (parent){
     return filter(function(sibling){
       return sibling !== self;
-    }, IHierarchy.children(parent));
+    }, p.children(parent));
   } else {
     return emptyList();
   }
