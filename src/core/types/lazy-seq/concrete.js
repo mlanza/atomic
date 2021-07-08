@@ -93,7 +93,7 @@ export function each(f, xs){
   let ys = p.seq(xs);
   while(ys){
     f(p.first(ys));
-    ys = p.seq(p.rest(ys));
+    ys = p.next(ys);
   }
 }
 
