@@ -1,6 +1,5 @@
-import {overload, identity, constantly, complement} from "../../core.js";
+import {overload, identity, constantly, complement, unary, partial} from "../../core.js";
 import {IReduce, ICounted, IComparable, IAddable} from "../../protocols.js";
-import {partial, unary} from "../function.js";
 import * as p from "./protocols.js";
 
 export function number(...args){

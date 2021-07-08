@@ -2,7 +2,7 @@ import fetch from "fetch";
 import Promise from "promise";
 import * as _ from "atomic/core";
 import {IQueryable, IParams, IOptions, IAddress, IIntercept} from "../../protocols.js";
-import {IClonable, ITemplate, IFunctor, ICoerceable, IForkable, IMap, IAssociative, ILookup, IAppendable, IPrependable, fromTask} from "atomic/core";
+import {IClonable, ITemplate, IFunctor, ICoercible, IForkable, IMap, IAssociative, ILookup, IAppendable, IPrependable, fromTask} from "atomic/core";
 
 export function query(self, plan){
   const keys = _.filter(_.startsWith(?, "$"), _.keys(plan));
@@ -80,7 +80,7 @@ function fork(self, reject, resolve){
 export default _.does(
   _.implement(ITemplate, {fill}),
   _.implement(IClonable, {clone}),
-  _.implement(ICoerceable, {toPromise: fromTask}),
+  _.implement(ICoercible, {toPromise: fromTask}),
   _.implement(IAppendable, {append}),
   _.implement(IPrependable, {prepend}),
   _.implement(IForkable, {fork}),

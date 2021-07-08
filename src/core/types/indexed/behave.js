@@ -1,5 +1,5 @@
 import {overload, does} from "../../core.js";
-import {IKVReduce, IReduce, ICoerceable, INext, ICounted, ISeq, ISeqable, ISequential, IIndexed, ILookup, IInclusive} from "../../protocols.js";
+import {IKVReduce, IReduce, ICoercible, INext, ICounted, ISeq, ISeqable, ISequential, IIndexed, ILookup, IInclusive} from "../../protocols.js";
 import {implement} from "../protocol.js";
 import {indexedSeq} from "../indexed-seq/construct.js";
 import {emptyList} from "../empty-list/construct.js";
@@ -45,7 +45,7 @@ export default does(
   implement(IIndexed, {nth}),
   implement(ILookup, {lookup: nth}),
   implement(INext, {next}),
-  implement(ICoerceable, {toArray: Array.from}),
+  implement(ICoercible, {toArray: Array.from}),
   implement(ISeq, {first, rest}),
   implement(ISeqable, {seq}),
   implement(ICounted, {count}));

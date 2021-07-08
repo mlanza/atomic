@@ -61,7 +61,7 @@ function next(self){
 export default _.does(
   _.iterable,
   _.implement(_.IKVReduce, {reducekv}),
-  _.implement(_.ICoerceable, {toArray}),
+  _.implement(_.ICoercible, {toArray}),
   _.implement(_.IMergable, {merge}),
   _.implement(_.INext, {next}),
   _.implement(_.ISeq, {first, rest}),

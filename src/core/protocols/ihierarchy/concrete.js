@@ -1,4 +1,4 @@
-import {overload} from "../../core.js";
+import {overload, comp} from "../../core.js";
 import {IHierarchy} from "./instance.js";
 import {first} from "../iseq.js";
 import {count} from "../icounted/concrete.js";
@@ -9,7 +9,7 @@ import {cons} from "../../types/list/construct.js";
 import {emptyList} from "../../types/empty-list/construct.js";
 import {map, mapcat, remove} from "../../types/lazy-seq/concrete.js";
 import {concat} from "../../types/concatenated/construct.js";
-import {comp, juxt} from "../../types/function/concrete.js";
+import {juxt} from "../../types/function/concrete.js";
 
 export function downward(f){
   return function down(self){

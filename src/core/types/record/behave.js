@@ -1,7 +1,7 @@
 import {does, constructs} from "../../core.js";
 import {implement} from "../protocol.js";
 import {reduced} from "../reduced/construct.js";
-import {IReduce, IKVReduce, IEquiv, ICoerceable, IAssociative, ISeqable, ILookup, ICounted, IMap, ISeq, IEmptyableCollection} from "../../protocols.js";
+import {IReduce, IKVReduce, IEquiv, ICoercible, IAssociative, ISeqable, ILookup, ICounted, IMap, ISeq, IEmptyableCollection} from "../../protocols.js";
 import Symbol from "symbol";
 import * as p from "./protocols.js";
 
@@ -91,7 +91,7 @@ export default does(
   implement(IReduce, {reduce}),
   implement(IKVReduce, {reducekv}),
   implement(IEquiv, {equiv}),
-  implement(ICoerceable, {toObject}),
+  implement(ICoercible, {toObject}),
   implement(IEmptyableCollection, {empty}),
   implement(IAssociative, {assoc, contains}),
   implement(ILookup, {lookup}),

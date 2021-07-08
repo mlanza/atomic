@@ -59,7 +59,7 @@ export default _.does(
   _.implement(_.IInclusive, {includes}),
   _.implement(_.IAssociative, {contains}),
   _.implement(_.ILookup, {lookup}),
-  _.implement(_.ICoerceable, {toObject: deref}),
+  _.implement(_.ICoercible, {toObject: deref}),
   _.implement(mut.ITransientMap, {dissoc}),
   _.implement(mut.ITransientAssociative, {assoc}),
   _.implement(mut.ITransientOmissible, {omit}),
