@@ -1,5 +1,5 @@
-import {implement} from "../protocol.js";
-import {identity, does} from "../../core.js";
+import {implement, packs as does} from "../protocol.js";
+import {identity} from "../../core.js";
 import {lazySeq} from "../../types/lazy-seq/construct.js";
 import {cons} from "../../types/list/construct.js";
 import {remove, into} from "../../types/lazy-seq/concrete.js";

@@ -1,5 +1,5 @@
-import {identity, does, overload} from "../../core.js";
-import {implement} from "../protocol.js";
+import {identity, overload} from "../../core.js";
+import {implement, packs as does} from "../protocol.js";
 import {indexedSeq} from "./construct.js";
 import {revSeq} from "../../types/rev-seq/construct.js";
 import {isReduced, unreduced} from "../../types/reduced.js";
