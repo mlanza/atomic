@@ -198,7 +198,7 @@ export const toFragment = _.toFragment;
 (function(){
 
   function embed(self, parent, nextSibling) {
-    IEmbeddable.embed(parent.ownerDocument.createTextNode(self), parent, nextSibling);
+    p.embed(parent.ownerDocument.createTextNode(self), parent, nextSibling);
   }
 
   function toFragment(self, doc){
@@ -214,7 +214,7 @@ export const toFragment = _.toFragment;
 (function(){
 
   function embed(self, parent, nextSibling) {
-    IEmbeddable.embed(parent.ownerDocument.createTextNode(_.str(self)), parent, nextSibling);
+    p.embed(parent.ownerDocument.createTextNode(_.str(self)), parent, nextSibling);
   }
 
   _.doto(Number, _.implement(IEmbeddable, {embed}));

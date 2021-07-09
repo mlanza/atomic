@@ -15,3 +15,7 @@ export function embed(self, parent, referenceNode){
     IEmbeddable.embed(_.str(self), parent, referenceNode);
   }
 }
+
+export function embeds(self, ...contents){
+  _.each(IEmbeddable.embed(?, self), contents);
+}
