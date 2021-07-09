@@ -1,9 +1,9 @@
 import * as _ from "atomic/core";
 import * as $ from "atomic/reactives";
 import * as mut from "atomic/transients";
+import * as p from "../../protocols/concrete.js";
 import {isMountable} from "../../protocols/imountable/concrete.js"
 import {IHtml, IText, IValue, IContent, IHideable, IEmbeddable, ISelectable} from "../../protocols.js";
-import {embed as _embed} from "../../protocols/iembeddable/concrete.js";
 import {nestedAttrs} from "../nested-attrs/construct.js";
 import {isElement} from "../element/construct.js";
 import {Text} from "dom";
@@ -41,19 +41,19 @@ function embed(self, parent, referenceNode) {
 }
 
 function append(self, content){
-  IEmbeddable.embed(content, self);
+  p.embed(content, self);
 }
 
 function prepend(self, content){
-  IEmbeddable.embed(content, self, self.childNodes[0]);
+  p.embed(content, self, self.childNodes[0]);
 }
 
 function before(self, content){
-  IEmbeddable.embed(content, _.parent(self), self);
+  p.embed(content, _.parent(self), self);
 }
 
 function after(self, content){
-  IEmbeddable.embed(content, _.parent(self), _.nextSibling(self));
+  p.embed(content, _.parent(self), _.nextSibling(self));
 }
 
 const conj = append;
@@ -308,7 +308,7 @@ function html2(self, html){
     self.innerHTML = html;
   } else {
     empty(self);
-    _embed(html, self);
+    p.embed(html, self);
   }
   return self;
 }
