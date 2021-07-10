@@ -4,5 +4,5 @@ export function Multimap(attrs, empty){
 }
 
 export function multimap(attrs, empty){
-  return new Multimap(attrs || {}, empty);
+  return new Multimap(attrs || {}, empty || (() => []));
 }
