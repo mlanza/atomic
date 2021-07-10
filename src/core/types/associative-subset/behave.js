@@ -1,10 +1,10 @@
-import {implement, packs as does} from "../protocol.js";
-import {identity} from "../../core.js";
+import {implement} from "../protocol.js";
+import {identity, does} from "../../core.js";
 import {lazySeq} from "../../types/lazy-seq/construct.js";
 import {cons} from "../../types/list/construct.js";
 import {remove, into} from "../../types/lazy-seq/concrete.js";
 import {emptyObject} from "../../types/object/construct.js";
-import iemptylist from "../../types/empty-list/behave.js";
+import {iequiv} from "../../types/empty-list/behave.js";
 import {IEquiv, ICoercible, IFind, IReduce, IKVReduce, ISeqable, ICounted, ILookup, IFn, IMap, IClonable, IEmptyableCollection} from "../../protocols.js";
 import * as p from "./protocols.js";
 
@@ -65,7 +65,7 @@ function reducekv(self, xf, init){
 }
 
 export default does(
-  implement(IEquiv, iemptylist),
+  iequiv,
   implement(ICoercible, {toObject}),
   implement(IFind, {find}),
   implement(IMap, {dissoc, keys, vals}),

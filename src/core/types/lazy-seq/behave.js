@@ -1,12 +1,12 @@
-import {overload, identity, partial, comp} from "../../core.js";
-import {implement, packs as does} from "../protocol.js";
+import {overload, identity, does, partial, comp} from "../../core.js";
+import {implement} from "../protocol.js";
 import {IBlankable, ICompactible, IFunctor, IReversible, IOmissible, ICoercible, IInclusive, IFind, IEquiv, ICollection, INext, ISeq, IReduce, IKVReduce, ISeqable, ISequential, IIndexed, IEmptyableCollection, ICounted, IAppendable, IPrependable} from "../../protocols.js";
 import {Reduced, isReduced, reduced} from "../reduced.js";
 import {concat} from "../concatenated/construct.js";
 import {cons} from "../list/construct.js";
 import {map, filter, detect} from "./concrete.js";
 import {emptyList} from "../empty-list/construct.js";
-import iemptylist from "../empty-list/behave.js";
+import {iequiv} from "../empty-list/behave.js";
 import Symbol from "symbol";
 import * as p from "./protocols.js";
 
@@ -155,7 +155,7 @@ const reverse = comp(p.reverse, toArray);
 
 export default does(
   iterable,
-  implement(IEquiv, iemptylist),
+  iequiv,
   implement(IReduce, {reduce}),
   implement(IKVReduce, {reducekv}),
   implement(ISequential),

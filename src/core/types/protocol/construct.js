@@ -1,7 +1,6 @@
 import {overload, does} from "../../core.js";
 import {Nil} from "../nil/construct.js";
 import Symbol from "symbol";
-import Map from "map";
 
 const TEMPLATE = Symbol("@protocol-template"),
       INDEX    = Symbol("@protocol-index"),
@@ -136,20 +135,6 @@ function satisfies2(method, obj){
 }
 
 Protocol.prototype.satisfies = overload(satisfies0, satisfies1, satisfies2);
-
-export function packs(...args){ //same api as `does` but promotes sharing behaviors
-  const fs = [],
-        behaviors = new Map(),
-        behaves = behaviors.get.bind(behaviors);
-  for(let arg of args){
-    let f = typeof arg === "function" ? arg : implement(arg.protocol, arg.behavior);
-    fs.push(f);
-    if (f.protocol && f.behavior){
-      behaviors.set(f.protocol, f.behavior);
-    }
-  }
-  return Object.assign(does.apply(this, fs), {behaves});
-}
 
 export function ProtocolLookupError(protocol, method, subject, args) {
   this.protocol = protocol;

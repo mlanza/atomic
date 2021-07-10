@@ -5,7 +5,7 @@ import {unreduced, isReduced} from "../reduced.js";
 import {drop} from "../lazy-seq.js";
 import {iterable} from "../lazy-seq/behave.js";
 import {emptyable} from "../record/behave.js";
-import iemptylist from "../empty-list/behave.js";
+import {equiv as _equiv} from "../empty-list/behave.js";
 import {Range} from "./construct.js";
 import * as p from "./protocols.js";
 
@@ -26,8 +26,6 @@ function next(self){
   const stepped = p.add(self.start, self.step);
   return self.end == null || (p.compare(stepped, self.end) * self.direction) < 0 ? new self.constructor(stepped, self.end, self.step, self.direction) : null;
 }
-
-const _equiv = implement(IEquiv, iemptylist).behavior.equiv;
 
 function equiv(self, other){
   return kin(self, other) ? p.alike(self, other) : _equiv(self, other);
