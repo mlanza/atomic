@@ -51,22 +51,22 @@ function dissoc(self, idx){
   return arr;
 }
 
-function reduce(xs, xf, init){
+function reduce(xs, f, init){
   let memo = init, to = xs.length - 1;
   for(let i = 0; i <= to; i++){
     if (isReduced(memo))
       break;
-    memo = xf(memo, xs[i]);
+    memo = f(memo, xs[i]);
   }
   return unreduced(memo);
 }
 
-function reducekv(xs, xf, init){
+function reducekv(xs, f, init){
   let memo = init, len = xs.length;
   for(let i = 0; i < len; i++){
     if (isReduced(memo))
       break;
-    memo = xf(memo, i, xs[i]);
+    memo = f(memo, i, xs[i]);
   }
   return unreduced(memo);
 }

@@ -52,11 +52,11 @@ function toArray(self){
   return self.toArray();
 }
 
-function reduce(self, xf, init){
+function reduce(self, f, init){
   let memo = init;
   let coll = _.seq(self);
   while(coll){
-    memo = xf(memo, _.first(coll));
+    memo = f(memo, _.first(coll));
     coll = _.next(coll);
   }
   return _.unreduced(memo);

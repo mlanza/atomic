@@ -89,11 +89,11 @@ function toArray(self){
   return self.split("");
 }
 
-function reduce(self, xf, init){
+function reduce(self, f, init){
   let memo = init;
   let coll = p.seq(self);
   while(coll && !isReduced(memo)){
-    memo = xf(memo, p.first(coll));
+    memo = f(memo, p.first(coll));
     coll = p.next(coll);
   }
   return unreduced(memo);

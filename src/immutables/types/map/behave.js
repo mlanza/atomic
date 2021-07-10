@@ -28,9 +28,9 @@ function dissoc(self, key){
   return self.remove(self, key);
 }
 
-function reducekv(self, xf, init){
+function reducekv(self, f, init){
   return _.reduce(function(memo, key){
-    return xf(memo, key, _.get(self, key));
+    return f(memo, key, _.get(self, key));
   }, init, keys(self));
 }
 

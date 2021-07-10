@@ -13,7 +13,7 @@ function assoc(self, key, value){
   return obj;
 }
 
-function reduce(self, xf, init){
+function reduce(self, f, init){
   return init;
 }
 

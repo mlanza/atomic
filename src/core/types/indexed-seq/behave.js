@@ -86,20 +86,20 @@ function count(self){
   return p.count(self.seq) - self.start;
 }
 
-function reduce(self, xf, init){
+function reduce(self, f, init){
   let memo = init,
       coll = p.seq(self);
   while (coll && !isReduced(memo)){
-    memo = xf(memo, p.first(coll));
+    memo = f(memo, p.first(coll));
     coll = p.next(coll);
   }
   return unreduced(memo);
 }
 
-function reducekv(self, xf, init){
+function reducekv(self, f, init){
   let idx = 0;
   return reduce(self, function(memo, value){
-    memo = xf(memo, idx, value);
+    memo = f(memo, idx, value);
     idx += 1;
     return memo;
   }, init);

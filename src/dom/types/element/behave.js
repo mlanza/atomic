@@ -332,8 +332,8 @@ function value2(self, value){
 
 export const value = _.overload(null, value1, value2);
 
-function reduce(self, xf, init){
-  return _.reduce(xf, init, _.descendants(self));
+function reduce(self, f, init){
+  return _.reduce(f, init, _.descendants(self));
 }
 
 export const ihierarchy = _.implement(_.IHierarchy, {root, parent, parents, closest, children, descendants, nextSibling, nextSiblings, prevSibling, prevSiblings, siblings});

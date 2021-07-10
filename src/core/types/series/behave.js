@@ -45,8 +45,8 @@ function empty(self){
   return self.constructor.from([]);
 }
 
-function reduce(self, xf, init){
-  return p.reduce(xf, init, self.items);
+function reduce(self, f, init){
+  return p.reduce(f, init, self.items);
 }
 
 function construction(Type){

@@ -48,11 +48,11 @@ function clone(self){
   return transientSet(toArray(self));
 }
 
-function reduce(self, xf, init){
+function reduce(self, f, init){
   let memo = init;
   let coll = seq(self);
   while(coll){
-    memo = xf(memo, first(coll));
+    memo = f(memo, first(coll));
     coll = next(coll);
   }
   return _.unreduced(memo);

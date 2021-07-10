@@ -52,15 +52,15 @@ function clone(self){
   return toObject(self);
 }
 
-function reduce(self, xf, init){
+function reduce(self, f, init){
   return p.reduce(function(memo, key){
-    return xf(memo, [key, lookup(self, key)]);
+    return f(memo, [key, lookup(self, key)]);
   }, init, keys(self));
 }
 
-function reducekv(self, xf, init){
+function reducekv(self, f, init){
   return p.reduce(function(memo, key){
-    return xf(memo, key, lookup(self, key));
+    return f(memo, key, lookup(self, key));
   }, init, keys(self));
 }
 

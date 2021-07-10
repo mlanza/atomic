@@ -5,9 +5,9 @@ import {Duration} from "../duration/construct.js";
 import {IAddable, IKVReduce, IFunctor, IMergable, ICoercible, IMultipliable, IDivisible, IMap, IAssociative, ILookup} from "../../protocols.js";
 import * as p from "./protocols.js";
 
-function reducekv(self, xf, init){
+function reducekv(self, f, init){
   return p.reduce(function(memo, key){
-    return xf(memo, key, lookup(self, key));
+    return f(memo, key, lookup(self, key));
   }, init, keys(self));
 }
 
