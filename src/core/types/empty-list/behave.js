@@ -1,5 +1,5 @@
-import {identity, constantly} from "../../core.js";
-import {satisfies, implement, packs as does} from "../protocol.js";
+import {identity, constantly, does} from "../../core.js";
+import {satisfies, implement} from "../protocol.js";
 import {IEquiv, IBlankable, ICoercible, IInclusive, IReversible, INext, ISeq, ISeqable, ISequential, IEmptyableCollection, IKVReduce, IReduce, ICounted} from "../../protocols.js";
 import {emptyList, EmptyList} from "../../types/empty-list/construct.js";
 import {emptyArray} from "../../types/array/construct.js";
@@ -10,15 +10,17 @@ function reduce(self, f, init){
   return init;
 }
 
-function equiv(xs, ys){
+export function equiv(xs, ys){
   return !!satisfies(ISequential, xs) === !!satisfies(ISequential, ys)
     && p.count(xs) === p.count(ys)
     && p.equiv(p.first(xs), p.first(ys))
     && p.equiv(p.next(xs), p.next(ys));
 }
 
+export const iequiv = implement(IEquiv, {equiv});
+
 export default does(
-  implement(IEquiv, {equiv}),
+  iequiv,
   implement(ISequential),
   implement(IBlankable, {blank: constantly(true)}),
   implement(IReversible, {reverse: emptyList}),

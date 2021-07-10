@@ -1,12 +1,12 @@
-import {identity, overload} from "../../core.js";
-import {implement, packs as does} from "../protocol.js";
+import {identity, overload, does} from "../../core.js";
+import {implement} from "../protocol.js";
 import {indexedSeq} from "./construct.js";
 import {revSeq} from "../../types/rev-seq/construct.js";
 import {isReduced, unreduced} from "../../types/reduced.js";
 import {concat} from "../../types/concatenated/construct.js";
 import {drop, detect} from "../lazy-seq/concrete.js";
 import {emptyArray} from "../../types/array/construct.js";
-import iemptylist from "../../types/empty-list/behave.js";
+import {iequiv} from "../../types/empty-list/behave.js";
 import {iterable} from "../lazy-seq/behave.js";
 import {ICoercible, IEquiv, IReversible, IMapEntry, IFind, IInclusive, IAssociative, IAppendable, IPrependable, ICollection, INext, ICounted, IReduce, IKVReduce, ISeq, ISeqable, ISequential, IIndexed, ILookup, IFn, IEmptyableCollection} from "../../protocols.js";
 import * as p from "./protocols.js";
@@ -111,7 +111,7 @@ function includes(self, x){
 
 export default does(
   iterable,
-  implement(IEquiv, iemptylist),
+  iequiv,
   implement(ISequential),
   implement(IIndexed, {nth, idx}),
   implement(IReversible, {reverse}),
