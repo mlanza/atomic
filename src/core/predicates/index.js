@@ -52,10 +52,10 @@ export function signatureHead(...preds){
 }
 
 export function everyPair(pred, xs){
-  let every = xs.length > 0;
-  while(every && xs.length > 1){
-    every = pred(xs[0], xs[1]);
-    xs = slice(xs, 1);
+  let every = p.count(xs) > 0;
+  while(every && p.count(xs) > 1){
+    every = pred(p.first(xs), p.second(xs));
+    xs = p.rest(xs);
   }
   return every;
 }
