@@ -174,20 +174,19 @@ export const checkbox = _.assume(isHTMLDocument, document, function checkbox(doc
     _.specify(IValue, {value: value}));
 });
 
-export const select = _.assume(isHTMLDocument, document, function select(document, options, ...args){
-  const tag = tags(element(document)),
-    select = tag('select'),
-    option = tag('option'),
-    el = select(...args);
-  _.each(function(entry){
-    mut.append(el, option({value: _.key(entry)}, _.val(entry)));
-  }, options);
-  return el;
-});
+export const option = _.assume(isHTMLDocument, document, _.overload(null, null, function option(document, entry){
+  return element(document, "option", {value: _.key(entry)}, _.val(entry));
+}, function(document, key, value){
+  return element(document, "option", {value: key}, value);
+}));
 
-export const input = _.assume(isHTMLDocument, document, function input(document, ...args){
+export const select = _.called(_.assume(isHTMLDocument, document, function select(document, entries, ...args){
+  return element(document, "select", _.map(option(document, ?), entries), ...args);
+}), "`select` is deprecated — use `select` tag with `option(key, value),...` or `map(option, entries)`.");
+
+export const input = _.called(_.assume(isHTMLDocument, document, function input(document, ...args){
   return element(document, 'input', {type: "text"}, ...args);
-});
+}), "`input` is deprecated — use `input` tag with {type: 'text'}.");
 
 export const textbox = input;
 
