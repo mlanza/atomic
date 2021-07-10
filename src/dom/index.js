@@ -161,7 +161,17 @@ function tags3(engine, f, keys){
 export const tags = _.overload(tags0, tags1, tags2, tags3);
 export const tag = tags();
 
-export const checkbox = _.assume(isHTMLDocument, document, function checkbox(document, ...args){
+export const option = _.assume(isHTMLDocument, document, _.overload(null, null, function option(document, entry){
+  return element(document, "option", {value: _.key(entry)}, _.val(entry));
+}, function(document, key, value){
+  return element(document, "option", {value: key}, value);
+}));
+
+export const select = _.called(_.assume(isHTMLDocument, document, function select(document, entries, ...args){
+  return element(document, "select", _.map(option(document, ?), entries), ...args);
+}), "`select` is deprecated — use `select` tag with `option(key, value),...` or `map(option, entries)`.");
+
+export const checkbox = _.called(_.assume(isHTMLDocument, document, function checkbox(document, ...args){
   const el = element(document, 'input', {type: "checkbox"}, ...args);
   function value1(el){
     return el.checked;
@@ -172,17 +182,7 @@ export const checkbox = _.assume(isHTMLDocument, document, function checkbox(doc
   const value = _.overload(null, value1, value2);
   return _.doto(el,
     _.specify(IValue, {value: value}));
-});
-
-export const option = _.assume(isHTMLDocument, document, _.overload(null, null, function option(document, entry){
-  return element(document, "option", {value: _.key(entry)}, _.val(entry));
-}, function(document, key, value){
-  return element(document, "option", {value: key}, value);
-}));
-
-export const select = _.called(_.assume(isHTMLDocument, document, function select(document, entries, ...args){
-  return element(document, "select", _.map(option(document, ?), entries), ...args);
-}), "`select` is deprecated — use `select` tag with `option(key, value),...` or `map(option, entries)`.");
+}), "`checkbox` is deprecated — use `input` tag with {type: 'checkbox'} instead.");
 
 export const input = _.called(_.assume(isHTMLDocument, document, function input(document, ...args){
   return element(document, 'input', {type: "text"}, ...args);
