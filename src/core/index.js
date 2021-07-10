@@ -151,7 +151,7 @@ export function unique(xs){
   return p.toArray(new Set(p.toArray(xs)));
 }
 
-export const second = branch(satisfies(ISeq, ?), comp(p.first, p.next), _second);
+export const second = branch(satisfies(ISeq, ?), p.second, _second);
 
 export function expands(f){
   function expand(...contents){
