@@ -4,9 +4,8 @@ import {embed} from "../../protocols/iembeddable/concrete.js";
 import {isHTMLDocument} from "../html-document/construct.js";
 
 export const fragment = _.assume(isHTMLDocument, document, function fragment(document, ...contents){
-  const frag = document.createDocumentFragment();
-  _.each(embed(?, frag), contents);
-  return frag;
+  return _.doto(document.createDocumentFragment(),
+    embed(?, contents));
 });
 
 DocumentFragment.create = fragment;

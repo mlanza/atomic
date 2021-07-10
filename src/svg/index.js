@@ -9,9 +9,8 @@ function tags2(document, list){
   const tags = dom.tags(ns, list);
 
   function use(link, ...contents){
-    const el = ns("use");
+    const el = ns("use", contents);
     el.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', link);
-    dom.embeds(el, ...contents);
     return el;
   }
 

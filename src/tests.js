@@ -102,6 +102,30 @@ QUnit.test("component", function(assert){
   assert.equal(_.count(_.deref(people)), 3);
 });
 
+QUnit.test("embeddables", function(assert){
+  function names(context){
+    return _.mapa(dom.text, dom.sel("li", context));
+  }
+  const ul = dom.tag('ul'),
+        li = dom.tag('li');
+  const larry = li("Larry"),
+        curly = li("Curly"),
+        moe = li({class: "boss"}, "Moe"),
+        shemp = li("Shemp"),
+        corey = li("Corey"),
+        stooges = ul({class: "stooges"}, larry);
+  const frag = dom.fragment(stooges);
+  assert.equal(dom.attr(stooges, "class"), "stooges");
+  dom.append(stooges, corey);
+  assert.deepEqual(names(frag), ["Larry", "Corey"]);
+  dom.prepend(stooges, moe);
+  assert.deepEqual(names(frag), ["Moe", "Larry", "Corey"]);
+  dom.before(corey, curly);
+  assert.deepEqual(names(frag), ["Moe", "Larry", "Curly", "Corey"]);
+  dom.after(curly, shemp);
+  assert.deepEqual(names(frag), ["Moe", "Larry", "Curly", "Shemp", "Corey"]);
+});
+
 QUnit.test("dom", function(assert){
   const {ul, li, div, span} = dom.tags(dom.element(document), _.expands, ["ul", "li", "div", "span"]);
   const duo = _.doto(dom.fragment(), dom.append(?, div("Abbott")), dom.append(?, dom.element("div", "Costello")));

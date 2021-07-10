@@ -69,6 +69,9 @@ function specify1(behavior){
 }
 
 function specify2(behavior, target){
+  if (!this) {
+    throw new Error("Protocol not specified.");
+  }
   const keys = this.generate();
   addMeta(target, keys("__marker__"), this);
   for(let method in behavior){

@@ -20,40 +20,41 @@ function show(self){
   mut.omit(nestedAttrs(self, "style"), hides); //TODO mut unconj
 }
 
-function embed(self, parent, referenceNode) {
-  if (isMountable(self)) {
-    const detail = {parent};
-    $.trigger(self, "mounting", {bubbles: true, detail});
-    if (referenceNode) {
-      parent.insertBefore(self, referenceNode);
+function embeddables(self){
+  function embed(parent, add){
+    if (isMountable(self)) {
+      const detail = {parent};
+      $.trigger(self, "mounting", {bubbles: true, detail});
+      add(parent, self);
+      $.trigger(self, "mounted" , {bubbles: true, detail});
     } else {
-      parent.appendChild(self);
-    }
-    $.trigger(self, "mounted" , {bubbles: true, detail});
-  } else {
-    if (referenceNode) {
-      parent.insertBefore(self, referenceNode);
-    } else {
-      parent.appendChild(self);
+      add(parent, self);
     }
   }
-  return self;
+  return [embed];
 }
 
 function append(self, content){
-  p.embed(content, self);
+  p.embed(self, content);
 }
 
 function prepend(self, content){
-  p.embed(content, self, self.childNodes[0]);
+  p.embed(function(parent, child){
+    parent.insertBefore(child, parent.childNodes[0]);
+  }, self, content);
 }
 
 function before(self, content){
-  p.embed(content, _.parent(self), self);
+  p.embed(function(parent, child){
+    parent.insertBefore(child, self);
+  }, _.parent(self), content);
 }
 
 function after(self, content){
-  p.embed(content, _.parent(self), _.nextSibling(self));
+  const ref = _.nextSibling(self);
+  p.embed(function(parent, child){
+    parent.insertBefore(child, ref);
+  }, _.parent(self), content);
 }
 
 const conj = append;
@@ -308,7 +309,7 @@ function html2(self, html){
     self.innerHTML = html;
   } else {
     empty(self);
-    p.embed(html, self);
+    p.embed(self, html);
   }
   return self;
 }
@@ -350,7 +351,7 @@ export default _.does(
   _.implement(IText, {text}),
   _.implement(IHtml, {html}),
   _.implement(IValue, {value}),
-  _.implement(IEmbeddable, {embed}),
+  _.implement(IEmbeddable, {embeddables}),
   _.implement(mut.ITransientEmptyableCollection, {empty}),
   _.implement(mut.ITransientInsertable, {before, after}),
   _.implement(_.IInclusive, {includes}),

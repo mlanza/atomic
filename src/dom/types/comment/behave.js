@@ -1,9 +1,10 @@
 import * as _ from "atomic/core";
+import {document} from "dom";
 import {IEmbeddable} from "../../protocols.js";
 
-function embed(self, parent) {
-  parent.appendChild(self);
+function embeddables(self){
+  return [self];
 }
 
 export default _.does(
-  _.implement(IEmbeddable, {embed}));
+  _.implement(IEmbeddable, {embeddables}));

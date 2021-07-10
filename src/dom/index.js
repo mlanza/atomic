@@ -196,8 +196,8 @@ export const toFragment = _.toFragment;
 
 (function(){
 
-  function embed(self, parent, nextSibling) {
-    p.embed(parent.ownerDocument.createTextNode(self), parent, nextSibling);
+  function embeddables(self, doc){
+    return [(doc || document).createTextNode(self)];
   }
 
   function toFragment(self, doc){
@@ -206,29 +206,44 @@ export const toFragment = _.toFragment;
 
   _.doto(String,
     _.implement(_.ICoercible, {toFragment}),
-    _.implement(IEmbeddable, {embed}));
+    _.implement(IEmbeddable, {embeddables}));
 
 })();
 
 (function(){
 
-  function embed(self, parent, nextSibling) {
-    p.embed(parent.ownerDocument.createTextNode(_.str(self)), parent, nextSibling);
+  function embeddables(self, doc){
+    return [(doc || document).createTextNode(self)];
   }
 
-  _.doto(Number, _.implement(IEmbeddable, {embed}));
+  _.doto(Number, _.implement(IEmbeddable, {embeddables}));
 
 })();
 
 (function(){
 
-  function embed(self, parent) {
-    _.each(function(entry){
-      mut.assoc(parent, _.key(entry), _.val(entry));
-    }, self);
+  function embeddables(self, doc){
+    function embed(el){
+      _.each(function(entry){
+        mut.assoc(el, _.key(entry), _.val(entry)); //attributes
+      }, self);
+    }
+    return [embed];
   }
 
-  _.doto(Object, _.implement(IEmbeddable, {embed}));
+  _.doto(Object, _.implement(IEmbeddable, {embeddables}));
+
+})();
+
+(function(){
+
+  function embeddables(self, doc){
+    return _.mapcat(p.embeddables(?, doc || document), self);
+  }
+
+_.each(
+  _.implement(IEmbeddable, {embeddables}),
+  [_.LazySeq, Array]);
 
 })();
 
@@ -240,6 +255,6 @@ export const toFragment = _.toFragment;
 
   _.doto(_.Nil,
     _.implement(_.ICoercible, {toFragment}),
-    _.implement(IEmbeddable, {embed: _.identity}));
+    _.implement(IEmbeddable, {embeddables: _.emptyList}));
 
 })();
