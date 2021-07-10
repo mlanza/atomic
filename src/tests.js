@@ -12,6 +12,30 @@ const stooges = ["Larry","Curly","Moe"],
       court   = {jack: 11, queen: 12, king: 13},
       worth   = {pieces: pieces, court: court};
 
+QUnit.test("inheritance chain", function(assert){
+  function Person(fname, lname){
+    this.fname = fname;
+    this.lname = lname;
+  }
+  function name(self){
+    return `${self.fname} ${self.lname}`;
+  }
+
+  assert.equal(_.name(Person), "Person");
+  _.specify(_.INamable, {name: _.constantly("Human")}, Person); //on the constructor itself
+  assert.equal(_.name(Person), "Human");
+  var greg = new Person("Gregory", "Porter");
+  assert.ok(!_.satisfies(_.INamable, greg));
+  _.implement(_.INamable, {name}, Person);
+  assert.ok(_.satisfies(_.INamable, greg));
+  assert.equal(_.name(greg), "Gregory Porter");
+  _.specify(_.INamable, {name: _.get(?, "fname")}, greg);
+  assert.equal(_.name(greg), "Gregory");
+  assert.ok(_.satisfies(_.INamable, Array)); //e.g. from `naming`
+  assert.ok(!_.satisfies(_.INamable, []));
+  assert.ok(_.what([], Array)); //e.g. from `naming`
+});
+
 QUnit.test("router & multimethod", function(assert){ //not just for fns!
   const f = _.doto($.router(), //router handlers need not be (but can be) fns
       mut.conj(?, $.handler(_.signature(_.isString), _.str(?, "!"), _.apply)), //use apply to spread the message against the pred and callback
