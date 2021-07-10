@@ -5,6 +5,7 @@ export * from "./types/document-fragment.js";
 export * from "./types/element.js";
 export * from "./types/html-collection.js";
 export * from "./types/html-document.js";
+export * from "./types/html-input-element.js";
 export * from "./types/html-select-element.js";
 export * from "./types/invalid-host-element-error.js";
 export * from "./types/location.js";

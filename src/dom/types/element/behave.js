@@ -3,7 +3,7 @@ import * as $ from "atomic/reactives";
 import * as mut from "atomic/transients";
 import * as p from "../../protocols/concrete.js";
 import {isMountable} from "../../protocols/imountable/concrete.js"
-import {IHtml, IText, IValue, IContent, IHideable, IEmbeddable, ISelectable} from "../../protocols.js";
+import {IHtml, IText, IContent, IHideable, IEmbeddable, ISelectable} from "../../protocols.js";
 import {nestedAttrs} from "../nested-attrs/construct.js";
 import {isElement} from "../element/construct.js";
 import {Text} from "dom";
@@ -259,6 +259,7 @@ function omit2(self, node){
 
 export const omit = _.overload(null, omit1, omit2);
 
+//TODO too overloaded, impure protocol
 function includes(self, target){
   if (isElement(target)) {
     return _.detect(_.isIdentical(target, ?), children(self));
@@ -316,23 +317,6 @@ function html2(self, html){
 
 export const html = _.overload(null, html1, html2);
 
-function value1(self){
-  return "value" in self ? self.value : null;
-}
-
-function value2(self, value){
-  if ("value" in self) {
-    value = value == null ? "" : value;
-    if (self.value != value) {
-      self.value = value;
-    }
-  } else {
-    throw new TypeError("Type does not support value property.");
-  }
-}
-
-export const value = _.overload(null, value1, value2);
-
 function reduce(self, f, init){
   return _.reduce(f, init, _.descendants(self));
 }
@@ -350,7 +334,6 @@ export default _.does(
   _.implement(_.IReduce, {reduce}),
   _.implement(IText, {text}),
   _.implement(IHtml, {html}),
-  _.implement(IValue, {value}),
   _.implement(IEmbeddable, {embeddables}),
   _.implement(mut.ITransientEmptyableCollection, {empty}),
   _.implement(mut.ITransientInsertable, {before, after}),

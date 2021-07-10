@@ -57,6 +57,7 @@ define('dom', [], function(){
     XMLDocument: window.XMLDocument || window.Document, //IE compatible
     HTMLDocument: window.HTMLDocument || window.Document, //IE compatible
     HTMLCollection: HTMLCollection,
+    HTMLInputElement: HTMLInputElement,
     HTMLSelectElement: HTMLSelectElement,
     Comment: Comment,
     Location: Location
