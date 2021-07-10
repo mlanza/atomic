@@ -1,7 +1,7 @@
-import {overload, constantly, identity, slice} from "../core.js";
+import {overload, complement, constantly, identity, slice} from "../core.js";
 import {reduced} from "../types/reduced.js";
 import {apply} from "../types/function/concrete.js";
-import {mapa} from "../types/lazy-seq/concrete.js";
+import {mapa, detect, some} from "../types/lazy-seq/concrete.js";
 import {isNil} from "../types/nil/construct.js";
 import {indexed} from "../types/indexed/construct.js";
 import {maybe} from "../types/maybe/construct.js";
@@ -59,35 +59,6 @@ export function everyPair(pred, xs){
   }
   return every;
 }
-
-function someFn1(a){
-  return function(){
-    return apply(a, arguments);
-  }
-}
-
-function someFn2(a, b){
-  return function(){
-    return apply(a, arguments) || apply(b, arguments);
-  }
-}
-
-function someFn3(a, b, c){
-  return function(){
-    return apply(a, arguments) || apply(b, arguments) || apply(c, arguments);
-  }
-}
-
-function someFnN(...preds){
-  return function(...args){
-    return p.reduce(function(result, pred){
-      let r = apply(pred, args);
-      return r ? reduced(r) : result;
-    }, false, preds);
-  }
-}
-
-export const someFn = overload(null, someFn1, someFn2, someFn3, someFnN);
 
 export function isIdentical(x, y){
   return x === y; //TODO Object.is?
@@ -155,3 +126,44 @@ export function everyPred(...preds){
     }, true, slice(arguments));
   }
 }
+
+function someFn1(p){
+  function f1(x){
+    return p(x);
+  }
+  function f2(x, y){
+    return p(x) || p(y);
+  }
+  function f3(x, y, z){
+    return p(x) || p(y) || p(z);
+  }
+  function fn(x, y, z, ...args){
+    return f3(x, y, z) || some(p, args);
+  }
+  return overload(constantly(null), f1, f2, f3, fn);
+}
+
+function someFn2(p1, p2){
+  function f1(x){
+    return p1(x) || p2(x);
+  }
+  function f2(x, y){
+    return p1(x) || p1(y) || p2(x) || p2(y);
+  }
+  function f3(x, y, z){
+    return p1(x) || p1(y) || p1(z) || p2(x) || p2(y) || p2(z);
+  }
+  function fn(x, y, z, ...args){
+    return f3(x, y, z) || some(or(p1, p2), args);
+  }
+  return overload(constantly(null), f1, f2, f3, fn);
+}
+
+function someFnN(...ps){
+  function fn(...args){
+    return some(or(...ps), args);
+  }
+  return overload(constantly(null), fn);
+}
+
+export const someFn = overload(null, someFn1, someFn2, someFnN);

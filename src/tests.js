@@ -327,7 +327,7 @@ QUnit.test("sequences", function(assert){
   assert.deepEqual([1, 2] |> _.concat(?, [3, 4], [5, 6]) |> _.toArray, [1, 2, 3, 4, 5, 6]);
   assert.deepEqual(["a", "b", "c", "d", "e"] |> _.keepIndexed((idx, value) => _.isOdd(idx) ? value : null, ?) |> _.toArray, ["b", "d"]);
   assert.deepEqual([10, 11, 12] |> _.mapIndexed((idx, value) => [idx, _.inc(value)], ?) |> _.toArray, [[0, 11], [1, 12], [2, 13]]);
-  assert.deepEqual(_.everyPred(_.isEven, x => x > 10)(12,14,16), true);
+  assert.ok(_.everyPred(_.isEven, x => x > 10)(12,14,16));
   assert.equal(_.maxKey(obj => obj["king"], pieces, court), pieces);
 });
 
@@ -544,9 +544,22 @@ QUnit.test("coersion", function(assert){
 });
 
 QUnit.test("predicates", function(assert){
+  //two means of running multiple tests against different arguments
+  const cinco = _.range(5),
+        any = _.someFn(_.includes(cinco, ?)), //or
+        all = _.everyPred(_.includes(cinco, ?)); //and
   assert.ok({ace: 1, king: 2, queen: 3} |> _.subsumes(?, {ace: 1, king: 2}));
   assert.equal(_.any(3, 1), 3);
   assert.equal(_.any(null, 1), 1);
   assert.equal(_.all(3, 1), 1);
   assert.equal(_.all(null, 1), null);
+  assert.ok(any(1, 2, 3));
+  assert.ok(all(1, 2, 3));
+  assert.ok(any(-1, -2, 3));
+  assert.ok(!all(1, 2, -3));
+  assert.ok(!all(-1, -2, -3));
+  assert.ok(!_.includes(cinco, 1, 2, -3)); //same functionality built in
+  assert.ok(!_.excludes(cinco, 1, 2, -3));
+  assert.ok(_.excludes(cinco, 11, 5, -3));
+  assert.ok(!_.includes(cinco, -1, -2, -3));
 });
