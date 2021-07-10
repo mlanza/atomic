@@ -1,31 +1,37 @@
 import * as _ from "atomic/core";
 import * as p from "../../protocols/concrete.js";
-import {IValue, IText, ISelectable} from "../../protocols.js";
+import {IValue, IText} from "../../protocols.js";
 
-function access(f, g){
+function access(f){
 
-  function _value1(self){
-    return _.maybe(p.sel(self, "option"), _.detect(function(option){
+  function value1(self){
+    return _.maybe(p.sel("option", self), _.detect(function(option){
       return option.selected;
     }, ?), f);
   }
 
-  const value1 = g ? _.comp(g, _value1) : _value1;
-
   function value2(self, value){
-    _.each(function(option){
-      const selected = f(option) == value;
-      if (option.selected != selected) {
-        option.selected = selected;
-      }
-    }, p.sel(self, "option"));
+    const options = p.sel("option", self);
+    const chosen = _.detect(function(option){
+      return f(option) == value;
+    }, options);
+    if (chosen) {
+      _.each(function(option){
+        const selected = f(option) == value;
+        if (option.selected != selected) {
+          option.selected = selected;
+        }
+      }, options);
+    } else {
+      throw new Error("Cannot set value — it is not an option.");
+    }
   }
 
   return _.overload(null, value1, value2);
 
 }
 
-const text  = access(p.text, _.either(?, "")),
+const text  = _.comp(_.either(?, ""), access(p.text)),
       value = access(p.value);
 
 export default _.does(
