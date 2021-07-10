@@ -96,16 +96,16 @@ function compare(self, other){
   return other == null ? -1 : deref(self) - p.deref(other);
 }
 
-function reduce(self, xf, init){
+function reduce(self, f, init){
   return p.reduce(function(memo, key){
     const value = p.get(self, key);
-    return xf(memo, [key, value]);
+    return f(memo, [key, value]);
   }, init, keys(self));
 }
 
-function reducekv(self, xf, init){
+function reducekv(self, f, init){
   return reduce(self, function(memo, [key, value]){
-    return xf(memo, key, value);
+    return f(memo, key, value);
   }, init);
 }
 

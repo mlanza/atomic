@@ -31,22 +31,22 @@ function equiv(self, other){
   return kin(self, other) ? p.alike(self, other) : _equiv(self, other);
 }
 
-function reduce(self, xf, init){
+function reduce(self, f, init){
   let memo = init,
       coll = seq(self);
   while(!isReduced(memo) && coll){
-    memo = xf(memo, p.first(coll));
+    memo = f(memo, p.first(coll));
     coll = p.next(coll);
   }
   return unreduced(memo);
 }
 
-function reducekv(self, xf, init){
+function reducekv(self, f, init){
   let memo = init,
       coll = seq(self),
       n = 0;
   while(!isReduced(memo) && coll){
-    memo = xf(memo, n++, p.first(coll));
+    memo = f(memo, n++, p.first(coll));
     coll = p.next(coll);
   }
   return unreduced(memo);

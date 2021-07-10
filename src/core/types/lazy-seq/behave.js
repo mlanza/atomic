@@ -98,22 +98,22 @@ function idx(self, x){
   return null;
 }
 
-function reduce(xs, xf, init){
+function reduce(xs, f, init){
   let memo = init,
       ys = p.seq(xs);
   while(ys && !(memo instanceof Reduced)){
-    memo = xf(memo, p.first(ys));
+    memo = f(memo, p.first(ys));
     ys = p.next(ys);
   }
   return memo instanceof Reduced ? memo.valueOf() : memo;
 }
 
-function reducekv(xs, xf, init){
+function reducekv(xs, f, init){
   let memo = init,
       ys = p.seq(xs),
       idx = 0;
   while(ys && !(memo instanceof Reduced)){
-    memo = xf(memo, idx++, p.first(ys));
+    memo = f(memo, idx++, p.first(ys));
     ys = p.next(ys);
   }
   return memo instanceof Reduced ? memo.valueOf() : memo;

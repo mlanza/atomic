@@ -59,15 +59,15 @@ function empty(self){
   return self.constructor.from({});
 }
 
-function reduce(self, xf, init){
+function reduce(self, f, init){
   return p.reduce(function(memo, key){
-    return xf(memo, [key, lookup(self, key)]);
+    return f(memo, [key, lookup(self, key)]);
   }, init, p.keys(self));
 }
 
-function reducekv(self, xf, init){
+function reducekv(self, f, init){
   return p.reduce(function(memo, key){
-    return xf(memo, key, lookup(self, key));
+    return f(memo, key, lookup(self, key));
   }, init, p.keys(self));
 }
 

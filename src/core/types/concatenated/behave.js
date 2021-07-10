@@ -34,22 +34,22 @@ function toArray(self){
   }, []);
 }
 
-function reduce(self, xf, init){
+function reduce(self, f, init){
   let memo = init,
       remaining = self;
   while(!isReduced(memo) && p.seq(remaining)){
-    memo = xf(memo, p.first(remaining))
+    memo = f(memo, p.first(remaining))
     remaining = p.next(remaining);
   }
   return unreduced(memo);
 }
 
-function reducekv(self, xf, init){
+function reducekv(self, f, init){
   let memo = init,
       remaining = self,
       idx = 0;
   while(!isReduced(memo) && p.seq(remaining)){
-    memo = xf(memo, idx, p.first(remaining))
+    memo = f(memo, idx, p.first(remaining))
     remaining = p.next(remaining);
     idx++;
   }

@@ -9,8 +9,8 @@ function merge(self, other){
   });
 }
 
-function reduce(self, xf, init){
-  return p.sub(init, xf(self, ?));
+function reduce(self, f, init){
+  return p.sub(init, f(self, ?));
 }
 
 export const imergable = implement(IMergable, {merge});

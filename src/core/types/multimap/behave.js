@@ -44,15 +44,15 @@ function contains(self, key){
   return p.contains(self.attrs, key);
 }
 
-function reduce(self, xf, init){
+function reduce(self, f, init){
   return p.reduce(function(memo, pair){
-    return xf(memo, pair);
+    return f(memo, pair);
   }, init, seq(self));
 }
 
-function reducekv(self, xf, init){
+function reducekv(self, f, init){
   return reduce(self, function(memo, [key, value]){
-    return xf(memo, key, value);
+    return f(memo, key, value);
   }, init);
 }
 

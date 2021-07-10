@@ -1,23 +1,23 @@
 import {overload, identity} from "../../core.js";
 import {IReduce} from "./instance.js";
 
-function reduce2(xf, coll){
-  return IReduce.reduce(coll, xf, xf());
+function reduce2(f, coll){
+  return reduce3(f, f(), coll);
 }
 
-function reduce3(xf, init, coll){
-  return IReduce.reduce(coll, xf, init);
+function reduce3(f, init, coll){
+  return IReduce.reduce(coll, f, init);
 }
 
 export const reduce = overload(null, null, reduce2, reduce3);
 
-function reducing1(rf){
-  return reducing2(rf, identity);
+function reducing1(f){
+  return reducing2(f, identity);
 }
 
-function reducing2(rf, order){
+function reducing2(f, order){
   return function(x, ...xs){
-    return IReduce.reduce(order(xs), rf, x);
+    return reduce3(f, x, order(xs));
   }
 }
 
