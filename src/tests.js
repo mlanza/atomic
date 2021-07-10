@@ -229,6 +229,11 @@ QUnit.test("ilookup", function(assert){
 
 QUnit.test("iassociative", function(assert){
   assert.equal(stooges |> _.assoc(?, 0, "Larry"), stooges, "maintain referential equivalence");
+  assert.ok(_.contains(court, "jack", 11));
+  assert.ok(!_.contains(court, "ace", 14));
+  assert.ok(_.includes(court, ["jack", 11], ["queen", 12]));
+  assert.ok(_.excludes(court, ["deuce", 2]));
+  assert.ok(_.everyPred(_.spread(_.partial(_.contains, court)))(["jack", 11], ["queen", 12]));
   assert.deepEqual(stooges |> _.assoc(?, 0, "Shemp"), ["Shemp","Curly","Moe"]);
   assert.deepEqual(court |> _.assoc(?, "ace", 14), {jack: 11, queen: 12, king: 13, ace: 14});
   assert.deepEqual(worth |> _.assocIn(?, ["court","ace"], 1), {pieces: {pawn: 1, knight: 3, bishop: 3, rook: 5, queen: 10, king: Infinity}, court: {ace: 1, jack: 11, queen: 12, king: 13}});
