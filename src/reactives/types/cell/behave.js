@@ -22,6 +22,10 @@ function complete(self){
   p.complete(self.observer);
 }
 
+function closed(self){
+  return p.closed(self.observer);
+}
+
 function sub(self, observer){
   p.pub(observer, self.state); //to prime subscriber state
   return p.sub(self.observer, observer); //return unsubscribe fn
@@ -55,4 +59,4 @@ export default _.does(
   _.implement(_.IReset, {reset: pub}),
   _.implement(_.ISwap, {swap}),
   _.implement(ISubscribe, {sub, unsub, subscribed}),
-  _.implement(IPublish, {pub, err, complete}));
+  _.implement(IPublish, {pub, err, complete, closed}));

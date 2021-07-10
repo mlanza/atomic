@@ -125,13 +125,14 @@ function satisfies0(){
 function satisfies1(obj){
   const target = obj == null ? new Nil() : obj,
         key    = this[INDEX]["__marker__"] || MISSING;
-  return target[key] || target.constructor[key];
+  return target[key] || (target.constructor === Object ? target.constructor[key] : null);
 }
 
+//Everything inherits from Object.  The behaviors added to Object target only literals (e.g. `{}`) not everything!
 function satisfies2(method, obj){
   const target = obj == null ? new Nil() : obj,
         key    = this[INDEX][method] || MISSING;
-  return target[key] || target.constructor[key] || this[TEMPLATE][method];
+  return target[key] || (target.constructor === Object ? target.constructor[key] : null) || this[TEMPLATE][method];
 }
 
 Protocol.prototype.satisfies = overload(satisfies0, satisfies1, satisfies2);
