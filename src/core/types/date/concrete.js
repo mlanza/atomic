@@ -1,11 +1,9 @@
-import {inc, dec} from "../../protocols/iaddable/concrete.js";
-import {prop, patch} from "../../associatives.js";
 import {overload, identity} from "../../core.js";
 import * as p from "./protocols.js";
 
 export function monthDays(self){
-  return patch(self, {
-    month: inc,
+  return p.patch(self, {
+    month: p.inc,
     day: 0
   }).getDate();
 }
@@ -28,13 +26,13 @@ function dow2(self, n){
 }
 
 export const dow = overload(null, dow1, dow2);
-export const year = prop("year");
-export const month = prop("month");
-export const day = prop("day");
-export const hour = prop("hour");
-export const minute = prop("minute");
-export const second = prop("second");
-export const millisecond = prop("millisecond");
+export const year = p.prop("year");
+export const month = p.prop("month");
+export const day = p.prop("day");
+export const hour = p.prop("hour");
+export const minute = p.prop("minute");
+export const second = p.prop("second");
+export const millisecond = p.prop("millisecond");
 
 export function quarter(self){
   return Math.ceil((month(self) + 1) / 3);
@@ -70,7 +68,7 @@ export function rdow(self, n){
 }
 
 export function mdow(self, n){
-  return rdow(patch(self, som()), n);
+  return rdow(p.patch(self, som()), n);
 }
 
 export function isDate(self){
@@ -96,7 +94,7 @@ export function eod(){
     minute: 0,
     second: 0,
     millisecond: 0,
-    day: inc
+    day: p.inc
   };
 }
 
@@ -129,7 +127,7 @@ export function som(){
 
 export function eom(){
   return {
-    month: inc,
+    month: p.inc,
     day: 1,
     hour: 0,
     minute: 0,
@@ -151,7 +149,7 @@ export function soy(){
 
 export function eoy(){
   return {
-    year: inc,
+    year: p.inc,
     month: 0,
     day: 1,
     hour: 0,
@@ -168,5 +166,5 @@ export function tick(n){
 }
 
 export function untick(){
-  return tick(dec);
+  return tick(p.dec);
 }

@@ -6,7 +6,7 @@ import Symbol from "symbol";
 import * as p from "./protocols.js";
 
 //duplicated to break dependencies
-export function filter(pred, xs){
+function filter(pred, xs){
   return p.seq(xs) ? lazySeq(function(){
     let ys = xs;
     while (p.seq(ys)) {

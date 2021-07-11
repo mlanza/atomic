@@ -1,10 +1,11 @@
-import {overload, curry, called, toggles, identity, obj, partly, comp, doto, does, branch, unspread, applying, execute, noop, constantly, once, isFunction, isString} from "./core.js";
+import {overload, partial, curry, called, toggles, identity, obj, partly, comp, doto, does, branch, unspread, applying, execute, noop, constantly, once, isFunction, isString} from "./core.js";
 import {IAssociative, IClonable, IHierarchy, ILookup, ISeq} from "./protocols.js";
 import {just, satisfies, spread, maybe, each, duration, remove, sort, flip, realized, apply, realize, isNil, reFindAll, mapkv, period, selectKeys, mapVals, reMatches, test, date, emptyList, cons, days, recurrence, second as _second, Nil} from "./types.js";
 import {isBlank, str, replace} from "./types/string.js";
 import {isSome} from "./types/nil.js";
 import {implement, behaves} from "./types/protocol/concrete.js";
 import {into, detect, map, mapa, splice, drop, join, some, last, takeWhile, dropWhile, filter, lazySeq} from "./types/lazy-seq.js";
+import {concat} from "./types/concatenated.js";
 import iseries from "./types/series/behave.js";
 export {filter} from "./types/lazy-seq.js";
 export const serieslike = iseries;
@@ -13,7 +14,6 @@ export * from "./core.js";
 export * from "./types.js";
 export * from "./protocols.js";
 export * from "./protocols/concrete.js";
-export * from "./associatives.js";
 import * as p from "./protocols/concrete.js";
 import Set from "set";
 import {extend} from "./types/protocol/concrete.js";
@@ -271,3 +271,43 @@ export function writable(keys){
     implement(IClonable, {clone}),
     implement(IAssociative, {assoc, contains}));
 }
+
+
+function scanKey1(better){
+  return partial(scanKey, better);
+}
+
+function scanKey3(better, k, x){
+  return x;
+}
+
+function scanKey4(better, k, x, y){
+  return better(k(x), k(y)) ? x : y;
+}
+
+function scanKeyN(better, k, x, ...args){
+  return apply(p.reduce, partial(scanKey3, better), x, args);
+}
+
+export const scanKey = overload(null, scanKey1, null, scanKey3, scanKey4, scanKeyN);
+export const maxKey  = scanKey(p.gt);
+export const minKey  = scanKey(p.lt);
+
+function absorb2(tgt, src){
+  return p.reducekv(function(memo, key, value){
+    const was = p.get(memo, key);
+    let absorbed;
+    if (was == null) {
+      absorbed = value;
+    } else if (descriptive(value)) {
+      absorbed = into(p.empty(was), absorb(was, value));
+    } else if (satisfies(ISequential, value)) {
+      absorbed = into(p.empty(was), concat(was, value));
+    } else {
+      absorbed = value;
+    }
+    return p.assoc(memo, key, absorbed);
+  }, tgt, src || p.empty(tgt));
+}
+
+export const absorb = overload(constantly({}), identity, absorb2, p.reducing(absorb2));

@@ -1,5 +1,5 @@
 import {overload} from "../../core.js";
-import {patch} from "../../associatives.js";
+import {patch} from "../../protocols/iassociative/concrete.js";
 import {sod, eod, isDate} from "../date/concrete.js";
 import Symbol from "symbol";
 import * as p from "./protocols.js";
