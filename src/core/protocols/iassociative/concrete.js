@@ -1,6 +1,8 @@
 import {IAssociative} from "./instance.js";
 import {overload, slice, branch, identity} from "../../core.js";
 import {toArray} from "../icoercible.js";
+import {reducekv} from "../ikvreduce.js";
+import {reducing} from "../ireduce.js";
 import {rest} from "../iseq.js";
 import {get} from "../ilookup.js";
 
@@ -80,3 +82,15 @@ function contains3(self, key, value){
 export const contains = overload(null, null, IAssociative.contains, contains3);
 export const updateIn = overload(null, null, null, updateIn3, updateIn4, updateIn5, updateIn6, updateInN);
 export const rewrite = branch(IAssociative.contains, update, identity);
+export const prop = overload(null, function(key){
+  return overload(null, v => get(v, key), v => assoc(v, key, v));
+}, get, assoc);
+
+function patch2(target, source){
+  return reducekv(function(memo, key, value){
+    return assoc(memo, key, typeof value === "function" ? value(get(memo, key)) : value);
+  }, target, source);
+}
+
+export const patch = overload(null, identity, patch2, reducing(patch2));
+

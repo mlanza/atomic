@@ -1,5 +1,5 @@
 import {overload, constantly} from "../../core.js";
-import {patch} from "../../associatives.js";
+import {patch} from "../../protocols/iassociative/concrete.js";
 import {days} from "../duration/construct.js";
 import {sod, eod, isDate} from "../date/concrete.js";
 import {filter} from "../lazy-seq/concrete.js";
