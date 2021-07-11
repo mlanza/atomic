@@ -390,3 +390,148 @@ export function nary(f, length){
 export function arity(f, length){
   return ([nullary, unary, binary, ternary, quaternary][length] || nary)(f, length);
 }
+
+export function fold(f, init, xs){
+  let memo = init, to = xs.length - 1, r = {};
+  for(let i = 0; i <= to; i++){
+    if (memo === r)
+      break;
+    memo = f(memo, xs[i], (reduced) => r = reduced);
+  }
+  return memo;
+}
+
+export function foldkv(f, init, xs){
+  let memo = init, len = xs.length, r = {};
+  for(let i = 0; i < len; i++){
+    if (memo === r)
+      break;
+    memo = f(memo, i, xs[i], (reduced) => r = reduced);
+  }
+  return memo;
+}
+
+export function signature(...preds){
+  return function(...values){
+    return foldkv(function(memo, idx, pred, reduced){
+      return memo ? !pred || pred(values[idx]) : reduced(memo);
+    }, preds.length === values.length, preds);
+  }
+}
+
+export function signatureHead(...preds){
+  return function(...values){
+    return foldkv(function(memo, idx, value, reduced){
+      let pred = preds[idx];
+      return memo ? !pred || pred(value) : reduced(memo);
+    }, true, values);
+  }
+}
+
+export function and(...preds){
+  return function(...args){
+    return fold(function(memo, pred, reduced){
+      return memo ? pred(...args) : reduced(memo);
+    }, true, preds);
+  }
+}
+
+export function or(...preds){
+  return function(...args){
+    return fold(function(memo, pred, reduced){
+      return memo ? reduced(memo) : pred(...args);
+    }, false, preds);
+  }
+}
+
+export function isSymbol(self){
+  return typeof self === "symbol";
+}
+
+export function both(memo, value){
+  return memo && value;
+}
+
+export function either(memo, value){
+  return memo || value;
+}
+
+export function isIdentical(x, y){
+  return x === y; //TODO Object.is?
+}
+
+export function everyPred(...preds){
+  return function(){
+    return fold(function(memo, arg){
+      return fold(function(memo, pred, reduced){
+        let result = memo && pred(arg);
+        return result ? result : reduced(result);
+      }, memo, preds);
+    }, true, slice(arguments));
+  }
+}
+
+function someFn1(p){
+  function f1(x){
+    return p(x);
+  }
+  function f2(x, y){
+    return p(x) || p(y);
+  }
+  function f3(x, y, z){
+    return p(x) || p(y) || p(z);
+  }
+  function fn(x, y, z, ...args){
+    return f3(x, y, z) || some(p, args);
+  }
+  return overload(constantly(null), f1, f2, f3, fn);
+}
+
+function someFn2(p1, p2){
+  function f1(x){
+    return p1(x) || p2(x);
+  }
+  function f2(x, y){
+    return p1(x) || p1(y) || p2(x) || p2(y);
+  }
+  function f3(x, y, z){
+    return p1(x) || p1(y) || p1(z) || p2(x) || p2(y) || p2(z);
+  }
+  function fn(x, y, z, ...args){
+    return f3(x, y, z) || some(or(p1, p2), args);
+  }
+  return overload(constantly(null), f1, f2, f3, fn);
+}
+
+function someFnN(...ps){
+  function fn(...args){
+    return some(or(...ps), args);
+  }
+  return overload(constantly(null), fn);
+}
+
+export const someFn = overload(null, someFn1, someFn2, someFnN);
+
+function folding1(f){
+  return folding2(f, identity);
+}
+
+function folding2(f, order){
+  return function(x, ...xs){
+    return fold(f, x, order(xs));
+  }
+}
+
+export const folding = overload(null, folding1, folding2);
+
+export const all = overload(null, identity, both, folding1(both));
+export const any = overload(null, identity, either, folding1(either));
+
+export function everyPair(pred, xs){
+  let every = xs.length > 0;
+  while(every && xs.length > 1){
+    every = pred(xs[0], xs[1]);
+    xs = slice(xs, 1);
+  }
+  return every;
+}

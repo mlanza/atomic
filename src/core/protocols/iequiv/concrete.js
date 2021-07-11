@@ -1,4 +1,4 @@
-import {overload, kin} from "../../core.js";
+import {overload, kin, everyPair, constantly, complement} from "../../core.js";
 import {implement} from "../../types/protocol/concrete.js";
 import {IEquiv} from "./instance.js";
 import {reduce} from "../ireduce/concrete.js";
@@ -27,3 +27,10 @@ export function equivalent(){
   }
   return implement(IEquiv, {equiv});
 }
+
+function eqN(...args){
+  return everyPair(equiv, args);
+}
+
+export const eq = overload(constantly(true), constantly(true), equiv, eqN);
+export const notEq = complement(eq);

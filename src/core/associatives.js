@@ -5,7 +5,6 @@ import {isFunction} from "./types/function/construct.js";
 import {satisfies} from "./types/protocol/concrete.js";
 import {concat} from "./types/concatenated.js";
 import {descriptive} from "./types/object/concrete.js";
-import {gt, lt} from "./predicates/index.js";
 import {ISequential} from "./protocols.js";
 import * as p from "./protocols/concrete.js";
 
@@ -26,8 +25,8 @@ function scanKeyN(better, k, x, ...args){
 }
 
 export const scanKey = overload(null, scanKey1, null, scanKey3, scanKey4, scanKeyN);
-export const maxKey  = scanKey(gt);
-export const minKey  = scanKey(lt);
+export const maxKey  = scanKey(p.gt);
+export const minKey  = scanKey(p.lt);
 export const prop    = overload(null, function(key){
     return overload(null, v => p.get(v, key), v => p.assoc(v, key, v));
 }, p.get, p.assoc);

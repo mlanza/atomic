@@ -13,7 +13,6 @@ export * from "./core.js";
 export * from "./types.js";
 export * from "./protocols.js";
 export * from "./protocols/concrete.js";
-export * from "./predicates/index.js";
 export * from "./associatives.js";
 import * as p from "./protocols/concrete.js";
 import Set from "set";
