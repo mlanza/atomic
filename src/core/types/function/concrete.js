@@ -1,7 +1,6 @@
-import {overload, identity, partial, log, slice} from "../../core.js";
+import {overload, identity, partial, log, slice, isFunction} from "../../core.js";
 import {isNil}  from "../nil.js";
 import {satisfies}  from "../protocol.js";
-import {isFunction}  from "./construct.js";
 import * as p from "./protocols.js";
 
 export function spread(f){

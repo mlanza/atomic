@@ -1,7 +1,6 @@
-import {overload, identity, partial, constantly, slice} from "./core.js";
+import {overload, identity, partial, constantly, slice, isFunction} from "./core.js";
 import {some, into, best} from "./types/lazy-seq/concrete.js";
 import {apply} from "./types/function/concrete.js";
-import {isFunction} from "./types/function/construct.js";
 import {satisfies} from "./types/protocol/concrete.js";
 import {concat} from "./types/concatenated.js";
 import {descriptive} from "./types/object/concrete.js";

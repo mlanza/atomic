@@ -1,14 +1,10 @@
-import {doto, comp, constantly, overload, pre, post, signature, isSymbol} from "../../core.js";
+import {doto, comp, constantly, overload, pre, post, signature, isSymbol, isFunction} from "../../core.js";
 import {INamable} from "./instance.js";
 import {specify, satisfies} from "../../types/protocol/concrete.js";
 import {Nil} from "../../types/nil/construct.js";
 import Symbol from "symbol";
 
 export const name = INamable.name;
-
-function isFunction(f){
-  return typeof f === "function";
-}
 
 export function type(self){
   return self == null ? Nil : self.constructor;

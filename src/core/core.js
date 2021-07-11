@@ -7,6 +7,18 @@ export const warn = console.warn.bind(console);
 export const info = console.info.bind(console);
 export const debug = console.debug.bind(console);
 
+export function isFunction(f){
+  return typeof f === "function";
+}
+
+export function isSymbol(self){
+  return typeof self === "symbol";
+}
+
+export function isString(self){
+  return typeof self === "string";
+}
+
 export function noop(){
 }
 
@@ -442,10 +454,6 @@ export function or(...preds){
       return memo ? reduced(memo) : pred(...args);
     }, false, preds);
   }
-}
-
-export function isSymbol(self){
-  return typeof self === "symbol";
 }
 
 export function both(memo, value){
