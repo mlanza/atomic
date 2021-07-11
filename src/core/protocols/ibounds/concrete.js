@@ -1,8 +1,7 @@
 import {IBounds} from "./instance.js";
-import {compare} from "../../protocols/icomparable.js";
+import {compare, gt, lt, lte} from "../../protocols/icomparable.js";
 import {isNil} from "../../types/nil.js";
 import {constructs} from "../../core.js";
-import {gt, lt, lte} from "../../predicates/index.js";
 
 export const start = IBounds.start;
 export const end = IBounds.end;

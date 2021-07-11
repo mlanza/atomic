@@ -1,4 +1,4 @@
-import {doto, comp, constantly, overload, pre, post} from "../../core.js";
+import {doto, comp, constantly, overload, pre, post, signature, isSymbol} from "../../core.js";
 import {INamable} from "./instance.js";
 import {specify, satisfies} from "../../types/protocol/concrete.js";
 import {Nil} from "../../types/nil/construct.js";
@@ -6,12 +6,8 @@ import Symbol from "symbol";
 
 export const name = INamable.name;
 
-export function isSymbol(self){
-  return typeof self === "symbol";
-}
-
-function hasSymbolicName(f, symbol){
-  return typeof f === "function" && typeof symbol === "symbol";
+function isFunction(f){
+  return typeof f === "function";
 }
 
 export function type(self){
@@ -31,4 +27,4 @@ export const naming = pre(function naming(type, symbol){
   if (!satisfies(INamable, type) || typeof name(type) !== "symbol") {
     doto(type, specify(INamable, {name: constantly(symbol)}));
   }
-}, hasSymbolicName);
+}, signature(isFunction, isSymbol));

@@ -1,5 +1,5 @@
 import {ISequential} from "../../protocols.js";
-import {trampoline, identity, constantly, overload, complement, comp, partial} from "../../core.js";
+import {trampoline, identity, constantly, overload, complement, comp, partial, slice} from "../../core.js";
 import {EmptyList, emptyList} from "../empty-list/construct.js";
 import {emptyArray} from "../array/construct.js";
 import {randInt, isEven} from "../number/concrete.js";
@@ -7,6 +7,7 @@ import {reduced} from "../reduced/construct.js";
 import {not} from "../boolean.js";
 import {isNil, isSome} from "../nil.js";
 import {cons} from "../list/construct.js";
+import {maybe} from "../maybe/construct.js";
 import {range} from "../range/construct.js";
 import {str} from "../string/concrete.js";
 import {juxt, apply} from "../function/concrete.js"; //MOD
@@ -48,6 +49,12 @@ function mapN(f, ...tail){
 
 export const map  = overload(null, null, map2, map3, mapN);
 export const mapa = comp(p.toArray, map);
+
+export function mapArgs(xf, f){
+  return function(){
+    return apply(f, mapa(maybe(?, xf), slice(arguments)));
+  }
+}
 
 export function keyed(f, keys){
   return p.reduce(function(memo, key){
