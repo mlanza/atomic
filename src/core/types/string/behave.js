@@ -1,12 +1,12 @@
 import {IBlankable, ISplittable, ITemplate, ICoercible, IMatchable, IReduce, ICollection, ISeqable, INext, ISeq, IInclusive, IAppendable, IPrependable, ILookup, IFn, IComparable, IEmptyableCollection} from "../../protocols.js";
-import {does, identity, constantly, unbind, overload} from "../../core.js";
+import {does, identity, constantly, unbind, overload, isString} from "../../core.js";
 import {implement} from "../protocol.js";
 import {isReduced, unreduced} from "../reduced.js";
 import {lazySeq} from "../lazy-seq/construct.js";
 import {cons} from "../list/construct.js";
 import {iindexed} from "../array/behave.js";
 import {rePattern} from "../reg-exp/concrete.js";
-import {emptyString, isString} from "./construct.js";
+import {emptyString} from "./construct.js";
 import {replace} from "./concrete.js";
 import * as p from "./protocols.js";
 

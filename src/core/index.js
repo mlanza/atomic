@@ -1,7 +1,7 @@
-import {overload, curry, called, toggles, identity, obj, partly, comp, doto, does, branch, unspread, applying, execute, noop, constantly, once} from "./core.js";
+import {overload, curry, called, toggles, identity, obj, partly, comp, doto, does, branch, unspread, applying, execute, noop, constantly, once, isFunction, isString} from "./core.js";
 import {IAssociative, IClonable, IHierarchy, ILookup, ISeq} from "./protocols.js";
-import {just, satisfies, spread, maybe, each, duration, remove, sort, flip, realized, isFunction, apply, realize, isNil, reFindAll, mapkv, period, selectKeys, mapVals, reMatches, test, date, emptyList, cons, days, recurrence, second as _second, Nil} from "./types.js";
-import {isString, isBlank, str, replace} from "./types/string.js";
+import {just, satisfies, spread, maybe, each, duration, remove, sort, flip, realized, apply, realize, isNil, reFindAll, mapkv, period, selectKeys, mapVals, reMatches, test, date, emptyList, cons, days, recurrence, second as _second, Nil} from "./types.js";
+import {isBlank, str, replace} from "./types/string.js";
 import {isSome} from "./types/nil.js";
 import {implement, behaves} from "./types/protocol/concrete.js";
 import {into, detect, map, mapa, splice, drop, join, some, last, takeWhile, dropWhile, filter, lazySeq} from "./types/lazy-seq.js";

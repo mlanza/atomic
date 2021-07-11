@@ -1,6 +1,5 @@
 import {IMatchable} from "./instance.js";
-import {pre} from "../../core.js";
-import {isString} from "../../types/string/construct.js";
+import {pre, isString} from "../../core.js";
 import {isRegExp} from "../../types/reg-exp/construct.js";
 
 function checkPattern(_, pattern){

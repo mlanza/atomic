@@ -1,11 +1,10 @@
-import {does, identity, constructs, branch, overload} from "../../core.js";
+import {does, identity, constructs, branch, overload, isString} from "../../core.js";
 import {implement} from "../protocol.js";
 import {IMergable, IBlankable, ICompactible, IComparable, IOmissible, INext, ICollection, IEquiv, IReduce, IKVReduce, ISeqable, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, IFn, IMap, ISeq, ICoercible, IClonable, IInclusive, ITemplate} from "../../protocols.js";
 import {reduced} from "../reduced.js";
 import {lazySeq, into, map} from "../lazy-seq.js";
 import {cons} from "../list.js";
 import {apply} from "../function/concrete.js";
-import {isString} from "../string/construct.js";
 import {satisfies} from "../protocol/concrete.js";
 import {update} from "../../protocols/iassociative/concrete.js";
 import {emptyObject, isObject} from "../object/construct.js";

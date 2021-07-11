@@ -1,9 +1,8 @@
-import {unbind} from "../../core.js";
+import {unbind, isString} from "../../core.js";
 import {count} from "../../protocols/icounted/concrete.js";
 import {first} from "../../protocols/iseq/concrete.js";
 import {get} from "../../protocols/ilookup/concrete.js";
 import {max} from "../../types/number/concrete.js";
-import {isString} from "../../types/string/construct.js";
 import {lazySeq} from "../../types/lazy-seq/construct.js";
 import {cons} from "../../types/list/construct.js";
 import {emptyList} from "../../types/empty-list/construct.js";
