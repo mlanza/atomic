@@ -243,7 +243,7 @@ export const toFragment = _.toFragment;
 
 _.each(
   _.implement(IEmbeddable, {embeddables}),
-  [_.LazySeq, Array]);
+  [_.LazySeq, _.EmptyList, _.List, Array]);
 
 })();
 
