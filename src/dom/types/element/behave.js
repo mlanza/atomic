@@ -3,7 +3,7 @@ import * as $ from "atomic/reactives";
 import * as mut from "atomic/transients";
 import * as p from "../../protocols/concrete.js";
 import {isMountable} from "../../protocols/imountable/concrete.js"
-import {IHtml, IText, IContent, IHideable, IEmbeddable, ISelectable} from "../../protocols.js";
+import {IHtml, IValue, IText, IContent, IHideable, IEmbeddable, ISelectable} from "../../protocols.js";
 import {nestedAttrs} from "../nested-attrs/construct.js";
 import {isElement} from "../element/construct.js";
 import {Text} from "dom";
@@ -291,6 +291,41 @@ function clone(self){
   return self.cloneNode(true);
 }
 
+function value1(self){
+  switch (self.getAttribute("type")){
+    case "checkbox":
+      return self.checked;
+    case "number":
+    case "range":
+      return _.maybe(self.value, _.blot, parseFloat);
+    default:
+      return "value" in self ? self.value : null;
+  }
+}
+
+function value2(self, value){
+  switch (self.getAttribute("type")){
+    case "checkbox":
+      self.checked = !!value;
+      return;
+    case "number":
+    case "range":
+      self.value = _.maybe(value, _.blot, parseFloat);
+      return;
+    default:
+      if ("value" in self) {
+        value = value == null ? "" : value;
+        if (self.value != value) {
+          self.value = value;
+        }
+      } else {
+        throw new TypeError("Type does not support value property.");
+      }
+  }
+}
+
+export const value = _.overload(null, value1, value2);
+
 function text1(self){
   return self.textContent;
 }
@@ -332,6 +367,7 @@ export default _.does(
   ievented,
   iselectable,
   _.implement(_.IReduce, {reduce}),
+  _.implement(IValue, {value}),
   _.implement(IText, {text}),
   _.implement(IHtml, {html}),
   _.implement(IEmbeddable, {embeddables}),
