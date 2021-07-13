@@ -5,7 +5,7 @@ import json  from '@rollup/plugin-json';
 export default {
   input: ['src/tests.js'],
   output: {
-    dir: 'public/assets',
+    dir: 'public/tests',
     format: 'amd',
     interop: false,
     globals: {
