@@ -156,7 +156,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
   function identifiableRecord(Type, identifier){
 
     function hash(self){
-      return IHash.hash(self.attrs);
+      return imm.hash(self.attrs);
     }
 
     _.doto(Type,
@@ -175,7 +175,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
     function reduce(self, xf, init){
       var memo = init,
           ys = self;
-      while(ISeqable.seq(ys)){
+      while(_.seq(ys)){
         var y = _.first(ys);
         memo = xf(memo, y);
         ys = _.rest(ys);
@@ -198,15 +198,15 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
     }
 
     function assoc(self, idx, value){
-      return new self.constructor(self.constraints, IAssociative.assoc(self.coll, idx, value));
+      return new self.constructor(self.constraints, _.assoc(self.coll, idx, value));
     }
 
     function seq(self){
-      return ISeqable.seq(self.coll) ? self : null;
+      return _.seq(self.coll) ? self : null;
     }
 
     function empty(self){
-      return new self.constructor(self.constraints, IEmptyableCollection.empty(self.coll));
+      return new self.constructor(self.constraints, _.empty(self.coll));
     }
 
     function deref(self){
@@ -232,7 +232,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
       _.implement(IEmptyableCollection, {empty: empty}),
       _.implement(IFunctor, {fmap: fmap}),
       _.implement(IConstrainable, {constraints: constraints}),
-      _.implement(ILookup, {lookup: IIndexed.nth}),
+      _.implement(ILookup, {lookup: _.nth}),
       _.implement(IAssociative, {assoc: assoc}),
       _.implement(IDeref, {deref: deref}),
       _.implement(IReduce, {reduce: reduce}),
@@ -255,11 +255,11 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
     }
 
     function assoc(self, idx, value){
-      return new self.constructor(self.constraints, IAssociative.assoc(self.coll, idx, value));
+      return new self.constructor(self.constraints, _.assoc(self.coll, idx, value));
     }
 
     function empty(self){
-      return new self.constructor(self.constraints, IEmptyableCollection.empty(self.coll));
+      return new self.constructor(self.constraints, _.empty(self.coll));
     }
 
     function constraints1(self){
@@ -281,7 +281,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
       _.implement(IResolveable, {resolved: resolved}),
       _.implement(IEmptyableCollection, {empty: empty}),
       _.implement(IConstrainable, {constraints: constraints}),
-      _.implement(ILookup, {lookup: IIndexed.nth}),
+      _.implement(ILookup, {lookup: _.nth}),
       _.implement(IAssociative, {assoc: assoc}),
       _.implement(ICollection, {conj: conj}));
 
@@ -312,15 +312,15 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
 
     function conj(self, value){
       var coll = ICollection.conj(self.coll, value);
-      return new self.constructor(self.cardinality, _.into(IEmptyableCollection.empty(coll), _.drop(_.max(ICounted.count(coll) - IBounds.end(self.cardinality), 0), coll)));
+      return new self.constructor(self.cardinality, _.into(_.empty(coll), _.drop(_.max(_.count(coll) - _.end(self.cardinality), 0), coll)));
     }
 
     function assoc(self, idx, value){
-      return new self.constructor(self.cardinality, IAssociative.assoc(self.coll, idx, value));
+      return new self.constructor(self.cardinality, _.assoc(self.coll, idx, value));
     }
 
     function empty(self){
-      return new self.constructor(self.cardinality, _.into(IEmptyableCollection.empty(self.coll), _.take(IBounds.start(self.cardinality), self.coll)));
+      return new self.constructor(self.cardinality, _.into(_.empty(self.coll), _.take(_.start(self.cardinality), self.coll)));
     }
 
     function constraints1(self){
@@ -338,7 +338,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
       _.implement(IEmptyableCollection, {empty: empty}),
       _.implement(IFunctor, {fmap: fmap}),
       _.implement(IConstrainable, {constraints: constraints}),
-      _.implement(ILookup, {lookup: IIndexed.nth}),
+      _.implement(ILookup, {lookup: _.nth}),
       _.implement(IAssociative, {assoc: assoc}),
       _.implement(ICollection, {conj: conj}));
 
@@ -438,12 +438,12 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
     }
 
     function lookup(self, assertion){
-      return ISeqable.seq(ILookup.lookup(self.assertions, assertion));
+      return _.seq(_.get(self.assertions, assertion));
     }
 
     _.doto(AssertionStore,
       _.implement(ICollection, {conj: reviseStore(ICollection.conj)}),
-      _.implement(ISet, {disj: reviseStore(ISet.disj)}),
+      _.implement(ISet, {disj: reviseStore(_.disj)}),
       _.implement(ILookup, {lookup: lookup}));
 
   })();
@@ -487,7 +487,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
     }
 
     function contains(self, key){
-      return IAssociative.contains(self.attrs, key);
+      return _.contains(self.attrs, key);
     }
 
     function dissoc(self, key){
@@ -603,11 +603,11 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
     }
 
     function assoc(self, key, value){
-      return new self.constructor(IAssociative.assoc(self.attrs, key, value), self.caster);
+      return new self.constructor(_.assoc(self.attrs, key, value), self.caster);
     }
 
     function contains(self, key){
-      return IAssociative.contains(self.attrs, key);
+      return _.contains(self.attrs, key);
     }
 
     function aget(self, entity){
@@ -668,11 +668,11 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
     }
 
     function assoc(self, key, value){
-      return new self.constructor(IAssociative.assoc(self.attrs, key, value), self.computations, self.emptyColl);
+      return new self.constructor(_.assoc(self.attrs, key, value), self.computations, self.emptyColl);
     }
 
     function contains(self, key){
-      return IAssociative.contains(self.attrs, key);
+      return _.contains(self.attrs, key);
     }
 
     function aget(self, entity){
@@ -838,15 +838,15 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
     }
 
     function lookup(self, key){
-      return ILookup.lookup(self.attrs, key);
+      return _.get(self.attrs, key);
     }
 
     function assoc(self, key, value){
-      return new Topic(self.type, IAssociative.assoc(self.attrs, key, value), self.schema, self.resource);
+      return new Topic(self.type, _.assoc(self.attrs, key, value), self.schema, self.resource);
     }
 
     function contains(self, key){
-      return IAssociative.contains(self.attrs, key);
+      return _.contains(self.attrs, key);
     }
 
     function make(self, attrs){
@@ -1072,7 +1072,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
     function query(self, plan){
       return _.filter(function(entity){
         return _.matches(entity.attrs, plan); //TODO temporary
-      }, ISeqable.seq(self));
+      }, _.seq(self));
     }
 
     function load(self, entities){
@@ -1112,38 +1112,38 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
     }
 
     function includes(self, entity){
-      return IAssociative.contains(self, IEntity.id(entity));
+      return _.contains(self, IEntity.id(entity));
     }
 
     function first(self){
-      return ISeq.first(vals(self));
+      return _.first(vals(self));
     }
 
     function rest(self){
-      return ISeq.rest(vals(self));
+      return _.rest(vals(self));
     }
 
     function next(self){
-      return ISeqable.seq(rest(self));
+      return _.seq(rest(self));
     }
 
     function seq(self){
-      return ISeqable.seq(IMap.keys(self)) ? self : null;
+      return _.seq(_.keys(self)) ? self : null;
     }
 
     function lookup(self, id){
-      return IAssociative.contains(self.changed, id) ? _.get(self.changed, id) : _.get(self.loaded, id);
+      return _.contains(self.changed, id) ? _.get(self.changed, id) : _.get(self.loaded, id);
     }
 
-    function reduce(self, xf, init){
-      return IReduce.reduce(_.map(_.get(self, _), _.keys(self)), xf, init);
+    function reduce(self, f, init){
+      return _.reduce(f, init, _.map(_.get(self, _), _.keys(self)));
     }
 
     function dissoc(self, id){
-      return IAssociative.contains(self, id) ?
+      return _.contains(self, id) ?
         entityWorkspace(
-          IAssociative.contains(self.loaded, id) ? IMap.dissoc(self.loaded, id) : self.loaded,
-          IAssociative.contains(self.changed, id) ? IMap.dissoc(self.changed, id) : self.changed, _.cons(id)) : self;
+          _.contains(self.loaded, id) ? _.dissoc(self.loaded, id) : self.loaded,
+          _.contains(self.changed, id) ? _.dissoc(self.changed, id) : self.changed, _.cons(id)) : self;
     }
 
     function keys(self){
@@ -1160,7 +1160,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
     }
 
     function contains(self, id){
-      return !!ILookup.lookup(self, id);
+      return !!_.get(self, id);
     }
 
     function id(self){
@@ -1258,7 +1258,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transients', 'atomic/react
     }
 
     function dissoc(self, id){
-      return new self.constructor(self.indexes, IMap.dissoc(self.workspace, id));
+      return new self.constructor(self.indexes, _.dissoc(self.workspace, id));
     }
 
     _.doto(IndexedEntityWorkspace,
