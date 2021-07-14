@@ -4,9 +4,12 @@ import {IEmbeddable} from "./instance.js";
 export const embeddables = IEmbeddable.embeddables;
 
 function embed3(add, parent, children){
-  _.each(function(child){
-    _.isFunction(child) ? child(parent, add) : add(parent, child);
-  }, embeddables(children, parent.ownerDocument));
+  children
+    |> _.flatten
+    |> _.mapcat(embeddables(?, parent.ownerDocument), ?)
+    |> _.each(function(child){
+          _.isFunction(child) ? child(parent, add) : add(parent, child);
+        }, ?);
 }
 
 function embed2(parent, children){
