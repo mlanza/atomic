@@ -35,26 +35,26 @@ function embeddables(self){
 }
 
 function append(self, content){
-  p.embed(self, content);
+  p.embed(self, [content]);
 }
 
 function prepend(self, content){
   p.embed(function(parent, child){
     parent.insertBefore(child, parent.childNodes[0]);
-  }, self, content);
+  }, self, [content]);
 }
 
 function before(self, content){
   p.embed(function(parent, child){
     parent.insertBefore(child, self);
-  }, _.parent(self), content);
+  }, _.parent(self), [content]);
 }
 
 function after(self, content){
   const ref = _.nextSibling(self);
   p.embed(function(parent, child){
     parent.insertBefore(child, ref);
-  }, _.parent(self), content);
+  }, _.parent(self), [content]);
 }
 
 const conj = append;
@@ -345,7 +345,7 @@ function html2(self, html){
     self.innerHTML = html;
   } else {
     empty(self);
-    p.embed(self, html);
+    p.embed(self, [html]);
   }
   return self;
 }

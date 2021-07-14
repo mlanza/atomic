@@ -237,18 +237,6 @@ export const toFragment = _.toFragment;
 
 (function(){
 
-  function embeddables(self, doc){
-    return _.mapcat(p.embeddables(?, doc || document), self);
-  }
-
-_.each(
-  _.implement(IEmbeddable, {embeddables}),
-  [_.LazySeq, _.EmptyList, _.List, Array]);
-
-})();
-
-(function(){
-
   function toFragment(self, doc){
     return (doc || document).createRange().createContextualFragment("");
   };
