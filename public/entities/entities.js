@@ -1375,8 +1375,10 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transducers', 'atomic/tran
   (function(){
 
     function handle(self, command, next){
-      var type = _.getIn(command, ["args", 0]), title = _.getIn(command, ["args", 1]);
-      var added = IFactory.make(self.buffer, {id: _.get(command, "id") || _.guid(), $type: type});
+      var id = _.get(command, "id") || _.guid().id,
+          type = _.getIn(command, ["args", 0]),
+          title = _.getIn(command, ["args", 1]);
+      var added = IFactory.make(self.buffer, {id: id, $type: type});
       var entity = _.reduce(function(memo, key){
           var fld = IKind.field(memo, key);
           return _.maybe(_.get(fld, "defaults"), function(defaults){
