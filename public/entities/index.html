@@ -12,7 +12,10 @@
       return {};
     });
     require(["cmd/imports"], function(imports){
-      Object.assign(imports, {ents: "../entities/entities"});
+      Object.assign(imports, {es: "../entities/entities"});
+    });
+    require(['cmd'], function(cmd){
+      cmd();
     });
   </script>
 </head>
