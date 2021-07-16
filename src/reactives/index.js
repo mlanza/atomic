@@ -145,7 +145,7 @@ function fromPromise2(promise, init){
   return sink;
 }
 
-export const fromPromise = _.called(_.overload(null, fromPromise1, fromPromise2), "`fromPromise` is deprecated — use `Observable.from` and `seed` instead.");
+export const fromPromise = _.called(_.overload(null, fromPromise1, fromPromise2), "`fromPromise` is deprecated — use `toObservable` and `seed` instead.");
 
 export const join = _.called(function join(sink, ...sources){
   const callback = p.pub(sink, ?);

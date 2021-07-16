@@ -192,7 +192,7 @@ QUnit.test("transducers", function(assert){
   var useFeat = location.href.indexOf("feature=next") > -1;
   function compare(source, xf, expect, desc){
     var $b = $.cell([]);
-    $.sub($.Observable.from(source), xf, $.collect($b));
+    $.sub($.toObservable(source), xf, $.collect($b));
     var a = _.transduce(xf, _.conj, [], source),
         b = _.deref($b);
     //compare for rough equivalence
@@ -420,7 +420,7 @@ QUnit.test("old & new reactives", function(assert){
   const fn = _.pipe(_.repeat(_, _), _.toArray);
   exec($.map(fn, $double, $name), $.calc(fn, $double, $name), "$.map v. $.calc with cells");
 
-  const $triple = $.Observable.from(_.range(3));
+  const $triple = $.toObservable(_.range(3));
   const $thrice = $.cell(0);
   let $ten = $.always(10);
   exec($.map(_.add, $triple, $ten), $.calc(_.add, $triple, $ten), "$.map v. $.calc with observables + always ");
