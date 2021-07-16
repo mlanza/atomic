@@ -14,8 +14,6 @@ import * as p from "./protocols.js";
 const keys = Object.keys;
 const vals = Object.values;
 
-Object.from = p.toObject;
-
 function fill(self, params){
   return p.reducekv(function(memo, key, value){
     return p.assoc(memo, key,

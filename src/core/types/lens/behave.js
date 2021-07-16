@@ -20,7 +20,7 @@ function conj(self, value){
 }
 
 function lookup(self, key){
-  return self.constructor.create(self.root, p.conj(self.path, key));
+  return Object.assign(p.clone(self), {path: p.conj(self.path, key)})
 }
 
 function assoc(self, key, value){
@@ -36,20 +36,20 @@ function dissoc(self, key){
 }
 
 function reset(self, value){
-  return self.constructor.create(p.assocIn(self.root, self.path, value), self.path);
+  return Object.assign(p.clone(self), {root: p.assocIn(self.root, self.path, value)});
 }
 
 function swap(self, f){
-  return self.constructor.create(p.updateIn(self.root, self.path, f), self.path);
+  return Object.assign(p.clone(self), {root: p.updateIn(self.root, self.path, f)});
 }
 
 function root(self){
-  return self.constructor.create(self.root);
+  return Object.assign(p.clone(self), {path: []});
 }
 
 function children(self){
   return map(function(key){
-    return self.constructor.create(self.root, p.conj(self.path, key));
+    return Object.assign(p.clone(self), {path: p.conj(self.path, key)});
   }, keys(self));
 }
 
@@ -68,7 +68,7 @@ function siblings(self){
         ctx = p.toArray(butlast(self.path)),
         key = last(self.path);
   return map(function(key){
-    return self.constructor.create(self.root, p.conj(ctx, key));
+    return Object.assign(p.clone(self), {path: p.conj(ctx, key)});
   }, remove(function(k){
     return k === key;
   }, p ? keys(p) : []));
@@ -79,7 +79,7 @@ function prevSiblings(self){
         ctx = p.toArray(butlast(self.path)),
         key = last(self.path);
   return map(function(key){
-    return self.constructor.create(self.root, p.conj(ctx, key));
+    return Object.assign(p.clone(self), {path: p.conj(ctx, key)});
   }, p.reverse(p.toArray(take(1, takeWhile(function(k){
     return k !== key;
   }, p ? keys(p) : [])))));
@@ -90,7 +90,7 @@ function nextSiblings(self){
         ctx = p.toArray(butlast(self.path)),
         key = last(self.path);
   return map(function(key){
-    return self.constructor.create(self.root, p.conj(ctx, key));
+    return Object.assign(p.clone(self), {path: p.conj(ctx, key)});
   }, drop(1, dropWhile(function(k){
     return k !== key;
   }, p ? keys(p) : [])));
@@ -100,7 +100,7 @@ const prevSibling = comp(p.first, prevSiblings);
 const nextSibling = comp(p.first, nextSiblings);
 
 function parent(self){
-  return p.seq(self.path) ? self.constructor.create(self.root, butlast(self.path)) : null;
+  return p.seq(self.path) ? Object.assign(p.clone(self), {path: butlast(self.path)}) : null;
 }
 
 function parents(self){

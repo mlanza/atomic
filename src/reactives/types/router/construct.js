@@ -13,5 +13,3 @@ function router0(){
 }
 
 export const router = _.overload(router0, router1);
-
-Router.from = router;

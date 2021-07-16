@@ -22,15 +22,15 @@ function rest(self){
 
 function next(self){
   const items = p.next(self.items);
-  return items ? self.constructor.from(items) : null;
+  return items ? Object.assign(p.clone(self), {items}) : null;
 }
 
 function append(self, other){
-  return self.constructor.from(p.append(self.items, other));
+  return Object.assign(p.clone(self), {items: p.append(self.items, other)});
 }
 
 function prepend(self, other){
-  return self.constructor.from(p.prepend(self.items, other));
+  return Object.assign(p.clone(self), {items: p.prepend(self.items, other)});
 }
 
 function includes(self, name){
@@ -42,22 +42,14 @@ function count(self){
 }
 
 function empty(self){
-  return self.constructor.from([]);
+  return p.clone(self, {items: []});
 }
 
 function reduce(self, f, init){
   return p.reduce(f, init, self.items);
 }
 
-function construction(Type){
-  Type.create = Type.create || constructs(Type);
-  Type.from = Type.from || function(items){
-    return Object.assign(Object.create(Type.prototype), {items: items});
-  }
-}
-
 export default does(
-  construction,
   iterable,
   implement(ISequential),
   implement(ICounted, {count}),

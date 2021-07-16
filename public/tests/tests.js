@@ -994,12 +994,17 @@ define(['atomic/core', 'atomic/immutables', 'atomic/dom', 'atomic/reactives', 'a
     _.record(Person);
 
     var sean = new Person("Sean", "Penn", _.date(1960, 8, 17));
-    var robin = Person.create("Robin", "Wright", new Date(1966, 3, 8));
-    Person.from({
+
+    var person = _.constructs(Person);
+
+    var robin = person("Robin", "Wright", new Date(1966, 3, 8));
+
+    _.construct(Person, {
       name: "Dylan",
       surname: "Penn",
       dob: _.date(1991, 4, 13)
     });
+
     assert.equal((_robin = robin, (_ref242 = _, _$get24 = _ref242.get, function get(_argPlaceholder139) {
       return _$get24.call(_ref242, _argPlaceholder139, "surname");
     })(_robin)), "Wright");

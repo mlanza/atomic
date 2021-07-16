@@ -8,4 +8,3 @@ export function emptyList(){
 }
 
 EmptyList.prototype[Symbol.toStringTag] = "EmptyList";
-EmptyList.create = emptyList;

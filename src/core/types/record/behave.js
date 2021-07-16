@@ -42,11 +42,11 @@ function vals(self){
 }
 
 function assoc(self, key, value){
-  return self.constructor.from(p.assoc(self.attrs, key, value));
+  return Object.assign(p.clone(self), {attrs: p.assoc(self.attrs, key, value)});
 }
 
 function dissoc(self, key){
-  return self.constructor.from(p.dissoc(self.attrs, key));
+  return Object.assign(p.clone(self), {attrs: p.dissoc(self.attrs, key)});
 }
 
 function equiv(self, other){
@@ -56,7 +56,7 @@ function equiv(self, other){
 }
 
 function empty(self){
-  return self.constructor.from({});
+  return Object.assign(p.clone(self), {attrs: {}});
 }
 
 function reduce(self, f, init){
@@ -71,11 +71,10 @@ function reducekv(self, f, init){
   }, init, p.keys(self));
 }
 
-function construction(Type){
-  Type.create = constructs(Type);
-  Type.from || (Type.from = function(attrs){
+export function construct(Type){
+  return function record(attrs){
     return Object.assign(Object.create(Type.prototype), {attrs: attrs});
-  });
+  }
 }
 
 export function emptyable(Type){
@@ -86,7 +85,6 @@ export function emptyable(Type){
 }
 
 export default does(
-  construction,
   emptyable,
   implement(IReduce, {reduce}),
   implement(IKVReduce, {reducekv}),

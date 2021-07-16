@@ -18,10 +18,4 @@ function indexedSeq2(seq, start){
 
 export const indexedSeq = overload(null, indexedSeq1, indexedSeq2);
 
-function from({seq, start}){
-  return indexedSeq(seq, start);
-}
-
 IndexedSeq.prototype[Symbol.toStringTag] = "IndexedSeq";
-IndexedSeq.create = indexedSeq;
-IndexedSeq.from = from;

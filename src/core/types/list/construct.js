@@ -8,10 +8,6 @@ export function List(head, tail){
   this.tail = tail;
 }
 
-function from({head, tail}){
-  return new List(head, tail);
-}
-
 function cons2(head, tail){
   return new List(head, tail || emptyList());
 }
@@ -25,7 +21,6 @@ function consN(...args){
 export const cons = overload(emptyList, cons2, cons2, consN);
 
 List.prototype[Symbol.toStringTag] = "List";
-List.from = from;
 
 export function isList(self){
   return self && self.constructor === List || self.constructor === EmptyList;
