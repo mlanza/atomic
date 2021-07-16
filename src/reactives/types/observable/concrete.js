@@ -1,6 +1,7 @@
 import * as _ from "atomic/core";
 import * as t from "atomic/transducers";
 import Promise from "promise";
+import {ISubscribe} from "../../protocols.js";
 import {pub, err, complete, closed, sub, unsub} from "../../protocols/concrete.js";
 import {Observable, observable} from "./construct.js";
 import {Observer, observer} from "../observer/construct.js";
@@ -268,6 +269,17 @@ export function depressed(el){
         t.dedupe()));
 }
 
+export function toObservable(self){
+  const f = _.satisfies(_.ICoercible, "toObservable", self);
+  if (f) {
+    return f(self);
+  } else if (_.satisfies(ISubscribe, "sub", self)) {
+    return fromSource(self);
+  } else if (_.satisfies(_.ISequential, self)) {
+    return fromCollection(self);
+  }
+}
+
 function fromCollection(coll){
   return observable(function(observer){
     for (var item of coll) {
@@ -290,20 +302,14 @@ function fromPromise(promise){
   });
 }
 
-function fromSource(source){ //useful for making readonly (e.g. covering over IPublish protocol)
+function fromSource(source){ //can be used to cover a source making it readonly
   return observable(sub(source, ?));
 }
 
-function from(obj){ //TODO `ICoerce.toObservable`?
-  if (obj instanceof Observable) {
-    return obj;
-  } else if (_.satisfies(_.ISequential, obj)) {
-    return fromCollection(obj);
-  } else if (obj instanceof Promise){
-    return fromPromise(obj);
-  } else {
-    return fromSource(obj);
-  }
-}
+_.extend(_.ICoercible, {toObservable: null});
 
-Observable.from = from;
+_.doto(Observable,
+  _.implement(_.ICoercible, {toObservable: _.identity}));
+
+_.doto(Promise,
+  _.implement(_.ICoercible, {toObservable: fromPromise}));

@@ -419,7 +419,7 @@ define(['atomic/core', 'atomic/immutables', 'atomic/dom', 'atomic/reactives', 'a
 
     function compare(source, xf, expect, desc) {
       var $b = $.cell([]);
-      $.sub($.Observable.from(source), xf, $.collect($b));
+      $.sub($.toObservable(source), xf, $.collect($b));
 
       var a = _.transduce(xf, _.conj, [], source),
           b = _.deref($b); //compare for rough equivalence
@@ -1043,7 +1043,7 @@ define(['atomic/core', 'atomic/immutables', 'atomic/dom', 'atomic/reactives', 'a
     var fn = _.pipe(_.repeat(_, _), _.toArray);
 
     exec($.map(fn, $double, $name), $.calc(fn, $double, $name), "$.map v. $.calc with cells");
-    var $triple = $.Observable.from(_.range(3));
+    var $triple = $.toObservable(_.range(3));
     $.cell(0);
     var $ten = $.always(10);
     exec($.map(_.add, $triple, $ten), $.calc(_.add, $triple, $ten), "$.map v. $.calc with observables + always ");

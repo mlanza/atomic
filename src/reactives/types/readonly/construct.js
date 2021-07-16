@@ -14,4 +14,4 @@ export const readonly = _.called(function readonly(source){
     _.specify(_.IDeref, {deref}, obj);
   }
   return obj;
-}, "`readonly` is deprecated — use `Observable.from` instead.");
+}, "`readonly` is deprecated — use `toObservable` instead.");
