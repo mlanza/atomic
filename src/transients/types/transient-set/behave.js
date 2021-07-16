@@ -1,5 +1,4 @@
 import * as _ from "atomic/core";
-import {emptyTransientSet, transientSet} from "./construct.js";
 import {IPersistent, ITransientSet, ITransientEmptyableCollection, ITransientCollection} from "../../protocols.js";
 
 function seq(self){
@@ -45,7 +44,7 @@ function count(self){
 const toArray = Array.from;
 
 function clone(self){
-  return transientSet(toArray(self));
+  return new self.constructor(toArray(self));
 }
 
 function reduce(self, f, init){
