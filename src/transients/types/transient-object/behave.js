@@ -1,5 +1,4 @@
 import * as _ from "atomic/core";
-import {transientObject} from "./construct.js";
 import {IPersistent, ITransientOmissible, ITransientAssociative, ITransientEmptyableCollection, ITransientCollection, ITransientMap} from "../../protocols.js";
 
 function omit(self, entry){
@@ -28,7 +27,7 @@ function assoc(self, key, value){
 }
 
 function clone(self){
-  return transientObject(_.clone(self.obj));
+  return new self.constructor(_.clone(self.obj));
 }
 
 function compare(a, b){

@@ -1,25 +1,21 @@
+import * as _ from "atomic/core";
 import fetch from "fetch";
 import Promise from "promise";
-import * as _ from "atomic/core";
 import {IQueryable, IParams, IOptions, IAddress, IIntercept} from "../../protocols.js";
-import {IClonable, ITemplate, IFunctor, ICoercible, IForkable, IMap, IAssociative, ILookup, IAppendable, IPrependable, fromTask} from "atomic/core";
+import {ITemplate, IFunctor, ICoercible, IForkable, IMap, IAssociative, ILookup, IAppendable, IPrependable} from "atomic/core";
 
 export function query(self, plan){
   const keys = _.filter(_.startsWith(?, "$"), _.keys(plan));
   return self
     |> _.merge(?, _.apply(_.dissoc, plan, keys))
     |> IParams.params(?, _.selectKeys(plan, keys))
-    |> fromTask;
+    |> _.fromTask;
 }
 
 function fill(self, params){
   return self
     |> _.edit(?, "url", _.fill(?, params))
     |> _.edit(?, "options", _.fill(?, params));
-}
-
-function clone(self){
-  return new self.constructor(self.url, self.options, self.config, self.interceptors, self.handlers);
 }
 
 function addr(self){
@@ -79,8 +75,7 @@ function fork(self, reject, resolve){
 
 export default _.does(
   _.implement(ITemplate, {fill}),
-  _.implement(IClonable, {clone}),
-  _.implement(ICoercible, {toPromise: fromTask}),
+  _.implement(ICoercible, {toPromise: _.fromTask}),
   _.implement(IAppendable, {append}),
   _.implement(IPrependable, {prepend}),
   _.implement(IForkable, {fork}),

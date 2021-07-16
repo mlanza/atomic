@@ -9,10 +9,6 @@ function xform(xf){
   }
 }
 
-function clone(self){
-  return new self.constructor(self.requests);
-}
-
 function filled(self){
   return _.maybe(self, p.addr, _.test(/\{[^{}]+\}/, ?), _.not);
 }
@@ -34,7 +30,6 @@ function rest(self){
 }
 
 export default _.does(
-  _.implement(_.IClonable, {clone}),
   _.implement(_.ICoercible, {toPromise: _.fromTask}),
   _.implement(_.IForkable, {fork}),
   _.implement(_.ISeq, {first, rest}),
