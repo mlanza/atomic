@@ -14,10 +14,6 @@ export function Recurrence(start, end, step, direction){
   this.direction = direction;
 }
 
-function from({start, end, step, direction}){
-  return new Recurrence(start, end, step, direction);
-}
-
 export function emptyRecurrence(){
   return new Recurrence();
 }
@@ -43,6 +39,4 @@ function recurrence4(start, end, step, f){
 
 export const recurrence = overload(emptyRecurrence, recurrence1, recurrence2, recurrence3, recurrence4);
 
-Recurrence.from = from;
-Recurrence.create = recurrence;
 Recurrence.prototype[Symbol.toStringTag] = "Recurrence";

@@ -10,4 +10,3 @@ const create = constructs(Date);
 export const date = overload(create, create, date7);
 
 Date.prototype[Symbol.toStringTag] = "Date";
-Date.create = create;

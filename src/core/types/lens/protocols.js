@@ -8,4 +8,4 @@ export * from "../../protocols/icoercible/concrete.js";
 export * from "../../protocols/ireversible/concrete.js";
 export * from "../../protocols/ihierarchy/concrete.js";
 export * from "../../protocols/icollection/concrete.js";
-
+export * from "../../protocols/iclonable/concrete.js";

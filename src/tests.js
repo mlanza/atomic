@@ -396,8 +396,9 @@ QUnit.test("record", function(assert){
   }
   _.record(Person);
   const sean  = new Person("Sean", "Penn", _.date(1960, 8, 17));
-  const robin = Person.create("Robin", "Wright", new Date(1966, 3, 8));
-  const dylan = Person.from({name: "Dylan", surname: "Penn", dob: _.date(1991, 4, 13)});
+  const person = _.constructs(Person);
+  const robin = person("Robin", "Wright", new Date(1966, 3, 8));
+  const dylan = _.construct(Person, {name: "Dylan", surname: "Penn", dob: _.date(1991, 4, 13)});
   assert.equal(robin |> _.get(?, "surname"), "Wright");
   assert.equal(robin |> _.assoc(?, "surname", "Penn") |> _.get(?, "surname"), "Penn");
   assert.equal(sean |> _.get(?, "surname"), "Penn");

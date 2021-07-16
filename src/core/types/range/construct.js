@@ -10,10 +10,6 @@ export function Range(start, end, step, direction){
   this.direction = direction;
 }
 
-function from({start, end, step, direction}){
-  return new Range(start, end, step, direction);
-}
-
 export function emptyRange(){
   return new Range();
 }
@@ -34,6 +30,4 @@ const range3 = p.steps(Range, isNumber);
 
 export const range = overload(range0, range1, range2, range3);
 
-Range.from = from;
-Range.create = range;
 Range.prototype[Symbol.toStringTag] = "Range";

@@ -20,10 +20,6 @@ function valueOf(){
      (units.millisecond || 0));
 }
 
-function from(obj){
-  return new Duration(Object.assign({}, obj));
-}
-
 function unit(key){
   return function(n){
     return new Duration(p.assoc({}, key, n));
@@ -45,6 +41,4 @@ export const weeks = comp(days, mult(?, 7));
 
 Duration.prototype[Symbol.toStringTag] = "Duration";
 Duration.prototype.valueOf = valueOf;
-Duration.create = duration;
-Duration.from = from;
 Duration.units = ["year", "month", "day", "hour", "minute", "second", "millisecond"];

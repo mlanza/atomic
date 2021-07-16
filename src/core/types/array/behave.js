@@ -1,4 +1,4 @@
-import {identity, overload, doto, complement, does} from "../../core.js";
+import {identity, overload, doto, complement, does, slice} from "../../core.js";
 import {implement, satisfies} from "../protocol.js";
 import {IMergable, IBlankable, IMap, ICoercible, IFunctor, IInsertable, IOmissible, IReversible, IMapEntry, IEquiv, IReduce, IKVReduce, IAppendable, IPrependable, IInclusive, ICollection, INext, ISeq, IFind, ISeqable, IIndexed, IAssociative, ISequential, IEmptyableCollection, IFn, ICounted, ILookup, IClonable} from "../../protocols.js";
 import {reduced, unreduced, isReduced} from "../reduced.js";
@@ -13,7 +13,9 @@ import {emptyArray} from "./construct.js";
 import {naming} from "../../protocols/inamable/concrete.js";
 import Symbol from "symbol";
 
-const clone = Array.from;
+function clone(self){
+  return slice(self)
+}
 
 function _before(self, reference, inserted){
   const pos = self.indexOf(reference);

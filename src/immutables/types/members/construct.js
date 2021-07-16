@@ -12,5 +12,3 @@ export function members(self){
 export function emptyMembers(){
   return new Members();
 }
-
-Members.from = members;
