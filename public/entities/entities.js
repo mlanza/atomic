@@ -1295,6 +1295,11 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transducers', 'atomic/tran
 
   })();
 
+  function Query(type, attrs){
+    this.type = type;
+    this.attrs = attrs;
+  }
+
   function Command(type, attrs){
     this.type = type;
     this.attrs = attrs;
@@ -1322,7 +1327,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transducers', 'atomic/tran
 
   }
 
-  _.each(messageBehavior, [Command, Event]);
+  _.each(messageBehavior, [Query, Command, Event]);
 
   function constructs(Type){
     return function message(type){
@@ -1332,7 +1337,8 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transducers', 'atomic/tran
     }
   }
 
-  var command = constructs(Command),
+  var query = constructs(Query),
+      command = constructs(Command),
       event = constructs(Event);
 
   function defs(construct, keys){
@@ -1341,8 +1347,32 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transducers', 'atomic/tran
     }, {}, keys);
   }
 
-  var c = defs(command, ["query", "load", "save", "cast", "toggle", "tag", "untag", "assert", "retract", "select", "deselect", "add", "destroy", "undo", "redo", "flush"]),
+  var q = defs(query, ["find"]),
+      c = defs(command, ["query", "load", "save", "cast", "toggle", "tag", "untag", "assert", "retract", "select", "deselect", "add", "destroy", "undo", "redo", "flush"]),
       e = defs(event, ["queried", "loaded", "saved", "casted", "toggled", "tagged", "untagged", "asserted", "retracted", "selected", "deselected", "added", "destroyed", "undone", "redone", "flushed"]);
+
+  function FindHandler(buffer){
+    this.buffer = buffer;
+  }
+
+  var findHandler = _.constructs(FindHandler);
+
+  (function(){
+
+    function handle(self, query, next){
+      var type = _.getIn(query, ["args", 0]);
+      var queried = _.filter(function(entity){
+        return _.first(_.get(entity, "$type")) == type;
+      }, _.deref(self.buffer.workspace));
+      _.log("q", _.toArray(queried));
+      //$.raise(self.provider, e.loaded(entities));
+      next(query);
+    }
+
+    return _.doto(FindHandler,
+      _.implement(IMiddleware, {handle: handle}));
+
+  })();
 
   function LoadHandler(buffer, provider){
     this.buffer = buffer;
@@ -2015,9 +2045,10 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transducers', 'atomic/tran
 
   //NOTE a view is capable of returning a seq of all possible `IView.interactions` each implementing `IIdentifiable` and `INamable`.
   //NOTE an interaction is a persistent, validatable object with field schema.  It will be flagged as command or query which will help with processing esp. pipelining.  When successfully validated it has all that it needs to be handled by the handler.  That it can be introspected allows for the UI to help will completing them.
-  function Outline(buffer, model, commandBus, eventBus, emitter, options){
+  function Outline(buffer, model, queryBus, commandBus, eventBus, emitter, options){
     this.buffer = buffer;
     this.model = model;
+    this.queryBus = queryBus;
     this.commandBus = commandBus;
     this.eventBus = eventBus;
     this.emitter = emitter;
@@ -2031,18 +2062,16 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transducers', 'atomic/tran
           expanded: _.into(imm.set(), options.expanded || []) //track which entities are expanded vs collapsed
         }),
         events = $.events(),
-        eventBus = bus(),
+        queryBus = bus(),
         commandBus = bus(),
+        eventBus = bus(),
         emitter = $.subject();
 
-    _.doto(eventBus,
+    _.doto(queryBus,
       mut.conj(_,
-        loggerMiddleware("event"),
-        eventMiddleware(emitter),
+        loggerMiddleware("query"),
         _.doto(handlerMiddleware(),
-          mut.assoc(_, "added", addedHandler(model, commandBus)),
-          mut.assoc(_, "saved", savedHandler(commandBus)),
-          mut.assoc(_, "queried", queriedHandler(commandBus)))));
+          mut.assoc(_, "find", findHandler(buffer)))));
 
     _.doto(commandBus,
       mut.conj(_,
@@ -2067,24 +2096,33 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transducers', 'atomic/tran
             mut.assoc(_, "deselect", deselectHandler(model, events)))),
         drainEventsMiddleware(events, eventBus)));
 
-    return new Outline(buffer, model, commandBus, eventBus, emitter, options);
+    _.doto(eventBus,
+      mut.conj(_,
+        loggerMiddleware("event"),
+        eventMiddleware(emitter),
+        _.doto(handlerMiddleware(),
+          mut.assoc(_, "added", addedHandler(model, commandBus)),
+          mut.assoc(_, "saved", savedHandler(commandBus)),
+          mut.assoc(_, "queried", queriedHandler(commandBus)))));
+
+    return new Outline(buffer, model, queryBus, commandBus, eventBus, emitter, options);
   }
 
   (function(){
-    function render(self, el){
+    function render(self, el){ //TODO implement last
       _.log("render", self, el);
-      //TODO implement
     }
 
-    function dispatch(self, command){
-      $.dispatch(self.commandBus, command);
+    function dispatch(self, message){
+      var bus = message instanceof Query ? self.queryBus : self.commandBus;
+      $.dispatch(bus, message);
     }
 
-    function lookup(self, guid){ //for development purposes, not meant for permanent use
+    function lookup(self, guid){ //TODO drop — for development purposes
       return _.get(self.buffer, guid);
     }
 
-    function sub(self, observer){ //TODO consider keeping these events private
+    function sub(self, observer){ //TODO provide separate set of external events (e.g. don't expose its internals)
       return $.sub(self.emitter, observer);
     }
 
@@ -2100,10 +2138,10 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transducers', 'atomic/tran
 
   _.maybe(dom.sel1("#outline"), function(el){
     var ol = outline(buf, {root: null});
-    var $loaded = $.pipe(ol, t.filter(function(e){
+    $.sub(ol, t.filter(function(e){
       return e.type === "loaded";
-    }));
-    $.sub($loaded, function(){
+    }),
+    function(){
       _.each($.dispatch(ol, _), [
         c.select([_.guid(0)]),
         c.tag(["develop-apps"]),
@@ -2113,27 +2151,30 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transducers', 'atomic/tran
     });
     IView.render(ol, el);
     $.dispatch(ol, c.query());
-    Object.assign(window, {ol: ol, c: c, e: e});
+    Object.assign(window, {ol: ol, q: q, c: c, e: e});
   });
 
-  return _.just(protocols, _.reduce(_.merge, _, _.map(function(protocol){
-    return _.reduce(function(memo, key){
-      return _.assoc(memo, key, protocol[key]);
-    }, {}, Object.keys(protocol));
-  }, _.vals(protocols))), _.merge(_, {
-    optional: optional,
-    required: required,
-    unlimited: unlimited,
-    assertionStore: assertionStore,
-    dirtyKeys: dirtyKeys,
-    questions: questions,
-    assertion: assertion,
-    entityWorkspace: entityWorkspace,
-    domain: domain,
-    assert: assert,
-    retract: retract,
-    asserts: asserts
-  }), _.impart(_, _.partly));
+  return _.just(protocols,
+    _.reduce(_.merge, _,
+      _.map(function(protocol){
+        return _.reduce(function(memo, key){
+          return _.assoc(memo, key, protocol[key]);
+        }, {}, Object.keys(protocol));
+      }, _.vals(protocols))),
+    _.merge(_, {
+      optional: optional,
+      required: required,
+      unlimited: unlimited,
+      assertionStore: assertionStore,
+      dirtyKeys: dirtyKeys,
+      questions: questions,
+      assertion: assertion,
+      entityWorkspace: entityWorkspace,
+      domain: domain,
+      assert: assert,
+      retract: retract,
+      asserts: asserts
+    }), _.impart(_, _.partly));
 
 });
 
