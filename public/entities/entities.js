@@ -1295,11 +1295,6 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transducers', 'atomic/tran
 
   })();
 
-  function Query(type, attrs){
-    this.type = type;
-    this.attrs = attrs;
-  }
-
   function Command(type, attrs){
     this.type = type;
     this.attrs = attrs;
@@ -1327,18 +1322,17 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transducers', 'atomic/tran
 
   }
 
-  _.each(messageBehavior, [Query, Command, Event]);
+  _.each(messageBehavior, [Command, Event]);
 
   function constructs(Type){
     return function message(type){
       return function(args, options){
-        return new Type(type, _.merge(options, {args: args}));
+        return new Type(type, Object.assign({args: args || []}, options));
       }
     }
   }
 
-  var query = constructs(Query),
-      command = constructs(Command),
+  var command = constructs(Command),
       event = constructs(Event);
 
   function defs(construct, keys){
@@ -1347,29 +1341,75 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transducers', 'atomic/tran
     }, {}, keys);
   }
 
-  var q = defs(query, ["find"]),
-      c = defs(command, ["query", "load", "save", "cast", "toggle", "tag", "untag", "assert", "retract", "select", "deselect", "add", "destroy", "undo", "redo", "flush"]),
+  var c = defs(command, ["pipe", "find", "query", "load", "save", "cast", "toggle", "tag", "untag", "assert", "retract", "select", "deselect", "add", "destroy", "undo", "redo", "flush"]),
       e = defs(event, ["queried", "loaded", "saved", "casted", "toggled", "tagged", "untagged", "asserted", "retracted", "selected", "deselected", "added", "destroyed", "undone", "redone", "flushed"]);
 
-  function FindHandler(buffer){
+  function FindHandler(buffer, model){
     this.buffer = buffer;
+    this.model = model;
   }
 
   var findHandler = _.constructs(FindHandler);
 
   (function(){
 
-    function handle(self, query, next){
-      var type = _.getIn(query, ["args", 0]);
-      var queried = _.filter(function(entity){
-        return _.first(_.get(entity, "$type")) == type;
-      }, _.deref(self.buffer.workspace));
-      _.log("q", _.toArray(queried));
+    function handle(self, command, next){
+      var args = _.get(command, "args");
+      function append(find){
+        _.just(self.model, _.swap(_, _.update(_, "find", function(found){
+          return found ? _.comp(found, find) : find;
+        })));
+      }
+
+      switch (_.count(args)) {
+        case 1:
+          var type = _.first(args);
+          append(t.filter(function(entity){
+            return _.first(_.get(entity, "$type")) == type;
+          }));
+          break;
+
+        case 2:
+          var key = _.first(args), value = _.second(args);
+          append(t.filter(function(entity){
+            return _.includes(_.get(entity, key), value);
+          }));
+          break;
+
+      }
       //$.raise(self.provider, e.loaded(entities));
-      next(query);
+      next(command);
     }
 
     return _.doto(FindHandler,
+      _.implement(IMiddleware, {handle: handle}));
+
+  })();
+
+  function PipeHandler(buffer, model, commandBus){
+    this.buffer = buffer;
+    this.model = model;
+    this.commandBus = commandBus;
+  }
+
+  var pipeHandler = _.constructs(PipeHandler);
+
+  (function(){
+
+    function handle(self, command, next){
+      var commands = _.get(command, "args");
+      _.each(function(command){
+        if (command.type === "select") {
+          var f = _.just(self.model, _.deref, _.get(_, "find"));
+          var selected = _.just(self.buffer.workspace, _.deref, _.into([], _.comp(f, t.map(_.get(_, "id")), t.map(_.first)), _));
+          _.log("selected", selected);
+        }
+        $.dispatch(self.commandBus, command);
+      }, commands);
+      next(command);
+    }
+
+    return _.doto(PipeHandler,
       _.implement(IMiddleware, {handle: handle}));
 
   })();
@@ -1721,12 +1761,15 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transducers', 'atomic/tran
   (function(){
 
     function handle(self, command, next){
-      if (_.get(command, "id")) {
+      if (_.get(command, "id")) { //explicit
         $.handle(self.handler, command, next);
-      } else {
-        _.each(function(id){
-          $.handle(self.handler, _.assoc(command, "id", id));
-        }, _.just(self.model, _.deref, _.get(_, "selected")));
+      } else { //implicit
+        _.each($.handle(self.handler, _),
+          _.just(
+            self.model,
+            _.deref,
+            _.get(_, "selected"),
+            _.map(_.assoc(command, "id", _), _)));
       }
       next(command);
     }
@@ -1873,7 +1916,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transducers', 'atomic/tran
           self.handling = false;
           next(message);
           if (self.queued.length) {
-            handle(self, self.queued.unshift(), next);
+            handle(self, self.queued.shift(), next);
           }
         });
       }
@@ -1949,27 +1992,21 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transducers', 'atomic/tran
 
   var handlerMiddleware3 = _.constructs(HandlerMiddleware);
 
-  function handlerMiddleware2(identify, fallback){
-    return handlerMiddleware3({}, identify, fallback);
+  function handlerMiddleware2(handlers, identify){
+    return handlerMiddleware3(handlers, identify);
   }
 
-  function handlerMiddleware1(identify){
-    return handlerMiddleware2(identify, null);
+  function handlerMiddleware1(handlers){
+    return handlerMiddleware2(handlers, IIdentifiable.identifier);
   }
 
   function handlerMiddleware0(){
-    return handlerMiddleware1(IIdentifiable.identifier);
+    return handlerMiddleware1({});
   }
 
   var handlerMiddleware = _.overload(handlerMiddleware0, handlerMiddleware1, handlerMiddleware2, handlerMiddleware3);
 
   (function(){
-
-    function UnknownMessageError(message){
-      this.message = message;
-    }
-
-    UnknownMessageError.prototype = new Error();
 
     function assoc(self, key, handler){
       self.handlers = _.assoc(self.handlers, key, handler);
@@ -1979,8 +2016,6 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transducers', 'atomic/tran
       var handler = _.get(self.handlers, self.identify(message), self.fallback);
       if (handler){
         $.handle(handler, message, next);
-      } else {
-        //throw new UnknownMessageError(message);
       }
       next(message);
     }
@@ -2033,7 +2068,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transducers', 'atomic/tran
     }
 
     _.doto(Buffer,
-      _.forward("workspace", ISwap, IRevertible),
+      _.forward("workspace", ISwap, IRevertible, IReduce),
       _.implement(IAssociative, {contains: contains}),
       _.implement(IPersistable, {save: save}),
       _.implement(IFactory, {make: make}),
@@ -2045,10 +2080,9 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transducers', 'atomic/tran
 
   //NOTE a view is capable of returning a seq of all possible `IView.interactions` each implementing `IIdentifiable` and `INamable`.
   //NOTE an interaction is a persistent, validatable object with field schema.  It will be flagged as command or query which will help with processing esp. pipelining.  When successfully validated it has all that it needs to be handled by the handler.  That it can be introspected allows for the UI to help will completing them.
-  function Outline(buffer, model, queryBus, commandBus, eventBus, emitter, options){
+  function Outline(buffer, model, commandBus, eventBus, emitter, options){
     this.buffer = buffer;
     this.model = model;
-    this.queryBus = queryBus;
     this.commandBus = commandBus;
     this.eventBus = eventBus;
     this.emitter = emitter;
@@ -2062,22 +2096,19 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transducers', 'atomic/tran
           expanded: _.into(imm.set(), options.expanded || []) //track which entities are expanded vs collapsed
         }),
         events = $.events(),
-        queryBus = bus(),
         commandBus = bus(),
         eventBus = bus(),
         emitter = $.subject();
 
-    _.doto(queryBus,
-      mut.conj(_,
-        loggerMiddleware("query"),
-        _.doto(handlerMiddleware(),
-          mut.assoc(_, "find", findHandler(buffer)))));
+    var lockingMiddleware = _.identity; //TODO remove — temporarily disabled
 
     _.doto(commandBus,
       mut.conj(_,
         loggerMiddleware("command"),
         lockingMiddleware(
           _.doto(handlerMiddleware(),
+            mut.assoc(_, "pipe", pipeHandler(buffer, model, commandBus)),
+            mut.assoc(_, "find", findHandler(buffer, model)),
             mut.assoc(_, "load", loadHandler(buffer, events)),
             mut.assoc(_, "add", addHandler(buffer, events)),
             mut.assoc(_, "save", saveHandler(buffer, events)),
@@ -2105,7 +2136,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transducers', 'atomic/tran
           mut.assoc(_, "saved", savedHandler(commandBus)),
           mut.assoc(_, "queried", queriedHandler(commandBus)))));
 
-    return new Outline(buffer, model, queryBus, commandBus, eventBus, emitter, options);
+    return new Outline(buffer, model, commandBus, eventBus, emitter, options);
   }
 
   (function(){
@@ -2114,8 +2145,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transducers', 'atomic/tran
     }
 
     function dispatch(self, message){
-      var bus = message instanceof Query ? self.queryBus : self.commandBus;
-      $.dispatch(bus, message);
+      $.dispatch(self.commandBus, message);
     }
 
     function lookup(self, guid){ //TODO drop — for development purposes
@@ -2146,12 +2176,17 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transducers', 'atomic/tran
         c.select([_.guid(0)]),
         c.tag(["develop-apps"]),
         c.tag(["cosmos"]),
-        c.add(["tiddler", "Scooby"])
+        c.add(["tiddler", "Scooby"]),
+        c.pipe([
+          c.find(["tag", "cosmos"]),
+          c.find(["tag", "develop-apps"]),
+          c.select()
+        ])
       ]);
     });
     IView.render(ol, el);
     $.dispatch(ol, c.query());
-    Object.assign(window, {ol: ol, q: q, c: c, e: e});
+    Object.assign(window, {ol: ol, c: c, e: e});
   });
 
   return _.just(protocols,
