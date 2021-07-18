@@ -1351,7 +1351,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transducers', 'atomic/tran
   }
 
   var c = defs(command, ["pipe", "find", "query", "load", "save", "cast", "toggle", "tag", "untag", "assert", "retract", "select", "deselect", "add", "destroy", "undo", "redo", "flush"]),
-      e = defs(event, ["queried", "loaded", "saved", "casted", "toggled", "tagged", "untagged", "asserted", "retracted", "selected", "deselected", "added", "destroyed", "undone", "redone", "flushed"]);
+      e = defs(event, ["found", "queried", "loaded", "saved", "casted", "toggled", "tagged", "untagged", "asserted", "retracted", "selected", "deselected", "added", "destroyed", "undone", "redone", "flushed"]);
 
   function handleExisting(event){
     return function handle(self, command, next){
@@ -1363,9 +1363,8 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transducers', 'atomic/tran
     }
   }
 
-  function FindHandler(buffer, model){
-    this.buffer = buffer;
-    this.model = model;
+  function FindHandler(provider){
+    this.provider = provider;
   }
 
   var findHandler = _.constructs(FindHandler);
@@ -1373,7 +1372,26 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transducers', 'atomic/tran
   (function(){
 
     function handle(self, command, next){
-      var args = _.get(command, "args");
+      $.raise(self.provider, effect(command, "found"));
+      next(command);
+    }
+
+    return _.doto(FindHandler,
+      _.implement(IMiddleware, {handle: handle}));
+
+  })();
+
+  function FoundHandler(buffer, model){
+    this.buffer = buffer;
+    this.model = model;
+  }
+
+  var foundHandler = _.constructs(FoundHandler);
+
+  (function(){
+
+    function handle(self, event, next){
+      var args = _.get(event, "args");
       function append(find){
         _.just(self.model, _.swap(_, _.update(_, "find", function(found){
           return found ? _.comp(found, find) : find;
@@ -1396,11 +1414,10 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transducers', 'atomic/tran
           break;
 
       }
-      //$.raise(self.provider, e.loaded(entities));
-      next(command);
+      next(event);
     }
 
-    return _.doto(FindHandler,
+    return _.doto(FoundHandler,
       _.implement(IMiddleware, {handle: handle}));
 
   })();
@@ -1417,14 +1434,9 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transducers', 'atomic/tran
 
     function handle(self, command, next){
       var commands = _.get(command, "args");
-      _.each(function(command){
-        /*if (command.type === "select") {
-          var f = _.just(self.model, _.deref, _.get(_, "find"));
-          var selected = _.just(self.buffer.workspace, _.deref, _.into([], _.comp(f, t.map(_.get(_, "id")), t.map(_.first)), _));
-          _.log("selected", selected);
-        }*/
-        $.dispatch(self.commandBus, command);
-      }, commands);
+      _.just(commands,
+        _.map(_.assoc(_, "pipe-id",_.guid()), _),
+        _.each($.dispatch(self.commandBus, _), _));
       next(command);
     }
 
@@ -1523,7 +1535,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transducers', 'atomic/tran
 
       //TODO create middleware which clears selections after certain actions, remove `model`
       _.just(self.model, _.deref, _.get(_, "selected"), _.toArray, c.deselect, $.dispatch(self.commandBus, _));
-      $.dispatch(self.commandBus, c.select([id]));
+      $.dispatch(self.commandBus, c.select([], {id: [id]}));
       next(event);
     }
 
@@ -1993,10 +2005,10 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transducers', 'atomic/tran
   (function(){
 
     function handle(self, command, next){
-      var ids = _.get(command, "args");
-      var missing = _.detect(_.complement(_.contains(self.buffer, _)), ids);
+      var id = _.get(command, "id");
+      var missing = _.detect(_.complement(_.contains(self.buffer, _)), id);
       if (!missing) {
-        $.raise(self.provider, e.selected(ids));
+        $.raise(self.provider, e.selected([], {id: id}));
       } else {
         throw new Error("Entity " + _.str(missing) + " was not present in buffer.");
       }
@@ -2017,11 +2029,11 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transducers', 'atomic/tran
   (function(){
 
     function handle(self, event, next){
-      var ids = _.get(event, "args");
+      var id = _.get(event, "id");
       _.swap(self.model,
         _.update(_, "selected",
-          _.apply(_.conj, _, ids)));
-      next(command);
+          _.apply(_.conj, _, id)));
+      next(event);
     }
 
     return _.doto(SelectedHandler,
@@ -2101,20 +2113,105 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transducers', 'atomic/tran
 
   })();
 
-  function LoggerMiddleware(label){
-    this.label = label; //TODO use logger role/protocol here
+  function SelectionMiddleware(model, pred){
+    this.model = model;
+    this.pred = pred;
   }
 
-  var loggerMiddleware = _.constructs(LoggerMiddleware);
+  var selectionMiddleware = _.constructs(SelectionMiddleware);
 
   (function(){
 
     function handle(self, message, next){
-      _.log(self.label, message);
+      if (!_.contains(message, "id") && self.pred(message)) {
+        _.just(
+          self.model,
+          _.deref,
+          _.get(_, "selected"), //a sequence!
+          _.toArray,
+          _.assoc(message, "id", _),
+          next);
+      } else {
+        next(message);
+      }
+    }
+
+    return _.doto(SelectionMiddleware,
+      _.implement(IMiddleware, {handle: handle}));
+
+  })();
+
+  function FindMiddleware(model, buffer, pred, lastPipeId){
+    this.model = model;
+    this.buffer = buffer;
+    this.pred = pred;
+    this.lastPipeId = lastPipeId;
+  }
+
+  var findMiddleware = _.constructs(FindMiddleware);
+
+  (function(){
+    function handle(self, message, next){
+      var pipeId = _.get(message, "pipe-id");
+
+      if (_.notEq(pipeId, self.lastPipeId)) {
+        _.swap(self.model, _.assoc(_, "find", null));
+        _.log("cleared find cache!");
+        self.lastPipeId = pipeId;
+      }
+
+      if (!_.contains(message, "id") && self.pred(message)) {
+        var f = _.just(self.model, _.deref, _.get(_, "find"));
+        if (f) {
+          var id = _.just(self.buffer.workspace, //TODO demeter!
+            _.deref,
+            _.into([], _.comp(f, t.map(_.get(_, "id")), t.map(_.first)), _),
+            _.assoc(message, "id", _),
+            next);
+          return;
+        }
+      }
       next(message);
     }
 
-    return _.doto(LoggerMiddleware,
+    return _.doto(FindMiddleware,
+      _.implement(IMiddleware, {handle: handle}));
+
+  })();
+
+  function KeyedMiddleware(key, value){
+    this.key = key;
+    this.value = value;
+  }
+
+  var keyedMiddleware = _.constructs(KeyedMiddleware);
+
+  (function(){
+    function handle(self, message, next){
+      _.just(message,
+        _.assoc(_, self.key, self.value()),
+        next);
+    }
+
+    return _.doto(KeyedMiddleware,
+      _.implement(IMiddleware, {handle: handle}));
+
+  })();
+
+  function TeeMiddleware(effect){
+    this.effect = effect;
+  }
+
+  var teeMiddleware = _.constructs(TeeMiddleware);
+
+  (function(){
+
+    function handle(self, message, next){
+      self.effect(message);
+      next(message);
+    }
+
+    return _.doto(TeeMiddleware,
       _.implement(IMiddleware, {handle: handle}));
 
   })();
@@ -2276,27 +2373,31 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transducers', 'atomic/tran
         emitter = $.subject();
 
     var lockingMiddleware = _.identity; //TODO remove — temporarily disabled
+    var entityDriven = _.comp(_.includes(["assert", "retract", "toggle", "destroy", "cast", "tag", "untag", "select"], _), IIdentifiable.identifier);
 
     _.doto(commandBus,
       mut.conj(_,
-        loggerMiddleware("command"),
+        //keyedMiddleware("command-id", _.guid),
+        findMiddleware(model, buffer, entityDriven),
+        selectionMiddleware(model, entityDriven),
+        teeMiddleware(_.see("command")),
         lockingMiddleware(
           _.doto(handlerMiddleware(),
             mut.assoc(_, "pipe", pipeHandler(buffer, model, commandBus)),
-            mut.assoc(_, "find", findHandler(buffer, model)),
+            mut.assoc(_, "find", findHandler(events)),
             mut.assoc(_, "load", loadHandler(buffer, events)),
             mut.assoc(_, "add", addHandler(buffer, events)),
             mut.assoc(_, "save", saveHandler(buffer, events)),
             mut.assoc(_, "undo", undoHandler(buffer, events)),
             mut.assoc(_, "redo", redoHandler(buffer, events)),
             mut.assoc(_, "flush", flushHandler(buffer, events)),
-            mut.assoc(_, "cast", selectionHandler(model, castHandler(buffer, events))),
-            mut.assoc(_, "tag", tagHandler(selectionHandler(model, assertHandler(buffer, events)))),
-            mut.assoc(_, "untag", untagHandler(selectionHandler(model, retractHandler(buffer, events)))),
-            mut.assoc(_, "toggle", selectionHandler(model, blockingHandler("readonly", buffer, toggleHandler(buffer, events)))),
-            mut.assoc(_, "assert", selectionHandler(model, blockingHandler("readonly", buffer, assertHandler(buffer, events)))),
-            mut.assoc(_, "retract", selectionHandler(model, blockingHandler("appendonly", buffer, blockingHandler("readonly", buffer, retractHandler(buffer, events))))),
-            mut.assoc(_, "destroy", selectionHandler(model, destroyHandler(buffer, events))),
+            mut.assoc(_, "cast", castHandler(buffer, events)),
+            mut.assoc(_, "tag", tagHandler(assertHandler(buffer, events))),
+            mut.assoc(_, "untag", untagHandler(retractHandler(buffer, events))),
+            mut.assoc(_, "toggle", blockingHandler("readonly", buffer, toggleHandler(buffer, events))),
+            mut.assoc(_, "assert", blockingHandler("readonly", buffer, assertHandler(buffer, events))),
+            mut.assoc(_, "retract", blockingHandler("appendonly", buffer, blockingHandler("readonly", buffer, retractHandler(buffer, events)))),
+            mut.assoc(_, "destroy", destroyHandler(buffer, events)),
             mut.assoc(_, "query", queryHandler(buffer, events)),
             mut.assoc(_, "select", selectHandler(buffer, events)),
             mut.assoc(_, "deselect", deselectHandler(model, events)))),
@@ -2304,8 +2405,9 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transducers', 'atomic/tran
 
     _.doto(eventBus,
       mut.conj(_,
-        loggerMiddleware("event"),
+        //keyedMiddleware("event-id", _.guid),
         _.doto(handlerMiddleware(),
+          mut.assoc(_, "found", foundHandler(buffer, model)),
           mut.assoc(_, "loaded", loadedHandler(buffer)),
           mut.assoc(_, "added", addedHandler(model, buffer, commandBus)),
           mut.assoc(_, "saved", savedHandler(commandBus)),
@@ -2319,6 +2421,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transducers', 'atomic/tran
           mut.assoc(_, "queried", queriedHandler(commandBus)),
           mut.assoc(_, "selected", selectedHandler(model)),
           mut.assoc(_, "deselected", deselectedHandler(model))),
+        teeMiddleware(_.see("event")),
         eventMiddleware(emitter)));
 
     return new Outline(buffer, model, commandBus, eventBus, emitter, options);
@@ -2358,7 +2461,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transducers', 'atomic/tran
     }),
     function(e){
       _.each($.dispatch(ol, _), [
-        c.select([_.guid(0)]),
+        c.select([], {id: [_.guid(0)]}),
         c.tag(["develop-apps"]),
         c.tag(["cosmos"]),
         c.add(["tiddler", "Scooby"]),
