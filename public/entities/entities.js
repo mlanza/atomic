@@ -1355,10 +1355,11 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transducers', 'atomic/tran
 
   function handleExisting(event){
     return function handle(self, command, next){
-      var id = _.get(command, "id");
-      if (_.apply(_.everyPred, _.contains(self.buffer, _), id)) {
-        $.raise(self.provider, event(_.get(command, "args"), {id: id}));
-      }
+      var e = Object.assign(event(), command, {type: event().type});
+      //var id = _.get(command, "id");
+      //if (_.apply(_.everyPred, _.contains(self.buffer, _), id)) {
+        $.raise(self.provider, e);
+      //}
       next(command);
     }
   }
@@ -1611,6 +1612,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transducers', 'atomic/tran
     function handle(self, command, next){
       var altered =  _.just(command, alter(_, "retract"), _.update(_, "args", _.pipe(_.cons("tag", _), _.toArray)));
       $.handle(self.handler, altered, next);
+      next(command);
     }
 
     _.doto(UntagHandler,
@@ -1883,37 +1885,6 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transducers', 'atomic/tran
 
   })();
 
-
-
-  function SelectionHandler(model, handler){
-    this.model = model;
-    this.handler = handler;
-  }
-
-  var selectionHandler = _.constructs(SelectionHandler);
-
-  (function(){
-
-    function handle(self, command, next){
-      if (_.contains(command, "id")) { //explicit
-        $.handle(self.handler, command, next);
-      } else { //implicit
-        _.just(
-          self.model,
-          _.deref,
-          _.get(_, "selected"), //a sequence!
-          _.toArray,
-          _.assoc(command, "id", _),
-          $.handle(self.handler, _));
-      }
-      next(command);
-    }
-
-    _.doto(SelectionHandler,
-      _.implement(IMiddleware, {handle: handle}));
-
-  })();
-
   function RetractHandler(buffer, provider){
     this.buffer = buffer;
     this.provider = provider;
@@ -2080,31 +2051,35 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transducers', 'atomic/tran
 
   })();
 
-
-  function LockingMiddleware(middleware, queued, handling){
-    this.middleware = middleware;
+  function LockingMiddleware(bus, queued, handling){
+    this.bus = bus;
     this.queued = queued;
     this.handling = handling;
   }
 
-  function lockingMiddleware(middleware){
-    return new LockingMiddleware(middleware, [], false);
+  function lockingMiddleware(bus){
+    return new LockingMiddleware(bus, [], false);
   }
 
   (function(){
+
+    function handle(self, message, next){
+      next(message);
+    }
 
     function handle(self, message, next){
       if (self.handling) {
         self.queued.push(message);
       } else {
         self.handling = true;
-        IMiddleware.handle(self.middleware, message, function(message){
-          self.handling = false;
-          next(message);
-          if (self.queued.length) {
-            handle(self, self.queued.shift(), next);
-          }
-        });
+        next(message);
+        self.handling = false;
+        if (self.queued.length) {
+          var queued = self.queued;
+          self.queued = [];
+          _.log("draining queued", queued);
+          _.each($.dispatch(self.bus, _), queued);
+        }
       }
     }
 
@@ -2372,40 +2347,39 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transducers', 'atomic/tran
         eventBus = bus(),
         emitter = $.subject();
 
-    var lockingMiddleware = _.identity; //TODO remove — temporarily disabled
-    var entityDriven = _.comp(_.includes(["assert", "retract", "toggle", "destroy", "cast", "tag", "untag", "select"], _), IIdentifiable.identifier);
+    var entityDriven = _.comp(_.includes(["assert", "asserted", "retract", "retracted", "toggle", "toggled", "destroy", "destroyed", "cast", "casted", "tag", "tagged", "untag", "untagged", "select", "selected"], _), IIdentifiable.identifier);
 
     _.doto(commandBus,
       mut.conj(_,
-        //keyedMiddleware("command-id", _.guid),
+        lockingMiddleware(commandBus),
+        keyedMiddleware("command-id", _.generate(_.iterate(_.inc, 0))),
         findMiddleware(model, buffer, entityDriven),
         selectionMiddleware(model, entityDriven),
         teeMiddleware(_.see("command")),
-        lockingMiddleware(
-          _.doto(handlerMiddleware(),
-            mut.assoc(_, "pipe", pipeHandler(buffer, model, commandBus)),
-            mut.assoc(_, "find", findHandler(events)),
-            mut.assoc(_, "load", loadHandler(buffer, events)),
-            mut.assoc(_, "add", addHandler(buffer, events)),
-            mut.assoc(_, "save", saveHandler(buffer, events)),
-            mut.assoc(_, "undo", undoHandler(buffer, events)),
-            mut.assoc(_, "redo", redoHandler(buffer, events)),
-            mut.assoc(_, "flush", flushHandler(buffer, events)),
-            mut.assoc(_, "cast", castHandler(buffer, events)),
-            mut.assoc(_, "tag", tagHandler(assertHandler(buffer, events))),
-            mut.assoc(_, "untag", untagHandler(retractHandler(buffer, events))),
-            mut.assoc(_, "toggle", blockingHandler("readonly", buffer, toggleHandler(buffer, events))),
-            mut.assoc(_, "assert", blockingHandler("readonly", buffer, assertHandler(buffer, events))),
-            mut.assoc(_, "retract", blockingHandler("appendonly", buffer, blockingHandler("readonly", buffer, retractHandler(buffer, events)))),
-            mut.assoc(_, "destroy", destroyHandler(buffer, events)),
-            mut.assoc(_, "query", queryHandler(buffer, events)),
-            mut.assoc(_, "select", selectHandler(buffer, events)),
-            mut.assoc(_, "deselect", deselectHandler(model, events)))),
+        _.doto(handlerMiddleware(),
+          mut.assoc(_, "pipe", pipeHandler(buffer, model, commandBus)),
+          mut.assoc(_, "find", findHandler(events)),
+          mut.assoc(_, "load", loadHandler(buffer, events)),
+          mut.assoc(_, "add", addHandler(buffer, events)),
+          mut.assoc(_, "save", saveHandler(buffer, events)),
+          mut.assoc(_, "undo", undoHandler(buffer, events)),
+          mut.assoc(_, "redo", redoHandler(buffer, events)),
+          mut.assoc(_, "flush", flushHandler(buffer, events)),
+          mut.assoc(_, "cast", castHandler(buffer, events)),
+          mut.assoc(_, "tag", tagHandler(commandBus)),
+          mut.assoc(_, "untag", untagHandler(commandBus)),
+          mut.assoc(_, "toggle", toggleHandler(buffer, events)),
+          mut.assoc(_, "assert", assertHandler(buffer, events)),
+          mut.assoc(_, "retract", retractHandler(buffer, events)),
+          mut.assoc(_, "destroy", destroyHandler(buffer, events)),
+          mut.assoc(_, "query", queryHandler(buffer, events)),
+          mut.assoc(_, "select", selectHandler(buffer, events)),
+          mut.assoc(_, "deselect", deselectHandler(model, events))),
         drainEventsMiddleware(events, eventBus)));
 
     _.doto(eventBus,
       mut.conj(_,
-        //keyedMiddleware("event-id", _.guid),
+        keyedMiddleware("event-id", _.generate(_.iterate(_.inc, 0))),
         _.doto(handlerMiddleware(),
           mut.assoc(_, "found", foundHandler(buffer, model)),
           mut.assoc(_, "loaded", loadedHandler(buffer)),
