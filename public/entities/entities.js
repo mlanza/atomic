@@ -1350,8 +1350,8 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transducers', 'atomic/tran
     }, {}, keys);
   }
 
-  var c = defs(command, ["pipe", "find", "query", "load", "save", "cast", "toggle", "tag", "untag", "assert", "retract", "select", "deselect", "add", "destroy", "undo", "redo", "flush", "peek"]),
-      e = defs(event, ["found", "queried", "loaded", "saved", "casted", "toggled", "tagged", "untagged", "asserted", "retracted", "selected", "deselected", "added", "destroyed", "undone", "redone", "flushed", "peeked"]);
+  var c = defs(command, ["pipe", "find", "take", "skip", "query", "load", "save", "cast", "toggle", "tag", "untag", "assert", "retract", "select", "deselect", "add", "destroy", "undo", "redo", "flush", "peek"]),
+      e = defs(event, ["found", "took", "skipped", "queried", "loaded", "saved", "casted", "toggled", "tagged", "untagged", "asserted", "retracted", "selected", "deselected", "added", "destroyed", "undone", "redone", "flushed", "peeked"]);
 
   function handleExisting(event){
     return function handle(self, command, next){
@@ -1382,9 +1382,8 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transducers', 'atomic/tran
 
   })();
 
-  function FoundHandler(buffer, model){
-    this.buffer = buffer;
-    this.model = model;
+  function FoundHandler(compose){
+    this.compose = compose;
   }
 
   var foundHandler = _.constructs(FoundHandler);
@@ -1393,23 +1392,17 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transducers', 'atomic/tran
 
     function handle(self, event, next){
       var args = _.get(event, "args");
-      function append(find){
-        _.just(self.model, _.swap(_, _.update(_, "find", function(found){
-          return found ? _.comp(found, find) : find;
-        })));
-      }
-
       switch (_.count(args)) {
         case 1:
           var type = _.first(args);
-          append(t.filter(function(entity){
+          self.compose(t.filter(function(entity){
             return _.first(_.get(entity, "$type")) == type;
           }));
           break;
 
         case 2:
           var key = _.first(args), value = _.second(args);
-          append(t.filter(function(entity){
+          self.compose(t.filter(function(entity){
             return _.includes(_.get(entity, key), value);
           }));
           break;
@@ -1419,6 +1412,78 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transducers', 'atomic/tran
     }
 
     return _.doto(FoundHandler,
+      _.implement(IMiddleware, {handle: handle}));
+
+  })();
+
+  function TakeHandler(provider){
+    this.provider = provider;
+  }
+
+  var takeHandler = _.constructs(TakeHandler);
+
+  (function(){
+
+    function handle(self, command, next){
+      $.raise(self.provider, effect(command, "took"));
+      next(command);
+    }
+
+    return _.doto(TakeHandler,
+      _.implement(IMiddleware, {handle: handle}));
+
+  })();
+
+  function TookHandler(compose){
+    this.compose = compose;
+  }
+
+  var tookHandler = _.constructs(TookHandler);
+
+  (function(){
+
+    function handle(self, event, next){
+      self.compose(t.take(_.getIn(event, ["args", 0])));
+      next(event);
+    }
+
+    return _.doto(TookHandler,
+      _.implement(IMiddleware, {handle: handle}));
+
+  })();
+
+  function SkipHandler(provider){
+    this.provider = provider;
+  }
+
+  var skipHandler = _.constructs(SkipHandler);
+
+  (function(){
+
+    function handle(self, command, next){
+      $.raise(self.provider, effect(command, "skipped"));
+      next(command);
+    }
+
+    return _.doto(SkipHandler,
+      _.implement(IMiddleware, {handle: handle}));
+
+  })();
+
+  function SkippedHandler(compose){
+    this.compose = compose;
+  }
+
+  var skippedHandler = _.constructs(SkippedHandler);
+
+  (function(){
+
+    function handle(self, event, next){
+      self.compose(t.drop(_.getIn(event, ["args", 0])));
+      next(event);
+    }
+
+    return _.doto(SkippedHandler,
       _.implement(IMiddleware, {handle: handle}));
 
   })();
@@ -2396,6 +2461,8 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transducers', 'atomic/tran
         _.doto(handlerMiddleware(),
           mut.assoc(_, "pipe", pipeHandler(buffer, model, commandBus)),
           mut.assoc(_, "find", findHandler(events)),
+          mut.assoc(_, "take", takeHandler(events)),
+          mut.assoc(_, "skip", skipHandler(events)),
           mut.assoc(_, "peek", peekHandler(events)),
           mut.assoc(_, "load", loadHandler(buffer, events)),
           mut.assoc(_, "add", addHandler(buffer, events)),
@@ -2415,13 +2482,21 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transducers', 'atomic/tran
           mut.assoc(_, "deselect", deselectHandler(model, events))),
         drainEventsMiddleware(events, eventBus)));
 
+    function compose(key, f){
+      _.just(model, _.swap(_, _.update(_, key, function(g){
+        return g ? _.comp(g, f) : f;
+      })));
+    }
+
     _.doto(eventBus,
       mut.conj(_,
         keyedMiddleware("event-id", _.generate(_.iterate(_.inc, 1))),
         teeMiddleware(_.see("event")),
         _.doto(handlerMiddleware(),
           mut.assoc(_, "peeked", peekedHandler(buffer, model)),
-          mut.assoc(_, "found", foundHandler(buffer, model)),
+          mut.assoc(_, "found", foundHandler(_.partial(compose, "find"))),
+          mut.assoc(_, "took", tookHandler(_.partial(compose, "find"))),
+          mut.assoc(_, "skipped", skippedHandler(_.partial(compose, "find"))),
           mut.assoc(_, "loaded", loadedHandler(buffer)),
           mut.assoc(_, "added", addedHandler(model, buffer, commandBus)),
           mut.assoc(_, "saved", savedHandler(commandBus)),
@@ -2477,6 +2552,12 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transducers', 'atomic/tran
       }),
       function(e){
         _.each($.dispatch(ol, _), [
+          c.pipe([
+            c.find(["tiddler"]),
+            c.take([5]),
+            c.select(),
+            c.peek()
+          ]),
           c.select([], {id: [_.guid(0)]}),
           c.tag(["test"], {id: [_.guid(1)]}),
           c.tag(["cosmos"]),
