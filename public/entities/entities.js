@@ -1350,8 +1350,8 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transducers', 'atomic/tran
     }, {}, keys);
   }
 
-  var c = defs(command, ["pipe", "find", "query", "load", "save", "cast", "toggle", "tag", "untag", "assert", "retract", "select", "deselect", "add", "destroy", "undo", "redo", "flush"]),
-      e = defs(event, ["found", "queried", "loaded", "saved", "casted", "toggled", "tagged", "untagged", "asserted", "retracted", "selected", "deselected", "added", "destroyed", "undone", "redone", "flushed"]);
+  var c = defs(command, ["pipe", "find", "query", "load", "save", "cast", "toggle", "tag", "untag", "assert", "retract", "select", "deselect", "add", "destroy", "undo", "redo", "flush", "peek"]),
+      e = defs(event, ["found", "queried", "loaded", "saved", "casted", "toggled", "tagged", "untagged", "asserted", "retracted", "selected", "deselected", "added", "destroyed", "undone", "redone", "flushed", "peeked"]);
 
   function handleExisting(event){
     return function handle(self, command, next){
@@ -2052,6 +2052,42 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transducers', 'atomic/tran
 
   })();
 
+  function PeekHandler(provider){
+    this.provider = provider;
+  }
+
+  var peekHandler = _.constructs(PeekHandler);
+
+  (function(){
+
+    function handle(self, command, next){
+      $.raise(self.provider, effect(command, "peeked"));
+      next(command);
+    }
+
+    return _.doto(PeekHandler,
+      _.implement(IMiddleware, {handle: handle}));
+
+  })();
+
+  function PeekedHandler(buffer, model){
+    this.buffer = buffer;
+    this.model = model;
+  }
+
+  var peekedHandler = _.constructs(PeekedHandler);
+
+  (function(){
+    function handle(self, event, next){
+      _.just(self.model.state.selected, _.toArray, _.mapa(_.get(self.buffer, _), _), _.see("peeked"));
+      next(event);
+    }
+
+    return _.doto(PeekedHandler,
+      _.implement(IMiddleware, {handle: handle}));
+
+  })();
+
   function LockingMiddleware(bus, queued, handling){
     this.bus = bus;
     this.queued = queued;
@@ -2360,6 +2396,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transducers', 'atomic/tran
         _.doto(handlerMiddleware(),
           mut.assoc(_, "pipe", pipeHandler(buffer, model, commandBus)),
           mut.assoc(_, "find", findHandler(events)),
+          mut.assoc(_, "peek", peekHandler(events)),
           mut.assoc(_, "load", loadHandler(buffer, events)),
           mut.assoc(_, "add", addHandler(buffer, events)),
           mut.assoc(_, "save", saveHandler(buffer, events)),
@@ -2381,7 +2418,9 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transducers', 'atomic/tran
     _.doto(eventBus,
       mut.conj(_,
         keyedMiddleware("event-id", _.generate(_.iterate(_.inc, 1))),
+        teeMiddleware(_.see("event")),
         _.doto(handlerMiddleware(),
+          mut.assoc(_, "peeked", peekedHandler(buffer, model)),
           mut.assoc(_, "found", foundHandler(buffer, model)),
           mut.assoc(_, "loaded", loadedHandler(buffer)),
           mut.assoc(_, "added", addedHandler(model, buffer, commandBus)),
@@ -2396,7 +2435,6 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transducers', 'atomic/tran
           mut.assoc(_, "queried", queriedHandler(commandBus)),
           mut.assoc(_, "selected", selectedHandler(model)),
           mut.assoc(_, "deselected", deselectedHandler(model))),
-        teeMiddleware(_.see("event")),
         eventMiddleware(emitter)));
 
     return new Outline(buffer, model, commandBus, eventBus, emitter, options);
@@ -2427,31 +2465,32 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transducers', 'atomic/tran
 
   })();
 
-  var buf = buffer(jsonResource("../data/outline.json", work), $.journal($.cell(indexedEntityWorkspace())));
-
-  _.maybe(dom.sel1("#outline"), function(el){
-    var ol = outline(buf, {root: null});
-    $.sub(ol,
+  var ol = _.doto(
+    outline(
+      buffer(
+        jsonResource("../data/outline.json", work),
+        $.journal($.cell(indexedEntityWorkspace()))),
+        {root: null}),
+    $.sub(_,
       t.filter(function(e){
         return e.type === "loaded";
       }),
       function(e){
         _.each($.dispatch(ol, _), [
           c.select([], {id: [_.guid(0)]}),
-          c.tag(["develop-apps"]),
+          c.tag(["test"], {id: [_.guid(1)]}),
           c.tag(["cosmos"]),
           c.pipe([
             c.add(["tiddler", "Scooby"]),
             c.select(),
             c.tag(["sleuth"]),
             c.tag(["dog"]),
-          ])
+          ]),
+          c.select([], {id: [_.guid(0), _.guid(1)]}),
+          c.peek()
         ]);
-      });
-    IView.render(ol, el);
-    $.dispatch(ol, c.query());
-    Object.assign(window, {ol: ol, c: c, e: e});
-  });
+      }),
+    $.dispatch(_, c.query()));
 
   return _.just(protocols,
     _.reduce(_.merge, _,
@@ -2461,6 +2500,9 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transducers', 'atomic/tran
         }, {}, Object.keys(protocol));
       }, _.vals(protocols))),
     _.merge(_, {
+      ol: ol,
+      c: c,
+      e: e,
       optional: optional,
       required: required,
       unlimited: unlimited,
