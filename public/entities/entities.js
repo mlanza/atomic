@@ -2022,11 +2022,11 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transducers', 'atomic/tran
   (function(){
 
     function handle(self, command, next){
-      $.raise(self.provider, e.deselected(_.get(command, "args")));
+      $.raise(self.provider, effect(command, "deselected"));
       next(command);
     }
 
-    return _.doto(DeselectedHandler,
+    return _.doto(DeselectHandler,
       _.implement(IMiddleware, {handle: handle}));
 
   })();
@@ -2039,14 +2039,15 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transducers', 'atomic/tran
 
   (function(){
 
-    function handle(self, command, next){
+    function handle(self, event, next){
+      var id = _.get(event, "id");
       _.swap(self.model,
         _.update(_, "selected",
-          _.apply(_.disj, _, _.get(command, "args"))));
-      next(command);
+          _.apply(_.disj, _, id))); //_.comp(_.toArray, _.remove(_.includes(id, _), _))
+      next(event);
     }
 
-    return _.doto(DeselectHandler,
+    return _.doto(DeselectedHandler,
       _.implement(IMiddleware, {handle: handle}));
 
   })();
@@ -2347,12 +2348,12 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transducers', 'atomic/tran
         eventBus = bus(),
         emitter = $.subject();
 
-    var entityDriven = _.comp(_.includes(["assert", "asserted", "retract", "retracted", "toggle", "toggled", "destroy", "destroyed", "cast", "casted", "tag", "tagged", "untag", "untagged", "select", "selected"], _), IIdentifiable.identifier);
+    var entityDriven = _.comp(_.includes(["assert", "retract", "toggle", "destroy", "cast", "tag", "untag", "select", "deselect"], _), IIdentifiable.identifier);
 
     _.doto(commandBus,
       mut.conj(_,
         lockingMiddleware(commandBus),
-        keyedMiddleware("command-id", _.generate(_.iterate(_.inc, 0))),
+        keyedMiddleware("command-id", _.generate(_.iterate(_.inc, 1))),
         findMiddleware(model, buffer, entityDriven),
         selectionMiddleware(model, entityDriven),
         teeMiddleware(_.see("command")),
@@ -2379,7 +2380,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transducers', 'atomic/tran
 
     _.doto(eventBus,
       mut.conj(_,
-        keyedMiddleware("event-id", _.generate(_.iterate(_.inc, 0))),
+        keyedMiddleware("event-id", _.generate(_.iterate(_.inc, 1))),
         _.doto(handlerMiddleware(),
           mut.assoc(_, "found", foundHandler(buffer, model)),
           mut.assoc(_, "loaded", loadedHandler(buffer)),
@@ -2430,22 +2431,23 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transducers', 'atomic/tran
 
   _.maybe(dom.sel1("#outline"), function(el){
     var ol = outline(buf, {root: null});
-    $.sub(ol, t.filter(function(e){
-      return e.type === "loaded";
-    }),
-    function(e){
-      _.each($.dispatch(ol, _), [
-        c.select([], {id: [_.guid(0)]}),
-        c.tag(["develop-apps"]),
-        c.tag(["cosmos"]),
-        c.add(["tiddler", "Scooby"]),
-        c.pipe([
-          c.find(["tag", "cosmos"]),
-          c.find(["tag", "develop-apps"]),
-          c.select()
-        ])
-      ]);
-    });
+    $.sub(ol,
+      t.filter(function(e){
+        return e.type === "loaded";
+      }),
+      function(e){
+        _.each($.dispatch(ol, _), [
+          c.select([], {id: [_.guid(0)]}),
+          c.tag(["develop-apps"]),
+          c.tag(["cosmos"]),
+          c.pipe([
+            c.add(["tiddler", "Scooby"]),
+            c.select(),
+            c.tag(["sleuth"]),
+            c.tag(["dog"]),
+          ])
+        ]);
+      });
     IView.render(ol, el);
     $.dispatch(ol, c.query());
     Object.assign(window, {ol: ol, c: c, e: e});
