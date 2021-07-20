@@ -140,10 +140,11 @@ function dedupe1(f){
 }
 
 function dedupe2(f, equiv){
+  const nil = {};
   return function(rf){
-    let last;
+    let last = nil;
     return _.overload(rf, rf, function(memo, value){
-      const result = equiv(f(value), f(last)) ? memo : rf(memo, value);
+      const result = last !== nil && equiv(f(value), f(last)) ? memo : rf(memo, value);
       last = value;
       return result;
     });
