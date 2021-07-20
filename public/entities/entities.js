@@ -1350,8 +1350,8 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transducers', 'atomic/tran
     }, {}, keys);
   }
 
-  var c = defs(command, ["pipe", "find", "take", "skip", "query", "load", "save", "cast", "toggle", "tag", "untag", "assert", "retract", "select", "deselect", "add", "destroy", "undo", "redo", "flush", "peek"]),
-      e = defs(event, ["found", "took", "skipped", "queried", "loaded", "saved", "casted", "toggled", "tagged", "untagged", "asserted", "retracted", "selected", "deselected", "added", "destroyed", "undone", "redone", "flushed", "peeked"]);
+  var c = defs(command, ["pipe", "find", "take", "skip", "last", "query", "load", "save", "cast", "toggle", "tag", "untag", "assert", "retract", "select", "deselect", "add", "destroy", "undo", "redo", "flush", "peek"]),
+      e = defs(event, ["found", "took", "skipped", "lasted", "queried", "loaded", "saved", "casted", "toggled", "tagged", "untagged", "asserted", "retracted", "selected", "deselected", "added", "destroyed", "undone", "redone", "flushed", "peeked"]);
 
   function handleExisting(event){
     return function handle(self, command, next){
@@ -1484,6 +1484,42 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transducers', 'atomic/tran
     }
 
     return _.doto(SkippedHandler,
+      _.implement(IMiddleware, {handle: handle}));
+
+  })();
+
+  function LastHandler(provider){
+    this.provider = provider;
+  }
+
+  var lastHandler = _.constructs(LastHandler);
+
+  (function(){
+
+    function handle(self, command, next){
+      $.raise(self.provider, effect(command, "lasted"));
+      next(command);
+    }
+
+    return _.doto(LastHandler,
+      _.implement(IMiddleware, {handle: handle}));
+
+  })();
+
+  function LastedHandler(compose){
+    this.compose = compose;
+  }
+
+  var lastedHandler = _.constructs(LastedHandler);
+
+  (function(){
+
+    function handle(self, event, next){
+      self.compose(t.last(_.getIn(event, ["args", 0])));
+      next(event);
+    }
+
+    return _.doto(LastedHandler,
       _.implement(IMiddleware, {handle: handle}));
 
   })();
@@ -2463,6 +2499,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transducers', 'atomic/tran
           mut.assoc(_, "find", findHandler(events)),
           mut.assoc(_, "take", takeHandler(events)),
           mut.assoc(_, "skip", skipHandler(events)),
+          mut.assoc(_, "last", lastHandler(events)),
           mut.assoc(_, "peek", peekHandler(events)),
           mut.assoc(_, "load", loadHandler(buffer, events)),
           mut.assoc(_, "add", addHandler(buffer, events)),
@@ -2497,6 +2534,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transducers', 'atomic/tran
           mut.assoc(_, "found", foundHandler(_.partial(compose, "find"))),
           mut.assoc(_, "took", tookHandler(_.partial(compose, "find"))),
           mut.assoc(_, "skipped", skippedHandler(_.partial(compose, "find"))),
+          mut.assoc(_, "lasted", lastedHandler(_.partial(compose, "find"))),
           mut.assoc(_, "loaded", loadedHandler(buffer)),
           mut.assoc(_, "added", addedHandler(model, buffer, commandBus)),
           mut.assoc(_, "saved", savedHandler(commandBus)),
@@ -2554,7 +2592,7 @@ define(['fetch', 'atomic/core', 'atomic/dom', 'atomic/transducers', 'atomic/tran
         _.each($.dispatch(ol, _), [
           c.pipe([
             c.find(["tiddler"]),
-            c.take([5]),
+            c.last([5]),
             c.select(),
             c.peek()
           ]),
