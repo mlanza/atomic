@@ -22,6 +22,7 @@ export * from "./iforkable/concrete.js";
 export * from "./ifunctor/concrete.js";
 export * from "./ihandler/concrete.js";
 export * from "./ihierarchy/concrete.js";
+export * from "./iidentifiable/concrete.js";
 export * from "./iindexed/concrete.js";
 export * from "./iinclusive/concrete.js";
 export * from "./iinsertable/concrete.js";
