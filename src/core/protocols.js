@@ -41,6 +41,7 @@ export * from "./protocols/iprependable/instance.js";
 export * from "./protocols/ireduce/instance.js";
 export * from "./protocols/ireset/instance.js";
 export * from "./protocols/ireversible/instance.js";
+export * from "./protocols/irevertible/instance.js";
 export * from "./protocols/isend/instance.js";
 export * from "./protocols/iseq/instance.js";
 export * from "./protocols/iseqable/instance.js";

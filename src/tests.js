@@ -399,6 +399,14 @@ QUnit.test("record", function(assert){
   const person = _.constructs(Person);
   const robin = person("Robin", "Wright", new Date(1966, 3, 8));
   const dylan = _.construct(Person, {name: "Dylan", surname: "Penn", dob: _.date(1991, 4, 13)});
+  const $robin = $.cell(_.journal(robin));
+  assert.equal($robin |> _.deref |> _.get(?, "surname"), "Wright");
+  _.swap($robin, _.assoc(?, "surname", "Penn"));
+  assert.equal($robin |> _.deref |> _.get(?, "surname"), "Penn");
+  _.swap($robin, _.undo);
+  assert.equal($robin |> _.deref |> _.get(?, "surname"), "Wright");
+  _.swap($robin, _.redo);
+  assert.equal($robin |> _.deref |> _.get(?, "surname"), "Penn");
   assert.equal(robin |> _.get(?, "surname"), "Wright");
   assert.equal(robin |> _.assoc(?, "surname", "Penn") |> _.get(?, "surname"), "Penn");
   assert.equal(sean |> _.get(?, "surname"), "Penn");

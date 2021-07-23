@@ -15,6 +15,7 @@ export * from "./types/function.js";
 export * from "./types/guid.js";
 export * from "./types/indexed-seq.js";
 export * from "./types/indexed.js";
+export * from "./types/journal.js";
 export * from "./types/left.js";
 export * from "./types/lens.js";
 export * from "./types/list.js";

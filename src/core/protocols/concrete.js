@@ -41,6 +41,7 @@ export * from "./iprependable/concrete.js";
 export * from "./ireduce/concrete.js";
 export * from "./ireset/concrete.js";
 export * from "./ireversible/concrete.js";
+export * from "./irevertible/concrete.js";
 export * from "./isend/concrete.js";
 export * from "./iseq/concrete.js";
 export * from "./iseqable/concrete.js";

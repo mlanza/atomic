@@ -1,6 +1,6 @@
 import * as _ from "atomic/core";
 import * as p from "../../protocols/concrete.js";
-import {ISubscribe, IRevertible} from "../../protocols.js";
+import {ISubscribe} from "../../protocols.js";
 
 function deref(self){
   return _.deref(self.cell);
@@ -64,5 +64,5 @@ export default _.does(
   _.implement(_.IDeref, {deref}),
   _.implement(_.IReset, {reset}),
   _.implement(_.ISwap, {swap}),
-  _.implement(IRevertible, {undo, redo, flush, undoable, redoable}),
+  _.implement(_.IRevertible, {undo, redo, flush, undoable, redoable}),
   _.implement(ISubscribe, {sub, unsub, subscribed}));
