@@ -4,4 +4,3 @@ export * from "./ieventprovider/concrete.js";
 export * from "./imiddleware/concrete.js";
 export * from "./ipublish/concrete.js";
 export * from "./isubscribe/concrete.js";
-export * from "./irevertible/concrete.js";
