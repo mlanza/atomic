@@ -167,7 +167,6 @@ export function hashing(os){
     return p.hash(self.id);
   }
 
-  _.doto(_.GUID,
-    _.implement(IHash, {hash}));
+  _.each(_.implement(IHash, {hash}), [_.GUID, _.UID]);
 
 })();
