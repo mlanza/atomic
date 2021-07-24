@@ -1,6 +1,6 @@
 import * as _ from "atomic/core";
 import * as p from "../../protocols/concrete.js";
-import {IPublish, ISubscribe, IDispatch} from "../../protocols.js";
+import {IPublish, ISubscribe} from "../../protocols.js";
 
 function path(self){
   return self.path;
@@ -40,18 +40,11 @@ function subscribed(self){
   return _.count(self.callbacks);
 }
 
-function dispatch(self, command){
-  p.dispatch(self.source, _.update(command, "path", function(path){
-    return _.apply(_.conj, self.path, path || []);
-  }));
-}
-
 export default _.does(
   //_.implement(_.IDisposable, {dispose}), TODO
   _.implement(_.IPath, {path}),
   _.implement(_.IDeref, {deref}),
   _.implement(_.IReset, {reset}),
   _.implement(_.ISwap, {swap}),
-  _.implement(IDispatch, {dispatch}),
   _.implement(ISubscribe, {sub, unsub, subscribed}),
   _.implement(IPublish, {pub: reset}));

@@ -1,6 +1,7 @@
 import * as _ from "atomic/core";
+import * as $ from "atomic/reactives";
 import * as p from "../../protocols/concrete.js";
-import {IMiddleware, ISubscribe, IDispatch} from "../../protocols.js";
+import {IMiddleware, IDispatch} from "../../protocols.js";
 
 function dispatch(self, command){
   p.handle(self.handler, command);
@@ -12,6 +13,6 @@ function dispose(self){
 }
 
 export default _.does(
-  _.forward("state", ISubscribe, _.IDeref, _.IReset, _.ISwap, _.IReduce),
+  _.forward("state", $.ISubscribe, _.IDeref, _.IReset, _.ISwap, _.IReduce),
   _.implement(IDispatch, {dispatch}),
   _.implement(_.IDisposable, {dispose}));

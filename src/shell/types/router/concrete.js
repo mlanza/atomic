@@ -1,5 +1,5 @@
 import * as _ from "atomic/core";
-import {IDispatch} from "../../protocols.js";
+import {IDispatch, IHandler} from "../../protocols.js";
 
 function handler3(pred, callback, how){
   return handler2(how(pred, ?), how(callback, ?));
@@ -14,7 +14,7 @@ function handler2(pred, callback){
     return callback(message);
   }
   return _.doto(handler,
-    _.specify(_.IHandler, {handles}),
+    _.specify(IHandler, {handles}),
     _.specify(IDispatch, {dispatch}));
 }
 

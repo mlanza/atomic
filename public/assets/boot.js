@@ -126,11 +126,12 @@ define('jquery', ["vendor/jquery"], function(){
       return core.impart(tgt, core.partly);
     }));
   }
-})(["atomic/core", "atomic/dom", "atomic/immutables", "atomic/reactives", "atomic/repos", "atomic/transducers", "atomic/transients", "atomic/validates", "atomic/html", "atomic/svg"]);
+})(["atomic/core", "atomic/dom", "atomic/immutables", "atomic/reactives", "atomic/shell", "atomic/repos", "atomic/transducers", "atomic/transients", "atomic/validates", "atomic/html", "atomic/svg"]);
 define('cmd/imports', function(){
   return {
     "_": "atomic/core",
     "$": "atomic/reactives",
+    "sh": "atomic/shell",
     "dom": "atomic/dom",
     "imm": "atomic/immutables",
     "t": "atomic/transducers",

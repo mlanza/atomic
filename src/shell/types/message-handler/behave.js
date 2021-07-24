@@ -1,6 +1,6 @@
 import * as _ from "atomic/core";
 import * as p from "../../protocols/concrete";
-import {IMiddleware} from "../../protocols/imiddleware/instance.js"
+import {IMiddleware} from "../../../shell/protocols/imiddleware/instance.js"
 
 function handle(self, command, next){
   const type = _.get(command, "type");
