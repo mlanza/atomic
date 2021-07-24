@@ -1,7 +1,7 @@
-import {identity, overload, does} from "../../core.js";
+import {identity, overload, does, slice} from "../../core.js";
 import {implement} from "../protocol.js";
 import * as p from "../../protocols/concrete.js";
-import {IRevertible, IAssociative, ILookup} from "../../protocols.js";
+import {IRevertible, IAssociative, ILookup, IFunctor, IDeref} from "../../protocols.js";
 import {Journal} from "./construct.js";
 
 function undo(self){
@@ -25,8 +25,7 @@ function redoable(self){
 }
 
 function assoc(self, key, value){
-  const revised = p.assoc(self.state, key, value);
-  return new Journal(0, self.max, p.prepend(self.history, revised), revised);
+  return fmap(self, p.assoc(?, key, value))
 }
 
 function contains(self, key){
@@ -37,7 +36,18 @@ function lookup(self, key){
   return p.get(p.nth(self.history, self.pos), key);
 }
 
+function deref(self){
+  return self.state;
+}
+
+function fmap(self, f){
+  const revised = f(self.state);
+  return new Journal(0, self.max, p.prepend(self.pos ? slice(self.history, self.pos) : self.history, revised), revised);
+}
+
 export default does(
+  implement(IDeref, {deref}),
+  implement(IFunctor, {fmap}),
   implement(ILookup, {lookup}),
   implement(IAssociative, {assoc, contains}),
   implement(IRevertible, {undo, redo, flush, undoable, redoable}));
