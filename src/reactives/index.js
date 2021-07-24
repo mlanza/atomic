@@ -3,7 +3,7 @@ import * as p from "./protocols/concrete.js";
 import * as t from "atomic/transducers";
 import Symbol from "symbol";
 import Promise from "promise";
-import {IDispatch, IPublish} from "./protocols.js";
+import {IPublish} from "./protocols.js";
 import {ireduce} from "./shared.js";
 import {
   interact,
@@ -280,7 +280,6 @@ export const renderDiff = _.overload(null, null, renderDiff2, renderDiff3);
 
   _.doto(Function,
     ireduce, //makes fns work as observers like `cell`, e.g. `$.connect($.tick(3000), _.see("foo"))`
-    _.implement(IPublish, {pub, err: _.noop, complete: _.noop, closed: _.noop}),
-    _.implement(IDispatch, {dispatch}));
+    _.implement(IPublish, {pub, err: _.noop, complete: _.noop, closed: _.noop}));
 
 })();

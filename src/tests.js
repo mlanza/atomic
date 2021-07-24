@@ -2,6 +2,7 @@ import * as _ from "atomic/core";
 import * as I from "atomic/immutables";
 import * as dom from "atomic/dom";
 import * as $ from "atomic/reactives";
+import * as sh from "atomic/shell";
 import * as vd from "atomic/validates";
 import * as t from "atomic/transducers";
 import * as mut from "atomic/transients";
@@ -37,16 +38,16 @@ QUnit.test("inheritance chain", function(assert){
 });
 
 QUnit.test("router & multimethod", function(assert){ //not just for fns!
-  const f = _.doto($.router(), //router handlers need not be (but can be) fns
-      mut.conj(?, $.handler(_.signature(_.isString), _.str(?, "!"), _.apply)), //use apply to spread the message against the pred and callback
-      mut.conj(?, $.handler(_.signature(_.isNumber), _.mult(?, 2), _.apply)));
+  const f = _.doto(sh.router(), //router handlers need not be (but can be) fns
+      mut.conj(?, sh.handler(_.signature(_.isString), _.str(?, "!"), _.apply)), //use apply to spread the message against the pred and callback
+      mut.conj(?, sh.handler(_.signature(_.isNumber), _.mult(?, 2), _.apply)));
   const g = _.doto(mut.multimethod(), //multimethod handlers must be fns
       mut.conj(?, mut.method(_.signature(_.isString), _.str(?, "!"))), //as a multimethod always dispatches to fns, apply is a given and need not be specified.
       mut.conj(?, mut.method(_.signature(_.isNumber), _.mult(?, 2))));
-  assert.equal($.dispatch(f, [1]), 2);
-  assert.equal($.dispatch(f, ["timber"]), "timber!");
-  assert.equal($.dispatch(g, [1]), 2);
-  assert.equal($.dispatch(g, ["timber"]), "timber!");
+  assert.equal(sh.dispatch(f, [1]), 2);
+  assert.equal(sh.dispatch(f, ["timber"]), "timber!");
+  assert.equal(sh.dispatch(g, [1]), 2);
+  assert.equal(sh.dispatch(g, ["timber"]), "timber!");
   assert.equal(g(1), 2);
   assert.equal(g("timber"), "timber!");
 });
@@ -88,16 +89,16 @@ QUnit.test("validation", function(assert){
 QUnit.test("component", function(assert){
   const people =
     _.doto(
-      $.component($.cell([]), function(accepts, raises, affects){
+      sh.component($.cell([]), function(accepts, raises, affects){
         return [{
           "add": accepts("added")
         }, {
           "added": affects(_.conj)
         }]
       }),
-    $.dispatch(?, {type: "add", args: [{name: "Moe"}]}),
-    $.dispatch(?, {type: "add", args: [{name: "Curly"}]}),
-    $.dispatch(?, {type: "add", args: [{name: "Shemp"}]}));
+    sh.dispatch(?, {type: "add", args: [{name: "Moe"}]}),
+    sh.dispatch(?, {type: "add", args: [{name: "Curly"}]}),
+    sh.dispatch(?, {type: "add", args: [{name: "Shemp"}]}));
 
   assert.equal(_.count(_.deref(people)), 3);
 });

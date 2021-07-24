@@ -37,6 +37,7 @@ export default {
     "atomic/immutables",
     "atomic/repos",
     "atomic/reactives",
+    "atomic/shell",
     "atomic/transducers",
     "atomic/transients",
     "atomic/validates",

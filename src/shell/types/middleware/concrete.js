@@ -1,5 +1,6 @@
 import * as _ from "atomic/core";
 import * as mut from "atomic/transients";
+import * as $ from "atomic/reactives";
 import * as p from "../../protocols/concrete.js";
 import {middleware} from "./construct.js";
 import {eventDispatcher} from "../event-dispatcher/construct.js";
@@ -7,7 +8,6 @@ import {messageProcessor} from "../message-processor/construct.js";
 import {messageHandler} from "../message-handler/construct.js";
 import {bus} from "../bus/construct.js";
 import {events} from "../events/construct.js";
-import {subject} from "../subject/construct.js";
 import {IMiddleware} from "../../protocols/imiddleware/instance.js";
 
 function handles(handle){
@@ -50,7 +50,7 @@ export const affects = _.overload(null, null, affects2, affects3);
 function component2(state, callback){
   const evts = events(),
         ware = middleware(),
-        observer = subject();
+        observer = $.subject();
   return _.doto(bus(state, ware), function($bus){
     const maps = callback(_.partial(accepts, evts), _.partial(raises, evts, $bus), _.partial(affects, $bus));
     const commandMap = maps[0], eventMap = maps[1];

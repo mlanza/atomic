@@ -1,7 +1,8 @@
 import * as _ from "atomic/core";
+import * as $ from "atomic/reactives";
 import * as mut from "atomic/transients";
 import * as p from "../../protocols/concrete.js";
-import {IDispatch, IEvented} from "../../protocols.js";
+import {IDispatch, IHandler} from "../../protocols.js";
 import {handler} from "../router/concrete.js";
 
 function on(self, pred, callback){
@@ -9,7 +10,7 @@ function on(self, pred, callback){
 }
 
 function handles(self, message){
-  return _.detect(_.handles(?, message), self.handlers);
+  return _.detect(p.handles(?, message), self.handlers);
 }
 
 function dispatch(self, message){
@@ -25,7 +26,7 @@ function conj(self, handler){
 }
 
 export default _.does(
-  _.implement(IEvented, {on}),
   _.implement(IDispatch, {dispatch}),
-  _.implement(_.IHandler, {handles}),
+  _.implement(IHandler, {handles}),
+  _.implement($.IEvented, {on}),
   _.implement(mut.ITransientCollection, {conj}));
