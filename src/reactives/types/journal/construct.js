@@ -15,4 +15,4 @@ function journal1(cell){
   return journal2(Infinity, cell);
 }
 
-export const journal = _.overload(null, journal1, journal2);
+export const journal = _.called(_.overload(null, journal1, journal2), "`journal` is deprecated — use persistent `journal` from `core` and a `cell`.");
