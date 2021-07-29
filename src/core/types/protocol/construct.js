@@ -81,6 +81,9 @@ function specify2(behavior, target){
   const keys = this.generate();
   addMeta(target, keys("__marker__"), this);
   for(let method in behavior){
+    if (!this[method]) {
+      throw new Error("Foreign behavior specified: " + method);
+    }
     addMeta(target, keys(method), behavior[method]);
   }
 }
