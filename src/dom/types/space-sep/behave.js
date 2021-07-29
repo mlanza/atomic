@@ -33,7 +33,7 @@ function count(self){
 
 export default _.does(
   _.implement(_.ISequential),
-  _.implement(_.ISeq, {seq}),
+  _.implement(_.ISeqable, {seq}),
   _.implement(_.IDeref, {deref}),
   _.implement(_.IInclusive, {includes}),
   _.implement(_.ICoercible, {toArray: deref}),
