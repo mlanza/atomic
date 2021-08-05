@@ -200,14 +200,17 @@ export function collapse(...args){
   return some(isBlank, args) ? "" : join("", args);
 }
 
-function isNotConstructor(f){
-  return isFunction(f) && !/^[A-Z]./.test(p.name(f));
+function impartable(f){
+  const fn    = isFunction(f),
+        named = fn ? p.name(f) : null,
+        type = typeof named;
+  return fn && type !== "symbol" && !/^[A-Z]./.test(named);
 }
 
 //convenience for wrapping batches of functions.
-export function impart(self, f){ //set retraction to identity to curb retraction overhead
+export function impart(self, f){ //override `impart` with `identity` to nullify its effects
   return p.reducekv(function(memo, key, value){
-    return p.assoc(memo, key, isNotConstructor(value) ? f(value) : value);
+    return p.assoc(memo, key, impartable(value) ? f(value) : value); //impart to functions which are not also constructors
   }, {}, self);
 }
 

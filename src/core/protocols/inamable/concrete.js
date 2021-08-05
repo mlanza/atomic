@@ -20,7 +20,5 @@ function what2(self, type){
 export const what = overload(null, what1, what2);
 
 export const naming = pre(function naming(type, symbol){
-  if (!satisfies(INamable, type) || typeof name(type) !== "symbol") {
-    doto(type, specify(INamable, {name: constantly(symbol)}));
-  }
+  doto(type, specify(INamable, {name: constantly(symbol)}));
 }, signature(isFunction, isSymbol));

@@ -9,6 +9,8 @@ import {rePattern} from "../reg-exp/concrete.js";
 import {emptyString} from "./construct.js";
 import {replace} from "./concrete.js";
 import * as p from "./protocols.js";
+import Symbol from "symbol";
+import {naming} from "../../protocols/inamable/concrete.js";
 
 function split1(str){
   return str.split("");
@@ -105,6 +107,7 @@ function matches(self, re){
 
 export default does(
   iindexed,
+  naming(?, Symbol("String")),
   implement(ISplittable, {split}),
   implement(IBlankable, {blank}),
   implement(ITemplate, {fill}),

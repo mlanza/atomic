@@ -10,6 +10,8 @@ import {update} from "../../protocols/iassociative/concrete.js";
 import {emptyObject, isObject} from "../object/construct.js";
 import {descriptive} from "../object/concrete.js";
 import * as p from "./protocols.js";
+import {naming} from "../../protocols/inamable/concrete.js";
+import Symbol from "symbol";
 
 const keys = Object.keys;
 const vals = Object.values;
@@ -179,12 +181,13 @@ function toArray(self){
 }
 
 export default does(
+  naming(?, Symbol("Object")),
   implement(ITemplate, {fill}),
   implement(IBlankable, {blank}),
   implement(IMergable, {merge}),
   implement(ICompactible, {compact}),
   implement(IEquiv, {equiv}),
-  implement(ICoercible, {toArray: toArray, toObject: identity}),
+  implement(ICoercible, {toArray, toObject: identity}),
   implement(IFind, {find}),
   implement(IOmissible, {omit}),
   implement(IInclusive, {includes}),
@@ -197,7 +200,7 @@ export default does(
   implement(IFn, {invoke: lookup}),
   implement(ISeq, {first, rest}),
   implement(INext, {next}),
-  implement(ILookup, {lookup: lookup}),
+  implement(ILookup, {lookup}),
   implement(IEmptyableCollection, {empty: emptyObject}),
   implement(IAssociative, {assoc, contains}),
   implement(ISeqable, {seq}),
