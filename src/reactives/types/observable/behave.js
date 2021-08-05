@@ -1,4 +1,5 @@
 import * as _ from "atomic/core";
+import * as p from "../../protocols/concrete.js";
 import {ISubscribe} from "../../protocols/isubscribe.js";
 import {closed} from "../../protocols/ipublish.js";
 import {imergable, ireduce} from "../../shared.js";
@@ -8,7 +9,16 @@ function sub(self, observer){
   return closed(observer) ? (unsub(), _.noop) : unsub;
 }
 
+const deref = _.called(function deref(self){
+  let value = null;
+  p.sub(self, function(val){
+    value = val;
+  })(); //immediate unsubscribe
+  return value;
+}, "Prefer to subscribe to observables rather than `deref` them.");
+
 export default _.does(
   ireduce,
   imergable,
+  _.implement(_.IDeref, {deref}),
   _.implement(ISubscribe, {sub, unsub: _.noop, subscribed: _.constantly(1)})); //TODO  `unsub` and `subscribed` mock implementations are for cross compatibility and may be removed post migration

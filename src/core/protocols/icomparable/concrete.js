@@ -10,7 +10,7 @@ export function compare(x, y){
     return -1;
   } else if (isNil(y)) {
     return 1;
-  } else if (x.constructor === y.constructor) { //TODO use `what`?
+  } else if (x.constructor.name === y.constructor.name) { //TODO need a more robust check
     return IComparable.compare(x, y);
   } else {
     throw new TypeError("Cannot compare different types.");
