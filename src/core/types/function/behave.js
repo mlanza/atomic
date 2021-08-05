@@ -4,6 +4,8 @@ import {apply} from "./concrete.js";
 import {INamable, IFn, IAppendable, IPrependable} from "../../protocols.js";
 import Symbol from "symbol";
 import * as p from "./protocols.js";
+import {naming} from "../../protocols/inamable/concrete.js";
+
 
 export function append(f, ...applied){
   return function(...args){
@@ -20,6 +22,7 @@ function name(self){
 }
 
 export default does(
+  naming(?, Symbol("Function")),
   implement(INamable, {name}),
   implement(IAppendable, {append}),
   implement(IPrependable, {prepend: partial}),
