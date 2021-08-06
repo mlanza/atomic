@@ -10,9 +10,4 @@ function right1(value){
 }
 
 export const right = overload(null, right1, partial(thrush, right1));
-
-export function isRight(self){
-  return self instanceof Right;
-}
-
 export const just = right;

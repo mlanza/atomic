@@ -1,6 +1,7 @@
+import * as _ from "atomic/core";
 import {List} from "immutable";
 export {List} from "immutable";
 
 export function list(obj){
-  return obj instanceof List ? obj : new List(obj);
+  return _.ako(obj, List) ? obj : new List(obj);
 }

@@ -8,6 +8,3 @@ export const fragment = _.assume(isHTMLDocument, document, function fragment(doc
     embed(?, contents));
 });
 
-export function isDocumentFragment(self){
-  return self && self instanceof DocumentFragment;
-}

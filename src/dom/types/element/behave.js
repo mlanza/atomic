@@ -68,7 +68,7 @@ const matches = _.pre(function matches(self, selector){
 }, check);
 
 function isAttrs(self){
-  return !(self instanceof Node) && _.descriptive(self);
+  return !_.ako(self, Node) && _.descriptive(self);
 }
 
 function eventContext(catalog){
