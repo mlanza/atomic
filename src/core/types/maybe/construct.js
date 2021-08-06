@@ -11,7 +11,3 @@ function maybe1(x){
 
 export const maybe = overload(null, maybe1, partial(thrush, maybe1));
 export const opt = pipeline(maybe1);
-
-export function isMaybe(self){
-  return self instanceof Maybe;
-}

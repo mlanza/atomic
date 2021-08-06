@@ -83,7 +83,7 @@ QUnit.test("validation", function(assert){
   assert.ok(dob.constraint === Date);
   assert.ok(name.constraint === String);
   assert.ok(names != null);
-  assert.ok(anon.constraint instanceof vd.Required);
+  assert.ok(_.ako(anon.constraint, vd.Required));
   assert.ok(status != null);
   //TODO add `when` to validate conditiontionally or allow condition to be checked before registering the validation?
 });
@@ -152,7 +152,7 @@ QUnit.test("dom", function(assert){
   assert.deepEqual(_.fluent(moe, dom.classes, mut.conj(?, "main"), _.deref), ["main"]);
   assert.equal(_.fluent(moe, dom.attr(?, "data-tagged", "tests"), _.get(?, "data-tagged")), "tests");
   stooges |> dom.append(?, div({id: 'branding'}, span("Three Blind Mice")));
-  assert.ok(stooges |> dom.sel("#branding", ?) |> _.first |> (el => el instanceof HTMLDivElement), "Found by id");
+  assert.ok(stooges |> dom.sel("#branding", ?) |> _.first |> (el => _.ako(el, HTMLDivElement)), "Found by id");
   assert.deepEqual(stooges |> dom.sel("#branding span", ?) |> _.map(dom.text, ?) |> _.first, "Three Blind Mice", "Read text content");
   const greeting = stooges |> dom.sel("#branding span", ?) |> _.first;
   dom.hide(greeting);
@@ -183,8 +183,8 @@ QUnit.test("lazy-seq", function(assert){
   assert.ok(effects.length === 10);
   assert.ok(_.blank(blank));
   assert.ok(!_.blank(nums));
-  assert.ok(_.rest(blank) instanceof _.EmptyList);
-  assert.ok(_.rest(nums) instanceof _.LazySeq);
+  assert.ok(_.ako(_.rest(blank), _.EmptyList));
+  assert.ok(_.ako(_.rest(nums), _.LazySeq));
   assert.ok(_.seq(blank) == null);
   assert.ok(_.seq(nums) != null);
   assert.deepEqual(_.toArray(nums), [0,1,2]);

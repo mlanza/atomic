@@ -3,7 +3,7 @@ import {implement} from "../protocol.js";
 import {EmptyList, emptyList} from "../../types/empty-list/construct.js";
 import {cons} from "../../types/list/construct.js";
 import {range} from "../../types/range/construct.js";
-import {Reduced, unreduced} from "../../types/reduced.js";
+import {isReduced, unreduced} from "../../types/reduced.js";
 import {ISequential, ICoercible, ILookup, IMap, IClonable, IReduce, ICollection, IEmptyableCollection, INext, ISeq, ICounted, ISeqable, IIndexed} from "../../protocols.js";
 import {revSeq} from "./construct.js";
 import {iterable} from "../lazy-seq/behave.js";
@@ -56,12 +56,12 @@ function reduce3(coll, f, init){
       xs   = p.seq(coll);
   while(xs){
     memo = f(memo, p.first(xs));
-    if (memo instanceof Reduced) {
-      return unreduced(memo);
+    if (isReduced(memo)) {
+      break;
     }
     xs = p.next(xs);
   }
-  return memo;
+  return unreduced(memo);
 }
 
 const reduce = overload(null, null, reduce2, reduce3);

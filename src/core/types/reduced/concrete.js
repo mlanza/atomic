@@ -1,6 +1,9 @@
-import {overload} from "../../core.js";
-import {IReduce} from "../../protocols/ireduce.js";
-import {isReduced} from "./construct.js";
+import {Reduced} from "./construct.js";
+import {is} from "../../protocols/inamable/concrete.js";
+
+export function isReduced(self){
+  return is(self, Reduced);
+}
 
 export function unreduced(self){
   return isReduced(self) ? self.valueOf() : self;

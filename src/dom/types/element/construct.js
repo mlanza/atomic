@@ -14,5 +14,5 @@ export const elementns = _.assume(isHTMLDocument, document, _.curry(function ele
 }, 3));
 
 export function isElement(self){
-  return self instanceof Element;
+  return _.ako(self, Element);
 }

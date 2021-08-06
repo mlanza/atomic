@@ -10,7 +10,3 @@ export function left1(value){
 }
 
 export const left = overload(null, left1, partial(thrush, left1));
-
-export function isLeft(self){
-  return self instanceof Left;
-}

@@ -1,5 +1,6 @@
+import * as _ from "atomic/core";
 import {HTMLDocument} from "dom";
 
 export function isHTMLDocument(self){
-  return self instanceof HTMLDocument;
+  return _.ako(self, HTMLDocument);
 }

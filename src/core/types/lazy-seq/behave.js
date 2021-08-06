@@ -1,7 +1,7 @@
 import {overload, identity, does, partial, comp} from "../../core.js";
 import {implement} from "../protocol.js";
 import {IBlankable, ICompactible, IFunctor, IReversible, IOmissible, ICoercible, IInclusive, IFind, IEquiv, ICollection, INext, ISeq, IReduce, IKVReduce, ISeqable, ISequential, IIndexed, IEmptyableCollection, ICounted, IAppendable, IPrependable} from "../../protocols.js";
-import {Reduced, isReduced, reduced} from "../reduced.js";
+import {isReduced, reduced, unreduced} from "../reduced.js";
 import {concat} from "../concatenated/construct.js";
 import {cons} from "../list/construct.js";
 import {map, filter, detect} from "./concrete.js";
@@ -101,22 +101,22 @@ function idx(self, x){
 function reduce(xs, f, init){
   let memo = init,
       ys = p.seq(xs);
-  while(ys && !(memo instanceof Reduced)){
+  while(ys && !isReduced(memo)){
     memo = f(memo, p.first(ys));
     ys = p.next(ys);
   }
-  return memo instanceof Reduced ? memo.valueOf() : memo;
+  return unreduced(memo);
 }
 
 function reducekv(xs, f, init){
   let memo = init,
       ys = p.seq(xs),
       idx = 0;
-  while(ys && !(memo instanceof Reduced)){
+  while(ys && !isReduced(memo)){
     memo = f(memo, idx++, p.first(ys));
     ys = p.next(ys);
   }
-  return memo instanceof Reduced ? memo.valueOf() : memo;
+  return unreduced(memo);
 }
 
 function toArray(xs){

@@ -1,4 +1,5 @@
 import {unbind, isString} from "../../core.js";
+import {isArray} from "../../types/array/concrete.js";
 import {count} from "../../protocols/icounted/concrete.js";
 import {first} from "../../protocols/iseq/concrete.js";
 import {get} from "../../protocols/ilookup/concrete.js";
@@ -45,7 +46,7 @@ export function reSeq(re, s){
   return lazySeq(function(){
     const matchData = reFind(re, s),
           matchIdx = s.search(re),
-          matchStr = matchData instanceof Array ? first(matchData) : matchData,
+          matchStr = isArray(matchData) ? first(matchData) : matchData,
           postIdx = matchIdx + max(1, count(matchStr)),
           postMatch = s.substring(postIdx);
     return matchData ? cons(matchData, reSeq(new RegExp(re.source, re.flags), postMatch)) : emptyList();

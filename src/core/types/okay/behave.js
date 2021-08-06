@@ -2,7 +2,7 @@ import {IFunctor, IForkable} from "../../protocols.js";
 import {does, overload} from "../../core.js";
 import {implement} from "../protocol.js";
 import {okay} from "./construct.js";
-import {isError} from "../error/construct.js";
+import {isError} from "../error/concrete.js";
 
 function fmap(self, f){
   try{

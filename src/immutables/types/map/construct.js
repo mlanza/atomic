@@ -1,5 +1,6 @@
+import * as _ from "atomic/core";
 import {Map} from "immutable";
 
 export function map(obj){
-  return obj instanceof Map ? obj : new Map(obj);
+  return _.ako(obj, Map) ? obj : new Map(obj);
 }
