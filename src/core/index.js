@@ -4,7 +4,7 @@ import {just, satisfies, spread, maybe, each, duration, remove, sort, flip, real
 import {isBlank, str, replace} from "./types/string.js";
 import {isSome} from "./types/nil.js";
 import {implement, behaves} from "./types/protocol/concrete.js";
-import {into, detect, map, mapa, splice, drop, join, some, last, takeWhile, dropWhile, filter, lazySeq} from "./types/lazy-seq.js";
+import {into, detect, map, mapa, splice, drop, join, some, last, takeWhile, dropWhile, filter} from "./types/lazy-seq.js";
 import {concat} from "./types/concatenated.js";
 import iseries from "./types/series/behave.js";
 export {filter} from "./types/lazy-seq.js";

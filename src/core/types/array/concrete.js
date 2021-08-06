@@ -1,5 +1,5 @@
 import {is} from "../../protocols/inamable/concrete.js";
 
-export function isRegExp(self){
-  return is(self, RegExp);
+export function isArray(self){
+  return is(self, Array);
 }

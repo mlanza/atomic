@@ -1,13 +1,11 @@
-import {overload, identity, constantly, complement, unary, partial} from "../../core.js";
+import {overload, identity, constantly, complement, unary, partial, constructs} from "../../core.js";
 import {IReduce, ICounted, IComparable, IAddable} from "../../protocols.js";
 import * as p from "./protocols.js";
+import {is} from "../../protocols/inamable/concrete.js";
 
-export function number(...args){
-  return Number(...args);
-}
-
-export const num   = unary(number);
-export const int   = parseInt;
+export const number = constructs(Number);
+export const num = unary(number);
+export const int = parseInt;
 export const float = parseFloat;
 
 export function isNaN(n){
@@ -15,17 +13,17 @@ export function isNaN(n){
 }
 
 export function isNumber(n){
-  return Number(n) === n;
+  return is(n, Number) && !isNaN(n);
 }
 
 export function isInteger(n){
-  return Number(n) === n && n % 1 === 0;
+  return isNumber(n) && n % 1 === 0;
 }
 
 export const isInt = isInteger;
 
 export function isFloat(n){
-  return Number(n) === n && n % 1 !== 0;
+  return isNumber(n) && n % 1 !== 0;
 }
 
 export function mod(n, div){

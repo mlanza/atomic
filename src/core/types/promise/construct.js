@@ -1,9 +1,10 @@
 import Promise from "promise";
+import {is} from "../../protocols/inamable/concrete.js";
 
 export function promise(handler){
   return new Promise(handler);
 }
 
 export function isPromise(self){
-  return self instanceof Promise;
+  return is(self, Promise);
 }
