@@ -8,7 +8,7 @@ See:
 * https://github.com/mrdoob/three.js/issues/5886
 * http://perfectionkills.com/instanceof-considered-harmful-or-how-to-write-a-robust-isarray/
 
-To work around the issue Atomic applies symbolic names to constructors.  These same names can be applied to constructors in other frames.  Doing this guarantees identical constructors (from different frames) share a common identity.  This enables `is` and `ako` (while `CROSSFRAME=1`) to umambiguously identify objects.
+To work around the issue Atomic applies symbolic names to constructors.  These same names can be applied to constructors in other frames.  Doing this guarantees identical constructors (from different frames) share a common identity.  This enables `is` and `ako` (while `CROSSFRAME=1`) to unambiguously identify objects.
 
 Third-party code including most polyfills (even natives) should be considered unreliable as there is no consistent means by which developers have tackled cross-frame operability.  Only fully-controlled code with no external dependencies (unknowns) can be trusted!
 
@@ -31,9 +31,9 @@ Behaviors can be assigned to types if foreign hosts so they understand a module'
 import * as core from "atomic/core";
 import * as dom from "atomic/dom";
 
-core.behave(window);
-core.behave({Array, Object});
-dom.behave(window); //includes all known types
-dom.behave({Window, Location, HTMLDocument}); //includes only specified types
+core.behave(window); //includes all known types
+core.behave({Array, Object}); //includes only specified types
+dom.behave(window);
+dom.behave({Window, Location, HTMLDocument});
 ```
 Behaviors (and names) are automatically imbued in the frame in which a module loads.  It is only necessary to manually imbue behaviors to any foreign frames which interact (send data to) with the current.
