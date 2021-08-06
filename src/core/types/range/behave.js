@@ -1,4 +1,4 @@
-import {does, kin} from "../../core.js";
+import {does} from "../../core.js";
 import {implement} from "../protocol.js";
 import {ICoercible, IInverse, ISequential, INext, IEquiv, IReduce, IKVReduce, ISeqable, ICounted, ISeq, IInclusive, IIndexed} from "../../protocols.js";
 import {unreduced, isReduced} from "../reduced.js";
@@ -28,7 +28,7 @@ function next(self){
 }
 
 function equiv(self, other){
-  return kin(self, other) ? p.alike(self, other) : _equiv(self, other);
+  return p.kin(self, other) ? p.alike(self, other) : _equiv(self, other);
 }
 
 function reduce(self, f, init){

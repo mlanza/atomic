@@ -1,2 +1,3 @@
-import {noop} from "../../core.js";
-export default noop; //future behavior
+import Symbol from "symbol";
+import {naming} from "../../protocols/inamable/concrete.js";
+export default naming(?, Symbol("RegExp"));

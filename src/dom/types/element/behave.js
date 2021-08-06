@@ -67,10 +67,6 @@ const matches = _.pre(function matches(self, selector){
   return self.matches(selector);
 }, check);
 
-function isText(self){
-  return self && self.constructor === Text;
-}
-
 function isAttrs(self){
   return !(self instanceof Node) && _.descriptive(self);
 }

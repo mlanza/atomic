@@ -5,6 +5,11 @@ import {overload, branch, isFunction} from "../../core.js";
 import {satisfies} from "../protocol/concrete.js";
 import {emptyObject} from "./construct.js";
 import * as p from "./protocols.js";
+import {is} from "../../protocols/inamable/concrete.js";
+
+export function isObject(self){
+  return is(self, Object);
+}
 
 //an entity is has descriptive key/value pairs whereas an array does not.
 export function descriptive(self){

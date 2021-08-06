@@ -1,9 +1,14 @@
-import {overload, kin, everyPair, constantly, complement} from "../../core.js";
+import {overload, everyPair, constantly, complement} from "../../core.js";
 import {implement} from "../../types/protocol/concrete.js";
 import {IEquiv} from "./instance.js";
 import {reduce} from "../ireduce/concrete.js";
 import {reduced} from "../../types/reduced/construct.js";
 import {get} from "../ilookup/concrete.js";
+import {is} from "../../protocols/inamable/concrete.js";
+
+export function kin(self, other){
+  return is(other, self.constructor);
+}
 
 export function equiv(self, other){
   return self === other || IEquiv.equiv(self, other);

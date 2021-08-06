@@ -1,6 +1,7 @@
 import resolve from '@rollup/plugin-node-resolve';
 import babel from '@rollup/plugin-babel';
 import json  from '@rollup/plugin-json';
+import jscc from 'rollup-plugin-jscc';
 
 export default {
   input: [
@@ -59,6 +60,9 @@ export default {
   ],
   plugins: [
     resolve(),
+    jscc({
+      values: { _CROSSFRAME: 1 },
+    }),
     babel({
       exclude: 'node_modules/**',
       babelHelpers: 'inline'

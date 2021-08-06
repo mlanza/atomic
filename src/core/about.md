@@ -8,16 +8,20 @@ See https://github.com/mrdoob/three.js/issues/5886 and http://perfectionkills.co
 
 To work around the issue `naming` was provided.  This functions assigns symbolic names to behaviors.  The behaviors can be exported and even applied to cross-frame classes.  This guarantees classes spanning environments share common symbolic names.
 
-This enables `what` to umambiguously and consistently identify an object by a fixed, symbolic name.  It should be preferred (e.g. `what(s, String)`, `what(e, Element)`, `what(d, HTMLDocument)`) to type checking functions which rely internally on `instanceof` (e.g. `isString(s)`, `isElement(e)`, `isHTMLDocument(d)`, etc.).
+This enables `is` and `ako` (while `CROSSFRAME=1` to umambiguously and consistently identify an object by a fixed, symbolic name if one was assigned and its textual name if not.  While assigning symbolic names is preferred, textual names are extremely reliable.  The only potential issue would result from name collisions (e.g. types that share a name).  Symbolic names overcome this problem.
 
-Unfortuately, this approach works only where `instanceof` has been eradicated.  Who's to say whether dependencies, polyfills and even host natives are using the nefarious `instanceof`!?  A set of functions whose dependencies are untainted can indeed operate cleanly across frames.  Test well.
+Third-party code including most polyfills (even natives) should be considered unreliable as there is no consistent means by which developers are tackling cross-frame operability.  Only fully-controlled code with no external dependencies (unknowns) can be trusted.  If third-party dependencies (unknown code!!) are used, test well!
+
+Set `CROSSFRAME=1` to compile cross-frame operable bundles and `CROSSFRAME=0` when not needed as this option is not free of cost.
 
 ### Fostering Cross-Frame Module Use
 
-* Don't use `instanceof` (e.g. `isElement`).
-* Don't compare constructors to classes.
+* Don't use `instanceof`.  Use `ako`.
+* Don't check constructors.  Use `is`.
 * Don't bake environment globals (e.g. `document`, `location`) into functions or, at least, provide an overload which allows defaults to be overridden.
+* Type checking functions (`isString(s)`, `isElement(e)`, etc.) should be built from `is` or `ako`.
 * Export behaviors.  Apply the behaviors and names (e.g. `naming`) into foreign environments which share the library.
+* Don't create a type-testing function such as `isThing(t)` where `is(t, Thing)` will do unless further tests are needed.  An exception has been made for common types (`isObject`, `isArray`, etc.).
 
 ## Extending Foreign Hosts
 

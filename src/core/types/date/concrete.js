@@ -1,5 +1,10 @@
 import {overload, identity} from "../../core.js";
 import * as p from "./protocols.js";
+import {is} from "../../protocols/inamable/concrete.js";
+
+export function isDate(self){
+  return is(self, Date);
+}
 
 export function monthDays(self){
   return p.patch(self, {
@@ -69,10 +74,6 @@ export function rdow(self, n){
 
 export function mdow(self, n){
   return rdow(p.patch(self, som()), n);
-}
-
-export function isDate(self){
-  return self instanceof Date && !isNaN(self);
 }
 
 export function time(hour, minute, second, millisecond){

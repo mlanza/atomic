@@ -34,7 +34,9 @@ QUnit.test("inheritance chain", function(assert){
   assert.equal(_.name(greg), "Gregory");
   assert.ok(_.satisfies(_.INamable, Array)); //e.g. from `naming`
   assert.ok(!_.satisfies(_.INamable, []));
-  assert.ok(_.what([], Array)); //e.g. from `naming`
+  assert.ok(_.isArray([]));
+  assert.ok(_.isObject({}));
+
 });
 
 QUnit.test("router & multimethod", function(assert){ //not just for fns!

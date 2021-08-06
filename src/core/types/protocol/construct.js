@@ -69,13 +69,13 @@ function specify1(behavior){
 }
 
 function specify2(behavior, target){
-  if (!this) {
+  if (this == null) {
     throw new Error("Protocol not specified.");
   }
-  if (!behavior) {
+  if (behavior == null) {
     throw new Error("Behavior not specified.");
   }
-  if (!target) {
+  if (target == null) {
     throw new Error("Subject not specified.");
   }
   const keys = this.generate();

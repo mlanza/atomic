@@ -1,4 +1,4 @@
-import Symbol from "symbol";
+import {Nil} from "./types/nil/construct.js";
 export const unbind = Function.call.bind(Function.bind, Function.call);
 export const slice = unbind(Array.prototype.slice);
 export const indexOf = unbind(Array.prototype.indexOf);
@@ -6,6 +6,16 @@ export const log = console.log.bind(console);
 export const warn = console.warn.bind(console);
 export const info = console.info.bind(console);
 export const debug = console.debug.bind(console);
+
+/*#if _CROSSFRAME
+info("CROSSFRAME", 1);
+//#else */
+info("CROSSFRAME", 0);
+//#endif
+
+export function type(self){
+  return self == null ? Nil : self.constructor;
+}
 
 export function isFunction(f){
   return typeof f === "function";
@@ -181,28 +191,6 @@ export function does(...effects){
       effect(...args);
     }
   }
-}
-
-function is1(constructor){
-  return function(self){
-    return is2(self, constructor);
-  }
-}
-
-function is2(self, constructor){
-  return self != null && self.constructor === constructor;
-}
-
-export const is = overload(null, is1, is2);
-
-export function isInstance(self, constructor){
-  return self instanceof constructor;
-}
-
-export const ako = isInstance;
-
-export function kin(self, other){
-  return other != null && self != null && other.constructor === self.constructor;
 }
 
 export function unspread(f){

@@ -6,7 +6,6 @@ import Symbol from "symbol";
 import * as p from "./protocols.js";
 import {naming} from "../../protocols/inamable/concrete.js";
 
-
 export function append(f, ...applied){
   return function(...args){
     return f.apply(this, args.concat(applied));

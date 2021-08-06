@@ -2,6 +2,7 @@ import {overload} from "../../core.js";
 import {EmptyList, emptyList} from "../../types/empty-list.js";
 import Symbol from "symbol";
 import * as p from "./protocols.js";
+import {is} from "../../protocols/inamable/concrete.js";
 
 export function List(head, tail){
   this.head = head;
@@ -22,9 +23,6 @@ export const cons = overload(emptyList, cons2, cons2, consN);
 
 List.prototype[Symbol.toStringTag] = "List";
 
-export function isList(self){
-  return self && self.constructor === List || self.constructor === EmptyList;
-}
 
 export function list(...args){
   return p.reduce(function(memo, value){

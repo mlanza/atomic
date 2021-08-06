@@ -32,10 +32,6 @@ export function concatenated(xs){
   return p.seq(colls) ? new Concatenated(colls) : emptyList();
 }
 
-export function isConcatenated(self){
-  return self.constructor === Concatenated;
-}
-
 Concatenated.prototype[Symbol.toStringTag] = "Concatenated";
 
 export const concat = overload(emptyList, p.seq, unspread(concatenated));

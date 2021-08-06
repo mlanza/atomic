@@ -1,7 +1,7 @@
-export const isArray = Array.isArray.bind(Array);
+import {constructs} from "../../core.js";
+
+export const array = constructs(Array);
+
 export function emptyArray(){
   return [];
-}
-export function array(...args){
-  return args;
 }

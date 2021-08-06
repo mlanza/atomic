@@ -1,16 +1,15 @@
 import {everyPair, or, overload, constantly} from "../../core.js";
 import {IComparable} from "./instance.js";
-import {isNil} from "../../types/nil/construct.js";
-import {equiv} from "../../protocols/iequiv/concrete.js";
+import {equiv, kin} from "../../protocols/iequiv/concrete.js";
 
 export function compare(x, y){
   if (x === y) {
     return 0
-  } else if (isNil(x)) {
+  } else if (x == null) {
     return -1;
-  } else if (isNil(y)) {
+  } else if (y == null) {
     return 1;
-  } else if (x.constructor.name === y.constructor.name) { //TODO need a more robust check
+  } else if (kin(x, y)) {
     return IComparable.compare(x, y);
   } else {
     throw new TypeError("Cannot compare different types.");
