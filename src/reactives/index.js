@@ -28,7 +28,7 @@ import {pipe} from "./types/observable/concrete.js";
 export function then2(f, source){
   const sink = cell(null);
   function observe(value){
-    _.fmap(Promise.resolve(f(value)), _.partial(pub, sink));
+    _.fmap(Promise.resolve(f(value)), _.partial(IPublish.pub, sink));
   }
   function dispose(self){
     p.unsub(source, observe);
