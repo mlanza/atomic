@@ -41,11 +41,11 @@ function pipe2(source, xform){
 
 export const pipe = _.overload(null, _.identity, pipe2, pipeN);
 
-function multiplex1(source){
-  return multiplex2(source, subject());
+function share1(source){
+  return share2(source, subject());
 }
 
-function multiplex2(source, sink){
+function share2(source, sink){
   let disconnect = _.noop,
       refs = 0;
   return observable(function(observer){
@@ -54,18 +54,38 @@ function multiplex2(source, sink){
     }
     refs++;
     let unsub = sub(sink, observer);
-    return function(){
+    return _.once(function(){
       refs--;
       if (refs === 0){
         disconnect();
         disconnect = _.noop;
       }
       unsub();
-    }
+    });
   });
 }
 
-export const multiplex = _.overload(null, multiplex1, multiplex2);
+export const share = _.overload(null, share1, share2);
+
+export function sharing(source, init){
+  return share(source, init());
+}
+
+function seed2(init, source){
+  return _.doto(observable(function(observer){
+    const handle = pub(observer, ?);
+    handle(init());
+    return sub(source, handle);
+  }),
+    _.specify(_.IDeref, {deref: init})); //TODO remove after migration, this is for `sink` compatibility only
+}
+
+function seed1(source){
+  return seed2(_.constantly(null), source);
+}
+
+//adds an immediate value upon subscription as with cells.
+export const seed = _.overload(null, seed1, seed2);
 
 function fromEvent2(el, key) {
   return observable(function(observer){
@@ -97,8 +117,6 @@ function fromEvent3(el, key, selector){
   });
 }
 
-//const fromEvent = _.overload(null, null, fromEvent2, fromEvent3)
-
 function fromEvents2(el, keys){
   return _.apply(_.merge, _.map(fromEvent2(el, ?), _.split(keys, ' ')));
 }
@@ -107,41 +125,25 @@ function fromEvents3(el, keys, selector){
   return _.apply(_.merge, _.map(fromEvent3(el, ?, selector), _.split(keys, ' ')));
 }
 
-export const fromEvent = _.overload(null, null, fromEvents2, fromEvents3)
+const fromEvent = _.overload(null, null, fromEvents2, fromEvents3)
 
-function seed2(init, source){
-  return _.doto(observable(function(observer){
-    const handle = pub(observer, ?);
-    handle(init());
-    return sub(source, handle);
-  }),
-    _.specify(_.IDeref, {deref: init})); //TODO remove after migration, this is for `sink` compatibility only
-}
-
-function seed1(source){
-  return seed2(_.constantly(null), source);
-}
-
-//adds an immediate value upon subscription as with cells.
-export const seed = _.overload(null, seed1, seed2);
-
-export function computes(source, f){
+function computed(f, source){
   return seed(f, pipe(source, t.map(f)));
 }
 
-export function interact(key, f, el){
-  return computes(fromEvent(el, key), function(){
+function fromElement(key, f, el){
+  return computed(fromEvent(el, key), function(){
     return f(el);
   });
 }
 
-export function hash(window){
-  return computes(fromEvent(window, "hashchange"), function(e){
+function hash(window){
+  return computed(fromEvent(window, "hashchange"), function(e){
     return window.location.hash;
   });
 }
 
-export function indexed(sources){
+function indexed(sources){
   return observable(function(observer){
     return _.just(sources,
       _.mapIndexed(function(key, source){
@@ -154,14 +156,14 @@ export function indexed(sources){
   })
 }
 
-function _currents1(sources){
-  return _currents2(sources, null);
+function splay1(sources){
+  return splay2(sources, null);
 }
 
-function _currents2(sources, blank){
+function splay2(sources, blank){
   const source = indexed(sources);
   return observable(function(observer){
-    let state = _.toArray(_.take(_.count(sources), _.repeat(blank)));
+    let state = _.mapa(_.constantly(blank), sources);
     return sub(source, function(msg){
       state = _.assoc(state, msg.key, msg.value);
       pub(observer, state);
@@ -169,11 +171,11 @@ function _currents2(sources, blank){
   });
 }
 
-const _currents = _.overload(null, _currents1, _currents2);
+const splay = _.overload(null, splay1, splay2);
 
-//sources must provide an initial current value (e.g. immediately upon subscription as cells do).
-export function current(sources){
-  const nil = {}, source = _currents(sources, nil);
+//sources must publish an initial value immediately upon subscription as cells do.
+function latest(sources){
+  const nil = {}, source = splay2(sources, nil);
   return observable(function(observer){
     let init = false;
     return sub(source, function(state){
@@ -187,7 +189,7 @@ export function current(sources){
   });
 }
 
-export function toggles(el, on, off, init){
+function toggles(el, on, off, init){
   return seed(
     init,
     _.merge(
@@ -195,31 +197,35 @@ export function toggles(el, on, off, init){
         pipe(fromEvent(el, off), t.constantly(false))));
 }
 
-export function focus(el){
+function focus(el){
   return toggles(el, "focus", "blur", function(){
     return el === el.ownerDocument.activeElement;
   });
 }
 
-export function click(el){
+function click(el){
   return fromEvent(el, "click");
 }
 
-export function hover(el){
+function hover(el){
   return toggles(el, "mouseover", "mouseout", _.constantly(false));
 }
 
-export function always(value){
+function fixed(value){
   return observable(function(observer){
     pub(observer, value);
     complete(observer);
   });
 }
 
-export function tick(interval){
+function time(){
+  return _.date().getTime();
+}
+
+function tick2(interval, f){
   return observable(function(observer){
     const iv = setInterval(function(){
-      pub(observer, (new Date()).getTime());
+      pub(observer, f());
     }, interval);
     return function(){
       clearInterval(iv);
@@ -227,33 +233,33 @@ export function tick(interval){
   });
 }
 
+const tick = _.overload(null, tick2(?, time), tick2);
+
+function when2(interval, f){
+  return seed(f, tick(interval, f));
+}
+
+const when = _.overload(null, when2(?, time), when2);
+
 function map2(f, source){
   return pipe(source, t.map(f), t.dedupe());
 }
 
 function mapN(f, ...sources){
-  return map2(_.spread(f), current(sources));
+  return map2(_.spread(f), latest(sources));
 }
 
-export const calc = _.overload(null, null, map2, mapN); //TODO revert to `map` after migration.
+const map = _.overload(null, null, map2, mapN);
 
-function then2(f, source){
-  const src = map2(f, source);
+function resolve(source){
   return observable(function(observer){
-    return sub(src, function(value){
+    return sub(source, function(value){
       Promise.resolve(value).then(pub(observer, ?));
     });
   });
 }
 
-function thenN(f, ...sources){
-  return then2(_.spread(f), current(sources));
-}
-
-export const andThen = _.overload(null, null, then2, thenN);
-
-//calling this may spark sad thoughts
-export function depressed(el){
+function depressed(el){
   return seed(
     _.constantly([]),
     pipe(
@@ -269,16 +275,11 @@ export function depressed(el){
         t.dedupe()));
 }
 
-export function toObservable(self){
-  const f = _.satisfies(_.ICoercible, "toObservable", self);
-  if (f) {
-    return f(self);
-  } else if (_.satisfies(ISubscribe, "sub", self)) {
-    return fromSource(self);
-  } else if (_.satisfies(_.ISequential, self)) {
-    return fromCollection(self);
-  }
+function hist2(size, source){
+  return pipe(source, t.hist(size));
 }
+
+const hist = _.overload(null, hist2(2, ?), hist2);
 
 function fromCollection(coll){
   return observable(function(observer){
@@ -306,6 +307,17 @@ function fromSource(source){ //can be used to cover a source making it readonly
   return observable(sub(source, ?));
 }
 
+export function toObservable(self){
+  const f = _.satisfies(_.ICoercible, "toObservable", self);
+  if (f) {
+    return f(self);
+  } else if (_.satisfies(ISubscribe, "sub", self)) {
+    return fromSource(self);
+  } else if (_.satisfies(_.ISequential, self)) {
+    return fromCollection(self);
+  }
+}
+
 _.extend(_.ICoercible, {toObservable: null});
 
 _.doto(Observable,
@@ -313,3 +325,5 @@ _.doto(Observable,
 
 _.doto(Promise,
   _.implement(_.ICoercible, {toObservable: fromPromise}));
+
+Object.assign(Observable, {latest, map, hist, splay, indexed, computed, fromSource, fromEvent, fromPromise, fromElement, fixed, hash, tick, when, resolve, depressed, toggles, focus, click, hover});

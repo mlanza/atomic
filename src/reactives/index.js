@@ -3,90 +3,24 @@ import * as p from "./protocols/concrete.js";
 import * as t from "atomic/transducers";
 import Symbol from "symbol";
 import Promise from "promise";
-import {IPublish} from "./protocols.js";
+import {IPublish, ISubscribe} from "./protocols.js";
 import {ireduce} from "./shared.js";
-import {
-  interact,
-  Cell,
-  cell,
-  readonly,
-  AudienceDetector,
-  audienceDetector,
-  Subject,
-  subject,
-  Observable,
-  observable,
-  Observer,
-  observer
-} from "./types.js";
+import {Cell, cell} from "./types/cell/construct.js";
+import {Subject, subject} from "./types/subject/construct.js";
+import {Observable, sharing, share, pipe} from "./types/observable.js";
+import {Observer} from "./types/observer/construct.js";
 export * from "./types.js";
 export * from "./protocols.js";
 export * from "./protocols/concrete.js";
-import {pipe} from "./types/observable/concrete.js";
 
-//TODO that promises could potentially return out of order is a problem!
-export function then2(f, source){
-  const sink = cell(null);
-  function observe(value){
-    _.fmap(Promise.resolve(f(value)), _.partial(IPublish.pub, sink));
-  }
-  function dispose(self){
-    p.unsub(source, observe);
-  }
-  p.sub(source, observe);
-  return _.doto(readonly(sink),
-    _.specify(_.IDisposable, {dispose}));
-}
-
-function thenN(f, ...sources){
-  return then2(_.spread(f), latest(sources));
-}
-
-export const then = _.called(_.overload(null, null, then2, thenN), "`then` is deprecated — use `andThen` and `seed` instead.");
+const c = sharing(?, cell),
+      s = sharing(?, subject);
 
 export function collect(cell){
   return function(value){ //return observer
     _.swap(cell, _.conj(?, value));
   }
 }
-
-function signal1(source){
-  return signal2(t.identity(), source);
-}
-
-function signal2(xf, source){
-  return signal3(xf, null, source);
-}
-
-function signal3(xf, init, source){
-  return signal4(audienceDetector, xf, init, source);
-}
-
-function signal4(into, xf, init, source){
-  return into(cell(init), xf, source);
-}
-
-export const signal = _.called(_.overload(null, signal1, signal2, signal3, signal4), "`signal` is deprecated.");
-
-export const fromElement = _.called(function fromElement(events, f, el){
-  return signal(t.map(function(){
-    return f(el);
-  }), f(el), event(el, events));
-}, "`fromElement` is deprecated — use `interact` instead.");
-
-function sink(source){
-  return _.satisfies(_.IDeref, source) ? cell() : subject();
-}
-
-function via2(xf, source){
-  return p.into(sink(source), xf, source);
-}
-
-function viaN(xf, ...sources){
-  return via2(_.spread(xf), latest(sources));
-}
-
-export const via = _.called(_.overload(null, null, via2, viaN), "`via` is deprecated.");
 
 function connect2(source, sink){
   return p.sub(source, sink);
@@ -102,112 +36,47 @@ function connectN(source){
   return p.sub(pipe(source, ...xforms), sink);
 }
 
+ISubscribe.transducing = connect3;
+
 export const connect = _.overload(null, null, connect2, connect3, connectN); //returns `unsub` fn
 
-function map2(f, source){
-  return via2(_.comp(t.map(f), t.dedupe()), source);
-}
-
-function mapN(f, ...sources){
-  return map2(_.spread(f), latest(sources));
-}
-
-export const map = _.called(_.overload(null, null, map2, mapN), "`map` is deprecated — use `calc` instead.");
-
-export const computed = _.called(function computed(f, source){
-  const sink = cell(f(source));
-  function callback(){
-    _.reset(sink, f(source));
-  }
-  function pub(self, value){
-    p.pub(source, value);
-  }
-  return _.doto(audienceDetector(sink, function(state){
-    const f = state == "active" ? p.sub : p.unsub;
-    f(source, callback);
-  }),
-    _.specify(IPublish, {pub}));
-}, "`computed` is deprecated — use `computes` instead.");
+export const map = _.comp(c, Observable.map);
+export const then = _.comp(c, Observable.resolve, Observable.map);
+export const fromElement = _.comp(c, Observable.fromElement);
+export const fromEvent = _.comp(s, Observable.fromEvent);
+export const event = _.called(fromEvent, "`event` is deprecated — use `fromEvent` instead.");
+export const interact = _.called(fromElement, "`interact` is deprecated — use `fromElement` instead.");
+export const computed = _.comp(c, Observable.computed);
+export const fixed = _.comp(c, Observable.fixed);
+export const latest = _.comp(c, Observable.latest);
+export const splay = _.comp(c, Observable.splay);
+export const tick = _.comp(s, Observable.tick);
+export const when = _.comp(c, Observable.when);
+export const depressed = _.comp(c, Observable.depressed);
+export const toggles = _.comp(c, Observable.toggles);
+export const focus = _.comp(c, Observable.focus);
+export const click = _.comp(s, Observable.click);
+export const hover = _.comp(c, Observable.hover);
+export const hist = _.comp(c, Observable.hist);
+export const hash = _.comp(c, Observable.hash);
+export const hashchange = _.called(hash, "`hashchange` is deprecated — use `hash` instead.");
+export const readonly = _.called(_.identity, "`readonly` is deprecated.");
 
 function fmap(source, f){
   return map(f, source);
 }
 
-_.each(_.implement(_.IFunctor, {fmap}), [AudienceDetector, Cell, Subject, Observable]);
-
-function fromPromise1(promise){
-  return fromPromise2(promise, null);
-}
+_.each(_.implement(_.IFunctor, {fmap}), [Cell, Subject, Observable]);
 
 function fromPromise2(promise, init){
-  const sink = cell(init);
-  _.fmap(promise, p.pub(sink, ?));
-  return sink;
+  return share(Observable.fromPromise(promise), cell(init));
 }
 
-export const fromPromise = _.called(_.overload(null, fromPromise1, fromPromise2), "`fromPromise` is deprecated — use `toObservable` and `seed` instead.");
+export const fromPromise = _.overload(null, fromPromise2(?, null), fromPromise2);
 
 export const join = _.called(function join(sink, ...sources){
-  const callback = p.pub(sink, ?);
-  return audienceDetector(sink, function(state){
-    const f = state === "active" ? p.sub : p.unsub;
-    _.each(f(?, callback), sources);
-  });
+  return share(_.merge(...sources), sink);
 }, "`join` is deprecated — use `merge` instead.");
-
-export const fixed = _.called(_.comp(readonly, cell), "`fixed` is deprecated — use `always` instead.");
-
-export const latest = _.called(function latest(sources){
-  const sink = cell(_.mapa(_.constantly(null), sources));
-  const fs = _.memoize(function(idx){
-    return function(value){
-      _.swap(sink, _.assoc(?, idx, value));
-    }
-  }, _.str);
-  return audienceDetector(sink, function(state){
-    const f = state === "active" ? p.sub : p.unsub;
-    _.doall(_.mapIndexed(function(idx, source){
-      f(source, fs(idx));
-    }, sources));
-  });
-}, "`latest` is deprecated — use `current` instead."); //TODO after migration revert to `latest`
-
-function hist2(size, source){
-  const sink = cell([]);
-  let history = [];
-  p.sub(source, function(value){
-    history = _.slice(history);
-    history.unshift(value);
-    if (history.length > size){
-      history.pop();
-    }
-    p.pub(sink, history);
-  });
-  return sink;
-}
-
-export const hist = _.called(_.overload(null, _.partial(hist2, 2), hist2), "`hist` is deprecated — use `hist` transducer instead.");
-
-function event2(el, key){
-  const sink = subject(), callback = _.partial(p.pub, sink);
-  return audienceDetector(sink, function(status){
-    const f = status === "active" ? p.on : p.off;
-    f(el, key, callback);
-  });
-}
-
-function event3(el, key, selector){
-  const sink = subject(), callback = _.partial(p.pub, sink);
-  return audienceDetector(sink, function(status){
-    if (status === "active") {
-      p.on(el, key, selector, callback);
-    } else {
-      p.off(el, key, callback);
-    }
-  });
-}
-
-export const event = _.called(_.overload(null, null, event2, event3), "`event` deprecated - use `fromEvent` instead.");
 
 //enforce sequential nature of operations
 function isolate(f){ //TODO treat operations as promises

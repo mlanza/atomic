@@ -67,43 +67,6 @@ define('jquery', ["vendor/jquery"], function(){
   return jQuery.noConflict();
 });
 (function(mods){
-  var useFeat = location.href.indexOf("feature=next") > -1;
-  function identity(f){
-    return f;
-  }
-  var feature = useFeat ? function feature(f){
-    return function(_, $){
-      function fromPromise(promise, init){
-        return $.seed(_.constantly(init || null), $.Observable.from(promise));
-      }
-      function then(){
-        return $.seed($.andThen.apply(this, arguments));
-      }
-      function computed(f, source){
-        return $.computes(source, function(){
-          return f(source);
-        });
-      }
-      function fmap(source, f){
-        return $.calc(f, source);
-      }
-      $.mutate = $.mutates;
-      $.map = $.calc;
-      $.then = then;
-      $.event = $.fromEvent;
-      $.fromElement = $.interact;
-      $.fixed = $.always;
-      $.hashchange = $.hash;
-      $.latest = $.current;
-      $.computed = computed;
-      $.fromPromise = fromPromise;
-      $.readonly = _.identity; //ignore
-      $.ISubscribe.transducing = $.connect;
-      _.each(_.implement(_.IFunctor, {fmap: fmap}), [$.AudienceDetector, $.Cell, $.Subject, $.Observable]);
-      console.log("Next features applied!");
-      return f(_, $);
-    }
-  } : identity;
   define('atomic/core', ["vendor/" + mods[0], 'polyfill'], function(core){
     return Object.assign(core.placeholder, core.impart(core, core.partly));
   });
@@ -121,10 +84,9 @@ define('jquery', ["vendor/jquery"], function(){
   });
   for (var idx in mods) {
     var mod = mods[idx];
-    var f = mod === "atomic/reactives" ? feature : identity;
-    define(mod, ["atomic/core", "vendor/" + mod], f(function(core, tgt){
+    define(mod, ["atomic/core", "vendor/" + mod], function(core, tgt){
       return core.impart(tgt, core.partly);
-    }));
+    });
   }
 })(["atomic/core", "atomic/dom", "atomic/immutables", "atomic/reactives", "atomic/shell", "atomic/repos", "atomic/transducers", "atomic/transients", "atomic/validates", "atomic/html", "atomic/svg"]);
 define('cmd/imports', function(){
