@@ -18,9 +18,7 @@ function err(self, observer){
   p.err(self.observer, observer);
 }
 
-function complete(self){
-  p.complete(self.observer);
-}
+const complete = _.noop; //if completed, future subscribes to get the last known value would fail.
 
 function closed(self){
   return p.closed(self.observer);

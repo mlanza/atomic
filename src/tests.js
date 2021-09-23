@@ -416,7 +416,7 @@ QUnit.test("record", function(assert){
   assert.equal(_.count(robin), 3);
 });
 
-QUnit.test("old & new reactives", function(assert){
+QUnit.test("observable sharing", function(assert){
   function exec(oo, nn, desc){
     var o = {ex: oo, result: $.cell([])},
         n = {ex: nn, result: $.cell([])};
@@ -429,14 +429,14 @@ QUnit.test("old & new reactives", function(assert){
   const $double = $.cell(2);
   const $name = $.cell("Larry");
   const fn = _.pipe(_.repeat(_, _), _.toArray);
-  exec($.map(fn, $double, $name), $.calc(fn, $double, $name), "$.map v. $.calc with cells");
+  exec($.map(fn, $double, $name), $.Observable.map(fn, $double, $name), "$.map v. $.calc with cells");
 
   const $triple = $.toObservable(_.range(3));
   const $thrice = $.cell(0);
-  let $ten = $.always(10);
-  exec($.map(_.add, $triple, $ten), $.calc(_.add, $triple, $ten), "$.map v. $.calc with observables + always ");
+  let $ten = $.Observable.fixed(10);
+  exec($.map(_.add, $triple, $ten), $.Observable.map(_.add, $triple, $ten), "$.fixed");
   $ten = $.fixed(10);
-  exec($.map(_.add, $triple, $ten), $.calc(_.add, $triple, $ten), "$.map v. $.calc with observables + fixed");
+  exec($.map(_.add, $triple, $ten), $.Observable.map(_.add, $triple, $ten), "$.map");
 
   const $a  = $.cell(0),
         $ac = $.cell([]),
