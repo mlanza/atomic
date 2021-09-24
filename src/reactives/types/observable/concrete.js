@@ -72,12 +72,11 @@ export function sharing(source, init){
 }
 
 function seed2(init, source){
-  return _.doto(observable(function(observer){
+  return observable(function(observer){
     const handle = pub(observer, ?);
     handle(init());
     return sub(source, handle);
-  }),
-    _.specify(_.IDeref, {deref: init})); //TODO remove after migration, this is for `sink` compatibility only
+  });
 }
 
 function seed1(source){
