@@ -132,15 +132,15 @@ function computed(f, source){
 }
 
 function fromElement(key, f, el){
-  return computed(fromEvent(el, key), function(){
+  return computed(function(){
     return f(el);
-  });
+  }, fromEvent(el, key));
 }
 
 function hash(window){
-  return computed(fromEvent(window, "hashchange"), function(e){
+  return computed(function(e){
     return window.location.hash;
-  });
+  }, fromEvent(window, "hashchange"));
 }
 
 function indexed(sources){
