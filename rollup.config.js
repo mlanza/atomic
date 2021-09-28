@@ -61,7 +61,7 @@ export default {
   plugins: [
     resolve(),
     jscc({
-      values: { _CROSSFRAME: 1 },
+      values: { _CROSSFRAME: 0 },
     }),
     babel({
       exclude: 'node_modules/**',
