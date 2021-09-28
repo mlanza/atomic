@@ -1,7 +1,7 @@
 import {ISequential} from "../../protocols.js";
 import {trampoline, identity, constantly, overload, complement, comp, partial, slice} from "../../core.js";
 import {EmptyList, emptyList} from "../empty-list/construct.js";
-import {emptyArray} from "../array/construct.js";
+import {emptyArray, array} from "../array/construct.js";
 import {randInt, isEven} from "../number/concrete.js";
 import {reduced} from "../reduced/construct.js";
 import {not} from "../boolean.js";
@@ -385,13 +385,25 @@ export function partitionBy(f, xs){
   return cons(run, partitionBy(f, p.seq(drop(p.count(run), coll))));
 }
 
-export function last(coll){
+function last1(coll){
   let xs = coll, ys = null;
   while (ys = p.next(xs)) {
     xs = ys;
   }
   return p.first(xs);
 }
+
+function last2(n, coll){
+  let xs = coll, ys = array(n);
+  while (p.seq(xs)) {
+    ys.push(p.first(xs));
+    ys.shift();
+    xs = p.next(xs)
+  }
+  return ys;
+}
+
+export const last = overload(null, last1, last2);
 
 function dedupe1(coll){
   return dedupe2(identity, coll);
