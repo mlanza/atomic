@@ -4,7 +4,7 @@ import {IBlankable, ICompactible, IFunctor, IReversible, IOmissible, ICoercible,
 import {isReduced, reduced, unreduced} from "../reduced.js";
 import {concat} from "../concatenated/construct.js";
 import {cons} from "../list/construct.js";
-import {map, filter, detect} from "./concrete.js";
+import {map, filter, remove, detect} from "./concrete.js";
 import {emptyList} from "../empty-list/construct.js";
 import {iequiv} from "../empty-list/behave.js";
 import Symbol from "symbol";
