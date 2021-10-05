@@ -106,7 +106,9 @@ function reducekv(self, f, init){
 }
 
 function includes(self, x){
-  return detect(p.equiv(x, ?), drop(self.start, self.seq));
+  return detect(function(y){
+    return y === x;
+  }, drop(self.start, self.seq));
 }
 
 export default does(
