@@ -50,6 +50,7 @@ define('dom', [], function(){
     window: window,
     document: document,
     Window: Window,
+    DOMParser: DOMParser,
     Text: Text,
     Element: Element,
     NodeList: NodeList,

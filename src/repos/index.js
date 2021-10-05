@@ -1,4 +1,5 @@
 import Promise from "promise";
+import {DOMParser} from "dom";
 import * as _ from "atomic/core";
 export * from "./types.js";
 export * from "./protocols.js";
