@@ -36,15 +36,11 @@ function unsub(self, observer){
   observe && self.callbacks.delete(observer);
 }
 
-function subscribed(self){
-  return _.count(self.callbacks);
-}
-
 export default _.does(
   //_.implement(_.IDisposable, {dispose}), TODO
   _.implement(_.IPath, {path}),
   _.implement(_.IDeref, {deref}),
   _.implement(_.IReset, {reset}),
   _.implement(_.ISwap, {swap}),
-  _.implement(ISubscribe, {sub, unsub, subscribed}),
+  _.implement(ISubscribe, {sub, unsub}),
   _.implement(IPublish, {pub: reset}));

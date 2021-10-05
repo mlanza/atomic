@@ -19,10 +19,6 @@ function unsub(self, observer){
   mut.unconj(self.observers, observer);
 }
 
-function subscribed(self){
-  return _.count(self.observers);
-}
-
 function pub(self, message){
   if (!self.terminated){
     notify(self, p.pub(?, message));
@@ -57,5 +53,5 @@ function notify(self, f){
 export default _.does(
   ireduce,
   imergable,
-  _.implement(ISubscribe, {sub, unsub, subscribed}),
+  _.implement(ISubscribe, {sub, unsub}),
   _.implement(IPublish, {pub, err, complete, closed}));

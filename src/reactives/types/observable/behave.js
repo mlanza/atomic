@@ -21,4 +21,4 @@ export default _.does(
   ireduce,
   imergable,
   _.implement(_.IDeref, {deref}),
-  _.implement(ISubscribe, {sub, unsub: _.noop, subscribed: _.constantly(1)})); //TODO  `unsub` and `subscribed` mock implementations are for cross compatibility and may be removed post migration
+  _.implement(ISubscribe, {sub, unsub: _.noop})); //TODO  `unsub` is a mock implementation for cross compatibility and may be removed post migration
