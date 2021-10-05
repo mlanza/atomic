@@ -7,12 +7,6 @@ export const warn = console.warn.bind(console);
 export const info = console.info.bind(console);
 export const debug = console.debug.bind(console);
 
-/*#if _CROSSFRAME
-info("CROSSFRAME", 1);
-//#else */
-info("CROSSFRAME", 0);
-//#endif
-
 export function type(self){
   return self == null ? Nil : self.constructor;
 }

@@ -3,6 +3,9 @@ import babel from '@rollup/plugin-babel';
 import json  from '@rollup/plugin-json';
 import jscc from 'rollup-plugin-jscc';
 
+const _CROSSFRAME = process.argv.indexOf("--crossframe") == -1 ? 0 : 1;
+console.log("crossframe", _CROSSFRAME);
+
 export default {
   input: [
     'src/core.js',
@@ -61,7 +64,7 @@ export default {
   plugins: [
     resolve(),
     jscc({
-      values: { _CROSSFRAME: 0 },
+      values: {_CROSSFRAME},
     }),
     babel({
       exclude: 'node_modules/**',

@@ -6,4 +6,5 @@ public/data/*
 lib
 _src
 .DS_Store
+.vscode
 package-lock.json
