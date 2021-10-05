@@ -33,10 +33,6 @@ function unsub(self, observer){
   p.unsub(self.observer, observer);
 }
 
-function subscribed(self){
-  return p.subscribed(self.observer);
-}
-
 function deref(self){
   return self.state;
 }
@@ -56,5 +52,5 @@ export default _.does(
   _.implement(_.IDeref, {deref}),
   _.implement(_.IReset, {reset: pub}),
   _.implement(_.ISwap, {swap}),
-  _.implement(ISubscribe, {sub, unsub, subscribed}),
+  _.implement(ISubscribe, {sub, unsub}),
   _.implement(IPublish, {pub, err, complete, closed}));
