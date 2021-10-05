@@ -7,5 +7,4 @@ function fork(self, reject, resolve){
 }
 
 export default does(
-  implement(IForkable, {fork}),
-  implement(IFunctor, {fmap: identity}));
+  implement(IForkable, {fork}));
