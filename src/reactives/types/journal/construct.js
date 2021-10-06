@@ -1,4 +1,5 @@
 import * as _ from "atomic/core";
+import Symbol from "symbol";
 
 export function Journal(pos, max, history, cell){
   this.pos = pos;
@@ -6,6 +7,8 @@ export function Journal(pos, max, history, cell){
   this.history = history;
   this.cell = cell;
 }
+
+Journal.prototype[Symbol.toStringTag] = "Journal";
 
 function journal2(max, cell){
   return new Journal(0, max, [_.deref(cell)], cell);

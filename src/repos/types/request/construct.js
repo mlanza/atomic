@@ -1,4 +1,5 @@
 import * as _ from "atomic/core";
+import Symbol from "symbol";
 
 export function Request(url, options, config, interceptors, handlers){
   this.url = url;
@@ -7,6 +8,8 @@ export function Request(url, options, config, interceptors, handlers){
   this.interceptors = interceptors;
   this.handlers = handlers;
 }
+
+Request.prototype[Symbol.toStringTag] = "Request";
 
 export function request(url, config){
   return new Request(url, {}, config || {}, [filling], []);

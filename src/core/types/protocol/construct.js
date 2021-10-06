@@ -147,6 +147,7 @@ function satisfies2(method, obj){
 }
 
 Protocol.prototype.satisfies = overload(satisfies0, satisfies1, satisfies2);
+Protocol.prototype[Symbol.toStringTag] = "Protocol";
 
 export function ProtocolLookupError(protocol, method, subject, args) {
   this.protocol = protocol;
@@ -159,3 +160,4 @@ ProtocolLookupError.prototype = new Error();
 ProtocolLookupError.prototype.toString = function(){
   return `Protocol lookup for ${this.method} failed.`;
 }
+ProtocolLookupError.prototype[Symbol.toStringTag] = "ProtocolLookupError";

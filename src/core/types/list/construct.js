@@ -23,7 +23,6 @@ export const cons = overload(emptyList, cons2, cons2, consN);
 
 List.prototype[Symbol.toStringTag] = "List";
 
-
 export function list(...args){
   return p.reduce(function(memo, value){
     return cons(value, memo);

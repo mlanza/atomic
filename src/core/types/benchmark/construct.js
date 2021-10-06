@@ -3,6 +3,7 @@ import {period} from "../period/construct.js";
 import {mapa, sort, asc} from "../lazy-seq/concrete.js";
 import {measure} from "../number/concrete.js";
 import Promise from "promise";
+import Symbol from "symbol";
 import * as p from "./protocols.js";
 
 export function Benchmark(operation, result, period, duration){
@@ -11,6 +12,8 @@ export function Benchmark(operation, result, period, duration){
   this.period = period;
   this.duration = duration;
 }
+
+Benchmark.prototype[Symbol.toStringTag] = "Benchmark";
 
 function benchmark1(operation){
   const start = new Date();
