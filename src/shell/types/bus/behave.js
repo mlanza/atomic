@@ -2,6 +2,7 @@ import * as _ from "atomic/core";
 import * as $ from "atomic/reactives";
 import * as p from "../../protocols/concrete.js";
 import {IMiddleware, IDispatch} from "../../protocols.js";
+import Symbol from "symbol";
 
 function dispatch(self, command){
   p.handle(self.handler, command);
@@ -13,6 +14,7 @@ function dispose(self){
 }
 
 export default _.does(
+  _.naming(?, Symbol("Bus")),
   _.forward("state", $.ISubscribe, _.IDeref, _.IReset, _.ISwap, _.IReduce),
   _.implement(IDispatch, {dispatch}),
   _.implement(_.IDisposable, {dispose}));

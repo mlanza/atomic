@@ -1,5 +1,6 @@
 import * as _ from "atomic/core";
 import {members, emptyMembers} from "./construct.js";
+import Symbol from "symbol";
 
 function fmap(self, f){
   return members(_.mapcat(function(item){
@@ -24,6 +25,7 @@ function next(self){
 
 export default _.does(
   _.serieslike,
+  _.naming(?, Symbol("Members")),
   _.implement(_.INext, {next}),
   _.implement(_.ISeq, {first, rest}),
   _.implement(_.IFunctor, {fmap}));

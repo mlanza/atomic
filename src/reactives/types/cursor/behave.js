@@ -1,6 +1,7 @@
 import * as _ from "atomic/core";
 import * as p from "../../protocols/concrete.js";
 import {IPublish, ISubscribe} from "../../protocols.js";
+import Symbol from "symbol";
 
 function path(self){
   return self.path;
@@ -37,6 +38,7 @@ function unsub(self, observer){
 }
 
 export default _.does(
+  _.naming(?, Symbol("Cursor")),
   //_.implement(_.IDisposable, {dispose}), TODO
   _.implement(_.IPath, {path}),
   _.implement(_.IDeref, {deref}),

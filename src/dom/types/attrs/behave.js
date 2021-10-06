@@ -1,5 +1,6 @@
 import * as _ from "atomic/core";
 import * as mut from "atomic/transients";
+import Symbol from "symbol";
 
 function toArray(self){
   return _.toArray(next2(self, 0));
@@ -66,6 +67,7 @@ function empty(self){
 }
 
 export default _.does(
+  _.naming(?, Symbol("Attrs")),
   _.implement(_.ICoercible, {toArray}),
   _.implement(_.ICounted, {count}),
   _.implement(_.ISeqable, {seq}),

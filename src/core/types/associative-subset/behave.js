@@ -7,6 +7,8 @@ import {emptyObject} from "../../types/object/construct.js";
 import {iequiv} from "../../types/empty-list/behave.js";
 import {IEquiv, ICoercible, IFind, IReduce, IKVReduce, ISeqable, ICounted, ILookup, IFn, IMap, IClonable, IEmptyableCollection} from "../../protocols.js";
 import * as p from "./protocols.js";
+import {naming} from "../../protocols/inamable/concrete.js";
+import Symbol from "symbol";
 
 function toObject(self){
   return into({}, self);
@@ -66,6 +68,7 @@ function reducekv(self, f, init){
 
 export default does(
   iequiv,
+  naming(?, Symbol("AssociativeSubset")),
   implement(ICoercible, {toObject}),
   implement(IFind, {find}),
   implement(IMap, {dissoc, keys, vals}),

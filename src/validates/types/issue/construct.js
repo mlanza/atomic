@@ -1,11 +1,14 @@
 import * as _ from "atomic/core";
 import * as p from "../../protocols/concrete.js";
 import Promise from "promise";
+import Symbol from "symbol";
 
 export function Issue(constraint, path){
   this.constraint = constraint;
   this.path = path;
 }
+
+Issue.prototype[Symbol.toStringTag] = "Issue";
 
 export function issue(constraint, path){
   return new Issue(constraint, path || null);

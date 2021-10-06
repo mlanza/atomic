@@ -5,6 +5,8 @@ import {indexedSeq} from "../indexed-seq/construct.js";
 import {emptyList} from "../empty-list/construct.js";
 import {some} from "../lazy-seq/concrete.js";
 import ilazyseq, {iterable} from "../lazy-seq/behave.js";
+import {naming} from "../../protocols/inamable/concrete.js";
+import Symbol from "symbol";
 
 function count(self){
   return self.obj.length;
@@ -38,6 +40,7 @@ function includes(self, value){
 
 export default does(
   iterable,
+  naming(?, Symbol("Indexed")),
   implement(IReduce, ilazyseq),
   implement(IKVReduce, ilazyseq),
   implement(ISequential),

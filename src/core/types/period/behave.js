@@ -8,6 +8,8 @@ import {period} from "./construct.js";
 import {map, take} from "../lazy-seq/concrete.js";
 import {ISplittable, ICoercible, IAddable, IBounds, IComparable, IEquiv, IInclusive, IDivisible, IMergable} from "../../protocols.js";
 import * as p from "./protocols.js";
+import {naming} from "../../protocols/inamable/concrete.js";
+import Symbol from "symbol";
 
 function split2(self, step){
   return map(period(?, step), recurrence(p.start(self), p.end(self), step));
@@ -57,6 +59,7 @@ function compare(self, other){ //TODO test with sort of periods
 
 export default does(
   emptyable,
+  naming(?, Symbol("Period")),
   implement(ISplittable, {split}),
   implement(IAddable, {add}),
   implement(IMergable, {merge}),

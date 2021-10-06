@@ -3,6 +3,7 @@ import {satisfies, implement} from "../protocol.js";
 import {IEquiv, IBlankable, ICoercible, IInclusive, IReversible, INext, ISeq, ISeqable, ISequential, IEmptyableCollection, IKVReduce, IReduce, ICounted, IOmissible} from "../../protocols.js";
 import {emptyList, EmptyList} from "../../types/empty-list/construct.js";
 import {emptyArray} from "../../types/array/construct.js";
+import {naming} from "../../protocols/inamable/concrete.js";
 import Symbol from "symbol";
 import * as p from "./protocols.js";
 
@@ -21,6 +22,7 @@ export const iequiv = implement(IEquiv, {equiv});
 
 export default does(
   iequiv,
+  naming(?, Symbol("EmptyList")),
   implement(ISequential),
   implement(IBlankable, {blank: constantly(true)}),
   implement(IReversible, {reverse: emptyList}),

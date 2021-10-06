@@ -10,6 +10,8 @@ import {iequiv} from "../../types/empty-list/behave.js";
 import {iterable} from "../lazy-seq/behave.js";
 import {ICoercible, IEquiv, IReversible, IMapEntry, IFind, IInclusive, IAssociative, IAppendable, IPrependable, ICollection, INext, ICounted, IReduce, IKVReduce, ISeq, ISeqable, ISequential, IIndexed, ILookup, IFn, IEmptyableCollection} from "../../protocols.js";
 import * as p from "./protocols.js";
+import {naming} from "../../protocols/inamable/concrete.js";
+import Symbol from "symbol";
 
 function reverse(self){
   let c = count(self);
@@ -112,6 +114,7 @@ function includes(self, x){
 }
 
 export default does(
+  naming(?, Symbol("IndexedSeq")),
   iterable,
   iequiv,
   implement(ISequential),

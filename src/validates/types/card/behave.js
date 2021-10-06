@@ -1,6 +1,7 @@
 import * as _ from "atomic/core";
 import {ICheckable} from "../../protocols.js";
 import {issue} from "../issue.js";
+import Symbol from "symbol";
 
 function start(self){
   return self.least;
@@ -20,6 +21,7 @@ function check(self, coll){
 }
 
 export default _.does(
+  _.naming(?, Symbol("Card")),
   _.implement(ICheckable, {check}),
   _.implement(_.IInclusive, {includes}),
   _.implement(_.IBounds, {start, end}));

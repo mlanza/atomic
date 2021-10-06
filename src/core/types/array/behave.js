@@ -177,9 +177,9 @@ export const iindexed = does(
   implement(ICounted, {count}));
 
 export default does(
-  naming(?, Symbol("Array")),
   iequiv,
   iindexed,
+  naming(?, Symbol("Array")),
   implement(ISequential),
   implement(IMap, {dissoc, keys, vals: identity}),
   implement(IMergable, {merge: concat}),

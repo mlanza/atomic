@@ -2,6 +2,7 @@ import * as _ from "atomic/core";
 import * as mut from "atomic/transients";
 import * as p from "../../protocols/concrete.js";
 import {IMiddleware} from "../../protocols.js";
+import Symbol from "symbol";
 
 function assoc(self, key, handler){
   self.handlers = _.assoc(self.handlers, key, handler);
@@ -17,5 +18,6 @@ function handle(self, message, next){
 }
 
 export default _.does(
+  _.naming(?, Symbol("HandlerMiddleware")),
   _.implement(mut.ITransientAssociative, {assoc}),
   _.implement(IMiddleware, {handle}));

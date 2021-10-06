@@ -1,5 +1,6 @@
 import * as _ from "atomic/core";
 import * as mut from "atomic/transients";
+import Symbol from "symbol";
 
 function asText(obj){
   return _.mapa(function(entry){
@@ -54,6 +55,7 @@ function conj(self, pair){
 }
 
 export default _.does(
+  _.naming(?, Symbol("NestedAttrs")),
   _.implement(_.IDeref, {deref}),
   _.implement(_.IMap, {keys, vals}),
   _.implement(_.IInclusive, {includes}),

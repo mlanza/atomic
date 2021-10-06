@@ -1,4 +1,5 @@
 import {identity, overload} from "atomic/core";
+import Symbol from "symbol";
 
 export function Bounds(start, end, f){
   this.start = start;
@@ -19,3 +20,5 @@ function bounds1(end){
 }
 
 export const bounds = overload(null, bounds1, bounds2, bounds3);
+
+Bounds.prototype[Symbol.toStringTag] = "Bounds";

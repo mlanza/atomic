@@ -1,4 +1,5 @@
 import * as _ from "atomic/core";
+import Symbol from "symbol";
 
 function equiv(self, other){
   return self.equals(other);
@@ -68,6 +69,7 @@ function merge(self, other){
 
 export default _.does(
   _.iterable,
+  _.naming(?, Symbol("List")),
   _.implement(_.IEquiv, {equiv}),
   _.implement(_.IInclusive, {includes}),
   _.implement(_.IAssociative, {assoc, contains}),

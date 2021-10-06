@@ -3,6 +3,7 @@ import fetch from "fetch";
 import Promise from "promise";
 import {IQueryable, IParams, IOptions, IAddress, IIntercept} from "../../protocols.js";
 import {ITemplate, IFunctor, ICoercible, IForkable, IMap, IAssociative, ILookup, IAppendable, IPrependable} from "atomic/core";
+import Symbol from "symbol";
 
 export function query(self, plan){
   const keys = _.filter(_.startsWith(?, "$"), _.keys(plan));
@@ -74,6 +75,7 @@ function fork(self, reject, resolve){
 }
 
 export default _.does(
+  _.naming(?, Symbol("Request")),
   _.implement(ITemplate, {fill}),
   _.implement(ICoercible, {toPromise: _.fromTask}),
   _.implement(IAppendable, {append}),

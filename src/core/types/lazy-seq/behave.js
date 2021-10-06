@@ -7,6 +7,7 @@ import {cons} from "../list/construct.js";
 import {map, filter, remove, detect} from "./concrete.js";
 import {emptyList} from "../empty-list/construct.js";
 import {iequiv} from "../empty-list/behave.js";
+import {naming} from "../../protocols/inamable/concrete.js";
 import Symbol from "symbol";
 import * as p from "./protocols.js";
 
@@ -156,6 +157,7 @@ const reverse = comp(p.reverse, toArray);
 export default does(
   iterable,
   iequiv,
+  naming(?, Symbol("LazySeq")),
   implement(IReduce, {reduce}),
   implement(IKVReduce, {reducekv}),
   implement(ISequential),

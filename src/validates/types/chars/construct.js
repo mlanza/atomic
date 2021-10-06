@@ -1,4 +1,5 @@
 import * as _ from "atomic/core";
+import Symbol from "symbol";
 
 export function Characters(start, end, f){
   this.start = start;
@@ -15,3 +16,5 @@ function chars1(end){
 }
 
 export const chars = _.overload(null, chars1, chars2);
+
+Characters.prototype[Symbol.toStringTag] = "Characters";
