@@ -4,6 +4,7 @@ import {ICheckable, IScope} from "../../protocols.js";
 import {issue, issues} from "../issue.js";
 import {and} from "../and/construct.js";
 import {required} from "./construct.js";
+import Symbol from "symbol";
 
 function check(self, obj){
   const found = _.get(obj, self.key);
@@ -19,5 +20,6 @@ function append(self, constraint){
 }
 
 export default _.does(
+  _.naming(?, Symbol("Required")),
   _.implement(_.IAppendable, {append}),
   _.implement(ICheckable, {check}));

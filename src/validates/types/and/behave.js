@@ -3,6 +3,7 @@ import * as p from "../../protocols/concrete.js";
 import {ICheckable} from "../../protocols.js";
 import {and} from "./construct.js";
 import {issue, issues} from "../issue.js";
+import Symbol from "symbol";
 
 function check(self, value){
   return issues(self.constraints, p.check(?, value));
@@ -33,6 +34,7 @@ function next(self){
 }
 
 export default _.does(
+  _.naming(?, Symbol("And")),
   _.implement(_.ISeqable, {seq}),
   _.implement(_.INext, {next}),
   _.implement(_.IEmptyableCollection, {empty}),

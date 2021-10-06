@@ -3,6 +3,7 @@ import * as mut from "atomic/transients";
 import * as p from "../../protocols/concrete.js";
 import {element, isElement} from "../element/construct.js";
 import {IValue, IText} from "../../protocols.js";
+import Symbol from "symbol";
 
 function conj(self, entry){
   self.append(isElement(entry) ? entry : element("option", {value: _.key(entry)}, _.val(entry)));
@@ -41,6 +42,7 @@ const text  = _.comp(_.either(?, ""), access(p.text)),
       value = access(p.value);
 
 export default _.does(
+  _.naming(?, Symbol("HTMLSelectElement")),
   _.implement(mut.ITransientCollection, {conj}),
   _.implement(mut.ITransientAppendable, {append: conj}),
   _.implement(IValue, {value}),

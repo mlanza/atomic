@@ -1,6 +1,7 @@
 import * as _ from "atomic/core";
 import * as mut from "atomic/transients";
 import {emptySet} from "./construct.js";
+import Symbol from "symbol";
 
 function transient(self){
   return mut.transientSet(toArray(self));
@@ -64,6 +65,7 @@ function equiv(self, other){
 
 export default _.does(
   _.iterable,
+  _.naming(?, Symbol("Set")),
   _.implement(_.ISequential),
   _.implement(_.IEquiv, {equiv: equiv}),
   _.implement(_.IAssociative, {contains: includes}),

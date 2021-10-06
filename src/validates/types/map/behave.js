@@ -2,6 +2,7 @@ import * as _ from "atomic/core";
 import * as p from "../../protocols/concrete.js";
 import {ICheckable} from "../../protocols.js";
 import {issue} from "../issue.js";
+import Symbol from "symbol";
 
 function check(self, obj){
   try {
@@ -13,4 +14,5 @@ function check(self, obj){
 }
 
 export default _.does(
+  _.naming(?, Symbol("Map")),
   _.implement(ICheckable, {check}));

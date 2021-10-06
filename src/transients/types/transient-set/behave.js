@@ -1,5 +1,6 @@
 import * as _ from "atomic/core";
 import {IPersistent, ITransientSet, ITransientEmptyableCollection, ITransientCollection} from "../../protocols.js";
+import Symbol from "symbol";
 
 function seq(self){
   return count(self) ? self : null;
@@ -58,6 +59,7 @@ function reduce(self, f, init){
 }
 
 export default _.does(
+  _.naming(?, Symbol("TransientSet")),
   _.implement(_.ISequential),
   _.implement(_.IReduce, {reduce}),
   _.implement(_.ICoercible, {toArray}),

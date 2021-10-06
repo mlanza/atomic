@@ -2,6 +2,7 @@ import * as _ from "atomic/core";
 import * as p from "../../protocols/concrete.js";
 import {IQueryable, IParams, IOptions, IAddress, IIntercept} from "../../protocols.js";
 import {query} from "../request/behave.js";
+import Symbol from "symbol";
 
 function xform(xf){
   return function(self, ...args){
@@ -30,6 +31,7 @@ function rest(self){
 }
 
 export default _.does(
+  _.naming(?, Symbol("Routed")),
   _.implement(_.ICoercible, {toPromise: _.fromTask}),
   _.implement(_.IForkable, {fork}),
   _.implement(_.ISeq, {first, rest}),

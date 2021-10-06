@@ -1,5 +1,6 @@
 import * as _ from "atomic/core";
 import * as $ from "atomic/reactives";
+import Symbol from "symbol";
 
 function matches(self, pattern){
   if (_.isRegExp(pattern)){
@@ -17,5 +18,6 @@ function on(self, pattern, callback){
 }
 
 export default _.does(
+  _.naming(?, Symbol("Location")),
   _.implement($.IEvented, {on}),
   _.implement(_.IMatchable, {matches}));

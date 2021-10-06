@@ -1,6 +1,7 @@
 import * as _ from "atomic/core";
 import * as p from "../../protocols/concrete.js";
 import {ISubscribe} from "../../protocols.js";
+import Symbol from "symbol";
 
 function deref(self){
   return _.deref(self.cell);
@@ -57,6 +58,7 @@ function redoable(self){
 }
 
 export default _.does(
+  _.naming(?, Symbol("Journal")),
   _.implement(_.IDeref, {deref}),
   _.implement(_.IReset, {reset}),
   _.implement(_.ISwap, {swap}),

@@ -7,6 +7,7 @@ import {IHtml, IValue, IText, IContent, IHideable, IEmbeddable, ISelectable} fro
 import {nestedAttrs} from "../nested-attrs/construct.js";
 import {isElement} from "../element/construct.js";
 import {Text} from "dom";
+import Symbol from "symbol";
 
 const hides = ["display", "none"];
 export const hidden = _.comp(_.includes(?, hides), nestedAttrs(?, "style"));
@@ -362,6 +363,7 @@ export default _.does(
   icontents,
   ievented,
   iselectable,
+  _.naming(?, Symbol("Element")),
   _.implement(_.IReduce, {reduce}),
   _.implement(IValue, {value}),
   _.implement(IText, {text}),

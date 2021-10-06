@@ -1,4 +1,5 @@
 import * as _ from "atomic/core";
+import Symbol from "symbol";
 
 export function Cardinality(least, most){
   this.least = least;
@@ -13,3 +14,5 @@ export const card = _.fnil(_.pre(_.constructs(Cardinality), validCardinality), 0
 export const opt = card(0, 1);
 export const req = card(1, 1);
 export const unlimited = card(0, Infinity);
+
+Cardinality.prototype[Symbol.toStringTag] = "Cardinality";

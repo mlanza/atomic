@@ -1,6 +1,7 @@
 import * as _ from "atomic/core";
 import * as p from "../../protocols/concrete.js";
 import {IMiddleware} from "../../protocols/imiddleware/instance.js";
+import Symbol from "symbol";
 
 function handle(self, message, next){
   if (self.handling) {
@@ -19,4 +20,5 @@ function handle(self, message, next){
 }
 
 export default _.does(
+  _.naming(?, Symbol("LockingMiddleware")),
   _.implement(IMiddleware, {handle}));

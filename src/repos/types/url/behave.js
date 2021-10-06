@@ -1,5 +1,6 @@
 import * as _ from "atomic/core";
 import {IParams} from "../../protocols.js";
+import Symbol from "symbol";
 
 function params(self, obj){
   const f = _.isFunction(obj) ? obj : _.merge(?, obj);
@@ -14,5 +15,6 @@ function fill(self, params){
 }
 
 export default _.does(
+  _.naming(?, Symbol("URL")),
   _.implement(IParams, {params}),
   _.implement(_.ITemplate, {fill}));

@@ -6,6 +6,8 @@ import {emptyList} from "../empty-list/construct.js";
 import {concatenated} from "../concatenated/construct.js";
 import irecord from "../record/behave.js";
 import * as p from "./protocols.js";
+import {naming} from "../../protocols/inamable/concrete.js";
+import Symbol from "symbol";
 
 function keys(self){
   return Object.keys(self.attrs);
@@ -58,6 +60,7 @@ function reducekv(self, f, init){
 
 export default does(
   irecord,
+  naming(?, Symbol("Multimap")),
   implement(IMap, {keys}),
   implement(ICoercible, {toArray: comp(Array.from, seq)}),
   implement(IReduce, {reduce}),

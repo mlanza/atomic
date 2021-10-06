@@ -2,6 +2,7 @@ import * as _ from "atomic/core";
 import * as mut from "atomic/transients";
 import * as p from "../../protocols/concrete.js";
 import {IMiddleware} from "../../protocols/imiddleware/instance.js"
+import Symbol from "symbol";
 
 function conj(self, handler){
   self.handlers = _.conj(self.handlers, handler);
@@ -26,5 +27,6 @@ function handle(self, command, next){
 }
 
 export default _.does(
+  _.naming(?, Symbol("Middleware")),
   _.implement(mut.ITransientCollection, {conj}),
   _.implement(IMiddleware, {handle}));

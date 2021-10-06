@@ -1,6 +1,7 @@
 import * as _ from "atomic/core";
 import {IScope} from "../../protocols.js";
 import {issue} from "./construct.js";
+import Symbol from "symbol";
 
 function deref(self){
   return self.constraint;
@@ -15,5 +16,6 @@ function at(self, path){
 }
 
 export default _.does(
+  _.naming(?, Symbol("Issue")),
   _.implement(_.IDeref, {deref}),
   _.implement(IScope, {scope, at}));

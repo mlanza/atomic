@@ -4,6 +4,7 @@ import * as mut from "atomic/transients";
 import * as p from "../../protocols/concrete.js";
 import {IDispatch, IHandler} from "../../protocols.js";
 import {handler} from "../router/concrete.js";
+import Symbol from "symbol";
 
 function on(self, pred, callback){
   conj(self, handler(pred, callback));
@@ -26,6 +27,7 @@ function conj(self, handler){
 }
 
 export default _.does(
+  _.naming(?, Symbol("Router")),
   _.implement(IDispatch, {dispatch}),
   _.implement(IHandler, {handles}),
   _.implement($.IEvented, {on}),

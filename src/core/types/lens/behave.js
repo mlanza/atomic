@@ -6,6 +6,8 @@ import {cons} from "../../types/list/construct.js";
 import {concat} from "../../types/concatenated/construct.js";
 import {IPath, ISwap, IReset, IDeref, IMap, IHierarchy, ILookup, IAssociative, ICollection} from "../../protocols.js";
 import * as p from "./protocols.js";
+import {naming} from "../../protocols/inamable/concrete.js";
+import Symbol from "symbol";
 
 function path(self){
   return self.path;
@@ -117,6 +119,7 @@ function closest(self, pred){
 const descendants = p.downward(children);
 
 export default does(
+  naming(?, Symbol("Lens")),
   implement(IPath, {path}),
   implement(ICollection, {conj}),
   implement(ILookup, {lookup}),
