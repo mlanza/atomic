@@ -1,10 +1,12 @@
 import * as _ from "atomic/core";
+import Symbol from "symbol";
 
 export function URL(url, xfq){
   this.url = url;
   this.xfq = xfq;
 }
 
+URL.prototype[Symbol.toStringTag] = "URL";
 URL.prototype.toString = function(){
   return this.url;
 }

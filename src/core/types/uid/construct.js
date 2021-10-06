@@ -1,9 +1,11 @@
 import {overload} from "../../core.js";
+import Symbol from "symbol";
 
 export function UID(id){
   this.id = id;
 }
 
+UID.prototype[Symbol.toStringTag] = "UID";
 UID.prototype.toString = function(){
   return this.id;
 }

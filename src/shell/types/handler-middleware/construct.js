@@ -1,10 +1,13 @@
 import * as _ from "atomic/core";
+import Symbol from "symbol";
 
 export function HandlerMiddleware(handlers, identify, fallback){
   this.handlers = handlers;
   this.identify = identify;
   this.fallback = fallback;
 }
+
+HandlerMiddleware.prototype[Symbol.toStringTag] = "HandlerMiddleware";
 
 const handlerMiddleware3 = _.constructs(HandlerMiddleware);
 

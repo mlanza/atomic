@@ -1,11 +1,14 @@
 import * as _ from "atomic/core";
 import {subject} from "../subject/construct.js";
+import Symbol from "symbol";
 
 export function Cell(state, observer, validate){
   this.state = state;
   this.observer = observer;
   this.validate = validate;
 }
+
+Cell.prototype[Symbol.toStringTag] = "Cell";
 
 function cell0(){
   return cell1(null);

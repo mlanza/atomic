@@ -1,6 +1,10 @@
+import Symbol from "symbol";
+
 export function Task(fork){
   this.fork = fork;
 }
+
+Task.prototype[Symbol.toStringTag] = "Task";
 
 export function task(fork){
   return new Task(fork);
