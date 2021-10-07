@@ -23,4 +23,4 @@ export default _.does(
   imergable,
   _.naming(?, Symbol("Observable")),
   _.implement(_.IDeref, {deref}),
-  _.implement(ISubscribe, {sub, unsub: _.noop})); //TODO  `unsub` is a mock implementation for cross compatibility and may be removed post migration
+  _.implement(ISubscribe, {sub}));
