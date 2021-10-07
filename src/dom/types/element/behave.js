@@ -72,39 +72,15 @@ function isAttrs(self){
   return !_.ako(self, Node) && _.descriptive(self);
 }
 
-function eventContext(catalog){
-  function on3(self, key, callback){
-    _.isString(key) ? _.each(function(key){
-      self.addEventListener(key, callback);
-    }, _.compact(key.split(" "))) : self.addEventListener(key, callback);
-    return self;
-  }
-
-  function on4(self, key, selector, callback){
-    on3(self, key, _.doto(function(e){
-      if (_.matches(e.target, selector)) {
-        callback.call(e.target, e);
-      } else {
-        const found = _.closest(e.target, selector);
-        if (found && self.contains(found)) {
-          callback.call(found, e);
-        }
-      }
-    }, _.assoc(catalog, callback, ?)));
-    return self;
-  }
-
-  const on = _.overload(null, null, null, on3, on4);
-
-  function off(self, key, callback){
-    self.removeEventListener(key, _.get(catalog, callback, callback));
-    return self;
-  }
-
-  return {on, off};
+function on3(self, key, callback){
+  return $.sub($.fromEvent(self, key), callback);
 }
 
-const {on, off} = eventContext(_.weakMap());
+function on4(self, key, selector, callback){
+  return $.sub($.fromEvent(self, key, selector), callback);
+}
+
+const on = _.overload(null, null, null, on3, on4);
 
 const eventConstructors = {
   "click": MouseEvent,
@@ -355,7 +331,7 @@ function reduce(self, f, init){
 
 export const ihierarchy = _.implement(_.IHierarchy, {root, parent, parents, closest, children, descendants, nextSibling, nextSiblings, prevSibling, prevSiblings, siblings});
 export const icontents = _.implement(IContent, {contents});
-export const ievented = _.implement($.IEvented, {on, off, trigger});
+export const ievented = _.implement($.IEvented, {on, trigger});
 export const iselectable = _.implement(ISelectable, {sel, sel1});
 
 export default _.does(
