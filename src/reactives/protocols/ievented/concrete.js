@@ -2,25 +2,23 @@ import * as _ from "atomic/core";
 import {IEvented} from "./instance.js";
 
 export const on = IEvented.on;
-export const off = IEvented.off;
 export const trigger = IEvented.trigger;
 
-function one3(self, key, callback){
-  function cb(e){
-    off(self, key, ctx.cb);
+function once3(self, key, callback){
+  const off = on(self, key, function(e){
+    off();
     callback.call(this, e);
-  }
-  const ctx = {cb: cb};
-  return on(self, key, cb);
+  });
+  return off;
 }
 
-function one4(self, key, selector, callback){
-  function cb(e){
-    off(self, key, ctx.cb);
+function once4(self, key, selector, callback){
+  const off = on(self, key, selector, function(e){
+    off();
     callback.call(this, e);
-  }
-  const ctx = {cb: cb};
-  return on(self, key, selector, cb);
+  });
+  return off;
 }
 
-export const one = _.overload(null, null, null, one3, one4);
+export const once = _.overload(null, null, null, once3, once4);
+export const one = _.called(once, "`one` is deprecated.  Use `once` instead.");
