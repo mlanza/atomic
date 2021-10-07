@@ -36,7 +36,7 @@ export const month = p.prop("month");
 export const day = p.prop("day");
 export const hour = p.prop("hour");
 export const minute = p.prop("minute");
-export const second = p.prop("second");
+//export const second = p.prop("second");
 export const millisecond = p.prop("millisecond");
 
 export function quarter(self){
