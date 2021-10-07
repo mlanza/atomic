@@ -72,12 +72,14 @@ function isAttrs(self){
   return !_.ako(self, Node) && _.descriptive(self);
 }
 
-function on3(self, key, callback){
-  return $.sub($.fromEvent(self, key), callback);
+function on3(el, key, callback){
+  const $hub = el[Symbol.for(key)] ||= $.fromEvent(el, key);
+  return $.sub($hub, callback);
 }
 
-function on4(self, key, selector, callback){
-  return $.sub($.fromEvent(self, key, selector), callback);
+function on4(el, key, selector, callback){
+  const $hub = el[Symbol.for(_.str(key, "|", selector))] ||= $.fromEvent(el, key, selector);
+  return $.sub($hub, callback);
 }
 
 const on = _.overload(null, null, null, on3, on4);
