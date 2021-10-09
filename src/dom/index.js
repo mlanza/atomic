@@ -12,6 +12,7 @@ import {isHTMLDocument} from "./types/html-document/construct.js";
 export * from "./types.js";
 export * from "./protocols.js";
 export * from "./protocols/concrete.js";
+export * from "./shared.js";
 export {append, prepend, before, after, omit, empty} from "atomic/transients"; //TODO is reexporting a good idea?
 import {behaviors} from "./behaviors.js";
 export * from "./behaviors.js";

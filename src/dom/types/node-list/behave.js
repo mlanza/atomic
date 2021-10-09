@@ -1,7 +1,7 @@
 import * as _ from "atomic/core";
 import {IContent, ISelectable} from "../../protocols.js";
 import Symbol from "symbol";
-import {matches} from "../element/concrete.js";
+import {matches} from "../../shared.js";
 
 function seq2(self, idx){
   return idx < self.length ? _.lazySeq(function(){

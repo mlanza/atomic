@@ -86,45 +86,45 @@ function seed1(source){
 //adds an immediate value upon subscription as with cells.
 export const seed = _.overload(null, seed1, seed2);
 
+function on3(el, key, callback){
+  if (key.indexOf(" ") > -1) {
+    return _.does(..._.mapa(on3(el, ?, callback), key.split(" ")));
+  } else {
+    el.addEventListener(key, callback);
+    return function(){
+      el.removeEventListener(key, callback);
+    }
+  }
+}
+
+function on4(el, key, selector, callback){
+  return on3(el, key, function(e){
+    if (e.target.matches(selector)) {
+      callback.call(this, e);
+    } else {
+      const target = _.closest(e.target, selector);
+      if (target && el.contains(target)) {
+        callback.call(this, Object.assign(Object.create(e), {target}));
+      }
+    }
+  });
+}
+
+export const _on = _.overload(null, null, null, on3, on4);
+
 function fromEvent2(el, key) {
   return observable(function(observer){
-    const handler = pub(observer, ?);
-    el.addEventListener(key, handler);
-    return function(){
-      el.removeEventListener(key, handler);
-    }
+    return on3(el, key, pub(observer, ?));
   });
 }
 
 function fromEvent3(el, key, selector){
   return observable(function(observer){
-    const handler = pub(observer, ?);
-    function delegate(e){
-      if (_.matches(e.target, selector)) {
-        handler(observer, e);
-      } else {
-        const found = _.closest(e.target, selector);
-        if (found && el.contains(found)) {
-          handler(observer, Object.assign(Object.create(e), {target: found}));
-        }
-      }
-    }
-    el.addEventListener(key, delegate);
-    return function(){
-      el.removeEventListener(key, delegate);
-    }
+    return on4(el, key, selector, pub(observer, ?));
   });
 }
 
-function fromEvents2(el, keys){
-  return _.apply(_.merge, _.map(fromEvent2(el, ?), _.split(keys, ' ')));
-}
-
-function fromEvents3(el, keys, selector){
-  return _.apply(_.merge, _.map(fromEvent3(el, ?, selector), _.split(keys, ' ')));
-}
-
-const fromEvent = _.overload(null, null, fromEvents2, fromEvents3)
+const fromEvent = _.overload(null, null, fromEvent2, fromEvent3)
 
 function computed(f, source){
   return seed(f, pipe(source, t.map(f)));
