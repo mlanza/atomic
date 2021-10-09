@@ -1,5 +1,6 @@
 import * as _ from "atomic/core";
 import * as mut from "atomic/transients";
+import {InvalidHostElementError} from "./types/invalid-host-element-error.js";
 
 export function replaceWith(self, other){
   const parent = _.parent(self),
@@ -36,5 +37,11 @@ export function closest(self, selector){
       return target;
     }
     target = _.parent(target);
+  }
+}
+
+export function assert(el, selector){
+  if (!matches(el, selector)) {
+    throw new InvalidHostElementError(el, selector);
   }
 }

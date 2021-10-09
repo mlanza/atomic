@@ -156,16 +156,6 @@ const parents = _.upward(function(self){
 
 const root = _.comp(_.last, _.upward(parent));
 
-export function closest(self, selector){
-  let target = self;
-  while(target){
-    if (_.matches(target, selector)){
-      return target;
-    }
-    target = _.parent(target);
-  }
-}
-
 function sel(self, selector){
   return self.querySelectorAll(selector);
 }
