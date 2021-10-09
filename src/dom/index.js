@@ -4,7 +4,6 @@ import * as mut from "atomic/transients";
 import * as p from "./protocols/concrete.js";
 import {element} from "./types/element/construct.js";
 import {mounts} from "./protocols/imountable/concrete.js";
-import {InvalidHostElementError} from "./types/invalid-host-element-error.js";
 import {IValue} from "./protocols/ivalue/instance.js";
 import {IEmbeddable} from "./protocols/iembeddable/instance.js";
 import Promise from "promise";
@@ -100,12 +99,6 @@ export const toggleClass = _.overload(null, null, toggleClass2, toggleClass3);
 
 export function hasClass(self, name){
   return self.classList.contains(name);
-}
-
-export function assert(el, selector){
-  if (!_.matches(el, selector)) {
-    throw new InvalidHostElementError(el, selector);
-  }
 }
 
 function mount3(render, config, el){
