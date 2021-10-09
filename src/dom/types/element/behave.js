@@ -1,11 +1,13 @@
 import * as _ from "atomic/core";
 import * as $ from "atomic/reactives";
+import {_on as on} from "atomic/reactives";
 import * as mut from "atomic/transients";
 import * as p from "../../protocols/concrete.js";
 import {isMountable} from "../../protocols/imountable/concrete.js"
 import {IHtml, IValue, IText, IContent, IHideable, IEmbeddable, ISelectable} from "../../protocols.js";
 import {nestedAttrs} from "../nested-attrs/construct.js";
 import {isElement} from "../element/construct.js";
+import {matches} from "../../shared.js";
 import {Text} from "dom";
 import Symbol from "symbol";
 
@@ -63,18 +65,6 @@ const conj = append;
 function isAttrs(self){
   return !_.ako(self, Node) && _.descriptive(self);
 }
-
-function on3(el, key, callback){
-  const $hub = el[Symbol.for(key)] ||= $.fromEvent(el, key);
-  return $.sub($hub, callback);
-}
-
-function on4(el, key, selector, callback){
-  const $hub = el[Symbol.for(_.str(key, "|", selector))] ||= $.fromEvent(el, key, selector);
-  return $.sub($hub, callback);
-}
-
-const on = _.overload(null, null, null, on3, on4);
 
 const eventConstructors = {
   "click": MouseEvent,
@@ -155,6 +145,16 @@ const parents = _.upward(function(self){
 });
 
 const root = _.comp(_.last, _.upward(parent));
+
+function closest(self, selector){
+  let target = self;
+  while(target){
+    if (matches(target, selector)){
+      return target;
+    }
+    target = _.parent(target);
+  }
+}
 
 function sel(self, selector){
   return self.querySelectorAll(selector);

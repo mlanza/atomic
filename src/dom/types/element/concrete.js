@@ -1,6 +1,5 @@
 import * as _ from "atomic/core";
 import * as mut from "atomic/transients";
-import {InvalidHostElementError} from "./types/invalid-host-element-error.js";
 
 export function replaceWith(self, other){
   const parent = _.parent(self),
@@ -20,28 +19,4 @@ export function isVisible(el){
 export function enable(self, enabled){
   self.disabled = !enabled;
   return self;
-}
-
-function check(self, selector){
-  return _.isString(selector);
-}
-
-export const matches = _.pre(function matches(self, selector){
-  return self.matches ? self.matches(selector) : false; //e.g. HTMLDocument doesn't have `matches`
-}, check);
-
-export function closest(self, selector){
-  let target = self;
-  while(target){
-    if (matches(target, selector)){
-      return target;
-    }
-    target = _.parent(target);
-  }
-}
-
-export function assert(el, selector){
-  if (!matches(el, selector)) {
-    throw new InvalidHostElementError(el, selector);
-  }
 }
