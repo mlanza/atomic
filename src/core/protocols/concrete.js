@@ -30,7 +30,6 @@ export * from "./ikvreduce/concrete.js";
 export * from "./ilookup/concrete.js";
 export * from "./imap/concrete.js";
 export * from "./imapentry/concrete.js";
-export * from "./imatchable/concrete.js";
 export * from "./imergable/concrete.js";
 export * from "./imultipliable/concrete.js";
 export * from "./inamable/concrete.js";

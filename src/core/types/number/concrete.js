@@ -54,7 +54,7 @@ export function isNeg(x){
 }
 
 export function isOdd(n){
-  return n % 2;
+  return !!(n % 2);
 }
 
 export const isEven = complement(isOdd);

@@ -20,3 +20,21 @@ export function enable(self, enabled){
   self.disabled = !enabled;
   return self;
 }
+
+function check(self, selector){
+  return _.isString(selector);
+}
+
+export const matches = _.pre(function matches(self, selector){
+  return self.matches ? self.matches(selector) : false; //e.g. HTMLDocument doesn't have `matches`
+}, check);
+
+export function closest(self, selector){
+  let target = self;
+  while(target){
+    if (matches(target, selector)){
+      return target;
+    }
+    target = _.parent(target);
+  }
+}

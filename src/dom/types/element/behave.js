@@ -60,14 +60,6 @@ function after(self, content){
 
 const conj = append;
 
-function check(self, selector){
-  return _.isString(selector);
-}
-
-const matches = _.pre(function matches(self, selector){
-  return self.matches(selector);
-}, check);
-
 function isAttrs(self){
   return !_.ako(self, Node) && _.descriptive(self);
 }
@@ -352,7 +344,6 @@ export default _.does(
   _.implement(_.IInclusive, {includes}),
   _.implement(IHideable, {show, hide, toggle}),
   _.implement(mut.ITransientOmissible, {omit}),
-  _.implement(_.IMatchable, {matches}),
   _.implement(_.IClonable, {clone}),
   _.implement(mut.ITransientAppendable, {append}),
   _.implement(mut.ITransientPrependable, {prepend}),
