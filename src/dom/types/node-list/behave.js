@@ -1,6 +1,7 @@
 import * as _ from "atomic/core";
 import {IContent, ISelectable} from "../../protocols.js";
 import Symbol from "symbol";
+import {matches} from "../element/concrete.js";
 
 function seq2(self, idx){
   return idx < self.length ? _.lazySeq(function(){
@@ -31,7 +32,7 @@ const parents = _.comp(_.parents, seq);
 const contents = _.comp(_.contents, seq);
 
 function sel(self, selector){
-  return _.maybe(self, seq, _.filter(_.matches(?, selector), ?));
+  return _.maybe(self, seq, _.filter(matches(?, selector), ?));
 }
 
 function closest(self, selector){
