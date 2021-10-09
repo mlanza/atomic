@@ -1,5 +1,5 @@
 import {ISequential} from "../../protocols.js";
-import {trampoline, identity, constantly, overload, complement, comp, partial, slice} from "../../core.js";
+import {identity, constantly, overload, complement, comp, partial, slice} from "../../core.js";
 import {EmptyList, emptyList} from "../empty-list/construct.js";
 import {emptyArray, array} from "../array/construct.js";
 import {randInt, isEven} from "../number/concrete.js";
