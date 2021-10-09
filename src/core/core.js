@@ -292,26 +292,27 @@ export function attach(f){
   }
 }
 
-function trampoline1(f){
-  let g = f();
-  while(typeof g === "function") {
-    g = g();
-  }
-  return g;
+export function PreconditionError(f, pred, args) {
+  this.f = f;
+  this.pred = pred;
+  this.args = args;
 }
 
-function trampolineN(f, ...args){
-  return trampoline1(function(){
-    return f(...args);
-  });
+PreconditionError.prototype = new Error();
+
+export function PostconditionError(f, pred, args, result) {
+  this.f = f;
+  this.pred = pred;
+  this.args = args;
+  this.result = result;
 }
 
-export const trampoline = overload(null, trampoline1, trampolineN);
+PostconditionError.prototype = new Error();
 
 export function pre(f, pred){
   return function(){
     if (!pred.apply(this, arguments)) {
-      throw new TypeError("Failed pre-condition.");
+      throw new PreconditionError(f, pred, arguments);
     }
     return f.apply(this, arguments);
   }
@@ -319,9 +320,9 @@ export function pre(f, pred){
 
 export function post(f, pred){
   return function(){
-    let result = f.apply(this, arguments);
+    const result = f.apply(this, arguments);
     if (!pred(result)) {
-      throw new TypeError("Failed post-condition.");
+      throw new PostconditionError(f, pred, arguments, result);
     }
     return result;
   }
