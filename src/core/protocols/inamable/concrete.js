@@ -7,9 +7,7 @@ export const name = INamable.name;
 
 export const naming = pre(function naming(nm){
   const name = constantly(moniker(nm));
-  return function(Type){
-    doto(Type, specify(INamable, {name}));
-  }
+  return specify(INamable, {name});
 }, signature(isString));
 
 /*#if _CROSSFRAME

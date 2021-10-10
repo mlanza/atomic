@@ -102,6 +102,17 @@ export function hashing(os){
 (function(){
 
   function hash(self){
+    return imm.hash(self.toString());
+  }
+
+  _.each(_.implement(IHash, {hash}),
+    [_.Moniker]);
+
+})();
+
+(function(){
+
+  function hash(self){
     return self.valueOf();
   }
 
