@@ -157,7 +157,7 @@ const reverse = comp(p.reverse, toArray);
 export default does(
   iterable,
   iequiv,
-  naming(?, Symbol("LazySeq")),
+  naming("LazySeq"),
   implement(IReduce, {reduce}),
   implement(IKVReduce, {reducekv}),
   implement(ISequential),

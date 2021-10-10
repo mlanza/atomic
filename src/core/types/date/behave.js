@@ -6,7 +6,6 @@ import {Duration, days} from "../duration.js";
 import {IAddable, IReduce, IKVReduce, ISeqable, IBounds, IMap, IDeref, IComparable, IEquiv, IClonable, ILookup, IAssociative, ICollection} from "../../protocols.js";
 import * as p from "./protocols.js";
 import {naming} from "../../protocols/inamable/concrete.js";
-import Symbol from "symbol";
 
 function add(self, other){
   return mergeWith(p.add, self, isNumber(other) ? days(other) : other);
@@ -116,7 +115,7 @@ function deref(self){
 }
 
 export default does(
-  naming(?, Symbol("Date")),
+  naming("Date"),
   implement(IAddable, {add}),
   implement(IDeref, {deref}),
   implement(IBounds, {start: identity, end: identity}),

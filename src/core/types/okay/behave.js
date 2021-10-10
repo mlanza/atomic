@@ -4,7 +4,6 @@ import {implement} from "../protocol.js";
 import {okay} from "./construct.js";
 import {isError} from "../error/concrete.js";
 import {naming} from "../../protocols/inamable/concrete.js";
-import Symbol from "symbol";
 
 function fmap(self, f){
   try{
@@ -19,6 +18,6 @@ function fork(self, reject, resolve){
 }
 
 export default does(
-  naming(?, Symbol("Okay")),
+  naming("Okay"),
   implement(IForkable, {fork}),
   implement(IFunctor, {fmap}));

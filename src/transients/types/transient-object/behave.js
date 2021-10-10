@@ -1,6 +1,5 @@
 import * as _ from "atomic/core";
 import {IPersistent, ITransientOmissible, ITransientAssociative, ITransientEmptyableCollection, ITransientCollection, ITransientMap} from "../../protocols.js";
-import Symbol from "symbol";
 
 function omit(self, entry){
   const key = _.key(entry);
@@ -54,7 +53,7 @@ function persistent(self){
 }
 
 export default _.does(
-  _.naming(?, Symbol("TransientObject")),
+  _.naming("TransientObject"),
   _.forward("obj", _.IMap, _.IFind, _.IInclusive, _.ILookup, _.ISeq, _.INext, _.IAssociative, _.ISeqable, _.ICounted, _.IReduce, _.IKVReduce, _.ICoercible),
   _.implement(_.IComparable, {compare}),
   _.implement(_.ICoercible, {toObject}),

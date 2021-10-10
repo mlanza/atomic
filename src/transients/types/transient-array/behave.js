@@ -1,6 +1,5 @@
 import * as _ from "atomic/core";
 import {IPersistent, ITransientMap, ITransientInsertable, ITransientEmptyableCollection, ITransientReversible, ITransientOmissible, ITransientAssociative, ITransientAppendable, ITransientPrependable, ITransientCollection} from "../../protocols.js";
-import Symbol from "symbol";
 
 function before(self, reference, inserted){
   const pos = self.arr.indexOf(reference);
@@ -65,7 +64,7 @@ function persistent(self){
 }
 
 export default _.does(
-  _.naming(?, Symbol("TransientArray")),
+  _.naming("TransientArray"),
   _.forward("arr", _.IFind, _.IMapEntry, _.IAssociative, _.IMap, _.ICoercible, _.ILookup, _.IReduce, _.IKVReduce, _.IFunctor, _.IInclusive, _.ICounted, _.ISeq, _.INext),
   _.implement(_.ISequential),
   _.implement(_.IClonable, {clone}),

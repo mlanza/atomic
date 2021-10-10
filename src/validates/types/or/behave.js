@@ -2,7 +2,6 @@ import * as _ from "atomic/core";
 import * as p from "../../protocols/concrete.js";
 import {ICheckable} from "../../protocols.js";
 import {or} from "./construct.js";
-import Symbol from "symbol";
 
 function check(self, value){
   return _.detect(_.isSome, _.map(p.check(?, value), self.constraints));
@@ -33,7 +32,7 @@ function next(self){
 }
 
 export default _.does(
-  _.naming(?, Symbol("Or")),
+  _.naming("Or"),
   _.implement(_.ISeqable, {seq}),
   _.implement(_.INext, {next}),
   _.implement(_.IEmptyableCollection, {empty}),

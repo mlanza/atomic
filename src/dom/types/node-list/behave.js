@@ -1,6 +1,5 @@
 import * as _ from "atomic/core";
 import {IContent, ISelectable} from "../../protocols.js";
-import Symbol from "symbol";
 import {matches} from "../../shared.js";
 
 function seq2(self, idx){
@@ -49,7 +48,7 @@ function count(self){
 
 export default _.does(
   _.iterable,
-  _.naming(?, Symbol("NodeList")),
+  _.naming("NodeList"),
   _.implement(_.ILookup, {lookup}),
   _.implement(_.IIndexed, {nth: lookup}),
   _.implement(_.ICounted, {count}),

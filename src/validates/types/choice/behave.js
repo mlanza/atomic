@@ -1,7 +1,6 @@
 import * as _ from "atomic/core";
 import {ICheckable, ISelection} from "../../protocols.js";
 import {issue} from "../issue.js";
-import Symbol from "symbol";
 
 function options(self){
   return self.options;
@@ -12,6 +11,6 @@ function check(self, value){
 }
 
 export default _.does(
-  _.naming(?, Symbol("Choice")),
+  _.naming("Choice"),
   _.implement(ISelection, {options}),
   _.implement(ICheckable, {check}));

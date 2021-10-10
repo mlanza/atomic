@@ -1,6 +1,5 @@
 import * as _ from "atomic/core";
 import * as mut from "atomic/transients";
-import Symbol from "symbol";
 
 function lookup(self, key){
   return self.node[key];
@@ -31,7 +30,7 @@ function conj(self, entry){
 }
 
 export default _.does(
-  _.naming(?, Symbol("Props")),
+  _.naming("Props"),
   _.implement(_.IMap, {keys: Object.keys, vals: Object.values}),
   _.implement(_.IInclusive, {includes}),
   _.implement(_.IAssociative, {contains}),

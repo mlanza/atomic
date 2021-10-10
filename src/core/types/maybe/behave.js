@@ -3,7 +3,6 @@ import {identity, does} from "../../core.js";
 import {maybe} from "./construct.js";
 import {IFunctor, IOtherwise, IForkable, IDeref} from "../../protocols.js";
 import {naming} from "../../protocols/inamable/concrete.js";
-import Symbol from "symbol";
 
 function fmap(self, f){
   return self.value == null ? self : maybe(f(self.value));
@@ -22,7 +21,7 @@ function deref(self){
 }
 
 export default does(
-  naming(?, Symbol("Maybe")),
+  naming("Maybe"),
   implement(IDeref, {deref}),
   implement(IForkable, {fork}),
   implement(IOtherwise, {otherwise}),

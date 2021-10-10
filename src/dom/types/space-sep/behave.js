@@ -1,6 +1,5 @@
 import * as _ from "atomic/core";
 import * as mut from "atomic/transients";
-import Symbol from "symbol";
 
 function seq(self){
   const text = self.element.getAttribute(self.key);
@@ -33,7 +32,7 @@ function count(self){
 }
 
 export default _.does(
-  _.naming(?, Symbol("SpaceSep")),
+  _.naming("SpaceSep"),
   _.implement(_.ISequential),
   _.implement(_.ISeqable, {seq}),
   _.implement(_.IDeref, {deref}),

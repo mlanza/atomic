@@ -11,7 +11,6 @@ import {revSeq} from "../rev-seq.js";
 import {filter, mapa} from "../lazy-seq.js";
 import {emptyArray} from "./construct.js";
 import {naming} from "../../protocols/inamable/concrete.js";
-import Symbol from "symbol";
 
 function clone(self){
   return slice(self)
@@ -179,7 +178,7 @@ export const iindexed = does(
 export default does(
   iequiv,
   iindexed,
-  naming(?, Symbol("Array")),
+  naming("Array"),
   implement(ISequential),
   implement(IMap, {dissoc, keys, vals: identity}),
   implement(IMergable, {merge: concat}),

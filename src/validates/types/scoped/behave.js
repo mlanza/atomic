@@ -2,7 +2,6 @@ import * as _ from "atomic/core";
 import * as p from "../../protocols/concrete.js";
 import {ICheckable} from "../../protocols.js";
 import {issue, issues} from "../issue.js";
-import Symbol from "symbol";
 
 function check(self, value){
   return issues(p.check(self.constraint, value), function(iss){
@@ -11,5 +10,5 @@ function check(self, value){
 }
 
 export default _.does(
-  _.naming(?, Symbol("Scoped")),
+  _.naming("Scoped"),
   _.implement(ICheckable, {check}));

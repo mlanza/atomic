@@ -2,7 +2,6 @@ import {does, identity} from "../../core.js";
 import {implement} from "../protocol.js";
 import {ICounted, IAssociative, ILookup, IClonable} from "../../protocols.js";
 import {naming} from "../../protocols/inamable/concrete.js";
-import Symbol from "symbol";
 
 function assoc(self, key, value){
   return self.set(key, value);
@@ -21,7 +20,7 @@ function count(self){
 }
 
 export default does(
-  naming(?, Symbol("WeakMap")),
+  naming("WeakMap"),
   implement(IClonable, {clone: identity}),
   implement(ICounted, {count}),
   implement(ILookup, {lookup}),

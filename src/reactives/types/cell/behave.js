@@ -2,7 +2,6 @@ import * as _ from 'atomic/core';
 import * as p from "../../protocols/concrete.js";
 import {IPublish, ISubscribe} from "../../protocols.js";
 import {ireduce, imergable} from "../../shared.js";
-import Symbol from "symbol";
 
 function pub(self, value){
   if (value !== self.state){
@@ -49,7 +48,7 @@ function dispose(self){
 export default _.does(
   ireduce,
   imergable,
-  _.naming(?, Symbol("Cell")),
+  _.naming("Cell"),
   _.implement(_.IDisposable, {dispose}),
   _.implement(_.IDeref, {deref}),
   _.implement(_.IReset, {reset: pub}),

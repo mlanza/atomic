@@ -3,7 +3,6 @@ import * as p from "../../protocols/concrete.js";
 import {ICheckable, IExplains} from "../../protocols.js";
 import {issue, issues} from "../issue.js";
 import {anno} from "./construct.js";
-import Symbol from "symbol";
 
 function deref(self){
   return self.constraint;
@@ -24,7 +23,7 @@ function append(self, constraint){
 }
 
 export default _.does(
-  _.naming(?, Symbol("Annotation")),
+  _.naming("Annotation"),
   _.implement(_.IDeref, {deref}),
   _.implement(IExplains, {explain}),
   _.implement(_.IAppendable, {append}),

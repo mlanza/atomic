@@ -1,13 +1,16 @@
-import {doto, type, comp, constantly, overload, pre, signature, isSymbol, isFunction} from "../../core.js";
+import {doto, type, comp, constantly, overload, pre, signature, isString, isFunction} from "../../core.js";
 import {INamable} from "./instance.js";
 import {specify, satisfies} from "../../types/protocol/concrete.js";
-import Symbol from "symbol";
+import {moniker} from "../../types/moniker/construct.js";
 
 export const name = INamable.name;
 
-export const naming = pre(function naming(type, symbol){
-  doto(type, specify(INamable, {name: constantly(symbol)}));
-}, signature(isFunction, isSymbol));
+export const naming = pre(function naming(nm){
+  const name = constantly(moniker(nm));
+  return function(Type){
+    doto(Type, specify(INamable, {name}));
+  }
+}, signature(isString));
 
 /*#if _CROSSFRAME
 

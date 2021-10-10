@@ -3,7 +3,6 @@ import * as mut from "atomic/transients";
 import * as p from "../../protocols/concrete.js";
 import {IPublish, ISubscribe} from "../../protocols.js";
 import {ireduce, imergable} from "../../shared.js";
-import Symbol from "symbol";
 
 function sub(self, observer){
   if (!self.terminated) {
@@ -54,6 +53,6 @@ function notify(self, f){
 export default _.does(
   ireduce,
   imergable,
-  _.naming(?, Symbol("Subject")),
+  _.naming("Subject"),
   _.implement(ISubscribe, {sub, unsub}),
   _.implement(IPublish, {pub, err, complete, closed}));

@@ -1,6 +1,5 @@
 import * as _ from "atomic/core";
 import {ITransientCollection} from "../../protocols.js";
-import Symbol from "symbol";
 
 function conj(self, method){
   self.methods.push(method);
@@ -20,6 +19,6 @@ function invoke(self, ...args){
 }
 
 export default _.does(
-  _.naming(?, Symbol("Multimethod")),
+  _.naming("Multimethod"),
   _.implement(_.IFn, {invoke}),
   _.implement(ITransientCollection, {conj}));
