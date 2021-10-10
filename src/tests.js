@@ -39,19 +39,22 @@ QUnit.test("inheritance chain", function(assert){
 
 });
 
-QUnit.test("router & multimethod", function(assert){ //not just for fns!
-  const f = _.doto(sh.router(), //router handlers need not be (but can be) fns
-      mut.conj(?, sh.handler(_.signature(_.isString), _.str(?, "!"), _.apply)), //use apply to spread the message against the pred and callback
-      mut.conj(?, sh.handler(_.signature(_.isNumber), _.mult(?, 2), _.apply)));
-  const g = _.doto(mut.multimethod(), //multimethod handlers must be fns
-      mut.conj(?, mut.method(_.signature(_.isString), _.str(?, "!"))), //as a multimethod always dispatches to fns, apply is a given and need not be specified.
-      mut.conj(?, mut.method(_.signature(_.isNumber), _.mult(?, 2))));
-  assert.equal(sh.dispatch(f, [1]), 2);
-  assert.equal(sh.dispatch(f, ["timber"]), "timber!");
-  assert.equal(sh.dispatch(g, [1]), 2);
-  assert.equal(sh.dispatch(g, ["timber"]), "timber!");
+QUnit.test("router/multimethod", function(assert){ //not just for fns!
+  const f = sh.router();
+  const g = _.invokable(f); //a multimethod
+  g //invokable by nature...
+    |> _.deref //...and so must be unwrapped...
+    |> mut.conj(?, //...to be extended.
+        sh.method(_.signature(_.isString), _.str(?, "!")), //as a multimethod always dispatches to fns, apply is a given and need not be specified.
+        sh.method(_.signature(_.isNumber), _.mult(?, 2)));
+  const h = _.deref(g);
+  assert.equal(_.invoke(f, 1), 2);
+  assert.equal(_.invoke(f, "timber"), "timber!");
+  assert.equal(_.invoke(g, 1), 2);
+  assert.equal(_.invoke(g, "timber"), "timber!");
   assert.equal(g(1), 2);
   assert.equal(g("timber"), "timber!");
+  assert.ok(f === h);
 });
 
 QUnit.test("validation", function(assert){

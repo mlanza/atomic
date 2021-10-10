@@ -1,9 +1,9 @@
 import {overload, partial, curry, called, toggles, identity, obj, partly, comp, doto, does, branch, unspread, applying, execute, noop, constantly, once, isFunction, isString} from "./core.js";
-import {IAssociative, IClonable, IHierarchy, ILookup, ISeq} from "./protocols.js";
+import {IDeref, IFn, IAssociative, IClonable, IHierarchy, ILookup, ISeq} from "./protocols.js";
 import {just, satisfies, spread, maybe, each, duration, remove, sort, flip, realized, apply, realize, isNil, reFindAll, mapkv, period, selectKeys, mapVals, reMatches, test, date, emptyList, cons, days, recurrence, Nil} from "./types.js";
 import {isBlank, str, replace} from "./types/string.js";
 import {isSome} from "./types/nil.js";
-import {implement, behaves} from "./types/protocol/concrete.js";
+import {implement, specify, behaves} from "./types/protocol/concrete.js";
 import {into, detect, map, mapa, splice, drop, join, some, last, takeWhile, dropWhile, filter} from "./types/lazy-seq.js";
 import {concat} from "./types/concatenated.js";
 import iseries from "./types/series/behave.js";
@@ -311,3 +311,13 @@ function absorb2(tgt, src){
 }
 
 export const absorb = overload(constantly({}), identity, absorb2, p.reducing(absorb2));
+
+export function invokable(obj){
+  function invoke(self, ...args){
+    return p.invoke(obj, ...args);
+  }
+  const deref = constantly(obj);
+  return doto(partial(p.invoke, obj),
+    specify(IFn, {invoke}),
+    specify(IDeref, {deref}));
+}
