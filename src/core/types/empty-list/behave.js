@@ -4,7 +4,6 @@ import {IEquiv, IBlankable, ICoercible, IInclusive, IReversible, INext, ISeq, IS
 import {emptyList, EmptyList} from "../../types/empty-list/construct.js";
 import {emptyArray} from "../../types/array/construct.js";
 import {naming} from "../../protocols/inamable/concrete.js";
-import Symbol from "symbol";
 import * as p from "./protocols.js";
 
 function reduce(self, f, init){
@@ -22,7 +21,7 @@ export const iequiv = implement(IEquiv, {equiv});
 
 export default does(
   iequiv,
-  naming(?, Symbol("EmptyList")),
+  naming("EmptyList"),
   implement(ISequential),
   implement(IBlankable, {blank: constantly(true)}),
   implement(IReversible, {reverse: emptyList}),

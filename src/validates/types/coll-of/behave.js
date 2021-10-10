@@ -2,7 +2,6 @@ import * as _ from "atomic/core";
 import * as p from "../../protocols/concrete.js";
 import {ICheckable, IScope} from "../../protocols.js";
 import {issue} from "../issue.js";
-import Symbol from "symbol";
 
 function check(self, coll){
   return _.maybe(coll, _.mapIndexed(function(idx, item){
@@ -11,5 +10,5 @@ function check(self, coll){
 }
 
 export default _.does(
-  _.naming(?, Symbol("CollOf")),
+  _.naming("CollOf"),
   _.implement(ICheckable, {check}));

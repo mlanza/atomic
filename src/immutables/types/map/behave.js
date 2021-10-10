@@ -1,5 +1,4 @@
 import * as _ from "atomic/core";
-import Symbol from "symbol";
 
 function assoc(self, key, value){
   return self.set(key, value);
@@ -61,7 +60,7 @@ function next(self){
 
 export default _.does(
   _.iterable,
-  _.naming(?, Symbol("Map")),
+  _.naming("Map"),
   _.implement(_.IKVReduce, {reducekv}),
   _.implement(_.ICoercible, {toArray}),
   _.implement(_.IMergable, {merge}),

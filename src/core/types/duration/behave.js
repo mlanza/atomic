@@ -5,7 +5,6 @@ import {Duration} from "../duration/construct.js";
 import {IAddable, IKVReduce, IFunctor, IMergable, ICoercible, IMultipliable, IDivisible, IMap, IAssociative, ILookup} from "../../protocols.js";
 import * as p from "./protocols.js";
 import {naming} from "../../protocols/inamable/concrete.js";
-import Symbol from "symbol";
 
 function reducekv(self, f, init){
   return p.reduce(function(memo, key){
@@ -58,7 +57,7 @@ function divide(a, b){
 }
 
 export default does(
-  naming(?, Symbol("Duration")),
+  naming("Duration"),
   implement(IKVReduce, {reducekv}),
   implement(IAddable, {add: merge}),
   implement(IMergable, {merge}),

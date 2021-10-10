@@ -2,7 +2,6 @@ import * as _ from "atomic/core";
 import * as mut from "atomic/transients";
 import * as p from "../../protocols/concrete.js";
 import {IDispatch, IMiddleware} from "../../protocols.js";
-import Symbol from "symbol";
 
 function conj(self, middleware){
   self.middlewares = _.conj(self.middlewares, middleware);
@@ -20,7 +19,7 @@ function dispatch(self, message){
 }
 
 export default _.does(
-  _.naming(?, Symbol("MessageBus")),
+  _.naming("MessageBus"),
   _.implement(mut.ITransientCollection, {conj}),
   _.implement(IDispatch, {dispatch}),
   _.implement(IMiddleware, {handle}));

@@ -201,10 +201,7 @@ export function collapse(...args){
 }
 
 function impartable(f){
-  const fn    = isFunction(f),
-        named = fn ? p.name(f) : null,
-        type = typeof named;
-  return fn && type !== "symbol" && !/^[A-Z]./.test(named);
+  return isFunction(f) && !/^[A-Z]./.test(p.name(f));
 }
 
 //convenience for wrapping batches of functions.

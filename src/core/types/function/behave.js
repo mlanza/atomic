@@ -2,7 +2,6 @@ import {does, partial} from "../../core.js";
 import {implement} from "../protocol.js";
 import {apply} from "./concrete.js";
 import {INamable, IFn, IAppendable, IPrependable} from "../../protocols.js";
-import Symbol from "symbol";
 import * as p from "./protocols.js";
 import {naming} from "../../protocols/inamable/concrete.js";
 
@@ -21,7 +20,7 @@ function name(self){
 }
 
 export default does(
-  naming(?, Symbol("Function")),
+  naming("Function"),
   implement(INamable, {name}),
   implement(IAppendable, {append}),
   implement(IPrependable, {prepend: partial}),

@@ -10,7 +10,6 @@ import {concatenated, concat} from "./construct.js";
 import {ICoercible, ICollection, INext, ISeq, ICounted, ISeqable, IIndexed, IReduce, IKVReduce, ISequential, IEmptyableCollection} from "../../protocols.js";
 import * as p from "./protocols.js";
 import {naming} from "../../protocols/inamable/concrete.js";
-import Symbol from "symbol";
 
 function conj(self, x){
   return new self.constructor(p.conj(self.colls, [x]));
@@ -66,7 +65,7 @@ function count(self){
 
 export default does(
   iterable,
-  naming(?, Symbol("Concatenated")),
+  naming("Concatenated"),
   implement(IReduce, ilazyseq),
   implement(IKVReduce, ilazyseq),
   implement(ISequential),

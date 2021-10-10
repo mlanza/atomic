@@ -9,7 +9,6 @@ import {nestedAttrs} from "../nested-attrs/construct.js";
 import {isElement} from "../element/construct.js";
 import {matches} from "../../shared.js";
 import {Text} from "dom";
-import Symbol from "symbol";
 
 const hides = ["display", "none"];
 export const hidden = _.comp(_.includes(?, hides), nestedAttrs(?, "style"));
@@ -323,7 +322,7 @@ export default _.does(
   icontents,
   ievented,
   iselectable,
-  _.naming(?, Symbol("Element")),
+  _.naming("Element"),
   _.implement(_.IReduce, {reduce}),
   _.implement(IValue, {value}),
   _.implement(IText, {text}),

@@ -1,7 +1,6 @@
 import * as _ from "atomic/core";
 import * as $ from "atomic/reactives";
 import {IMiddleware} from "../../protocols.js";
-import Symbol from "symbol";
 
 function handle(self, event, next){
   $.pub(self.emitter, event);
@@ -9,5 +8,5 @@ function handle(self, event, next){
 }
 
 export default _.does(
-  _.naming(?, Symbol("EventMiddleware")),
+  _.naming("EventMiddleware"),
   _.implement(IMiddleware, {handle}));

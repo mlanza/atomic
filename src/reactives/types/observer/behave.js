@@ -1,6 +1,5 @@
 import * as _ from "atomic/core";
 import {IPublish} from "../../protocols.js";
-import Symbol from "symbol";
 
 function pub(self, message){
   if (!self.terminated) {
@@ -27,5 +26,5 @@ function closed(self){
 }
 
 export default _.does(
-  _.naming(?, Symbol("Observer")),
+  _.naming("Observer"),
   _.implement(IPublish, {pub, err, complete, closed}));

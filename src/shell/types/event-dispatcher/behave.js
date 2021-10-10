@@ -3,7 +3,6 @@ import * as $ from "atomic/reactives";
 import * as p from "../../protocols/concrete.js";
 import {release} from "../../protocols/ieventprovider/concrete.js";
 import {IMiddleware} from "../../protocols.js";
-import Symbol from "symbol";
 
 function handle(self, command, next){
   next(command);
@@ -14,5 +13,5 @@ function handle(self, command, next){
 }
 
 export default _.does(
-  _.naming(?, Symbol("EventDispatcher")),
+  _.naming("EventDispatcher"),
   _.implement(IMiddleware, {handle}));

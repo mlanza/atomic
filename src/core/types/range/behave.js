@@ -9,7 +9,6 @@ import {equiv as _equiv} from "../empty-list/behave.js";
 import {Range} from "./construct.js";
 import * as p from "./protocols.js";
 import {naming} from "../../protocols/inamable/concrete.js";
-import Symbol from "symbol";
 
 function seq(self){
   return p.equiv(self.start, self.end) || (self.step == null && self.direction == null && self.start == null && self.end == null) ? null : self;
@@ -109,7 +108,7 @@ function includes(self, value){
 export default does(
   iterable,
   emptyable,
-  naming(?, Symbol("Range")),
+  naming("Range"),
   implement(ISequential),
   implement(IInverse, {inverse}),
   implement(IIndexed, {nth}),

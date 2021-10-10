@@ -1,6 +1,5 @@
 import * as _ from "atomic/core";
 import * as $ from "atomic/reactives";
-import Symbol from "symbol";
 
 function on(self, pattern, callback){
   if (_.test(pattern, self)) {
@@ -9,5 +8,5 @@ function on(self, pattern, callback){
 }
 
 export default _.does(
-  _.naming(?, Symbol("Location")),
+  _.naming("Location"),
   _.implement($.IEvented, {on}));

@@ -6,7 +6,6 @@ import {implement} from "../protocol.js";
 import {emptyArray} from "../array/construct.js";
 import {nil} from "./construct.js";
 import * as p from "./protocols.js";
-import Symbol from "symbol";
 import {naming} from "../../protocols/inamable/concrete.js";
 
 function assoc(self, key, value){
@@ -40,7 +39,7 @@ function merge(self, ...xs){
 }
 
 export default does(
-  naming(?, Symbol("Nil")),
+  naming("Nil"),
   implement(IClonable, {clone: identity}),
   implement(ICompactible, {compact: identity}),
   implement(ICollection, {conj}),
