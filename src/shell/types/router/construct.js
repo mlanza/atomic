@@ -24,7 +24,7 @@ export const router = _.overload(router0, router1);
 function handler2(pred, callback){
   const handler = {pred, callback};
   function handles(_, message){
-    return pred(message) ? handler : null;
+    return pred(message);
   }
   function dispatch(_, message){
     return callback(message);
@@ -41,16 +41,7 @@ function handler1(callback){
 export const handler = _.overload(null, handler1, handler2);
 
 function params3(extract, process, callback){
-  const handler = {extract, process, callback};
-  function handles(self, url){
-    return extract(url);
-  }
-  function dispatch(self, url){
-    return _.maybe(url, extract, process, _.spread(callback));
-  }
-  return _.doto(handler,
-    _.specify(IHandler, {handles}),
-    _.specify(IDispatch, {dispatch}));
+  return handler2(extract, _.opt(extract, process, _.spread(callback)));
 }
 
 export const params = _.overload(null, null, params3(?, _.identity, ?), params3);
