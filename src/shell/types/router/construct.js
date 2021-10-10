@@ -2,18 +2,21 @@ import * as _ from "atomic/core";
 import Symbol from "symbol";
 import {IDispatch, IHandler} from "../../protocols.js";
 
-export function Router(handlers){
+export function Router(handlers, fallback){
   this.handlers = handlers;
+  this.fallback = fallback;
 }
 
 Router.prototype[Symbol.toStringTag] = "Router";
 
 function router1(fallback){
-  return new Router([handler1(fallback)]);
+  return new Router([], handler1(fallback));
 }
 
 function router0(){
-  return new Router([]);
+  return router1(function(){
+    throw new Error("No suitable handler for message.");
+  });
 }
 
 export const router = _.overload(router0, router1);
