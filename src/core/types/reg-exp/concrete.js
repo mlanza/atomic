@@ -1,7 +1,9 @@
-import {unbind, isString} from "../../core.js";
+import {unbind, isString, comp} from "../../core.js";
 import {isArray} from "../../types/array/concrete.js";
 import {count} from "../../protocols/icounted/concrete.js";
-import {first} from "../../protocols/iseq/concrete.js";
+import {toArray} from "../../protocols/icoercible/concrete.js";
+import {blot} from "../../protocols/iblankable/concrete.js";
+import {first, rest} from "../../protocols/iseq/concrete.js";
 import {get} from "../../protocols/ilookup/concrete.js";
 import {max} from "../../types/number/concrete.js";
 import {lazySeq} from "../../types/lazy-seq/construct.js";
@@ -62,3 +64,6 @@ export function rePattern(s){
         pattern = s.substring(count(prefix));
   return new RegExp(pattern, flags || "");
 }
+
+//Extracts group matches only: _.just("foo(12)/bar(22)", _.reGroups(/foo\((\d+)\)\/bar\((\d+)\)/,_))
+export const reGroups = comp(blot, toArray, rest, reFind);

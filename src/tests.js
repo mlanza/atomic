@@ -47,6 +47,16 @@ QUnit.test("router/multimethod", function(assert){ //not just for fns!
     |> mut.conj(?, //...to be extended.
         sh.method(_.signature(_.isString), _.str(?, "!")), //as a multimethod always dispatches to fns, apply is a given and need not be specified.
         sh.method(_.signature(_.isNumber), _.mult(?, 2)));
+
+  const website = _.doto(sh.router(),
+    mut.conj(?,
+      sh.params(_.reGroups(/users\((\d+)\)\/entries\((\d+)\)/i, ?), _.mapa(parseInt, ?), function(user, entry){
+        return `showing entry ${entry} for ${user}`;
+      }),
+      sh.params(_.reGroups(/blog(\?p=\d+)/i, ?), _.mapa(_.fromQueryString, ?), function(qs){
+        return `showing pg ${qs.p}`;
+      })));
+
   const h = _.deref(g);
   assert.equal(_.invoke(f, 1), 2);
   assert.equal(_.invoke(f, "timber"), "timber!");
@@ -55,6 +65,8 @@ QUnit.test("router/multimethod", function(assert){ //not just for fns!
   assert.equal(g(1), 2);
   assert.equal(g("timber"), "timber!");
   assert.ok(f === h);
+  assert.equals(sh.dispatch(website, "users(11)/entries(3)"), "showing entry 3 for 11");
+  assert.equals(sh.dispatch(website, "blog?p=99"), "showing pg 99");
 });
 
 QUnit.test("validation", function(assert){
