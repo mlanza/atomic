@@ -10,15 +10,11 @@ function on(self, pred, callback){
 }
 
 function handles(self, message){
-  return _.detect(p.handles(?, message), self.handlers);
+  return _.detect(p.handles(?, message), self.handlers) || self.fallback;
 }
 
 function dispatch(self, message){
-  const handler = handles(self, message);
-  if (!handler) {
-    throw new Error("No suitable handler for message.");
-  }
-  return p.dispatch(handler, message);
+  return p.dispatch(handles(self, message), message);
 }
 
 function invoke(self, ...args){
