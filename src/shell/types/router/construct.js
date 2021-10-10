@@ -40,6 +40,22 @@ function handler1(callback){
 
 export const handler = _.overload(null, handler1, handler2);
 
+function params3(extract, process, callback){
+  const handler = {extract, process, callback};
+  function handles(self, url){
+    return extract(url);
+  }
+  function dispatch(self, url){
+    return _.maybe(url, extract, process, _.spread(callback));
+  }
+  return _.doto(handler,
+    _.specify(IHandler, {handles}),
+    _.specify(IDispatch, {dispatch}));
+}
+
+export const params = _.overload(null, null, params3(?, _.identity, ?), params3);
+
+//for use with multimethods
 export function method(pred, callback){
   return handler2(_.spread(pred), _.spread(callback));
 }
