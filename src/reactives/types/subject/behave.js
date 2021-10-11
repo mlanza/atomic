@@ -1,12 +1,11 @@
 import * as _ from "atomic/core";
-import * as mut from "atomic/transients";
 import * as p from "../../protocols/concrete.js";
 import {IPublish, ISubscribe} from "../../protocols.js";
 import {ireduce, imergable} from "../../shared.js";
 
 function sub(self, observer){
   if (!self.terminated) {
-    mut.conj(self.observers, observer);
+    _.swap(self.observers, _.conj(?, observer));
     return _.once(function(){
       unsub(self, observer);
     });
@@ -16,7 +15,7 @@ function sub(self, observer){
 }
 
 function unsub(self, observer){
-  mut.unconj(self.observers, observer);
+  _.swap(self.observers, _.unconj(?, observer));
 }
 
 function pub(self, message){
@@ -29,7 +28,7 @@ function err(self, error){
   if (!self.terminated){
     self.terminated = {how: "error", error};
     notify(self, p.err(?, error));
-    self.observers = null; //release references
+    _.swap(self.observers, _.empty); //release references
   }
 }
 
@@ -37,7 +36,7 @@ function complete(self){
   if (!self.terminated){
     self.terminated = {how: "complete"};
     notify(self, p.complete);
-    self.observers = null; //release references
+    _.swap(self.observers, _.empty); //release references
   }
 }
 
@@ -45,9 +44,8 @@ function closed(self){
   return self.terminated;
 }
 
-//copying prevents midstream changes to observers
 function notify(self, f){
-  _.each(f, _.clone(self.observers));
+  _.each(f, _.deref(self.observers));
 }
 
 export default _.does(
