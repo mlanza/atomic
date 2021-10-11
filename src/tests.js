@@ -43,10 +43,10 @@ QUnit.test("router/multimethod", function(assert){ //not just for fns!
   const f = sh.router();
   const g = _.invokable(f); //a multimethod
   g //invokable by nature...
-    |> _.deref //...and so must be unwrapped...
-    |> mut.conj(?, //...to be extended.
-        sh.method(_.signature(_.isString), _.str(?, "!")), //as a multimethod always dispatches to fns, apply is a given and need not be specified.
-        sh.method(_.signature(_.isNumber), _.mult(?, 2)));
+    |> _.mutate(?,
+        mut.conj(?, //...to be extended.
+          sh.method(_.signature(_.isString), _.str(?, "!")), //as a multimethod always dispatches to fns, apply is a given and need not be specified.
+          sh.method(_.signature(_.isNumber), _.mult(?, 2))));
 
   const website = _.doto(sh.router(),
     mut.conj(?,

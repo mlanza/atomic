@@ -1,5 +1,5 @@
 import {overload, partial, curry, called, toggles, identity, obj, partly, comp, doto, does, branch, unspread, applying, execute, noop, constantly, once, isFunction, isString} from "./core.js";
-import {IDeref, IFn, IAssociative, IClonable, IHierarchy, ILookup, ISeq} from "./protocols.js";
+import {IDeref, IFn, IMutable, IAssociative, IClonable, IHierarchy, ILookup, ISeq} from "./protocols.js";
 import {just, satisfies, spread, maybe, each, duration, remove, sort, flip, realized, apply, realize, isNil, reFindAll, mapkv, period, selectKeys, mapVals, reMatches, test, date, emptyList, cons, days, recurrence, Nil} from "./types.js";
 import {isBlank, str, replace} from "./types/string.js";
 import {isSome} from "./types/nil.js";
@@ -316,8 +316,12 @@ export function invokable(obj){
   function invoke(self, ...args){
     return p.invoke(obj, ...args);
   }
+  function mutate(self, effect){
+    effect(obj);
+  }
   const deref = constantly(obj);
   return doto(partial(p.invoke, obj),
+    specify(IMutable, {mutate}),
     specify(IFn, {invoke}),
     specify(IDeref, {deref}));
 }
