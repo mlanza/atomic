@@ -14,6 +14,10 @@ Transient data ought not be revealed outside the object which contains it.
 The mutable protocols (e.g. `mut.conj`) are treated as commands per command-query separation.  That is, the mutable operators have no return values.  This differs from Clojure.
 
 ## Extreme Immutability
-I contemplated whether all stateful objects could be rewritten as persistent objects and in many cases they can.  The drawback is they necessitate a state container and are less performant than their stateful counterpart.
+Stateful objects can frequently be rewritten as persistent objects.  This choice necessitates a state container and can have performance costs.
 
-I had considered if it the library could be immutables focused, but I recalled the importance of the dom and its part in app development.  The dom is one big stateful ball of mutability.  When one recognizes the need to operate against natives the notion of eliminating transient types is gone.  The transient operations must exist because stateful objects continue to exist!  And the only way to eliminate the need for transient types is to ignore stateful objects.
+It's not necessarily a wrong choice to make system constructs persistent.  Frequently, these constructs are configured only during system start up and then are not touched again.  The configure-and-leave-alone tack reduces the impact of performance concerns.
+
+In some instances there is no reasonable persistent counterpart—the dom, for example.  The dom is stateful.  When one recognizes the need to operate against natives there is no eliminating impure functions.  The transient operations must exist because stateful objects exist!
+
+And the only way to eliminate the need for impure functions is to ignore stateful objects.  Another way would be to implement a virtual dom which is itself persistent and then a diff algorithm which contains all the necessary logic for applying updates against the dom.  This would contain all effects to the patching algorithm.  The same strategy could be applied against any kind of stateful objects.
