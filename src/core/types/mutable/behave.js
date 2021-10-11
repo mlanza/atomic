@@ -1,6 +1,6 @@
 import {does} from "../../core.js";
 import {implement} from "../protocol.js";
-import {IDeref, ISwap, IReset, IFunctor} from "../../protocols.js";
+import {IMutable, IDeref, ISwap, IReset, IFunctor} from "../../protocols.js";
 import {naming} from "../../protocols/inamable/concrete.js";
 
 function deref(self){
@@ -20,8 +20,14 @@ function fmap(self, f){
   return self;
 }
 
+function mutate(self, effect){
+  effect(self.obj);
+  return self.obj;
+}
+
 export default does(
   naming("Mutable"),
+  implement(IMutable, {mutate}),
   implement(IFunctor, {fmap}),
   implement(IReset, {reset}),
   implement(ISwap, {swap}),
