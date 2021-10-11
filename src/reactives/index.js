@@ -39,10 +39,8 @@ export const connect = _.overload(null, null, connect2, connect3, connectN); //r
 
 export const map = shared(cell, Observable.map);
 export const then = shared(cell, Observable.resolve, Observable.map);
-export const fromElement = shared(cell, Observable.fromElement);
+export const interact = shared(cell, Observable.interact);
 export const fromEvent = shared(subject, Observable.fromEvent);
-export const event = _.called(fromEvent, "`event` is deprecated — use `fromEvent` instead.");
-export const interact = _.called(fromElement, "`interact` is deprecated — use `fromElement` instead.");
 export const computed = shared(cell, Observable.computed);
 export const fixed = shared(cell, Observable.fixed);
 export const latest = shared(cell, Observable.latest);
@@ -58,6 +56,8 @@ export const hist = shared(cell, Observable.hist);
 export const hash = shared(cell, Observable.hash);
 export const hashchange = _.called(hash, "`hashchange` is deprecated — use `hash` instead.");
 export const readonly = _.called(_.identity, "`readonly` is deprecated.");
+export const event = _.called(fromEvent, "`event` is deprecated — use `fromEvent` instead.");
+export const fromElement = _.called(interact, "`fromElement` is deprecated — use `interact` instead.");
 
 function fmap(source, f){
   return map(f, source);
