@@ -94,7 +94,7 @@ function computed(f, source){
   return seed(f, pipe(source, t.map(f)));
 }
 
-function fromElement(key, f, el){
+function interact(key, f, el){
   return computed(function(){
     return f(el);
   }, chan(el, key));
@@ -289,4 +289,4 @@ _.doto(Observable,
 _.doto(Promise,
   _.implement(_.ICoercible, {toObservable: fromPromise}));
 
-Object.assign(Observable, {latest, map, hist, splay, indexed, computed, fromSource, fromEvent: chan, fromPromise, fromElement, fixed, hash, tick, when, resolve, depressed, toggles, focus, click, hover});
+Object.assign(Observable, {latest, map, hist, splay, indexed, computed, fromSource, fromEvent: chan, fromPromise, interact, fixed, hash, tick, when, resolve, depressed, toggles, focus, click, hover});
