@@ -318,6 +318,7 @@ export function invokable(obj){
   }
   function mutate(self, effect){
     effect(obj);
+    return obj;
   }
   const deref = constantly(obj);
   return doto(partial(p.invoke, obj),
