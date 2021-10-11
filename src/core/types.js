@@ -21,6 +21,7 @@ export * from "./types/lens.js";
 export * from "./types/list.js";
 export * from "./types/maybe.js";
 export * from "./types/moniker.js";
+export * from "./types/mutable.js";
 export * from "./types/nil.js";
 export * from "./types/object.js";
 export * from "./types/okay.js";
