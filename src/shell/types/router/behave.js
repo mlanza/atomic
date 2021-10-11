@@ -14,7 +14,11 @@ function handles(self, message){
 }
 
 function dispatch(self, message){
-  return p.dispatch(handles(self, message), message);
+  const handler = handles(self, message);
+  if (!handler) {
+    throw new Error("No suitable handler for message.");
+  }
+  return p.dispatch(handler, message);
 }
 
 function invoke(self, ...args){
