@@ -39,8 +39,13 @@ function params3(extract, process, callback){
 export const params = _.overload(null, null, params3(?, _.identity, ?), params3);
 
 //for use with multimethods
-export function method(pred, callback){
+function method2(pred, callback){
   return handler2(_.spread(pred), _.spread(callback));
 }
 
+function method1(callback){
+  return handler2(_.constantly(true), _.spread(callback));
+}
+
+export const method = _.overload(null, method1, method2);
 export const multimethod = _.comp(_.invokable, router);
