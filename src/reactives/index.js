@@ -7,14 +7,11 @@ import {IPublish, ISubscribe} from "./protocols.js";
 import {ireduce} from "./shared.js";
 import {Cell, cell} from "./types/cell/construct.js";
 import {Subject, subject} from "./types/subject/construct.js";
-import {Observable, sharing, share, pipe} from "./types/observable.js";
+import {Observable, shared, share, pipe} from "./types/observable.js";
 import {Observer} from "./types/observer/construct.js";
 export * from "./types.js";
 export * from "./protocols.js";
 export * from "./protocols/concrete.js";
-
-const c = sharing(?, cell),
-      s = sharing(?, subject);
 
 export function collect(cell){
   return function(value){ //return observer
@@ -40,25 +37,25 @@ ISubscribe.transducing = connect3;
 
 export const connect = _.overload(null, null, connect2, connect3, connectN); //returns `unsub` fn
 
-export const map = _.comp(c, Observable.map);
-export const then = _.comp(c, Observable.resolve, Observable.map);
-export const fromElement = _.comp(c, Observable.fromElement);
-export const fromEvent = _.comp(s, Observable.fromEvent);
+export const map = shared(cell, Observable.map);
+export const then = shared(cell, Observable.resolve, Observable.map);
+export const fromElement = shared(cell, Observable.fromElement);
+export const fromEvent = shared(subject, Observable.fromEvent);
 export const event = _.called(fromEvent, "`event` is deprecated — use `fromEvent` instead.");
 export const interact = _.called(fromElement, "`interact` is deprecated — use `fromElement` instead.");
-export const computed = _.comp(c, Observable.computed);
-export const fixed = _.comp(c, Observable.fixed);
-export const latest = _.comp(c, Observable.latest);
-export const splay = _.comp(c, Observable.splay);
-export const tick = _.comp(s, Observable.tick);
-export const when = _.comp(c, Observable.when);
-export const depressed = _.comp(c, Observable.depressed);
-export const toggles = _.comp(c, Observable.toggles);
-export const focus = _.comp(c, Observable.focus);
-export const click = _.comp(s, Observable.click);
-export const hover = _.comp(c, Observable.hover);
-export const hist = _.comp(c, Observable.hist);
-export const hash = _.comp(c, Observable.hash);
+export const computed = shared(cell, Observable.computed);
+export const fixed = shared(cell, Observable.fixed);
+export const latest = shared(cell, Observable.latest);
+export const splay = shared(cell, Observable.splay);
+export const tick = shared(subject, Observable.tick);
+export const when = shared(cell, Observable.when);
+export const depressed = shared(cell, Observable.depressed);
+export const toggles = shared(cell, Observable.toggles);
+export const focus = shared(cell, Observable.focus);
+export const click = shared(subject, Observable.click);
+export const hover = shared(cell, Observable.hover);
+export const hist = shared(cell, Observable.hist);
+export const hash = shared(cell, Observable.hash);
 export const hashchange = _.called(hash, "`hashchange` is deprecated — use `hash` instead.");
 export const readonly = _.called(_.identity, "`readonly` is deprecated.");
 
