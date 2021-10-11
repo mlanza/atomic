@@ -5,3 +5,5 @@ By default all objects, even the native object and array, are treated as immutab
 For a less expensive alternative, such objects can be encased in the `mutable` wrapper.  This wrapper is used to explicity highlight the intended mutable use as apart from it the rule of law is don't mutate objects.  The `mutate` function is used to explicitly highlight mutable actions.
 
 The mutable should be privately held by the type which contains and operates against it.  Because mutations are effected against a known concrete type, the containing type must ensure the type of the concrete mutable object.  If the dependency is passed in, it must be checked or coerced.
+
+Mutables are not observable so observability, if desired, must be provided by other means.
