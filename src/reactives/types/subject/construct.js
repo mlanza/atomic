@@ -1,5 +1,4 @@
 import * as _ from "atomic/core";
-import * as mut from "atomic/transients";
 import Symbol from "symbol";
 
 export function Subject(observers, terminated){
@@ -10,7 +9,7 @@ export function Subject(observers, terminated){
 Subject.prototype[Symbol.toStringTag] = "Subject";
 
 export function subject(observers){
-  return new Subject(mut.transient(observers || []), null);
+  return new Subject(_.mutable(observers || []), null);
 }
 
 export const broadcast = _.called(subject, "`broadcast` deprecated - use `subject` instead.");
