@@ -489,7 +489,7 @@ QUnit.test("cell", function(assert){
   const clicks = $.cell(0);
   tally.click();
   assert.equal(clicks |> _.deref, 0);
-  const tallied = $.click(tally);
+  const tallied = dom.click(tally);
   var unsub = $.sub(tallied, function(){
     _.swap(clicks, _.inc);
   });

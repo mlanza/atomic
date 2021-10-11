@@ -100,12 +100,6 @@ function interact(key, f, el){
   }, chan(el, key));
 }
 
-function hash(window){
-  return computed(function(e){
-    return window.location.hash;
-  }, chan(window, "hashchange"));
-}
-
 function indexed(sources){
   return observable(function(observer){
     return _.just(sources,
@@ -160,20 +154,6 @@ function toggles(el, on, off, init){
         pipe(chan(el, off), t.constantly(false))));
 }
 
-function focus(el){
-  return toggles(el, "focus", "blur", function(){
-    return el === el.ownerDocument.activeElement;
-  });
-}
-
-function click(el){
-  return chan(el, "click");
-}
-
-function hover(el){
-  return toggles(el, "mouseenter", "mouseleave", _.constantly(false));
-}
-
 function fixed(value){
   return observable(function(observer){
     pub(observer, value);
@@ -220,22 +200,6 @@ function resolve(source){
       Promise.resolve(value).then(pub(observer, ?));
     });
   });
-}
-
-function depressed(el){
-  return seed(
-    _.constantly([]),
-    pipe(
-      chan(el, "keydown keyup"),
-        t.scan(function(memo, e){
-          if (e.type === "keyup") {
-            memo = _.filtera(_.notEq(e.key, ?), memo);
-          } else if (!_.includes(memo, e.key)) {
-            memo = _.conj(memo, e.key);
-          }
-          return memo;
-        }, []),
-        t.dedupe()));
 }
 
 function hist2(size, source){
@@ -289,4 +253,4 @@ _.doto(Observable,
 _.doto(Promise,
   _.implement(_.ICoercible, {toObservable: fromPromise}));
 
-Object.assign(Observable, {latest, map, hist, splay, indexed, computed, fromSource, fromEvent: chan, fromPromise, interact, fixed, hash, tick, when, resolve, depressed, toggles, focus, click, hover});
+Object.assign(Observable, {latest, map, hist, splay, indexed, computed, fromSource, fromEvent: chan, fromPromise, interact, fixed, tick, when, resolve, toggles});
