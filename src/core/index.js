@@ -1,12 +1,14 @@
-import {overload, partial, curry, called, toggles, identity, obj, partly, comp, doto, does, branch, unspread, applying, execute, noop, constantly, once, isFunction, isString} from "./core.js";
-import {IDeref, IFn, IMutable, IAssociative, IClonable, IHierarchy, ILookup, ISeq} from "./protocols.js";
+import {overload, partial, curry, toggles, identity, obj, partly, comp, doto, does, branch, unspread, applying, execute, noop, constantly, once, isFunction, isString} from "./core.js";
+import {ILogger, IDeref, IFn, IMutable, IAssociative, IClonable, IHierarchy, ILookup, ISeq} from "./protocols.js";
 import {just, satisfies, spread, maybe, each, duration, remove, sort, flip, realized, apply, realize, isNil, reFindAll, mapkv, period, selectKeys, mapVals, reMatches, test, date, emptyList, cons, days, recurrence, Nil} from "./types.js";
 import {isBlank, str, replace} from "./types/string.js";
 import {isSome} from "./types/nil.js";
+import cfg from "./config.js";
 import {implement, specify, behaves} from "./types/protocol/concrete.js";
 import {into, detect, map, mapa, splice, drop, join, some, last, takeWhile, dropWhile, filter} from "./types/lazy-seq.js";
 import {concat} from "./types/concatenated.js";
 import iseries from "./types/series/behave.js";
+export const config = cfg;
 export {filter} from "./types/lazy-seq.js";
 export const serieslike = iseries;
 export {iterable} from "./types/lazy-seq/behave.js";
@@ -25,8 +27,49 @@ import {behaviors} from "./behaviors.js";
 export * from "./behaviors.js";
 export const behave = behaves(behaviors, ?);
 
+function called4(fn, message, context, logger){
+  return function(){
+    const meta = Object.assign({}, context, {fn, arguments});
+    p.log(logger, message, meta);
+    return meta.results = fn.apply(this, arguments);
+  }
+}
+
+function called3(fn, message, context){
+  return called4(fn, message, context, config.logger);
+}
+
+function called2(fn, message){
+  return called3(fn, message, {});
+}
+
+export const called = overload(null, null, called2, called3, called4);
+
 export const yank = called(p.omit, "`yank` is deprecated — use `omit` instead.");
 export const numeric = test(/^\d+$/i, ?);
+
+(function(){
+
+  function log(self, ...args){
+    self.log(...args);
+  }
+
+  doto(console,
+    specify(ILogger, {log}));
+
+  doto(Nil,
+    implement(ILogger, {log: noop}));
+
+})();
+
+export function logs(logger, method){
+  const f = logger[method].bind(logger);
+  function log(self, ...args){
+    f(...args);
+  }
+  return doto({logger, method},
+    specify(ILogger, {log}));
+}
 
 function siblings(self){
   const parent = p.parent(self);
