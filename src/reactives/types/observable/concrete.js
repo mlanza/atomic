@@ -2,7 +2,7 @@ import * as _ from "atomic/core";
 import * as t from "atomic/transducers";
 import Promise from "promise";
 import {ISubscribe} from "../../protocols.js";
-import {pub, err, complete, closed, sub, unsub} from "../../protocols/concrete.js";
+import {pub, err, complete, closed, sub, unsub, chan} from "../../protocols/concrete.js";
 import {Observable, observable} from "./construct.js";
 import {Observer, observer} from "../observer/construct.js";
 import {Subject, subject} from "../subject/construct.js";
@@ -67,6 +67,10 @@ function share2(source, sink){
 
 export const share = _.overload(null, share1, share2);
 
+export function shared(sink, ...fs){
+  return _.comp(sharing(?, sink), ...fs);
+}
+
 export function sharing(source, init){
   return share(source, init());
 }
@@ -86,46 +90,6 @@ function seed1(source){
 //adds an immediate value upon subscription as with cells.
 export const seed = _.overload(null, seed1, seed2);
 
-function on3(el, key, callback){
-  if (key.indexOf(" ") > -1) {
-    return _.does(..._.mapa(on3(el, ?, callback), key.split(" ")));
-  } else {
-    el.addEventListener(key, callback);
-    return function(){
-      el.removeEventListener(key, callback);
-    }
-  }
-}
-
-function on4(el, key, selector, callback){
-  return on3(el, key, function(e){
-    if (e.target.matches(selector)) {
-      callback.call(this, e);
-    } else {
-      const target = _.closest(e.target, selector);
-      if (target && el.contains(target)) {
-        callback.call(this, Object.assign(Object.create(e), {target}));
-      }
-    }
-  });
-}
-
-export const _on = _.overload(null, null, null, on3, on4);
-
-function fromEvent2(el, key) {
-  return observable(function(observer){
-    return on3(el, key, pub(observer, ?));
-  });
-}
-
-function fromEvent3(el, key, selector){
-  return observable(function(observer){
-    return on4(el, key, selector, pub(observer, ?));
-  });
-}
-
-const fromEvent = _.overload(null, null, fromEvent2, fromEvent3)
-
 function computed(f, source){
   return seed(f, pipe(source, t.map(f)));
 }
@@ -133,13 +97,13 @@ function computed(f, source){
 function fromElement(key, f, el){
   return computed(function(){
     return f(el);
-  }, fromEvent(el, key));
+  }, chan(el, key));
 }
 
 function hash(window){
   return computed(function(e){
     return window.location.hash;
-  }, fromEvent(window, "hashchange"));
+  }, chan(window, "hashchange"));
 }
 
 function indexed(sources){
@@ -192,8 +156,8 @@ function toggles(el, on, off, init){
   return seed(
     init,
     _.merge(
-        pipe(fromEvent(el, on), t.constantly(true)),
-        pipe(fromEvent(el, off), t.constantly(false))));
+        pipe(chan(el, on), t.constantly(true)),
+        pipe(chan(el, off), t.constantly(false))));
 }
 
 function focus(el){
@@ -203,11 +167,11 @@ function focus(el){
 }
 
 function click(el){
-  return fromEvent(el, "click");
+  return chan(el, "click");
 }
 
 function hover(el){
-  return toggles(el, "mouseover", "mouseout", _.constantly(false));
+  return toggles(el, "mouseenter", "mouseleave", _.constantly(false));
 }
 
 function fixed(value){
@@ -262,7 +226,7 @@ function depressed(el){
   return seed(
     _.constantly([]),
     pipe(
-      fromEvent(el, "keydown keyup"),
+      chan(el, "keydown keyup"),
         t.scan(function(memo, e){
           if (e.type === "keyup") {
             memo = _.filtera(_.notEq(e.key, ?), memo);
@@ -325,4 +289,4 @@ _.doto(Observable,
 _.doto(Promise,
   _.implement(_.ICoercible, {toObservable: fromPromise}));
 
-Object.assign(Observable, {latest, map, hist, splay, indexed, computed, fromSource, fromEvent, fromPromise, fromElement, fixed, hash, tick, when, resolve, depressed, toggles, focus, click, hover});
+Object.assign(Observable, {latest, map, hist, splay, indexed, computed, fromSource, fromEvent: chan, fromPromise, fromElement, fixed, hash, tick, when, resolve, depressed, toggles, focus, click, hover});

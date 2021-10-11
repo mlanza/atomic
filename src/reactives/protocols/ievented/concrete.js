@@ -2,6 +2,7 @@ import * as _ from "atomic/core";
 import {IEvented} from "./instance.js";
 
 export const on = IEvented.on;
+export const chan = IEvented.chan;
 export const trigger = IEvented.trigger;
 
 function once3(self, key, callback){

@@ -67,3 +67,4 @@ export function rePattern(s){
 
 //Extracts group matches only: _.just("foo(12)/bar(22)", _.reGroups(/foo\((\d+)\)\/bar\((\d+)\)/,_))
 export const reGroups = comp(blot, toArray, rest, reFind);
+

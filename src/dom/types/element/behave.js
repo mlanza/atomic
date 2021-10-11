@@ -1,6 +1,5 @@
 import * as _ from "atomic/core";
 import * as $ from "atomic/reactives";
-import {_on as on} from "atomic/reactives";
 import * as mut from "atomic/transients";
 import * as p from "../../protocols/concrete.js";
 import {isMountable} from "../../protocols/imountable/concrete.js"
@@ -312,9 +311,48 @@ function reduce(self, f, init){
   return _.reduce(f, init, _.descendants(self));
 }
 
+function chan2(el, key) {
+  return $.observable(function(observer){
+    return on3(el, key, $.pub(observer, ?));
+  });
+}
+
+function chan3(el, key, selector){
+  return $.observable(function(observer){
+    return on4(el, key, selector, $.pub(observer, ?));
+  });
+}
+
+const chan = _.overload(null, null, chan2, chan3);
+
+function on3(el, key, callback){
+  if (key.indexOf(" ") > -1) {
+    return _.does(..._.mapa(on3(el, ?, callback), key.split(" ")));
+  } else {
+    el.addEventListener(key, callback);
+    return function(){
+      el.removeEventListener(key, callback);
+    }
+  }
+}
+
+function on4(el, key, selector, callback){
+  return on3(el, key, function(e){
+    if (e.target.matches(selector)) {
+      callback.call(this, e);
+    } else {
+      const target = _.closest(e.target, selector);
+      if (target && el.contains(target)) {
+        callback.call(this, Object.assign(Object.create(e), {target}));
+      }
+    }
+  });
+}
+
+export const on = _.overload(null, null, null, on3, on4);
 export const ihierarchy = _.implement(_.IHierarchy, {root, parent, parents, closest, children, descendants, nextSibling, nextSiblings, prevSibling, prevSiblings, siblings});
 export const icontents = _.implement(IContent, {contents});
-export const ievented = _.implement($.IEvented, {on, trigger});
+export const ievented = _.implement($.IEvented, {on, chan, trigger});
 export const iselectable = _.implement(ISelectable, {sel, sel1});
 
 export default _.does(

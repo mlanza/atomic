@@ -242,7 +242,11 @@ function guard2(pred, f){
   return branch3(pred, f, noop);
 }
 
-export const guard = overload(null, guard1, guard2);
+function guard3(value, pred, f){
+  return value |> guard2(pred, f);
+}
+
+export const guard = overload(null, guard1, guard2, guard3);
 
 function memoize1(f){
   return memoize2(f, function(...args){
