@@ -1,4 +1,5 @@
-import {overload, identity, partial, log, slice, isFunction} from "../../core.js";
+import {overload, identity, partial, slice, isFunction} from "../../core.js";
+import config from "../../config.js";
 import {isNil}  from "../nil.js";
 import {satisfies}  from "../protocol.js";
 import * as p from "./protocols.js";
@@ -71,7 +72,7 @@ export function tee(f){
 
 export function see(...args){
   return tee(function(obj){
-    apply(log, p.conj(args, obj));
+    apply(p.log, config.logger, p.conj(args, obj));
   });
 }
 

@@ -2,10 +2,6 @@ import {Nil} from "./types/nil/construct.js";
 export const unbind = Function.call.bind(Function.bind, Function.call);
 export const slice = unbind(Array.prototype.slice);
 export const indexOf = unbind(Array.prototype.indexOf);
-export const log = console.log.bind(console);
-export const warn = console.warn.bind(console);
-export const info = console.info.bind(console);
-export const debug = console.debug.bind(console);
 
 export function type(self){
   return self == null ? Nil : self.constructor;
@@ -331,24 +327,6 @@ export function post(f, pred){
     return result;
   }
 }
-
-function called4(fn, message, context, log){
-  return function(){
-    const meta = Object.assign({}, context, {fn, arguments});
-    log(message, meta);
-    return meta.results = fn.apply(this, arguments);
-  }
-}
-
-function called3(fn, message, context){
-  return called4(fn, message, context, warn);
-}
-
-function called2(fn, message){
-  return called3(fn, message, {});
-}
-
-export const called = overload(null, null, called2, called3, called4);
 
 export function nullary(f){
   return function(){
