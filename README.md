@@ -5,7 +5,7 @@ A wholemeal, Clojure-inspired approach for programming.  Treats native JavaScrip
 * functional (supports pure function composition)
 * reactive (FRP)
 * transducers
-* [transients](src/transients/about.md)
+* [transients](src/transients)
 
 Provides a robust core for web development rich enough to meet typical use cases so that third-party integrations can be minimized.
 

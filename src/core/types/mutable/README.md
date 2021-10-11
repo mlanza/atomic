@@ -14,7 +14,7 @@ The reasons to sometimes use/contain mutable objects:
 * Stateful object has edited-in-place state anyway
 * All queries/commands are readily available without further implementation (e.g. `_.conj` not `mut.conj`)
 
-There are similar reasons for using [transient types](../../../transients/about.md).
+There are similar reasons for using [transient types](../../../transients).
 
 ## Swappability
 To avoid transient protocols, a stateful object might reasonably implement  `ISwap`.  Then instead of `mut.conj(middleware, handler)`, `_.swap(middleware, _.conj(_, handler))` is called.  The state container conceals mutation behind a swap.
