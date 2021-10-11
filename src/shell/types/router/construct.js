@@ -9,17 +9,9 @@ export function Router(handlers, fallback){
 
 Router.prototype[Symbol.toStringTag] = "Router";
 
-function router1(fallback){
-  return new Router([], handler1(fallback));
+export function router(handler){
+  return new Router([], handler || null);
 }
-
-function router0(){
-  return router1(function(){
-    throw new Error("No suitable handler for message.");
-  });
-}
-
-export const router = _.overload(router0, router1);
 
 function handler2(pred, callback){
   const handler = {pred, callback};
