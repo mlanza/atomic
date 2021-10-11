@@ -26,6 +26,42 @@ export const ready = _.assume(isHTMLDocument, document, function ready(document,
   }
 });
 
+export const hash = $.shared($.cell, function(window){
+  return $.computed(function(e){
+    return window.location.hash;
+  }, $.chan(window, "hashchange"));
+});
+
+export const focus = $.shared($.cell, function(el){
+  return $.toggles(el, "focus", "blur", function(){
+    return el === el.ownerDocument.activeElement;
+  });
+});
+
+export const click = $.shared($.subject, function(el){
+  return $.chan(el, "click");
+});
+
+export const hover = $.shared($.cell, function(el){
+  return $.toggles(el, "mouseenter", "mouseleave", _.constantly(false));
+});
+
+export const depressed = $.shared($.cell, function(el){
+  return $.seed(
+    _.constantly([]),
+    $.pipe(
+      $.chan(el, "keydown keyup"),
+        t.scan(function(memo, e){
+          if (e.type === "keyup") {
+            memo = _.filtera(_.notEq(e.key, ?), memo);
+          } else if (!_.includes(memo, e.key)) {
+            memo = _.conj(memo, e.key);
+          }
+          return memo;
+        }, []),
+        t.dedupe()));
+});
+
 function attr2(self, key){
   if (_.isString(key)) {
     return self.getAttribute(key);
