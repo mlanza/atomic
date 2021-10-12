@@ -1,4 +1,6 @@
 import * as _ from "atomic/core";
+import {transition} from "../../shared.js";
+import {transientObject} from "../transient-object/construct.js";
 import {IPersistent, ITransientOmissible, ITransientAssociative, ITransientEmptyableCollection, ITransientCollection, ITransientMap} from "../../protocols.js";
 
 function omit(self, entry){
@@ -54,6 +56,7 @@ function persistent(self){
 
 export default _.does(
   _.naming("TransientObject"),
+  transition(transientObject),
   _.forward("obj", _.IMap, _.IFind, _.IInclusive, _.ILookup, _.ISeq, _.INext, _.IAssociative, _.ISeqable, _.ICounted, _.IReduce, _.IKVReduce, _.ICoercible),
   _.implement(_.IComparable, {compare}),
   _.implement(_.ICoercible, {toObject}),
