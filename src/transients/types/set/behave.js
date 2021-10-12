@@ -58,7 +58,7 @@ function reduce(self, f, init){
 }
 
 export default _.does(
-  _.naming("TransientSet"),
+  _.naming("Set"),
   _.implement(_.ISequential),
   _.implement(_.IReduce, {reduce}),
   _.implement(_.ICoercible, {toArray}),

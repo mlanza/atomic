@@ -1,5 +1,6 @@
 import * as _ from "atomic/core";
 import Symbol from "symbol";
+import WeakMap from "weak-map";
 
 export function Cursor(source, path, callbacks){
   this.source = source;

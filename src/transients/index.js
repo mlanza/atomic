@@ -5,7 +5,7 @@ export * from "./protocols/concrete.js";
 export * from "./types.js";
 
 import {ITransient} from "./protocols.js";
-import {transientObject, transientArray, transientSet} from "./types.js";
+import {transientObject, transientArray} from "./types.js";
 import Set from "set";
 
 function toTransient(Type, construct){
@@ -21,7 +21,6 @@ function toTransient(Type, construct){
 
 toTransient(Object, transientObject);
 toTransient(Array, transientArray);
-toTransient(Set, transientSet);
 
 export function withMutations(self, f){
   return p.persistent(f(p.transient(self)));

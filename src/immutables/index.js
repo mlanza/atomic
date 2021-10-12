@@ -4,6 +4,8 @@ import * as imm from "immutable";
 import {set} from "./types/set/construct.js";
 import {map} from "./types/map/construct.js";
 import {IHash} from "./protocols/ihash/instance.js";
+import Set from "set";
+import WeakMap from "weak-map";
 import Symbol from "symbol";
 
 export * from "./types.js";
@@ -36,7 +38,7 @@ export const memoize = _.overload(null, memoize1, memoize2);
     return set(_.toArray(self));
   }
 
-  _.doto(mut.TransientSet,
+  _.doto(Set,
     _.implement(mut.IPersistent, {persistent}));
 
 })();
@@ -138,7 +140,7 @@ export function hashing(os){
 (function(){
 
   const seed = _.generate(_.positives);
-  const uniques = _.weakMap();
+  const uniques = new WeakMap();
 
   function hash(self){
     if (!uniques.has(self)) {
