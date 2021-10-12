@@ -1,8 +1,9 @@
-import {overload, identity, partial, slice, isFunction} from "../../core.js";
+import {doto, overload, identity, partial, slice, execute, isFunction} from "../../core.js";
 import config from "../../config.js";
 import {isNil}  from "../nil.js";
-import {satisfies}  from "../protocol.js";
+import {satisfies, specify}  from "../protocol.js";
 import * as p from "./protocols.js";
+import {ILogger} from "../../protocols/ilogger/instance.js";
 
 export function spread(f){
   return function(args){
@@ -52,29 +53,6 @@ function applyN(f, a, b, c, d, args){
 }
 
 export const apply = overload(null, null, apply2, apply3, apply4, apply5, applyN);
-
-export function multi(dispatch){
-  return function(...args){
-    const f = apply(dispatch, args);
-    if (!f){
-      throw Error("Failed dispatch");
-    }
-    return apply(f, args);
-  }
-}
-
-export function tee(f){
-  return function(value){
-    f(value);
-    return value;
-  }
-}
-
-export function see(...args){
-  return tee(function(obj){
-    apply(p.log, config.logger, p.conj(args, obj));
-  });
-}
 
 export function flip(f){
   return function(b, a, ...args){
