@@ -11,5 +11,5 @@ export function Cursor(source, path, callbacks){
 Cursor.prototype[Symbol.toStringTag] = "Cursor";
 
 export function cursor(source, path){
-  return new Cursor(source, path, _.weakMap());
+  return new Cursor(source, path, new WeakMap());
 }
