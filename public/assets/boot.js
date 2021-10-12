@@ -115,7 +115,7 @@ define('cmd', ["atomic/core", "cmd/imports", "promise"], function(_, defaults, P
       });
     });
   }
-  return function cmd(others){
+  return function cmd(others, logger){
     var target = this,
         imports = Object.assign({}, defaults, others),
         loading = [];
@@ -123,10 +123,11 @@ define('cmd', ["atomic/core", "cmd/imports", "promise"], function(_, defaults, P
       loading.push(load(dest, imports[dest]));
     }
     return _.fmap(Promise.all(loading), _.spread(Object.assign), _.tee(function(imported){
-      console.log("Commands loaded.");
+      _.log(logger || _.config.logger, "Commands loaded.");
       Object.assign(target, imported);
     }));
   }
+
 });
 require(['cmd'], function(cmd){
   window.cmd = cmd;

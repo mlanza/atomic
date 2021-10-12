@@ -164,6 +164,27 @@ export function constantly(x){
   }
 }
 
+export function multi(dispatch){
+  return function(...args){
+    const f = dispatch.apply(this, args);
+    if (!f){
+      throw Error("Failed dispatch");
+    }
+    return f.apply(this, args);
+  }
+}
+
+export function tee(f){
+  return function(value){
+    f(value);
+    return value;
+  }
+}
+
+export function see(...labels){
+  return tee(partial(console.log, ...labels));
+}
+
 export function doto(obj, ...effects){
   const len = effects.length;
   for(let i = 0; i < len; i++){

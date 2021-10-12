@@ -1,4 +1,4 @@
-import {overload, partial, curry, toggles, identity, obj, partly, comp, doto, does, branch, unspread, applying, execute, noop, constantly, once, isFunction, isString} from "./core.js";
+import {overload, partial, curry, tee, toggles, identity, obj, partly, comp, doto, does, branch, unspread, applying, execute, noop, constantly, once, isFunction, isString} from "./core.js";
 import {ILogger, IDeref, IFn, IMutable, IAssociative, IClonable, IHierarchy, ILookup, ISeq} from "./protocols.js";
 import {just, satisfies, spread, maybe, each, duration, remove, sort, flip, realized, apply, realize, isNil, reFindAll, mapkv, period, selectKeys, mapVals, reMatches, test, date, emptyList, cons, days, recurrence, Nil} from "./types.js";
 import {isBlank, str, replace} from "./types/string.js";
@@ -62,13 +62,33 @@ export const numeric = test(/^\d+$/i, ?);
 
 })();
 
-export function logs(logger, method){
-  const f = logger[method].bind(logger);
+export function severityLogger(logger, severity){
+  const f = logger[severity].bind(logger);
   function log(self, ...args){
     f(...args);
   }
-  return doto({logger, method},
+  return doto({logger, severity},
     specify(ILogger, {log}));
+}
+
+export function metaLogger(logger, ...meta){
+  function log(self, ...args){
+    p.log(logger, ...[...mapa(execute, meta), ...args]);
+  }
+  return doto({logger, meta},
+    specify(ILogger, {log}));
+}
+
+export function labelLogger(logger, ...labels){
+  function log(self, ...args){
+    p.log(logger, ...[...labels, ...args]);
+  }
+  return doto({logger, labels},
+    specify(ILogger, {log}));
+}
+
+export function peek(logger){
+  return tee(p.log(logger, ?));
 }
 
 function siblings(self){
