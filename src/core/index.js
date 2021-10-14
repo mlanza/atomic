@@ -45,6 +45,33 @@ function called2(fn, message){
 
 export const called = overload(null, null, called2, called3, called4);
 
+function addProp(obj, key, value){
+  if (obj.hasOwnProperty(key)) {
+    throw new Error("Property `" + key + "` already defined on " + obj.constructor.name + ".");
+  } else {
+    Object.defineProperty(obj, key, {
+      value,
+      writable: true,
+      enumerable: false,
+      configurable: true
+    });
+  }
+}
+
+function equals(other){
+  return p.equiv(this, other);
+}
+
+function hashCode(){
+  return this.constructor == Object ? p.hash(this) : null;
+}
+
+// There be dragons! Integrate with Immutable. Object literals despite their use elsewhere are, in this world, immutable.
+addProp(Object.prototype, "equals", equals);
+addProp(Object.prototype, "hashCode", hashCode);
+
+//TODO test hash against function and object
+
 export const yank = called(p.omit, "`yank` is deprecated — use `omit` instead.");
 export const numeric = test(/^\d+$/i, ?);
 

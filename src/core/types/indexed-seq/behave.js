@@ -8,9 +8,10 @@ import {drop, detect} from "../lazy-seq/concrete.js";
 import {emptyArray} from "../../types/array/construct.js";
 import {iequiv} from "../../types/empty-list/behave.js";
 import {iterable} from "../lazy-seq/behave.js";
-import {ICoercible, IEquiv, IReversible, IMapEntry, IFind, IInclusive, IAssociative, IAppendable, IPrependable, ICollection, INext, ICounted, IReduce, IKVReduce, ISeq, ISeqable, ISequential, IIndexed, ILookup, IFn, IEmptyableCollection} from "../../protocols.js";
+import {IHash, ICoercible, IEquiv, IReversible, IMapEntry, IFind, IInclusive, IAssociative, IAppendable, IPrependable, ICollection, INext, ICounted, IReduce, IKVReduce, ISeq, ISeqable, ISequential, IIndexed, ILookup, IFn, IEmptyableCollection} from "../../protocols.js";
 import * as p from "./protocols.js";
 import {naming} from "../../protocols/inamable/concrete.js";
+import {hashKeyed as hash} from "../../protocols/ihash/concrete.js";
 
 function reverse(self){
   let c = count(self);
@@ -117,6 +118,7 @@ export default does(
   iequiv,
   naming("IndexedSeq"),
   implement(ISequential),
+  implement(IHash, {hash}),
   implement(IIndexed, {nth, idx}),
   implement(IReversible, {reverse}),
   implement(IMapEntry, {key, val}),

@@ -1,11 +1,13 @@
 import {overload, does} from "../../core.js";
-import {IKVReduce, IReduce, ICoercible, INext, ICounted, ISeq, ISeqable, ISequential, IIndexed, ILookup, IInclusive} from "../../protocols.js";
+import {IHash, IKVReduce, IReduce, ICoercible, INext, IMap, ICounted, ISeq, ISeqable, ISequential, IIndexed, ILookup, IInclusive} from "../../protocols.js";
 import {implement} from "../protocol.js";
 import {indexedSeq} from "../indexed-seq/construct.js";
 import {emptyList} from "../empty-list/construct.js";
 import {some} from "../lazy-seq/concrete.js";
 import ilazyseq, {iterable} from "../lazy-seq/behave.js";
 import {naming} from "../../protocols/inamable/concrete.js";
+import {range} from "../../types/range/construct.js";
+import {hashKeyed as hash} from "../../protocols/ihash/concrete.js";
 
 function count(self){
   return self.obj.length;
@@ -37,9 +39,15 @@ function includes(self, value){
   }, self);
 }
 
+function keys(self){
+  return range(count(self));
+}
+
 export default does(
   iterable,
   naming("Indexed"),
+  implement(IHash, {hash}),
+  implement(IMap, {keys}),
   implement(IReduce, ilazyseq),
   implement(IKVReduce, ilazyseq),
   implement(ISequential),

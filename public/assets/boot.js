@@ -8,6 +8,9 @@ requirejs.config({
     'immutable': {
       export: 'Immutable'
     },
+    'hash': {
+      export: 'Hash'
+    },
     'jquery': {
       exports: 'jQuery'
     }
@@ -17,6 +20,7 @@ requirejs.config({
     "vendor": "../assets/vendor",
     "qunit": "vendor/qunit",
     "immutable": "vendor/immutable",
+    "hash": "vendor/hash",
     "rxjs": "vendor/rxjs",
     "text": "vendor/require/text",
     "css": "vendor/require/css",

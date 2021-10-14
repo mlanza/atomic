@@ -5,9 +5,10 @@ import {cons} from "../../types/list/construct.js";
 import {remove, into} from "../../types/lazy-seq/concrete.js";
 import {emptyObject} from "../../types/object/construct.js";
 import {iequiv} from "../../types/empty-list/behave.js";
-import {IEquiv, ICoercible, IFind, IReduce, IKVReduce, ISeqable, ICounted, ILookup, IFn, IMap, IClonable, IEmptyableCollection} from "../../protocols.js";
+import {IHash, IEquiv, ICoercible, IFind, IReduce, IKVReduce, ISeqable, ICounted, ILookup, IFn, IMap, IClonable, IEmptyableCollection} from "../../protocols.js";
 import * as p from "./protocols.js";
 import {naming} from "../../protocols/inamable/concrete.js";
+import {hashes, hashKeyed as hash} from "../../protocols/ihash/concrete.js";
 
 function toObject(self){
   return into({}, self);
@@ -68,6 +69,7 @@ function reducekv(self, f, init){
 export default does(
   iequiv,
   naming("AssociativeSubset"),
+  hashes(hash),
   implement(ICoercible, {toObject}),
   implement(IFind, {find}),
   implement(IMap, {dissoc, keys, vals}),

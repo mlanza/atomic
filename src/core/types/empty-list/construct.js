@@ -8,3 +8,7 @@ export function emptyList(){
 }
 
 EmptyList.prototype[Symbol.toStringTag] = "EmptyList";
+
+EmptyList.prototype.hashCode = function(){
+  return -0;
+}

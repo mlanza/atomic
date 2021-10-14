@@ -1,5 +1,5 @@
 import * as _ from "atomic/core";
-import * as I from "atomic/immutables";
+import * as imm from "atomic/immutables";
 import * as dom from "atomic/dom";
 import * as $ from "atomic/reactives";
 import * as sh from "atomic/shell";
@@ -37,6 +37,30 @@ QUnit.test("inheritance chain", function(assert){
   assert.ok(_.isArray([]));
   assert.ok(_.isObject({}));
 
+});
+
+QUnit.test("hashing", function(assert){
+  const m = imm.map()
+    |> _.assoc(?, _.date(999), 111)
+    |> _.assoc(?, [1, 7, 0, 1, 1], 17070)
+    |> _.assoc(?, _.moniker("Pecan Pie"), 100)
+    |> _.assoc(?, {"blackwidow": "Avenger"}, "Natasha")
+    |> _.assoc(?, "mustard", "ketchup");
+
+  function same(x, y){
+    assert.equal(_.hash(x), _.hash(y));
+    assert.equal(_.hash(x), _.hash(x));
+    assert.ok(_.equiv(x, y));
+  }
+  same([1, 7, 0, 1, 1], [1, 7, 0, 1, 1]);
+  same(_.moniker("Pecan Pie"), _.moniker("Pecan Pie"))
+  same(_.date(999), _.date(999));
+  same({blackwidow: "Avenger"}, {blackwidow: "Avenger"});
+  same([{blackwidow: "Avenger"}, _.date(774), [1, 2]], [{blackwidow: "Avenger"}, _.date(774), [1, 2]]);
+  assert.equal(_.get(m, _.date(999)), 111);
+  assert.equal(_.get(m, _.moniker("Pecan Pie")), 100);
+  assert.equal(_.get(m, {blackwidow: "Avenger"}), "Natasha");
+  assert.equal(_.get(m, "mustard"), "ketchup");
 });
 
 QUnit.test("router/multimethod", function(assert){ //not just for fns!
@@ -356,7 +380,7 @@ QUnit.test("sequences", function(assert){
   assert.deepEqual("Polo" |> _.toArray, ["P", "o", "l", "o"]);
   assert.deepEqual([1, 2, 3] |> _.cycle |> _.take(7, ?) |> _.toArray, [1, 2, 3, 1, 2, 3, 1]);
   assert.deepEqual([1, 2, 3, 3, 4, 4, 4, 5, 6, 6, 7] |> _.dedupe |> _.toArray, [1, 2, 3, 4, 5, 6, 7]);
-  assert.deepEqual([1, 2, 3, 1, 4, 3, 4, 3, 2, 2] |> I.distinct |> _.toArray, [1, 2, 3, 4]);
+  assert.deepEqual([1, 2, 3, 1, 4, 3, 4, 3, 2, 2] |> imm.distinct |> _.toArray, [1, 2, 3, 4]);
   assert.deepEqual(_.range(10) |> _.takeNth(2, ?) |> _.toArray, [0, 2, 4, 6, 8]);
   assert.deepEqual(_.constantly(1) |> _.repeatedly |> _.take(0, ?) |> _.toArray, []);
   assert.deepEqual(_.constantly(2) |> _.repeatedly |> _.take(10, ?) |> _.toArray, [2, 2, 2, 2, 2, 2, 2, 2, 2, 2]);

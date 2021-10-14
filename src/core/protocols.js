@@ -21,6 +21,7 @@ export * from "./protocols/ifn/instance.js";
 export * from "./protocols/iforkable/instance.js";
 export * from "./protocols/ifunctor/instance.js";
 export * from "./protocols/ihandler/instance.js";
+export * from "./protocols/ihash/instance.js";
 export * from "./protocols/ihierarchy/instance.js";
 export * from "./protocols/iidentifiable/instance.js";
 export * from "./protocols/iinclusive/instance.js";
