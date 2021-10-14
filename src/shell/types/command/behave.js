@@ -1,8 +1,7 @@
 import * as _ from "atomic/core";
-import * as imm from "atomic/immutables";
 
 function hash(self){
-  return imm.hash({type: self.type, attrs: self.attrs});
+  return _.hash({type: self.type, attrs: self.attrs});
 }
 
 function identifier(self){
@@ -12,5 +11,5 @@ function identifier(self){
 export default _.does(
   _.record,
   _.naming("Command"),
-  _.implement(imm.IHash, {hash}),
+  _.implement(_.IHash, {hash}),
   _.implement(_.IIdentifiable, {identifier}));

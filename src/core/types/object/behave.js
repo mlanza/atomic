@@ -1,6 +1,6 @@
 import {does, identity, constructs, branch, overload, isString} from "../../core.js";
 import {implement} from "../protocol.js";
-import {IMergable, IBlankable, ICompactible, IComparable, IOmissible, INext, ICollection, IEquiv, IReduce, IKVReduce, ISeqable, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, IFn, IMap, ISeq, ICoercible, IClonable, IInclusive, ITemplate} from "../../protocols.js";
+import {IHash, IMergable, IBlankable, ICompactible, IComparable, IOmissible, INext, ICollection, IEquiv, IReduce, IKVReduce, ISeqable, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, IFn, IMap, ISeq, ICoercible, IClonable, IInclusive, ITemplate} from "../../protocols.js";
 import {reduced} from "../reduced.js";
 import {lazySeq, into, map} from "../lazy-seq.js";
 import {cons} from "../list.js";
@@ -11,6 +11,7 @@ import {emptyObject} from "../object/construct.js";
 import {descriptive, isObject} from "../object/concrete.js";
 import * as p from "./protocols.js";
 import {naming} from "../../protocols/inamable/concrete.js";
+import {hashKeyed as hash} from "../../protocols/ihash/concrete.js";
 
 const keys = Object.keys;
 const vals = Object.values;
@@ -181,6 +182,7 @@ function toArray(self){
 
 export default does(
   naming("Object"),
+  implement(IHash, {hash}),
   implement(ITemplate, {fill}),
   implement(IBlankable, {blank}),
   implement(IMergable, {merge}),

@@ -3,7 +3,7 @@ import {implement} from "../protocol.js";
 import {isNumber} from "../number.js";
 import {mergeWith} from "../../protocols/imergable/instance.js";
 import {Duration, days} from "../duration.js";
-import {IAddable, IReduce, IKVReduce, ISeqable, IBounds, IMap, IDeref, IComparable, IEquiv, IClonable, ILookup, IAssociative, ICollection} from "../../protocols.js";
+import {IHash, IAddable, IReduce, IKVReduce, ISeqable, IBounds, IMap, IDeref, IComparable, IEquiv, IClonable, ILookup, IAssociative, ICollection} from "../../protocols.js";
 import * as p from "./protocols.js";
 import {naming} from "../../protocols/inamable/concrete.js";
 
@@ -114,8 +114,13 @@ function deref(self){
   return self.valueOf();
 }
 
+function hash(self){
+  return self.valueOf();
+}
+
 export default does(
   naming("Date"),
+  implement(IHash, {hash}),
   implement(IAddable, {add}),
   implement(IDeref, {deref}),
   implement(IBounds, {start: identity, end: identity}),

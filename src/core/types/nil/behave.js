@@ -1,4 +1,4 @@
-import {IMergable, IBlankable, ICompactible, IMap, IAssociative, IInclusive, IOtherwise, IForkable, ICoercible, IEquiv, ICollection, INext, ISeq, ISeqable, IIndexed, ICounted, ILookup, IReduce, IKVReduce, IEmptyableCollection, IClonable} from "../../protocols.js";
+import {IHash, IMergable, IBlankable, ICompactible, IMap, IAssociative, IInclusive, IOtherwise, IForkable, ICoercible, IEquiv, ICollection, INext, ISeq, ISeqable, IIndexed, ICounted, ILookup, IReduce, IKVReduce, IEmptyableCollection, IClonable} from "../../protocols.js";
 import {emptyList} from "../empty-list/construct.js";
 import {cons} from "../list/construct.js";
 import {identity, constantly, does, overload, noop} from "../../core.js";
@@ -7,6 +7,7 @@ import {emptyArray} from "../array/construct.js";
 import {nil} from "./construct.js";
 import * as p from "./protocols.js";
 import {naming} from "../../protocols/inamable/concrete.js";
+import {hash as hsh} from "hash";
 
 function assoc(self, key, value){
   const obj = {};
@@ -38,8 +39,13 @@ function merge(self, ...xs){
   return p.count(xs) ? p.merge.apply(null, Array.from(xs)) : null;
 }
 
+function hash(self){
+  return hsh(null);
+}
+
 export default does(
   naming("Nil"),
+  implement(IHash, {hash}),
   implement(IClonable, {clone: identity}),
   implement(ICompactible, {compact: identity}),
   implement(ICollection, {conj}),
