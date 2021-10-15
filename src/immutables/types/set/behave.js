@@ -3,7 +3,7 @@ import * as mut from "atomic/transients";
 import {emptySet} from "./construct.js";
 
 function transient(self){
-  return mut.transientSet(toArray(self));
+  return mut.set(toArray(self));
 }
 
 function seq(self){
