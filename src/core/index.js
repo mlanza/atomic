@@ -62,15 +62,20 @@ function equals(other){
   return p.equiv(this, other);
 }
 
+addProp(Object.prototype, "equals", equals);
+
 function hashCode(){
-  return this.constructor == Object ? p.hash(this) : null;
+  return p.hash(this);
 }
 
 // There be dragons! Integrate with Immutable. Object literals despite their use elsewhere are, in this world, immutable.
-addProp(Object.prototype, "equals", equals);
-addProp(Object.prototype, "hashCode", hashCode);
-
-//TODO test hash against function and object
+addProp(Object.prototype, "hashCode", hashCode); //in Atomic, plain objects are treated as immutables
+//now break the chain against natives as ImmutableJS handles them already
+addProp(String.prototype, "hashCode", null);
+addProp(Number.prototype, "hashCode", null);
+addProp(Date.prototype, "hashCode", null);
+addProp(Function.prototype, "hashCode", null);
+addProp(Boolean.prototype, "hashCode", null);
 
 export const yank = called(p.omit, "`yank` is deprecated — use `omit` instead.");
 export const numeric = test(/^\d+$/i, ?);

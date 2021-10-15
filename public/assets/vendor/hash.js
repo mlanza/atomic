@@ -17,10 +17,7 @@ define(['exports'], (function (exports) { 'use strict';
 
     if (typeof o.hashCode === 'function') {
       // Drop any high bits from accidentally long hash codes.
-      var hc = o.hashCode(o);
-      if (hc != null){
-        return smi(hc);
-      }
+      return smi(o.hashCode(o));
     }
 
     var v = valueOf(o);

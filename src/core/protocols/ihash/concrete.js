@@ -1,12 +1,29 @@
 import {IHash} from "./instance.js";
 import {does} from "../../core.js";
-import {implement} from "../../types/protocol/concrete.js";
+import {implement, satisfies} from "../../types/protocol/concrete.js";
 import {map, sort} from "../../types/lazy-seq/concrete.js";
 import {keys} from "../../protocols/imap/concrete.js";
 import {get} from "../../protocols/ilookup/concrete.js";
 import {reduce} from "../ireduce.js";
+import Symbol from "symbol";
+import {hash as _hash} from "hash";
+const keep = Symbol("keep");
 
-export const hash = IHash.hash;
+export function hash(self){
+  const h = satisfies(IHash, "hash", self) || _hash;
+  if (typeof self === "object"){
+    const cached = self[keep];
+    if (cached) {
+      return cached;
+    } else {
+      const code = self[keep] = h(self);
+      Object.freeze(self); //Danger! Will Robinson.  The object must remain immutable!
+      return code;
+    }
+  } else {
+    return h(self);
+  }
+}
 
 export function hashable(){
   function hash(self){
