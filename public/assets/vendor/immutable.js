@@ -1,4 +1,4 @@
-define(['exports', 'atomic/core'], (function (exports, Hash) { 'use strict';
+define(['exports', 'atomic/core'], (function (exports, core) { 'use strict';
 
   // Used for setting prototype methods that IE8 chokes on.
   var DELETE = 'delete'; // Constants describing the size of trie nodes.
@@ -726,11 +726,6 @@ define(['exports', 'atomic/core'], (function (exports, Hash) { 'use strict';
     return isMap(maybeOrderedMap) && isOrdered(maybeOrderedMap);
   }
 
-  function isValueObject(maybeValue) {
-    return Hash.isValueObject(maybeValue);
-    //return Boolean(maybeValue && typeof maybeValue.equals === 'function' && typeof maybeValue.hashCode === 'function');
-  }
-
   /**
    * An extension of the "same-value" algorithm as [described for use by ES6 Map
    * and Set](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map#Key_equality)
@@ -808,7 +803,7 @@ define(['exports', 'atomic/core'], (function (exports, Hash) { 'use strict';
       }
     }
 
-    return !!(isValueObject(valueA) && isValueObject(valueB) && valueA.equals(valueB));
+    return !!(core.isValueObject(valueA) && core.isValueObject(valueB) && valueA.equals(valueB));
   }
 
   function _typeof$c(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof$c = function _typeof(obj) { return typeof obj; }; } else { _typeof$c = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof$c(obj); }
@@ -2576,7 +2571,7 @@ define(['exports', 'atomic/core'], (function (exports, Hash) { 'use strict';
       key: "get",
       value: function get(shift, keyHash, key, notSetValue) {
         if (keyHash === undefined) {
-          keyHash = Hash.hash(key);
+          keyHash = core.hash(key);
         }
 
         var bit = 1 << ((shift === 0 ? keyHash : keyHash >>> shift) & MASK);
@@ -2587,7 +2582,7 @@ define(['exports', 'atomic/core'], (function (exports, Hash) { 'use strict';
       key: "update",
       value: function update(ownerID, shift, keyHash, key, value, didChangeSize, didAlter) {
         if (keyHash === undefined) {
-          keyHash = Hash.hash(key);
+          keyHash = core.hash(key);
         }
 
         var keyHashFrag = (shift === 0 ? keyHash : keyHash >>> shift) & MASK;
@@ -2650,7 +2645,7 @@ define(['exports', 'atomic/core'], (function (exports, Hash) { 'use strict';
       key: "get",
       value: function get(shift, keyHash, key, notSetValue) {
         if (keyHash === undefined) {
-          keyHash = Hash.hash(key);
+          keyHash = core.hash(key);
         }
 
         var idx = (shift === 0 ? keyHash : keyHash >>> shift) & MASK;
@@ -2661,7 +2656,7 @@ define(['exports', 'atomic/core'], (function (exports, Hash) { 'use strict';
       key: "update",
       value: function update(ownerID, shift, keyHash, key, value, didChangeSize, didAlter) {
         if (keyHash === undefined) {
-          keyHash = Hash.hash(key);
+          keyHash = core.hash(key);
         }
 
         var idx = (shift === 0 ? keyHash : keyHash >>> shift) & MASK;
@@ -2733,7 +2728,7 @@ define(['exports', 'atomic/core'], (function (exports, Hash) { 'use strict';
       key: "update",
       value: function update(ownerID, shift, keyHash, key, value, didChangeSize, didAlter) {
         if (keyHash === undefined) {
-          keyHash = Hash.hash(key);
+          keyHash = core.hash(key);
         }
 
         var removed = value === NOT_SET;
@@ -2837,7 +2832,7 @@ define(['exports', 'atomic/core'], (function (exports, Hash) { 'use strict';
         }
 
         SetRef(didChangeSize);
-        return mergeIntoNode(this, ownerID, shift, Hash.hash(key), [key, value]);
+        return mergeIntoNode(this, ownerID, shift, core.hash(key), [key, value]);
       }
     }]);
 
@@ -3033,7 +3028,7 @@ define(['exports', 'atomic/core'], (function (exports, Hash) { 'use strict';
       ownerID = new OwnerID();
     }
 
-    var node = new ValueNode(ownerID, Hash.hash(key), [key, value]);
+    var node = new ValueNode(ownerID, core.hash(key), [key, value]);
 
     for (var ii = 0; ii < entries.length; ii++) {
       var entry = entries[ii];
@@ -5512,13 +5507,13 @@ define(['exports', 'atomic/core'], (function (exports, Hash) { 'use strict';
     var h = ordered ? 1 : 0;
 
     var size = collection.__iterate(keyed ? ordered ? function (v, k) {
-      h = 31 * h + hashMerge(Hash.hash(v), Hash.hash(k)) | 0;
+      h = 31 * h + hashMerge(core.hash(v), core.hash(k)) | 0;
     } : function (v, k) {
-      h = h + hashMerge(Hash.hash(v), Hash.hash(k)) | 0;
+      h = h + hashMerge(core.hash(v), core.hash(k)) | 0;
     } : ordered ? function (v) {
-      h = 31 * h + Hash.hash(v) | 0;
+      h = 31 * h + core.hash(v) | 0;
     } : function (v) {
-      h = h + Hash.hash(v) | 0;
+      h = h + core.hash(v) | 0;
     });
 
     return murmurHashOfSize(size, h);
@@ -6066,14 +6061,14 @@ define(['exports', 'atomic/core'], (function (exports, Hash) { 'use strict';
     Repeat: Repeat,
     is: is,
     fromJS: fromJS,
-    hash: Hash.hash,
+    hash: core.hash,
     isImmutable: isImmutable,
     isCollection: isCollection,
     isKeyed: isKeyed,
     isIndexed: isIndexed,
     isAssociative: isAssociative,
     isOrdered: isOrdered,
-    isValueObject: isValueObject,
+    isValueObject: core.isValueObject,
     isPlainObject: isPlainObject,
     isSeq: isSeq,
     isList: isList,
@@ -6103,7 +6098,11 @@ define(['exports', 'atomic/core'], (function (exports, Hash) { 'use strict';
 
   Object.defineProperty(exports, 'hash', {
     enumerable: true,
-    get: function () { return Hash.hash; }
+    get: function () { return core.hash; }
+  });
+  Object.defineProperty(exports, 'isValueObject', {
+    enumerable: true,
+    get: function () { return core.isValueObject; }
   });
   exports.Collection = Collection;
   exports.Iterable = Iterable;
@@ -6139,7 +6138,6 @@ define(['exports', 'atomic/core'], (function (exports, Hash) { 'use strict';
   exports.isSeq = isSeq;
   exports.isSet = isSet;
   exports.isStack = isStack;
-  exports.isValueObject = isValueObject;
   exports.merge = merge;
   exports.mergeDeep = mergeDeep$1;
   exports.mergeDeepWith = mergeDeepWith$1;
