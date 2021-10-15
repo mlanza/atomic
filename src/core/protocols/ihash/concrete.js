@@ -30,37 +30,14 @@ export function isValueObject(self){
   return satisfies(IHash, self) && satisfies(IEquiv, self);
 }
 
-export function hashable(){
-  function hash(self){
-    const content = [self.constructor.name], keys = Object.keys(self);
-    for(let key of keys){
-      content.push(key, self[key]);
-    }
-    return hashing(content);
-  }
-  return implement(IHash, {hash});
-}
-
-export function hashed(hs){
+export function hashSeq(hs){
   return reduce(function(h1, h2){
     return 3 * h1 + h2;
-  }, 0, Array.from(hs));
-}
-
-export function hashing(os){
-  return hashed(map(hash, os));
+  }, 0, map(hash, hs));
 }
 
 export function hashKeyed(self){
   return reduce(function(memo, key){
-    return hashing([memo, key, get(self, key)]);
+    return hashSeq([memo, key, get(self, key)]);
   }, 0, sort(keys(self)));
-}
-
-export function hashes(hash){
-  return does(implement(IHash, {hash}), function(Type){
-    Type.prototype.hashCode = function hashCode(o){
-      return hash(this)
-    }
-  });
 }

@@ -11,7 +11,7 @@ import {revSeq} from "../rev-seq.js";
 import {filter, mapa} from "../lazy-seq.js";
 import {emptyArray} from "./construct.js";
 import {naming} from "../../protocols/inamable/concrete.js";
-import {hashing as hash} from "../../protocols/ihash/concrete.js";
+import {hashSeq as hash} from "../../protocols/ihash/concrete.js";
 
 function clone(self){
   return slice(self)

@@ -15,5 +15,5 @@ function hash(self){
 
 export default does(
   naming("Moniker"),
-  h.hashes(hash),
+  implement(IHash, {hash}),
   implement(IEquiv, {equiv}));
