@@ -11,5 +11,5 @@ function identifier(self){
 export default _.does(
   _.record,
   _.naming("Command"),
-  _.implement(_.IHash, {hash}),
+  _.implement(_.IHashable, {hash}),
   _.implement(_.IIdentifiable, {identifier}));

@@ -1,7 +1,7 @@
 import {does} from "../../core.js";
 import {implement} from "../protocol.js";
-import {IEquiv, IHash} from "../../protocols.js";
-import * as h from "../../protocols/ihash/concrete.js";
+import {IEquiv, IHashable} from "../../protocols.js";
+import * as h from "../../protocols/ihashable/concrete.js";
 import {kin} from "../../protocols/iequiv/concrete.js";
 import {naming} from "../../protocols/inamable/concrete.js";
 
@@ -15,5 +15,5 @@ function hash(self){
 
 export default does(
   naming("GUID"),
-  implement(IHash, {hash}),
+  implement(IHashable, {hash}),
   implement(IEquiv, {equiv}));

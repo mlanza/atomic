@@ -1,9 +1,9 @@
 import {does, identity} from "../../core.js";
 import {implement} from "../protocol.js";
-import {ISeq, ISeqable, IHash} from "../../protocols.js";
+import {ISeq, ISeqable, IHashable} from "../../protocols.js";
 import ilazyseq from "../lazy-seq/behave.js";
 import {naming} from "../../protocols/inamable/concrete.js";
-import {hashSeq as hash} from "../../protocols/ihash/concrete.js";
+import {hashSeq as hash} from "../../protocols/ihashable/concrete.js";
 
 function first(self){
   return self.head;
@@ -16,6 +16,6 @@ function rest(self){
 export default does(
   ilazyseq,
   naming("List"),
-  implement(IHash, {hash}),
+  implement(IHashable, {hash}),
   implement(ISeqable, {seq: identity}),
   implement(ISeq, {first, rest}));

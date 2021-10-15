@@ -1,6 +1,6 @@
 import {identity, overload, doto, complement, does, slice} from "../../core.js";
 import {implement, satisfies} from "../protocol.js";
-import {IHash, IMergable, IBlankable, IMap, ICoercible, IFunctor, IInsertable, IOmissible, IReversible, IMapEntry, IEquiv, IReduce, IKVReduce, IAppendable, IPrependable, IInclusive, ICollection, INext, ISeq, IFind, ISeqable, IIndexed, IAssociative, ISequential, IEmptyableCollection, IFn, ICounted, ILookup, IClonable} from "../../protocols.js";
+import {IHashable, IMergable, IBlankable, IMap, ICoercible, IFunctor, IInsertable, IOmissible, IReversible, IMapEntry, IEquiv, IReduce, IKVReduce, IAppendable, IPrependable, IInclusive, ICollection, INext, ISeq, IFind, ISeqable, IIndexed, IAssociative, ISequential, IEmptyableCollection, IFn, ICounted, ILookup, IClonable} from "../../protocols.js";
 import {reduced, unreduced, isReduced} from "../reduced.js";
 import {indexedSeq} from "../indexed-seq.js";
 import {replace} from "../string/concrete.js";
@@ -11,7 +11,7 @@ import {revSeq} from "../rev-seq.js";
 import {filter, mapa} from "../lazy-seq.js";
 import {emptyArray} from "./construct.js";
 import {naming} from "../../protocols/inamable/concrete.js";
-import {hashSeq as hash} from "../../protocols/ihash/concrete.js";
+import {hashSeq as hash} from "../../protocols/ihashable/concrete.js";
 
 function clone(self){
   return slice(self)
@@ -181,7 +181,7 @@ export default does(
   iindexed,
   naming("Array"),
   implement(ISequential),
-  implement(IHash, {hash}),
+  implement(IHashable, {hash}),
   implement(IMap, {dissoc, keys, vals: identity}),
   implement(IMergable, {merge: concat}),
   implement(IInsertable, {before, after}),
