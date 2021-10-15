@@ -11,7 +11,7 @@ import {emptyObject} from "../object/construct.js";
 import {descriptive, isObject} from "../object/concrete.js";
 import * as p from "./protocols.js";
 import {naming} from "../../protocols/inamable/concrete.js";
-import {hashKeyed} from "../../protocols/ihash/concrete.js";
+import {hashKeyed as hash} from "../../protocols/ihash/concrete.js";
 
 const keys = Object.keys;
 const vals = Object.values;
@@ -178,10 +178,6 @@ function toArray(self){
     memo.push(pair);
     return memo;
   }, []);
-}
-
-function hash(self){
-  return hashKeyed(self);
 }
 
 export default does(
