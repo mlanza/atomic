@@ -1,6 +1,6 @@
-import {overload, partial, curry, tee, toggles, identity, obj, partly, comp, doto, does, branch, unspread, applying, execute, noop, constantly, once, isFunction, isString} from "./core.js";
+import {overload, partial, unary, type, curry, tee, toggles, identity, obj, partly, comp, doto, does, branch, unspread, applying, execute, noop, constantly, once, isFunction, isString} from "./core.js";
 import {ILogger, IDeref, IFn, IMutable, IAssociative, IClonable, IHierarchy, ILookup, ISeq} from "./protocols.js";
-import {just, satisfies, spread, maybe, each, duration, remove, sort, flip, realized, apply, realize, isNil, reFindAll, mapkv, period, selectKeys, mapVals, reMatches, test, date, emptyList, cons, days, recurrence, Nil} from "./types.js";
+import {just, satisfies, spread, maybe, each, duration, remove, sort, flip, realized, apply, realize, isNil, reFindAll, mapkv, period, selectKeys, mapVals, reMatches, test, date, emptyList, cons, days, recurrence, multimethod, addMethod, moniker, Nil} from "./types.js";
 import {isBlank, str, replace} from "./types/string.js";
 import {isSome} from "./types/nil.js";
 import cfg from "./config.js";
@@ -394,17 +394,11 @@ function absorb2(tgt, src){
 
 export const absorb = overload(constantly({}), identity, absorb2, p.reducing(absorb2));
 
-export function invokable(obj){
-  function invoke(self, ...args){
-    return p.invoke(obj, ...args);
-  }
-  function mutate(self, effect){
-    effect(obj);
-    return obj;
-  }
-  const deref = constantly(obj);
-  return doto(partial(p.invoke, obj),
-    specify(IMutable, {mutate}),
-    specify(IFn, {invoke}),
-    specify(IDeref, {deref}));
-}
+export const coerce = multimethod(function(source, Type){
+  return  [p.name(type(source)), p.name(Type)];
+});
+
+coerce
+|> IDeref.deref
+|> addMethod(?, [moniker("Number"), moniker("String")], unary(str))
+|> addMethod(?, [moniker("Number"), moniker("Date")], unary(date));
