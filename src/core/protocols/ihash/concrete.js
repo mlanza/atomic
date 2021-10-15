@@ -7,6 +7,7 @@ import {get} from "../../protocols/ilookup/concrete.js";
 import {reduce} from "../ireduce.js";
 import Symbol from "symbol";
 import {hash as _hash} from "hash";
+import {IEquiv} from "../iequiv/instance.js";
 const cache = Symbol("hashcode");
 
 export function hash(self){
@@ -23,6 +24,10 @@ export function hash(self){
   } else {
     return h(self);
   }
+}
+
+export function isValueObject(self){
+  return satisfies(IHash, self) && satisfies(IEquiv, self);
 }
 
 export function hashable(){

@@ -727,7 +727,8 @@ define(['exports', 'atomic/core'], (function (exports, Hash) { 'use strict';
   }
 
   function isValueObject(maybeValue) {
-    return Boolean(maybeValue && typeof maybeValue.equals === 'function' && typeof maybeValue.hashCode === 'function');
+    return Hash.isValueObject(maybeValue);
+    //return Boolean(maybeValue && typeof maybeValue.equals === 'function' && typeof maybeValue.hashCode === 'function');
   }
 
   /**
