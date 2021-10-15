@@ -1,8 +1,8 @@
 import {does} from "../../core.js";
 import {implement} from "../protocol.js";
 import {kin} from "../../protocols/iequiv/concrete.js";
-import {IEquiv, IHash} from "../../protocols.js";
-import * as h from "../../protocols/ihash/concrete.js";
+import {IEquiv, IHashable} from "../../protocols.js";
+import * as h from "../../protocols/ihashable/concrete.js";
 import {naming} from "../../protocols/inamable/concrete.js";
 
 function equiv(self, other){
@@ -15,5 +15,5 @@ function hash(self){
 
 export default does(
   naming("Moniker"),
-  implement(IHash, {hash}),
+  implement(IHashable, {hash}),
   implement(IEquiv, {equiv}));

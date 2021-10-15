@@ -3,7 +3,7 @@ import {implement} from "../protocol.js";
 import {isNumber} from "../number.js";
 import {mergeWith} from "../../protocols/imergable/instance.js";
 import {Duration, days} from "../duration.js";
-import {IHash, IAddable, IReduce, IKVReduce, ISeqable, IBounds, IMap, IDeref, IComparable, IEquiv, IClonable, ILookup, IAssociative, ICollection} from "../../protocols.js";
+import {IHashable, IAddable, IReduce, IKVReduce, ISeqable, IBounds, IMap, IDeref, IComparable, IEquiv, IClonable, ILookup, IAssociative, ICollection} from "../../protocols.js";
 import * as p from "./protocols.js";
 import {naming} from "../../protocols/inamable/concrete.js";
 
@@ -120,7 +120,7 @@ function hash(self){
 
 export default does(
   naming("Date"),
-  implement(IHash, {hash}),
+  implement(IHashable, {hash}),
   implement(IAddable, {add}),
   implement(IDeref, {deref}),
   implement(IBounds, {start: identity, end: identity}),

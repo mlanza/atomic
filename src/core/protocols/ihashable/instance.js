@@ -1,4 +1,4 @@
 import {protocol} from "../../types/protocol.js";
-export const IHash = protocol({
+export const IHashable = protocol({
   hash: null
 });

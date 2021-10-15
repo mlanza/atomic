@@ -1,4 +1,4 @@
-import {hash} from "../../protocols/ihash/concrete.js";
+import {hash} from "../../protocols/ihashable/concrete.js";
 
 export function addMethod(self, key, handler){
   const hashcode = hash(key);

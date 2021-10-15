@@ -3,7 +3,7 @@ import {implement} from "../protocol.js";
 import {some} from "../lazy-seq/concrete.js";
 import {naming} from "../../protocols/inamable/concrete.js";
 import {equiv} from "../../protocols/iequiv/concrete.js";
-import {hash} from "../../protocols/ihash/concrete.js";
+import {hash} from "../../protocols/ihashable/concrete.js";
 import {IFn} from "../../protocols/ifn/instance.js";
 
 function invoke(self, ...args){
