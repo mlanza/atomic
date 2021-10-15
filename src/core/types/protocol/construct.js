@@ -72,8 +72,8 @@ function specify2(behavior, target){
   if (this == null) {
     throw new Error("Protocol not specified.");
   }
-  if (behavior == null) {
-    throw new Error("Behavior not specified.");
+  if (behavior == null || typeof behavior != "object") {
+    throw new Error("Behavior must be an object map.");
   }
   if (target == null) {
     throw new Error("Subject not specified.");

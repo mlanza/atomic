@@ -3,7 +3,7 @@ import {implement} from "../protocol.js";
 import {isReduced, unreduced} from "../reduced.js";
 import {apply} from "../function/concrete.js";
 import {EmptyList, emptyList} from "../empty-list.js";
-import ilazyseq, {iterable} from "../lazy-seq/behave.js";
+import ilazyseq, {iterable, reductive} from "../lazy-seq/behave.js";
 import {mapa} from "../lazy-seq/concrete.js";
 import {LazySeq} from "../lazy-seq/construct.js";
 import {concatenated, concat} from "./construct.js";
@@ -66,14 +66,13 @@ function count(self){
 
 export default does(
   iterable,
+  //TODO reductive?
   naming("Concatenated"),
+  implement(IKVReduce, {reducekv}),
+  implement(IReduce, {reduce}),
   implement(IHash, {hash}),
-  implement(IReduce, ilazyseq),
-  implement(IKVReduce, ilazyseq),
   implement(ISequential),
   implement(IEmptyableCollection, {empty: emptyList}),
-  implement(IKVReduce, {reducekv}), //TODO!!
-  implement(IReduce, {reduce}), //TODO!!
   implement(ICollection, {conj}),
   implement(INext, {next}),
   implement(ISeq, {first, rest}),

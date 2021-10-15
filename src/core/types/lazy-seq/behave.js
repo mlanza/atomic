@@ -154,12 +154,15 @@ function includes(self, value){
 
 const reverse = comp(p.reverse, toArray);
 
+export const reductive = does(
+  implement(IReduce, {reduce}),
+  implement(IKVReduce, {reducekv}));
+
 export default does(
   iterable,
   iequiv,
+  reductive,
   naming("LazySeq"),
-  implement(IReduce, {reduce}),
-  implement(IKVReduce, {reducekv}),
   implement(ISequential),
   implement(IIndexed, {nth, idx}),
   implement(IReversible, {reverse}),
