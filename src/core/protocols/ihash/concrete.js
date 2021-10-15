@@ -7,18 +7,18 @@ import {get} from "../../protocols/ilookup/concrete.js";
 import {reduce} from "../ireduce.js";
 import Symbol from "symbol";
 import {hash as _hash} from "hash";
-const keep = Symbol("keep");
+const cache = Symbol("hashcode");
 
 export function hash(self){
   const h = satisfies(IHash, "hash", self) || _hash;
   if (typeof self === "object"){
-    const cached = self[keep];
-    if (cached) {
-      return cached;
+    const stored = self[cache];
+    if (stored) {
+      return stored;
     } else {
-      const code = self[keep] = h(self);
+      const hashcode = self[cache] = h(self);
       Object.freeze(self); //Danger! Will Robinson.  The object must remain immutable!
-      return code;
+      return hashcode;
     }
   } else {
     return h(self);
