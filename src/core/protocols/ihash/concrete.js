@@ -1,33 +1,33 @@
-import {IHash} from "./instance.js";
 import {does} from "../../core.js";
 import {implement, satisfies} from "../../types/protocol/concrete.js";
+import {IHash} from "./instance.js";
+import {IEquiv} from "../iequiv/instance.js";
 import {map, sort} from "../../types/lazy-seq/concrete.js";
 import {keys} from "../../protocols/imap/concrete.js";
 import {get} from "../../protocols/ilookup/concrete.js";
 import {reduce} from "../ireduce.js";
 import Symbol from "symbol";
-import {hash as _hash} from "hash";
-import {IEquiv} from "../iequiv/instance.js";
+import * as h from "hash";
 const cache = Symbol("hashcode");
 
 export function hash(self){
-  const h = satisfies(IHash, "hash", self) || _hash;
+  const hash = satisfies(IHash, "hash", self) || h.hash;
   if (typeof self === "object"){
     const stored = self[cache];
     if (stored) {
       return stored;
     } else {
-      const hashcode = self[cache] = h(self);
+      const hashcode = self[cache] = hash(self);
       Object.freeze(self); //Danger! Will Robinson.  The object must remain immutable!
       return hashcode;
     }
   } else {
-    return h(self);
+    return hash(self);
   }
 }
 
 export function isValueObject(self){
-  return satisfies(IHash, self) && satisfies(IEquiv, self);
+  return (satisfies(IHash, self) && satisfies(IEquiv, self)) || h.isValueObject(self);
 }
 
 export function hashSeq(hs){

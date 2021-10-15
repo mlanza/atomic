@@ -1,5 +1,9 @@
 define(['exports'], (function (exports) { 'use strict';
 
+  function isValueObject(maybeValue) {
+    return Boolean(maybeValue && typeof maybeValue.equals === 'function' && typeof maybeValue.hashCode === 'function');
+  }
+
   // Values which have either 00 or 11 as the high order bits qualify.
   // This function drops the highest order bit in a signed number, maintaining
   // the sign bit.
@@ -259,6 +263,7 @@ define(['exports'], (function (exports) { 'use strict';
   var stringHashCache = {};
 
   exports.hash = hash;
+  exports.isValueObject = isValueObject;
 
   Object.defineProperty(exports, '__esModule', { value: true });
 
