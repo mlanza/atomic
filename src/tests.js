@@ -52,10 +52,14 @@ QUnit.test("hashing", function(assert){
     assert.equal(_.hash(x), _.hash(x));
     assert.ok(_.equiv(x, y));
   }
+  const div = dom.tag("div");
+  const hi = div("hi");
+  assert.ok(_.hash(div("hi")) !== _.hash(div("hi")));
   assert.ok(_.hash({card: "ace"}) !== _.hash({card: "king"}));
   assert.ok(_.hash(true) !== _.hash(false));
   assert.ok(_.hash(same) !== _.hash(function(){}));
   assert.ok(_.hash(function(){}) !== _.hash(function(){}));
+  same(hi, hi);
   same(same, same);
   same(true, true);
   same([1, 7, 0, 1, 1], [1, 7, 0, 1, 1]);
