@@ -1,11 +1,12 @@
 import {does, overload} from "../../core.js";
 import {implement} from "../protocol.js";
 import {emptyable} from "../record/behave.js";
-import {duration} from "../duration/construct.js";
+import {duration, Duration} from "../duration/construct.js";
 import {min, max} from "../number/concrete.js";
 import {recurrence} from "../recurrence/construct.js";
-import {period} from "./construct.js";
+import {period, Period} from "./construct.js";
 import {map, take} from "../lazy-seq/concrete.js";
+import {coerce} from "../../multimethods.js";
 import {ISplittable, ICoercible, IAddable, IBounds, IComparable, IEquiv, IInclusive, IDivisible, IMergable} from "../../protocols.js";
 import * as p from "./protocols.js";
 import {keying} from "../../protocols/imapentry/concrete.js";
@@ -29,7 +30,7 @@ function merge(self, other){
 }
 
 function divide(self, step){
-  return p.divide(p.toDuration(self), step);
+  return p.divide(coerce(self, Duration), step);
 }
 
 function start(self){
@@ -48,10 +49,6 @@ function equiv(self, other){
   return other != null && p.equiv(self.start, other.start) && p.equiv(self.end, other.end);
 }
 
-function toDuration(self){
-  return self.end == null || self.start == null ? duration(Number.POSITIVE_INFINITY) : duration(self.end - self.start);
-}
-
 function compare(self, other){ //TODO test with sort of periods
   return p.compare(other.start, self.start) || p.compare(other.end, self.end);
 }
@@ -64,7 +61,6 @@ export default does(
   implement(IMergable, {merge}),
   implement(IDivisible, {divide}),
   implement(IComparable, {compare}),
-  implement(ICoercible, {toDuration}),
   implement(IInclusive, {includes}),
   implement(IBounds, {start, end}),
   implement(IEquiv, {equiv}));

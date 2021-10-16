@@ -6,7 +6,7 @@ import * as h from "../../protocols/ihashable/concrete.js";
 import {keying} from "../../protocols/imapentry/concrete.js";
 
 function equiv(self, other){
-  return kin(self, other) && self.name === other.name;
+  return self === other;
 }
 
 function hash(self){

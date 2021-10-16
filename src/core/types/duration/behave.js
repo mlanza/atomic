@@ -1,5 +1,5 @@
 import {implement} from "../protocol.js";
-import {does, identity, partial} from "../../core.js";
+import {does, partial} from "../../core.js";
 import {mergeWith} from "../../protocols/imergable/instance.js";
 import {Duration} from "../duration/construct.js";
 import {IAddable, IKVReduce, IFunctor, IMergable, ICoercible, IMultipliable, IDivisible, IMap, IAssociative, ILookup} from "../../protocols.js";
@@ -66,5 +66,4 @@ export default does(
   implement(ILookup, {lookup}),
   implement(IMap, {keys, dissoc}),
   implement(IDivisible, {divide}),
-  implement(IMultipliable, {mult}),
-  implement(ICoercible, {toDuration: identity}));
+  implement(IMultipliable, {mult}));

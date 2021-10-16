@@ -12,7 +12,9 @@ function invoke(self, ...args){
   const potentials = self.methods[hashcode];
   const f = some(function([k, h]){
     return equiv(k, key) ? h : null;
-  }, potentials) || self.fallback;
+  }, potentials) || self.fallback || function(){
+    throw new Error("Unable to locate appropriate method.");
+  };
   return f.apply(this, args);
 }
 
