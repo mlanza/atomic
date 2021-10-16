@@ -64,12 +64,10 @@ QUnit.test("hashing", function(assert){
   same(same, same);
   same(true, true);
   same([1, 7, 0, 1, 1], [1, 7, 0, 1, 1]);
-  same(_.moniker("Pecan Pie"), _.moniker("Pecan Pie"))
   same(_.date(999), _.date(999));
   same({blackwidow: "Avenger"}, {blackwidow: "Avenger"});
   same([{blackwidow: "Avenger"}, _.date(774), [1, 2]], [{blackwidow: "Avenger"}, _.date(774), [1, 2]]);
   assert.equal(_.get(m, _.date(999)), 111);
-  assert.equal(_.get(m, _.moniker("Pecan Pie")), 100);
   assert.equal(_.get(m, {blackwidow: "Avenger"}), "Natasha");
   assert.equal(_.get(m, "mustard"), "ketchup");
 });

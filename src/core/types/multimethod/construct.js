@@ -7,7 +7,5 @@ export function Multimethod(dispatch, methods, fallback){
 }
 
 export function multimethod(dispatch, fallback){
-  return invokable(new Multimethod(dispatch, {}, fallback || function(){
-    throw new Error("Unable to locate appropriate method.");
-  }));
+  return invokable(new Multimethod(dispatch, {}, fallback));
 }

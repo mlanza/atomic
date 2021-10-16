@@ -6,6 +6,8 @@ import {moniker} from "../../types/moniker/construct.js";
 export const key = IMapEntry.key;
 export const val = IMapEntry.val;
 
+/*#if _CROSSFRAME
+
 export const keying = pre(function keying(nm){
   return function(Type){
     return specify(IMapEntry, {
@@ -14,8 +16,6 @@ export const keying = pre(function keying(nm){
     }, Type);
   }
 }, signature(isString));
-
-/*#if _CROSSFRAME
 
 const is1 = comp(key, type);
 
@@ -32,6 +32,15 @@ export function ako(self, type){
 
 //#else */
 
+export const keying = pre(function keying(nm){
+  return function(Type){
+    return specify(IMapEntry, {
+      key: constantly(Type),
+      val: constantly(Type)
+    }, Type);
+  }
+}, signature(isString));
+
 export function is(self, constructor){
   return type(self) === constructor;
 }
@@ -41,4 +50,3 @@ export function ako(self, constructor){
 }
 
 //#endif
-

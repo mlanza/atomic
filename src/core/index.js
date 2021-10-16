@@ -1,6 +1,6 @@
 import {overload, partial, unary, type, curry, tee, toggles, identity, obj, partly, comp, doto, does, branch, unspread, applying, execute, noop, constantly, once, isFunction, isString} from "./core.js";
 import {ILogger, IDeref, IFn, IMutable, IAssociative, IClonable, IHierarchy, ILookup, ISeq} from "./protocols.js";
-import {just, satisfies, spread, maybe, each, duration, remove, sort, flip, realized, apply, realize, isNil, reFindAll, mapkv, period, selectKeys, mapVals, reMatches, test, date, emptyList, cons, days, recurrence, multimethod, addMethod, moniker, Nil} from "./types.js";
+import {Duration, Period, just, satisfies, spread, maybe, each, duration, remove, sort, flip, realized, apply, realize, isNil, reFindAll, mapkv, period, selectKeys, mapVals, reMatches, test, date, emptyList, cons, days, recurrence, addMethod, Nil} from "./types.js";
 import {isBlank, str, replace} from "./types/string.js";
 import {isSome} from "./types/nil.js";
 import cfg from "./config.js";
@@ -12,10 +12,12 @@ export const config = cfg;
 export {filter} from "./types/lazy-seq.js";
 export const serieslike = iseries;
 export {iterable} from "./types/lazy-seq/behave.js";
+export * from "./multimethods.js";
 export * from "./core.js";
 export * from "./types.js";
 export * from "./protocols.js";
 export * from "./protocols/concrete.js";
+import {coerce} from "./multimethods.js";
 import * as p from "./protocols/concrete.js";
 import Set from "set";
 import {extend} from "./types/protocol/concrete.js";
@@ -394,11 +396,14 @@ function absorb2(tgt, src){
 
 export const absorb = overload(constantly({}), identity, absorb2, p.reducing(absorb2));
 
-export const coerce = multimethod(function(source, Type){
-  return  [p.name(type(source)), p.name(Type)];
-});
-
 coerce
-|> IDeref.deref
-|> addMethod(?, [moniker("Number"), moniker("String")], unary(str))
-|> addMethod(?, [moniker("Number"), moniker("Date")], unary(date));
+  |> p.deref
+  |> addMethod(?, [p.key(Number), p.key(String)], unary(str))
+  |> addMethod(?, [p.key(Number), p.key(Date)], unary(date))
+  |> addMethod(?, [p.key(Duration), p.key(Duration)], identity)
+  |> addMethod(?, [p.key(Period), p.key(Duration)],
+      function(self){
+        return self.end == null || self.start == null ? duration(Number.POSITIVE_INFINITY) : duration(self.end - self.start);
+      })
+
+export const toDuration = coerce(?, Duration);
