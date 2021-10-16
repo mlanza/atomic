@@ -7,15 +7,11 @@ function sub(self, observer){
   if (!self.terminated) {
     _.swap(self.observers, _.conj(?, observer));
     return _.once(function(){
-      unsub(self, observer);
+      _.swap(self.observers, _.unconj(?, observer));
     });
   } else {
     throw new Error("Cannot subscribe to a terminated Subject.");
   }
-}
-
-function unsub(self, observer){
-  _.swap(self.observers, _.unconj(?, observer));
 }
 
 function pub(self, message){
@@ -52,5 +48,5 @@ export default _.does(
   ireduce,
   imergable,
   _.naming("Subject"),
-  _.implement(ISubscribe, {sub, unsub}),
+  _.implement(ISubscribe, {sub}),
   _.implement(IPublish, {pub, err, complete, closed}));

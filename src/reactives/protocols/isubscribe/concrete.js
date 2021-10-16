@@ -13,4 +13,3 @@ function subN(source){
 }
 
 export const sub = _.overload(null, null, ISubscribe.sub, sub3, subN);
-export const unsub = _.overload(null, null, ISubscribe.unsub);

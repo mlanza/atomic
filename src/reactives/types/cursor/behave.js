@@ -23,17 +23,9 @@ function swap(self, f){
 }
 
 function sub(self, observer){
-  function observe(state){
+  return p.sub(self.source, function(state){
     p.pub(observer, _.getIn(state, self.path));
-  }
-  self.callbacks.set(observer, observe);
-  p.sub(self.source, observe);
-}
-
-function unsub(self, observer){
-  const observe = self.callbacks.get(observer);
-  p.unsub(self.source, observe);
-  observe && self.callbacks.delete(observer);
+  });
 }
 
 export default _.does(
@@ -43,5 +35,5 @@ export default _.does(
   _.implement(_.IDeref, {deref}),
   _.implement(_.IReset, {reset}),
   _.implement(_.ISwap, {swap}),
-  _.implement(ISubscribe, {sub, unsub}),
+  _.implement(ISubscribe, {sub}),
   _.implement(IPublish, {pub: reset}));
