@@ -26,6 +26,6 @@ function handle(self, command, next){
 }
 
 export default _.does(
-  _.naming("Middleware"),
+  _.keying("Middleware"),
   _.implement(mut.ITransientCollection, {conj}),
   _.implement(IMiddleware, {handle}));

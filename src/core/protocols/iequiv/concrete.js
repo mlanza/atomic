@@ -4,7 +4,7 @@ import {IEquiv} from "./instance.js";
 import {reduce} from "../ireduce/concrete.js";
 import {reduced} from "../../types/reduced/construct.js";
 import {get} from "../ilookup/concrete.js";
-import {is} from "../../protocols/inamable/concrete.js";
+import {is} from "../../protocols/imapentry/concrete.js";
 
 export function kin(self, other){
   return is(other, self.constructor);

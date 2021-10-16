@@ -7,5 +7,5 @@ function handle(self, message, next){
 }
 
 export default _.does(
-  _.naming("TeeMiddleware"),
+  _.keying("TeeMiddleware"),
   _.implement(IMiddleware, {handle}));

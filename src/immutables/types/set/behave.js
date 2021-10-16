@@ -64,7 +64,7 @@ function equiv(self, other){
 
 export default _.does(
   _.iterable,
-  _.naming("Set"),
+  _.keying("Set"),
   _.implement(_.ISequential),
   _.implement(_.IEquiv, {equiv: equiv}),
   _.implement(_.IAssociative, {contains: includes}),

@@ -41,7 +41,7 @@ const text  = _.comp(_.either(?, ""), access(p.text)),
       value = access(p.value);
 
 export default _.does(
-  _.naming("HTMLSelectElement"),
+  _.keying("HTMLSelectElement"),
   _.implement(mut.ITransientCollection, {conj}),
   _.implement(mut.ITransientAppendable, {append: conj}),
   _.implement(IValue, {value}),

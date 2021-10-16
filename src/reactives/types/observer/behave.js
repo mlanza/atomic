@@ -26,5 +26,5 @@ function closed(self){
 }
 
 export default _.does(
-  _.naming("Observer"),
+  _.keying("Observer"),
   _.implement(IPublish, {pub, err, complete, closed}));

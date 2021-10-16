@@ -19,5 +19,5 @@ function handle(self, message, next){
 }
 
 export default _.does(
-  _.naming("LockingMiddleware"),
+  _.keying("LockingMiddleware"),
   _.implement(IMiddleware, {handle}));

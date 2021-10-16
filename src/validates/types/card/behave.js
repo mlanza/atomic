@@ -20,7 +20,7 @@ function check(self, coll){
 }
 
 export default _.does(
-  _.naming("Card"),
+  _.keying("Card"),
   _.implement(ICheckable, {check}),
   _.implement(_.IInclusive, {includes}),
   _.implement(_.IBounds, {start, end}));

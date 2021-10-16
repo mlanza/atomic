@@ -1,2 +1,2 @@
-import {naming} from "../../protocols/inamable/concrete.js";
-export default naming("Symbol");
+import {keying} from "../../protocols/imapentry/concrete.js";
+export default keying("Symbol");

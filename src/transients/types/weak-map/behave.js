@@ -3,4 +3,4 @@ import behave from "../map/behave.js";
 
 export default _.does(
   behave,
-  _.naming("WeakMap"));
+  _.keying("WeakMap"));

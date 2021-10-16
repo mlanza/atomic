@@ -29,7 +29,7 @@ function sub(self, observer){
 }
 
 export default _.does(
-  _.naming("Cursor"),
+  _.keying("Cursor"),
   //_.implement(_.IDisposable, {dispose}), TODO
   _.implement(_.IPath, {path}),
   _.implement(_.IDeref, {deref}),

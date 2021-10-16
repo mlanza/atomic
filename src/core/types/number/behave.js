@@ -1,7 +1,7 @@
 import {does, identity} from "../../core.js";
 import {implement} from "../protocol.js";
 import {IBounds, IAddable, IInverse, IComparable, IMultipliable, IDivisible} from "../../protocols.js";
-import {naming} from "../../protocols/inamable/concrete.js";
+import {keying} from "../../protocols/imapentry/concrete.js";
 
 function compare(self, other){
   return self === other ? 0 : self - other;
@@ -27,7 +27,7 @@ const start = identity,
       end   = identity;
 
 export default does(
-  naming("Number"),
+  keying("Number"),
   implement(IDivisible, {divide}),
   implement(IMultipliable, {mult}),
   implement(IBounds, {start, end}),

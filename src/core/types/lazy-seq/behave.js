@@ -7,7 +7,7 @@ import {cons} from "../list/construct.js";
 import {map, filter, remove, detect} from "./concrete.js";
 import {emptyList} from "../empty-list/construct.js";
 import {iequiv} from "../empty-list/behave.js";
-import {naming} from "../../protocols/inamable/concrete.js";
+import {keying} from "../../protocols/imapentry/concrete.js";
 import Symbol from "symbol";
 import * as p from "./protocols.js";
 
@@ -162,7 +162,7 @@ export default does(
   iterable,
   iequiv,
   reductive,
-  naming("LazySeq"),
+  keying("LazySeq"),
   implement(ISequential),
   implement(IIndexed, {nth, idx}),
   implement(IReversible, {reverse}),

@@ -7,5 +7,5 @@ function check(self, obj){
 }
 
 export default _.does(
-  _.naming("When"),
+  _.keying("When"),
   _.implement(ICheckable, {check}));

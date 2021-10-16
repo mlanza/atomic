@@ -7,5 +7,5 @@ function handle(self, message, next){
 }
 
 export default _.does(
-  _.naming("MessageProcessor"),
+  _.keying("MessageProcessor"),
   _.implement(IMiddleware, {handle}));

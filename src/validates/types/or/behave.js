@@ -32,7 +32,7 @@ function next(self){
 }
 
 export default _.does(
-  _.naming("Or"),
+  _.keying("Or"),
   _.implement(_.ISeqable, {seq}),
   _.implement(_.INext, {next}),
   _.implement(_.IEmptyableCollection, {empty}),

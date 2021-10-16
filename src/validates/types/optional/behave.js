@@ -19,6 +19,6 @@ function append(self, constraint){
 }
 
 export default _.does(
-  _.naming("Optional"),
+  _.keying("Optional"),
   _.implement(_.IAppendable, {append}),
   _.implement(ICheckable, {check}));

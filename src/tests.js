@@ -32,11 +32,12 @@ QUnit.test("inheritance chain", function(assert){
   assert.equal(_.name(greg), "Gregory Porter");
   _.specify(_.INamable, {name: _.get(?, "fname")}, greg);
   assert.equal(_.name(greg), "Gregory");
-  assert.ok(_.satisfies(_.INamable, Array)); //e.g. from `naming`
-  assert.ok(!_.satisfies(_.INamable, []));
+});
+
+QUnit.test("keyed types", function(assert){
+  assert.ok(_.satisfies(_.IMapEntry, Array)); //e.g. from `keying`
   assert.ok(_.isArray([]));
   assert.ok(_.isObject({}));
-
 });
 
 QUnit.test("hashing", function(assert){

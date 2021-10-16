@@ -15,6 +15,6 @@ function at(self, path){
 }
 
 export default _.does(
-  _.naming("Issue"),
+  _.keying("Issue"),
   _.implement(_.IDeref, {deref}),
   _.implement(IScope, {scope, at}));

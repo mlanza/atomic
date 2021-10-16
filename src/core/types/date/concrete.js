@@ -1,6 +1,6 @@
 import {overload, identity} from "../../core.js";
 import * as p from "./protocols.js";
-import {is} from "../../protocols/inamable/concrete.js";
+import {is} from "../../protocols/imapentry/concrete.js";
 
 export function isDate(self){
   return is(self, Date);

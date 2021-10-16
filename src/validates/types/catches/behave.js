@@ -12,5 +12,5 @@ function check(self, obj){
 }
 
 export default _.does(
-  _.naming("Catches"),
+  _.keying("Catches"),
   _.implement(ICheckable, {check}));

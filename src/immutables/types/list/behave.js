@@ -68,7 +68,7 @@ function merge(self, other){
 
 export default _.does(
   _.iterable,
-  _.naming("List"),
+  _.keying("List"),
   _.implement(_.IEquiv, {equiv}),
   _.implement(_.IInclusive, {includes}),
   _.implement(_.IAssociative, {assoc, contains}),

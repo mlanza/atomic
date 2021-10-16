@@ -66,7 +66,7 @@ function persistent(self){
 }
 
 export default _.does(
-  _.naming("TransientArray"),
+  _.keying("TransientArray"),
   transition(transientArray),
   _.forward("arr", _.IFind, _.IMapEntry, _.IAssociative, _.IMap, _.ICoercible, _.ILookup, _.IReduce, _.IKVReduce, _.IFunctor, _.IInclusive, _.ICounted, _.ISeq, _.INext),
   _.implement(_.ISequential),

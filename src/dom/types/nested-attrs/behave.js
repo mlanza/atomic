@@ -54,7 +54,7 @@ function conj(self, pair){
 }
 
 export default _.does(
-  _.naming("NestedAttrs"),
+  _.keying("NestedAttrs"),
   _.implement(_.IDeref, {deref}),
   _.implement(_.IMap, {keys, vals}),
   _.implement(_.IInclusive, {includes}),

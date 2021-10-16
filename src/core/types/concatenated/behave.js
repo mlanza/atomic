@@ -9,7 +9,7 @@ import {LazySeq} from "../lazy-seq/construct.js";
 import {concatenated, concat} from "./construct.js";
 import {IHashable, ICoercible, ICollection, INext, ISeq, ICounted, ISeqable, IIndexed, IReduce, IKVReduce, ISequential, IEmptyableCollection} from "../../protocols.js";
 import * as p from "./protocols.js";
-import {naming} from "../../protocols/inamable/concrete.js";
+import {keying} from "../../protocols/imapentry/concrete.js";
 import {hashSeq as hash} from "../../protocols/ihashable/concrete.js";
 
 function conj(self, x){
@@ -67,7 +67,7 @@ function count(self){
 export default does(
   iterable,
   //TODO reductive?
-  naming("Concatenated"),
+  keying("Concatenated"),
   implement(IKVReduce, {reducekv}),
   implement(IReduce, {reduce}),
   implement(IHashable, {hash}),

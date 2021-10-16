@@ -48,7 +48,7 @@ function count(self){
 
 export default _.does(
   _.iterable,
-  _.naming("NodeList"),
+  _.keying("NodeList"),
   _.implement(_.ILookup, {lookup}),
   _.implement(_.IIndexed, {nth: lookup}),
   _.implement(_.ICounted, {count}),

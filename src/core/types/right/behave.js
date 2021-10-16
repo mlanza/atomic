@@ -2,7 +2,7 @@ import {implement} from "../protocol.js";
 import {identity, does} from "../../core.js";
 import {right} from "./construct.js";
 import {IFunctor, IOtherwise, IForkable, IDeref} from "../../protocols.js";
-import {naming} from "../../protocols/inamable/concrete.js";
+import {keying} from "../../protocols/imapentry/concrete.js";
 
 function fmap(self, f){
   return right(f(self.value));
@@ -21,7 +21,7 @@ function deref(self){
 }
 
 export default does(
-  naming("Right"),
+  keying("Right"),
   implement(IDeref, {deref}),
   implement(IForkable, {fork}),
   implement(IOtherwise, {otherwise}),

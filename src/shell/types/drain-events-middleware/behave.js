@@ -10,5 +10,5 @@ function handle(self, command, next){
 }
 
 export default _.does(
-  _.naming("DrainEventsMiddleware"),
+  _.keying("DrainEventsMiddleware"),
   _.implement(IMiddleware, {handle}));

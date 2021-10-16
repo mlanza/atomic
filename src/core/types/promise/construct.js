@@ -1,5 +1,5 @@
 import Promise from "promise";
-import {is} from "../../protocols/inamable/concrete.js";
+import {is} from "../../protocols/imapentry/concrete.js";
 
 export function promise(handler){
   return new Promise(handler);

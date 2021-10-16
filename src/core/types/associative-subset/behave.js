@@ -7,7 +7,7 @@ import {emptyObject} from "../../types/object/construct.js";
 import {iequiv} from "../../types/empty-list/behave.js";
 import {IHashable, IEquiv, ICoercible, IFind, IReduce, IKVReduce, ISeqable, ICounted, ILookup, IFn, IMap, IClonable, IEmptyableCollection} from "../../protocols.js";
 import * as p from "./protocols.js";
-import {naming} from "../../protocols/inamable/concrete.js";
+import {keying} from "../../protocols/imapentry/concrete.js";
 import {hashKeyed as hash} from "../../protocols/ihashable/concrete.js";
 
 function toObject(self){
@@ -68,7 +68,7 @@ function reducekv(self, f, init){
 
 export default does(
   iequiv,
-  naming("AssociativeSubset"),
+  keying("AssociativeSubset"),
   implement(IHashable, {hash}),
   implement(ICoercible, {toObject}),
   implement(IFind, {find}),

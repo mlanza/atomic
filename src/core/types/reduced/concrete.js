@@ -1,5 +1,5 @@
 import {Reduced} from "./construct.js";
-import {is} from "../../protocols/inamable/concrete.js";
+import {is} from "../../protocols/imapentry/concrete.js";
 
 export function isReduced(self){
   return is(self, Reduced);

@@ -1,7 +1,7 @@
 import {implement} from "../protocol.js";
 import {identity, does} from "../../core.js";
 import {IFunctor, IForkable, IDeref} from "../../protocols.js";
-import {naming} from "../../protocols/inamable/concrete.js";
+import {keying} from "../../protocols/imapentry/concrete.js";
 
 const fmap = identity;
 
@@ -14,7 +14,7 @@ function deref(self){
 }
 
 export default does(
-  naming("Left"),
+  keying("Left"),
   implement(IDeref, {deref}),
   implement(IForkable, {fork}),
   implement(IFunctor, {fmap}));

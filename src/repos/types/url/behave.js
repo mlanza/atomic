@@ -14,6 +14,6 @@ function fill(self, params){
 }
 
 export default _.does(
-  _.naming("URL"),
+  _.keying("URL"),
   _.implement(IParams, {params}),
   _.implement(_.ITemplate, {fill}));

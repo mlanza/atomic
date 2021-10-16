@@ -9,7 +9,7 @@ import {rePattern} from "../reg-exp/concrete.js";
 import {emptyString} from "./construct.js";
 import {replace} from "./concrete.js";
 import * as p from "./protocols.js";
-import {naming} from "../../protocols/inamable/concrete.js";
+import {keying} from "../../protocols/imapentry/concrete.js";
 
 function split1(str){
   return str.split("");
@@ -102,7 +102,7 @@ function reduce(self, f, init){
 
 export default does(
   iindexed,
-  naming("String"),
+  keying("String"),
   implement(ISplittable, {split}),
   implement(IBlankable, {blank}),
   implement(ITemplate, {fill}),

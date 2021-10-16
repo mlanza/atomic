@@ -3,7 +3,7 @@ import {implement} from "../protocol.js";
 import * as p from "../../protocols/concrete.js";
 import {IRevertible, IAssociative, ILookup, IFunctor, IDeref} from "../../protocols.js";
 import {Journal} from "./construct.js";
-import {naming} from "../../protocols/inamable/concrete.js";
+import {keying} from "../../protocols/imapentry/concrete.js";
 
 function undo(self){
   return undoable(self) ? new Journal(self.pos + 1, self.max, self.history, self.state) : self;
@@ -47,7 +47,7 @@ function fmap(self, f){
 }
 
 export default does(
-  naming("Journal"),
+  keying("Journal"),
   implement(IDeref, {deref}),
   implement(IFunctor, {fmap}),
   implement(ILookup, {lookup}),

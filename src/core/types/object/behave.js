@@ -10,7 +10,7 @@ import {update} from "../../protocols/iassociative/concrete.js";
 import {emptyObject} from "../object/construct.js";
 import {descriptive, isObject} from "../object/concrete.js";
 import * as p from "./protocols.js";
-import {naming} from "../../protocols/inamable/concrete.js";
+import {keying} from "../../protocols/imapentry/concrete.js";
 import {hashKeyed as hash} from "../../protocols/ihashable/concrete.js";
 
 const keys = Object.keys;
@@ -181,7 +181,7 @@ function toArray(self){
 }
 
 export default does(
-  naming("Object"),
+  keying("Object"),
   implement(IHashable, {hash}),
   implement(ITemplate, {fill}),
   implement(IBlankable, {blank}),

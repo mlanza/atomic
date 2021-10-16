@@ -13,5 +13,5 @@ function check(self, obj){
 }
 
 export default _.does(
-  _.naming("Map"),
+  _.keying("Map"),
   _.implement(ICheckable, {check}));

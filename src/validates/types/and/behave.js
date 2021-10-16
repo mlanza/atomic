@@ -33,7 +33,7 @@ function next(self){
 }
 
 export default _.does(
-  _.naming("And"),
+  _.keying("And"),
   _.implement(_.ISeqable, {seq}),
   _.implement(_.INext, {next}),
   _.implement(_.IEmptyableCollection, {empty}),

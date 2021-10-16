@@ -12,5 +12,5 @@ function release(self){
 }
 
 export default _.does(
-  _.naming("Events"),
+  _.keying("Events"),
   _.implement(IEventProvider, {raise, release}));

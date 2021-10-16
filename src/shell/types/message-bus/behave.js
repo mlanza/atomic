@@ -19,7 +19,7 @@ function dispatch(self, message){
 }
 
 export default _.does(
-  _.naming("MessageBus"),
+  _.keying("MessageBus"),
   _.implement(mut.ITransientCollection, {conj}),
   _.implement(IDispatch, {dispatch}),
   _.implement(IMiddleware, {handle}));

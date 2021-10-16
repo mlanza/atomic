@@ -55,7 +55,7 @@ function persistent(self){
 }
 
 export default _.does(
-  _.naming("TransientObject"),
+  _.keying("TransientObject"),
   transition(transientObject),
   _.forward("obj", _.IMap, _.IFind, _.IInclusive, _.ILookup, _.ISeq, _.INext, _.IAssociative, _.ISeqable, _.ICounted, _.IReduce, _.IKVReduce, _.ICoercible),
   _.implement(_.IComparable, {compare}),

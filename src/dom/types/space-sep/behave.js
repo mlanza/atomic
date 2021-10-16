@@ -32,7 +32,7 @@ function count(self){
 }
 
 export default _.does(
-  _.naming("SpaceSep"),
+  _.keying("SpaceSep"),
   _.implement(_.ISequential),
   _.implement(_.ISeqable, {seq}),
   _.implement(_.IDeref, {deref}),

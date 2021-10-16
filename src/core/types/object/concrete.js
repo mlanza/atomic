@@ -5,7 +5,7 @@ import {overload, branch, isFunction} from "../../core.js";
 import {satisfies} from "../protocol/concrete.js";
 import {emptyObject} from "./construct.js";
 import * as p from "./protocols.js";
-import {is} from "../../protocols/inamable/concrete.js";
+import {is} from "../../protocols/imapentry/concrete.js";
 
 export function isObject(self){
   return is(self, Object);

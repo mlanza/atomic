@@ -6,7 +6,7 @@ import {implement} from "../protocol.js";
 import {emptyArray} from "../array/construct.js";
 import {nil} from "./construct.js";
 import * as p from "./protocols.js";
-import {naming} from "../../protocols/inamable/concrete.js";
+import {keying} from "../../protocols/imapentry/concrete.js";
 import {hash as hsh} from "hash";
 
 function assoc(self, key, value){
@@ -44,7 +44,7 @@ function hash(self){
 }
 
 export default does(
-  naming("Nil"),
+  keying("Nil"),
   implement(IHashable, {hash}),
   implement(IClonable, {clone: identity}),
   implement(ICompactible, {compact: identity}),
