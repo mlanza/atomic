@@ -5,7 +5,7 @@ import {maybe} from "../../types/maybe/construct.js";
 import {fsm} from "./construct.js";
 import {does} from "../../core.js";
 import {implement} from "../protocol.js";
-import {naming} from "../../protocols/inamable/concrete.js";
+import {keying} from "../../protocols/imapentry/concrete.js";
 
 function equiv(self, other){
   return state(self) === state(other) && self.transitions === other.transitions;
@@ -24,6 +24,6 @@ function transition(self, event) {
 }
 
 export default does(
-  naming("FiniteStateMachine"),
+  keying("FiniteStateMachine"),
   implement(IEquiv, {equiv}),
   implement(IStateMachine, {state, transition, transitions}));

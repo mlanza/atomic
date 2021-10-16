@@ -9,5 +9,5 @@ function check(self, obj){
 }
 
 export default _.does(
-  _.naming("Predicate"),
+  _.keying("Predicate"),
   _.implement(ICheckable, {check}));

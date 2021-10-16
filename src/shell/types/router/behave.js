@@ -30,7 +30,7 @@ function conj(self, handler){
 }
 
 export default _.does(
-  _.naming("Router"),
+  _.keying("Router"),
   _.implement(IDispatch, {dispatch}),
   _.implement(_.IFn, {invoke}),
   _.implement(IHandler, {handles}),

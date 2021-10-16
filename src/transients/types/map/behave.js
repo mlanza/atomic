@@ -22,7 +22,7 @@ function count(self){
 }
 
 export default _.does(
-  _.naming("Map"),
+  _.keying("Map"),
   _.implement(_.ICounted, {count}),
   _.implement(_.ILookup, {lookup}),
   _.implement(_.IAssociative, {contains}),

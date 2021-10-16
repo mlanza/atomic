@@ -17,6 +17,6 @@ function handle(self, message, next){
 }
 
 export default _.does(
-  _.naming("HandlerMiddleware"),
+  _.keying("HandlerMiddleware"),
   _.implement(mut.ITransientAssociative, {assoc}),
   _.implement(IMiddleware, {handle}));

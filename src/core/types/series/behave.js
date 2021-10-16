@@ -3,7 +3,7 @@ import {implement} from "../protocol.js";
 import {ICoercible, IReduce, ISeqable, ISeq, INext, IInclusive, IAppendable, IPrependable, ICounted, ISequential, IEmptyableCollection} from "../../protocols.js";
 import {iterable} from "../lazy-seq/behave.js";
 import * as p from "./protocols.js";
-import {naming} from "../../protocols/inamable/concrete.js";
+import {keying} from "../../protocols/imapentry/concrete.js";
 
 function seq(self){
   return p.seq(self.items);
@@ -52,7 +52,7 @@ function reduce(self, f, init){
 
 export default does(
   iterable,
-  naming("Series"),
+  keying("Series"),
   implement(ISequential),
   implement(ICounted, {count}),
   implement(IInclusive, {includes}),

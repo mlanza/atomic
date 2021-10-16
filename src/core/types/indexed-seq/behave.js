@@ -10,7 +10,7 @@ import {iequiv} from "../../types/empty-list/behave.js";
 import {iterable} from "../lazy-seq/behave.js";
 import {IHashable, ICoercible, IEquiv, IReversible, IMapEntry, IFind, IInclusive, IAssociative, IAppendable, IPrependable, ICollection, INext, ICounted, IReduce, IKVReduce, ISeq, ISeqable, ISequential, IIndexed, ILookup, IFn, IEmptyableCollection} from "../../protocols.js";
 import * as p from "./protocols.js";
-import {naming} from "../../protocols/inamable/concrete.js";
+import {keying} from "../../protocols/imapentry/concrete.js";
 import {hashKeyed as hash} from "../../protocols/ihashable/concrete.js";
 
 function reverse(self){
@@ -116,7 +116,7 @@ function includes(self, x){
 export default does(
   iterable,
   iequiv,
-  naming("IndexedSeq"),
+  keying("IndexedSeq"),
   implement(ISequential),
   implement(IHashable, {hash}),
   implement(IIndexed, {nth, idx}),

@@ -9,7 +9,7 @@ import {revSeq} from "./construct.js";
 import {iterable} from "../lazy-seq/behave.js";
 import {map} from "../lazy-seq/concrete.js";
 import * as p from "./protocols.js";
-import {naming} from "../../protocols/inamable/concrete.js";
+import {keying} from "../../protocols/imapentry/concrete.js";
 
 function clone(self){
   return new revSeq(self.coll, self.idx);
@@ -69,7 +69,7 @@ const reduce = overload(null, null, reduce2, reduce3);
 
 export default does(
   iterable,
-  naming("RevSeq"),
+  keying("RevSeq"),
   implement(ISequential),
   implement(ICounted, {count}),
   implement(IIndexed, {nth}),

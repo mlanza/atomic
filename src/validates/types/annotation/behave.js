@@ -23,7 +23,7 @@ function append(self, constraint){
 }
 
 export default _.does(
-  _.naming("Annotation"),
+  _.keying("Annotation"),
   _.implement(_.IDeref, {deref}),
   _.implement(IExplains, {explain}),
   _.implement(_.IAppendable, {append}),

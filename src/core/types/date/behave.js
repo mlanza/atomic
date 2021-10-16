@@ -5,7 +5,7 @@ import {mergeWith} from "../../protocols/imergable/instance.js";
 import {Duration, days} from "../duration.js";
 import {IHashable, IAddable, IReduce, IKVReduce, ISeqable, IBounds, IMap, IDeref, IComparable, IEquiv, IClonable, ILookup, IAssociative, ICollection} from "../../protocols.js";
 import * as p from "./protocols.js";
-import {naming} from "../../protocols/inamable/concrete.js";
+import {keying} from "../../protocols/imapentry/concrete.js";
 
 function add(self, other){
   return mergeWith(p.add, self, isNumber(other) ? days(other) : other);
@@ -119,7 +119,7 @@ function hash(self){
 }
 
 export default does(
-  naming("Date"),
+  keying("Date"),
   implement(IHashable, {hash}),
   implement(IAddable, {add}),
   implement(IDeref, {deref}),

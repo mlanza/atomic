@@ -1,7 +1,7 @@
 import {does} from "../../core.js";
 import {implement} from "../protocol.js";
 import {some} from "../lazy-seq/concrete.js";
-import {naming} from "../../protocols/inamable/concrete.js";
+import {keying} from "../../protocols/imapentry/concrete.js";
 import {equiv} from "../../protocols/iequiv/concrete.js";
 import {hash} from "../../protocols/ihashable/concrete.js";
 import {IFn} from "../../protocols/ifn/instance.js";
@@ -17,5 +17,5 @@ function invoke(self, ...args){
 }
 
 export default does(
-  naming("Multimethod"),
+  keying("Multimethod"),
   implement(IFn, {invoke}));

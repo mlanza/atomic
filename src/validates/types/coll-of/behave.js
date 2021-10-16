@@ -10,5 +10,5 @@ function check(self, coll){
 }
 
 export default _.does(
-  _.naming("CollOf"),
+  _.keying("CollOf"),
   _.implement(ICheckable, {check}));

@@ -10,7 +10,7 @@ import {concat} from "../concatenated/construct.js";
 import {revSeq} from "../rev-seq.js";
 import {filter, mapa} from "../lazy-seq.js";
 import {emptyArray} from "./construct.js";
-import {naming} from "../../protocols/inamable/concrete.js";
+import {keying} from "../../protocols/imapentry/concrete.js";
 import {hashSeq as hash} from "../../protocols/ihashable/concrete.js";
 
 function clone(self){
@@ -179,7 +179,7 @@ export const iindexed = does(
 export default does(
   iequiv,
   iindexed,
-  naming("Array"),
+  keying("Array"),
   implement(ISequential),
   implement(IHashable, {hash}),
   implement(IMap, {dissoc, keys, vals: identity}),

@@ -20,7 +20,7 @@ Set `CROSSFRAME=1` to compile cross-frame operable bundles and `CROSSFRAME=0` wh
 * Don't check constructors.  Use `is`.
 * Don't bake environment globals (e.g. `document`, `location`) into functions or, at least, provide an overload which allows defaults to be overridden.
 * Type checking functions (`isString(s)`, `isElement(e)`, etc.) should be built from `is` or `ako`.
-* Export behaviors.  Apply the behaviors and names (e.g. `naming`) into foreign environments which share the library.
+* Export behaviors.  Apply the behaviors and shared keys (e.g. `keying`) across environments which share the library.
 * Unless frequently used, don't create type-testing functions such as `isThing(t)`.  Prefer `is(obj, Thing)`.
 
 ## Extending Foreign Hosts

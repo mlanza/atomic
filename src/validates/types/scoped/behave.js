@@ -10,5 +10,5 @@ function check(self, value){
 }
 
 export default _.does(
-  _.naming("Scoped"),
+  _.keying("Scoped"),
   _.implement(ICheckable, {check}));

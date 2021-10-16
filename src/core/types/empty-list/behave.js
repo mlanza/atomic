@@ -3,7 +3,7 @@ import {satisfies, implement} from "../protocol.js";
 import {IEquiv, IBlankable, ICoercible, IInclusive, IReversible, INext, ISeq, ISeqable, ISequential, IEmptyableCollection, IKVReduce, IReduce, ICounted, IOmissible} from "../../protocols.js";
 import {emptyList, EmptyList} from "../../types/empty-list/construct.js";
 import {emptyArray} from "../../types/array/construct.js";
-import {naming} from "../../protocols/inamable/concrete.js";
+import {keying} from "../../protocols/imapentry/concrete.js";
 import * as p from "./protocols.js";
 
 function reduce(self, f, init){
@@ -21,7 +21,7 @@ export const iequiv = implement(IEquiv, {equiv});
 
 export default does(
   iequiv,
-  naming("EmptyList"),
+  keying("EmptyList"),
   implement(ISequential),
   implement(IBlankable, {blank: constantly(true)}),
   implement(IReversible, {reverse: emptyList}),

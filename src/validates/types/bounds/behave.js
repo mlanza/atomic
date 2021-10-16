@@ -20,7 +20,7 @@ function check(self, obj){
 }
 
 export default _.does(
-  _.naming("Bounds"),
+  _.keying("Bounds"),
   _.implement(ICheckable, {check}),
   _.implement(_.IInclusive, {includes}),
   _.implement(_.IBounds, {start, end}));

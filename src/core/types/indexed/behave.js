@@ -5,7 +5,7 @@ import {indexedSeq} from "../indexed-seq/construct.js";
 import {emptyList} from "../empty-list/construct.js";
 import {some} from "../lazy-seq/concrete.js";
 import ilazyseq, {iterable, reductive} from "../lazy-seq/behave.js";
-import {naming} from "../../protocols/inamable/concrete.js";
+import {keying} from "../../protocols/imapentry/concrete.js";
 import {range} from "../../types/range/construct.js";
 import {hashKeyed as hash} from "../../protocols/ihashable/concrete.js";
 
@@ -46,7 +46,7 @@ function keys(self){
 export default does(
   iterable,
   reductive,
-  naming("Indexed"),
+  keying("Indexed"),
   implement(IHashable, {hash}),
   implement(IMap, {keys}),
   implement(ISequential),

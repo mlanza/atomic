@@ -7,5 +7,5 @@ function embeddables(self){
 }
 
 export default _.does(
-  _.naming("Attrs"),
+  _.keying("Attrs"),
   _.implement(IEmbeddable, {embeddables}));

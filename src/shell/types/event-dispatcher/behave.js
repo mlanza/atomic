@@ -13,5 +13,5 @@ function handle(self, command, next){
 }
 
 export default _.does(
-  _.naming("EventDispatcher"),
+  _.keying("EventDispatcher"),
   _.implement(IMiddleware, {handle}));

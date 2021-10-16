@@ -2,7 +2,7 @@ import {overload} from "../../core.js";
 import {EmptyList, emptyList} from "../../types/empty-list.js";
 import Symbol from "symbol";
 import * as p from "./protocols.js";
-import {is} from "../../protocols/inamable/concrete.js";
+import {is} from "../../protocols/imapentry/concrete.js";
 
 export function List(head, tail){
   this.head = head;

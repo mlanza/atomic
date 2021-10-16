@@ -8,5 +8,5 @@ function handle(self, event, next){
 }
 
 export default _.does(
-  _.naming("EventMiddleware"),
+  _.keying("EventMiddleware"),
   _.implement(IMiddleware, {handle}));

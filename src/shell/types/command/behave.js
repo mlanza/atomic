@@ -10,6 +10,6 @@ function identifier(self){
 
 export default _.does(
   _.record,
-  _.naming("Command"),
+  _.keying("Command"),
   _.implement(_.IHashable, {hash}),
   _.implement(_.IIdentifiable, {identifier}));

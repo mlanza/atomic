@@ -47,6 +47,6 @@ function notify(self, f){
 export default _.does(
   ireduce,
   imergable,
-  _.naming("Subject"),
+  _.keying("Subject"),
   _.implement(ISubscribe, {sub}),
   _.implement(IPublish, {pub, err, complete, closed}));

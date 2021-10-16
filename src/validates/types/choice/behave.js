@@ -11,6 +11,6 @@ function check(self, value){
 }
 
 export default _.does(
-  _.naming("Choice"),
+  _.keying("Choice"),
   _.implement(ISelection, {options}),
   _.implement(ICheckable, {check}));

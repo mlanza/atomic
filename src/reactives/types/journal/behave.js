@@ -53,7 +53,7 @@ function redoable(self){
 }
 
 export default _.does(
-  _.naming("Journal"),
+  _.keying("Journal"),
   _.implement(_.IDeref, {deref}),
   _.implement(_.IReset, {reset}),
   _.implement(_.ISwap, {swap}),

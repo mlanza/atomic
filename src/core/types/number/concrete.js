@@ -1,7 +1,7 @@
 import {overload, identity, constantly, complement, unary, partial, constructs} from "../../core.js";
 import {IReduce, ICounted, IComparable, IAddable} from "../../protocols.js";
 import * as p from "./protocols.js";
-import {is} from "../../protocols/inamable/concrete.js";
+import {is} from "../../protocols/imapentry/concrete.js";
 
 export const number = constructs(Number);
 export const num = unary(number);

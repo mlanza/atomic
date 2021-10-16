@@ -3,7 +3,7 @@ import {does, overload} from "../../core.js";
 import {implement} from "../protocol.js";
 import {okay} from "./construct.js";
 import {isError} from "../error/concrete.js";
-import {naming} from "../../protocols/inamable/concrete.js";
+import {keying} from "../../protocols/imapentry/concrete.js";
 
 function fmap(self, f){
   try{
@@ -18,6 +18,6 @@ function fork(self, reject, resolve){
 }
 
 export default does(
-  naming("Okay"),
+  keying("Okay"),
   implement(IForkable, {fork}),
   implement(IFunctor, {fmap}));

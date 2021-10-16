@@ -30,7 +30,7 @@ function rest(self){
 }
 
 export default _.does(
-  _.naming("Routed"),
+  _.keying("Routed"),
   _.implement(_.ICoercible, {toPromise: _.fromTask}),
   _.implement(_.IForkable, {fork}),
   _.implement(_.ISeq, {first, rest}),

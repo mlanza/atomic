@@ -13,7 +13,7 @@ function dispose(self){
 }
 
 export default _.does(
-  _.naming("Bus"),
+  _.keying("Bus"),
   _.forward("state", $.ISubscribe, _.IDeref, _.IReset, _.ISwap, _.IReduce),
   _.implement(IDispatch, {dispatch}),
   _.implement(_.IDisposable, {dispose}));

@@ -44,7 +44,7 @@ function dispose(self){
 export default _.does(
   ireduce,
   imergable,
-  _.naming("Cell"),
+  _.keying("Cell"),
   _.implement(_.IDisposable, {dispose}),
   _.implement(_.IDeref, {deref}),
   _.implement(_.IReset, {reset: pub}),

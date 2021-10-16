@@ -20,6 +20,6 @@ const deref = _.called(function deref(self){
 export default _.does(
   ireduce,
   imergable,
-  _.naming("Observable"),
+  _.keying("Observable"),
   _.implement(_.IDeref, {deref}),
   _.implement(ISubscribe, {sub}));

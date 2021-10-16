@@ -360,7 +360,7 @@ export default _.does(
   icontents,
   ievented,
   iselectable,
-  _.naming("Element"),
+  _.keying("Element"),
   _.implement(_.IReduce, {reduce}),
   _.implement(IValue, {value}),
   _.implement(IText, {text}),

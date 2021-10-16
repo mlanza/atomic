@@ -2,7 +2,7 @@ import {IFunctor, IForkable, IOtherwise} from "../../protocols.js";
 import {identity, does, overload} from "../../core.js";
 import {implement} from "../protocol.js";
 import Promise from "promise";
-import {naming} from "../../protocols/inamable/concrete.js";
+import {keying} from "../../protocols/imapentry/concrete.js";
 
 function fmap(self, resolve){
   return self.then(resolve);
@@ -19,7 +19,7 @@ function otherwise(self, other){
 }
 
 export default does(
-  naming("Promise"),
+  keying("Promise"),
   implement(IOtherwise, {otherwise}),
   implement(IForkable, {fork}),
   implement(IFunctor, {fmap}));

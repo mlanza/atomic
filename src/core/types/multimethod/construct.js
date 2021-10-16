@@ -1,4 +1,4 @@
-import { invokable } from "../../protocols/ifn/concrete.js";
+import {invokable} from "../../protocols/ifn/concrete.js";
 
 export function Multimethod(dispatch, methods, fallback){
   this.dispatch = dispatch;

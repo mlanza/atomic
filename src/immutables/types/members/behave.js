@@ -24,7 +24,7 @@ function next(self){
 
 export default _.does(
   _.serieslike,
-  _.naming("Members"),
+  _.keying("Members"),
   _.implement(_.INext, {next}),
   _.implement(_.ISeq, {first, rest}),
   _.implement(_.IFunctor, {fmap}));
