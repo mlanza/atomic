@@ -4,7 +4,7 @@ import {butlast, last, detect, map, lazySeq, remove, drop, dropWhile, take, take
 import {emptyList} from "../../types/empty-list/construct.js";
 import {cons} from "../../types/list/construct.js";
 import {concat} from "../../types/concatenated/construct.js";
-import {IPath, ISwap, IReset, IDeref, IMap, IHierarchy, ILookup, IAssociative, ICollection} from "../../protocols.js";
+import {IPath, IFunctor, ISwap, IReset, IDeref, IMap, IHierarchy, ILookup, IAssociative, ICollection} from "../../protocols.js";
 import * as p from "./protocols.js";
 import {keying} from "../../protocols/imapentry/concrete.js";
 
@@ -42,6 +42,10 @@ function reset(self, value){
 
 function swap(self, f){
   return Object.assign(p.clone(self), {root: p.updateIn(self.root, self.path, f)});
+}
+
+function fmap(self, f){
+  return Object.assign(p.clone(self), {path: f(self.path)});
 }
 
 function root(self){
@@ -101,7 +105,7 @@ const prevSibling = comp(p.first, prevSiblings);
 const nextSibling = comp(p.first, nextSiblings);
 
 function parent(self){
-  return p.seq(self.path) ? Object.assign(p.clone(self), {path: butlast(self.path)}) : null;
+  return p.seq(self.path) ? Object.assign(p.clone(self), {path: p.toArray(butlast(self.path))}) : null;
 }
 
 function parents(self){
@@ -124,6 +128,7 @@ export default does(
   implement(ILookup, {lookup}),
   implement(IAssociative, {assoc, contains}),
   implement(IMap, {keys, vals, dissoc}),
+  implement(IFunctor, {fmap}),
   implement(ISwap, {swap}),
   implement(IReset, {reset}),
   implement(IHierarchy, {root, children, parents, parent, closest, descendants, siblings, nextSiblings, nextSibling, prevSiblings, prevSibling}),
