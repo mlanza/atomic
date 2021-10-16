@@ -8,6 +8,4 @@ export function Cursor(source, path){
 
 Cursor.prototype[Symbol.toStringTag] = "Cursor";
 
-export function cursor(source, path){
-  return new Cursor(source, path);
-}
+export const cursor = _.constructs(Cursor);

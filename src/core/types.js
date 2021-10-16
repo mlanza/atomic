@@ -20,6 +20,7 @@ export * from "./types/left.js";
 export * from "./types/lens.js";
 export * from "./types/list.js";
 export * from "./types/maybe.js";
+export * from "./types/members.js";
 export * from "./types/moniker.js";
 export * from "./types/mutable.js";
 export * from "./types/multimethod.js";
