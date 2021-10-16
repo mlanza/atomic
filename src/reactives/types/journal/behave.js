@@ -25,10 +25,6 @@ function sub(self, observer){
   p.sub(self.cell, observer);
 }
 
-function unsub(self, observer){
-  p.unsub(self.cell, observer);
-}
-
 function undo(self){
   if (undoable(self)) {
     self.pos += 1;
@@ -62,4 +58,4 @@ export default _.does(
   _.implement(_.IReset, {reset}),
   _.implement(_.ISwap, {swap}),
   _.implement(_.IRevertible, {undo, redo, flush, undoable, redoable}),
-  _.implement(ISubscribe, {sub, unsub}));
+  _.implement(ISubscribe, {sub}));

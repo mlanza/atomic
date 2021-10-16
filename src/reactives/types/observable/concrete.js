@@ -2,7 +2,7 @@ import * as _ from "atomic/core";
 import * as t from "atomic/transducers";
 import Promise from "promise";
 import {ISubscribe} from "../../protocols.js";
-import {pub, err, complete, closed, sub, unsub, chan} from "../../protocols/concrete.js";
+import {pub, err, complete, closed, sub, chan} from "../../protocols/concrete.js";
 import {Observable, observable} from "./construct.js";
 import {Observer, observer} from "../observer/construct.js";
 import {Subject, subject} from "../subject/construct.js";
