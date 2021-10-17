@@ -144,6 +144,10 @@ export function partly(f){
   return Object.assign(partial(plug, f), {partly: f});
 }
 
+export function unpartly(f){
+  return f && f.partly ? f.partly : f;
+}
+
 export function deferring(f){
   return function(...args){
     return partial(f, ...args);

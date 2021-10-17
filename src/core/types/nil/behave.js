@@ -27,10 +27,6 @@ function otherwise(self, other){
   return other;
 }
 
-function fork(self, reject, resolve){
-  return reject(self);
-}
-
 function conj(self, value){
   return cons(value);
 }
@@ -52,7 +48,6 @@ export default does(
   implement(IBlankable, {blank: constantly(true)}),
   implement(IMergable, {merge}),
   implement(IMap, {keys: nil, vals: nil, dissoc: nil}),
-  implement(IForkable, {fork}),
   implement(IEmptyableCollection, {empty: identity}),
   implement(IOtherwise, {otherwise}),
   implement(IEquiv, {equiv}),

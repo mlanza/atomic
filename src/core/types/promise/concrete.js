@@ -15,11 +15,3 @@ export function awaits(f){
     }
   }
 }
-
-export function fromTask(task){
-  return new Promise(function(resolve, reject){
-    fork(task, reject, resolve);
-  });
-}
-
-Promise.fromTask = fromTask;
