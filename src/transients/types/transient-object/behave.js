@@ -40,10 +40,6 @@ function equiv(a, b){
   return _.equiv(a.obj, b == null ? null : b.obj);
 }
 
-function toObject(self){
-  return self.obj;
-}
-
 function empty(self){
   self.obj = {};
 }
@@ -59,7 +55,6 @@ export default _.does(
   transition(transientObject),
   _.forward("obj", _.IMap, _.IFind, _.IInclusive, _.ILookup, _.ISeq, _.INext, _.IAssociative, _.ISeqable, _.ICounted, _.IReduce, _.IKVReduce, _.ICoercible),
   _.implement(_.IComparable, {compare}),
-  _.implement(_.ICoercible, {toObject}),
   _.implement(_.IFn, {invoke: _.get}),
   _.implement(_.IClonable, {clone}),
   _.implement(_.IEquiv, {equiv}),

@@ -1,12 +1,13 @@
 import {does, constructs} from "../../core.js";
 import {implement} from "../protocol.js";
 import {reduced} from "../reduced/construct.js";
+import {is} from "../../protocols/imapentry/concrete.js";
 import {IReduce, IKVReduce, IEquiv, ICoercible, IAssociative, ISeqable, ILookup, ICounted, IMap, ISeq, IEmptyableCollection} from "../../protocols.js";
 import Symbol from "symbol";
 import * as p from "./protocols.js";
 
-function toObject(self){
-  return self.attrs;
+function coerce(self, Type){
+  return is(Type, Object) ? self.attrs : p.coerce(self.attrs, Type);
 }
 
 function contains(self, key){
@@ -89,7 +90,7 @@ export default does(
   implement(IReduce, {reduce}),
   implement(IKVReduce, {reducekv}),
   implement(IEquiv, {equiv}),
-  implement(ICoercible, {toObject}),
+  implement(ICoercible, {coerce}),
   implement(IEmptyableCollection, {empty}),
   implement(IAssociative, {assoc, contains}),
   implement(ILookup, {lookup}),

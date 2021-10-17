@@ -7,3 +7,4 @@ export * from "../../protocols/imap/concrete.js";
 export * from "../../protocols/iequiv/concrete.js";
 export * from "../../protocols/ireduce/concrete.js";
 export * from "../../protocols/iclonable/concrete.js";
+export * from "../../protocols/icoercible/concrete.js";

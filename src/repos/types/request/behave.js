@@ -2,7 +2,7 @@ import * as _ from "atomic/core";
 import fetch from "fetch";
 import Promise from "promise";
 import {IQueryable, IParams, IOptions, IAddress, IIntercept} from "../../protocols.js";
-import {ITemplate, IFunctor, ICoercible, IForkable, IMap, IAssociative, ILookup, IAppendable, IPrependable} from "atomic/core";
+import {ITemplate, IFunctor, IForkable, IMap, IAssociative, ILookup, IAppendable, IPrependable} from "atomic/core";
 
 export function query(self, plan){
   const keys = _.filter(_.startsWith(?, "$"), _.keys(plan));

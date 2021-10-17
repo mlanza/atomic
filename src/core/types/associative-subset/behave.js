@@ -5,14 +5,10 @@ import {cons} from "../../types/list/construct.js";
 import {remove, into} from "../../types/lazy-seq/concrete.js";
 import {emptyObject} from "../../types/object/construct.js";
 import {iequiv} from "../../types/empty-list/behave.js";
-import {IHashable, IEquiv, ICoercible, IFind, IReduce, IKVReduce, ISeqable, ICounted, ILookup, IFn, IMap, IClonable, IEmptyableCollection} from "../../protocols.js";
+import {IHashable, IEquiv, IFind, IReduce, IKVReduce, ISeqable, ICounted, ILookup, IFn, IMap, IClonable, IEmptyableCollection} from "../../protocols.js";
 import * as p from "./protocols.js";
 import {keying} from "../../protocols/imapentry/concrete.js";
 import {hashKeyed as hash} from "../../protocols/ihashable/concrete.js";
-
-function toObject(self){
-  return into({}, self);
-}
 
 function find(self, key){
   return p.includes(p.keys(self), key) ? [key, p.get(self.obj, key)] : null;
@@ -51,7 +47,7 @@ function count(self){
 }
 
 function clone(self){
-  return toObject(self);
+  return new self.constructor(self.obj, self.keys);
 }
 
 function reduce(self, f, init){
@@ -70,7 +66,6 @@ export default does(
   iequiv,
   keying("AssociativeSubset"),
   implement(IHashable, {hash}),
-  implement(ICoercible, {toObject}),
   implement(IFind, {find}),
   implement(IMap, {dissoc, keys, vals}),
   implement(IReduce, {reduce}),
