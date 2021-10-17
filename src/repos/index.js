@@ -45,8 +45,6 @@ function params(self, obj){
 
 _.implement(IParams, {params}, String);
 
-_.coerce
-  |> _.unpartly
-  |> _.deref
+_.ICoercible.multimethod
   |> _.addMethod(?, [_.key(T.Request), _.key(Promise)], _.unfork)
   |> _.addMethod(?, [_.key(T.Routed), _.key(Promise)], _.unfork)

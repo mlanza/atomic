@@ -1,6 +1,5 @@
 import {overload, partial, unary, type, curry, tee, toggles, identity, obj, partly, comp, doto, does, branch, unspread, applying, execute, noop, constantly, once, isFunction, isString} from "./core.js";
-import {IForkable, ILogger, IDeref, IFn, IMutable, IAssociative, IClonable, IHierarchy, ILookup, ISeq} from "./protocols.js";
-import {Duration, Period, Right, Left, Nil, Maybe, Okay, Task} from "./types.js";
+import {ICoercible, IForkable, ILogger, IDeref, IFn, IMutable, IAssociative, IClonable, IHierarchy, ILookup, ISeq} from "./protocols.js";
 import {just, satisfies, spread, maybe, each, duration, remove, sort, flip, realized, apply, realize, isNil, reFindAll, mapkv, period, selectKeys, mapVals, reMatches, test, date, emptyList, cons, days, recurrence, addMethod} from "./types.js";
 import {isBlank, str, replace} from "./types/string.js";
 import {isSome} from "./types/nil.js";
@@ -13,13 +12,12 @@ export const config = cfg;
 export {filter} from "./types/lazy-seq.js";
 export const serieslike = iseries;
 export {iterable} from "./types/lazy-seq/behave.js";
-export * from "./multimethods.js";
 export * from "./core.js";
 export * from "./types.js";
 export * from "./protocols.js";
 export * from "./protocols/concrete.js";
-import {coerce} from "./multimethods.js";
 import * as p from "./protocols/concrete.js";
+import * as T from "./types.js";
 import Set from "set";
 import {extend} from "./types/protocol/concrete.js";
 import {Protocol} from "./types/protocol/construct.js";
@@ -79,7 +77,7 @@ export const numeric = test(/^\d+$/i, ?);
   doto(console,
     specify(ILogger, {log}));
 
-  doto(Nil,
+  doto(T.Nil,
     implement(ILogger, {log: noop}));
 
 })();
@@ -403,22 +401,34 @@ export function unfork(self){
   });
 }
 
-coerce
-  |> p.deref
+ICoercible.multimethod
   |> addMethod(?, [p.key(Number), p.key(String)], unary(str))
   |> addMethod(?, [p.key(Number), p.key(Date)], unary(date))
-  |> addMethod(?, [p.key(Duration), p.key(Duration)], identity)
-  |> addMethod(?, [p.key(Period), p.key(Duration)],
+  |> addMethod(?, [p.key(T.Duration), p.key(T.Duration)], identity)
+  |> addMethod(?, [p.key(T.Period), p.key(T.Duration)],
       function(self){
         return self.end == null || self.start == null ? duration(Number.POSITIVE_INFINITY) : duration(self.end - self.start);
       })
   |> addMethod(?, [p.key(Promise), p.key(Promise)], identity)
-  |> addMethod(?, [p.key(Right), p.key(Promise)], unfork)
-  |> addMethod(?, [p.key(Left), p.key(Promise)], unfork)
+  |> addMethod(?, [p.key(T.Right), p.key(Promise)], unfork)
+  |> addMethod(?, [p.key(T.Left), p.key(Promise)], unfork)
   |> addMethod(?, [p.key(Error), p.key(Promise)], unfork)
-  |> addMethod(?, [p.key(Maybe), p.key(Promise)], unfork)
-  |> addMethod(?, [p.key(Okay), p.key(Promise)], unfork)
-  |> addMethod(?, [p.key(Task), p.key(Promise)], unfork)
+  |> addMethod(?, [p.key(T.Maybe), p.key(Promise)], unfork)
+  |> addMethod(?, [p.key(T.Okay), p.key(Promise)], unfork)
+  |> addMethod(?, [p.key(T.Task), p.key(Promise)], unfork)
+  |> addMethod(?, [p.key(Object), p.key(Object)], identity)
+  |> addMethod(?, [p.key(Array), p.key(Object)],
+      function(self){
+        return p.reduce(function(memo, [key, value]){
+          memo[key] = value;
+          return memo;
+        }, {}, self);
+      })
+  |> addMethod(?, [p.key(T.AssociativeSubset), p.key(Object)],
+      function(self){
+        return into({}, self);
+      })
 
-export const toDuration = called(coerce(?, Duration), "`toDuration` is deprecated — use `coerce`.");
-export const toPromise = called(coerce(?, Promise), "`toPromise` is deprecated — use `coerce`.")
+export const toDuration = called(p.coerce(?, T.Duration), "`toDuration` is deprecated — use `coerce`.");
+export const toPromise = called(p.coerce(?, Promise), "`toPromise` is deprecated — use `coerce`.");
+export const toObject = called(p.coerce(?, Object), "`toObject` is deprecated — use `coerce`.");

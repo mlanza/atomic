@@ -9,6 +9,7 @@ import {IEmbeddable} from "./protocols/iembeddable/instance.js";
 import Promise from "promise";
 import {document} from "dom";
 import {isHTMLDocument} from "./types/html-document/construct.js";
+import * as T from "./types.js";
 export * from "./types.js";
 export * from "./protocols.js";
 export * from "./protocols/concrete.js";
@@ -276,3 +277,6 @@ export const toFragment = _.toFragment;
     _.implement(IEmbeddable, {embeddables: _.emptyList}));
 
 })();
+
+_.ICoercible.multimethod
+  |> _.addMethod(?, [_.key(T.NestedAttrs), _.key(Object)], _.deref)

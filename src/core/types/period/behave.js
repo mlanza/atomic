@@ -6,8 +6,7 @@ import {min, max} from "../number/concrete.js";
 import {recurrence} from "../recurrence/construct.js";
 import {period, Period} from "./construct.js";
 import {map, take} from "../lazy-seq/concrete.js";
-import {coerce} from "../../multimethods.js";
-import {ISplittable, ICoercible, IAddable, IBounds, IComparable, IEquiv, IInclusive, IDivisible, IMergable} from "../../protocols.js";
+import {ISplittable, IAddable, IBounds, IComparable, IEquiv, IInclusive, IDivisible, IMergable} from "../../protocols.js";
 import * as p from "./protocols.js";
 import {keying} from "../../protocols/imapentry/concrete.js";
 
@@ -30,7 +29,7 @@ function merge(self, other){
 }
 
 function divide(self, step){
-  return p.divide(coerce(self, Duration), step);
+  return p.divide(p.coerce(self, Duration), step);
 }
 
 function start(self){

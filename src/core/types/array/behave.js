@@ -159,13 +159,6 @@ function idx(self, x){
   return n === -1 ? null : n;
 }
 
-function toObject(self){
-  return reduce(self, function(memo, [key, value]){
-    memo[key] = value;
-    return memo;
-  }, {});
-}
-
 function fmap(self, f){
   return mapa(f, self);
 }
@@ -186,7 +179,7 @@ export default does(
   implement(IMergable, {merge: concat}),
   implement(IInsertable, {before, after}),
   implement(IFunctor, {fmap}),
-  implement(ICoercible, {toObject, toArray: identity}),
+  implement(ICoercible, {toArray: identity}),
   implement(IOmissible, {omit}),
   implement(IReversible, {reverse}),
   implement(IFind, {find}),

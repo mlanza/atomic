@@ -188,7 +188,7 @@ export default does(
   implement(IMergable, {merge}),
   implement(ICompactible, {compact}),
   implement(IEquiv, {equiv}),
-  implement(ICoercible, {toArray, toObject: identity}),
+  implement(ICoercible, {toArray}),
   implement(IFind, {find}),
   implement(IOmissible, {omit}),
   implement(IInclusive, {includes}),
