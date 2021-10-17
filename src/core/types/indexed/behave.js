@@ -7,7 +7,7 @@ import {some} from "../lazy-seq/concrete.js";
 import ilazyseq, {iterable, reductive} from "../lazy-seq/behave.js";
 import {keying} from "../../protocols/imapentry/concrete.js";
 import {range} from "../../types/range/construct.js";
-import {hashKeyed as hash} from "../../protocols/ihashable/concrete.js";
+import {hashKeyed as hash} from "../../protocols/ihashable/hashers.js";
 
 function count(self){
   return self.obj.length;
@@ -54,7 +54,6 @@ export default does(
   implement(IIndexed, {nth}),
   implement(ILookup, {lookup: nth}),
   implement(INext, {next}),
-  implement(ICoercible, {toArray: Array.from}),
   implement(ISeq, {first, rest}),
   implement(ISeqable, {seq}),
   implement(ICounted, {count}));

@@ -7,6 +7,8 @@ import {emptyObject} from "./construct.js";
 import * as p from "./protocols.js";
 import {is} from "../../protocols/imapentry/concrete.js";
 
+export const toObject = p.coerce(?, Object);
+
 export function isObject(self){
   return is(self, Object);
 }

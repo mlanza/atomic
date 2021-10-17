@@ -6,6 +6,7 @@ import {concat} from "../concatenated/construct.js";
 import {cons} from "../list/construct.js";
 import {map, filter, remove, detect} from "./concrete.js";
 import {emptyList} from "../empty-list/construct.js";
+import {toArray} from "../array/concrete.js";
 import {iequiv} from "../empty-list/behave.js";
 import {keying} from "../../protocols/imapentry/concrete.js";
 import Symbol from "symbol";
@@ -120,16 +121,6 @@ function reducekv(xs, f, init){
   return unreduced(memo);
 }
 
-function toArray(xs){
-  let ys = xs;
-  const zs = [];
-  while (p.seq(ys) != null) {
-    zs.push(p.first(ys));
-    ys = p.rest(ys);
-  }
-  return zs;
-}
-
 function count(self){
   return reduce(self, function(memo){
     return memo + 1;
@@ -172,7 +163,6 @@ export default does(
   implement(IOmissible, {omit}),
   implement(IFunctor, {fmap}),
   implement(ICollection, {conj}),
-  implement(ICoercible, {toArray}),
   implement(IAppendable, {append}),
   implement(IPrependable, {prepend: conj}),
   implement(ICounted, {count}),

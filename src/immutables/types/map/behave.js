@@ -34,10 +34,6 @@ function reducekv(self, f, init){
   }, init, keys(self));
 }
 
-function toArray(self){
-  return self.toArray();
-}
-
 function merge(self, other){
   return _.reducekv(_.assoc, self, other);
 }
@@ -62,7 +58,6 @@ export default _.does(
   _.iterable,
   _.keying("Map"),
   _.implement(_.IKVReduce, {reducekv}),
-  _.implement(_.ICoercible, {toArray}),
   _.implement(_.IMergable, {merge}),
   _.implement(_.INext, {next}),
   _.implement(_.ISeq, {first, rest}),

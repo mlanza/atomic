@@ -45,6 +45,5 @@ function params(self, obj){
 
 _.implement(IParams, {params}, String);
 
-_.ICoercible.multimethod
-  |> _.addMethod(?, [_.key(T.Request), _.key(Promise)], _.unfork)
-  |> _.addMethod(?, [_.key(T.Routed), _.key(Promise)], _.unfork)
+_.ICoercible.addMethod([T.Request, Promise], _.unfork);
+_.ICoercible.addMethod([T.Routed, Promise], _.unfork);

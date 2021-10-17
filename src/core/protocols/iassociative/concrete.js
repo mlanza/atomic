@@ -1,6 +1,6 @@
 import {IAssociative} from "./instance.js";
 import {overload, slice, branch, identity} from "../../core.js";
-import {toArray} from "../icoercible.js";
+import {toArray} from "../../types/array/concrete.js";
 import {reducekv} from "../ikvreduce.js";
 import {reducing} from "../ireduce.js";
 import {rest} from "../iseq.js";

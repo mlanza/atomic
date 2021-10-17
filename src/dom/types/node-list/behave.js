@@ -55,7 +55,6 @@ export default _.does(
   _.implement(_.ISeq, {first, rest}),
   _.implement(_.IReduce, {reduce}),
   _.implement(_.INext, {next}),
-  _.implement(_.ICoercible, {toArray: Array.from}),
   _.implement(_.IHierarchy, {parent, parents, closest, nextSiblings, nextSibling, prevSiblings, prevSibling, siblings, children, descendants}),
   _.implement(_.ISequential),
   _.implement(_.ISeqable, {seq}),

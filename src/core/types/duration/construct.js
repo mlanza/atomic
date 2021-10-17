@@ -4,6 +4,8 @@ import {isNumber} from "../number/concrete.js";
 import Symbol from "symbol";
 import * as p from "./protocols.js";
 
+export const toDuration = p.coerce(?, Duration);
+
 export function Duration(units){
   this.units = units;
 }

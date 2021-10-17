@@ -1,2 +1,2 @@
 import behave from "./series/behave.js";
-export default behave;
+export const series = behave;

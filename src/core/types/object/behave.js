@@ -11,7 +11,7 @@ import {emptyObject} from "../object/construct.js";
 import {descriptive, isObject} from "../object/concrete.js";
 import * as p from "./protocols.js";
 import {keying} from "../../protocols/imapentry/concrete.js";
-import {hashKeyed as hash} from "../../protocols/ihashable/concrete.js";
+import {hashKeyed as hash} from "../../protocols/ihashable/hashers.js";
 
 const keys = Object.keys;
 const vals = Object.values;
@@ -173,13 +173,6 @@ function reducekv(self, f, init){
   }, init, keys(self));
 }
 
-function toArray(self){
-  return reduce(self, function(memo, pair){
-    memo.push(pair);
-    return memo;
-  }, []);
-}
-
 export default does(
   keying("Object"),
   implement(IHashable, {hash}),
@@ -188,7 +181,6 @@ export default does(
   implement(IMergable, {merge}),
   implement(ICompactible, {compact}),
   implement(IEquiv, {equiv}),
-  implement(ICoercible, {toArray}),
   implement(IFind, {find}),
   implement(IOmissible, {omit}),
   implement(IInclusive, {includes}),

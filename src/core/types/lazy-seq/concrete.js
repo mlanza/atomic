@@ -2,6 +2,7 @@ import {ISequential} from "../../protocols.js";
 import {identity, constantly, overload, complement, comp, partial, slice} from "../../core.js";
 import {EmptyList, emptyList} from "../empty-list/construct.js";
 import {emptyArray, array} from "../array/construct.js";
+import {toArray} from "../array/concrete.js";
 import {randInt, isEven} from "../number/concrete.js";
 import {reduced} from "../reduced/construct.js";
 import {not} from "../boolean.js";
@@ -48,7 +49,7 @@ function mapN(f, ...tail){
 }
 
 export const map  = overload(null, null, map2, map3, mapN);
-export const mapa = comp(p.toArray, map);
+export const mapa = comp(toArray, map);
 
 export function mapArgs(xf, f){
   return function(){
@@ -258,7 +259,7 @@ export function zip(...colls){
   return mapcat(identity, map(p.seq, ...colls));
 }
 
-export const filtera = comp(p.toArray, filter);
+export const filtera = comp(toArray, filter);
 
 export function remove(pred, xs){
   return filter(complement(pred), xs);

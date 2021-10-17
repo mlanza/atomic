@@ -75,7 +75,6 @@ export default does(
   implement(IIndexed, {nth}),
   implement(ILookup, {lookup: nth}),
   implement(IMap, {keys, vals}),
-  implement(ICoercible, {toArray: Array.from}),
   implement(IEmptyableCollection, {empty: emptyList}),
   implement(IReduce, {reduce}),
   implement(ICollection, {conj}),

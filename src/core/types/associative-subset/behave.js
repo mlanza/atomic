@@ -8,7 +8,7 @@ import {iequiv} from "../../types/empty-list/behave.js";
 import {IHashable, IEquiv, IFind, IReduce, IKVReduce, ISeqable, ICounted, ILookup, IFn, IMap, IClonable, IEmptyableCollection} from "../../protocols.js";
 import * as p from "./protocols.js";
 import {keying} from "../../protocols/imapentry/concrete.js";
-import {hashKeyed as hash} from "../../protocols/ihashable/concrete.js";
+import {hashKeyed as hash} from "../../protocols/ihashable/hashers.js";
 
 function find(self, key){
   return p.includes(p.keys(self), key) ? [key, p.get(self.obj, key)] : null;

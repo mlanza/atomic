@@ -37,7 +37,6 @@ export default _.does(
   _.implement(_.ISeqable, {seq}),
   _.implement(_.IDeref, {deref}),
   _.implement(_.IInclusive, {includes}),
-  _.implement(_.ICoercible, {toArray: deref}),
   _.implement(_.ICounted, {count}),
   _.implement(mut.ITransientOmissible, {omit}),
   _.implement(mut.ITransientCollection, {conj}));

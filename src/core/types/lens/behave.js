@@ -2,6 +2,7 @@ import {does, comp} from "../../core.js";
 import {implement, satisfies} from "../protocol.js";
 import {butlast, last, detect, map, lazySeq, remove, drop, dropWhile, take, takeWhile} from "../lazy-seq.js";
 import {emptyList} from "../../types/empty-list/construct.js";
+import {toArray} from "../../types/array/concrete.js";
 import {cons} from "../../types/list/construct.js";
 import {concat} from "../../types/concatenated/construct.js";
 import {IPath, IFunctor, ISwap, IReset, IDeref, IMap, IHierarchy, ILookup, IAssociative, ICollection} from "../../protocols.js";
@@ -70,7 +71,7 @@ function vals(self){
 
 function siblings(self){
   const p = parent(self),
-        ctx = p.toArray(butlast(self.path)),
+        ctx = toArray(butlast(self.path)),
         key = last(self.path);
   return map(function(key){
     return Object.assign(p.clone(self), {path: p.conj(ctx, key)});
@@ -81,18 +82,18 @@ function siblings(self){
 
 function prevSiblings(self){
   const p = parent(self),
-        ctx = p.toArray(butlast(self.path)),
+        ctx = toArray(butlast(self.path)),
         key = last(self.path);
   return map(function(key){
     return Object.assign(p.clone(self), {path: p.conj(ctx, key)});
-  }, p.reverse(p.toArray(take(1, takeWhile(function(k){
+  }, p.reverse(toArray(take(1, takeWhile(function(k){
     return k !== key;
   }, p ? keys(p) : [])))));
 }
 
 function nextSiblings(self){
   const p = parent(self),
-        ctx = p.toArray(butlast(self.path)),
+        ctx = toArray(butlast(self.path)),
         key = last(self.path);
   return map(function(key){
     return Object.assign(p.clone(self), {path: p.conj(ctx, key)});
@@ -105,7 +106,7 @@ const prevSibling = comp(p.first, prevSiblings);
 const nextSibling = comp(p.first, nextSiblings);
 
 function parent(self){
-  return p.seq(self.path) ? Object.assign(p.clone(self), {path: p.toArray(butlast(self.path))}) : null;
+  return p.seq(self.path) ? Object.assign(p.clone(self), {path: toArray(butlast(self.path))}) : null;
 }
 
 function parents(self){

@@ -55,7 +55,6 @@ export default does(
   implement(IInclusive, {includes: constantly(false)}),
   implement(IAssociative, {assoc: assoc, contains: constantly(false)}),
   implement(INext, {next: identity}),
-  implement(ICoercible, {toArray: emptyArray}),
   implement(ISeq, {first: identity, rest: emptyList}),
   implement(ISeqable, {seq: identity}),
   implement(IIndexed, {nth: identity}),

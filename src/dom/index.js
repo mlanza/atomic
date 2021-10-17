@@ -278,5 +278,6 @@ export const toFragment = _.toFragment;
 
 })();
 
-_.ICoercible.multimethod
-  |> _.addMethod(?, [_.key(T.NestedAttrs), _.key(Object)], _.deref)
+_.ICoercible.addMethod([NodeList, Array], Array.from);
+_.ICoercible.addMethod([T.SpaceSeparated, Array], _.comp(Array.from, _.seq));
+_.ICoercible.addMethod([T.NestedAttrs, Object], _.deref);

@@ -10,7 +10,7 @@ import {concatenated, concat} from "./construct.js";
 import {IHashable, ICoercible, ICollection, INext, ISeq, ICounted, ISeqable, IIndexed, IReduce, IKVReduce, ISequential, IEmptyableCollection} from "../../protocols.js";
 import * as p from "./protocols.js";
 import {keying} from "../../protocols/imapentry/concrete.js";
-import {hashSeq as hash} from "../../protocols/ihashable/concrete.js";
+import {hashSeq as hash} from "../../protocols/ihashable/hashers.js";
 
 function conj(self, x){
   return new self.constructor(p.conj(self.colls, [x]));
@@ -27,13 +27,6 @@ function first(self){
 
 function rest(self){
   return apply(concat, p.rest(p.first(self.colls)), p.rest(self.colls));
-}
-
-function toArray(self){
-  return reduce(self, function(memo, value){
-    memo.push(value);
-    return memo;
-  }, []);
 }
 
 function reduce(self, f, init){
@@ -76,6 +69,5 @@ export default does(
   implement(ICollection, {conj}),
   implement(INext, {next}),
   implement(ISeq, {first, rest}),
-  implement(ICoercible, {toArray}),
   implement(ISeqable, {seq: identity}),
   implement(ICounted, {count}));

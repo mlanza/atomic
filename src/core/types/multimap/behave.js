@@ -61,7 +61,6 @@ export default does(
   irecord,
   keying("Multimap"),
   implement(IMap, {keys}),
-  implement(ICoercible, {toArray: comp(Array.from, seq)}),
   implement(IReduce, {reduce}),
   implement(IKVReduce, {reducekv}),
   implement(ICounted, {count}),
