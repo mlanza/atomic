@@ -31,7 +31,6 @@ function rest(self){
 
 export default _.does(
   _.keying("Routed"),
-  _.implement(_.ICoercible, {toPromise: _.fromTask}),
   _.implement(_.IForkable, {fork}),
   _.implement(_.ISeq, {first, rest}),
   _.implement(_.ITemplate, {fill: xform(_.fill)}),

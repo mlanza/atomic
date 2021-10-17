@@ -1,5 +1,6 @@
 import Promise from "promise";
 import {DOMParser} from "dom";
+import * as T from "./types.js";
 import * as _ from "atomic/core";
 export * from "./types.js";
 export * from "./protocols.js";
@@ -43,3 +44,9 @@ function params(self, obj){
 }
 
 _.implement(IParams, {params}, String);
+
+_.coerce
+  |> _.unpartly
+  |> _.deref
+  |> _.addMethod(?, [_.key(T.Request), _.key(Promise)], _.unfork)
+  |> _.addMethod(?, [_.key(T.Routed), _.key(Promise)], _.unfork)

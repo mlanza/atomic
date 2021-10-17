@@ -1,6 +1,7 @@
 import {overload, partial, unary, type, curry, tee, toggles, identity, obj, partly, comp, doto, does, branch, unspread, applying, execute, noop, constantly, once, isFunction, isString} from "./core.js";
-import {ILogger, IDeref, IFn, IMutable, IAssociative, IClonable, IHierarchy, ILookup, ISeq} from "./protocols.js";
-import {Duration, Period, just, satisfies, spread, maybe, each, duration, remove, sort, flip, realized, apply, realize, isNil, reFindAll, mapkv, period, selectKeys, mapVals, reMatches, test, date, emptyList, cons, days, recurrence, addMethod, Nil} from "./types.js";
+import {IForkable, ILogger, IDeref, IFn, IMutable, IAssociative, IClonable, IHierarchy, ILookup, ISeq} from "./protocols.js";
+import {Duration, Period, Right, Left, Nil, Maybe, Okay, Task} from "./types.js";
+import {just, satisfies, spread, maybe, each, duration, remove, sort, flip, realized, apply, realize, isNil, reFindAll, mapkv, period, selectKeys, mapVals, reMatches, test, date, emptyList, cons, days, recurrence, addMethod} from "./types.js";
 import {isBlank, str, replace} from "./types/string.js";
 import {isSome} from "./types/nil.js";
 import cfg from "./config.js";
@@ -396,6 +397,12 @@ function absorb2(tgt, src){
 
 export const absorb = overload(constantly({}), identity, absorb2, p.reducing(absorb2));
 
+export function unfork(self){
+  return new Promise(function(resolve, reject){
+    p.fork(self, reject, resolve);
+  });
+}
+
 coerce
   |> p.deref
   |> addMethod(?, [p.key(Number), p.key(String)], unary(str))
@@ -405,5 +412,13 @@ coerce
       function(self){
         return self.end == null || self.start == null ? duration(Number.POSITIVE_INFINITY) : duration(self.end - self.start);
       })
+  |> addMethod(?, [p.key(Promise), p.key(Promise)], identity)
+  |> addMethod(?, [p.key(Right), p.key(Promise)], unfork)
+  |> addMethod(?, [p.key(Left), p.key(Promise)], unfork)
+  |> addMethod(?, [p.key(Error), p.key(Promise)], unfork)
+  |> addMethod(?, [p.key(Maybe), p.key(Promise)], unfork)
+  |> addMethod(?, [p.key(Okay), p.key(Promise)], unfork)
+  |> addMethod(?, [p.key(Task), p.key(Promise)], unfork)
 
-export const toDuration = coerce(?, Duration);
+export const toDuration = called(coerce(?, Duration), "`toDuration` is deprecated — use `coerce`.");
+export const toPromise = called(coerce(?, Promise), "`toPromise` is deprecated — use `coerce`.")

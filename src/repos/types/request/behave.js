@@ -76,7 +76,6 @@ function fork(self, reject, resolve){
 export default _.does(
   _.keying("Request"),
   _.implement(ITemplate, {fill}),
-  _.implement(ICoercible, {toPromise: _.fromTask}),
   _.implement(IAppendable, {append}),
   _.implement(IPrependable, {prepend}),
   _.implement(IForkable, {fork}),
