@@ -1,6 +1,6 @@
 import {overload, partial, unary, type, curry, tee, toggles, identity, obj, partly, comp, doto, does, branch, unspread, applying, execute, noop, constantly, once, isFunction, isString} from "./core.js";
 import {ICoercible, IForkable, ILogger, IDeref, IFn, IMutable, IAssociative, IClonable, IHierarchy, ILookup, ISeq} from "./protocols.js";
-import {just, satisfies, spread, maybe, each, duration, remove, sort, flip, realized, apply, realize, isNil, reFindAll, mapkv, period, selectKeys, mapVals, reMatches, test, date, emptyList, cons, days, recurrence, addMethod} from "./types.js";
+import {just, satisfies, spread, maybe, each, duration, remove, sort, flip, realized, apply, realize, isNil, reFindAll, mapkv, period, selectKeys, mapVals, reMatches, test, date, emptyList, cons, days, recurrence, emptyArray} from "./types.js";
 import {isBlank, str, replace} from "./types/string.js";
 import {isSome} from "./types/nil.js";
 import cfg from "./config.js";
@@ -230,7 +230,7 @@ export function fromQueryString(url){
 }
 
 export function unique(xs){
-  return p.toArray(new Set(p.toArray(xs)));
+  return p.coerce(new Set(p.coerce(xs, Array)), Array);
 }
 
 export const second = branch(satisfies(ISeq, ?), comp(ISeq.first, ISeq.rest), p.prop("second"));
@@ -401,34 +401,55 @@ export function unfork(self){
   });
 }
 
-ICoercible.multimethod
-  |> addMethod(?, [p.key(Number), p.key(String)], unary(str))
-  |> addMethod(?, [p.key(Number), p.key(Date)], unary(date))
-  |> addMethod(?, [p.key(T.Duration), p.key(T.Duration)], identity)
-  |> addMethod(?, [p.key(T.Period), p.key(T.Duration)],
-      function(self){
-        return self.end == null || self.start == null ? duration(Number.POSITIVE_INFINITY) : duration(self.end - self.start);
-      })
-  |> addMethod(?, [p.key(Promise), p.key(Promise)], identity)
-  |> addMethod(?, [p.key(T.Right), p.key(Promise)], unfork)
-  |> addMethod(?, [p.key(T.Left), p.key(Promise)], unfork)
-  |> addMethod(?, [p.key(Error), p.key(Promise)], unfork)
-  |> addMethod(?, [p.key(T.Maybe), p.key(Promise)], unfork)
-  |> addMethod(?, [p.key(T.Okay), p.key(Promise)], unfork)
-  |> addMethod(?, [p.key(T.Task), p.key(Promise)], unfork)
-  |> addMethod(?, [p.key(Object), p.key(Object)], identity)
-  |> addMethod(?, [p.key(Array), p.key(Object)],
-      function(self){
-        return p.reduce(function(memo, [key, value]){
-          memo[key] = value;
-          return memo;
-        }, {}, self);
-      })
-  |> addMethod(?, [p.key(T.AssociativeSubset), p.key(Object)],
-      function(self){
-        return into({}, self);
-      })
+function reduceToArray(self){
+  return p.reduce(function(memo, value){
+    memo.push(value);
+    return memo;
+  }, [], self);
+}
 
-export const toDuration = called(p.coerce(?, T.Duration), "`toDuration` is deprecated — use `coerce`.");
-export const toPromise = called(p.coerce(?, Promise), "`toPromise` is deprecated — use `coerce`.");
-export const toObject = called(p.coerce(?, Object), "`toObject` is deprecated — use `coerce`.");
+ICoercible.addMethod([Number, String], unary(str));
+ICoercible.addMethod([Number, Date], unary(date));
+ICoercible.addMethod([T.Duration, T.Duration], identity);
+ICoercible.addMethod([T.Period, T.Duration], function(self){
+  return self.end == null || self.start == null ? duration(Number.POSITIVE_INFINITY) : duration(self.end - self.start);
+});
+ICoercible.addMethod([Promise, Promise], identity);
+ICoercible.addMethod([T.Right, Promise], unfork);
+ICoercible.addMethod([T.Left, Promise], unfork);
+ICoercible.addMethod([Error, Promise], unfork);
+ICoercible.addMethod([T.Maybe, Promise], unfork);
+ICoercible.addMethod([T.Okay, Promise], unfork);
+ICoercible.addMethod([T.Task, Promise], unfork);
+ICoercible.addMethod([Object, Object], identity);
+ICoercible.addMethod([Array, Object], function(self){
+  return p.reduce(function(memo, [key, value]){
+    memo[key] = value;
+    return memo;
+  }, {}, self);
+});
+ICoercible.addMethod([T.AssociativeSubset, Object], function(self){
+  return into({}, self);
+});
+ICoercible.addMethod([Array, Array], identity);
+ICoercible.addMethod([T.Concatenated, Array], reduceToArray);
+ICoercible.addMethod([T.EmptyList, Array], emptyArray);
+ICoercible.addMethod([T.List, Array], reduceToArray);
+ICoercible.addMethod([T.Range, Array], reduceToArray);
+ICoercible.addMethod([T.Nil, Array], emptyArray);
+ICoercible.addMethod([T.IndexedSeq, Array], reduceToArray);
+ICoercible.addMethod([T.RevSeq, Array], Array.from);
+ICoercible.addMethod([T.LazySeq, Array], function(xs){
+  let ys = xs;
+  const zs = [];
+  while (p.seq(ys) != null) {
+    zs.push(p.first(ys));
+    ys = p.rest(ys);
+  }
+  return zs;
+});
+ICoercible.addMethod([T.Multimap, Array], comp(Array.from, p.seq));
+ICoercible.addMethod([Object, Array], reduceToArray);
+ICoercible.addMethod([String, Array], function(self){
+  return self.split("");
+});

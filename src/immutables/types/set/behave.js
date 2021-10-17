@@ -3,15 +3,11 @@ import * as mut from "atomic/transients";
 import {emptySet} from "./construct.js";
 
 function transient(self){
-  return mut.set(toArray(self));
+  return mut.set(_.toArray(self));
 }
 
 function seq(self){
   return count(self) ? self : null;
-}
-
-function toArray(self){
-  return self.toArray();
 }
 
 function includes(self, value){
@@ -71,7 +67,6 @@ export default _.does(
   _.implement(_.IMergable, {merge}),
   _.implement(mut.ITransient, {transient}),
   _.implement(_.IReduce, {reduce}),
-  _.implement(_.ICoercible, {toArray}),
   _.implement(_.ISeqable, {seq}),
   _.implement(_.IInclusive, {includes}),
   _.implement(_.ISet, {disj, unite: conj}),

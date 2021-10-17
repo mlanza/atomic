@@ -1,7 +1,6 @@
 import {unbind, isString, comp} from "../../core.js";
-import {isArray} from "../../types/array/concrete.js";
+import {isArray, toArray} from "../../types/array/concrete.js";
 import {count} from "../../protocols/icounted/concrete.js";
-import {toArray} from "../../protocols/icoercible/concrete.js";
 import {blot} from "../../protocols/iblankable/concrete.js";
 import {first, rest} from "../../protocols/iseq/concrete.js";
 import {get} from "../../protocols/ilookup/concrete.js";

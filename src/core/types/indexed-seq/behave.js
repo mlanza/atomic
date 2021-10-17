@@ -11,7 +11,7 @@ import {iterable} from "../lazy-seq/behave.js";
 import {IHashable, ICoercible, IEquiv, IReversible, IMapEntry, IFind, IInclusive, IAssociative, IAppendable, IPrependable, ICollection, INext, ICounted, IReduce, IKVReduce, ISeq, ISeqable, ISequential, IIndexed, ILookup, IFn, IEmptyableCollection} from "../../protocols.js";
 import * as p from "./protocols.js";
 import {keying} from "../../protocols/imapentry/concrete.js";
-import {hashKeyed as hash} from "../../protocols/ihashable/concrete.js";
+import {hashKeyed as hash} from "../../protocols/ihashable/hashers.js";
 
 function reverse(self){
   let c = count(self);
@@ -77,13 +77,6 @@ function rest(self){
   return indexedSeq(self.seq, self.start + 1);
 }
 
-function toArray(self){
-  return reduce(self, function(memo, x){
-    memo.push(x);
-    return memo;
-  }, []);
-}
-
 function count(self){
   return p.count(self.seq) - self.start;
 }
@@ -134,7 +127,6 @@ export default does(
   implement(ILookup, {lookup}),
   implement(ICollection, {conj: append}),
   implement(INext, {next}),
-  implement(ICoercible, {toArray}),
   implement(ISeq, {first, rest}),
   implement(ISeqable, {seq: identity}),
   implement(ICounted, {count}));

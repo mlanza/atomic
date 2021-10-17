@@ -48,10 +48,6 @@ function seq(self){
   return self.size ? self : null
 }
 
-function toArray(self){
-  return self.toArray();
-}
-
 function reduce(self, f, init){
   let memo = init;
   let coll = _.seq(self);
@@ -75,7 +71,6 @@ export default _.does(
   _.implement(_.ILookup, {lookup}),
   _.implement(_.IReduce, {reduce}),
   _.implement(_.INext, {next}),
-  _.implement(_.ICoercible, {toArray}),
   _.implement(_.IMergable, {merge}),
   _.implement(_.IEmptyableCollection, {empty}),
   _.implement(_.IClonable, {clone: _.identity}),

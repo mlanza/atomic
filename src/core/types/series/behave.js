@@ -9,10 +9,6 @@ function seq(self){
   return p.seq(self.items);
 }
 
-function toArray(self){
-  return p.toArray(self.items);
-}
-
 function first(self){
   return p.first(self.items);
 }
@@ -59,7 +55,6 @@ export default does(
   implement(IAppendable, {append}),
   implement(IPrependable, {prepend}),
   implement(IEmptyableCollection, {empty}),
-  implement(ICoercible, {toArray}),
   implement(ISeqable, {seq}),
   implement(INext, {next}),
   implement(IReduce, {reduce}),

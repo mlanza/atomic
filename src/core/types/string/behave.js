@@ -86,10 +86,6 @@ function includes(self, str){
   return self.indexOf(str) > -1;
 }
 
-function toArray(self){
-  return self.split("");
-}
-
 function reduce(self, f, init){
   let memo = init;
   let coll = p.seq(self);
@@ -108,7 +104,6 @@ export default does(
   implement(ITemplate, {fill}),
   implement(ICollection, {conj}),
   implement(IReduce, {reduce}),
-  implement(ICoercible, {toArray}),
   implement(IComparable, {compare}),
   implement(IInclusive, {includes}),
   implement(IAppendable, {append: conj}),

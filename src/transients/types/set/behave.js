@@ -41,10 +41,8 @@ function count(self){
   return self.size;
 }
 
-const toArray = Array.from;
-
 function clone(self){
-  return new self.constructor(toArray(self));
+  return new self.constructor(_.toArray(self));
 }
 
 function reduce(self, f, init){
@@ -61,7 +59,6 @@ export default _.does(
   _.keying("Set"),
   _.implement(_.ISequential),
   _.implement(_.IReduce, {reduce}),
-  _.implement(_.ICoercible, {toArray}),
   _.implement(_.ISeqable, {seq}),
   _.implement(_.IInclusive, {includes}),
   _.implement(_.IClonable, {clone}),

@@ -11,7 +11,7 @@ import {revSeq} from "../rev-seq.js";
 import {filter, mapa} from "../lazy-seq.js";
 import {emptyArray} from "./construct.js";
 import {keying} from "../../protocols/imapentry/concrete.js";
-import {hashSeq as hash} from "../../protocols/ihashable/concrete.js";
+import {hashSeq as hash} from "../../protocols/ihashable/hashers.js";
 
 function clone(self){
   return slice(self)
@@ -179,7 +179,6 @@ export default does(
   implement(IMergable, {merge: concat}),
   implement(IInsertable, {before, after}),
   implement(IFunctor, {fmap}),
-  implement(ICoercible, {toArray: identity}),
   implement(IOmissible, {omit}),
   implement(IReversible, {reverse}),
   implement(IFind, {find}),

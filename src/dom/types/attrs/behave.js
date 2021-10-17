@@ -1,10 +1,6 @@
 import * as _ from "atomic/core";
 import * as mut from "atomic/transients";
 
-function toArray(self){
-  return _.toArray(next2(self, 0));
-}
-
 function count(self){
   return self.node.attributes.length;
 }
@@ -60,14 +56,16 @@ function includes(self, pair) {
 }
 
 function empty(self){
-  while(self.node.attributes.length > 0) {
+  while (self.node.attributes.length > 0) {
     self.node.removeAttribute(self.node.attributes[0].name);
   }
 }
 
 export default _.does(
   _.keying("Attrs"),
-  _.implement(_.ICoercible, {toArray}),
+  _.ICoercible.to(Array, function(self){
+    return _.toArray(next2(self, 0));
+  }),
   _.implement(_.ICounted, {count}),
   _.implement(_.ISeqable, {seq}),
   _.implement(_.INext, {next}),

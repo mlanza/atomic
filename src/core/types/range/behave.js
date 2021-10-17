@@ -53,13 +53,6 @@ function reducekv(self, f, init){
   return unreduced(memo);
 }
 
-function toArray(self){
-  return reduce(self, function(memo, date){
-    memo.push(date);
-    return memo;
-  }, []);
-}
-
 function inverse(self){
   const start = self.end,
         end   = self.start,
@@ -115,7 +108,6 @@ export default does(
   implement(ICounted, {count}),
   implement(IInclusive, {includes}),
   implement(ISeqable, {seq}),
-  implement(ICoercible, {toArray}),
   implement(IReduce, {reduce}),
   implement(IKVReduce, {reducekv}),
   implement(INext, {next}),
