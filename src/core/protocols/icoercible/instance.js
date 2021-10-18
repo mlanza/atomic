@@ -17,7 +17,9 @@ export const ICoercible = protocol({
 });
 
 ICoercible.addMethod = function addMethod(match, f){
-  if (typeof match === "function") {
+  if (match == null) {
+    return mm;
+  } else if (typeof match === "function") {
     return function(Type){
       addMethod(match(Type), f);
     }
