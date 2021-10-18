@@ -1,4 +1,4 @@
-import {unbind} from "../../core.js";
+import {unbind, overload, fold, does} from "../../core.js";
 import {Protocol} from "./construct.js";
 
 export const extend    = unbind(Protocol.prototype.extend);
@@ -24,3 +24,25 @@ export function behaves(behaviors, env, callback){
     }
   }
 }
+
+function forward1(key){
+  return function forward(f){
+    return function(self, ...args){
+      return f.apply(this, [self[key], ...args]);
+    }
+  }
+}
+
+function forwardN(target, ...protocols){
+  const fwd = forward1(target);
+  const behavior = fold(function(memo, protocol){
+    memo.push(implement(protocol, fold(function(memo, key){
+      memo[key] = fwd(protocol[key]);
+      return memo;
+    }, {}, protocol.keys() || [])));
+    return memo;
+  }, [], protocols);
+  return does(...behavior);
+}
+
+export const forward = overload(null, forward1, forwardN);
