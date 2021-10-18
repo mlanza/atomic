@@ -44,7 +44,6 @@ QUnit.test("hashing", function(assert){
   const m = imm.map()
     |> _.assoc(?, _.date(999), 111)
     |> _.assoc(?, [1, 7, 0, 1, 1], 17070)
-    |> _.assoc(?, _.moniker("Pecan Pie"), 100)
     |> _.assoc(?, {"blackwidow": "Avenger"}, "Natasha")
     |> _.assoc(?, "mustard", "ketchup");
 
