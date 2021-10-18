@@ -19,7 +19,7 @@ export * from "./protocols/concrete.js";
 import * as p from "./protocols/concrete.js";
 import * as T from "./types.js";
 import Set from "set";
-import {extend} from "./types/protocol/concrete.js";
+import {extend, forward} from "./types/protocol/concrete.js";
 import {Protocol} from "./types/protocol/construct.js";
 import iprotocol from "./types/protocol/behave.js";
 iprotocol(Protocol);
@@ -146,25 +146,6 @@ function closest(self, pred){
 
 extend(IHierarchy, {siblings, prevSibling, nextSibling, prevSiblings, nextSiblings, parents, closest, root});
 
-function forward1(key){
-  return function forward(f){
-    return function(self, ...args){
-      return f.apply(this, [self[key], ...args]);
-    }
-  }
-}
-
-function forwardN(target, ...protocols){
-  const fwd = forward1(target);
-  const behavior = mapa(function(protocol){
-    return implement(protocol, p.reduce(function(memo, key){
-      return p.assoc(memo, key, fwd(protocol[key]));
-    }, {}, p.keys(protocol)));
-  }, protocols);
-  return does(...behavior);
-}
-
-export const forward = overload(null, forward1, forwardN);
 export const forwardTo = called(forward, "`forwardTo` is deprecated — use `forward` instead.");
 
 function recurs2(pd, step) {
