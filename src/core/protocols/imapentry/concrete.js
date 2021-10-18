@@ -1,21 +1,35 @@
 import {doto, type, comp, identity, constantly, overload, pre, signature, isString, isFunction} from "../../core.js";
 import {IMapEntry} from "./instance.js";
 import {specify, satisfies} from "../../types/protocol/concrete.js";
-import {moniker} from "../../types/moniker/construct.js";
 
 export const key = IMapEntry.key;
 export const val = IMapEntry.val;
 
+function unkeyed(Type){
+  return specify(IMapEntry, {
+    key: constantly(Type),
+    val: constantly(Type)
+  }, Type);
+}
+
 /*#if _CROSSFRAME
 
-export const keying = pre(function keying(nm){
+function uid() {
+  const head = (Math.random() * 46656) | 0,
+        tail = (Math.random() * 46656) | 0;
+  return ("000" + head.toString(36)).slice(-3) + ("000" + tail.toString(36)).slice(-3);
+}
+
+function _keying(named){
+  const id = uid();
+  const key = `${named}-${id}`;
   return function(Type){
     return specify(IMapEntry, {
-      key: constantly(moniker(nm)),
+      key: constantly(key),
       val: constantly(Type)
     }, Type);
   }
-}, signature(isString));
+}
 
 const is1 = comp(key, type);
 
@@ -32,14 +46,7 @@ export function ako(self, type){
 
 //#else */
 
-export const keying = pre(function keying(nm){
-  return function(Type){
-    return specify(IMapEntry, {
-      key: constantly(Type),
-      val: constantly(Type)
-    }, Type);
-  }
-}, signature(isString));
+const _keying = constantly(unkeyed);
 
 export function is(self, constructor){
   return type(self) === constructor;
@@ -50,3 +57,5 @@ export function ako(self, constructor){
 }
 
 //#endif
+
+export const keying = overload(constantly(unkeyed), pre(_keying, signature(isString)));

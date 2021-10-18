@@ -63,7 +63,7 @@ function empty(self){
 
 export default _.does(
   _.keying("Attrs"),
-  _.ICoercible.to(Array, function(self){
+  _.ICoercible.addMethod(_.array(?, Array), function(self){
     return _.toArray(next2(self, 0));
   }),
   _.implement(_.ICounted, {count}),
