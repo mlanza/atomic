@@ -325,6 +325,15 @@ function chan3(el, key, selector){
 
 const chan = _.overload(null, null, chan2, chan3);
 
+function altTarget(e, target){
+  const evt = {
+    target,
+    preventDefault: e.preventDefault.bind(e)
+  }
+  evt.__proto__ = e;
+  return evt;
+}
+
 function on3(el, key, callback){
   if (key.indexOf(" ") > -1) {
     return _.does(..._.mapa(on3(el, ?, callback), key.split(" ")));
@@ -343,7 +352,7 @@ function on4(el, key, selector, callback){
     } else {
       const target = _.closest(e.target, selector);
       if (target && el.contains(target)) {
-        callback.call(this, Object.assign(Object.create(e), {target}));
+        callback.call(target, altTarget(e, target));
       }
     }
   });
