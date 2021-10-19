@@ -16,8 +16,7 @@ export default {
       "set": "Set",
       "weak-map": "WeakMap",
       "symbol": "Symbol",
-      "promise": "Promise",
-      "immutable": "Immutable"
+      "promise": "Promise"
     }
   },
   plugins: [
@@ -29,17 +28,25 @@ export default {
     json()
   ],
   external: [
+    "immutable",
+    "hash",
+    "promise",
     "fetch",
+    "symbol",
+    "weak-map",
+    "set",
+    "map",
     "qunit",
+    "jquery",
     "dom",
     "atomic",
     "atomic/core",
     "atomic/immutables",
-    "atomic/repos",
-    "atomic/reactives",
     "atomic/shell",
+    "atomic/reactives",
     "atomic/transducers",
     "atomic/transients",
+    "atomic/repos",
     "atomic/validates",
     "atomic/html",
     "atomic/svg",

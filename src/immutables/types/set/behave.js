@@ -1,6 +1,10 @@
 import * as _ from "atomic/core";
 import * as mut from "atomic/transients";
-import {emptySet} from "./construct.js";
+import {emptySet, set} from "./construct.js";
+
+function persistent(self){
+  return set(_.toArray(self));
+}
 
 function transient(self){
   return mut.set(_.toArray(self));
@@ -61,6 +65,7 @@ function equiv(self, other){
 export default _.does(
   _.iterable,
   _.keying("Set"),
+  _.implement(mut.IPersistent, {persistent}),
   _.implement(_.ISequential),
   _.implement(_.IEquiv, {equiv: equiv}),
   _.implement(_.IAssociative, {contains: includes}),
