@@ -5,12 +5,6 @@ requirejs.config({
     'polyfills/collections-es6': {
       deps: ["symbol"]
     },
-    'immutable': {
-      export: 'Immutable'
-    },
-    'hash': {
-      export: 'Hash'
-    },
     'jquery': {
       exports: 'jQuery'
     }
