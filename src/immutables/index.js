@@ -1,14 +1,10 @@
 import * as _ from "atomic/core";
 import * as mut from "atomic/transients";
 import * as T from "immutable";
-import {set} from "./types/set/construct.js";
 import {map} from "./types/map/construct.js";
 import Set from "set";
 import Symbol from "symbol";
-
 export * from "./types.js";
-export * from "./protocols.js";
-export * from "./protocols/concrete.js";
 
 function memoize2(f, hash){
   const c = Symbol("cache");
@@ -28,17 +24,6 @@ function memoize1(f){
 }
 
 export const memoize = _.overload(null, memoize1, memoize2);
-
-(function(){
-
-  function persistent(self){
-    return set(_.toArray(self));
-  }
-
-  _.doto(Set,
-    _.implement(mut.IPersistent, {persistent}));
-
-})();
 
 function toArray(self){
   return self.toArray();

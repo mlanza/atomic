@@ -28,20 +28,18 @@ export default {
       "jquery": "jQuery",
       "qunit": "QUnit",
       "fetch": "fetch",
-      "hash": "hash",
       "map": "Map",
       "set": "Set",
       "weak-map": "WeakMap",
       "symbol": "Symbol",
-      "promise": "Promise",
-      "immutable": "Immutable"
+      "promise": "Promise"
     }
   },
   external: [
     "immutable",
+    "hash",
     "promise",
     "fetch",
-    "hash",
     "symbol",
     "weak-map",
     "set",
@@ -49,7 +47,6 @@ export default {
     "qunit",
     "jquery",
     "dom",
-    "rxjs",
     "atomic",
     "atomic/core",
     "atomic/immutables",
