@@ -20,7 +20,6 @@ export * from "./protocols/ifind/instance.js";
 export * from "./protocols/ifn/instance.js";
 export * from "./protocols/iforkable/instance.js";
 export * from "./protocols/ifunctor/instance.js";
-export * from "./protocols/ihandler/instance.js";
 export * from "./protocols/ihashable/instance.js";
 export * from "./protocols/ihierarchy/instance.js";
 export * from "./protocols/iidentifiable/instance.js";
