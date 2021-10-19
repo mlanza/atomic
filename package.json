@@ -5,7 +5,6 @@
     "server": "static ./public",
     "develop": "rollup --config --watch",
     "bundle": "rollup --config",
-    "bundle-tests": "rollup --config rollup.tests.js",
     "transpile": "babel src -d lib",
     "pipelines": "deno run --import-map=import-map.json pipelines.js"
   },
