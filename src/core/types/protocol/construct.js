@@ -2,52 +2,6 @@ import {overload, does} from "../../core.js";
 import {Nil} from "../nil/construct.js";
 import Symbol from "symbol";
 
-const TEMPLATE = Symbol("@protocol-template"),
-      INDEX    = Symbol("@protocol-index"),
-      MISSING  = Symbol("@protocol-missing");
-
-export function Protocol(template, index){
-  this[INDEX] = index;
-  this[TEMPLATE] = template;
-}
-
-export function protocol(template){
-  const p = new Protocol({}, {});
-  p.extend(template);
-  return p;
-}
-
-Protocol.prototype.extend = function(template){
-  for(let method in template){
-    this[method] = this.dispatch(method);
-  }
-  Object.assign(this[TEMPLATE], template);
-}
-
-Protocol.prototype.dispatch = function(method){
-  const protocol = this;
-  return function(self, ...args){
-    const f = satisfies2.call(protocol, method, self);
-    if (!f) {
-      throw new ProtocolLookupError(protocol, method, self, args);
-    }
-    return f.apply(null, [self].concat(args));
-  }
-}
-
-Protocol.prototype.generate = function(){
-  const index = this[INDEX];
-  return function(method){
-    const sym = index[method] || Symbol(method);
-    index[method] = sym;
-    return sym;
-  }
-}
-
-Protocol.prototype.keys = function(){
-  return Object.keys(this[TEMPLATE]);
-}
-
 function addMeta(target, key, value){
   try {
     Object.defineProperty(target, key, { //unsupported on some objects like Location
@@ -59,6 +13,52 @@ function addMeta(target, key, value){
   } catch (ex) {
     target[key] = value;
   }
+}
+
+const TEMPLATE = Symbol("@protocol-template"),
+      INDEX    = Symbol("@protocol-index"),
+      MISSING  = Symbol("@protocol-missing");
+
+export function protocol(template){
+  const p = new Protocol({}, {});
+  p.extend(template);
+  return p;
+}
+
+export function Protocol(template, index){
+  this[INDEX] = index;
+  this[TEMPLATE] = template;
+}
+
+function extend(template){
+  for(let method in template){
+    this[method] = this.dispatch(method);
+  }
+  Object.assign(this[TEMPLATE], template);
+}
+
+function dispatch(method){
+  const protocol = this;
+  return function(self, ...args){
+    const f = satisfies2.call(protocol, method, self);
+    if (!f) {
+      throw new ProtocolLookupError(protocol, method, self, args);
+    }
+    return f.apply(null, [self].concat(args));
+  }
+}
+
+function generate(){
+  const index = this[INDEX];
+  return function(method){
+    const sym = index[method] || Symbol(method);
+    index[method] = sym;
+    return sym;
+  }
+}
+
+function keys(){
+  return Object.keys(this[TEMPLATE]);
 }
 
 function specify1(behavior){
@@ -88,7 +88,7 @@ function specify2(behavior, target){
   }
 }
 
-Protocol.prototype.specify = overload(null, specify1, specify2);
+const specify = overload(null, specify1, specify2);
 
 function unspecify1(behavior){
   const protocol = this;
@@ -105,9 +105,9 @@ function unspecify2(behavior, target){
   }
 }
 
-Protocol.prototype.unspecify = overload(null, unspecify1, unspecify2);
+const unspecify = overload(null, unspecify1, unspecify2);
 
-export function implement0(){
+function implement0(){
   return implement1.call(this, {}); //marker interface
 }
 
@@ -127,7 +127,7 @@ function implement2(behavior, target){
   specify2.call(this, behavior, tgt);
 }
 
-Protocol.prototype.implement = overload(implement0, implement1, implement2);
+const implement = overload(implement0, implement1, implement2);
 
 function satisfies0(){
   return this.satisfies.bind(this);
@@ -146,7 +146,10 @@ function satisfies2(method, obj){
   return target[key] || (target.constructor === Object ? target.constructor[key] : null) || this[TEMPLATE][method];
 }
 
-Protocol.prototype.satisfies = overload(satisfies0, satisfies1, satisfies2);
+const satisfies = overload(satisfies0, satisfies1, satisfies2);
+
+Object.assign(Protocol.prototype, {extend, dispatch, generate, keys, specify, unspecify, implement, satisfies});
+
 Protocol.prototype[Symbol.toStringTag] = "Protocol";
 
 export function ProtocolLookupError(protocol, method, subject, args) {
