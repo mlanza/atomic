@@ -1,8 +1,9 @@
 import {overload, identity} from "../../core.js";
 import {IReduce} from "./instance.js";
+import {ISeq} from "../iseq/instance.js";
 
 function reduce2(f, coll){
-  return reduce3(f, f(), coll);
+  return reduce3(f, ISeq.first(coll), ISeq.rest(coll));
 }
 
 function reduce3(f, init, coll){
