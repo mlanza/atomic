@@ -287,10 +287,6 @@ export const include = overload(null, null, include2, include3);
 
 export const fmt = expands(str);
 
-export function parsedo(re, xf, callback){
-  return opt(re, xf, spread(callback));
-}
-
 export function when(pred, ...xs) {
   return last(map(realize, pred ? xs : null));
 }
