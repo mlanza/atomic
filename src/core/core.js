@@ -413,7 +413,7 @@ export function foldkv(f, init, xs){
   return memo;
 }
 
-export function positionally(...xfs){
+export function posn(...xfs){
   return function(arr){
     return foldkv(function(memo, idx, xf){
       const val = arr[idx];
