@@ -83,18 +83,18 @@ QUnit.test("routing", function(assert){ //not just for fns!
   const s = _.invokable(r);
 
   const wc = _.coalesce(
-    _.parsedo(_.reGroups(/users\((\d+)\)\/entries\((\d+)\)/i, ?), _.positionally(parseInt, parseInt), function(user, entry){
+    _.parsedo(_.reGroups(/users\((\d+)\)\/entries\((\d+)\)/i, ?), _.posn(parseInt, parseInt), function(user, entry){
       return `showing entry ${entry} for ${user}`;
     }),
-    _.parsedo(_.reGroups(/blog(\?p=\d+)/i, ?), _.positionally(_.fromQueryString), function(qs){
+    _.parsedo(_.reGroups(/blog(\?p=\d+)/i, ?), _.posn(_.fromQueryString), function(qs){
       return `showing pg ${qs.p}`;
     }));
 
   const wr = _.router()
-    |> _.addRoute(?, /users\((\d+)\)\/entries\((\d+)\)/i, _.positionally(parseInt, parseInt), function(user, entry){
+    |> _.addRoute(?, /users\((\d+)\)\/entries\((\d+)\)/i, _.posn(parseInt, parseInt), function(user, entry){
           return `showing entry ${entry} for ${user}`;
         })
-    |> _.addRoute(?, /blog(\?p=\d+)/i, _.positionally(_.fromQueryString), function(qs){
+    |> _.addRoute(?, /blog(\?p=\d+)/i, _.posn(_.fromQueryString), function(qs){
           return `showing pg ${qs.p}`;
         });
 
