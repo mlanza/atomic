@@ -71,7 +71,7 @@ QUnit.test("hashing", function(assert){
   assert.equal(_.get(m, "mustard"), "ketchup");
 });
 
-QUnit.test("router/multimethod", function(assert){ //not just for fns!
+QUnit.test("routing", function(assert){ //not just for fns!
   const c = _.coalesce(
     _.guard(_.signature(_.isString), _.str(?, "!")),
     _.guard(_.signature(_.isNumber), _.mult(?, 2)));
@@ -83,20 +83,20 @@ QUnit.test("router/multimethod", function(assert){ //not just for fns!
   const s = _.invokable(r);
 
   const wc = _.coalesce(
-    _.parsedo(_.reGroups(/users\((\d+)\)\/entries\((\d+)\)/i, ?), _.mapa(parseInt, ?), function(user, entry){
+    _.parsedo(_.reGroups(/users\((\d+)\)\/entries\((\d+)\)/i, ?), _.positionally(parseInt, parseInt), function(user, entry){
       return `showing entry ${entry} for ${user}`;
     }),
-    _.parsedo(_.reGroups(/blog(\?p=\d+)/i, ?), _.mapa(_.fromQueryString, ?), function(qs){
+    _.parsedo(_.reGroups(/blog(\?p=\d+)/i, ?), _.positionally(_.fromQueryString), function(qs){
       return `showing pg ${qs.p}`;
     }));
 
   const wr = _.router()
-    |> _.addRoute(?, _.parsedo(_.reGroups(/users\((\d+)\)\/entries\((\d+)\)/i, ?), _.mapa(parseInt, ?), function(user, entry){
+    |> _.addRoute(?, /users\((\d+)\)\/entries\((\d+)\)/i, _.positionally(parseInt, parseInt), function(user, entry){
           return `showing entry ${entry} for ${user}`;
-        }))
-    |> _.addRoute(?, _.parsedo(_.reGroups(/blog(\?p=\d+)/i, ?), _.mapa(_.fromQueryString, ?), function(qs){
+        })
+    |> _.addRoute(?, /blog(\?p=\d+)/i, _.positionally(_.fromQueryString), function(qs){
           return `showing pg ${qs.p}`;
-        }));
+        });
 
   assert.equal(_.invoke(c, 1), 2);
   assert.equal(_.invoke(c, "timber"), "timber!");

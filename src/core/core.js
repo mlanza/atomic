@@ -413,6 +413,16 @@ export function foldkv(f, init, xs){
   return memo;
 }
 
+export function positionally(...xfs){
+  return function(arr){
+    return foldkv(function(memo, idx, xf){
+      const val = arr[idx];
+      memo.push(xf ? xf(val) : val);
+      return memo;
+    }, [], xfs);
+  }
+}
+
 export function signature(...preds){
   return function(...values){
     return foldkv(function(memo, idx, pred, reduced){
