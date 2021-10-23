@@ -1,6 +1,6 @@
 import {overload, partial, unary, type, curry, tee, toggles, identity, obj, partly, comp, doto, does, branch, unspread, applying, execute, noop, constantly, once, isFunction, isString} from "./core.js";
 import {ICoercible, IForkable, ILogger, IDeref, IFn, IMutable, IAssociative, IClonable, IHierarchy, ILookup, ISeq} from "./protocols.js";
-import {just, satisfies, spread, maybe, each, duration, remove, sort, flip, realized, apply, realize, isNil, reFindAll, mapkv, period, selectKeys, mapVals, reMatches, test, date, emptyList, cons, days, recurrence, emptyArray} from "./types.js";
+import {just, satisfies, spread, maybe, opt, each, duration, remove, sort, flip, realized, apply, realize, isNil, reFindAll, mapkv, period, selectKeys, mapVals, reMatches, test, date, emptyList, cons, days, recurrence, emptyArray} from "./types.js";
 import {isBlank, str, replace} from "./types/string.js";
 import {isSome} from "./types/nil.js";
 import cfg from "./config.js";
@@ -287,10 +287,8 @@ export const include = overload(null, null, include2, include3);
 
 export const fmt = expands(str);
 
-export function coalesce(...fs){
-  return function(...args){
-    return detect(isSome, map(applying(...args), fs));
-  }
+export function parsedo(re, xf, callback){
+  return opt(re, xf, spread(callback));
 }
 
 export function when(pred, ...xs) {

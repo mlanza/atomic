@@ -24,6 +24,16 @@ export function dispatchable(Cursor){ //from `atomic/reactives`
 }
 
 (function(){
+  function dispatch(self, args){
+    return self.f(...args);
+  }
+
+  _.doto(_.Router,
+    _.implement(IDispatch, {dispatch}));
+
+})();
+
+(function(){
 
   function dispatch(self, args){
     return _.apply(self, args);

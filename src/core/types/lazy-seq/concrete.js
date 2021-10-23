@@ -1,5 +1,5 @@
 import {ISequential} from "../../protocols.js";
-import {identity, constantly, overload, complement, comp, partial, slice} from "../../core.js";
+import {identity, constantly, overload, complement, comp, partial, slice, applying} from "../../core.js";
 import {EmptyList, emptyList} from "../empty-list/construct.js";
 import {emptyArray, array} from "../array/construct.js";
 import {toArray} from "../array/concrete.js";
@@ -760,6 +760,12 @@ function index2(key, coll){
 }
 
 export const index = overload(null, null, index2, index3, index4);
+
+export function coalesce(...fs){
+  return function(...args){
+    return detect(isSome, map(applying(...args), fs));
+  }
+}
 
 function lazyIterable1(iter){
   return lazyIterable2(iter, emptyList());
