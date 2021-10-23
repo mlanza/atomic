@@ -5,7 +5,6 @@ export * from "./types/message-handler.js";
 export * from "./types/message-processor.js";
 export * from "./types/middleware.js";
 //TODO obsolete?
-export * from "./types/router.js";
 export * from "./types/message-bus.js";
 export * from "./types/command.js";
 export * from "./types/event.js";

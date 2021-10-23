@@ -72,33 +72,45 @@ QUnit.test("hashing", function(assert){
 });
 
 QUnit.test("router/multimethod", function(assert){ //not just for fns!
-  const f = sh.router();
-  const g = _.invokable(f); //a multimethod
-  g //invokable by nature...
-    |> _.mutate(?,
-        mut.conj(?, //...to be extended.
-          sh.method(_.signature(_.isString), _.str(?, "!")), //as a multimethod always dispatches to fns, apply is a given and need not be specified.
-          sh.method(_.signature(_.isNumber), _.mult(?, 2))));
+  const c = _.coalesce(
+    _.guard(_.signature(_.isString), _.str(?, "!")),
+    _.guard(_.signature(_.isNumber), _.mult(?, 2)));
 
-  const website = _.doto(sh.router(),
-    mut.conj(?,
-      sh.params(_.reGroups(/users\((\d+)\)\/entries\((\d+)\)/i, ?), _.mapa(parseInt, ?), function(user, entry){
-        return `showing entry ${entry} for ${user}`;
-      }),
-      sh.params(_.reGroups(/blog(\?p=\d+)/i, ?), _.mapa(_.fromQueryString, ?), function(qs){
-        return `showing pg ${qs.p}`;
-      })));
+  const r = _.router()
+    |> _.addRoute(?, _.signature(_.isString), _.str(?, "!"))
+    |> _.addRoute(?, _.signature(_.isNumber), _.mult(?, 2))
 
-  const h = _.deref(g);
-  assert.equal(_.invoke(f, 1), 2);
-  assert.equal(_.invoke(f, "timber"), "timber!");
-  assert.equal(_.invoke(g, 1), 2);
-  assert.equal(_.invoke(g, "timber"), "timber!");
-  assert.equal(g(1), 2);
-  assert.equal(g("timber"), "timber!");
-  assert.ok(f === h);
-  assert.equals(sh.dispatch(website, "users(11)/entries(3)"), "showing entry 3 for 11");
-  assert.equals(sh.dispatch(website, "blog?p=99"), "showing pg 99");
+  const s = _.invokable(r);
+
+  const wc = _.coalesce(
+    _.parsedo(_.reGroups(/users\((\d+)\)\/entries\((\d+)\)/i, ?), _.mapa(parseInt, ?), function(user, entry){
+      return `showing entry ${entry} for ${user}`;
+    }),
+    _.parsedo(_.reGroups(/blog(\?p=\d+)/i, ?), _.mapa(_.fromQueryString, ?), function(qs){
+      return `showing pg ${qs.p}`;
+    }));
+
+  const wr = _.router()
+    |> _.addRoute(?, _.parsedo(_.reGroups(/users\((\d+)\)\/entries\((\d+)\)/i, ?), _.mapa(parseInt, ?), function(user, entry){
+          return `showing entry ${entry} for ${user}`;
+        }))
+    |> _.addRoute(?, _.parsedo(_.reGroups(/blog(\?p=\d+)/i, ?), _.mapa(_.fromQueryString, ?), function(qs){
+          return `showing pg ${qs.p}`;
+        }));
+
+  assert.equal(_.invoke(c, 1), 2);
+  assert.equal(_.invoke(c, "timber"), "timber!");
+  assert.equal(c(1), 2);
+  assert.equal(c("timber"), "timber!");
+  assert.equal(_.invoke(r, 1), 2);
+  assert.equal(_.invoke(r, "timber"), "timber!");
+  assert.equal(s(1), 2);
+  assert.equal(s("timber"), "timber!");
+  assert.equals(wc("users(11)/entries(3)"), "showing entry 3 for 11");
+  assert.equals(wc("blog?p=99"), "showing pg 99");
+  assert.equals(_.invoke(wr, "users(11)/entries(3)"), "showing entry 3 for 11");
+  assert.equals(_.invoke(wr, "blog?p=99"), "showing pg 99");
+
 });
 
 QUnit.test("validation", function(assert){
