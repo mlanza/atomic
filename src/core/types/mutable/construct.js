@@ -1,11 +1,11 @@
 import Symbol from "symbol";
 
-export function Mutable(obj){
-  this.obj = obj;
+export function Mutable(state){
+  this.state = state;
 }
 
-export function mutable(obj){
-  return new Mutable(obj);
+export function mutable(state){
+  return new Mutable(state);
 }
 
 Mutable.prototype[Symbol.toStringTag] = "Mutable";

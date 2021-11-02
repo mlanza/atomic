@@ -9,7 +9,7 @@ export function Subject(observers, terminated){
 Subject.prototype[Symbol.toStringTag] = "Subject";
 
 export function subject(observers){
-  return new Subject(_.mutable(observers || []), null);
+  return new Subject(_.volatile(observers || []), null);
 }
 
 export const broadcast = _.called(subject, "`broadcast` deprecated - use `subject` instead.");
