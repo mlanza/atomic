@@ -1,5 +1,5 @@
 export function vreset(self, state){
-  self.state = state;
+  return self.state = state;
 }
 
 export function vswap(self, f){
