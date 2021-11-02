@@ -2,10 +2,10 @@ import {implement} from "../protocol.js";
 import {identity, does} from "../../core.js";
 import {lazySeq} from "../../types/lazy-seq/construct.js";
 import {cons} from "../../types/list/construct.js";
-import {remove, into} from "../../types/lazy-seq/concrete.js";
+import {remove, into, detect} from "../../types/lazy-seq/concrete.js";
 import {emptyObject} from "../../types/object/construct.js";
 import {iequiv} from "../../types/empty-list/behave.js";
-import {IHashable, IEquiv, IFind, IReduce, IKVReduce, ISeqable, ICounted, ILookup, IFn, IMap, IClonable, IEmptyableCollection} from "../../protocols.js";
+import {IHashable, IEquiv, IFind, IReduce, IKVReduce, ISeqable, ICounted, IAssociative, ILookup, IFn, IMap, IClonable, IEmptyableCollection} from "../../protocols.js";
 import * as p from "./protocols.js";
 import {keying} from "../../protocols/imapentry/concrete.js";
 import {hashKeyed as hash} from "../../protocols/ihashable/hashers.js";
@@ -16,6 +16,16 @@ function find(self, key){
 
 function lookup(self, key){
   return p.includes(p.keys(self), key) ? self.obj[key] : null;
+}
+
+function assoc(self, key, value){
+  return p.assoc(into({}, self), key, value);
+}
+
+function contains(self, key){
+  return !!detect(function(k){
+    return key === k;
+  }, keys(self));
 }
 
 function dissoc(self, key){
@@ -73,6 +83,7 @@ export default does(
   implement(IClonable, {clone}),
   implement(IEmptyableCollection, {empty: emptyObject}),
   implement(IFn, {invoke: lookup}),
+  implement(IAssociative, {assoc, contains}),
   implement(ILookup, {lookup}),
   implement(ISeqable, {seq}),
   implement(ICounted, {count}));
