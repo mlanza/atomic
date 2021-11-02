@@ -3,7 +3,7 @@ import {ITransient} from "./protocols/itransient/instance.js";
 import {persistent} from "./protocols/ipersistent/concrete.js";
 
 export function transition(construct){
-  function mutate(self, f){
+  function mutate(self, f){ //TODO??
     return persistent(f(transient(self)));
   }
 

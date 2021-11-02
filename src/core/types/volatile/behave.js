@@ -8,5 +8,5 @@ function deref(self){
 }
 
 export default does(
-  keying("Mutable"),
+  keying("Volatile"),
   implement(IDeref, {deref}));
