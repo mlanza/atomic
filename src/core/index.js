@@ -3,14 +3,12 @@ import {ICoercible, IForkable, ILogger, IDeref, IFn, IMutable, IAssociative, ICl
 import {just, satisfies, spread, maybe, opt, each, duration, remove, sort, flip, realized, apply, realize, isNil, reFindAll, mapkv, period, selectKeys, mapVals, reMatches, test, date, emptyList, cons, days, recurrence, emptyArray} from "./types.js";
 import {isBlank, str, replace} from "./types/string.js";
 import {isSome} from "./types/nil.js";
-import cfg from "./config.js";
+import _config from "./config.js";
 import {implement, specify, behaves} from "./types/protocol/concrete.js";
 import {into, detect, map, mapa, splice, drop, join, some, last, takeWhile, dropWhile, filter} from "./types/lazy-seq.js";
 import {concat} from "./types/concatenated.js";
-import iseries from "./types/series/behave.js";
-export const config = cfg;
+export const config = _config;
 export {filter} from "./types/lazy-seq.js";
-export const serieslike = iseries;
 export {iterable} from "./types/lazy-seq/behave.js";
 export * from "./core.js";
 export * from "./types.js";
