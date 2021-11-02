@@ -4,7 +4,7 @@ import {ISequential, INext, ISeq, IFunctor} from "../../protocols.js";
 import {mapcat} from "../../types/lazy-seq/concrete.js";
 import * as p from "../../protocols/concrete.js";
 import {keying} from "../../protocols/imapentry/concrete.js";
-import iseries from "../../types/series/behave.js";
+import series from "../../types/series/behave.js";
 
 function fmap(self, f){
   return new self.constructor(mapcat(function(item){
@@ -27,7 +27,7 @@ function next(self){
 }
 
 export default does(
-  iseries,
+  series,
   keying("Members"),
   implement(INext, {next}),
   implement(ISeq, {first, rest}),

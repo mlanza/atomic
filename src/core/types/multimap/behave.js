@@ -4,7 +4,7 @@ import {ISeq, ICoercible, IReduce, IKVReduce, ICounted, ISeqable, ICollection, I
 import {map} from "../lazy-seq.js";
 import {emptyList} from "../empty-list/construct.js";
 import {concatenated} from "../concatenated/construct.js";
-import irecord from "../record/behave.js";
+import record from "../record/behave.js";
 import * as p from "./protocols.js";
 import {keying} from "../../protocols/imapentry/concrete.js";
 
@@ -58,7 +58,7 @@ function reducekv(self, f, init){
 }
 
 export default does(
-  irecord,
+  record,
   keying("Multimap"),
   implement(IMap, {keys}),
   implement(IReduce, {reduce}),
