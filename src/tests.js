@@ -76,27 +76,21 @@ QUnit.test("routing", function(assert){ //not just for fns!
     _.guard(_.signature(_.isString), _.str(?, "!")),
     _.guard(_.signature(_.isNumber), _.mult(?, 2)));
 
-  const r = _.doto(_.router(),
-    _.addRoute(?, _.signature(_.isString), _.str(?, "!")),
-    _.addRoute(?, _.signature(_.isNumber), _.mult(?, 2)));
+  const r = _.router()
+    |> _.addRoute(?, _.signature(_.isString), _.str(?, "!"))
+    |> _.addRoute(?, _.signature(_.isNumber), _.mult(?, 2))
 
   const s = _.invokable(r);
 
-  const wc = _.coalesce(
-    _.parsedo(_.reGroups(/users\((\d+)\)\/entries\((\d+)\)/i, ?), _.posn(parseInt, parseInt), function(user, entry){
-      return `showing entry ${entry} for ${user}`;
-    }),
-    _.parsedo(_.reGroups(/blog(\?p=\d+)/i, ?), _.posn(_.fromQueryString), function(qs){
-      return `showing pg ${qs.p}`;
-    }));
-
-  const wr = _.doto(_.router(),
+  const website = _.just(
+    _.router(),
     _.addRoute(?, /users\((\d+)\)\/entries\((\d+)\)/i, _.posn(parseInt, parseInt), function(user, entry){
       return `showing entry ${entry} for ${user}`;
     }),
     _.addRoute(?, /blog(\?p=\d+)/i, _.posn(_.fromQueryString), function(qs){
       return `showing pg ${qs.p}`;
-    }));
+    }),
+    _.invokable);
 
   assert.equal(_.invoke(c, 1), 2);
   assert.equal(_.invoke(c, "timber"), "timber!");
@@ -106,10 +100,8 @@ QUnit.test("routing", function(assert){ //not just for fns!
   assert.equal(_.invoke(r, "timber"), "timber!");
   assert.equal(s(1), 2);
   assert.equal(s("timber"), "timber!");
-  assert.equals(wc("users(11)/entries(3)"), "showing entry 3 for 11");
-  assert.equals(wc("blog?p=99"), "showing pg 99");
-  assert.equals(_.invoke(wr, "users(11)/entries(3)"), "showing entry 3 for 11");
-  assert.equals(_.invoke(wr, "blog?p=99"), "showing pg 99");
+  assert.equal(website("users(11)/entries(3)"), "showing entry 3 for 11");
+  assert.equal(website("blog?p=99"), "showing pg 99");
 
 });
 
