@@ -1,6 +1,5 @@
 import {does, partial} from "../../core.js";
 import {implement} from "../protocol.js";
-import {apply} from "./concrete.js";
 import {INamable, IFn, IAppendable, IPrependable} from "../../protocols.js";
 import * as p from "./protocols.js";
 import {keying} from "../../protocols/imapentry/concrete.js";

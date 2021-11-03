@@ -3,7 +3,6 @@ import {reduce, reducing} from "../ireduce/concrete.js";
 import {conj} from "../icollection/concrete.js";
 import {includes} from "../iinclusive/concrete.js";
 import {empty} from "../iemptyablecollection/concrete.js"
-import {concat} from "../../types/concatenated/construct.js";
 import {every} from "../../types/lazy-seq/concrete.js";
 import {ISet} from "./instance.js";
 

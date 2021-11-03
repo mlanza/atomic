@@ -1,7 +1,7 @@
 import {does, overload} from "../../core.js";
 import {implement} from "../protocol.js";
 import {emptyable} from "../record/behave.js";
-import {duration, Duration} from "../duration/construct.js";
+import {Duration} from "../duration/construct.js";
 import {min, max} from "../number/concrete.js";
 import {recurrence} from "../recurrence/construct.js";
 import {period, Period} from "./construct.js";

@@ -6,7 +6,7 @@ import {EmptyList, emptyList} from "../empty-list.js";
 import ilazyseq, {iterable, reductive} from "../lazy-seq/behave.js";
 import {mapa} from "../lazy-seq/concrete.js";
 import {LazySeq} from "../lazy-seq/construct.js";
-import {concatenated, concat} from "./construct.js";
+import {concat} from "./construct.js";
 import {IHashable, ICoercible, ICollection, INext, ISeq, ICounted, ISeqable, IIndexed, IReduce, IKVReduce, ISequential, IEmptyableCollection} from "../../protocols.js";
 import * as p from "./protocols.js";
 import {keying} from "../../protocols/imapentry/concrete.js";

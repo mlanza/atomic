@@ -4,7 +4,6 @@ import {butlast, last, detect, map, lazySeq, remove, drop, dropWhile, take, take
 import {emptyList} from "../../types/empty-list/construct.js";
 import {toArray} from "../../types/array/concrete.js";
 import {cons} from "../../types/list/construct.js";
-import {concat} from "../../types/concatenated/construct.js";
 import {IPath, IFunctor, ISwap, IReset, IDeref, IMap, IHierarchy, ILookup, IAssociative, ICollection} from "../../protocols.js";
 import * as p from "./protocols.js";
 import {keying} from "../../protocols/imapentry/concrete.js";
