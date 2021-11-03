@@ -6,7 +6,7 @@ import {keying} from "../../protocols/imapentry/concrete.js";
 const fmap = identity;
 
 function fork(self, reject, resolve){
-  return reject(self.value);
+  reject(self.value);
 }
 
 function deref(self){

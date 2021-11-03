@@ -63,7 +63,7 @@ function append(self, xf){
 }
 
 function fork(self, reject, resolve){
-  return self
+  self
     |> Promise.resolve
     |> _.apply(_.pipe, self.interceptors)
     |> _.fmap(?, function(self){
