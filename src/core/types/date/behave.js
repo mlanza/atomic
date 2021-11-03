@@ -2,7 +2,7 @@ import {does, overload, constantly, identity, partial} from "../../core.js";
 import {implement} from "../protocol.js";
 import {isNumber} from "../number.js";
 import {mergeWith} from "../../protocols/imergable/instance.js";
-import {Duration, days} from "../duration.js";
+import {days} from "../duration.js";
 import {IHashable, IAddable, IReduce, IKVReduce, ISeqable, IBounds, IMap, IDeref, IComparable, IEquiv, IClonable, ILookup, IAssociative, ICollection} from "../../protocols.js";
 import * as p from "./protocols.js";
 import {keying} from "../../protocols/imapentry/concrete.js";

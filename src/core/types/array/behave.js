@@ -6,10 +6,10 @@ import {indexedSeq} from "../indexed-seq.js";
 import {replace} from "../string/concrete.js";
 import {range} from "../range/construct.js";
 import {iequiv} from "../empty-list/behave.js";
-import {concat} from "../concatenated/construct.js";
 import {revSeq} from "../rev-seq.js";
 import {filter, mapa} from "../lazy-seq.js";
-import {emptyArray} from "./construct.js";
+import {emptyArray as empty} from "./construct.js";
+import {concat as merge} from "../concatenated/construct.js";
 import {keying} from "../../protocols/imapentry/concrete.js";
 import {hashSeq as hash} from "../../protocols/ihashable/hashers.js";
 
@@ -176,7 +176,7 @@ export default does(
   implement(ISequential),
   implement(IHashable, {hash}),
   implement(IMap, {dissoc, keys, vals: identity}),
-  implement(IMergable, {merge: concat}),
+  implement(IMergable, {merge}),
   implement(IInsertable, {before, after}),
   implement(IFunctor, {fmap}),
   implement(IOmissible, {omit}),
@@ -188,7 +188,7 @@ export default does(
   implement(IPrependable, {prepend}),
   implement(IClonable, {clone}),
   implement(IFn, {invoke: lookup}),
-  implement(IEmptyableCollection, {empty: emptyArray}),
+  implement(IEmptyableCollection, {empty}),
   implement(IReduce, {reduce}),
   implement(IKVReduce, {reducekv}),
   implement(ILookup, {lookup}),
