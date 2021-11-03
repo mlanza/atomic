@@ -14,7 +14,7 @@ function fmap(self, f){
 }
 
 function fork(self, reject, resolve){
-  return resolve(self);
+  resolve(self);
 }
 
 export default does(

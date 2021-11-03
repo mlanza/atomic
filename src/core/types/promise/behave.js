@@ -9,7 +9,7 @@ function fmap(self, resolve){
 }
 
 function fork(self, reject, resolve){
-  return self.then(resolve, reject);
+  self.then(resolve, reject);
 }
 
 function otherwise(self, other){

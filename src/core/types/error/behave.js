@@ -4,7 +4,7 @@ import {implement} from "../protocol.js";
 import {keying} from "../../protocols/imapentry/concrete.js";
 
 function fork(self, reject, resolve){
-  return reject(self);
+  reject(self);
 }
 
 export default does(

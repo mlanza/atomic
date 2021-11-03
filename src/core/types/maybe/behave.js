@@ -13,7 +13,7 @@ function otherwise(self, other){
 }
 
 function fork(self, reject, resolve){
-  return resolve(self.value == null ? null : self.value);
+  resolve(self.value == null ? null : self.value);
 }
 
 function deref(self){

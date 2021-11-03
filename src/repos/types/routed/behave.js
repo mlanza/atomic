@@ -14,7 +14,7 @@ function filled(self){
 }
 
 function fork(self, reject, resolve){
-  return _.fork(_.detect(filled, self.requests), reject, resolve);
+  _.fork(_.detect(filled, self.requests), reject, resolve);
 }
 
 function addr(self){
