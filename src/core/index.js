@@ -401,9 +401,6 @@ ICoercible.addMethod([Array, Object], function(self){
     return memo;
   }, {}, self);
 });
-ICoercible.addMethod([T.AssociativeSubset, Object], function(self){
-  return into({}, self);
-});
 ICoercible.addMethod([Array, Array], identity);
 ICoercible.addMethod([T.Multimap, Array], comp(Array.from, p.seq));
 ICoercible.addMethod([T.Concatenated, Array], reduceToArray);

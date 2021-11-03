@@ -26,7 +26,6 @@ export * from "./types/multimethod.js";
 export * from "./types/nil.js";
 export * from "./types/object.js";
 export * from "./types/okay.js";
-export * from "./types/associative-subset.js";
 export * from "./types/period.js";
 export * from "./types/promise.js";
 export * from "./types/protocol.js";
