@@ -1,9 +1,8 @@
 import {does, comp} from "../../core.js";
 import {implement} from "../protocol.js";
 import {ISeq, ICoercible, IReducible, IKVReducible, ICounted, ISeqable, ICollection, ILookup, IMap, IAssociative} from "../../protocols.js";
-import {map} from "../lazy-seq.js";
+import {map, concatenated} from "../lazy-seq.js";
 import {emptyList} from "../empty-list/construct.js";
-import {concatenated} from "../concatenated/construct.js";
 import record from "../record/behave.js";
 import * as p from "./protocols.js";
 import {keying} from "../../protocols/imapentry/concrete.js";
