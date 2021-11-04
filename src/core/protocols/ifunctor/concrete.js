@@ -1,5 +1,5 @@
 import {overload, identity, constantly, partial} from "../../core.js";
-import {reduce, reducing} from "../ireduce/concrete.js";
+import {reduce, reducing} from "../ireducible/concrete.js";
 import {deref} from "../ideref/concrete.js";
 import {IFunctor} from "./instance.js";
 

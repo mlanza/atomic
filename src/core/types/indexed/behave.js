@@ -1,5 +1,5 @@
 import {overload, does} from "../../core.js";
-import {IHashable, IKVReduce, IReduce, ICoercible, INext, IMap, ICounted, ISeq, ISeqable, ISequential, IIndexed, ILookup, IInclusive} from "../../protocols.js";
+import {IHashable, IKVReducible, IReducible, ICoercible, INext, IMap, ICounted, ISeq, ISeqable, ISequential, IIndexed, ILookup, IInclusive} from "../../protocols.js";
 import {implement} from "../protocol.js";
 import {indexedSeq} from "../indexed-seq/construct.js";
 import {emptyList} from "../empty-list/construct.js";

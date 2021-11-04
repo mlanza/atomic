@@ -7,7 +7,7 @@ import ilazyseq, {iterable, reductive} from "../lazy-seq/behave.js";
 import {mapa} from "../lazy-seq/concrete.js";
 import {LazySeq} from "../lazy-seq/construct.js";
 import {concat} from "./construct.js";
-import {IHashable, ICoercible, ICollection, INext, ISeq, ICounted, ISeqable, IIndexed, IReduce, IKVReduce, ISequential, IEmptyableCollection} from "../../protocols.js";
+import {IHashable, ICoercible, ICollection, INext, ISeq, ICounted, ISeqable, IIndexed, IReducible, IKVReducible, ISequential, IEmptyableCollection} from "../../protocols.js";
 import * as p from "./protocols.js";
 import {keying} from "../../protocols/imapentry/concrete.js";
 import {hashSeq as hash} from "../../protocols/ihashable/hashers.js";
@@ -61,8 +61,8 @@ export default does(
   iterable,
   //TODO reductive?
   keying("Concatenated"),
-  implement(IKVReduce, {reducekv}),
-  implement(IReduce, {reduce}),
+  implement(IKVReducible, {reducekv}),
+  implement(IReducible, {reduce}),
   implement(IHashable, {hash}),
   implement(ISequential),
   implement(IEmptyableCollection, {empty: emptyList}),

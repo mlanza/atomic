@@ -1,4 +1,4 @@
 import {protocol} from "../../types/protocol.js";
-export const ISwap = protocol({
+export const ISwappable = protocol({
   swap: null
 });

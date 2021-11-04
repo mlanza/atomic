@@ -1,4 +1,4 @@
-# IReduce
+# IReducible
 
 Represents a sequential, finite collection capable of reducing itself.
 

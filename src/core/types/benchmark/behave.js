@@ -1,6 +1,6 @@
 import {implement} from "../protocol.js";
 import {does} from "../../core.js";
-import {IBounds} from "../../protocols/ibounds.js";
+import {IBounded} from "../../protocols/ibounded.js";
 import * as p from "./protocols.js";
 import {keying} from "../../protocols/imapentry/concrete.js";
 
@@ -14,4 +14,4 @@ function end(self){
 
 export default does(
   keying("Benchmark"),
-  implement(IBounds, {start, end}));
+  implement(IBounded, {start, end}));

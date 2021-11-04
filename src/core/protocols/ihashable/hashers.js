@@ -1,7 +1,7 @@
 import {map, sort} from "../../types/lazy-seq/concrete.js";
 import {keys} from "../../protocols/imap/concrete.js";
 import {get} from "../../protocols/ilookup/concrete.js";
-import {reduce} from "../ireduce.js";
+import {reduce} from "../ireducible.js";
 import {hash} from "./concrete.js";
 
 export function hashSeq(hs){

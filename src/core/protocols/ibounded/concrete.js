@@ -1,10 +1,10 @@
-import {IBounds} from "./instance.js";
+import {IBounded} from "./instance.js";
 import {compare, gt, lt, lte} from "../../protocols/icomparable.js";
 import {isNil} from "../../types/nil.js";
 import {constructs} from "../../core.js";
 
-export const start = IBounds.start;
-export const end = IBounds.end;
+export const start = IBounded.start;
+export const end = IBounded.end;
 
 function chronology(item){
   const s = start(item), e = end(item);

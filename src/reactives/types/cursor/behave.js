@@ -33,7 +33,7 @@ export default _.does(
   //_.implement(_.IDisposable, {dispose}), TODO
   _.implement(_.IPath, {path}),
   _.implement(_.IDeref, {deref}),
-  _.implement(_.IReset, {reset}),
-  _.implement(_.ISwap, {swap}),
+  _.implement(_.IResettable, {reset}),
+  _.implement(_.ISwappable, {swap}),
   _.implement(ISubscribe, {sub}),
   _.implement(IPublish, {pub: reset}));

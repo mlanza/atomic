@@ -1,4 +1,4 @@
-import {IStateMachine, IEquiv} from "../../protocols.js";
+import {ITransitionable, IEquiv} from "../../protocols.js";
 import {getIn} from "../../protocols/ilookup.js";
 import {keys} from "../../protocols/imap.js";
 import {maybe} from "../../types/maybe/construct.js";
@@ -26,4 +26,4 @@ function transition(self, event) {
 export default does(
   keying("FiniteStateMachine"),
   implement(IEquiv, {equiv}),
-  implement(IStateMachine, {state, transition, transitions}));
+  implement(ITransitionable, {state, transition, transitions}));

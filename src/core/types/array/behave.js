@@ -1,6 +1,6 @@
 import {identity, overload, doto, complement, does, slice} from "../../core.js";
 import {implement, satisfies} from "../protocol.js";
-import {IHashable, IMergable, IBlankable, IMap, ICoercible, IFunctor, IInsertable, IOmissible, IReversible, IMapEntry, IEquiv, IReduce, IKVReduce, IAppendable, IPrependable, IInclusive, ICollection, INext, ISeq, IFind, ISeqable, IIndexed, IAssociative, ISequential, IEmptyableCollection, IFn, ICounted, ILookup, IClonable} from "../../protocols.js";
+import {IHashable, IMergable, IBlankable, IMap, ICoercible, IFunctor, IInsertable, IOmissible, IReversible, IMapEntry, IEquiv, IReducible, IKVReducible, IAppendable, IPrependable, IInclusive, ICollection, INext, ISeq, IFind, ISeqable, IIndexed, IAssociative, ISequential, IEmptyableCollection, IFn, ICounted, ILookup, IClonable} from "../../protocols.js";
 import {reduced, unreduced, isReduced} from "../reduced.js";
 import {indexedSeq} from "../indexed-seq.js";
 import {replace} from "../string/concrete.js";
@@ -189,8 +189,8 @@ export default does(
   implement(IClonable, {clone}),
   implement(IFn, {invoke: lookup}),
   implement(IEmptyableCollection, {empty}),
-  implement(IReduce, {reduce}),
-  implement(IKVReduce, {reducekv}),
+  implement(IReducible, {reduce}),
+  implement(IKVReducible, {reducekv}),
   implement(ILookup, {lookup}),
   implement(IAssociative, {assoc, contains}),
   implement(IBlankable, {blank}),

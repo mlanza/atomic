@@ -58,7 +58,7 @@ function reduce(self, f, init){
 export default _.does(
   _.keying("Set"),
   _.implement(_.ISequential),
-  _.implement(_.IReduce, {reduce}),
+  _.implement(_.IReducible, {reduce}),
   _.implement(_.ISeqable, {seq}),
   _.implement(_.IInclusive, {includes}),
   _.implement(_.IClonable, {clone}),

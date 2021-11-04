@@ -1,4 +1,4 @@
 import {protocol} from "../../types/protocol.js";
-export const IReduce = protocol({
+export const IReducible = protocol({
   reduce: null
 });

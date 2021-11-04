@@ -1,5 +1,5 @@
 import {overload, unbind} from "../../core.js";
-import {reducing} from "../../protocols/ireduce/concrete.js";
+import {reducing} from "../../protocols/ireducible/concrete.js";
 import {emptyString} from "./construct.js";
 
 export function isBlank(str){

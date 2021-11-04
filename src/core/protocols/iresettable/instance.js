@@ -1,4 +1,4 @@
 import {protocol} from "../../types/protocol.js";
-export const IReset = protocol({
+export const IResettable = protocol({
   reset: null
 });

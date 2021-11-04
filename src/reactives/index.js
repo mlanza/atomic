@@ -4,7 +4,7 @@ import * as t from "atomic/transducers";
 import Symbol from "symbol";
 import Promise from "promise";
 import {IPublish, ISubscribe} from "./protocols.js";
-import {ireduce} from "./shared.js";
+import {reducible} from "./shared.js";
 import {Cell, cell} from "./types/cell/construct.js";
 import {Subject, subject} from "./types/subject/construct.js";
 import {Observable, shared, share, pipe} from "./types/observable.js";
@@ -139,7 +139,7 @@ export const renderDiff = _.overload(null, null, renderDiff2, renderDiff3);
   }
 
   _.doto(Function,
-    ireduce, //makes fns work as observers like `cell`, e.g. `$.connect($.tick(3000), _.see("foo"))`
+    reducible, //makes fns work as observers like `cell`, e.g. `$.connect($.tick(3000), _.see("foo"))`
     _.implement(IPublish, {pub, err: _.noop, complete: _.noop, closed: _.noop}));
 
 })();

@@ -1,7 +1,7 @@
 import {overload, everyPair, constantly, complement} from "../../core.js";
 import {implement} from "../../types/protocol/concrete.js";
 import {IEquiv} from "./instance.js";
-import {reduce} from "../ireduce/concrete.js";
+import {reduce} from "../ireducible/concrete.js";
 import {reduced} from "../../types/reduced/construct.js";
 import {get} from "../ilookup/concrete.js";
 import {is} from "../../protocols/imapentry/concrete.js";

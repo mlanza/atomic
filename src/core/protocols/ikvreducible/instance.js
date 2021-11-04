@@ -1,4 +1,4 @@
 import {protocol} from "../../types/protocol.js";
-export const IKVReduce = protocol({
+export const IKVReducible = protocol({
   reducekv: null
 });

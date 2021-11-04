@@ -1,5 +1,5 @@
 import {overload, identity} from "../../core.js";
-import {reduce, reducing} from "../ireduce/concrete.js";
+import {reduce, reducing} from "../ireducible/concrete.js";
 import {conj} from "../icollection/concrete.js";
 import {includes} from "../iinclusive/concrete.js";
 import {empty} from "../iemptyablecollection/concrete.js"

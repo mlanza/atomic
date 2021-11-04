@@ -1,7 +1,7 @@
 import * as _ from "atomic/core";
 import * as p from "../../protocols/concrete.js";
 import {IPublish, ISubscribe} from "../../protocols.js";
-import {ireduce, imergable} from "../../shared.js";
+import {reducible, mergable} from "../../shared.js";
 
 function sub(self, observer){
   if (!self.terminated) {
@@ -45,8 +45,8 @@ function notify(self, f){
 }
 
 export default _.does(
-  ireduce,
-  imergable,
+  reducible,
+  mergable,
   _.keying("Subject"),
   _.implement(ISubscribe, {sub}),
   _.implement(IPublish, {pub, err, complete, closed}));

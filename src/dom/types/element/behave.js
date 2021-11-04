@@ -361,7 +361,7 @@ export default _.does(
   ievented,
   iselectable,
   _.keying("Element"),
-  _.implement(_.IReduce, {reduce}),
+  _.implement(_.IReducible, {reduce}),
   _.implement(IValue, {value}),
   _.implement(IText, {text}),
   _.implement(IHtml, {html}),
