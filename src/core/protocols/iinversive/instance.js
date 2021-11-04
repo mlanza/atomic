@@ -3,6 +3,6 @@ import {IMultipliable} from "../imultipliable.js";
 function inverse(self){
   return IMultipliable.mult(self, -1);
 }
-export const IInverse = protocol({
+export const IInversive = protocol({
   inverse: inverse
 });
