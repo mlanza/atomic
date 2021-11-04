@@ -1,5 +1,5 @@
 import {ISequential} from "../../protocols.js";
-import {identity, constantly, overload, complement, comp, partial, slice, applying} from "../../core.js";
+import {identity, constantly, overload, complement, comp, partial, slice, applying, unspread} from "../../core.js";
 import {EmptyList, emptyList} from "../empty-list/construct.js";
 import {emptyArray, array} from "../array/construct.js";
 import {toArray} from "../array/concrete.js";
@@ -13,10 +13,17 @@ import {range} from "../range/construct.js";
 import {str} from "../string/concrete.js";
 import {juxt, apply} from "../function/concrete.js"; //MOD
 import {lazySeq} from "../lazy-seq/construct.js";
-import {concat, concatenated} from "../concatenated/construct.js";
+import {Concatenated} from "../concatenated/construct.js";
 import {satisfies} from "../protocol/concrete.js";
 import Symbol from "symbol";
 import * as p from "./protocols.js";
+
+export function concatenated(xs){
+  const colls = filter(p.seq, xs);
+  return p.seq(colls) ? new Concatenated(colls) : emptyList();
+}
+
+export const concat = overload(emptyList, p.seq, unspread(concatenated));
 
 function map2(f, xs){
   return p.seq(xs) ? lazySeq(function(){

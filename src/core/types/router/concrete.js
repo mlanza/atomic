@@ -1,8 +1,7 @@
 import {overload, guard} from "../../core.js";
-import {coalesce} from "../../types/lazy-seq/concrete.js";
+import {coalesce, concat} from "../../types/lazy-seq/concrete.js";
 import {parsedo} from "../../types/function/concrete.js";
 import {append} from "../../protocols/iappendable/concrete.js";
-import {concat} from "../../types/concatenated/construct.js";
 import {apply} from "../../types/function/concrete.js";
 import {reGroups} from "../../types/reg-exp/concrete.js";
 import {Router} from "./construct.js";
