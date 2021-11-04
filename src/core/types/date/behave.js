@@ -3,7 +3,7 @@ import {implement} from "../protocol.js";
 import {isNumber} from "../number.js";
 import {mergeWith} from "../../protocols/imergable/instance.js";
 import {days} from "../duration.js";
-import {IHashable, IAddable, IReduce, IKVReduce, ISeqable, IBounds, IMap, IDeref, IComparable, IEquiv, IClonable, ILookup, IAssociative, ICollection} from "../../protocols.js";
+import {IHashable, IAddable, IReducible, IKVReducible, ISeqable, IBounded, IMap, IDeref, IComparable, IEquiv, IClonable, ILookup, IAssociative, ICollection} from "../../protocols.js";
 import * as p from "./protocols.js";
 import {keying} from "../../protocols/imapentry/concrete.js";
 
@@ -123,10 +123,10 @@ export default does(
   implement(IHashable, {hash}),
   implement(IAddable, {add}),
   implement(IDeref, {deref}),
-  implement(IBounds, {start: identity, end: identity}),
+  implement(IBounded, {start: identity, end: identity}),
   implement(ISeqable, {seq: identity}),
-  implement(IReduce, {reduce}),
-  implement(IKVReduce, {reducekv}),
+  implement(IReducible, {reduce}),
+  implement(IKVReducible, {reducekv}),
   implement(IEquiv, {equiv}),
   implement(IMap, {keys, vals}),
   implement(IComparable, {compare}),

@@ -8,7 +8,7 @@ import {drop, detect} from "../lazy-seq/concrete.js";
 import {emptyArray} from "../../types/array/construct.js";
 import {iequiv} from "../../types/empty-list/behave.js";
 import {iterable} from "../lazy-seq/behave.js";
-import {IHashable, ICoercible, IEquiv, IReversible, IMapEntry, IFind, IInclusive, IAssociative, IAppendable, IPrependable, ICollection, INext, ICounted, IReduce, IKVReduce, ISeq, ISeqable, ISequential, IIndexed, ILookup, IFn, IEmptyableCollection} from "../../protocols.js";
+import {IHashable, ICoercible, IEquiv, IReversible, IMapEntry, IFind, IInclusive, IAssociative, IAppendable, IPrependable, ICollection, INext, ICounted, IReducible, IKVReducible, ISeq, ISeqable, ISequential, IIndexed, ILookup, IFn, IEmptyableCollection} from "../../protocols.js";
 import * as p from "./protocols.js";
 import {keying} from "../../protocols/imapentry/concrete.js";
 import {hashKeyed as hash} from "../../protocols/ihashable/hashers.js";
@@ -121,8 +121,8 @@ export default does(
   implement(IAppendable, {append}),
   implement(IPrependable, {prepend}),
   implement(IEmptyableCollection, {empty: emptyArray}),
-  implement(IReduce, {reduce}),
-  implement(IKVReduce, {reducekv}),
+  implement(IReducible, {reduce}),
+  implement(IKVReducible, {reducekv}),
   implement(IFn, {invoke: lookup}),
   implement(ILookup, {lookup}),
   implement(ICollection, {conj: append}),

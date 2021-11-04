@@ -1,5 +1,5 @@
 import {overload, identity, constantly, complement, unary, partial, constructs} from "../../core.js";
-import {IReduce, ICounted, IComparable, IAddable} from "../../protocols.js";
+import {IReducible, ICounted, IComparable, IAddable} from "../../protocols.js";
 import * as p from "./protocols.js";
 import {is} from "../../protocols/imapentry/concrete.js";
 

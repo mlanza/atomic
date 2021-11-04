@@ -1,6 +1,6 @@
 import {overload, identity, does, partial, comp} from "../../core.js";
 import {implement} from "../protocol.js";
-import {IBlankable, ICompactible, IFunctor, IReversible, IOmissible, ICoercible, IInclusive, IFind, IEquiv, ICollection, INext, ISeq, IReduce, IKVReduce, ISeqable, ISequential, IIndexed, IEmptyableCollection, ICounted, IAppendable, IPrependable} from "../../protocols.js";
+import {IBlankable, ICompactible, IFunctor, IReversible, IOmissible, ICoercible, IInclusive, IFind, IEquiv, ICollection, INext, ISeq, IReducible, IKVReducible, ISeqable, ISequential, IIndexed, IEmptyableCollection, ICounted, IAppendable, IPrependable} from "../../protocols.js";
 import {isReduced, reduced, unreduced} from "../reduced.js";
 import {concat} from "../concatenated/construct.js";
 import {cons} from "../list/construct.js";
@@ -146,8 +146,8 @@ function includes(self, value){
 const reverse = comp(p.reverse, toArray);
 
 export const reductive = does(
-  implement(IReduce, {reduce}),
-  implement(IKVReduce, {reducekv}));
+  implement(IReducible, {reduce}),
+  implement(IKVReducible, {reducekv}));
 
 export default does(
   iterable,

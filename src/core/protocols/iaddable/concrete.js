@@ -1,7 +1,7 @@
 import {IAddable} from "./instance.js";
 import {IInverse} from "../iinverse/instance.js";
 import {compare} from "../icomparable/concrete.js";
-import {reducing} from "../ireduce/concrete.js";
+import {reducing} from "../ireducible/concrete.js";
 import {constantly, overload, identity} from "../../core.js";
 
 export function directed(start, step) {

@@ -23,4 +23,4 @@ export default _.does(
   _.keying("Card"),
   _.implement(ICheckable, {check}),
   _.implement(_.IInclusive, {includes}),
-  _.implement(_.IBounds, {start, end}));
+  _.implement(_.IBounded, {start, end}));

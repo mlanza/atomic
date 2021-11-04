@@ -1,6 +1,6 @@
 import {does, constructs} from "../../core.js";
 import {implement} from "../protocol.js";
-import {ICoercible, IReduce, ISeqable, ISeq, INext, IInclusive, IAppendable, IPrependable, ICounted, ISequential, IEmptyableCollection} from "../../protocols.js";
+import {ICoercible, IReducible, ISeqable, ISeq, INext, IInclusive, IAppendable, IPrependable, ICounted, ISequential, IEmptyableCollection} from "../../protocols.js";
 import {iterable} from "../lazy-seq/behave.js";
 import * as p from "./protocols.js";
 import {keying} from "../../protocols/imapentry/concrete.js";
@@ -57,5 +57,5 @@ export default does(
   implement(IEmptyableCollection, {empty}),
   implement(ISeqable, {seq}),
   implement(INext, {next}),
-  implement(IReduce, {reduce}),
+  implement(IReducible, {reduce}),
   implement(ISeq, {first, rest}));

@@ -4,7 +4,7 @@ import {butlast, last, detect, map, lazySeq, remove, drop, dropWhile, take, take
 import {emptyList} from "../../types/empty-list/construct.js";
 import {toArray} from "../../types/array/concrete.js";
 import {cons} from "../../types/list/construct.js";
-import {IPath, IFunctor, ISwap, IReset, IDeref, IMap, IHierarchy, ILookup, IAssociative, ICollection} from "../../protocols.js";
+import {IPath, IFunctor, ISwappable, IResettable, IDeref, IMap, IHierarchy, ILookup, IAssociative, ICollection} from "../../protocols.js";
 import * as p from "./protocols.js";
 import {keying} from "../../protocols/imapentry/concrete.js";
 
@@ -129,7 +129,7 @@ export default does(
   implement(IAssociative, {assoc, contains}),
   implement(IMap, {keys, vals, dissoc}),
   implement(IFunctor, {fmap}),
-  implement(ISwap, {swap}),
-  implement(IReset, {reset}),
+  implement(ISwappable, {swap}),
+  implement(IResettable, {reset}),
   implement(IHierarchy, {root, children, parents, parent, closest, descendants, siblings, nextSiblings, nextSibling, prevSiblings, prevSibling}),
   implement(IDeref, {deref}));

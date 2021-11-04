@@ -1,5 +1,5 @@
 import {overload, identity} from "../../core.js";
-import {IReduce} from "./instance.js";
+import {IReducible} from "./instance.js";
 import {ISeq} from "../iseq/instance.js";
 
 function reduce2(f, coll){
@@ -7,7 +7,7 @@ function reduce2(f, coll){
 }
 
 function reduce3(f, init, coll){
-  return IReduce.reduce(coll, f, init);
+  return IReducible.reduce(coll, f, init);
 }
 
 export const reduce = overload(null, null, reduce2, reduce3);

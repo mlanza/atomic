@@ -1,7 +1,7 @@
 import * as _ from 'atomic/core';
 import * as p from "../../protocols/concrete.js";
 import {IPublish, ISubscribe} from "../../protocols.js";
-import {ireduce, imergable} from "../../shared.js";
+import {reducible, mergable} from "../../shared.js";
 
 function pub(self, value){
   if (value !== self.state){
@@ -42,12 +42,12 @@ function dispose(self){
 }
 
 export default _.does(
-  ireduce,
-  imergable,
+  reducible,
+  mergable,
   _.keying("Cell"),
   _.implement(_.IDisposable, {dispose}),
   _.implement(_.IDeref, {deref}),
-  _.implement(_.IReset, {reset: pub}),
-  _.implement(_.ISwap, {swap}),
+  _.implement(_.IResettable, {reset: pub}),
+  _.implement(_.ISwappable, {swap}),
   _.implement(ISubscribe, {sub}),
   _.implement(IPublish, {pub, err, complete, closed}));

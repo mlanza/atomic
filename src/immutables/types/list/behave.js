@@ -69,7 +69,7 @@ export default _.does(
   _.implement(_.IInclusive, {includes}),
   _.implement(_.IAssociative, {assoc, contains}),
   _.implement(_.ILookup, {lookup}),
-  _.implement(_.IReduce, {reduce}),
+  _.implement(_.IReducible, {reduce}),
   _.implement(_.INext, {next}),
   _.implement(_.IMergable, {merge}),
   _.implement(_.IEmptyableCollection, {empty}),

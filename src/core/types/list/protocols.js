@@ -1,1 +1,1 @@
-export * from "../../protocols/ireduce/concrete.js";
+export * from "../../protocols/ireducible/concrete.js";

@@ -2,7 +2,7 @@ import {constantly, partial, doto} from "../../core.js";
 import {specify} from "../../types/protocol/concrete.js";
 import {IFn} from "./instance.js";
 import {IDeref} from "../ideref/instance.js";
-import {ISwap} from "../iswap/instance.js";
+import {ISwappable} from "../iswappable/instance.js";
 export const invoke = IFn.invoke;
 
 export function invokable(obj){
@@ -18,6 +18,6 @@ export function invokable(obj){
   }
   return doto(partial(invoke, null),
     specify(IFn, {invoke}),
-    specify(ISwap, {swap}),
+    specify(ISwappable, {swap}),
     specify(IDeref, {deref}));
 }

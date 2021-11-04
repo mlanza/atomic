@@ -57,7 +57,7 @@ function next(self){
 export default _.does(
   _.iterable,
   _.keying("Map"),
-  _.implement(_.IKVReduce, {reducekv}),
+  _.implement(_.IKVReducible, {reducekv}),
   _.implement(_.IMergable, {merge}),
   _.implement(_.INext, {next}),
   _.implement(_.ISeq, {first, rest}),

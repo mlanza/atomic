@@ -1,5 +1,5 @@
 import {overload} from "../../core.js";
-import {IReduce, IFunctor} from "../../protocols.js";
+import {IReducible, IFunctor} from "../../protocols.js";
 import {isError} from "../error/concrete.js";
 import Symbol from "symbol";
 

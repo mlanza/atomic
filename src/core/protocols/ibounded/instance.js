@@ -1,5 +1,5 @@
 import {protocol} from "../../types/protocol.js";
-export const IBounds = protocol({
+export const IBounded = protocol({
   start: null,
   end: null
 });

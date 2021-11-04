@@ -1,6 +1,6 @@
 import {does, comp} from "../../core.js";
 import {implement} from "../protocol.js";
-import {ISeq, ICoercible, IReduce, IKVReduce, ICounted, ISeqable, ICollection, ILookup, IMap, IAssociative} from "../../protocols.js";
+import {ISeq, ICoercible, IReducible, IKVReducible, ICounted, ISeqable, ICollection, ILookup, IMap, IAssociative} from "../../protocols.js";
 import {map} from "../lazy-seq.js";
 import {emptyList} from "../empty-list/construct.js";
 import {concatenated} from "../concatenated/construct.js";
@@ -61,8 +61,8 @@ export default does(
   record,
   keying("Multimap"),
   implement(IMap, {keys}),
-  implement(IReduce, {reduce}),
-  implement(IKVReduce, {reducekv}),
+  implement(IReducible, {reduce}),
+  implement(IKVReducible, {reducekv}),
   implement(ICounted, {count}),
   implement(ISeqable, {seq}),
   implement(ILookup, {lookup}),

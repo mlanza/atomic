@@ -2,7 +2,7 @@ import {implement} from "../protocol.js";
 import {does, partial} from "../../core.js";
 import {mergeWith} from "../../protocols/imergable/instance.js";
 import {Duration} from "../duration/construct.js";
-import {IAddable, IKVReduce, IFunctor, IMergable, IMultipliable, IDivisible, IMap, IAssociative, ILookup} from "../../protocols.js";
+import {IAddable, IKVReducible, IFunctor, IMergable, IMultipliable, IDivisible, IMap, IAssociative, ILookup} from "../../protocols.js";
 import * as p from "./protocols.js";
 import {keying} from "../../protocols/imapentry/concrete.js";
 
@@ -58,7 +58,7 @@ function divide(a, b){
 
 export default does(
   keying("Duration"),
-  implement(IKVReduce, {reducekv}),
+  implement(IKVReducible, {reducekv}),
   implement(IAddable, {add: merge}),
   implement(IMergable, {merge}),
   implement(IFunctor, {fmap}),

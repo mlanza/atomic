@@ -612,7 +612,7 @@ QUnit.test("indexed-seq", function(assert){
   assert.equal(nums |> _.first, 12);
   assert.equal(nums |> _.nth(?, 1), 13);
   assert.equal(nums |> _.count, 3);
-  assert.ok(nums |> _.satisfies(_.IReduce, ?));
+  assert.ok(nums |> _.satisfies(_.IReducible, ?));
   assert.equal(nums |> _.reduce(_.add, 0, ?), 39);
 });
 

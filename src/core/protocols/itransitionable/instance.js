@@ -1,5 +1,5 @@
 import {protocol} from "../../types/protocol.js";
-export const IStateMachine = protocol({
+export const ITransitionable = protocol({
   state: null,
   transition: null,
   transitions: null

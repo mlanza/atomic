@@ -1,4 +1,4 @@
-import {implement, does, IMergable, IReduce} from "atomic/core";
+import {implement, does, IMergable, IReducible} from "atomic/core";
 import {observable} from "./types/observable/construct.js"
 import * as p from "./protocols/concrete.js";
 
@@ -13,5 +13,5 @@ function reduce(self, f, init){
   return p.sub(init, f(self, ?));
 }
 
-export const imergable = implement(IMergable, {merge});
-export const ireduce = implement(IReduce, {reduce});
+export const mergable = implement(IMergable, {merge});
+export const reducible = implement(IReducible, {reduce});

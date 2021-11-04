@@ -2,7 +2,7 @@ import {does, constructs} from "../../core.js";
 import {implement} from "../protocol.js";
 import {reduced} from "../reduced/construct.js";
 import {is} from "../../protocols/imapentry/concrete.js";
-import {IReduce, IKVReduce, IEquiv, ICoercible, IAssociative, ISeqable, ILookup, ICounted, IMap, ISeq, IEmptyableCollection} from "../../protocols.js";
+import {IReducible, IKVReducible, IEquiv, ICoercible, IAssociative, ISeqable, ILookup, ICounted, IMap, ISeq, IEmptyableCollection} from "../../protocols.js";
 import Symbol from "symbol";
 import * as p from "./protocols.js";
 
@@ -87,8 +87,8 @@ export function emptyable(Type){
 
 export default does(
   emptyable,
-  implement(IReduce, {reduce}),
-  implement(IKVReduce, {reducekv}),
+  implement(IReducible, {reduce}),
+  implement(IKVReducible, {reducekv}),
   implement(IEquiv, {equiv}),
   implement(ICoercible, {coerce}),
   implement(IEmptyableCollection, {empty}),

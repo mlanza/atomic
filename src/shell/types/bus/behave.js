@@ -14,6 +14,6 @@ function dispose(self){
 
 export default _.does(
   _.keying("Bus"),
-  _.forward("state", $.ISubscribe, _.IDeref, _.IReset, _.ISwap, _.IReduce),
+  _.forward("state", $.ISubscribe, _.IDeref, _.IResettable, _.ISwappable, _.IReducible),
   _.implement(IDispatch, {dispatch}),
   _.implement(_.IDisposable, {dispose}));

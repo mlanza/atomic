@@ -53,7 +53,7 @@ export default _.does(
   _.implement(_.IIndexed, {nth: lookup}),
   _.implement(_.ICounted, {count}),
   _.implement(_.ISeq, {first, rest}),
-  _.implement(_.IReduce, {reduce}),
+  _.implement(_.IReducible, {reduce}),
   _.implement(_.INext, {next}),
   _.implement(_.IHierarchy, {parent, parents, closest, nextSiblings, nextSibling, prevSiblings, prevSibling, siblings, children, descendants}),
   _.implement(_.ISequential),

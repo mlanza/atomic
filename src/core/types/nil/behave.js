@@ -1,4 +1,4 @@
-import {IHashable, IMergable, IBlankable, ICompactible, IMap, IAssociative, IInclusive, IOtherwise, ICoercible, IEquiv, ICollection, INext, ISeq, ISeqable, IIndexed, ICounted, ILookup, IReduce, IKVReduce, IEmptyableCollection, IClonable} from "../../protocols.js";
+import {IHashable, IMergable, IBlankable, ICompactible, IMap, IAssociative, IInclusive, IOtherwise, ICoercible, IEquiv, ICollection, INext, ISeq, ISeqable, IIndexed, ICounted, ILookup, IReducible, IKVReducible, IEmptyableCollection, IClonable} from "../../protocols.js";
 import {emptyList} from "../empty-list/construct.js";
 import {cons} from "../list/construct.js";
 import {identity, constantly, does, overload, noop} from "../../core.js";
@@ -59,5 +59,5 @@ export default does(
   implement(ISeqable, {seq: identity}),
   implement(IIndexed, {nth: identity}),
   implement(ICounted, {count: constantly(0)}),
-  implement(IKVReduce, {reducekv: reduce}),
-  implement(IReduce, {reduce}));
+  implement(IKVReducible, {reducekv: reduce}),
+  implement(IReducible, {reduce}));
