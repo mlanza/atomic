@@ -1,6 +1,6 @@
 import {does, identity} from "../../core.js";
 import {implement} from "../protocol.js";
-import {IInverse, IComparable} from "../../protocols.js";
+import {IInversive, IComparable} from "../../protocols.js";
 import {keying} from "../../protocols/imapentry/concrete.js";
 
 function compare(self, other){
@@ -14,4 +14,4 @@ function inverse(self){
 export default does(
   keying("Boolean"),
   implement(IComparable, {compare}),
-  implement(IInverse, {inverse}));
+  implement(IInversive, {inverse}));

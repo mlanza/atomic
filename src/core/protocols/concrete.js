@@ -9,7 +9,7 @@ export * from "./icoercible/concrete.js";
 export * from "./icollection/concrete.js";
 export * from "./icompactible/concrete.js";
 export * from "./icomparable/concrete.js";
-export * from "./iinverse/concrete.js";
+export * from "./iinversive/concrete.js";
 export * from "./icounted/concrete.js";
 export * from "./ideref/concrete.js";
 export * from "./idisposable/concrete.js";

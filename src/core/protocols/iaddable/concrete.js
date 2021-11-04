@@ -1,5 +1,5 @@
 import {IAddable} from "./instance.js";
-import {IInverse} from "../iinverse/instance.js";
+import {IInversive} from "../iinversive/instance.js";
 import {compare} from "../icomparable/concrete.js";
 import {reducing} from "../ireducible/concrete.js";
 import {constantly, overload, identity} from "../../core.js";
@@ -31,7 +31,7 @@ export function steps(Type, pred){
 }
 
 function subtract2(self, n){
-  return IAddable.add(self, IInverse.inverse(n));
+  return IAddable.add(self, IInversive.inverse(n));
 }
 
 export const subtract = overload(constantly(0), identity, subtract2, reducing(subtract2));

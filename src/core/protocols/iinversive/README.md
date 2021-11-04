@@ -1,4 +1,4 @@
-# IInverse
+# IInversive
 
 Represents an object/value which has a known diametric opposite, a cancelling effect.  Two things which are merged, combined, or otherwise reduced will cancel each other out if one if the inverse of the other.
 In accounting, a reversing entry.
