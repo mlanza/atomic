@@ -1,6 +1,5 @@
-import {overload} from "../../core.js";
-import {IReducible, IFunctor} from "../../protocols.js";
-import {isError} from "../error/concrete.js";
+import {overload, constructs, partial} from "../../core.js";
+import {thrush, pipeline} from "../../protocols/ifunctor/concrete.js";
 import Symbol from "symbol";
 
 export function Okay(value){
@@ -9,6 +8,6 @@ export function Okay(value){
 
 Okay.prototype[Symbol.toStringTag] = "Okay";
 
-export function okay(x){
-  return isError(x) ? x : new Okay(x);
-}
+const okay1 = constructs(Okay);
+
+export const okay = overload(null, okay1, partial(thrush, okay1));

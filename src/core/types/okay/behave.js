@@ -1,4 +1,4 @@
-import {IFunctor, IForkable} from "../../protocols.js";
+import {IFunctor, IForkable, IDeref} from "../../protocols.js";
 import {does, overload} from "../../core.js";
 import {implement} from "../protocol.js";
 import {left} from "../left/construct.js";
@@ -18,7 +18,12 @@ function fork(self, reject, resolve){
   resolve(self);
 }
 
+function deref(self){
+  return self.value;
+}
+
 export default does(
   keying("Okay"),
+  implement(IDeref, {deref}),
   implement(IForkable, {fork}),
   implement(IFunctor, {fmap}));
