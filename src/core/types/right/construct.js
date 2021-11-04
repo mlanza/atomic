@@ -1,5 +1,5 @@
-import {overload, constructs, partial} from "../../core.js";
-import {thrush, pipeline} from "../../protocols/ifunctor/concrete.js";
+import {constructs} from "../../core.js";
+import {thrush} from "../../protocols/ifunctor/concrete.js";
 import Symbol from "symbol";
 
 export function Right(value){
@@ -8,6 +8,5 @@ export function Right(value){
 
 Right.prototype[Symbol.toStringTag] = "Right";
 
-const right1 = constructs(Right);
-export const right = overload(null, right1, partial(thrush, right1));
+export const right = thrush(constructs(Right));
 export const just = right;
