@@ -1,12 +1,15 @@
-import {ISequential} from "../../protocols/isequential/instance.js";
-import {satisfies} from "../protocol.js";
-import {cons} from "../../types/list/construct.js";
+import {constructs, comp} from "../../core.js";
+import {thrush} from "../../protocols/ifunctor/concrete.js";
+import {sequential} from "../../protocols/isequential/concrete";
 
 export function Members(items, f){
   this.items = items;
   this.f = f;
 }
 
-export function members(items, f){
-  return new Members(f(satisfies(ISequential, items) ? items : cons(items)), f);
+export function members(f){
+  const g = comp(f, sequential);
+  return thrush(function construct(items){
+    return new Members(g(items), g);
+  });
 }
