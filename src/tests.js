@@ -216,6 +216,25 @@ QUnit.test("dom", function(assert){
   assert.equal(branding |> _.parent |> _.first, null, "Removed");
 });
 
+QUnit.test("jQueryesque functor", function(assert){
+  const ol = dom.tag("ol"),
+        li = dom.tag("li"),
+        span = dom.tag("span");
+  const jq = _.members(function(els){ //configure members functor, it upholds the collectiveness of contents
+    return dom.isElement(_.first(els)) ? imm.distinct(els) : els; //guarantee distinctness - but only for elements
+  });
+  const bedrock =
+    ol({"id": "Bedrock"},
+      ol({"id": "Flintstones", "class": "Family"},
+        li(span("Fred"), " ", "Flintstone"),
+        li(span("Wilma"), " ", "Flintstone")),
+      ol({"id": "Rubbles", "class": "Family"},
+        li(span("Barney"), " ", "Rubble"),
+        li(span("Betty"), " ", "Rubble")));
+  const cavepersons = jq(bedrock, dom.sel(".Family", ?), dom.sel("span", ?), dom.text, _.lowerCase);
+  assert.deepEqual(_.toArray(cavepersons), ["fred", "wilma", "barney", "betty"]);
+});
+
 QUnit.test("lazy-seq", function(assert){
   const effects = [],
         push    = effects.push.bind(effects),
