@@ -23,19 +23,19 @@ function addr(self){
 }
 
 function assoc(self, key, value) {
-  return _.edit(self, "config", IAssociative.assoc(?, key, value));
+  return _.edit(self, "config", _.assoc(?, key, value));
 }
 
 function contains(self, key){
-  return IAssociative.contains(self.config, key);
+  return _.contains(self.config, key);
 }
 
 function keys(self){
-  return IMap.keys(self.config);
+  return _.keys(self.config);
 }
 
 function lookup(self, key){
-  return ILookup.lookup(self.config, key);
+  return _.lookup(self.config, key);
 }
 
 function params(self, params){
