@@ -68,7 +68,7 @@ export function flip(f){
 
 export function farg(f, ...fs){
   return function(...args){
-    for(let x = 0; x < fs.length; x++){
+    for(let x = 0; x < args.length; x++){
       const g = fs[x];
       if (g) {
         args[x] = g(args[x]);
