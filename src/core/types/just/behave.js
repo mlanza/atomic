@@ -1,21 +1,15 @@
 import {implement} from "../protocol.js";
 import {identity, does} from "../../core.js";
-import {just} from "./construct.js";
-import {IFunctor, IOtherwise, IDeref} from "../../protocols.js";
+import {IOtherwise} from "../../protocols.js";
+import {maybe, isMaybe} from "./construct.js";
+import monadic from "../../monadic.js";
 import {keying} from "../../protocols/imapentry/concrete.js";
 
-function fmap(self, f){
-  return just(f(self.value));
-}
-
-function deref(self){
+function otherwise(self){
   return self.value;
 }
 
-const otherwise = deref;
-
 export default does(
   keying("Just"),
-  implement(IDeref, {deref}),
-  implement(IOtherwise, {otherwise}),
-  implement(IFunctor, {fmap}));
+  monadic(maybe, isMaybe),
+  implement(IOtherwise, {otherwise}));

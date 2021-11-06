@@ -1,6 +1,6 @@
 import {implement} from "../protocol.js";
-import {constantly, identity as fmap, does} from "../../core.js";
-import {IFunctor, IOtherwise, IDeref} from "../../protocols.js";
+import {constantly, identity as fmap, identity as chain, does} from "../../core.js";
+import {IFunctor, IChainable, IOtherwise, IDeref} from "../../protocols.js";
 import {keying} from "../../protocols/imapentry/concrete.js";
 
 function otherwise(self, other){
@@ -13,4 +13,5 @@ export default does(
   keying("Just"),
   implement(IDeref, {deref}),
   implement(IOtherwise, {otherwise}),
+  implement(IChainable, {chain}),
   implement(IFunctor, {fmap}));

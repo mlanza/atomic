@@ -1,12 +1,10 @@
 import {implement} from "../protocol.js";
 import {identity, does} from "../../core.js";
-import {right} from "./construct.js";
-import {IFunctor, IOtherwise, IForkable, IDeref} from "../../protocols.js";
+import {IFunctor, IChainable, IOtherwise, IForkable, IDeref} from "../../protocols.js";
+import * as p from "../../protocols/concrete.js";
+import {right, isEither} from "./construct.js";
+import monadic from "../../monadic.js";
 import {keying} from "../../protocols/imapentry/concrete.js";
-
-function fmap(self, f){
-  return right(f(self.value));
-}
 
 function otherwise(self, other){
   return self.value;
@@ -16,13 +14,8 @@ function fork(self, reject, resolve){
   resolve(self.value);
 }
 
-function deref(self){
-  return self.value;
-}
-
 export default does(
   keying("Right"),
-  implement(IDeref, {deref}),
+  monadic(right, isEither),
   implement(IForkable, {fork}),
-  implement(IOtherwise, {otherwise}),
-  implement(IFunctor, {fmap}));
+  implement(IOtherwise, {otherwise}));
