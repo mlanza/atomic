@@ -1,7 +1,7 @@
 import {ITransitionable, IEquiv} from "../../protocols.js";
 import {getIn} from "../../protocols/ilookup.js";
 import {keys} from "../../protocols/imap.js";
-import {just} from "../../types/just/construct.js";
+import {maybe} from "../../types/just/construct.js";
 import {fsm} from "./construct.js";
 import {does} from "../../core.js";
 import {implement} from "../protocol.js";
@@ -20,7 +20,7 @@ function transitions(self){
 }
 
 function transition(self, event) {
-  return just(self.transitions, getIn(?, [self.state, event]), fsm(?, self.transitions)) || self;
+  return maybe(self.transitions, getIn(?, [self.state, event]), fsm(?, self.transitions)) || self;
 }
 
 export default does(

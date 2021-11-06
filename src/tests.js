@@ -300,10 +300,10 @@ QUnit.test("ilookup", function(assert){
   }};
   const moe = {givenName: "Moe", surname: "Howard"};
   const givenName = _.overload(null, _.get(?, "givenName"), _.assoc(?, "givenName", ?)); //lens
-  const getAddressLine1 = _.pipe(_.just, _.fmap(?, _.get(?, "address"), _.get(?, "lines"), _.get(?, 1)), _.otherwise(?, ""));
+  const getAddressLine1 = _.pipe(_.maybe, _.fmap(?, _.get(?, "address"), _.get(?, "lines"), _.get(?, 1)), _.otherwise(?, ""));
   assert.equal(moe   |> getAddressLine1, "");
   assert.equal(boris |> getAddressLine1, "Suite 401");
-  assert.equal(boris |> _.just |> _.fmap(?, _.get(?, "address"), _.get(?, "lines"), _.get(?, 1)) |> _.otherwise(?, ""), "Suite 401");
+  assert.equal(boris |> _.maybe |> _.fmap(?, _.get(?, "address"), _.get(?, "lines"), _.get(?, 1)) |> _.otherwise(?, ""), "Suite 401");
   assert.equal(boris |> _.getIn(?, ["address", "lines", 1]), "Suite 401");
   assert.equal(boris |> _.getIn(?, ["address", "lines", 2]), null);
   assert.deepEqual(boris |> _.assocIn(?, ["address", "lines", 1], "attn: Finance Dept."), {givenName: "Boris", surname: "Lasky", address: {

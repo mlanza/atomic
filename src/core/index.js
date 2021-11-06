@@ -1,6 +1,6 @@
 import {overload, partial, unary, type, curry, tee, toggles, identity, obj, partly, comp, doto, does, branch, unspread, applying, execute, noop, constantly, once, isFunction, isString} from "./core.js";
 import {ICoercible, IForkable, ILogger, IDeref, IFn, IAssociative, IClonable, IHierarchy, ILookup, ISeq} from "./protocols.js";
-import {just, satisfies, spread, each, duration, remove, sort, flip, realized, apply, realize, isNil, reFindAll, mapkv, period, selectKeys, mapVals, reMatches, test, date, emptyList, cons, days, recurrence, emptyArray} from "./types.js";
+import {maybe, opt, satisfies, spread, each, duration, remove, sort, flip, realized, apply, realize, isNil, reFindAll, mapkv, period, selectKeys, mapVals, reMatches, test, date, emptyList, cons, days, recurrence, emptyArray} from "./types.js";
 import {isBlank, str, replace} from "./types/string.js";
 import {isSome} from "./types/nil.js";
 import _config from "./config.js";
@@ -64,7 +64,6 @@ addProp(Object.prototype, "equals", equals);
 
 export const yank = called(p.omit, "`yank` is deprecated — use `omit` instead.");
 export const numeric = test(/^\d+$/i, ?);
-export const maybe = called(just, "`maybe` deprecated — use `just` instead.");
 
 (function(){
 
@@ -195,9 +194,7 @@ export function deconstruct(dur, ...units){
   }, units);
 }
 
-export function toQueryString(obj){
-  return just(obj, mapkv(str(?, "=", ?), ?), join("&", ?), collapse("?", ?));
-}
+export const toQueryString = opt(mapkv(str(?, "=", ?), ?), join("&", ?), collapse("?", ?));
 
 export function fromQueryString(url){
   const params = {};
