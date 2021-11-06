@@ -226,19 +226,6 @@ export function expands(f){
   return expand;
 }
 
-export function xarg(fn, n, f){
-  return function(){
-    arguments[n] = f(arguments[n]);
-    return fn.apply(this, arguments);
-  }
-}
-
-export function xargs(f, ...fs){
-  return function(...args){
-    return apply(f, map(execute, fs, args));
-  }
-}
-
 function filled2(f, g){
   return function(...args){
     return p.seq(filter(isNil, args)) ? g(...args) : f(...args);
