@@ -22,6 +22,16 @@ export function isString(self){
 export function noop(){
 }
 
+export function identity(x){
+  return x;
+}
+
+export function constantly(x){
+  return function(){
+    return x;
+  }
+}
+
 export function complement(f){
   return function(){
     return !f.apply(this, arguments);
@@ -30,6 +40,14 @@ export function complement(f){
 
 export function invokes(self, method, ...args){
   return self[method].apply(self, args);
+}
+
+export function overload(){
+  const fs = arguments, fallback = fs[fs.length - 1];
+  return function(){
+    const f = fs[arguments.length] || (arguments.length >= fs.length ? fallback : null);
+    return f.apply(this, arguments);
+  }
 }
 
 export function comp(){
@@ -44,23 +62,22 @@ export function comp(){
   }
 }
 
-export function pipe(f, ...fs){
-  return arguments.length ? function(){
+function pipeN(f, ...fs){
+  return function(){
     let memo = f.apply(this, arguments);
     for(let i = 0; i < fs.length; i++) {
       const f = fs[i];
       memo = f.call(this, memo);
     }
     return memo;
-  } : identity;
+  }
 }
 
-export function overload(){
-  const fs = arguments, fallback = fs[fs.length - 1];
-  return function(){
-    const f = fs[arguments.length] || (arguments.length >= fs.length ? fallback : null);
-    return f.apply(this, arguments);
-  }
+export const pipe = overload(constantly(identity), identity, pipeN);
+
+export function thread(value, ...fs){
+  const f = pipe(...fs)
+  return f(value);
 }
 
 export function handle(){
@@ -156,16 +173,6 @@ export function deferring(f){
 
 export function factory(f, ...args){
   return deferring(partial(f, ...args));
-}
-
-export function identity(x){
-  return x;
-}
-
-export function constantly(x){
-  return function(){
-    return x;
-  }
 }
 
 export function multi(dispatch){
