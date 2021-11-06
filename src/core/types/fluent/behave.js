@@ -5,7 +5,8 @@ import {IFunctor, IDeref} from "../../protocols.js";
 import {keying} from "../../protocols/imapentry/concrete.js";
 
 function fmap(self, f){
-  return fluent(f(self.value) || self.value);
+  const value = f(self.value);
+  return fluent(value == undefined ? self.value : value);
 }
 
 function deref(self){
