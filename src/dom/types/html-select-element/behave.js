@@ -11,7 +11,7 @@ function conj(self, entry){
 function access(f){
 
   function value1(self){
-    return _.maybe(p.sel("option", self), _.detect(function(option){
+    return _.just(p.sel("option", self), _.detect(function(option){
       return option.selected;
     }, ?), f);
   }

@@ -9,4 +9,3 @@ export function Right(value){
 Right.prototype[Symbol.toStringTag] = "Right";
 
 export const right = thrush(constructs(Right));
-export const just = right;

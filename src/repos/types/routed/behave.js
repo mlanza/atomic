@@ -10,7 +10,7 @@ function xform(xf){
 }
 
 function filled(self){
-  return _.maybe(self, p.addr, _.test(/\{[^{}]+\}/, ?), _.not);
+  return _.just(self, p.addr, _.test(/\{[^{}]+\}/, ?), _.not);
 }
 
 function fork(self, reject, resolve){

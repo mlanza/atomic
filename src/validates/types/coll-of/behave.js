@@ -4,7 +4,7 @@ import {ICheckable, IScope} from "../../protocols.js";
 import {issue} from "../issue.js";
 
 function check(self, coll){
-  return _.maybe(coll, _.mapIndexed(function(idx, item){
+  return _.just(coll, _.mapIndexed(function(idx, item){
     return _.map(p.scope(?, idx), p.check(self.constraint, item));
   }, ?), _.concatenated, _.compact, _.toArray, _.blot);
 }

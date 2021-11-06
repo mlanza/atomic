@@ -2,7 +2,7 @@ import {doto, overload, identity, partial, slice, execute, isFunction} from "../
 import config from "../../config.js";
 import {isNil}  from "../nil.js";
 import {toArray} from "../../types/array/concrete.js";
-import {opt} from "../../types/maybe/construct.js";
+import {just} from "../../types/just/construct.js";
 import {satisfies, specify}  from "../protocol.js";
 import * as p from "./protocols.js";
 import {ILogger} from "../../protocols/ilogger/instance.js";
@@ -14,7 +14,7 @@ export function spread(f){
 }
 
 export function parsedo(re, xf, callback){
-  return opt(re, xf, spread(callback));
+  return just(?, re, xf, spread(callback));
 }
 
 export function realize(g){

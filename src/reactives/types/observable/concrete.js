@@ -102,7 +102,7 @@ function interact(key, f, el){
 
 function indexed(sources){
   return observable(function(observer){
-    return _.just(sources,
+    return _.right(sources,
       _.mapIndexed(function(key, source){
         return sub(source, function(value){
           pub(observer, {key, value});

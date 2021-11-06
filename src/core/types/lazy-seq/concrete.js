@@ -8,7 +8,7 @@ import {reduced} from "../reduced/construct.js";
 import {not} from "../boolean.js";
 import {isNil, isSome} from "../nil.js";
 import {cons} from "../list/construct.js";
-import {maybe} from "../maybe/construct.js";
+import {just} from "../just/construct.js";
 import {range} from "../range/construct.js";
 import {str} from "../string/concrete.js";
 import {juxt, apply} from "../function/concrete.js"; //MOD
@@ -60,7 +60,7 @@ export const mapa = comp(toArray, map);
 
 export function mapArgs(xf, f){
   return function(){
-    return apply(f, mapa(maybe(?, xf), slice(arguments)));
+    return apply(f, mapa(just(?, xf), slice(arguments)));
   }
 }
 
