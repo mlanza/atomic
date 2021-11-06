@@ -252,7 +252,7 @@ function value1(self){
       return self.checked;
     case "number":
     case "range":
-      return _.maybe(self.value, _.blot, parseFloat);
+      return _.just(self.value, _.blot, parseFloat);
     default:
       return "value" in self ? self.value : null;
   }
@@ -265,7 +265,7 @@ function value2(self, value){
       return;
     case "number":
     case "range":
-      self.value = _.maybe(value, _.blot, parseFloat);
+      self.value = _.just(value, _.blot, parseFloat);
       return;
     default:
       if ("value" in self) {
