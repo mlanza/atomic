@@ -9,7 +9,6 @@ export * from "./types/concatenated.js";
 export * from "./types/date.js";
 export * from "./types/duration.js";
 export * from "./types/error.js";
-export * from "./types/fsm.js";
 export * from "./types/function.js";
 export * from "./types/guid.js";
 export * from "./types/indexed-seq.js";

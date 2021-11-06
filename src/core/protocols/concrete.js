@@ -47,7 +47,6 @@ export * from "./iseq/concrete.js";
 export * from "./iseqable/concrete.js";
 export * from "./isequential/concrete.js";
 export * from "./iset/concrete.js";
-export * from "./itransitionable/concrete.js";
 export * from "./isplittable/concrete.js";
 export * from "./iswappable/concrete.js";
 export * from "./itemplate/concrete.js";

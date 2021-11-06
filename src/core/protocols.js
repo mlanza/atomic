@@ -47,7 +47,6 @@ export * from "./protocols/iseq/instance.js";
 export * from "./protocols/iseqable/instance.js";
 export * from "./protocols/isequential/instance.js";
 export * from "./protocols/iset/instance.js";
-export * from "./protocols/itransitionable/instance.js";
 export * from "./protocols/isplittable/instance.js";
 export * from "./protocols/iswappable/instance.js";
 export * from "./protocols/itemplate/instance.js";
