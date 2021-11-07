@@ -2,7 +2,7 @@ import {implement} from "../protocol.js";
 import {identity, does} from "../../core.js";
 import {IFunctor, IChainable, IOtherwise, IForkable, IDeref} from "../../protocols.js";
 import * as p from "../../protocols/concrete.js";
-import {right, isEither} from "./construct.js";
+import {right} from "./construct.js";
 import monadic from "../../monadic.js";
 import {keying} from "../../protocols/imapentry/concrete.js";
 
@@ -16,6 +16,6 @@ function fork(self, reject, resolve){
 
 export default does(
   keying("Right"),
-  monadic(right, isEither),
+  monadic(right),
   implement(IForkable, {fork}),
   implement(IOtherwise, {otherwise}));
