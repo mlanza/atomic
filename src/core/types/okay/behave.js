@@ -18,8 +18,7 @@ function fmap(self, f){
 
 function chain(self, f){
   try{
-    const value = f(self.value);
-    return is(value, self.constructor) ? value : new self.constructor(value);
+    return f(self.value);
   } catch (ex) {
     return left(ex);
   }
