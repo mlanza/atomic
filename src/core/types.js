@@ -22,7 +22,7 @@ export * from "./types/members.js";
 export * from "./types/mutable.js";
 export * from "./types/multimethod.js";
 export * from "./types/nil.js";
-export * from "./types/none.js";
+export * from "./types/nothing.js";
 export * from "./types/object.js";
 export * from "./types/okay.js";
 export * from "./types/period.js";

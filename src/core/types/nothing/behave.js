@@ -10,7 +10,7 @@ function otherwise(self, other){
 const deref = constantly(null);
 
 export default does(
-  keying("Just"),
+  keying("Nothing"),
   implement(IDeref, {deref}),
   implement(IOtherwise, {otherwise}),
   implement(IChainable, {chain}),
