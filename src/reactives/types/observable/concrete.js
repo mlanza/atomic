@@ -195,9 +195,23 @@ function mapN(f, ...sources){
 const map = _.overload(null, null, map2, mapN);
 
 function resolve(source){
+  const queue = [];
+  function pop(prom, observer){
+    return function(value){
+      if (queue[0] === prom) {
+        queue.shift();
+        pub(observer, value);
+        if (queue.length) { //drain queue
+          queue[0].then(pop(queue[0], observer));
+        }
+      }
+    }
+  }
   return observable(function(observer){
     return sub(source, function(value){
-      Promise.resolve(value).then(pub(observer, ?));
+      const prom = Promise.resolve(value);
+      queue.push(prom);
+      prom.then(pop(prom, observer));
     });
   });
 }
