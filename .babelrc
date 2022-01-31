@@ -3,7 +3,6 @@
     ["@babel/preset-env", {"modules": false}]
   ],
   "plugins": [
-    "babel-plugin-macros",
     "@babel/plugin-proposal-partial-application",
     ["@babel/plugin-proposal-pipeline-operator", {"proposal": "fsharp"}],
     "@babel/plugin-transform-arrow-functions"
