@@ -7,29 +7,6 @@ import { rollupImportMapPlugin } from "rollup-plugin-import-map";
 const _CROSSFRAME = process.argv.indexOf("--crossframe") == -1 ? 0 : 1;
 console.log("crossframe", _CROSSFRAME);
 
-const external = [
-/*  "immutable",
-  "hash",
-  "promise",
-  "fetch",
-  "symbol",
-  "weak-map",
-  "set",
-  "map",
-  "atomic",
-  "atomic/core",
-  "atomic/immutables",
-  "atomic/shell",
-  "atomic/reactives",
-  "atomic/transducers",
-  "atomic/transients",
-  "atomic/repos",
-  "atomic/validates",
-  "atomic/html",
-  "atomic/svg",
-  "atomic/dom" */
-];
-
 const globals = {
   "jquery": "jQuery",
   "qunit": "QUnit",
@@ -61,7 +38,7 @@ export default [{
     interop: false,
     globals
   },
-  external,
+  external: [],
   plugins: [
     resolve(),
     rollupImportMapPlugin({
@@ -135,5 +112,5 @@ export default [{
     }),
     json()
   ],
-  external
+  external: []
 }];
