@@ -22,7 +22,7 @@ export default [{
     'src/svg.js'
   ],
   output: {
-    dir: 'public/assets/vendor/atomic',
+    dir: 'dist/lib/atomic',
     format: 'esm',
     interop: false
   },
@@ -58,7 +58,7 @@ export default [{
 },{
   input: ['src/tests.js'],
   output: {
-    dir: 'public/assets',
+    file: 'tests/main.js',
     format: 'esm',
     interop: false
   },
@@ -66,30 +66,30 @@ export default [{
     resolve(),
     rollupImportMapPlugin({
       "imports": {
-        "hash": "./vendor/hash.js",
-        "immutable": "./vendor/immutable.js",
-        "atomic/core": "./vendor/atomic/core.js",
-        "atomic/dom": "./vendor/atomic/dom.js",
-        "atomic/html": "./vendor/atomic/html.js",
-        "atomic/immutables": "./vendor/atomic/immutables.js",
-        "atomic/reactives": "./vendor/atomic/reactives.js",
-        "atomic/repos": "./vendor/atomic/repos.js",
-        "atomic/shell": "./vendor/atomic/shell.js",
-        "atomic/svg": "./vendor/atomic/svg.js",
-        "atomic/transducers": "./vendor/atomic/transducers.js",
-        "atomic/transients": "./vendor/atomic/transients.js",
-        "atomic/validates": "./vendor/atomic/validates.js",
-        "@atomic/core": "./vendor/@atomic/core.js",
-        "@atomic/dom": "./vendor/@atomic/dom.js",
-        "@atomic/html": "./vendor/@atomic/html.js",
-        "@atomic/immutables": "./vendor/@atomic/immutables.js",
-        "@atomic/reactives": "./vendor/@atomic/reactives.js",
-        "@atomic/repos": "./vendor/@atomic/repos.js",
-        "@atomic/shell": "./vendor/@atomic/shell.js",
-        "@atomic/svg": "./vendor/@atomic/svg.js",
-        "@atomic/transducers": "./vendor/@atomic/transducers.js",
-        "@atomic/transients": "./vendor/@atomic/transients.js",
-        "@atomic/validates": "./vendor/@atomic/validates.js"
+        "hash": "../lib/hash.js",
+        "immutable": "../lib/immutable.js",
+        "atomic/core": "../lib/atomic/core.js",
+        "atomic/dom": "../lib/atomic/dom.js",
+        "atomic/html": "../lib/atomic/html.js",
+        "atomic/immutables": "../lib/atomic/immutables.js",
+        "atomic/reactives": "../lib/atomic/reactives.js",
+        "atomic/repos": "../lib/atomic/repos.js",
+        "atomic/shell": "../lib/atomic/shell.js",
+        "atomic/svg": "../lib/atomic/svg.js",
+        "atomic/transducers": "../lib/atomic/transducers.js",
+        "atomic/transients": "../lib/atomic/transients.js",
+        "atomic/validates": "../lib/atomic/validates.js",
+        "@atomic/core": "../lib/@atomic/core.js",
+        "@atomic/dom": "../lib/@atomic/dom.js",
+        "@atomic/html": "../lib/@atomic/html.js",
+        "@atomic/immutables": "../lib/@atomic/immutables.js",
+        "@atomic/reactives": "../lib/@atomic/reactives.js",
+        "@atomic/repos": "../lib/@atomic/repos.js",
+        "@atomic/shell": "../lib/@atomic/shell.js",
+        "@atomic/svg": "../lib/@atomic/svg.js",
+        "@atomic/transducers": "../lib/@atomic/transducers.js",
+        "@atomic/transients": "../lib/@atomic/transients.js",
+        "@atomic/validates": "../lib/@atomic/validates.js"
 
       }
     }),
