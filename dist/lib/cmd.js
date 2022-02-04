@@ -1,4 +1,3 @@
-console.log("DDD")
 export async function cmds(){
   const [_, dom, $, imm, sh, repos, html, svg, vd, t, mut] = await Promise.all([
     import('./@atomic/core.js'),
