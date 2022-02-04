@@ -1,5 +1,3 @@
-import Symbol from "symbol";
-
 export function Or(constraints){
   this.constraints = constraints;
 }

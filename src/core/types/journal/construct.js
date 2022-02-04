@@ -1,5 +1,4 @@
 import {overload} from "../../core.js";
-import Symbol from "symbol";
 
 export function Journal(pos, max, history, state){
   this.pos = pos;

@@ -6,8 +6,6 @@ import {element} from "./types/element/construct.js";
 import {mounts} from "./protocols/imountable/concrete.js";
 import {IValue} from "./protocols/ivalue/instance.js";
 import {IEmbeddable} from "./protocols/iembeddable/instance.js";
-import Promise from "promise";
-import {document} from "dom";
 import {isHTMLDocument} from "./types/html-document/construct.js";
 import * as T from "./types.js";
 export * from "./types.js";

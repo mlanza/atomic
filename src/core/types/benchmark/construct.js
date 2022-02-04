@@ -2,8 +2,6 @@ import {overload, partial} from "../../core.js";
 import {period} from "../period/construct.js";
 import {mapa, sort, asc} from "../lazy-seq/concrete.js";
 import {measure} from "../number/concrete.js";
-import Promise from "promise";
-import Symbol from "symbol";
 import * as p from "./protocols.js";
 
 export function Benchmark(operation, result, period, duration){

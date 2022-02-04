@@ -1,5 +1,3 @@
-import Symbol from "symbol";
-
 export function Choice(options){
   this.options = options;
 }

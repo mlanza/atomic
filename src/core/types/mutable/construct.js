@@ -1,5 +1,3 @@
-import Symbol from "symbol";
-
 export function Mutable(state){
   this.state = state;
 }

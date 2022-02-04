@@ -1,6 +1,5 @@
 import {overload, does} from "../../core.js";
 import {Nil} from "../nil/construct.js";
-import Symbol from "symbol";
 
 function addMeta(target, key, value){
   try {

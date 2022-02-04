@@ -1,5 +1,3 @@
-import Symbol from "symbol";
-
 export function Reduced(value){
   this.value = value;
 }

@@ -1,6 +1,5 @@
 import {overload} from "../../core.js";
 import {isNumber} from "../number/concrete.js";
-import Symbol from "symbol";
 import * as p from "./protocols.js";
 
 export function Range(start, end, step, direction){

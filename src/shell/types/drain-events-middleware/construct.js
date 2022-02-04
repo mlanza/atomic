@@ -1,5 +1,4 @@
 import * as _ from "atomic/core";
-import Symbol from "symbol";
 
 export function DrainEventsMiddleware(provider, eventBus){
   this.provider = provider;

@@ -1,5 +1,4 @@
 import * as _ from "atomic/core";
-import WeakMap from "weak-map";
 
 export function isWeakMap(self){
   return _.is(self, WeakMap);

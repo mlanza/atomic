@@ -1,5 +1,3 @@
-import Symbol from "symbol";
-
 export function Annotation(note, constraint) {
   this.note = note;
   this.constraint = constraint;

@@ -1,5 +1,3 @@
-import Symbol from "symbol";
-
 export function Scoped(key, constraint){
   this.key = key;
   this.constraint = constraint;

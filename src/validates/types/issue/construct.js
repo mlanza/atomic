@@ -1,7 +1,5 @@
 import * as _ from "atomic/core";
 import * as p from "../../protocols/concrete.js";
-import Promise from "promise";
-import Symbol from "symbol";
 
 export function Issue(constraint, path){
   this.constraint = constraint;

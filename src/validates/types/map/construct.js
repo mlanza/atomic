@@ -1,5 +1,3 @@
-import Symbol from "symbol";
-
 export function Map(f, constraint){
   this.f = f;
   this.constraint = constraint;

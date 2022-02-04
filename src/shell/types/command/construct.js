@@ -1,5 +1,3 @@
-import Symbol from "symbol";
-
 export function Command(type, attrs){
   this.type = type;
   this.attrs = attrs;

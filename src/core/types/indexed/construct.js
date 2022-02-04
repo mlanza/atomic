@@ -1,5 +1,3 @@
-import Symbol from "symbol";
-
 export function Indexed(obj){
   this.obj = obj;
 }

@@ -1,6 +1,5 @@
 import * as _ from "atomic/core";
 import {constructs} from "../command/construct.js";
-import Symbol from "symbol";
 
 export function Event(type, attrs){
   this.type = type;

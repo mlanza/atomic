@@ -1,5 +1,3 @@
-import Symbol from "symbol";
-
 export function Observable(subscribe){
   this.subscribe = subscribe;
 }

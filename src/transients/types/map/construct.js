@@ -1,5 +1,4 @@
 import * as _ from "atomic/core";
-import Map from "map";
 
 export function isMap(self){
   return _.is(self, Map);

@@ -1,5 +1,3 @@
-import Set from "set";
-
 export function set(entries){
   return new Set(entries || []);
 }

@@ -1,12 +1,11 @@
-import * as _ from "atomic/core";
-import * as imm from "atomic/immutables";
-import * as dom from "atomic/dom";
-import * as $ from "atomic/reactives";
-import * as sh from "atomic/shell";
-import * as vd from "atomic/validates";
-import * as t from "atomic/transducers";
-import * as mut from "atomic/transients";
-import QUnit from "qunit";
+import _ from "@atomic/core";
+import imm from "@atomic/immutables";
+import dom from "@atomic/dom";
+import $ from "@atomic/reactives";
+import sh from "@atomic/shell";
+import vd from "@atomic/validates";
+import t from "@atomic/transducers";
+import mut from "@atomic/transients";
 
 const stooges = ["Larry","Curly","Moe"],
       pieces  = {pawn: 1, knight: 3, bishop: 3, rook: 5, queen: 10, king: Infinity},

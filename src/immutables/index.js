@@ -2,8 +2,6 @@ import * as _ from "atomic/core";
 import * as mut from "atomic/transients";
 import * as T from "immutable";
 import {map} from "./types/map/construct.js";
-import Set from "set";
-import Symbol from "symbol";
 export * from "./types.js";
 
 function memoize2(f, hash){

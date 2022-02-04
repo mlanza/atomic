@@ -1,5 +1,4 @@
 import {once} from "../../core.js";
-import Symbol from "symbol";
 
 export function LazySeq(perform){
   this.perform = perform;

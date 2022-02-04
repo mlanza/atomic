@@ -1,7 +1,6 @@
 import {IFunctor, IForkable, IOtherwise} from "../../protocols.js";
 import {identity, does, overload} from "../../core.js";
 import {implement} from "../protocol.js";
-import Promise from "promise";
 import {keying} from "../../protocols/imapentry/concrete.js";
 
 function fmap(self, resolve){

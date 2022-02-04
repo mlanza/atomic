@@ -1,6 +1,5 @@
 import * as _ from "atomic/core";
 import * as dom from "atomic/dom";
-import {document} from "dom";
 
 function tags2(document, list){
   return dom.tags(dom.element(document), list);

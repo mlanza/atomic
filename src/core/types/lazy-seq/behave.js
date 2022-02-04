@@ -8,7 +8,6 @@ import {emptyList} from "../empty-list/construct.js";
 import {toArray} from "../array/concrete.js";
 import {iequiv} from "../empty-list/behave.js";
 import {keying} from "../../protocols/imapentry/concrete.js";
-import Symbol from "symbol";
 import * as p from "./protocols.js";
 
 const compact1 = partial(filter, identity);

@@ -1,5 +1,3 @@
-import Symbol from "symbol";
-
 export function Predicate(f, args){
   this.f = f;
   this.args = args;

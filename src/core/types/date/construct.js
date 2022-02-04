@@ -1,6 +1,4 @@
 import {overload, constructs} from "../../core.js";
-import Symbol from "symbol";
-
 function date7(year, month, day, hour, minute, second, millisecond){
   return new Date(year, month || 0, day || 1, hour || 0, minute || 0, second || 0, millisecond || 0);
 }

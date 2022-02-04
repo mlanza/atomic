@@ -1,6 +1,5 @@
 import {thrush, pipeline} from "../../protocols/ifunctor/concrete.js";
 import {nothing} from "../nothing/construct.js";
-import Symbol from "symbol";
 
 export function Just(value){
   this.value = value;

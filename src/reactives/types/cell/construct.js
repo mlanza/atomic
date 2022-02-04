@@ -1,6 +1,5 @@
 import * as _ from "atomic/core";
 import {subject} from "../subject/construct.js";
-import Symbol from "symbol";
 
 export function Cell(state, observer, validate){
   this.state = state;

@@ -1,5 +1,4 @@
 import {identity, overload} from "atomic/core";
-import Symbol from "symbol";
 
 export function Bounds(start, end, f){
   this.start = start;

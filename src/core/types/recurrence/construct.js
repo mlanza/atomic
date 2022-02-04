@@ -5,7 +5,6 @@ import {sod, eod, isDate} from "../date/concrete.js";
 import {filter} from "../lazy-seq/concrete.js";
 import {steps, directed} from "../../protocols/iaddable/concrete.js";
 import {compare} from "../../protocols/icomparable/concrete.js";
-import Symbol from "symbol";
 
 export function Recurrence(start, end, step, direction){
   this.start = start;
