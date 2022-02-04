@@ -1,5 +1,5 @@
-import { isValueObject, hash } from '/assets/vendor/atomic/core.js';
-export { hash, isValueObject } from '/assets/vendor/atomic/core.js';
+import { isValueObject, hash } from './atomic/core.js';
+export { hash, isValueObject } from './atomic/core.js';
 
 // Used for setting prototype methods that IE8 chokes on.
 var DELETE = 'delete'; // Constants describing the size of trie nodes.
