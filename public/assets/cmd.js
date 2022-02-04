@@ -1,4 +1,4 @@
-export default async function cmd(){
+export async function cmds(){
   const [_, dom, $, imm, sh, repos, html, svg, vd, t, mut] = await Promise.all([
     import('./vendor/@atomic/core.js'),
     import('./vendor/@atomic/dom.js'),
@@ -12,7 +12,7 @@ export default async function cmd(){
     import('./vendor/@atomic/transducers.js'),
     import('./vendor/@atomic/transients.js')
   ]);
-  const cmds = {
+  return {
     _: _.default,
     dom: dom.default,
     $: $.default,
@@ -25,9 +25,13 @@ export default async function cmd(){
     t: t.default,
     mut: mut.default
   };
-  Object.assign(globalThis, cmds);
-  cmds._.log("Commands loaded", cmds);
-  return cmds;
+}
+
+export function cmd(target){
+  cmds().then(function(cmds){
+    Object.assign(target || globalThis, cmds);
+    console.log("Commands loaded", cmds);
+  });
 }
 
 window.cmd = cmd;
