@@ -1,5 +1,3 @@
-import Symbol from "symbol";
-
 export function Bus(state, handler){
   this.state = state;
   this.handler = handler;

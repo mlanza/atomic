@@ -1,6 +1,5 @@
 import {overload} from "../../core.js";
 import {emptyList} from "../empty-list.js";
-import Symbol from "symbol";
 import * as p from "./protocols.js";
 
 export function IndexedSeq(seq, start){

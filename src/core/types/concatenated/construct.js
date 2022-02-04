@@ -1,5 +1,3 @@
-import Symbol from "symbol";
-
 export function Concatenated(colls){
   this.colls = colls;
 }

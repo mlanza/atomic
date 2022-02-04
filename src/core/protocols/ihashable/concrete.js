@@ -2,7 +2,6 @@ import {does} from "../../core.js";
 import {satisfies} from "../../types/protocol/concrete.js";
 import {IHashable} from "./instance.js";
 import {IEquiv} from "../iequiv/instance.js";
-import Symbol from "symbol";
 import * as h from "hash";
 
 const cache = Symbol("hashcode");

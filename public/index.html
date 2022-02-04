@@ -5,14 +5,12 @@
   <title>Atomic</title>
   <meta name="description" content="Atomic">
   <meta name="author" content="Mario T. Lanza">
-  <link rel="stylesheet" href="../assets/vendor/qunit.css">
-  <script src="../assets/vendor/require.js"></script>
-  <script src="../assets/boot.js"></script>
-  <script type="text/javascript">
-    require(['../assets/tests'], function(){
-      QUnit.config.autostart = false;
-      QUnit.start();
-    });
+  <link rel="stylesheet" href="./assets/vendor/qunit.css">
+  <script src="./assets/vendor/qunit.js"></script>
+  <script type="module" src="./assets/tests.js"></script>
+  <script>
+    QUnit.config.autostart = false;
+    QUnit.start();
   </script>
 </head>
 <body>

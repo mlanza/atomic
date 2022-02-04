@@ -1,5 +1,4 @@
 import * as _ from "atomic/core";
-import {DocumentFragment, document} from "dom";
 import {embed} from "../../protocols/iembeddable/concrete.js";
 import {isHTMLDocument} from "../html-document/construct.js";
 

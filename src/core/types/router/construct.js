@@ -1,5 +1,4 @@
 import {noop} from "../../core.js";
-import Symbol from "symbol";
 
 export function Router(handlers, fallback, f){
   this.handlers = handlers;

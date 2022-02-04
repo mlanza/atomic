@@ -1,6 +1,5 @@
 import * as _ from "atomic/core";
 import * as dom from "atomic/dom";
-import {document} from "dom";
 
 export const taglist = ["svg", "g", "symbol", "defs", "clipPath", "metadata", "path", "line", "circle", "rect", "ellipse", "polygon", "polyline", "image", "text", "tspan"];
 

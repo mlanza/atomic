@@ -1,5 +1,3 @@
-import Symbol from "symbol";
-
 export function RevSeq(coll, idx){
   this.coll = coll;
   this.idx = idx;

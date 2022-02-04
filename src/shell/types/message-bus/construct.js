@@ -1,5 +1,3 @@
-import Symbol from "symbol";
-
 export function MessageBus(middlewares){
   this.middlewares = middlewares;
 }

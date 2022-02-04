@@ -1,5 +1,3 @@
-import Symbol from "symbol";
-
 export function Required(key, constraint){
   this.key = key;
   this.constraint = constraint;

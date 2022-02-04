@@ -1,5 +1,3 @@
-import Symbol from "symbol";
-
 export function Events(queued){
   this.queued = queued;
 }

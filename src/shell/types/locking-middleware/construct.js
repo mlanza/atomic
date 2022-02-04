@@ -1,5 +1,3 @@
-import Symbol from "symbol";
-
 export function LockingMiddleware(bus, queued, handling){
   this.bus = bus;
   this.queued = queued;

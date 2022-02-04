@@ -1,5 +1,3 @@
-import Symbol from "symbol";
-
 export function When(pred, constraint){
   this.pred = pred;
   this.constraint = constraint;

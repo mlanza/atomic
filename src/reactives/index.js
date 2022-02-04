@@ -1,8 +1,6 @@
 import * as _ from "atomic/core";
 import * as p from "./protocols/concrete.js";
 import * as t from "atomic/transducers";
-import Symbol from "symbol";
-import Promise from "promise";
 import {IPublish, ISubscribe} from "./protocols.js";
 import {reducible} from "./shared.js";
 import {Cell, cell} from "./types/cell/construct.js";

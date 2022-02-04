@@ -1,11 +1,17 @@
 {
   "imports": {
-    "promise": "./import-map/promise.js",
-    "fetch": "./import-map/fetch.js",
-    "symbol": "./import-map/symbol.js",
-    "set": "./import-map/set.js",
-    "map": "./import-map/map.js",
-    "weak-set": "./import-map/weak-set.js",
-    "weak-map": "./import-map/weak-map.js"
+    "hash": "./public/assets/hash.js",
+    "immutable": "./public/assets/immutable.js",
+    "atomic/core": "./public/assets/vendor/atomic/core.js",
+    "atomic/dom": "./public/assets/vendor/atomic/dom.js",
+    "atomic/html": "./public/assets/vendor/atomic/html.js",
+    "atomic/immutables": "./public/assets/vendor/atomic/immutables.js",
+    "atomic/reactives": "./public/assets/vendor/atomic/reactives.js",
+    "atomic/repos": "./public/assets/vendor/atomic/repos.js",
+    "atomic/shell": "./public/assets/vendor/atomic/shell.js",
+    "atomic/svg": "./public/assets/vendor/atomic/svg.js",
+    "atomic/transducers": "./public/assets/vendor/atomic/transducers.js",
+    "atomic/transients": "./public/assets/vendor/atomic/transients.js",
+    "atomic/validates": "./public/assets/vendor/atomic/validates.js"
   }
 }

@@ -1,5 +1,3 @@
-import Symbol from "symbol";
-
 export function Catches(constraint){
   this.constraint = constraint;
 }

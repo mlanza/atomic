@@ -1,5 +1,3 @@
-import Symbol from "symbol";
-
 export function MessageHandler(handlers, fallback){
   this.handlers = handlers;
   this.fallback = fallback;

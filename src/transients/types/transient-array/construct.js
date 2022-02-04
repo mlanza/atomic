@@ -1,5 +1,3 @@
-import Symbol from "symbol";
-
 export function TransientArray(arr){
   this.arr = arr;
 }

@@ -1,5 +1,3 @@
-import Symbol from "symbol";
-
 export function CollOf(constraint){
   this.constraint = constraint;
 }

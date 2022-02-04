@@ -3,7 +3,6 @@ import {implement} from "../protocol.js";
 import {reduced} from "../reduced/construct.js";
 import {is} from "../../protocols/imapentry/concrete.js";
 import {IReducible, IKVReducible, IEquiv, ICoercible, IAssociative, ISeqable, ILookup, ICounted, IMap, ISeq, IEmptyableCollection} from "../../protocols.js";
-import Symbol from "symbol";
 import * as p from "./protocols.js";
 
 function coerce(self, Type){

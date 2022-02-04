@@ -1,5 +1,3 @@
-import Symbol from "symbol";
-
 export function Isa(types){
   this.types = types;
 }

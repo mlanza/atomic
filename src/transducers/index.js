@@ -1,5 +1,4 @@
 import * as _ from "atomic/core";
-import Set from "set";
 
 export function identity(){
   return _.identity;

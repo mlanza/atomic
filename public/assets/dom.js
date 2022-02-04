@@ -1,0 +1,15 @@
+export const window = this;
+export const document = this.document;
+export const Window = this.Window;
+export const DOMParser = this.DOMParser;
+export const Text = this.Text;
+export const Element = this.Element;
+export const NodeList = this.NodeList;
+export const DocumentFragment = DocumentFragment;
+export const XMLDocument = window.XMLDocument || window.Document; //IE compatible
+export const HTMLDocument = window.HTMLDocument || window.Document; //IE compatible
+export const HTMLCollection = HTMLCollection;
+export const HTMLInputElement = HTMLInputElement;
+export const HTMLSelectElement = HTMLSelectElement;
+export const Comment = Comment;
+export const Location = Location;

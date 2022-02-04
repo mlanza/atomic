@@ -1,5 +1,4 @@
 import * as _ from "atomic/core";
-import Symbol from "symbol";
 
 export function Middleware(handlers){
   this.handlers = handlers;

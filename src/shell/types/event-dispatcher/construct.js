@@ -1,5 +1,3 @@
-import Symbol from "symbol";
-
 export function EventDispatcher(events, bus, observer){
   this.events = events;
   this.bus = bus;

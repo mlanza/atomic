@@ -1,5 +1,4 @@
 import * as _ from "atomic/core";
-import {document} from "dom";
 import {IEmbeddable} from "../../protocols.js";
 
 function embeddables(self){

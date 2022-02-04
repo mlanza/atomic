@@ -15,7 +15,6 @@ import {juxt, apply} from "../function/concrete.js"; //MOD
 import {lazySeq} from "../lazy-seq/construct.js";
 import {Concatenated} from "../concatenated/construct.js";
 import {satisfies} from "../protocol/concrete.js";
-import Symbol from "symbol";
 import * as p from "./protocols.js";
 
 export function concatenated(xs){

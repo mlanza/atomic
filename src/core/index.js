@@ -15,7 +15,6 @@ export * from "./protocols.js";
 export * from "./protocols/concrete.js";
 import * as p from "./protocols/concrete.js";
 import * as T from "./types.js";
-import Set from "set";
 import {extend, forward} from "./types/protocol/concrete.js";
 import {Protocol} from "./types/protocol/construct.js";
 import iprotocol from "./types/protocol/behave.js";

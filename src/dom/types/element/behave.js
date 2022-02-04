@@ -7,7 +7,6 @@ import {IHtml, IValue, IText, IContent, IHideable, IEmbeddable, ISelectable} fro
 import {nestedAttrs} from "../nested-attrs/construct.js";
 import {isElement} from "../element/construct.js";
 import {matches} from "../../shared.js";
-import {Text} from "dom";
 
 const hides = ["display", "none"];
 export const hidden = _.comp(_.includes(?, hides), nestedAttrs(?, "style"));

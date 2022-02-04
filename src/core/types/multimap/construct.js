@@ -1,5 +1,3 @@
-import Symbol from "symbol";
-
 export function Multimap(attrs, empty){
   this.attrs = attrs;
   this.empty = empty;

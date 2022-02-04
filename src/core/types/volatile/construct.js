@@ -1,5 +1,3 @@
-import Symbol from "symbol";
-
 export function Volatile(state){
   this.state = state;
 }

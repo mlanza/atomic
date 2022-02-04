@@ -1,5 +1,3 @@
-import Symbol from "symbol";
-
 export function TransientObject(obj){
   this.obj = obj;
 }

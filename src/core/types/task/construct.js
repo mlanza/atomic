@@ -1,5 +1,3 @@
-import Symbol from "symbol";
-
 export function Task(fork){
   this.fork = fork;
 }
