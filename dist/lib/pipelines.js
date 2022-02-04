@@ -1,5 +1,5 @@
-import {log, lowerCase, map, mapa, thread, join, pipe, str, range} from "./vendor/atomic/core.js";
-import _ from "./vendor/@atomic/core.js";
+import {log, lowerCase, map, mapa, thread, join, pipe, str, range} from "./atomic/core.js";
+import _ from "./@atomic/core.js";
 
 /* WANTED: point-free style, esp. with pipelined operations (e.g. threading macro) */
 

@@ -1,16 +1,17 @@
+console.log("DDD")
 export async function cmds(){
   const [_, dom, $, imm, sh, repos, html, svg, vd, t, mut] = await Promise.all([
-    import('./vendor/@atomic/core.js'),
-    import('./vendor/@atomic/dom.js'),
-    import('./vendor/@atomic/reactives.js'),
-    import('./vendor/@atomic/immutables.js'),
-    import('./vendor/@atomic/shell.js'),
-    import('./vendor/@atomic/repos.js'),
-    import('./vendor/@atomic/html.js'),
-    import('./vendor/@atomic/svg.js'),
-    import('./vendor/@atomic/validates.js'),
-    import('./vendor/@atomic/transducers.js'),
-    import('./vendor/@atomic/transients.js')
+    import('./@atomic/core.js'),
+    import('./@atomic/dom.js'),
+    import('./@atomic/reactives.js'),
+    import('./@atomic/immutables.js'),
+    import('./@atomic/shell.js'),
+    import('./@atomic/repos.js'),
+    import('./@atomic/html.js'),
+    import('./@atomic/svg.js'),
+    import('./@atomic/validates.js'),
+    import('./@atomic/transducers.js'),
+    import('./@atomic/transients.js')
   ]);
   return {
     _: _.default,
