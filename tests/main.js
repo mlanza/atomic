@@ -1,11 +1,11 @@
-import _ from '../lib/@atomic/core.js';
-import imm from '../lib/@atomic/immutables.js';
-import dom from '../lib/@atomic/dom.js';
-import $ from '../lib/@atomic/reactives.js';
-import sh from '../lib/@atomic/shell.js';
-import vd from '../lib/@atomic/validates.js';
-import t from '../lib/@atomic/transducers.js';
-import mut from '../lib/@atomic/transients.js';
+import _ from './lib/@atomic/core.js';
+import imm from './lib/@atomic/immutables.js';
+import dom from './lib/@atomic/dom.js';
+import $ from './lib/@atomic/reactives.js';
+import sh from './lib/@atomic/shell.js';
+import vd from './lib/@atomic/validates.js';
+import t from './lib/@atomic/transducers.js';
+import mut from './lib/@atomic/transients.js';
 
 var stooges = ["Larry", "Curly", "Moe"],
     pieces = {
