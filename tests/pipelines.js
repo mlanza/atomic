@@ -1,5 +1,5 @@
-import {log, lowerCase, map, mapa, thread, join, pipe, str, range} from "./atomic/core.js";
-import _ from "./@atomic/core.js";
+import {log, lowerCase, map, mapa, thread, join, pipe, str, range} from "./lib/atomic/core.js";
+import _ from "./lib/@atomic/core.js";
 
 /* WANTED: point-free style, esp. with pipelined operations (e.g. threading macro) */
 
@@ -10,12 +10,12 @@ import _ from "./@atomic/core.js";
 //  |> log;
 
 //Arrow functions help, but are noisy and not point-free.
-thread(range(10),
-  x => map(pipe(y => str("Number ", y), lowerCase), x),
-  x => join(", ", x),
-  log);
+_.thread(_.range(10),
+  x => _.map(_.pipe(y => _.str("Number ", y), _.lowerCase), x),
+  x => _.join(", ", x),
+  _.log);
 
-//See how `boot.js` imbues typical functions with partial application so the following just works.
+//The wrapped `@atomic` libraries imbue functions with partial applicability giving point-free style.
 _.thread(_.range(10),
   _.map(_.pipe(_.str("Number ", _), _.lowerCase), _),
   _.join(", ", _),
