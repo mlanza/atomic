@@ -266,6 +266,10 @@ function include3(self, value, want){
 
 export const include = overload(null, null, include2, include3);
 
+export function inventory(obj){ //can be used to expose all module exports
+  return obj |> Object.keys |> join(",\n", ?) |> str("{\n", ?, "\n}");
+}
+
 export const fmt = expands(str);
 
 export function when(pred, ...xs) {
