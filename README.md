@@ -1,8 +1,8 @@
 # Atomic
 A wholemeal, Clojure-inspired approach for programming.  Treats native JavaScript data structures (e.g. Object, Array) by default as immutable data.  Includes persistent data structures via Immutable.js integration.
 
-* protocols (interfaces can be added to third-party types)
 * functional (supports pure function composition)
+* [protocols](src/core/protocols) (interfaces can be added to third-party types)
 * [reactives](src/reactives) (FRP)
 * [transducers](src/transducers)
 * [transients](src/transients)
