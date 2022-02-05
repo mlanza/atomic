@@ -90,7 +90,6 @@ export default [{
         "@atomic/transducers": "./lib/@atomic/transducers.js",
         "@atomic/transients": "./lib/@atomic/transients.js",
         "@atomic/validates": "./lib/@atomic/validates.js"
-
       }
     }),
     babel({
