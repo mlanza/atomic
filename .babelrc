@@ -1,11 +1,7 @@
 {
-  "presets":[
-    ["@babel/preset-env", {
-      "targets": {
-        "esmodules": true
-      }
-    }]
- ],
+  "presets": [
+    ["@babel/preset-env", {"useBuiltIns": "entry", "corejs": 3, "targets": {"esmodules": true }}]
+  ],
   "plugins": [
     "@babel/plugin-proposal-partial-application",
     ["@babel/plugin-proposal-pipeline-operator", {"proposal": "fsharp"}],
