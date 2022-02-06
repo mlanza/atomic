@@ -279,3 +279,14 @@ export const toFragment = _.toFragment;
 _.ICoercible.addMethod([NodeList, Array], Array.from);
 _.ICoercible.addMethod([T.SpaceSeparated, Array], _.comp(Array.from, _.seq));
 _.ICoercible.addMethod([T.NestedAttrs, Object], _.deref);
+
+function stylesheet2(href, document){
+  const stylesheet = element(document, "link", {type: "text/css", rel: "stylesheet", href});
+  mut.append(document.body, stylesheet);
+}
+
+function stylesheet1(href){
+  stylesheet2(href, document);
+}
+
+export const stylesheet = _.overload(null, stylesheet1, stylesheet2);
