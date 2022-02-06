@@ -16,6 +16,7 @@ function pipe2(source, xform){
       pub(memo, value);
       return memo;
     }));
+    let unsub = _.noop;
     const sink = observer(function(value){
       const memo = step(obs, value);
       if (_.isReduced(memo)){
@@ -23,13 +24,13 @@ function pipe2(source, xform){
       }
     }, function(error){
       err(obs, error);
-      unsub && unsub();
+      unsub();
     }, function(){
       step(obs);
       complete(obs);
-      unsub && unsub();
+      unsub();
     });
-    const unsub = sub(source, sink); //might complete before returning `unsub` fn
+    unsub = sub(source, sink); //might complete before returning `unsub` fn
     if (closed(sink)) {
       unsub();
       return _.noop;
