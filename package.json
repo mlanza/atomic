@@ -2,11 +2,11 @@
   "name": "atomic",
   "version": "1.0.0",
   "scripts": {
-    "tests": "static ./tests",
-    "develop": "rollup --config --watch",
     "bundle": "rollup --config",
-    "transpile": "babel src -d lib",
-    "pipelines": "deno run --import-map=import-map.json pipelines.js"
+    "develop": "rollup --config --watch",
+    "tests": "static ./tests",
+    "autopartial": "deno run ./tests/autopartial.js",
+    "autopartial-less": "deno run ./tests/autopartial-less.js"
   },
   "engines": {
     "node": ">= 17.4.0",
