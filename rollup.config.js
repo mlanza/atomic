@@ -22,7 +22,7 @@ export default [{
     'src/svg.js'
   ],
   output: {
-    dir: 'dist/lib/atomic',
+    dir: 'dist/atomic',
     format: 'esm',
     interop: false
   },
