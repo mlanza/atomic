@@ -31,8 +31,8 @@ export default [{
     resolve(),
     rollupImportMapPlugin({
       "imports": {
-        "hash": "../hash.js",
-        "immutable": "../immutable.js",
+        "hash": "./immutables/hash.js",
+        "immutable": "./immutables/immutable.js",
         "atomic/core": "./core.js",
         "atomic/dom": "./dom.js",
         "atomic/html": "./html.js",
@@ -66,8 +66,8 @@ export default [{
     resolve(),
     rollupImportMapPlugin({
       "imports": {
-        "hash": "./lib/hash.js",
-        "immutable": "./lib/immutable.js",
+        "hash": "./lib/atomic/immutables/hash.js",
+        "immutable": "./lib/atomic/immutables/immutable.js",
         "atomic/core": "./lib/atomic/core.js",
         "atomic/dom": "./lib/atomic/dom.js",
         "atomic/html": "./lib/atomic/html.js",
