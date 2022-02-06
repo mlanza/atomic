@@ -281,8 +281,10 @@ _.ICoercible.addMethod([T.SpaceSeparated, Array], _.comp(Array.from, _.seq));
 _.ICoercible.addMethod([T.NestedAttrs, Object], _.deref);
 
 function stylesheet2(href, document){
-  const stylesheet = element(document, "link", {type: "text/css", rel: "stylesheet", href});
-  mut.append(document.body, stylesheet);
+  if (!p.sel1(`link[href='${href}']`, document)) {
+    const stylesheet = element(document, "link", {type: "text/css", rel: "stylesheet", href});
+    mut.append(document.body, stylesheet);
+  }
 }
 
 function stylesheet1(href){
