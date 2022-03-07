@@ -221,7 +221,7 @@ export const textbox = input;
 
 _.extend(_.ICoercible, {toFragment: null});
 
-export const toFragment = _.toFragment;
+export const toFragment = _.ICoercible.toFragment;
 
 (function(){
 

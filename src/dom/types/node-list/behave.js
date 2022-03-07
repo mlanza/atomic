@@ -28,7 +28,7 @@ const prevSiblings = _.comp(_.prevSiblings, seq);
 const siblings = _.comp(_.siblings, seq);
 const parent = _.comp(_.parent, seq);
 const parents = _.comp(_.parents, seq);
-const contents = _.comp(_.contents, seq);
+const contents = _.comp(IContent.contents, seq);
 
 function sel(self, selector){
   return _.maybe(self, seq, _.filter(matches(?, selector), ?));
