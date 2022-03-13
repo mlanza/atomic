@@ -1,6 +1,6 @@
 import {identity, overload, doto, complement, does, slice} from "../../core.js";
 import {implement, satisfies} from "../protocol.js";
-import {IHashable, IMergable, IBlankable, IMap, ICoercible, IFunctor, IInsertable, IOmissible, IReversible, IMapEntry, IEquiv, IReducible, IKVReducible, IAppendable, IPrependable, IInclusive, ICollection, INext, ISeq, IFind, ISeqable, IIndexed, IAssociative, ISequential, IEmptyableCollection, IFn, ICounted, ILookup, IClonable} from "../../protocols.js";
+import {IHashable, IMergable, IBlankable, IMap, IFlatMappable, ICoercible, IFunctor, IInsertable, IOmissible, IReversible, IMapEntry, IEquiv, IReducible, IKVReducible, IAppendable, IPrependable, IInclusive, ICollection, INext, ISeq, IFind, ISeqable, IIndexed, IAssociative, ISequential, IEmptyableCollection, IFn, ICounted, ILookup, IClonable} from "../../protocols.js";
 import {reduced, unreduced, isReduced} from "../reduced.js";
 import {indexedSeq} from "../indexed-seq.js";
 import {replace} from "../string/concrete.js";
@@ -168,11 +168,16 @@ export const iindexed = does(
   implement(IIndexed, {nth, idx}),
   implement(ICounted, {count}));
 
+function flatMap(self){
+  return self.flat();
+}
+
 export default does(
   iequiv,
   iindexed,
   keying("Array"),
   implement(ISequential),
+  implement(IFlatMappable, {flatMap}),
   implement(IHashable, {hash}),
   implement(IMap, {dissoc, keys, vals: identity}),
   implement(IMergable, {merge}),
