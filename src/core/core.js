@@ -75,7 +75,7 @@ function pipeN(f, ...fs){
 
 export const pipe = overload(constantly(identity), identity, pipeN);
 
-export function thread(value, ...fs){
+export function chain(value, ...fs){
   const f = pipe(...fs)
   return f(value);
 }

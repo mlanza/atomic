@@ -1,6 +1,6 @@
 import {implement} from "../protocol.js";
 import {identity, does} from "../../core.js";
-import {IFunctor, IChainable, IOtherwise, IForkable, IDeref} from "../../protocols.js";
+import {IFunctor, IOtherwise, IForkable, IDeref} from "../../protocols.js";
 import * as p from "../../protocols/concrete.js";
 import {right} from "./construct.js";
 import monadic from "../../monadic.js";

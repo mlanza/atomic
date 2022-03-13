@@ -1,6 +1,6 @@
 import {implement} from "./types/protocol.js";
 import {does} from "./core.js";
-import {IFunctor, IChainable, IDeref} from "./protocols.js";
+import {IFunctor, IFlatMappable, IDeref} from "./protocols.js";
 
 export default function monadic(construct){
 
@@ -8,7 +8,7 @@ export default function monadic(construct){
     return construct(f(self.value));
   }
 
-  function chain(self, f){
+  function flatMap(self, f){
     return f(self.value);
   }
 
@@ -18,6 +18,6 @@ export default function monadic(construct){
 
   return does(
     implement(IDeref, {deref}),
-    implement(IChainable, {chain}),
+    implement(IFlatMappable, {flatMap}),
     implement(IFunctor, {fmap}));
 }
