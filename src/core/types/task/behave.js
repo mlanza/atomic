@@ -1,4 +1,4 @@
-import {IFunctor, IForkable, IChainable} from "../../protocols.js";
+import {IFunctor, IForkable, IFlatMappable} from "../../protocols.js";
 import {identity, does, overload, noop, comp} from "../../core.js";
 import {implement} from "../protocol.js";
 import {task} from "./construct.js";
@@ -11,7 +11,7 @@ function fmap(self, f){
   });
 }
 
-function chain(self, f){
+function flatMap(self, f){
   return task(function(reject, resolve){
     self.fork(reject, function(value){
       p.fork(f(value), reject, resolve);
@@ -25,6 +25,6 @@ function fork(self, reject, resolve){
 
 export default does(
   keying("Task"),
-  implement(IChainable, {chain}),
+  implement(IFlatMappable, {flatMap}),
   implement(IForkable, {fork}),
   implement(IFunctor, {fmap}));
