@@ -168,8 +168,8 @@ export const iindexed = does(
   implement(IIndexed, {nth, idx}),
   implement(ICounted, {count}));
 
-function flatMap(self){
-  return self.flat();
+function flatMap(self, f){
+  return self.flat().map(f);
 }
 
 export default does(
