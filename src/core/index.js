@@ -299,14 +299,14 @@ export function writable(keys){
     if (!p.includes(keys, key) || !contains(self, key)) {
       throw new Error("Cannot write to " + key);
     }
-    var tgt = clone(self);
+    const tgt = clone(self);
     tgt[key] = value;
     return tgt;
   } : function(self, key, value){
     if (!contains(self, key)) {
       throw new Error("Cannot write to " + key);
     }
-    var tgt = clone(self);
+    const tgt = clone(self);
     tgt[key] = value;
     return tgt;
   }
