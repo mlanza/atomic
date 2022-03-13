@@ -224,7 +224,7 @@ const hist = _.overload(null, hist2(2, ?), hist2);
 
 function fromCollection(coll){
   return observable(function(observer){
-    for (var item of coll) {
+    for (let item of coll) {
       pub(observer, item);
       if (closed(observer)) {
         return;

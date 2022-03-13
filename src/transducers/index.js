@@ -18,7 +18,7 @@ export function last(n){
     let prior = [];
     return _.overload(rf, function(memo){
       let acc = memo;
-      for (var x of prior){
+      for (let x of prior){
         acc = rf(acc, x);
       }
       return rf(acc);

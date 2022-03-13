@@ -15,7 +15,7 @@ export function reifiable(properties){
 }
 
 export function behaves(behaviors, env, callback){
-  for(var key in behaviors) {
+  for(let key in behaviors) {
     if (key in env) {
       const type = env[key],
             behave = behaviors[key];
