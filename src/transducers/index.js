@@ -256,7 +256,7 @@ export function hist(limit){
     return _.overload(rf, rf, function(memo, value){
       const revised = _.clone(history);
       revised.unshift(value);
-      if (history.length > limit) {
+      if (revised.length > limit) {
         revised.pop();
       }
       history = revised;
