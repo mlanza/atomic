@@ -3,7 +3,9 @@ import {OrderedSet} from "immutable";
 export {OrderedSet} from "immutable";
 
 export function orderedSet(coll){
-  return _.ako(coll, OrderedSet) ? coll : new OrderedSet(_.toArray(coll));
+  return _.reduce(function(memo, value){
+    return memo.add(value);
+  }, new OrderedSet(), coll || []);;
 }
 
 export function emptyOrderedSet(){

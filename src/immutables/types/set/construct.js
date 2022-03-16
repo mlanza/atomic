@@ -3,7 +3,9 @@ import * as _ from "atomic/core";
 import {Set} from "immutable";
 
 export function set(coll){
-  return coll ? new Set(_.toArray(coll)) : new Set();
+  return _.reduce(function(memo, value){
+    return memo.add(value);
+  }, new Set(), coll || []);;
 }
 
 export function emptySet(){
