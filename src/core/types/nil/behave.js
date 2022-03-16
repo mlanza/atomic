@@ -7,7 +7,7 @@ import {emptyArray} from "../array/construct.js";
 import {nil} from "./construct.js";
 import * as p from "./protocols.js";
 import {keying} from "../../protocols/imapentry/concrete.js";
-import {hash as hsh} from "hash";
+import {immhash as hsh} from "immutable";
 
 function assoc(self, key, value){
   const obj = {};

@@ -2,12 +2,12 @@ import {does} from "../../core.js";
 import {satisfies} from "../../types/protocol/concrete.js";
 import {IHashable} from "./instance.js";
 import {IEquiv} from "../iequiv/instance.js";
-import * as h from "hash";
+import * as h from "immutable";
 
 const cache = Symbol("hashcode");
 
 export function hash(self){
-  const hash = satisfies(IHashable, "hash", self) || h.hash;
+  const hash = satisfies(IHashable, "hash", self) || h.immhash;
   if (typeof self === "object"){
     const stored = self[cache];
     if (stored) {
@@ -23,5 +23,5 @@ export function hash(self){
 }
 
 export function isValueObject(self){
-  return (satisfies(IHashable, self) && satisfies(IEquiv, self)) || h.isValueObject(self);
+  return (satisfies(IHashable, self) && satisfies(IEquiv, self)) || h.immIsValueObject(self);
 }
