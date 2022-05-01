@@ -2,6 +2,7 @@ npm-debug.log
 node_modules/*
 public/data/*
 dist/atomic
+tests/main.js
 .DS_Store
 .vscode
 package-lock.json
