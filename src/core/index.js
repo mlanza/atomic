@@ -368,9 +368,7 @@ function reduceToArray(self){
   }, [], self);
 }
 
-ICoercible.addMethod([Set, Array], function(self){
-  return Array.from(self);
-});
+ICoercible.addMethod([Set, Array], Array.from);
 ICoercible.addMethod([Number, String], unary(str));
 ICoercible.addMethod([Number, Date], unary(date));
 ICoercible.addMethod([T.Duration, T.Duration], identity);
