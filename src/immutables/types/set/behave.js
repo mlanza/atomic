@@ -59,7 +59,7 @@ function merge(self, other){
 }
 
 function equiv(self, other){
-  return _.count(_.union(self, other)) === count(self);
+  return self.equals(other);
 }
 
 export default _.does(
@@ -67,7 +67,7 @@ export default _.does(
   _.keying("Set"),
   _.implement(mut.IPersistent, {persistent}),
   _.implement(_.ISequential),
-  _.implement(_.IEquiv, {equiv: equiv}),
+  _.implement(_.IEquiv, {equiv}),
   _.implement(_.IAssociative, {contains: includes}),
   _.implement(_.IMergable, {merge}),
   _.implement(mut.ITransient, {transient}),

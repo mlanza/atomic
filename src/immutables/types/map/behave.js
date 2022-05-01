@@ -4,6 +4,10 @@ function assoc(self, key, value){
   return self.set(key, value);
 }
 
+function conj(self, [key, value]){
+  return assoc(self, key, value);
+}
+
 function contains(self, key){
   return self.has(key);
 }
@@ -25,7 +29,7 @@ function vals(self){
 }
 
 function dissoc(self, key){
-  return self.remove(self, key);
+  return self.remove(key);
 }
 
 function reducekv(self, f, init){
@@ -54,10 +58,15 @@ function next(self){
   return _.seq(rest(self));
 }
 
+function equiv(self, other){
+  return self.equals(other);
+}
+
 export default _.does(
   _.iterable,
   _.keying("Map"),
   _.implement(_.IKVReducible, {reducekv}),
+  _.implement(_.IEquiv, {equiv}),
   _.implement(_.IMergable, {merge}),
   _.implement(_.INext, {next}),
   _.implement(_.ISeq, {first, rest}),
@@ -66,4 +75,5 @@ export default _.does(
   _.implement(_.IClonable, {clone: _.identity}),
   _.implement(_.ICounted, {count}),
   _.implement(_.ILookup, {lookup}),
+  _.implement(_.ICollection, {conj}),
   _.implement(_.IAssociative, {assoc, contains}));

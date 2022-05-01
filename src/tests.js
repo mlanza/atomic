@@ -39,6 +39,22 @@ QUnit.test("keyed types", function(assert){
   assert.ok(_.isObject({}));
 });
 
+QUnit.test("immutables", function(assert){
+  const x = imm.set();
+  const y = _.conj(x, 6, 7);
+  assert.ok(_.equiv(y, imm.set([7, 6, 7])));
+  assert.ok(_.equiv(y, _.disj(imm.set([7, 6, 8]), 8)));
+  assert.ok(_.includes(y, 7));
+  assert.ok(!_.includes(y, 9));
+  assert.ok(_.first(y) === 6);
+  const z = imm.map({jack: 11, queen: 12, king: 13});
+  assert.ok(_.equiv(_.first(z), ["jack", 11]));
+  assert.ok(_.get(z, "king") === 13);
+  assert.ok(_.get(z, "jester") == null);
+  assert.ok(_.get(_.conj(z, ["ten", 10]), "ten") === 10);
+  assert.ok(_.equiv(_.dissoc(z, "jack"), _.conj(imm.map(), ["queen", 12], ["king", 13])));
+});
+
 QUnit.test("hashing", function(assert){
   const m = imm.map()
     |> _.assoc(?, _.date(999), 111)
