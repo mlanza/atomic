@@ -1,6 +1,6 @@
 import {identity, constantly, does} from "../../core.js";
 import {satisfies, implement} from "../protocol.js";
-import {IEquiv, IBlankable, ICoercible, IInclusive, IReversible, INext, ISeq, ISeqable, ISequential, IEmptyableCollection, IKVReducible, IReducible, ICounted, IOmissible} from "../../protocols.js";
+import {IEquiv, IBlankable, ICoercible, IInclusive, IReversible, INext, ISeq, ISeqable, ISequential, IEmptyableCollection, IKVReducible, IReducible, ICounted, IOmissible, IPrependable, IAppendable} from "../../protocols.js";
 import {emptyList, EmptyList} from "../../types/empty-list/construct.js";
 import {keying} from "../../protocols/imapentry/concrete.js";
 import * as p from "./protocols.js";
@@ -8,6 +8,12 @@ import * as p from "./protocols.js";
 function reduce(self, f, init){
   return init;
 }
+
+function append(self, x){
+  return [x];
+}
+
+const prepend = append;
 
 export function equiv(xs, ys){
   return !!satisfies(ISequential, xs) === !!satisfies(ISequential, ys)
@@ -22,6 +28,8 @@ export default does(
   iequiv,
   keying("EmptyList"),
   implement(ISequential),
+  implement(IPrependable, {prepend}),
+  implement(IAppendable, {append}),
   implement(IBlankable, {blank: constantly(true)}),
   implement(IReversible, {reverse: emptyList}),
   implement(ICounted, {count: constantly(0)}),
