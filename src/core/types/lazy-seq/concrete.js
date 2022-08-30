@@ -401,10 +401,12 @@ function last1(coll){
 }
 
 function last2(n, coll){
-  let xs = coll, ys = array(n);
+  let xs = coll, ys = [];
   while (p.seq(xs)) {
     ys.push(p.first(xs));
-    ys.shift();
+    while (ys.length > n) {
+      ys.shift();
+    }
     xs = p.next(xs)
   }
   return ys;
