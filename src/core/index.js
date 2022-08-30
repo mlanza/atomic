@@ -396,7 +396,7 @@ ICoercible.addMethod([T.List, Array], reduceToArray);
 ICoercible.addMethod([T.Range, Array], reduceToArray);
 ICoercible.addMethod([T.Nil, Array], emptyArray);
 ICoercible.addMethod([T.IndexedSeq, Array], reduceToArray);
-ICoercible.addMethod([T.RevSeq, Array], Array.from);
+ICoercible.addMethod([T.RevSeq, Array], unary(Array.from));
 ICoercible.addMethod([T.LazySeq, Array], function(xs){
   let ys = xs;
   const zs = [];
