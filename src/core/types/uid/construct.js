@@ -1,7 +1,18 @@
 import {overload} from "../../core.js";
+import {randInt} from "../number.js";
+import {repeatedly} from "../lazy-seq.js";
+import {partial} from "../../core.js";
+import {nth} from "../../protocols/iindexed/concrete.js";
+import {count} from "../../protocols/icounted/concrete.js";
+import { join } from "../lazy-seq.js";
 
-export function UID(id){
+export function pluck(coll){
+  return nth(coll, randInt(count(coll)));
+}
+
+export function UID(id, context){
   this.id = id;
+  this.context = context; //optionally, the qualifying context in which the id is unique
 }
 
 UID.prototype[Symbol.toStringTag] = "UID";
@@ -10,13 +21,15 @@ UID.prototype.toString = function(){
 }
 
 function uid0() {
-  const head = (Math.random() * 46656) | 0,
-        tail = (Math.random() * 46656) | 0;
-  return uid1(("000" + head.toString(36)).slice(-3) + ("000" + tail.toString(36)).slice(-3));
+  return uidOf(5);
 }
 
-function uid1(id){
-  return new UID(id);
+function uid2(id, context = null){
+  return new UID(id, context);
 }
 
-export const uid = overload(uid0, uid1);
+export const uid = overload(uid0, uid2, uid2);
+
+export function uidOf(len, context){
+  return uid(join("", repeatedly(len, partial(pluck, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"))), context);
+}
