@@ -4,10 +4,14 @@ import {repeatedly} from "../lazy-seq.js";
 import {partial} from "../../core.js";
 import {nth} from "../../protocols/iindexed/concrete.js";
 import {count} from "../../protocols/icounted/concrete.js";
-import { join } from "../lazy-seq.js";
+import {join} from "../lazy-seq.js";
 
 export function pluck(coll){
   return nth(coll, randInt(count(coll)));
+}
+
+export function uident(len){
+  return join("", repeatedly(len, partial(pluck, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789")));
 }
 
 export function UID(id, context){
@@ -21,7 +25,7 @@ UID.prototype.toString = function(){
 }
 
 function uid0() {
-  return uidOf(5);
+  return uid(uident(5));
 }
 
 function uid2(id, context = null){
@@ -29,7 +33,3 @@ function uid2(id, context = null){
 }
 
 export const uid = overload(uid0, uid2, uid2);
-
-export function uidOf(len, context){
-  return uid(join("", repeatedly(len, partial(pluck, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"))), context);
-}
