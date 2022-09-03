@@ -1,14 +1,15 @@
 import {protocol, satisfies} from "../../types/protocol.js";
 import {invoke} from "../../protocols/ifn/concrete.js";
+import {IMapEntry} from "../../protocols/imapentry/instance.js";
 import {key as k} from "../../protocols/imapentry/concrete.js";
 import {type} from "../../core.js";
 import {multimethod} from "../../types/multimethod/construct.js";
 import {addMethod as _addMethod} from "../../types/multimethod/concrete.js";
 
 function key(self){
-  try {
+  if (satisfies(IMapEntry, "key", self)) {
     return k(self);
-  } catch {
+  } else {
     return self; //coercible fallback
   }
 }
