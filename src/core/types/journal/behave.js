@@ -37,7 +37,7 @@ function fmap(self, f){
 }
 
 function revision(self, pos){
-  return [self.history[pos], self.history[pos - 1] || null];
+  return [self.history[pos], self.history[pos + 1] || null];
 }
 
 export default does(
