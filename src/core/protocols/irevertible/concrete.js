@@ -5,6 +5,7 @@ export const undoable = IRevertible.undoable;
 export const redo = IRevertible.redo;
 export const redoable = IRevertible.redoable;
 export const flush = IRevertible.flush;
+export const flushable = IRevertible.flushable;
 export const revision = overload(null, function(self){
   return IRevertible.revision(self, self.pos);
 }, IRevertible.revision);

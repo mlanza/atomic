@@ -1,7 +1,7 @@
 import {identity, overload, does, slice} from "../../core.js";
 import {implement} from "../protocol.js";
 import * as p from "../../protocols/concrete.js";
-import {IRevertible, IAssociative, ILookup, IFunctor, IDeref} from "../../protocols.js";
+import {IRevertible, IAssociative, ILookup, IFunctor, IDeref, ICounted} from "../../protocols.js";
 import {Journal} from "./construct.js";
 import {keying} from "../../protocols/imapentry/concrete.js";
 
@@ -19,8 +19,12 @@ function flush(self){
   return new Journal(0, self.max, [self.state], self.state);
 }
 
+function flushable(self){
+  return ICounted.count(self.history) > 1;
+}
+
 function undoable(self){
-  return self.pos < p.count(self.history);
+  return self.pos + 1 < p.count(self.history);
 }
 
 function redoable(self){
@@ -44,4 +48,4 @@ export default does(
   keying("Journal"),
   implement(IDeref, {deref}),
   implement(IFunctor, {fmap}),
-  implement(IRevertible, {undo, redo, flush, undoable, redoable, revision}));
+  implement(IRevertible, {undo, redo, flush, flushable, undoable, redoable, revision}));
