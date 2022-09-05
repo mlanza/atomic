@@ -6,11 +6,13 @@ import {Journal} from "./construct.js";
 import {keying} from "../../protocols/imapentry/concrete.js";
 
 function undo(self){
-  return undoable(self) ? new Journal(self.pos + 1, self.max, self.history, self.state) : self;
+  const pos = self.pos + 1;
+  return undoable(self) ? new Journal(pos, self.max, self.history, self.history[pos]) : self;
 }
 
 function redo(self){
-  return redoable(self) ? new Journal(self.pos - 1, self.max, self.history, self.state) : self;
+  const pos = self.pos - 1;
+  return redoable(self) ? new Journal(pos, self.max, self.history, self.history[pos]) : self;
 }
 
 function flush(self){
@@ -25,18 +27,6 @@ function redoable(self){
   return self.pos > 0;
 }
 
-function assoc(self, key, value){
-  return fmap(self, p.assoc(?, key, value))
-}
-
-function contains(self, key){
-  return p.contains(p.nth(self.history, self.pos), key);
-}
-
-function lookup(self, key){
-  return p.get(p.nth(self.history, self.pos), key);
-}
-
 function deref(self){
   return self.state;
 }
@@ -46,10 +36,12 @@ function fmap(self, f){
   return new Journal(0, self.max, p.prepend(self.pos ? slice(self.history, self.pos) : self.history, revised), revised);
 }
 
+function revision(self, pos){
+  return [self.history[pos], self.history[pos - 1] || null];
+}
+
 export default does(
   keying("Journal"),
   implement(IDeref, {deref}),
   implement(IFunctor, {fmap}),
-  implement(ILookup, {lookup}),
-  implement(IAssociative, {assoc, contains}),
-  implement(IRevertible, {undo, redo, flush, undoable, redoable}));
+  implement(IRevertible, {undo, redo, flush, undoable, redoable, revision}));
