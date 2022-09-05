@@ -4,5 +4,6 @@ export const IRevertible = protocol({
   redo: null,
   flush: null,
   undoable: null,
-  redoable: null
+  redoable: null,
+  revision: null
 });
