@@ -42,10 +42,8 @@ function called2(fn, message){
 
 export const called = overload(null, null, called2, called3, called4);
 
-function addProp(obj, key, value){
-  if (obj.hasOwnProperty(key)) {
-    throw new Error("Property `" + key + "` already defined on " + obj.constructor.name + ".");
-  } else {
+function fillProp(obj, key, value){
+  if (!obj.hasOwnProperty(key)) {
     Object.defineProperty(obj, key, {
       value,
       writable: true,
@@ -59,7 +57,7 @@ function equals(other){
   return p.equiv(this, other);
 }
 
-addProp(Object.prototype, "equals", equals);
+fillProp(Object.prototype, "equals", equals);
 
 export const yank = called(p.omit, "`yank` is deprecated — use `omit` instead.");
 export const numeric = test(/^\d+$/i, ?);
