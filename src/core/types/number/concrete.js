@@ -26,7 +26,7 @@ export function isFloat(n){
   return isNumber(n) && n % 1 !== 0;
 }
 
-export function mod(n, div){
+export function modulus(n, div){
   return n % div;
 }
 
