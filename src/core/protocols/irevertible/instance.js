@@ -3,8 +3,8 @@ export const IRevertible = protocol({
   undo: null,
   redo: null,
   flush: null,
-  flushable: null,
   undoable: null,
   redoable: null,
+  flushable: null,
   revision: null
 });
