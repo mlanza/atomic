@@ -20,7 +20,7 @@ function flush(self){
 }
 
 function flushable(self){
-  return ICounted.count(self.history) > 1;
+  return p.count(self.history) > 1;
 }
 
 function undoable(self){
@@ -32,13 +32,13 @@ function redoable(self){
 }
 
 function reset(self){
-  const at = _.count(self.history) - 1,
-        state = _.nth(self.history, at);
+  const at = p.count(self.history) - 1,
+        state = p.nth(self.history, at);
   return new Journal(at, self.max, self.history, state);
 }
 
 function resettable(self){
-  return self.pos !== _.count(self.history) - 1;
+  return self.pos !== p.count(self.history) - 1;
 }
 
 function deref(self){
