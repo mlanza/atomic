@@ -100,6 +100,9 @@ function lookup(self, key){
 }
 
 function assoc(self, key, value){
+  if (key < 0 || key > count(self)) {
+    throw new Error(`Index ${key} out of bounds`);
+  }
   if (lookup(self, key) === value) {
     return self;
   }
