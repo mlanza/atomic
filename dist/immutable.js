@@ -5857,10 +5857,6 @@ function defaultConverter(k, v) {
   return isIndexed(v) ? v.toList() : isKeyed(v) ? v.toMap() : v.toSet();
 }
 
-function immIsValueObject(maybeValue) {
-  return Boolean(maybeValue && typeof maybeValue.equals === 'function' && typeof maybeValue.hashCode === 'function');
-}
-
 var version = "4.0.0";
 
 var Immutable = {
@@ -5894,7 +5890,6 @@ var Immutable = {
   isAssociative: isAssociative,
   isOrdered: isOrdered,
   isValueObject: isValueObject,
-  immIsValueObject: immIsValueObject,
   isPlainObject: isPlainObject,
   isSeq: isSeq,
   isList: isList,
@@ -5925,4 +5920,4 @@ var Immutable = {
 var Iterable = Collection;
 
 export default Immutable;
-export { immhash, immIsValueObject, Collection, Iterable, List, Map, OrderedMap, OrderedSet, Range, Record, Repeat, Seq, Set, Stack, fromJS, get, getIn$1 as getIn, has, hasIn$1 as hasIn, hash, is, isAssociative, isCollection, isImmutable, isIndexed, isKeyed, isList, isMap, isOrdered, isOrderedMap, isOrderedSet, isPlainObject, isRecord, isSeq, isSet, isStack, isValueObject, merge, mergeDeep$1 as mergeDeep, mergeDeepWith$1 as mergeDeepWith, mergeWith, remove, removeIn, set, setIn$1 as setIn, update$1 as update, updateIn$1 as updateIn, version };
+export { immhash, Collection, Iterable, List, Map, OrderedMap, OrderedSet, Range, Record, Repeat, Seq, Set, Stack, fromJS, get, getIn$1 as getIn, has, hasIn$1 as hasIn, hash, is, isAssociative, isCollection, isImmutable, isIndexed, isKeyed, isList, isMap, isOrdered, isOrderedMap, isOrderedSet, isPlainObject, isRecord, isSeq, isSet, isStack, isValueObject, merge, mergeDeep$1 as mergeDeep, mergeDeepWith$1 as mergeDeepWith, mergeWith, remove, removeIn, set, setIn$1 as setIn, update$1 as update, updateIn$1 as updateIn, version };

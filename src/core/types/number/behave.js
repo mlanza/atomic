@@ -1,6 +1,6 @@
 import {does, identity} from "../../core.js";
 import {implement} from "../protocol.js";
-import {IBounded, IAddable, IInversive, IComparable, IMultipliable, IDivisible} from "../../protocols.js";
+import {IHashable, IBounded, IAddable, IInversive, IComparable, IMultipliable, IDivisible} from "../../protocols.js";
 import {keying} from "../../protocols/imapentry/concrete.js";
 
 function compare(self, other){
@@ -24,10 +24,12 @@ function divide(self, n){
 }
 
 const start = identity,
-      end   = identity;
+      end   = identity,
+      hash  = identity;
 
 export default does(
   keying("Number"),
+  implement(IHashable, {hash}),
   implement(IDivisible, {divide}),
   implement(IMultipliable, {mult}),
   implement(IBounded, {start, end}),
