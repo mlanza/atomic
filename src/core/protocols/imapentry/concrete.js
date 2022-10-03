@@ -1,17 +1,10 @@
 import {doto, does, type, comp, identity, constantly, overload, pre, signature, isString, isFunction} from "../../core.js";
 import {IMapEntry} from "./instance.js";
 import {specify, satisfies} from "../../types/protocol/concrete.js";
-import {hashTag} from "../../protocols/ihashable/concrete";
+import {hashTag} from "../../protocols/ihashable/concrete"; //preassign hashTag to types; useful when lib is loaded crossframe
 
 export const key = IMapEntry.key;
 export const val = IMapEntry.val;
-
-function unkeyed(Type){
-  return does(specify(IMapEntry, {
-    key: constantly(Type),
-    val: constantly(Type)
-  }, Type), hashTag()); //preassign hashTag to types; useful when lib is loaded crossframe
-}
 
 /*#if _CROSSFRAME
 
@@ -19,17 +12,6 @@ function uid() {
   const head = (Math.random() * 46656) | 0,
         tail = (Math.random() * 46656) | 0;
   return ("000" + head.toString(36)).slice(-3) + ("000" + tail.toString(36)).slice(-3);
-}
-
-function _keying(named){
-  const id = uid();
-  const key = `${named}-${id}`;
-  return function(Type){
-    return specify(IMapEntry, {
-      key: constantly(key),
-      val: constantly(Type)
-    }, Type);
-  }
 }
 
 const is1 = comp(key, type);
@@ -45,9 +27,27 @@ export function ako(self, type){
   return is2(self, type) || (proto && ako(proto, type));
 }
 
-//#else */
+function keyed(label){
+  const id = uid();
+  const key = `${label}-${id}`;
+  return function(Type){
+    return specify(IMapEntry, {
+      key: constantly(key),
+      val: constantly(Type)
+    }, Type);
+  }
+}
 
-const _keying = constantly(unkeyed);
+export function keying(label){
+  if (label && !isString(label)) {
+    throw new Error("Label must be a string");
+  }
+  return does(keyed(label), hashTag(), label ? function(Type){
+    Type[Symbol.toStringTag] = label;
+  } : noop);
+}
+
+//#else */
 
 export function is(self, constructor){
   return type(self) === constructor;
@@ -57,6 +57,20 @@ export function ako(self, constructor){
   return self instanceof constructor;
 }
 
-//#endif
+function unkeyed(Type){
+  return specify(IMapEntry, {
+    key: constantly(Type),
+    val: constantly(Type)
+  }, Type);
+}
 
-export const keying = overload(constantly(unkeyed), pre(_keying, signature(isString)));
+export function keying(label){
+  if (label && !isString(label)) {
+    throw new Error("Label must be a string");
+  }
+  return does(unkeyed, hashTag(), label ? function(Type){
+    Type[Symbol.toStringTag] = label;
+  } : noop);
+}
+
+//#endif
