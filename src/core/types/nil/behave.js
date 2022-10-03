@@ -7,7 +7,6 @@ import {emptyArray} from "../array/construct.js";
 import {nil} from "./construct.js";
 import * as p from "./protocols.js";
 import {keying} from "../../protocols/imapentry/concrete.js";
-import {immhash as hsh} from "immutable";
 
 function assoc(self, key, value){
   const obj = {};
@@ -36,7 +35,7 @@ function merge(self, ...xs){
 }
 
 function hash(self){
-  return hsh(null);
+  return 0;
 }
 
 export default does(

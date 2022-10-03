@@ -1,4 +1,4 @@
-import {IIndexed, IBlankable, ISplittable, ITemplate, ICoercible, IReducible, ICollection, ISeqable, INext, ISeq, IInclusive, IAppendable, IPrependable, ILookup, IFn, IComparable, IEmptyableCollection} from "../../protocols.js";
+import {IHashable, IIndexed, IBlankable, ISplittable, ITemplate, ICoercible, IReducible, ICollection, ISeqable, INext, ISeq, IInclusive, IAppendable, IPrependable, ILookup, IFn, IComparable, IEmptyableCollection} from "../../protocols.js";
 import {does, identity, constantly, unbind, overload, isString} from "../../core.js";
 import {implement} from "../protocol.js";
 import {isReduced, unreduced} from "../reduced.js";
@@ -96,9 +96,22 @@ function reduce(self, f, init){
   return unreduced(memo);
 }
 
+function hash(self) {
+  var hash = 0,
+    i, chr;
+  if (self.length === 0) return hash;
+  for (i = 0; i < self.length; i++) {
+    chr = self.charCodeAt(i);
+    hash = ((hash << 5) - hash) + chr;
+    hash |= 0;
+  }
+  return hash;
+}
+
 export default does(
   iindexed,
   keying("String"),
+  implement(IHashable, {hash}),
   implement(ISplittable, {split}),
   implement(IBlankable, {blank}),
   implement(ITemplate, {fill}),

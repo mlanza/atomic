@@ -1,15 +1,16 @@
-import {doto, type, comp, identity, constantly, overload, pre, signature, isString, isFunction} from "../../core.js";
+import {doto, does, type, comp, identity, constantly, overload, pre, signature, isString, isFunction} from "../../core.js";
 import {IMapEntry} from "./instance.js";
 import {specify, satisfies} from "../../types/protocol/concrete.js";
+import {hashTag} from "../../protocols/ihashable/concrete";
 
 export const key = IMapEntry.key;
 export const val = IMapEntry.val;
 
 function unkeyed(Type){
-  return specify(IMapEntry, {
+  return does(specify(IMapEntry, {
     key: constantly(Type),
     val: constantly(Type)
-  }, Type);
+  }, Type), hashTag()); //preassign hashTag to types; useful when lib is loaded crossframe
 }
 
 /*#if _CROSSFRAME
