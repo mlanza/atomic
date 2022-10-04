@@ -1,4 +1,4 @@
-import {overload, partial, unary, type, curry, tee, toggles, identity, obj, partly, comp, doto, does, branch, unspread, applying, execute, noop, constantly, once, isFunction, isString} from "./core.js";
+import {foldkv, overload, partial, unary, type, curry, tee, toggles, identity, obj, partly, comp, doto, does, branch, unspread, applying, execute, noop, constantly, once, isFunction, isString} from "./core.js";
 import {ICoercible, IForkable, ILogger, IDeref, IFn, IAssociative, IClonable, IHierarchy, ILookup, ISeq} from "./protocols.js";
 import {maybe, opt, satisfies, spread, each, duration, remove, sort, flip, realized, apply, realize, isNil, reFindAll, mapkv, period, selectKeys, mapVals, reMatches, test, date, emptyList, cons, days, recurrence, emptyArray} from "./types.js";
 import {isBlank, str, replace} from "./types/string.js";
@@ -247,12 +247,24 @@ function impartable(f){
   return isFunction(f) && !/^[A-Z]./.test(p.name(f));
 }
 
-//convenience for wrapping batches of functions.
-export function impart(self, f){ //override `impart` with `identity` to nullify its effects
-  return p.reducekv(function(memo, key, value){
-    return p.assoc(memo, key, impartable(value) ? f(value) : value); //impart to functions which are not also constructors
-  }, {}, self);
+export function impart(self, f){ //overriding `f` with `identity` nullifies its effects
+  return decorating3(self, impartable, f); //impart to functions which are not also constructors
 }
+
+//convenience for wrapping batches of functions/modules.
+function decorating2(self, f){
+  return decorating3(self, identity, f);
+}
+
+function decorating3(self, pred, f){
+  const memo = {};
+  for(const [key, value] of Object.entries(self)){
+    memo[key] = pred(value, key) ? f(value) : value;
+  }
+  return memo;
+}
+
+export const decorating = overload(null, null, decorating2, decorating3);
 
 function include2(self, value){
   return toggles(p.conj(?, value), p.omit(?, value), p.includes(?, value), self);
