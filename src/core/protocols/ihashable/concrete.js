@@ -8,7 +8,9 @@ const cache = Symbol("hashcode");
 export function hashTag(){
   const tag = Math.random(0);
   return function(self){
-    self[cache] = tag;
+    if (!self[cache]){
+      self[cache] = tag;
+    }
   }
 }
 
@@ -17,28 +19,16 @@ export function hash(self){
     return 0;
   } else if (self.hashCode){
     return self.hashCode();
+  } else if (self[cache]) {
+    return self[cache];
   }
   const hash = satisfies(IHashable, "hash", self);
   if (hash){
-    if (typeof self === "object"){
-      const stored = self[cache];
-      if (stored) {
-        return stored;
-      } else {
-        const hashcode = self[cache] = hash(self);
-        return hashcode;
-      }
-    } else {
-      return hash(self);
-    }
+    const hashcode = hash(self);
+    return Object.isFrozen(self) ? hashcode : (self[cache] = hashcode);
   } else {
-    const stored = self[cache];
-    if (stored) {
-      return stored;
-    } else {
-      hashTag()(self);
-      return self[cache];
-    }
+    hashTag()(self);
+    return self[cache];
   }
 }
 
