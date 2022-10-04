@@ -1,3 +1,2 @@
-import * as c from "../atomic/core.js";
-const core = Object.assign({}, c);
-export default Object.assign(core.placeholder, core.impart(core, core.partly));
+import * as _ from "../atomic/core.js";
+export default Object.assign(_.placeholder, _.impart(_, _.partly));
