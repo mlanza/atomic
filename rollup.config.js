@@ -31,7 +31,6 @@ export default [{
     resolve(),
     rollupImportMapPlugin({
       "imports": {
-        "hash": "../hash.js",
         "immutable": "../immutable.js",
         "atomic/core": "./core.js",
         "atomic/dom": "./dom.js",
@@ -66,30 +65,17 @@ export default [{
     resolve(),
     rollupImportMapPlugin({
       "imports": {
-        "hash": "./lib/atomic/immutables/hash.js",
-        "immutable": "./lib/atomic/immutables/immutable.js",
-        "atomic/core": "./lib/atomic/core.js",
-        "atomic/dom": "./lib/atomic/dom.js",
-        "atomic/html": "./lib/atomic/html.js",
-        "atomic/immutables": "./lib/atomic/immutables.js",
-        "atomic/reactives": "./lib/atomic/reactives.js",
-        "atomic/repos": "./lib/atomic/repos.js",
-        "atomic/shell": "./lib/atomic/shell.js",
-        "atomic/svg": "./lib/atomic/svg.js",
-        "atomic/transducers": "./lib/atomic/transducers.js",
-        "atomic/transients": "./lib/atomic/transients.js",
-        "atomic/validates": "./lib/atomic/validates.js",
-        "@atomic/core": "./lib/@atomic/core.js",
-        "@atomic/dom": "./lib/@atomic/dom.js",
-        "@atomic/html": "./lib/@atomic/html.js",
-        "@atomic/immutables": "./lib/@atomic/immutables.js",
-        "@atomic/reactives": "./lib/@atomic/reactives.js",
-        "@atomic/repos": "./lib/@atomic/repos.js",
-        "@atomic/shell": "./lib/@atomic/shell.js",
-        "@atomic/svg": "./lib/@atomic/svg.js",
-        "@atomic/transducers": "./lib/@atomic/transducers.js",
-        "@atomic/transients": "./lib/@atomic/transients.js",
-        "@atomic/validates": "./lib/@atomic/validates.js"
+        "atomic_/core": "./lib/atomic_/core.js",
+        "atomic_/dom": "./lib/atomic_/dom.js",
+        "atomic_/html": "./lib/atomic_/html.js",
+        "atomic_/immutables": "./lib/atomic_/immutables.js",
+        "atomic_/reactives": "./lib/atomic_/reactives.js",
+        "atomic_/repos": "./lib/atomic_/repos.js",
+        "atomic_/shell": "./lib/atomic_/shell.js",
+        "atomic_/svg": "./lib/atomic_/svg.js",
+        "atomic_/transducers": "./lib/atomic_/transducers.js",
+        "atomic_/transients": "./lib/atomic_/transients.js",
+        "atomic_/validates": "./lib/atomic_/validates.js"
       }
     }),
     babel({
