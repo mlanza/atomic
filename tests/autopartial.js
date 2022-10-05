@@ -1,6 +1,6 @@
-import _ from "./lib/@atomic/core.js";
+import _ from "./lib/atomic_/core.js";
 
-//The wrapped `@atomic` libraries imbue functions with partial applicability giving point-free style.
+//The `atomic_` shadow libraries (note the trailing underscore) imbue functions with partial applicability giving point-free style.
 _.chain(_.range(10),
   _.map(_.pipe(_.str("Number ", _), _.lowerCase), _),
   _.join(", ", _),
