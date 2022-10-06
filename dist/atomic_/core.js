@@ -1,2 +1,2 @@
 import * as _ from "../atomic/core.js";
-export default Object.assign(_.placeholder, _.impart(_, _.partly));
+export default _.impart(_.placeholder, _, _.partly);

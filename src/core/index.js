@@ -247,24 +247,33 @@ function impartable(f){
   return isFunction(f) && !/^[A-Z]./.test(p.name(f));
 }
 
-export function impart(self, f){ //overriding `f` with `identity` nullifies its effects
-  return decorating3(self, impartable, f); //impart to functions which are not also constructors
+function impart2(source, f){ //overriding `f` with `identity` nullifies its effects
+  return decorating3(source, impartable, f); //impart to functions which are not also constructors
 }
+
+function impart3(target, source, f){
+  return decorating4(target, source, impartable, f);
+}
+
+export const impart = overload(null, null, impart2, impart3);
 
 //convenience for wrapping batches of functions/modules.
-function decorating2(self, f){
-  return decorating3(self, identity, f);
+function decorating2(source, f){
+  return decorating3(source, identity, f);
 }
 
-function decorating3(self, pred, f){
-  const memo = {};
-  for(const [key, value] of Object.entries(self)){
-    memo[key] = pred(value, key) ? f(value) : value;
+function decorating3(source, pred, f){
+  return decorating4({}, source, pred, f);
+}
+
+function decorating4(target, source, pred, f){
+  for(const [key, value] of Object.entries(source)){
+    target[key] = pred(value, key) ? f(value) : value;
   }
-  return memo;
+  return target;
 }
 
-export const decorating = overload(null, null, decorating2, decorating3);
+export const decorating = overload(null, null, decorating2, decorating3, decorating4);
 
 function include2(self, value){
   return toggles(p.conj(?, value), p.omit(?, value), p.includes(?, value), self);
