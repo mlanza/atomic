@@ -338,7 +338,7 @@ function on3(el, key, callback){
 function on4(el, key, selector, callback){
   return on3(el, key, function(e){
     if (e.target.matches(selector)) {
-      callback.call(this, e);
+      callback.call(e.target, e);
     } else {
       const target = _.closest(e.target, selector);
       if (target && el.contains(target)) {
