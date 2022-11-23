@@ -154,23 +154,6 @@ QUnit.test("validation", function(assert){
   //TODO add `when` to validate conditiontionally or allow condition to be checked before registering the validation?
 });
 
-QUnit.test("component", function(assert){
-  const people =
-    _.doto(
-      sh.component($.cell([]), function(accepts, raises, affects){
-        return [{
-          "add": accepts("added")
-        }, {
-          "added": affects(_.conj)
-        }]
-      }),
-    sh.dispatch(?, {type: "add", args: [{name: "Moe"}]}),
-    sh.dispatch(?, {type: "add", args: [{name: "Curly"}]}),
-    sh.dispatch(?, {type: "add", args: [{name: "Shemp"}]}));
-
-  assert.equal(_.count(_.deref(people)), 3);
-});
-
 QUnit.test("embeddables", function(assert){
   function names(context){
     return _.mapa(dom.text, dom.sel("li", context));

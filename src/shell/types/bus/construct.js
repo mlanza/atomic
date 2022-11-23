@@ -1,10 +1,9 @@
-export function Bus(state, handler){
-  this.state = state;
-  this.handler = handler;
+export function Bus(middlewares){
+  this.middlewares = middlewares;
 }
 
- Bus.prototype[Symbol.toStringTag] = "Bus";
+Bus.prototype[Symbol.toStringTag] = "Bus";
 
-export function bus(state, handler){
-  return new Bus(state, handler);
+export function bus(middlewares){
+  return new Bus(middlewares || []);
 }
