@@ -1,19 +1,25 @@
 import * as _ from "atomic/core";
-import * as $ from "atomic/reactives";
+import * as mut from "atomic/transients";
 import * as p from "../../protocols/concrete.js";
-import {IMiddleware, IDispatch} from "../../protocols.js";
+import {IDispatch, IMiddleware} from "../../protocols.js";
 
-function dispatch(self, command){
-  p.handle(self.handler, command);
+function conj(self, middleware){
+  self.middlewares = _.conj(self.middlewares, middleware);
 }
 
-function dispose(self){
-  _.satisfies(_.IDisposable, self.state) && _.dispose(self.state);
-  _.satisfies(_.IDisposable, self.handler) && _.dispose(self.handler);
+function handle(self, message, next){
+  const f = _.reduce(function(memo, middleware){
+    return p.handle(middleware, ?, memo);
+  }, next || _.noop, _.reverse(self.middlewares));
+  f(message);
+}
+
+function dispatch(self, message){
+  handle(self, message);
 }
 
 export default _.does(
   _.keying("Bus"),
-  _.forward("state", $.ISubscribe, _.IDeref, _.IResettable, _.ISwappable, _.IReducible),
+  _.implement(mut.ITransientCollection, {conj}),
   _.implement(IDispatch, {dispatch}),
-  _.implement(_.IDisposable, {dispose}));
+  _.implement(IMiddleware, {handle}));
