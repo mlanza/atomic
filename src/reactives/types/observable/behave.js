@@ -9,13 +9,13 @@ function sub(self, observer){
   return closed(observer) ? (unsub(), _.noop) : unsub;
 }
 
-const deref = _.called(function deref(self){
+function deref(self){
   let value = null;
   p.sub(self, function(val){
     value = val;
   })(); //immediate unsubscribe
   return value;
-}, "Prefer to subscribe to observables rather than `deref` them.");
+}
 
 export default _.does(
   reducible,
