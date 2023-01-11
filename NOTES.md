@@ -2,7 +2,8 @@
 
 * Avoid dependence on module organization.  The public api should be packaged under a single collective module in order to reduce the impact of reorganizations.  The organization is not yet firm.
 * Construct all objects with factory functions.
-* Prefer a diff/patch strategy to the use of virtual doms (e.g. the React way).
+* To aid REPL-driven development type properties are treated as private as a matter of discipline and not actually hidden.
+* Prefer a diff/patch strategy to virtual doms (React).
 * Avoid recursion which could result in stack overflows.
 * Write functions in that pass `self` as the first arg (FP) over those that rely on `this` (OOP).
 * Prefer abstractions and behavioral, protocol-centered thinking to caring about concrete types.
