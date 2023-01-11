@@ -1,13 +1,14 @@
-import _ from "./lib/atomic_/core.js";
+import _ from "./lib/atomic_/core.js";  //shadow modules have a trailing underscore...
 
-//The `atomic_` shadow libraries (note the trailing underscore) imbue functions with partial applicability giving point-free style.
-_.chain(_.range(10),
+//...and exist to export functions imbued with partial applicability.  I call this technique autopartial.  It affords point-free style without a build step.
+
+_.chain(_.range(10), //`chain` facilitates threading
   _.map(_.pipe(_.str("Number ", _), _.lowerCase), _),
   _.join(", ", _),
   _.log);
 
-//Ideal but JavaScript, minus a build step, has no threading macro for chaining functions together:
-//range(10)
-//  |> map(pipe(str("Number ", ?), lowerCase), ?),
-//  |> join(", ", ?),
-//  |> log;
+//The following is ideal but requires pipe operators and partial application syntax which do not yet exist without a build step:
+//_.range(10)
+//  |> _.map(_.pipe(_.str("Number ", ?), _.lowerCase), ?),
+//  |> _.join(", ", ?),
+//  |> _.log;

@@ -1,16 +1,145 @@
 # Atomic
-A wholemeal, Clojure-inspired approach for programming.  Treats native JavaScript data structures (e.g. Object, Array) by default as immutable data.  Includes persistent data structures via Immutable.js integration.
+A wholemeal, [Clojure-inspired approach](https://changelog.com/posts/rich-hickeys-greatest-hits) for programming in JavaScript which treats its basic data types as immutables.
 
-* functional (supports pure function composition)
-* [protocols](src/core/protocols) (interfaces can be added to third-party types)
+Highlights:
+
+* well suited for web apps
+* promotes a functional core, imperative shell paradigm
+* functional composition via partial application and pipelines
+* functions over methods
+* [core](src/core) (much of the Clojure standard lib)
+* [protocols](src/core/protocols) (to the very foundation)
 * [reactives](src/reactives) (FRP)
 * [transducers](src/transducers)
-* [transients](src/transients)
 
-Provides a robust core for web development rich enough to meet typical use cases so that third-party integrations can be minimized.
+Atomic provides a robust core for web development sufficient for standard use cases with no additional libraries.
 
-Promotes a uniform functional api.  Functions drive all queries and commands.  Arguments are explicitly passed to functions with most functions preferring an explicit `self` in the first position.  The use of `this` is largely eliminated.  All properties (set usually once during construction) are treated as privates (no underscore prefix needed) and aid in REPL-driven development.
+Atomic provides a uniform functional api. Arguments are explicitly passed to functions with functions preferring an explicit `self` in the first position.  The use of `this` is all but eliminated.
 
-Supplants concretion thinking with abstraction thinking.  Don't ask an object, "What's your type?" but rather "What's your behavior?  Your interface?"  Take reactives — streams emit events and signals emit time-changing values.  Disregard the actual object types.  While a `Cell` is a kind of signal (nearly analagous to a Clojure atom) and a `Subject` a kind of stream, an observable can be constructed to behave as either.  Simply put: objects must be thought of by the roles they play.  Furthermore, functions (e.g. pure queries) can take types and return different types.  Thus, [abstractions](https://en.wikipedia.org/wiki/Abstract_data_type).  In this protocols are the foundation.  They make it possible to integrate third-party types while maintaining a uniform api.
+Atomic encourages one to think about objects as [abstract types](https://en.wikipedia.org/wiki/Abstract_data_type) rather than concrete types.  This falls out of protocol-based apis.  Don't ask "What's your type?" but rather "What's your behavior?  Your interface?"  Take the common api of cells, subjects, and observables.  When they're passed around a function needn't mind what it has but rather the role what it has plays.
 
-Offers [point-free programming](https://en.wikipedia.org/wiki/Tacit_programming) without a build step.  This is demonstrated in [autopartial](./tests/autopartial.js) and [autopartial-less](./tests/autopartial-less.js).  When [pipeline operators](https://github.com/tc39/proposal-pipeline-operator) and [partial application](https://github.com/tc39/proposal-partial-application) are eventually ratified into JavaScript this kludge can be deprecated.
+Atomic protocols exist in the absence of TypeScript.  This makes it possible to integrate third-party types such as the persistents found in Immutable.js while maintaining a familiar api.
+
+[Autopartial](./tests/autopartial.js) delivers [point-free programming](https://en.wikipedia.org/wiki/Tacit_programming) without a build step.  Without this technique and until [pipeline operators](https://github.com/tc39/proposal-pipeline-operator) and [partial application](https://github.com/tc39/proposal-partial-application) land in JavaScript proper [the points](./tests/autopartial-less.js) must remain.
+
+## Forward
+
+Atomic has been used in production since its 2015 release, originally as AMDs but now ES6 modules.  There was no fanfare because there was no announcement.  And no announcement because, at the time, it was still an experiment aimed at answering: how well does the Clojure mindset fare in the land of JavaScript?
+
+ClojureScript had already answered.  Splendidly!  But those suffering the weight of transpiled cljs may have wondered, can't this be done without a build step and without the barf of transilation?  And why not just implement the necessary types for idiomatic Clojure directly in JavaScript?
+
+Atomic is usable, 1.0 complete, and production-ready.  And while this has long been the case, it was kept under wraps.  This was done to avoid the open source shackles of issue and enhancement requests and the concern that a change might break something someone else depends on.  The door is being opened a wee bit, in in response to recent inquiry, and to help others vet the same questions.
+
+Atomic can be freely used but, for now, fork and maintain your own version.  While it is stable and production ready, the typical use-at-your-own-risk disclaimer applies.
+
+## Getting Started
+
+Build the `dist` from the command line using:
+
+```bash
+npm install
+npm run bundle
+```
+
+Include the contents of this folder under `lib` in a project then import from either `lib\atomic` or `lib\atomic_` depending on whether [autopartial](./tests/autopartial.js) is wanted.
+
+## Modules
+
+The `core` module provides what's needed in most general situations.  If a UI is needed, reach for the `reactives` and `dom` modules, where the former provides FRP and the latter tools for use in the, ahem, dom.
+
+Elm sold FRP.  So by the time CSP appeared in `core.async` that ship had already sailed.
+
+The atom equivalent and the type which houses an app's big bang [world state](https://docs.racket-lang.org/teachpack/2htdpuniverse.html) is `cell`.  From it observables/signals are derived.  It's only significant difference from an atom is how, like a [subject](https://rxjs.dev/guide/subject), in addition to on change, it invokes its callback on subscribe as well.  This seemed to make sense in most UIs it was used to build.
+
+Like [xstream](https://staltz.com/why-we-built-xstream.html) it doesn't rely on many operators.  And implementation experience has seen how hot observables are usually easier to handle correctly than cold ones.  These notions have, thus, been baked into the defaults.
+
+The holy trinity of modules is `core`, `reactives`, `dom` and, if a forth, `transducers`.  The others were situationally used.  And because protocols are usually sufficient on their own, in practice, Clojure-like multimethods were rarely implemented.
+
+Although Clojure's `transients` were implemented so all the familiar functions can be used with mutables too, in practice, this module wasn't used as anticipated when it came to native objects and arrays.  Rather one ceased using the library and fell back on treating objects and arrays, privately, as mutables.  The use of this module was, thus, primarily relegated to always-mutable types, like DOM elements, which have no immutable counterparts.
+
+The `immutables` module wraps [Immutable.js](https://immutable-js.com) types.  This was grafted in to provide true persistents, however, in practice, it was rarely used.  First, there was the cost of having to marshal this dependency over the network.  Second, when native arrays and objects are treated like immutables—as all the modules do by default!—they're going to give you what you require most of the time.  [Records and tuples](https://tc39.es/proposal-record-tuple/) will eventually fill this gap.
+
+The boon of protocols is how they seamlessly wrap third-party types with familiar (and uniform!) apis.  This makes it easy to experiment with new types while keeping a consistent api.  And when a concrete type gets ditched, a substitution can be made and the program(s) which rely on it need never be the wiser!
+
+Typical module assignments follow:
+* `_` → `core` (it also doubles as a partial application placeholder)
+* `$` → `reactives`
+* `dom` → `dom`
+* `t` → `transducers`
+* `mut` → `transients`
+
+These assignments can be readily imported by entering [cmd()](./dist/cmd.js) from a browser console where Atomic is loaded.  Obviously, this facilitates REPL-driven development.
+
+Since many of its core functions are taken directly from Clojure one can often use its documentation.  Here are a handful of its bread and butter functions:
+* [swap](https://clojuredocs.org/clojure.core/swap!)
+* [get](https://clojuredocs.org/clojure.core/get)
+* [update](https://clojuredocs.org/clojure.core/update)
+* [updateIn](https://clojuredocs.org/clojure.core/update-in)
+* [assoc](https://clojuredocs.org/clojure.core/assoc)
+* [assocIn](https://clojuredocs.org/clojure.core/assoc-in)
+
+The beauty of these functions (kudos to Hickey!) is how they allow one to surgically update a state object held in a cell (atom) without actually mutating anything.  In Atomic this is done using ordinary objects and arrays instead of persistent maps and vectors.
+
+In the absence of threading macros, several key functions exist (see these demonstrated in the example programs) to facilitate pipelines and composition:
+* chain (a normal pipeline)
+* maybe (a null-handling pipeline)
+* comp
+* pipe
+
+See the various READMEs disbursed among the source modules for a bit more help.
+
+## Guidance for Writing Apps
+
+Start with a functional core, a persistent type or compound structure which represents the world state.  For this plain objects and arrays are often good enough.  Just, as a matter of discipline, don't mutate them!
+
+Birth the world state with an `init` function and wrap it in an atom.  Then write [swappable](https://clojuredocs.org/clojure.core/swap!) functions which drive state transitions based on anticipated user actions.  These will be pure.  The impure ones will be implemented later in the imperative shell or UI layer.
+
+The essence of "easy to reason about" falls out of purity.  When the world state can be readily examined in a REPL (browser console) after each and every transition identifying broken functions becomes a much less onerous task.
+
+Next, begin the imperative shell.  This is everything else including the UI.  Often this happens once the core is complete.  Not all apps have data, however, which is simple enough to visually digest from the REPL.  In such situations one may be unable to get by without the visuals a UI provides and the shell may need to be created earlier and develop in parallel.
+
+This entire effort begins with [forethought](https://www.youtube.com/watch?v=f84n5oFoZBc), preliminary work, and perhaps a bit of notetaking.  Think first about the shape of the data, then the functions (and, potentially, commands/events) which transform it, and lastly how the UI looks and how it utilizes this.  For more complex apps, roughing out the UI in HTML/CSS will help guide the work.  Not everything needs working out, but having a sense of how things fit together and how the UI works before writing the first line of code will help avoid snafus.
+
+If an app involves animation, as a turn-based board game would, ponder this aspect too.  How one renders elements which are animated is often different from how one renders those which aren't.  Fortunately, CSS is now capable of driving most animations without the help of additional libraries.
+
+Sparingly add libraries.  Keep projects lean.  [Dependencies breed](https://tonsky.me/blog/disenchantment/).  The ever-changing landscape of modern libraries (Vue, React, Angular, Svelte, etc.) brims with excellent ideas, yet the author has continually met customer requirements without necessitating any of them.
+
+Rather, and only when the deficit is truly felt, graft in the idea, not the dependency.  It permits the local team and not the vendor team to dictate the schedule.  It also alleviates the pressure of falling out of step with the latest release.
+
+## Progressive Enhancement
+
+One begins routinely with a simple core and shell and potentially layers in other useful concepts.
+
+The `journal` type can be added to provide undo/redo and permit stepping forward and backward along a timeline.
+
+Add a layer to process change via commands and events, in its simplest form, both represented as plain old JavaScript objects.  Commands (yin) belong in the impure world (imperative shell), and events (yang) the pure world (functional core).
+
+Events are folded into the world state via a master reduction.  And both events and commands can be readily sent over the wire or captured in logs.  When captured, they provide a complete and auditable history, one which can be readily examined in the REPL.
+
+## A Tale of Two Worlds
+
+Rather than one, the developer writes two programs, edits two files, straddles two worlds.  To get why this is done, first understand what the pure world actually is: simulation.
+
+The functional core is where the domain logic goes and the imperative shell where the glue code or program architecture (routers, queues, buffers, buses, etc.) goes.  The core simulates what your program is actually about (managing to-dos) and the shell provides the machinery (all the types and operations which, from a user's perspective, have nothing to do with managing to-dos) necessary to transform these simulations into realities.
+
+The shell transforms effect into simulation and vice versa.  Commands flow in.  Events flow out.  The core provides the direction, the shell the orchestration.
+
+The benefit of starting with simulations is they're free of messy unpredictability, are easy to write tests against, and can be fully controlled.  Putting it another way, they're like flipbooks where time can be stopped and any page and its subsequent examined.  Imagine how much easier than imperative programs of old they are to reason about, develop, troubleshoot, and fix!
+
+## Atomic in Action
+
+Atomic has been used for developing and deploying (to typical web hosts, SharePoint, Cloudflare, and Power Apps) a variety of production apps reliably for years and has recently been used to create digital card and board games.
+
+These examples epitomize the above guidance:
+
+* [Todo](https://github.com/mlanza/todo)
+* [Treasure Quest](https://github.com/mlanza/treasure-quest)
+* [Pickomino](https://github.com/mlanza/pickomino)
+
+Dom events are oft handled using an `$.on` which is similar to [jQuery's](https://api.jquery.com/on).
+
+While creating and diffing a [virtual dom](https://reactjs.org/docs/faq-internals.html) had been considered for inclusion in the library, experience has seen these approaches fare well without it.  In some apps `$.hist` provides two frames (the present and the immediate past) of world state history which can be diffed whenever convenient.  In practice, however, for simpler UIs, this extra effort isn't usually needed.
+
+The unfamiliar will best become aquainted with this approach by implementing a small, real-world-useful app.
+
+Its author, perhaps obviously so by now, is a [strategy board games](https://boardgamegeek.com/boardgame/2955/mexica) superfan!
