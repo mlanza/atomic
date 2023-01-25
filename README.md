@@ -30,8 +30,6 @@ ClojureScript had already answered.  Splendidly!  But those suffering the weight
 
 Atomic is usable, 1.0 complete, and production-ready.  And while this has long been the case, it was kept under wraps.  This was done to avoid the open source shackles of issue and enhancement requests and the concern that a change might break something someone else depends on.  The door is being opened a wee bit, in in response to recent inquiry, and to help others vet the same questions.
 
-Atomic can be freely used but, for now, fork and maintain your own version.  While it is stable and production ready, the typical use-at-your-own-risk disclaimer applies.
-
 ## Getting Started
 
 Build the `dist` from the command line using:
@@ -87,6 +85,14 @@ In the absence of threading macros, several key functions exist (see these demon
 * pipe
 
 See the various READMEs disbursed among the source modules for a bit more help.
+
+## Changes
+
+Atomic is stable, production ready, and actively maintained; however, changes are not handled in a manner which guarantees safety to an open source audience.  This is because, historically, being a private library, there has been none.  Proper measures can be installed when and if that changes.  For now, safety can be had by forking and maintaining your own version.
+
+Pull requests which fix defects will be evaluated for acceptance.
+
+Enhancement requests are not currently being accepted.
 
 ## Guidance for Writing Apps
 
