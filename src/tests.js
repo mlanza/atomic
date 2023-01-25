@@ -2,7 +2,7 @@ import _ from "atomic_/core";
 import imm from "atomic_/immutables";
 import dom from "atomic_/dom";
 import $ from "atomic_/reactives";
-import sh from "atomic_/shell";
+//import sh from "atomic_/shell";
 import vd from "atomic_/validates";
 import t from "atomic_/transducers";
 import mut from "atomic_/transients";

@@ -4,6 +4,8 @@ import * as p from "../../protocols/concrete.js";
 import {IRevertible, IResettable, IAssociative, ILookup, IFunctor, IDeref, ICounted} from "../../protocols.js";
 import {Journal} from "./construct.js";
 import {keying} from "../../protocols/imapentry/concrete.js";
+import {splice} from "../lazy-seq/concrete.js";
+import {toArray} from "../array/concrete.js";
 
 function undo(self){
   const pos = self.pos + 1;
@@ -21,6 +23,12 @@ function flush(self){
 
 function flushable(self){
   return p.count(self.history) > 1;
+}
+
+const crunchable = flushable;
+
+function crunch(self){
+  return new Journal(self.pos, self.max, toArray(splice(self.history, p.count(self.history) - 1, 1, [])), self.state);
 }
 
 function undoable(self){
@@ -59,4 +67,4 @@ export default does(
   implement(IDeref, {deref}),
   implement(IFunctor, {fmap}),
   implement(IResettable, {reset, resettable}),
-  implement(IRevertible, {undo, redo, flush, flushable, undoable, redoable, revision}));
+  implement(IRevertible, {undo, redo, flush, crunch, flushable, crunchable, undoable, redoable, revision}));
