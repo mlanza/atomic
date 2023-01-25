@@ -1,5 +1,7 @@
 import {IRevertible} from "./instance.js";
 import { overload } from "../../core.js";
+export const crunch = IRevertible.crunch;
+export const crunchable = IRevertible.crunchable;
 export const undo = IRevertible.undo;
 export const undoable = IRevertible.undoable;
 export const redo = IRevertible.redo;
