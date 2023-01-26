@@ -4,9 +4,8 @@ A wholemeal, [Clojure-inspired approach](https://changelog.com/posts/rich-hickey
 Highlights:
 
 * well suited for web apps
+* deploy the code you write — point free, composed, pipelines, no build required
 * promotes a functional core, imperative shell paradigm
-* functional composition via partial application and pipelines
-* functions over methods
 * [core](src/core) (much of the Clojure standard lib)
 * [protocols](src/core/protocols) (to the very foundation)
 * [reactives](src/reactives) (FRP)
@@ -14,32 +13,38 @@ Highlights:
 
 Atomic provides a robust core for web development sufficient for standard use cases with no additional libraries.
 
-Atomic provides a uniform functional api. Arguments are explicitly passed to functions with functions preferring an explicit `self` in the first position.  The use of `this` is all but eliminated.
+Atomic is functional first.  Since methods aren't used the use of `this` is all but eliminated.  Rather, functions often receive an explicit `self` in the first position.
 
-Atomic encourages one to think about objects as [abstract types](https://en.wikipedia.org/wiki/Abstract_data_type) rather than concrete types.  This falls out of protocol-based apis.  Don't ask "What's your type?" but rather "What's your behavior?  Your interface?"  Take the common api of cells, subjects, and observables.  When they're passed around a function needn't mind what it has but rather the role what it has plays.
+Atomic, because it is built from the ground up using protocols, sees objects as [abstract](https://en.wikipedia.org/wiki/Abstract_data_type) rather than concrete types.  Don't ask "What's your type?" but rather "What's your behavior?  Your interface?"  Objects implement behaviors and what's more important than their behavior is the role they play.
 
-Atomic protocols exist in the absence of TypeScript.  This makes it possible to integrate third-party types such as the persistents found in Immutable.js while maintaining a familiar api.
+Atomic protocols and factory functions allow third-party types, such as the persistents found in Immutable.js, to be seamlessly integrated so that devs can keep using its consistent, familiar api.  This makes it easy to experiment with new types or substitute new types for old types.  When a concrete type gets ditched the program(s) which relied on it needn't be the wiser!
 
 [Autopartial](./tests/autopartial.js) delivers [point-free programming](https://en.wikipedia.org/wiki/Tacit_programming) without a build step.  Without this technique and until [pipeline operators](https://github.com/tc39/proposal-pipeline-operator) and [partial application](https://github.com/tc39/proposal-partial-application) land in JavaScript proper [the points](./tests/autopartial-less.js) must remain.
 
-## Forward
+## Premise
 
-Atomic has been used in production since its 2015 release, originally as AMDs but now ES6 modules.  There was no fanfare because there was no announcement.  And no announcement because, at the time, it was still an experiment aimed at answering: how well does the Clojure mindset fare in the land of JavaScript?
+Atomic has been used in production since 2015, originally as AMDs but now ES6 modules.  There was no fanfare because there was no announcement and no announcement because, at the time, it was still highly experimental.  It sought to take ClojureScript one step further, answering:
 
-ClojureScript had already answered.  Splendidly!  But those suffering the weight of transpiled cljs may have wondered, can't this be done without a build step and without the barf of transilation?  And why not just implement the necessary types for idiomatic Clojure directly in JavaScript?
+> Can't the necessary types for idiomatic Clojure be implemented in JavaScript, directly, so a build step is unnecessary?
 
-Atomic is usable, 1.0 complete, and production-ready.  And while this has long been the case, it was kept under wraps.  This was done to avoid the open source shackles of issue and enhancement requests and the concern that a change might break something someone else depends on.  The door is being opened a wee bit, in in response to recent inquiry, and to help others vet the same questions.
+Atomic is usable, 1.0 complete, and production-ready.  And while this has long been the case, it was kept under wraps.  This was done to avoid the open source shackles of issue and enhancement requests and the concern that a change might break something someone else depends on.  The door is being opened a wee bit in in response to recent inquiry and to allow others to explore the same question.
+
+Here's the ephiphany.  The quest for the perfect language makes syntax the holy grail since a developer can in almost any language otherwise realize almost any feature with just libraries.
+
+Consider what Atomic grafts into JavaScript: the semantics of Clojure and protocols.  At what cost?  Primarily syntax.
+
+The fact that every language can be transpiled to JavaScript is telling.  If a language's superiority isn't its syntax, its mindset can be ported, directly.
 
 ## Getting Started
 
-Build the `dist` from the command line using:
+Build it from the command line:
 
-```bash
+```sh
 npm install
 npm run bundle
 ```
 
-Include the contents of this folder under `lib` in a project then import from either `lib\atomic` or `lib\atomic_` depending on whether [autopartial](./tests/autopartial.js) is wanted.
+Copy the contents of `dist` to `lib` in a project then import from either `lib\atomic` or `lib\atomic_` depending on whether [autopartial](./tests/autopartial.js) is wanted.
 
 ## Modules
 
@@ -55,9 +60,7 @@ The holy trinity of modules is `core`, `reactives`, `dom` and, if a forth, `tran
 
 Although Clojure's `transients` were implemented so all the familiar functions can be used with mutables too, in practice, this module wasn't used as anticipated when it came to native objects and arrays.  Rather one ceased using the library and fell back on treating objects and arrays, privately, as mutables.  The use of this module was, thus, primarily relegated to always-mutable types, like DOM elements, which have no immutable counterparts.
 
-The `immutables` module wraps [Immutable.js](https://immutable-js.com) types.  This was grafted in to provide true persistents, however, in practice, it was rarely used.  First, there was the cost of having to marshal this dependency over the network.  Second, when native arrays and objects are treated like immutables—as all the modules do by default!—they're going to give you what you require most of the time.  [Records and tuples](https://tc39.es/proposal-record-tuple/) will eventually fill this gap.
-
-The boon of protocols is how they seamlessly wrap third-party types with familiar (and uniform!) apis.  This makes it easy to experiment with new types while keeping a consistent api.  And when a concrete type gets ditched, a substitution can be made and the program(s) which rely on it need never be the wiser!
+The `immutables` module wraps [Immutable.js](https://immutable-js.com) types.  This was grafted in to provide true persistents, however, in practice, it was rarely used.  First, there was the cost of having to marshal this dependency over the network.  Second, when native arrays and objects are treated like immutables—as all the modules do by default!—they usually perform adequately.  [Records and tuples](https://tc39.es/proposal-record-tuple/) will eventually take their place.
 
 Typical module assignments follow:
 * `_` → `core` (it also doubles as a partial application placeholder)
@@ -66,7 +69,7 @@ Typical module assignments follow:
 * `t` → `transducers`
 * `mut` → `transients`
 
-These assignments can be readily imported by entering [cmd()](./dist/cmd.js) from a browser console where Atomic is loaded.  Obviously, this facilitates REPL-driven development.
+These assignments can be readily imported by entering [cmd()](./dist/cmd.js) from a browser console where Atomic is loaded.  Obviously, this facilitates interactive development.
 
 Since many of its core functions are taken directly from Clojure one can often use its documentation.  Here are a handful of its bread and butter functions:
 * [swap](https://clojuredocs.org/clojure.core/swap!)
@@ -88,11 +91,9 @@ See the various READMEs disbursed among the source modules for a bit more help.
 
 ## Changes
 
-Atomic is stable, production ready, and actively maintained; however, changes are not handled in a manner which guarantees safety to an open source audience.  This is because, historically, being a private library, there has been none.  Proper measures can be installed when and if that changes.  For now, safety can be had by forking and maintaining your own version.
+Changes are not presently handled in a manner which guarantees safety to an open source audience.  This is because, historically, being a private library, there has been none.  Proper measures can be installed when and if that changes.  For now, safety can be had by forking and maintaining your own version.
 
 Pull requests which fix defects will be evaluated for acceptance.
-
-Enhancement requests are not currently being accepted.
 
 ## Guidance for Writing Apps
 
@@ -100,9 +101,9 @@ Start with a functional core, a persistent type or compound structure which repr
 
 Birth the world state with an `init` function and wrap it in an atom.  Then write [swappable](https://clojuredocs.org/clojure.core/swap!) functions which drive state transitions based on anticipated user actions.  These will be pure.  The impure ones will be implemented later in the imperative shell or UI layer.
 
-The essence of "easy to reason about" falls out of purity.  When the world state can be readily examined in a REPL (browser console) after each and every transition identifying broken functions becomes a much less onerous task.
+The essence of "easy to reason about" falls out of purity.  When the world state can be readily examined in the browser console after each and every transition identifying broken functions becomes a much less onerous task.
 
-Next, begin the imperative shell.  This is everything else including the UI.  Often this happens once the core is complete.  Not all apps have data, however, which is simple enough to visually digest from the REPL.  In such situations one may be unable to get by without the visuals a UI provides and the shell may need to be created earlier and develop in parallel.
+Next, begin the imperative shell.  This is everything else including the UI.  Often this happens once the core is complete.  Not all apps have data, however, which is simple enough to visually digest from the browser console.  In such situations one may be unable to get by without the visuals a UI provides and the shell may need to be created earlier and develop in parallel.
 
 This entire effort begins with [forethought](https://www.youtube.com/watch?v=f84n5oFoZBc), preliminary work, and perhaps a bit of notetaking.  Think first about the shape of the data, then the functions (and, potentially, commands/events) which transform it, and lastly how the UI looks and how it utilizes this.  For more complex apps, roughing out the UI in HTML/CSS will help guide the work.  Not everything needs working out, but having a sense of how things fit together and how the UI works before writing the first line of code will help avoid snafus.
 
@@ -120,7 +121,7 @@ The `journal` type can be added to provide undo/redo and permit stepping forward
 
 Add a layer to process change via commands and events, in its simplest form, both represented as plain old JavaScript objects.  Commands (yin) belong in the impure world (imperative shell), and events (yang) the pure world (functional core).
 
-Events are folded into the world state via a master reduction.  And both events and commands can be readily sent over the wire or captured in logs.  When captured, they provide a complete and auditable history, one which can be readily examined in the REPL.
+Events are folded into the world state via a master reduction.  And both events and commands can be readily sent over the wire or captured in logs.  When captured, they provide a complete and auditable history, one which can be readily examined from the browser console.
 
 ## A Tale of Two Worlds
 
