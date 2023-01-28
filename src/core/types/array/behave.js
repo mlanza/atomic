@@ -171,8 +171,12 @@ export const iindexed = does(
   implement(IIndexed, {nth, idx}),
   implement(ICounted, {count}));
 
+function flat(self){
+  return self.flat();
+}
+
 function flatMap(self, f){
-  return self.flat().map(f);
+  return self.flatMap(f);
 }
 
 export default does(
@@ -180,7 +184,7 @@ export default does(
   iindexed,
   keying("Array"),
   implement(ISequential),
-  implement(IFlatMappable, {flatMap}),
+  implement(IFlatMappable, {flatMap, flat}),
   implement(IHashable, {hash}),
   implement(IMap, {dissoc, keys, vals: identity}),
   implement(IMergable, {merge}),
