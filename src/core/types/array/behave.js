@@ -147,7 +147,7 @@ function rest(self){
 }
 
 function includes(self, x){
-  return self.indexOf(x) > -1;
+  return self.includes(x);
 }
 
 function count(self){
