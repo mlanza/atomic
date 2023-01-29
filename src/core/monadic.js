@@ -8,16 +8,13 @@ export default function monadic(construct, flat){
     return construct(f(self.value));
   }
 
-  function flatMap(self, f){
-    return chain(self, IFlatMappable.flat, IFunctor.fmap(?, f));
-  }
-
   function deref(self){
     return self.value;
   }
 
   return does(
     implement(IDeref, {deref}),
-    implement(IFlatMappable, {flatMap, flat}),
+    implement(IFlatMappable, {flat}),
     implement(IFunctor, {fmap}));
+
 }
