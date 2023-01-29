@@ -6,9 +6,8 @@ import {left} from "./construct.js";
 import monadic from "../../monadic.js";
 
 const fmap = identity;
-function flat(self){
-  return self;
-}
+const flat = identity;
+
 function fork(self, reject, resolve){
   reject(self.value);
 }
