@@ -28,7 +28,7 @@ function flushable(self){
 const crunchable = flushable;
 
 function crunch(self){
-  return new Journal(self.pos, self.max, toArray(splice(self.history, p.count(self.history) - 1, 1, [])), self.state);
+  return crunchable(self) ? new Journal(self.pos, self.max, toArray(splice(self.history, p.count(self.history) - 1, 1, [])), self.state) : self;
 }
 
 function undoable(self){
