@@ -37,6 +37,7 @@ export * from "./types/rev-seq.js";
 export * from "./types/right.js";
 export * from "./types/router.js";
 export * from "./types/series.js";
+export * from "./types/set.js";
 export * from "./types/symbol.js";
 export * from "./types/string.js";
 export * from "./types/task.js";
