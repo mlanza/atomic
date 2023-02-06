@@ -196,29 +196,6 @@ export const option = _.assume(isHTMLDocument, document, _.overload(null, null, 
   return element(document, "option", {value: key}, value);
 }));
 
-export const select = _.called(_.assume(isHTMLDocument, document, function select(document, entries, ...args){
-  return element(document, "select", _.map(option(document, ?), entries), ...args);
-}), "`select` is deprecated — use `select` tag with `option(key, value),...` or `map(option, entries)`.");
-
-export const checkbox = _.called(_.assume(isHTMLDocument, document, function checkbox(document, ...args){
-  const el = element(document, 'input', {type: "checkbox"}, ...args);
-  function value1(el){
-    return el.checked;
-  }
-  function value2(el, checked){
-    el.checked = checked;
-  }
-  const value = _.overload(null, value1, value2);
-  return _.doto(el,
-    _.specify(IValue, {value: value}));
-}), "`checkbox` is deprecated — use `input` tag with {type: 'checkbox'} instead.");
-
-export const input = _.called(_.assume(isHTMLDocument, document, function input(document, ...args){
-  return element(document, 'input', {type: "text"}, ...args);
-}), "`input` is deprecated — use `input` tag with {type: 'text'}.");
-
-export const textbox = input;
-
 _.extend(_.ICoercible, {toFragment: null});
 
 export const toFragment = _.ICoercible.toFragment;
