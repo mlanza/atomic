@@ -59,7 +59,6 @@ function equals(other){
 
 fillProp(Object.prototype, "equals", equals);
 
-export const yank = called(p.omit, "`yank` is deprecated — use `omit` instead.");
 export const numeric = test(/^\d+$/i, ?);
 
 (function(){
@@ -139,8 +138,6 @@ function closest(self, pred){
 }
 
 extend(IHierarchy, {siblings, prevSibling, nextSibling, prevSiblings, nextSiblings, parents, closest, root});
-
-export const forwardTo = called(forward, "`forwardTo` is deprecated — use `forward` instead.");
 
 function recurs2(pd, step) {
   return recurrence(p.start(pd), p.end(pd), step);

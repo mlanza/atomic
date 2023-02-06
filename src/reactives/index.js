@@ -47,9 +47,6 @@ export const tick = shared(subject, Observable.tick);
 export const when = shared(cell, Observable.when);
 export const toggles = shared(cell, Observable.toggles);
 export const hist = shared(cell, Observable.hist);
-export const readonly = _.called(_.identity, "`readonly` is deprecated.");
-export const event = _.called(fromEvent, "`event` is deprecated — use `fromEvent` instead.");
-export const fromElement = _.called(interact, "`fromElement` is deprecated — use `interact` instead.");
 
 function fmap(source, f){
   return map(f, source);
@@ -62,10 +59,6 @@ function fromPromise2(promise, init){
 }
 
 export const fromPromise = _.overload(null, fromPromise2(?, null), fromPromise2);
-
-export const join = _.called(function join(sink, ...sources){
-  return share(_.merge(...sources), sink);
-}, "`join` is deprecated — use `merge` instead.");
 
 //enforce sequential nature of operations
 function isolate(f){ //TODO treat operations as promises
@@ -86,17 +79,6 @@ function isolate(f){ //TODO treat operations as promises
     }
   }
 }
-
-function mutate3(self, state, f){
-  p.sub(state, _.partial(isolate(f), self));
-  return self;
-}
-
-function mutate2(state, f){
-  return mutate3(?, state, f);
-}
-
-export const mutate = _.called(_.overload(null, null, mutate2, mutate3), "`mutate` is deprecated — use `render` instead.");
 
 function render3(el, obs, f){
   return p.sub(obs, t.isolate(), function(state){

@@ -22,4 +22,3 @@ function once4(self, key, selector, callback){
 }
 
 export const once = _.overload(null, null, null, once3, once4);
-export const one = _.called(once, "`one` is deprecated.  Use `once` instead.");
