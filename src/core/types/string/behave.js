@@ -83,7 +83,7 @@ function prepend(self, head){
 }
 
 function includes(self, str){
-  return self.indexOf(str) > -1;
+  return self.includes(str);
 }
 
 function reduce(self, f, init){
