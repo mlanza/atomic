@@ -244,6 +244,15 @@ export function filter(pred, xs){
 
 export const detect = comp(p.first, filter);
 
+export function detectIndex(pred, xs){
+  const found = detect(function([idx, x]){
+    return pred(x);
+  }, mapIndexed(function(idx, x){
+    return [idx, x];
+  }, xs));
+  return found ? found[0] : null;
+}
+
 export function cycle(coll){
   return p.seq(coll) ? lazySeq(function(){
     return cons(p.first(coll), concat(p.rest(coll), cycle(coll)));
@@ -390,6 +399,11 @@ export function partitionBy(f, xs){
           return val === f(x);
         }, p.next(coll)));
   return cons(run, partitionBy(f, p.seq(drop(p.count(run), coll))));
+}
+
+export function sift(pred, xs){
+  const sifted = groupBy(pred, xs);
+  return [sifted["true"] || null, sifted["false"] || null];
 }
 
 function last1(coll){
