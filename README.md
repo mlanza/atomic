@@ -6,8 +6,9 @@ Highlights:
 * well suited for web apps
 * deploy the code you write — point free, composed, pipelines, no build required
 * promotes a functional core, imperative shell paradigm
+* [nil-punning](https://ericnormand.me/article/nil-punning) handles null in sensible ways,
 * [core](src/core) (much of the Clojure standard lib)
-* [protocols](src/core/protocols) (to the very foundation)
+* [protocols](src/core/protocols) at the foundation
 * [reactives](src/reactives) (FRP)
 * [transducers](src/transducers)
 
