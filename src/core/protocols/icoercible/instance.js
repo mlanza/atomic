@@ -14,7 +14,7 @@ function key(self){
   }
 }
 
-//hide the details of using `key` for potential cross-frame compatibility
+//hide the details of using `key` for potential cross-realm compatibility
 const mm = multimethod(function(source, Type){
   return  [key(type(source)), key(Type)];
 });

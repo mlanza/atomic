@@ -1,6 +1,6 @@
 # Core
 
-## Cross-frame operability
+## Cross-realm operability
 
 Most libraries don't work across frames due to each having its own copy of the host's constructors.  This renders certain coding practices (relying on `instanceof` or constructor comparisons) unreliable.
 
@@ -8,13 +8,13 @@ See:
 * https://github.com/mrdoob/three.js/issues/5886
 * http://perfectionkills.com/instanceof-considered-harmful-or-how-to-write-a-robust-isarray/
 
-To work around the issue Atomic applies symbolic names to constructors.  These same names can be applied to constructors in other frames.  Doing this guarantees identical constructors (from different frames) share a common identity.  This enables `is` and `ako` (while `CROSSFRAME=1`) to unambiguously identify objects.
+To work around the issue Atomic applies symbolic names to constructors.  These same names can be applied to constructors in other frames.  Doing this guarantees identical constructors (from different frames) share a common identity.  This enables `is` and `ako` (while `CROSSREALM=1`) to unambiguously identify objects.
 
-Third-party code including most polyfills (even natives) should be considered unreliable as there is no consistent means by which developers have tackled cross-frame operability.  Only fully-controlled code with no external dependencies (unknowns) can be trusted!
+Third-party code including most polyfills (even natives) should be considered unreliable as there is no consistent means by which developers have tackled cross-realm operability.  Only fully-controlled code with no external dependencies (unknowns) can be trusted!
 
-Set `CROSSFRAME=1` to compile cross-frame operable bundles and `CROSSFRAME=0` when not needed as this option is not cost free.
+Set `CROSSREALM=1` to compile cross-realm operable bundles and `CROSSREALM=0` when not needed as this option is not cost free.
 
-### Fostering Cross-Frame Module Use
+### Fostering Cross-realm Module Use
 
 * Don't use `instanceof`.  Use `ako`.
 * Don't check constructors.  Use `is`.
