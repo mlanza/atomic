@@ -43,7 +43,7 @@ function dispatch(method){
     if (!f) {
       throw new ProtocolLookupError(protocol, method, self, args);
     }
-    return f.apply(null, [self].concat(args));
+    return f.apply(null, [self, ...args]);
   }
 }
 

@@ -127,11 +127,11 @@ function unconj(self, x){
 }
 
 function append(self, x){
-  return self.concat([x]);
+  return [...self, x];
 }
 
 function prepend(self, x){
-  return [x].concat(self);
+  return [x, ...self];
 }
 
 function next(self){
