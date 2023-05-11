@@ -65,8 +65,7 @@ export function comp(){
 function pipeN(f, ...fs){
   return function(){
     let memo = f.apply(this, arguments);
-    for(let i = 0; i < fs.length; i++) {
-      const f = fs[i];
+    for(const f of fs) {
       memo = f.call(this, memo);
     }
     return memo;
@@ -400,10 +399,10 @@ export function arity(f, length){
 
 export function fold(f, init, xs){
   let memo = init, to = xs.length - 1, r = {};
-  for(let i = 0; i <= to; i++){
+  for(const x of xs){
     if (memo === r)
       break;
-    memo = f(memo, xs[i], (reduced) => r = reduced);
+    memo = f(memo, x, (reduced) => r = reduced);
   }
   return memo;
 }
@@ -417,7 +416,6 @@ export function foldkv(f, init, xs){
   }
   return memo;
 }
-
 
 export function posn(...xfs){
   return function(arr){
