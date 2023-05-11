@@ -41,9 +41,9 @@ function update6(self, key, f, a, b, c){
   return IAssociative.assoc(self, key, f(get(self, key), a, b, c));
 }
 
-function updateN(self, key, f){
+function updateN(self, key, f, ...xs){
   let tgt  = get(self, key),
-      args = [tgt].concat(slice(arguments, 3));
+      args = [tgt, ...xs];
   return IAssociative.assoc(self, key, f.apply(this, args));
 }
 
@@ -70,8 +70,8 @@ function updateIn6(self, key, f, a, b, c){
 }
 
 function updateInN(self, keys, f) {
-  return updateIn3(self, keys, function(obj, ...args){
-    return f.apply(null, [obj].concat(args));
+  return updateIn3(self, keys, function(...xs){
+    return f.apply(null, xs);
   });
 }
 

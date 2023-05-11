@@ -82,7 +82,7 @@ export function chain(value, ...fs){
 
 export function handle(){
   const handlers = slice(arguments, 0, arguments.length - 1),
-        fallback = arguments[arguments.length -1];
+        fallback = arguments[arguments.length - 1];
   return function(){
     for(let handler of handlers){
       const check = handler[0];
@@ -107,7 +107,6 @@ export function subj(f, len){ //subjective
     }
   }
 }
-
 export function obj(f, len){ //objective
   const length = len || f.length;
   return function(...xs){
@@ -122,47 +121,45 @@ function curry1(f){
 }
 
 function curry2(f, minimum){
-  return function(){
-    const applied = arguments.length ? slice(arguments) : [undefined]; //each invocation assumes advancement
-    if (applied.length >= minimum) {
-      return f.apply(this, applied);
+  return function(...args){
+    const xs = args.length ? args : [undefined]; //each invocation assumes advancement
+    if (xs.length >= minimum) {
+      return f.apply(this, xs);
     } else {
-      return curry2(function(){
-        return f.apply(this, applied.concat(slice(arguments)));
-      }, minimum - applied.length);
+      return curry2(function(...ys){
+        return f.apply(this, [...xs, ...ys]);
+      }, minimum - xs.length);
     }
   }
 }
 
 export const curry = overload(null, curry1, curry2);
 
-export const placeholder = {};
-
-export function plug(f){ //apply placeholders and, optionally, values returning a partially applied function which is executed when all placeholders are supplied.
-  const xs = slice(arguments, 1), n = xs.length;
-  return xs.indexOf(placeholder) < 0 ? f.apply(null, xs) : function() {
-    const ys = slice(arguments),
-          zs = [];
-    for (let i = 0; i < n; i++) {
-      let x = xs[i];
-      zs.push(x === placeholder && ys.length ? ys.shift() : x);
+export function plugging(placeholder){
+  return function plug(f, ...xs){ //provides values and/or placeholders and return a fn which defers realization until all placeholders are supplied
+    const n = xs.length;
+    return xs.indexOf(placeholder) < 0 ? f.apply(null, xs) : function(...ys) {
+      const zs = [];
+      for (let i = 0; i < n; i++) {
+        let x = xs[i];
+        zs.push(x === placeholder && ys.length ? ys.shift() : x);
+      }
+      return plug.apply(null, [f, ...zs, ...ys]);
     }
-    return plug.apply(null, [f].concat(zs).concat(ys));
   }
 }
 
-export function partial(f, ...applied){
-  return function(...args){
-    return f.apply(this, applied.concat(args));
+export const placeholder = {};
+export const plug = plugging(placeholder);
+
+export function partial(f, ...xs){
+  return function(...ys){
+    return f.apply(this, [...xs, ...ys]);
   }
 }
 
 export function partly(f){
-  return Object.assign(partial(plug, f), {partly: f});
-}
-
-export function unpartly(f){
-  return f && f.partly ? f.partly : f;
+  return partial(plug, f);
 }
 
 export function deferring(f){
@@ -320,7 +317,7 @@ export function detach(method){
 
 export function attach(f){
   return function(...args){
-    return f.apply(null, [this].concat(args));
+    return f.apply(null, [this, ...args]);
   }
 }
 
@@ -400,6 +397,7 @@ export function arity(f, length){
   return ([nullary, unary, binary, ternary, quaternary][length] || nary)(f, length);
 }
 
+
 export function fold(f, init, xs){
   let memo = init, to = xs.length - 1, r = {};
   for(let i = 0; i <= to; i++){
@@ -419,6 +417,7 @@ export function foldkv(f, init, xs){
   }
   return memo;
 }
+
 
 export function posn(...xfs){
   return function(arr){
