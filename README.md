@@ -150,4 +150,16 @@ While creating and diffing a [virtual dom](https://reactjs.org/docs/faq-internal
 
 The unfamiliar will best become aquainted with this approach by implementing a small, real-world-useful app.
 
+## Future
+
+One day applying the Clojure mindset to ordinary JavaScript will be possible.  Ideally, parts of this library will vaporize (as the need for jQuery did) when the following EcmaScript proposals reach stage maturity:
+
+* [pipeline operator](https://github.com/tc39/proposal-pipeline-operator)
+* [partial application](https://github.com/tc39/proposal-partial-application)
+* [records & tuples](https://github.com/tc39/proposal-record-tuple) (including typed records & tuples!)
+* [first-class protocols](https://github.com/tc39/proposal-first-class-protocols)
+* [temporal](https://github.com/tc39/proposal-temporal)
+
+## Footnote
+
 Its author, perhaps obviously so by now, is a [strategy board games](https://boardgamegeek.com/boardgame/2955/mexica) superfan!
