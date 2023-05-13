@@ -151,15 +151,21 @@ Object.assign(Protocol.prototype, {extend, dispatch, generate, keys, specify, un
 
 Protocol.prototype[Symbol.toStringTag] = "Protocol";
 
-export function ProtocolLookupError(protocol, method, subject, args) {
-  this.protocol = protocol;
-  this.method = method;
-  this.subject = subject;
-  this.args = args;
-}
+class ProtocolLookupError extends Error {
+  constructor(protocol, method, subject, args){
+    super(`Protocol lookup for ${method} failed.`);
+    this.protocol = protocol;
+    this.method = method;
+    this.subject = subject;
+    this.args = args;
+    this.name = this.constructor.name;
+  }
 
-ProtocolLookupError.prototype = new Error();
-ProtocolLookupError.prototype.toString = function(){
-  return `Protocol lookup for ${this.method} failed.`;
+  get[Symbol.toStringTag]() {
+    return "ProtocolLookupError";
+  }
+
+  toString(){
+    return this.message;
+  }
 }
-ProtocolLookupError.prototype[Symbol.toStringTag] = "ProtocolLookupError";
