@@ -1,9 +1,9 @@
 import { guid } from "../guid/construct.js";
 
 export function Chance(text){ //better if a phrase or sentence
-  const seed = MurmurHash3(text);
+  const seed = murmurHash3(text);
   this.text = text;
-  this.random = SimpleFastCounter32(seed(), seed());
+  this.random = simpleFastCounter32(seed(), seed());
 }
 
 export function chance(text = guid()){
@@ -12,7 +12,7 @@ export function chance(text = guid()){
 
 //credit: https://www.delftstack.com/howto/javascript/javascript-random-seed-to-generate-random/
 
-function MurmurHash3(string) {
+function murmurHash3(string) {
   let i = 0, hash;
   for (i, hash = 1779033703 ^ string.length; i < string.length; i++) {
       let bitwise_xor_from_character = hash ^ string.charCodeAt(i);
@@ -26,7 +26,7 @@ function MurmurHash3(string) {
   }
 }
 
-function SimpleFastCounter32(seed_1, seed_2, seed_3, seed_4) {
+function simpleFastCounter32(seed_1, seed_2, seed_3, seed_4) {
   return () => {
     seed_1 >>>= 0; seed_2 >>>= 0; seed_3 >>>= 0; seed_4 >>>= 0;
     let cast32 = (seed_1 + seed_2) | 0;
