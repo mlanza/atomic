@@ -6,6 +6,7 @@ Highlights:
 * well suited for web apps
 * deploy the code you write — point free, composed, pipelines, no build required
 * promotes a functional core, imperative shell paradigm
+* pure pseudo random number generation
 * [nil-punning](https://ericnormand.me/article/nil-punning) handles null in sensible ways,
 * [core](src/core) (much of the Clojure standard lib)
 * [protocols](src/core/protocols) at the foundation

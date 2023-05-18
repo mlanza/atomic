@@ -10,6 +10,7 @@ export * from "./types/duration.js";
 export * from "./types/error.js";
 export * from "./types/function.js";
 export * from "./types/guid.js";
+export * from "./types/chance.js";
 export * from "./types/indexed-seq.js";
 export * from "./types/indexed.js";
 export * from "./types/journal.js";

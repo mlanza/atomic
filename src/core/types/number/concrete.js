@@ -71,11 +71,21 @@ function rand1(n){
   return Math.random() * n;
 }
 
-export const rand = overload(rand0, rand1);
+function rand2(f = Math.random, n){
+  return f() * n;
+}
 
-export function randInt(n){
+export const rand = overload(rand0, rand1, rand2);
+
+function randInt1(n){
   return Math.floor(rand(n));
 }
+
+function randInt2(f, n){
+  return Math.floor(rand(f, n));
+}
+
+export const randInt = overload(null, randInt1, randInt2);
 
 export function sum(ns){
   return p.reduce(p.add, 0, ns);
