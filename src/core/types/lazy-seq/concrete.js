@@ -708,17 +708,23 @@ function join2(sep, xs){
 
 export const join = overload(null, join1, join2);
 
-export function shuffle(coll) {
+function shuffle2(f, coll) {
   let a = Array.from(coll);
   let j, x, i;
   for (i = a.length - 1; i > 0; i--) {
-    j = Math.floor(Math.random() * (i + 1));
+    j = Math.floor(f() * (i + 1));
     x = a[i];
     a[i] = a[j];
     a[j] = x;
   }
   return a;
 }
+
+function shuffle1(coll){
+  return shuffle2(Math.random, coll);
+}
+
+export const shuffle = overload(null, shuffle1, shuffle2);
 
 export function generate(iterable){ //e.g. counter: generate(iterate(inc, 0)) or partial(generate, iterate(inc, 0))) for a counter factory;
   let iter = iterable[Symbol.iterator]();
