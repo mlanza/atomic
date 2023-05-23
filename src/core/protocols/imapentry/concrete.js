@@ -1,12 +1,12 @@
 import {doto, does, type, comp, identity, constantly, overload, pre, signature, isString, isFunction} from "../../core.js";
 import {IMapEntry} from "./instance.js";
 import {specify, satisfies} from "../../types/protocol/concrete.js";
-import {hashTag} from "../../protocols/ihashable/concrete"; //preassign hashTag to types; useful when lib is loaded crossframe
+import {hashTag} from "../../protocols/ihashable/concrete"; //preassign hashTag to types; useful when lib is loaded crossrealm
 
 export const key = IMapEntry.key;
 export const val = IMapEntry.val;
 
-/*#if _CROSSFRAME
+/*#if _CROSSREALM
 
 function uid() {
   const head = (Math.random() * 46656) | 0,
