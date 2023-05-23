@@ -4,8 +4,8 @@ import json  from '@rollup/plugin-json';
 import jscc from 'rollup-plugin-jscc';
 import { rollupImportMapPlugin } from "rollup-plugin-import-map";
 
-const _CROSSFRAME = process.argv.indexOf("--crossframe") == -1 ? 0 : 1;
-console.log("crossframe", _CROSSFRAME);
+const _CROSSREALM = process.argv.indexOf("--crossrealm") == -1 ? 0 : 1;
+console.log("crossrealm", _CROSSREALM);
 
 export default [{
   input: [
@@ -44,7 +44,7 @@ export default [{
       }
     }),
     jscc({
-      values: {_CROSSFRAME},
+      values: {_CROSSREALM},
     }),
     babel({
       exclude: 'node_modules/**',
