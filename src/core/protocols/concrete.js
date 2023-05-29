@@ -4,7 +4,7 @@ export * from "./iassociative/concrete.js";
 export * from "./iblankable/concrete.js";
 export * from "./ibounded/concrete.js";
 export * from "./iflatmappable/concrete.js";
-export * from "./iclonable/concrete.js";
+export * from "./icloneable/concrete.js";
 export * from "./icoercible/concrete.js";
 export * from "./icollection/concrete.js";
 export * from "./icompactible/concrete.js";

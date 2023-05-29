@@ -56,7 +56,7 @@ export default _.does(
   _.forward("obj", _.IMap, _.IFind, _.IInclusive, _.ILookup, _.ISeq, _.INext, _.IAssociative, _.ISeqable, _.ICounted, _.IReducible, _.IKVReducible, _.ICoercible),
   _.implement(_.IComparable, {compare}),
   _.implement(_.IFn, {invoke: _.get}),
-  _.implement(_.IClonable, {clone}),
+  _.implement(_.ICloneable, {clone}),
   _.implement(_.IEquiv, {equiv}),
   _.implement(IPersistent, {persistent}),
   _.implement(ITransientCollection, {conj}),

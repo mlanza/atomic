@@ -4,4 +4,4 @@ function clone(self){
   return Object.assign(Object.create(self.constructor.prototype), self);
 }
 
-export const IClonable = protocol({clone});
+export const ICloneable = protocol({clone});

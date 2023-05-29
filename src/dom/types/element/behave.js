@@ -370,7 +370,7 @@ export default _.does(
   _.implement(_.IInclusive, {includes}),
   _.implement(IHideable, {show, hide, toggle}),
   _.implement(mut.ITransientOmissible, {omit}),
-  _.implement(_.IClonable, {clone}),
+  _.implement(_.ICloneable, {clone}),
   _.implement(mut.ITransientAppendable, {append}),
   _.implement(mut.ITransientPrependable, {prepend}),
   _.implement(mut.ITransientCollection, {conj}),

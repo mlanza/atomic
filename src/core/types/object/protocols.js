@@ -6,7 +6,7 @@ export * from "../../protocols/ilookup/concrete.js";
 export * from "../../protocols/imap/concrete.js";
 export * from "../../protocols/imapentry/concrete.js";
 export * from "../../protocols/iassociative/concrete.js";
-export * from "../../protocols/iclonable/concrete.js";
+export * from "../../protocols/icloneable/concrete.js";
 export * from "../../protocols/icounted/concrete.js";
 export * from "../../protocols/inext/concrete.js";
 export * from "../../protocols/iseq/concrete.js";

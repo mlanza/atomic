@@ -72,7 +72,7 @@ export default _.does(
   _.implement(_.ISeq, {first, rest}),
   _.implement(_.ISeqable, {seq}),
   _.implement(_.IMap, {keys, vals, dissoc}),
-  _.implement(_.IClonable, {clone: _.identity}),
+  _.implement(_.ICloneable, {clone: _.identity}),
   _.implement(_.ICounted, {count}),
   _.implement(_.ILookup, {lookup}),
   _.implement(_.ICollection, {conj}),

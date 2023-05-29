@@ -1,4 +1,4 @@
-import {IHashable, IMergable, IBlankable, ICompactible, IMap, IAssociative, IInclusive, IOtherwise, ICoercible, IEquiv, ICollection, INext, ISeq, ISeqable, IIndexed, ICounted, ILookup, IReducible, IKVReducible, IEmptyableCollection, IClonable} from "../../protocols.js";
+import {IHashable, IMergable, IBlankable, ICompactible, IMap, IAssociative, IInclusive, IOtherwise, ICoercible, IEquiv, ICollection, INext, ISeq, ISeqable, IIndexed, ICounted, ILookup, IReducible, IKVReducible, IEmptyableCollection, ICloneable} from "../../protocols.js";
 import {emptyList} from "../empty-list/construct.js";
 import {cons} from "../list/construct.js";
 import {identity, constantly, does, overload, noop} from "../../core.js";
@@ -41,7 +41,7 @@ function hash(self){
 export default does(
   keying("Nil"),
   implement(IHashable, {hash}),
-  implement(IClonable, {clone: identity}),
+  implement(ICloneable, {clone: identity}),
   implement(ICompactible, {compact: identity}),
   implement(ICollection, {conj}),
   implement(IBlankable, {blank: constantly(true)}),
