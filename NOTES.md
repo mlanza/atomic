@@ -22,7 +22,7 @@
 * The api documentation should offer practical examples showcasing the usefulness of a function.  I found that some popular libraries seem to include arbitrary examples that were of no help.
 * Prefer JavaScripts native arrays and objects to their weightier counterparts (e.g. `Immutable Vector` and `Immutable Map`) as this also avoids importing an additional dependency.
 * Prefer the public api, which may be overloaded, (e.g. `_.reduce`) to the direct use of a protocol (e.g. `IReduce.reduce`) or at least understand their differences.
-* Use `IClonable.clone` in preparation for a mutation when the need arises.
+* Use `ICloneable.clone` in preparation for a mutation when the need arises.
 * Both protocols and multimethods are just implementation details over programming interfaces.  This leaves room to change the details for performance reasons or otherwise without impacting consumers.  When possible prefer protocols to multimethods.  Furthermore, if the type provided to the second arg affects the result, either branch internally or use an exposed multimethod internally.
 * Clojure offers persistent and transient objects and different protocols to effect the same operation (e.g. `assoc` v. `assoc!`).  As bang, however, is not valid in method names the distinction falls to the namespace (e.g. `_.assoc` v. `mut.assoc`).
 * In observance of command-query separation, and contrary to what Clojure does, commands return void.  As an exception a command may return a (potentially promised) status signaling its outcome.

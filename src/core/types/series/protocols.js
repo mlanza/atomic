@@ -7,4 +7,4 @@ export * from "../../protocols/ireducible/concrete.js";
 export * from "../../protocols/icoercible/concrete.js";
 export * from "../../protocols/iseqable/concrete.js";
 export * from "../../protocols/iseq/concrete.js";
-export * from "../../protocols/iclonable/concrete.js";
+export * from "../../protocols/icloneable/concrete.js";

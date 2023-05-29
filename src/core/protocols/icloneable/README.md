@@ -1,4 +1,4 @@
-# Clonable
+# Cloneable
 
 Makes a copy of an object, usually for immediate modification.
 

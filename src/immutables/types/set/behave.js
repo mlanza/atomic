@@ -75,7 +75,7 @@ export default _.does(
   _.implement(_.ISeqable, {seq}),
   _.implement(_.IInclusive, {includes}),
   _.implement(_.ISet, {disj, unite: conj}),
-  _.implement(_.IClonable, {clone: _.identity}),
+  _.implement(_.ICloneable, {clone: _.identity}),
   _.implement(_.IEmptyableCollection, {empty: emptySet}),
   _.implement(_.ICollection, {conj}),
   _.implement(_.ICounted, {count}),

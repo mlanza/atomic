@@ -4,7 +4,7 @@ import {EmptyList, emptyList} from "../../types/empty-list/construct.js";
 import {cons} from "../../types/list/construct.js";
 import {range} from "../../types/range/construct.js";
 import {isReduced, unreduced} from "../../types/reduced.js";
-import {ISequential, ICoercible, ILookup, IMap, IClonable, IReducible, ICollection, IEmptyableCollection, INext, ISeq, ICounted, ISeqable, IIndexed} from "../../protocols.js";
+import {ISequential, ICoercible, ILookup, IMap, ICloneable, IReducible, ICollection, IEmptyableCollection, INext, ISeq, ICounted, ISeqable, IIndexed} from "../../protocols.js";
 import {revSeq} from "./construct.js";
 import {iterable} from "../lazy-seq/behave.js";
 import {map} from "../lazy-seq/concrete.js";
@@ -81,4 +81,4 @@ export default does(
   implement(ISeq, {first, rest}),
   implement(INext, {next}),
   implement(ISeqable, {seq: identity}),
-  implement(IClonable, {clone}));
+  implement(ICloneable, {clone}));

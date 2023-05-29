@@ -3,7 +3,7 @@ export * from "./protocols/iappendable/instance.js";
 export * from "./protocols/iassociative/instance.js";
 export * from "./protocols/iblankable/instance.js";
 export * from "./protocols/ibounded/instance.js";
-export * from "./protocols/iclonable/instance.js";
+export * from "./protocols/icloneable/instance.js";
 export * from "./protocols/icoercible/instance.js";
 export * from "./protocols/icollection/instance.js";
 export * from "./protocols/icompactible/instance.js";

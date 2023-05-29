@@ -1,5 +1,5 @@
 import {foldkv, overload, partial, unary, type, curry, tee, toggles, identity, obj, partly, comp, doto, does, branch, unspread, applying, execute, noop, constantly, once, isFunction, isString} from "./core.js";
-import {ICoercible, IForkable, ILogger, IDeref, IFn, IAssociative, IClonable, IHierarchy, ILookup, ISeq} from "./protocols.js";
+import {ICoercible, IForkable, ILogger, IDeref, IFn, IAssociative, ICloneable, IHierarchy, ILookup, ISeq} from "./protocols.js";
 import {maybe, opt, satisfies, spread, each, duration, remove, sort, flip, realized, apply, realize, isNil, reFindAll, mapkv, period, selectKeys, mapVals, reMatches, test, date, emptyList, cons, days, recurrence, emptyArray} from "./types.js";
 import {isBlank, str, replace} from "./types/string.js";
 import {isSome} from "./types/nil.js";
@@ -327,7 +327,7 @@ export function writable(keys){
     return tgt;
   }
   return does(
-    implement(IClonable, {clone}),
+    implement(ICloneable, {clone}),
     implement(IAssociative, {assoc, contains}));
 }
 
