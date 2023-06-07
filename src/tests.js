@@ -33,8 +33,7 @@ QUnit.test("inheritance chain", function(assert){
   assert.equal(_.name(greg), "Gregory");
 });
 
-QUnit.test("keyed types", function(assert){
-  assert.ok(_.satisfies(_.IMapEntry, Array)); //e.g. from `keying`
+QUnit.test("type checks", function(assert){
   assert.ok(_.isArray([]));
   assert.ok(_.isObject({}));
 });

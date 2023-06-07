@@ -8,16 +8,18 @@ export const val = IMapEntry.val;
 
 /*#if _CROSSREALM
 
+const kind = Symbol("kind");
+
 function uid() {
   const head = (Math.random() * 46656) | 0,
         tail = (Math.random() * 46656) | 0;
   return ("000" + head.toString(36)).slice(-3) + ("000" + tail.toString(36)).slice(-3);
 }
 
-const is1 = comp(key, type);
+const is1 = type;
 
 function is2(self, type){
-  return is1(self) === key(type) && self !== type;
+  return is1(self)[kind] === type[kind] && self !== type;
 }
 
 export const is = overload(null, is1, is2);
@@ -28,18 +30,14 @@ export function ako(self, type){
 }
 
 function keyed(label){
-  const id = uid();
-  const key = `${label}-${id}`;
+  const id = `${label}-${uid()}`;
   return function(Type){
-    return specify(IMapEntry, {
-      key: constantly(key),
-      val: constantly(Type)
-    }, Type);
+    Type[kind] = id;
   }
 }
 
 export function keying(label){
-  if (label && !isString(label)) {
+  if (!isString(label)) {
     throw new Error("Label must be a string");
   }
   return does(keyed(label), hashTag(), label ? function(Type){
@@ -57,18 +55,11 @@ export function ako(self, constructor){
   return self instanceof constructor;
 }
 
-function unkeyed(Type){
-  return specify(IMapEntry, {
-    key: constantly(Type),
-    val: constantly(Type)
-  }, Type);
-}
-
 export function keying(label){
-  if (label && !isString(label)) {
+  if (!isString(label)) {
     throw new Error("Label must be a string");
   }
-  return does(unkeyed, hashTag(), label ? function(Type){
+  return does(hashTag(), label ? function(Type){
     Type[Symbol.toStringTag] = label;
   } : noop);
 }
