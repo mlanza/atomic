@@ -21,3 +21,6 @@ It's not necessarily a wrong choice to make system constructs persistent.  Frequ
 In some instances there is no reasonable persistent counterpart—the dom, for example.  The dom is stateful.  When one recognizes the need to operate against natives there is no eliminating impure functions.  The transient operations must exist because stateful objects exist!
 
 And the only way to eliminate the need for impure functions is to ignore stateful objects.  Another way would be to implement a virtual dom which is itself persistent and then a diff algorithm which contains all the necessary logic for applying updates against the dom.  This would contain all effects to the patching algorithm.  The same strategy could be applied against any kind of stateful objects.
+
+## Naming
+Clojure appends an exclamation to a function name to call out mutable operations; however, JavaScript does not permit this.  Thus, rather than `_.assoc` v. `_.assoc!`, it's `_.assoc` v. `mut.assoc`.
