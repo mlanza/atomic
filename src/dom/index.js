@@ -170,18 +170,20 @@ export const markup = _.obj(function(name, ...contents){
 }, Infinity);
 
 function tags0(){
-  return tags1(element(document));
+  return _.factory(element(document));
 }
 
-const tags1 = _.factory;
+function tags1(keys){
+  return tags2(element(document), keys);
+}
 
 function tags2(engine, keys){
   return tags3(engine, _.identity, keys);
 }
 
 function tags3(engine, f, keys){
-  const tag = tags1(engine);
-  return _.reduce(function(memo, key){
+  const tag = _.factory(engine);
+  return _.fold(function(memo, key){
     memo[key] = f(tag(key));
     return memo;
   }, {}, keys);
