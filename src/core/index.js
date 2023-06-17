@@ -199,9 +199,25 @@ export function fromQueryString(url){
   return params;
 }
 
-export function unique(xs){
+function distinct0(){ //transducer
+  return function(rf){
+    const seen = new Set();
+    return overload(rf, rf, function(memo, value){
+      if (seen.has(value)) {
+        return memo;
+      }
+      seen.add(value);
+      return rf(memo, value);
+    });
+  }
+}
+
+function distinct1(xs){
   return p.coerce(new Set(p.coerce(xs, Array)), Array);
 }
+
+export const distinct = overload(distinct0, distinct1);
+export const unique = distinct;
 
 export const second = branch(satisfies(ISeq, ?), comp(ISeq.first, ISeq.rest), p.prop("second"));
 

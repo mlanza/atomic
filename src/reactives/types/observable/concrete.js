@@ -1,5 +1,5 @@
 import * as _ from "atomic/core";
-import * as t from "atomic/transducers";
+import * as t from "../../transducers.js";
 import {ISubscribe} from "../../protocols.js";
 import {pub, err, complete, closed, sub, chan} from "../../protocols/concrete.js";
 import {Observable, observable} from "./construct.js";
@@ -91,7 +91,7 @@ function seed1(source){
 export const seed = _.overload(null, seed1, seed2);
 
 function computed(f, source){
-  return seed(f, pipe(source, t.map(f)));
+  return seed(f, pipe(source, _.map(f)));
 }
 
 function interact(key, f, el){
@@ -150,8 +150,8 @@ function toggles(el, on, off, init){
   return seed(
     init,
     _.merge(
-        pipe(chan(el, on), t.constantly(true)),
-        pipe(chan(el, off), t.constantly(false))));
+        pipe(chan(el, on), _.map(_.constantly(true))),
+        pipe(chan(el, off), _.map(_.constantly(false)))));
 }
 
 function fixed(value){
@@ -185,7 +185,7 @@ function when2(interval, f){
 const when = _.overload(null, when2(?, time), when2);
 
 function map2(f, source){
-  return pipe(source, t.map(f), t.dedupe());
+  return pipe(source, _.map(f), _.dedupe());
 }
 
 function mapN(f, ...sources){

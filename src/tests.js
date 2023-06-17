@@ -4,7 +4,6 @@ import dom from "atomic_/dom";
 import $ from "atomic_/reactives";
 //import sh from "atomic_/shell";
 import vd from "atomic_/validates";
-import t from "atomic_/transducers";
 import mut from "atomic_/transients";
 
 const stooges = ["Larry","Curly","Moe"],
@@ -153,6 +152,11 @@ QUnit.test("validation", function(assert){
   //TODO add `when` to validate conditiontionally or allow condition to be checked before registering the validation?
 });
 
+QUnit.test("best", function(assert){
+  assert.ok(_.best(_.lt, stooges) === "Curly");
+  assert.ok(_.best(_.mapArgs(_.count, _.lt), stooges) === "Moe");
+});
+
 QUnit.test("embeddables", function(assert){
   function names(context){
     return _.mapa(dom.text, dom.sel("li", context));
@@ -258,6 +262,8 @@ QUnit.test("lazy-seq", function(assert){
   assert.deepEqual(_.toArray(blank), []);
 });
 
+
+
 QUnit.test("transducers", function(assert){
   var useFeat = location.href.indexOf("feature=next") > -1;
   function compare(source, xf, expect, desc){
@@ -270,15 +276,14 @@ QUnit.test("transducers", function(assert){
     assert.deepEqual(b, expect, "observe " + desc);
   }
   var special = [8, 6, 7, 5, 3, 0, 9];
-  useFeat && compare(special, t.first(), [8], "first");
-  useFeat && compare(special, t.last(), [9], "last");
-  useFeat && compare(special, t.last(2), [0, 9], "last 2");
-  compare(special, t.map(_.inc), [9, 7, 8, 6, 4, 1, 10], "increased");
-  compare(special, t.filter(_.isOdd), [7, 5, 3, 9], "odd only");
-  compare(special, _.comp(t.filter(_.isOdd), t.map(_.inc)), [8, 6, 4, 10], "odd increased");
-  assert.deepEqual([1, 2, 3] |> _.cycle |> _.into([], _.comp(t.take(4), t.map(_.inc)), ?), [2, 3, 4, 2]);
-  assert.deepEqual([1, 3, 2, 2, 3] |> _.into([], t.dedupe(), ?), [1, 3, 2, 3]);
-  assert.deepEqual([1, 3, 2, 2, 3] |> _.into([], t.filter(_.isEven), ?), [2, 2]);
+  useFeat && compare(special, _.first(), [8], "first");
+  useFeat && compare(special, _.last(), [9], "last");
+  compare(special, _.map(_.inc), [9, 7, 8, 6, 4, 1, 10], "increased");
+  compare(special, _.filter(_.isOdd), [7, 5, 3, 9], "odd only");
+  compare(special, _.comp(_.filter(_.isOdd), _.map(_.inc)), [8, 6, 4, 10], "odd increased");
+  assert.deepEqual([1, 2, 3] |> _.cycle |> _.into([], _.comp(_.take(4), _.map(_.inc)), ?), [2, 3, 4, 2]);
+  assert.deepEqual([1, 3, 2, 2, 3] |> _.into([], _.dedupe(), ?), [1, 3, 2, 3]);
+  assert.deepEqual([1, 3, 2, 2, 3] |> _.into([], _.filter(_.isEven), ?), [2, 2]);
 });
 
 QUnit.test("iinclusive", function(assert){
@@ -525,7 +530,7 @@ QUnit.test("observable sharing", function(assert){
         $cc = $.cell([]),
         $cs = $.cell([]),
         $cf = $.cell([]);
-  const bump = t.map(_.inc);
+  const bump = _.map(_.inc);
   $.sub($.pipe($triple, bump), $.collect($cc));
   $.sub($triple, bump, $.collect($cs));
   $.sub($ca, $.collect($cf));
@@ -551,7 +556,7 @@ QUnit.test("cell", function(assert){
   tally.click();
   const source = $.cell(0);
   const dest = $.cell();
-  const sink   = $.pipe(source, t.map(_.inc), t.tee($.pub(dest, ?)));
+  const sink   = $.pipe(source, _.map(_.inc), _.map(_.tee($.pub(dest, ?))));
   $.connect(sink, $.subject());
   const msink  = _.fmap(source, _.inc);
   const msinkc = $.cell();

@@ -1,5 +1,5 @@
 export async function cmds(){
-  const [_, dom, $, imm, sh, html, svg, vd, t, mut] = await Promise.all([
+  const [_, dom, $, imm, sh, html, svg, vd, mut] = await Promise.all([
     import('./atomic_/core.js'),
     import('./atomic_/dom.js'),
     import('./atomic_/reactives.js'),
@@ -8,7 +8,6 @@ export async function cmds(){
     import('./atomic_/html.js'),
     import('./atomic_/svg.js'),
     import('./atomic_/validates.js'),
-    import('./atomic_/transducers.js'),
     import('./atomic_/transients.js')
   ]);
   return {
@@ -20,7 +19,6 @@ export async function cmds(){
     html: html.default,
     svg: svg.default,
     vd: vd.default,
-    t: t.default,
     mut: mut.default
   };
 }

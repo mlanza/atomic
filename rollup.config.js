@@ -14,7 +14,6 @@ export default [{
     'src/immutables.js',
     'src/shell.js',
     'src/reactives.js',
-    'src/transducers.js',
     'src/transients.js',
     'src/validates.js',
     'src/html.js',
@@ -38,7 +37,6 @@ export default [{
         "atomic/reactives": "./reactives.js",
         "atomic/shell": "./shell.js",
         "atomic/svg": "./svg.js",
-        "atomic/transducers": "./transducers.js",
         "atomic/transients": "./transients.js",
         "atomic/validates": "./validates.js"
       }
@@ -70,7 +68,6 @@ export default [{
         "atomic_/reactives": "./lib/atomic_/reactives.js",
         "atomic_/shell": "./lib/atomic_/shell.js",
         "atomic_/svg": "./lib/atomic_/svg.js",
-        "atomic_/transducers": "./lib/atomic_/transducers.js",
         "atomic_/transients": "./lib/atomic_/transients.js",
         "atomic_/validates": "./lib/atomic_/validates.js"
       }
