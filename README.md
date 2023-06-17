@@ -66,8 +66,6 @@ The holy trinity of modules is `core`, `reactives`, and `dom`.  The others are s
 
 Although Clojure's `transients` were implemented so all the familiar functions can be used against mutables too, in practice, this module wasn't used as anticipated when it came to native objects and arrays.  Rather one ceased using the library and fell back on treating objects and arrays, privately, as mutables.  The use of this module was, thus, primarily relegated to always-mutable types, like DOM elements, for which this library has no immutable counterpart.
 
-The `immutables` module wraps [Immutable.js](https://immutable-js.com) types.  This was grafted in to provide true persistents, however, in practice, it was rarely used.  First, there was the cost of having to marshal this library as a dependency over the network.  Second, using native objects and arrays instead of true persistents (maps and vectors) peforms adequately.
-
 Typical module assignments follow:
 * `_` → `core` (it also doubles as a partial application placeholder)
 * `$` → `reactives`

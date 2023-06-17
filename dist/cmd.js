@@ -3,7 +3,6 @@ export async function cmds(){
     import('./atomic_/core.js'),
     import('./atomic_/dom.js'),
     import('./atomic_/reactives.js'),
-    import('./atomic_/immutables.js'),
     import('./atomic_/shell.js'),
     import('./atomic_/html.js'),
     import('./atomic_/svg.js'),
