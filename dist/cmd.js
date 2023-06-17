@@ -1,10 +1,9 @@
 export async function cmds(){
-  const [_, dom, $, imm, sh, html, svg, vd, mut] = await Promise.all([
+  const [_, dom, $, sh, svg, vd, mut] = await Promise.all([
     import('./atomic_/core.js'),
     import('./atomic_/dom.js'),
     import('./atomic_/reactives.js'),
     import('./atomic_/shell.js'),
-    import('./atomic_/html.js'),
     import('./atomic_/svg.js'),
     import('./atomic_/validates.js'),
     import('./atomic_/transients.js')
@@ -13,9 +12,7 @@ export async function cmds(){
     _: _.default,
     dom: dom.default,
     $: $.default,
-    imm: imm.default,
     sh: sh.default,
-    html: html.default,
     svg: svg.default,
     vd: vd.default,
     mut: mut.default

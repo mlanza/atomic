@@ -15,7 +15,6 @@ export default [{
     'src/reactives.js',
     'src/transients.js',
     'src/validates.js',
-    'src/html.js',
     'src/svg.js'
   ],
   output: {
@@ -31,7 +30,6 @@ export default [{
         "immutable": "../immutable.js",
         "atomic/core": "./core.js",
         "atomic/dom": "./dom.js",
-        "atomic/html": "./html.js",
         "atomic/reactives": "./reactives.js",
         "atomic/shell": "./shell.js",
         "atomic/svg": "./svg.js",
@@ -61,7 +59,6 @@ export default [{
       "imports": {
         "atomic_/core": "./lib/atomic_/core.js",
         "atomic_/dom": "./lib/atomic_/dom.js",
-        "atomic_/html": "./lib/atomic_/html.js",
         "atomic_/reactives": "./lib/atomic_/reactives.js",
         "atomic_/shell": "./lib/atomic_/shell.js",
         "atomic_/svg": "./lib/atomic_/svg.js",
