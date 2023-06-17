@@ -1,6 +1,6 @@
 import * as _ from "atomic/core";
 import * as p from "./protocols/concrete.js";
-import * as t from "atomic/transducers";
+import * as t from "./transducers.js";
 import {IPublish, ISubscribe} from "./protocols.js";
 import {reducible} from "./shared.js";
 import {Cell, cell} from "./types/cell/construct.js";
@@ -34,7 +34,6 @@ function connectN(source){
 ISubscribe.transducing = connect3;
 
 export const connect = _.overload(null, null, connect2, connect3, connectN); //returns `unsub` fn
-
 export const map = shared(cell, Observable.map);
 export const then = shared(cell, Observable.resolve, Observable.map);
 export const interact = shared(cell, Observable.interact);
@@ -61,7 +60,7 @@ function fromPromise2(promise, init){
 export const fromPromise = _.overload(null, fromPromise2(?, null), fromPromise2);
 
 //enforce sequential nature of operations
-function isolate(f){ //TODO treat operations as promises
+function isolate1(f){ //TODO treat operations as promises
   const queue = [];
   return function(){
     const ready = queue.length === 0;
@@ -80,8 +79,10 @@ function isolate(f){ //TODO treat operations as promises
   }
 }
 
+export const isolate = _.overload(t.isolate, isolate1);
+
 function render3(el, obs, f){
-  return p.sub(obs, t.isolate(), function(state){
+  return p.sub(obs, isolate0(), function(state){
     f(el, state);
     p.trigger(el, "mutate", {bubbles: true}); //TODO rename
   });

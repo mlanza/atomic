@@ -9,7 +9,6 @@ Highlights:
 * [core](src/core) (much of the Clojure standard lib)
 * [protocols](src/core/protocols) at the foundation
 * [reactives](src/reactives) (FRP)
-* [transducers](src/transducers)
 
 Atomic provides a robust core for web development sufficient for standard use cases with no additional libraries.
 
@@ -63,7 +62,7 @@ The atom equivalent and the type which houses an app's big bang [world state](ht
 
 Like [xstream](https://staltz.com/why-we-built-xstream.html) it doesn't rely on many operators.  And implementation experience has seen how hot observables are usually easier to handle correctly than cold ones.  These notions have, thus, been baked into the defaults.
 
-The holy trinity of modules is `core`, `reactives`, `dom` and, if a forth, `transducers`.  The others are situationally used.  And because protocols have proven more than sufficient, multimethods were rarely needed.
+The holy trinity of modules is `core`, `reactives`, and `dom`.  The others are situational.  And because protocols have proven more than sufficient, multimethods were rarely needed.
 
 Although Clojure's `transients` were implemented so all the familiar functions can be used against mutables too, in practice, this module wasn't used as anticipated when it came to native objects and arrays.  Rather one ceased using the library and fell back on treating objects and arrays, privately, as mutables.  The use of this module was, thus, primarily relegated to always-mutable types, like DOM elements, for which this library has no immutable counterpart.
 
@@ -73,7 +72,6 @@ Typical module assignments follow:
 * `_` → `core` (it also doubles as a partial application placeholder)
 * `$` → `reactives`
 * `dom` → `dom`
-* `t` → `transducers`
 * `mut` → `transients`
 
 These assignments can be readily imported by entering [`cmd()`](./dist/cmd.js) from a browser console where Atomic is loaded.  This facilitates interactive development.

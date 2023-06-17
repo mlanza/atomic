@@ -45,12 +45,22 @@ export const hover = $.shared($.cell, function(el){
   return $.toggles(el, "mouseenter", "mouseleave", _.constantly(false));
 });
 
+function scan(step, init){ //transducer
+  return function(rf){
+    let acc = init;
+    return _.overload(rf, rf, function(memo, value){
+      acc = step(acc, value)
+      return rf(memo, acc);
+    });
+  }
+}
+
 export const depressed = $.shared($.cell, function(el){
   return $.seed(
     _.constantly([]),
     $.pipe(
       $.chan(el, "keydown keyup"),
-        t.scan(function(memo, e){
+        scan(function(memo, e){
           if (e.type === "keyup") {
             memo = _.filtera(_.notEq(e.key, ?), memo);
           } else if (!_.includes(memo, e.key)) {
@@ -58,7 +68,7 @@ export const depressed = $.shared($.cell, function(el){
           }
           return memo;
         }, []),
-        t.dedupe()));
+        _.dedupe()));
 });
 
 function attr2(self, key){

@@ -18,11 +18,19 @@ import {satisfies} from "../protocol/concrete.js";
 import * as p from "./protocols.js";
 
 export function concatenated(xs){
-  const colls = filter(p.seq, xs);
+  const colls = filter2(p.seq, xs);
   return p.seq(colls) ? new Concatenated(colls) : emptyList();
 }
 
 export const concat = overload(emptyList, p.seq, unspread(concatenated));
+
+function map1(f){ //transducer
+  return function(rf){
+    return overload(rf, rf, function(memo, value){
+      return rf(memo, f(value));
+    });
+  }
+}
 
 function map2(f, xs){
   return p.seq(xs) ? lazySeq(function(){
@@ -48,18 +56,18 @@ function map4(f, c1, c2, c3){
 }
 
 function mapN(f, ...tail){
-  const seqs = map(p.seq, tail);
+  const seqs = map2(p.seq, tail);
   return notAny(isNil, seqs) ? lazySeq(function(){
     return cons(apply(f, mapa(p.first, seqs)), apply(mapN, f, mapa(p.rest, seqs)));
   }) : emptyList();
 }
 
-export const map  = overload(null, null, map2, map3, mapN);
+export const map  = overload(null, map1, map2, map3, mapN);
 export const mapa = comp(toArray, map);
 
 export function mapArgs(xf, f){
-  return function(){
-    return apply(f, mapa(maybe(?, xf), slice(arguments)));
+  return function(...args){
+    return apply(f, args.map(maybe(?, xf)));
   }
 }
 
@@ -168,13 +176,13 @@ function entries1(xs){
 export const entries = overload(null, entries1, entries2);
 
 export function mapkv(f, xs){
-  return map(function([key, value]){
+  return map2(function([key, value]){
     return f(key, value);
   }, entries(xs));
 }
 
-export function mapvk(f, xs){
-  return map(function([key, value]){
+export function mapvk(f, xs){ //TODO necessary, given `mapkv`?
+  return map2(function([key, value]){
     return f(value, key);
   }, entries(xs));
 }
@@ -215,17 +223,41 @@ export function every(pred, coll){
 
 export const notEvery = comp(not, every);
 
-export function mapSome(f, pred, coll){
-  return map(function(value){
+function mapSome2(f, pred){
+  return function(rf){
+    return overload(rf, rf, function(memo, value){
+      return rf(memo, pred(value) ? f(value) : value);
+    });
+  }
+}
+
+function mapSome3(f, pred, coll){
+  return map2(function(value){
     return pred(value) ? f(value) : value;
   }, coll);
 }
 
-export function mapcat(f, colls){
-  return concatenated(map(f, colls));
+export const mapSome = overload(null, null, mapSome2, mapSome3);
+
+function mapcat1(f){ //transducer
+  return comp(map1(f), p.cat());
 }
 
-export function filter(pred, xs){
+function mapcat2(f, colls){
+  return concatenated(map2(f, colls));
+}
+
+export const mapcat = overload(null, mapcat1, mapcat2);
+
+function filter1(pred){ //transducer
+  return function(rf){
+    return overload(rf, rf, function(memo, value){
+      return pred(value) ? rf(memo, value) : memo;
+    });
+  }
+}
+
+function filter2(pred, xs){
   return p.seq(xs) ? lazySeq(function(){
     let ys = xs;
     while (p.seq(ys)) {
@@ -233,7 +265,7 @@ export function filter(pred, xs){
             tail = p.rest(ys);
       if (pred(head)) {
         return cons(head, lazySeq(function(){
-          return filter(pred, tail);
+          return filter2(pred, tail);
         }));
       }
       ys = tail;
@@ -242,10 +274,22 @@ export function filter(pred, xs){
   }) : emptyList();
 }
 
-export const detect = comp(p.first, filter);
+export const filter = overload(null, filter1, filter2);
+
+function detect1(pred){ //transducer
+  return function(rf){
+    return overload(rf, rf, function(memo, value){
+      return pred(value) ? reduced(rf(memo, value)) : memo;
+    });
+  }
+}
+
+const detect2 = comp(p.first, filter2);
+
+export const detect = overload(null, detect1, detect2);
 
 export function detectIndex(pred, xs){
-  const found = detect(function([idx, x]){
+  const found = detect2(function([idx, x]){
     return pred(x);
   }, mapIndexed(function(idx, x){
     return [idx, x];
@@ -261,30 +305,49 @@ export function cycle(coll){
 
 export function treeSeq(branch, children, root){
   function walk(node){
-    return cons(node, branch(node) ? mapcat(walk, children(node)) : emptyList());
+    return cons(node, branch(node) ? mapcat2(walk, children(node)) : emptyList());
   }
   return walk(root);
 }
 
 export function flatten(coll){
-  return filter(complement(satisfies(ISequential)), p.rest(treeSeq(satisfies(ISequential), p.seq, coll)));
+  return filter2(complement(satisfies(ISequential)), p.rest(treeSeq(satisfies(ISequential), p.seq, coll)));
 }
 
 export function zip(...colls){
-  return mapcat(identity, map(p.seq, ...colls));
+  return mapcat2(identity, map2(p.seq, ...colls));
 }
 
 export const filtera = comp(toArray, filter);
 
-export function remove(pred, xs){
-  return filter(complement(pred), xs);
+const remove1 = comp(filter1, complement); //transducer
+
+function remove2(pred, xs){
+  return filter2(complement(pred), xs);
 }
 
-export function keep(f, xs){
-  return filter(isSome, map(f, xs));
+export const remove = overload(null, remove1, remove2);
+
+function keep1(f){ //transducer
+  return comp(map1(f), filter1(isSome));
 }
 
-export function drop(n, coll){
+function keep2(f, xs){
+  return filter2(isSome, map2(f, xs));
+}
+
+export const keep = overload(null, keep1, keep2);
+
+function drop1(n){ //transducer
+  return function(rf){
+    let dropping = n;
+    return overload(rf, rf, function(memo, value){
+      return dropping-- > 0 ? memo : rf(memo, value);
+    });
+  }
+}
+
+function drop2(n, coll){
   let i = n,
       xs = p.seq(coll)
   while (i > 0 && xs) {
@@ -294,24 +357,66 @@ export function drop(n, coll){
   return xs;
 }
 
-export function dropWhile(pred, xs){
+export const drop = overload(null, drop1, drop2);
+
+function dropWhile1(pred){ //transducer
+  return function(rf){
+    let dropping = true;
+    return overload(rf, rf, function(memo, value){
+      !dropping || (dropping = pred(value));
+      return dropping ? memo : rf(memo, value);
+    });
+  }
+}
+
+function dropWhile2(pred, xs){
   return p.seq(xs) ? pred(p.first(xs)) ? dropWhile(pred, p.rest(xs)) : xs : emptyList();
 }
 
+export const dropWhile = overload(null, dropWhile1, dropWhile2);
+
 export function dropLast(n, coll){
-  return map(function(x, _){
+  return map3(function(x, _){
     return x;
   }, coll, drop(n, coll));
 }
 
-export function take(n, coll){
+function take1(n){ //transducer
+  return function(rf){
+    let taking = n < 0 ? 0 : n;
+    return overload(rf, rf, function(memo, value){
+      switch(taking){
+        case 0:
+          return reduced(memo)
+        case 1:
+          taking--;
+          return reduced(rf(memo, value));
+        default:
+          taking--;
+          return rf(memo, value);
+      }
+    });
+  }
+}
+
+function take2(n, coll){
   const xs = p.seq(coll);
   return n > 0 && xs ? lazySeq(function(){
-    return cons(p.first(xs), take(n - 1, p.rest(xs)));
+    return cons(p.first(xs), take2(n - 1, p.rest(xs)));
   }) : emptyList();
 }
 
-export function takeWhile(pred, xs){
+export const take = overload(null, take1, take2);
+
+function takeWhile1(pred){ //transducer
+  return function(rf){
+    return overload(rf, rf, function(memo, value){
+      return pred(value) ? rf(memo, value) : reduced(memo);
+    });
+  }
+}
+
+function takeWhile2(pred, xs){
   return p.seq(xs) ? lazySeq(function(){
     const item = p.first(xs);
     return pred(item) ? cons(item, lazySeq(function(){
@@ -320,11 +425,25 @@ export function takeWhile(pred, xs){
   }) : emptyList();
 }
 
-export function takeNth(n, xs){
+export const takeWhile = overload(null, takeWhile1, takeWhile2);
+
+function takeNth1(n){ //transducer
+  return function(rf){
+    let x = -1;
+    return overload(rf, rf, function(memo, value){
+      x++;
+      return x === 0 || x % n === 0 ? rf(memo, value) : memo;
+    });
+  }
+}
+
+function takeNth2(n, xs){
   return p.seq(xs) ? lazySeq(function(){
     return cons(p.first(xs), takeNth(n, drop(n, xs)));
   }) : emptyList();
 }
+
+export const takeNth = overload(null, takeNth1, takeNth2);
 
 export function takeLast(n, coll){
   return n ? drop(p.count(coll) - n, coll) : emptyList();
@@ -343,16 +462,26 @@ function interleaveN(...colls){
 }
 
 export function interleaved(colls){
-  return p.seq(filter(isNil, colls)) ? emptyList() : lazySeq(function(){
-    return cons(map(p.first, colls), interleaved(map(p.next, colls)));
+  return p.seq(filter2(isNil, colls)) ? emptyList() : lazySeq(function(){
+    return cons(map2(p.first, colls), interleaved(map2(p.next, colls)));
   });
 }
 
 export const interleave = overload(null, null, interleave2, interleaveN);
 
-export function interpose(sep, xs){
-  return drop(1, interleave2(repeat1(sep), xs));
+function interpose1(sep){
+  return function(rf){
+    return overload(rf, rf, function(memo, value){
+      return rf(p.seq(memo) ? rf(memo, sep) : memo, value);
+    });
+  }
 }
+
+function interpose2(sep, xs){
+  return drop2(1, interleave2(repeat1(sep), xs));
+}
+
+export const interpose = overload(null, interpose1, interpose2);
 
 function partition2(n, xs){
   return partition3(n, n, xs);
@@ -361,15 +490,15 @@ function partition2(n, xs){
 function partition3(n, step, xs){
   const coll = p.seq(xs);
   if (!coll) return xs;
-  const part = take(n, coll);
+  const part = take2(n, coll);
   return n === p.count(part) ? cons(part, partition3(n, step, drop(step, coll))) : emptyList();
 }
 
 function partition4(n, step, pad, xs){
   const coll = p.seq(xs);
   if (!coll) return xs;
-  const part = take(n, coll);
-  return n === p.count(part) ? cons(part, partition4(n, step, pad, drop(step, coll))) : cons(take(n, concat(part, pad)));
+  const part = take2(n, coll);
+  return n === p.count(part) ? cons(part, partition4(n, step, pad, drop(step, coll))) : cons(take2(n, concat(part, pad)));
 }
 
 export const partition = overload(null, null, partition2, partition3, partition4);
@@ -385,7 +514,7 @@ export function partitionAll2(n, xs){
 export function partitionAll3(n, step, xs){
   const coll = p.seq(xs);
   if (!coll) return xs;
-  return cons(take(n, coll), partitionAll3(n, step, drop(step, coll)));
+  return cons(take2(n, coll), partitionAll3(n, step, drop2(step, coll)));
 }
 
 export const partitionAll = overload(null, partitionAll1, partitionAll2, partitionAll3);
@@ -395,7 +524,7 @@ export function partitionBy(f, xs){
   if (!coll) return xs;
   const head = p.first(coll),
         val  = f(head),
-        run  = cons(head, takeWhile(function(x){
+        run  = cons(head, takeWhile2(function(x){
           return val === f(x);
         }, p.next(coll)));
   return cons(run, partitionBy(f, p.seq(drop(p.count(run), coll))));
@@ -406,15 +535,26 @@ export function sift(pred, xs){
   return [sifted["true"] || null, sifted["false"] || null];
 }
 
-function last1(coll){
-  let xs = coll, ys = null;
-  while (ys = p.next(xs)) {
-    xs = ys;
+function lastN1(size = 1){ //transducer
+  return function(rf){
+    let prior = [];
+    return overload(rf, function(memo){
+      let acc = memo;
+      for (let x of prior){
+        acc = rf(acc, x);
+      }
+      return rf(acc);
+    }, function(memo, value){
+      prior.push(value);
+      while (prior.length > size) {
+        prior.shift();
+      }
+      return memo;
+    });
   }
-  return p.first(xs);
 }
 
-function last2(n, coll){
+function lastN2(n, coll){
   let xs = coll, ys = [];
   while (p.seq(xs)) {
     ys.push(p.first(xs));
@@ -426,28 +566,56 @@ function last2(n, coll){
   return ys;
 }
 
-export const last = overload(null, last1, last2);
+export const lastN = overload(null, lastN1, lastN2);
 
-function dedupe1(coll){
-  return dedupe2(identity, coll);
+function last0(){
+  return lastN1(1);
 }
 
-function dedupe2(f, coll){
-  return dedupe3(f, p.equiv, coll);
+function last1(coll){
+  let xs = coll, ys = null;
+  while (ys = p.next(xs)) {
+    xs = ys;
+  }
+  return p.first(xs);
 }
 
-function dedupe3(f, equiv, coll){
+export const last = overload(last0, last1);
+
+function thin2(f, equiv){ //transducer
+  const nil = {};
+  return function(rf){
+    let last = nil;
+    return overload(rf, rf, function(memo, value){
+      const result = last !== nil && equiv(f(value), f(last)) ? memo : rf(memo, value);
+      last = value;
+      return result;
+    });
+  }
+}
+
+function thin3(f, equiv, coll){
   return p.seq(coll) ? lazySeq(function(){
     let xs = p.seq(coll);
     const last = p.first(xs);
-    while(p.next(xs) && equiv(f(p.first(p.next(xs))), f(last))) {
+    while(p.next(xs) && p.equiv(f(p.first(p.next(xs))), f(last))) {
       xs = p.next(xs);
     }
-    return cons(last, dedupe2(f, p.next(xs)));
+    return cons(last, thin3(f, p.equiv, p.next(xs)));
   }) : coll;
 }
 
-export const dedupe = overload(null, dedupe1, dedupe2, dedupe3);
+export const thin = overload(null, null, thin2, thin3);
+
+function dedupe0(){ //transducer
+  return thin2(identity, p.equiv);
+}
+
+function dedupe1(coll){
+  return thin3(identity, p.equiv, coll);
+}
+
+export const dedupe = overload(dedupe0, dedupe1);
 
 function repeatedly1(f){
   return lazySeq(function(){
@@ -457,7 +625,7 @@ function repeatedly1(f){
 
 
 function repeatedly2(n, f){
-  return take(n, repeatedly1(f));
+  return take2(n, repeatedly1(f));
 }
 
 export const repeatedly = overload(null, repeatedly1, repeatedly2);
@@ -552,26 +720,39 @@ export function withIndex(iter){
   }
 }
 
+function keepIndexed1(f){ //transducer
+  return comp(mapIndexed1(f), filter1(isSome));
+}
+
+function mapIndexed1(f){ //transducer
+  return function(rf){
+    let idx = -1;
+    return overload(rf, rf, function(memo, value){
+      return rf(memo, f(++idx, value));
+    });
+  }
+}
+
 export const butlast     = partial(dropLast, 1);
 export const initial     = butlast;
 export const eachIndexed = withIndex(each);
-export const mapIndexed  = withIndex(map);
-export const keepIndexed = withIndex(keep);
+export const mapIndexed  = overload(null, mapIndexed1, withIndex(map));
+export const keepIndexed = overload(null, keepIndexed1, withIndex(keep));
 export const splitAt     = juxt(take, drop);
 export const splitWith   = juxt(takeWhile, dropWhile);
 
 function braid3(f, xs, ys){
-  return mapcat(function(x){
-    return map(function(y){
+  return mapcat2(function(x){
+    return map2(function(y){
       return f(x, y);
     }, ys);
   }, xs);
 }
 
 function braid4(f, xs, ys, zs){
-  return mapcat(function(x){
-    return mapcat(function(y){
-      return map(function(z){
+  return mapcat2(function(x){
+    return mapcat2(function(y){
+      return map2(function(z){
         return f(x, y, z);
       }, zs);
     }, ys);
@@ -580,18 +761,24 @@ function braid4(f, xs, ys, zs){
 
 function braidN(f, xs, ...colls){
   if (p.seq(colls)) {
-    return mapcat(function(x){
+    return mapcat2(function(x){
       return apply(braid, function(...args){
         return apply(f, x, args);
       }, colls);
     }, xs);
   } else {
-    return map(f, xs || []);
+    return map2(f, xs || []);
   }
 }
 
 //Clojure's `for`; however, could not use the name as it's a reserved word in JavaScript.
 export const braid = overload(null, null, map, braid3, braid4, braidN);
+
+function best1(better){ //transducer
+  return function(rf){
+    return _.overload(rf, rf, better);
+  }
+}
 
 function best2(better, xs){
   const coll = p.seq(xs);
@@ -600,27 +787,14 @@ function best2(better, xs){
   }, p.first(coll), p.rest(coll)) : null;
 }
 
-function best3(f, better, xs){
-  const coll = p.seq(xs);
-  return coll ? p.reduce(function(a, b){
-    return better(f(a), f(b)) ? a : b;
-  }, p.first(coll), p.rest(coll)) : null;
-}
+export const best = overload(null, best1, best2);
 
-export const best = overload(null, best2, best3);
-
-function scan1(xs){
-  return scan2(2, xs);
-}
-
-function scan2(n, xs){
+export function scan(n, xs){ //TODO add transducer
   return lazySeq(function(){
-    const ys = take(n, xs);
+    const ys = take2(n, xs);
     return p.count(ys) === n ? cons(ys, scan2(n, p.rest(xs))) : emptyList();
   });
 }
-
-export const scan = overload(null, scan1, scan2);
 
 function isDistinct1(coll){
   let seen = new Set();
@@ -694,7 +868,7 @@ export function cond(...xs){
     return p.reduce(function(memo, condition){
       const pred = p.first(condition);
       return pred(...args) ? reduced(p.first(p.rest(condition))) : memo;
-    }, null, partition(2, conditions));
+    }, null, partition2(2, conditions));
   }
 }
 
@@ -734,7 +908,7 @@ export function generate(iterable){ //e.g. counter: generate(iterate(inc, 0)) or
 }
 
 function splice4(self, start, nix, coll){
-  return concat(take(start, self), coll, drop(start + nix, self))
+  return concat(take2(start, self), coll, drop2(start + nix, self))
 }
 
 function splice3(self, start, coll){
@@ -744,7 +918,7 @@ function splice3(self, start, coll){
 export const splice = overload(null, null, null, splice3, splice4);
 
 export function also(f, xs){
-  return concat(xs, mapcat(function(x){
+  return concat(xs, mapcat2(function(x){
     const result = f(x);
     return satisfies(ISequential, result) ? result : [result];
   }, xs));
@@ -791,7 +965,7 @@ export const index = overload(null, null, index2, index3, index4);
 
 export function coalesce(...fs){
   return function(...args){
-    return detect(isSome, map(applying(...args), fs));
+    return detect2(isSome, map2(applying(...args), fs));
   }
 }
 
