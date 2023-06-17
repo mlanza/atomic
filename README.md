@@ -16,7 +16,9 @@ Atomic is functional first.  Since functions are preferred to methods, an explic
 
 Atomic, because it is built from the ground up using protocols, sees objects as [abstract](https://en.wikipedia.org/wiki/Abstract_data_type) rather than concrete types.  Don't ask "What's your type?" but rather "What's your behavior?  Your interface?"  Objects implement behaviors and what's more important than their behavior is the role they play.
 
-Integrating with third-party types, such as the persistents found in Immutable.js, can be made a seamless affair since protocols allow a consistent, familiar api across types.  This makes it easy to experiment with new types or substitute new types for old types.  When concrete types are replaced dependent programs are none the wiser!
+Integrating with third-party types is a seamless affair since protocols allow a consistent, familiar api across types.  This makes it easy to experiment with new types or substitute new types for old types.  When concrete types are replaced dependent programs are none the wiser!
+
+[Immutable.js](https://immutable-js.com) was fully integrated.  However, in practice, the cost of the additional library was rarely worth loading it over the network so [integration was dropped](https://github.com/mlanza/atomic/commit/8e1787f6974df5bfbb53a371a261e09b5efee8ee).  But protocols made its types blend in seamlessly.
 
 [Autopartial](./tests/autopartial.js) delivers [point-free programming](https://en.wikipedia.org/wiki/Tacit_programming) without a build step.  Without this technique and until [pipeline operators](https://github.com/tc39/proposal-pipeline-operator) and [partial application](https://github.com/tc39/proposal-partial-application) land in JavaScript proper [the points](./tests/autopartial-less.js) must remain.
 
