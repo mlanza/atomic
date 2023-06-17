@@ -582,37 +582,37 @@ function last1(coll){
 
 export const last = overload(last0, last1);
 
-function thin2(f, equiv){ //transducer
+function thin1(equiv){ //transducer
   const nil = {};
   return function(rf){
     let last = nil;
     return overload(rf, rf, function(memo, value){
-      const result = last !== nil && equiv(f(value), f(last)) ? memo : rf(memo, value);
+      const result = last !== nil && equiv(value, last) ? memo : rf(memo, value);
       last = value;
       return result;
     });
   }
 }
 
-function thin3(f, equiv, coll){
+function thin2(equiv, coll){
   return p.seq(coll) ? lazySeq(function(){
     let xs = p.seq(coll);
     const last = p.first(xs);
-    while(p.next(xs) && p.equiv(f(p.first(p.next(xs))), f(last))) {
+    while(p.next(xs) && p.equiv(p.first(p.next(xs)), last)) {
       xs = p.next(xs);
     }
-    return cons(last, thin3(f, p.equiv, p.next(xs)));
+    return cons(last, thin2(p.equiv, p.next(xs)));
   }) : coll;
 }
 
-export const thin = overload(null, null, thin2, thin3);
+export const thin = overload(null, thin1, thin2);
 
 function dedupe0(){ //transducer
-  return thin2(identity, p.equiv);
+  return thin1(p.equiv);
 }
 
 function dedupe1(coll){
-  return thin3(identity, p.equiv, coll);
+  return thin2(p.equiv, coll);
 }
 
 export const dedupe = overload(dedupe0, dedupe1);
