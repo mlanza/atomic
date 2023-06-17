@@ -2,7 +2,7 @@ import * as _ from "atomic/core";
 import * as $ from "atomic/reactives";
 import * as mut from "atomic/transients";
 import * as p from "./protocols/concrete.js";
-import {element} from "./types/element/construct.js";
+import {element, elementns} from "./types/element/construct.js";
 import {mounts} from "./protocols/imountable/concrete.js";
 import {IValue} from "./protocols/ivalue/instance.js";
 import {IEmbeddable} from "./protocols/iembeddable/instance.js";
@@ -197,6 +197,16 @@ function tags3(engine, f, keys){
     memo[key] = f(tag(key));
     return memo;
   }, {}, keys);
+}
+
+export function svg(doc = document, tags = ["svg", "g", "symbol", "defs", "clipPath", "metadata", "path", "line", "circle", "rect", "ellipse", "polygon", "polyline", "image", "text", "tspan"]){
+  function use(link, ...contents) {
+    const ns = elementns(doc, "http://www.w3.org/2000/svg"),
+          el = ns("use", contents);
+    el.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', link);
+    return el;
+  }
+  return Object.assign(tags2(element(document), tags), {use});
 }
 
 export const tags = _.overload(tags0, tags1, tags2, tags3);

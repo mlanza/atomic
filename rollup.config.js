@@ -14,8 +14,7 @@ export default [{
     'src/shell.js',
     'src/reactives.js',
     'src/transients.js',
-    'src/validates.js',
-    'src/svg.js'
+    'src/validates.js'
   ],
   output: {
     dir: 'dist/atomic',
@@ -32,7 +31,6 @@ export default [{
         "atomic/dom": "./dom.js",
         "atomic/reactives": "./reactives.js",
         "atomic/shell": "./shell.js",
-        "atomic/svg": "./svg.js",
         "atomic/transients": "./transients.js",
         "atomic/validates": "./validates.js"
       }
@@ -61,7 +59,6 @@ export default [{
         "atomic_/dom": "./lib/atomic_/dom.js",
         "atomic_/reactives": "./lib/atomic_/reactives.js",
         "atomic_/shell": "./lib/atomic_/shell.js",
-        "atomic_/svg": "./lib/atomic_/svg.js",
         "atomic_/transients": "./lib/atomic_/transients.js",
         "atomic_/validates": "./lib/atomic_/validates.js"
       }
