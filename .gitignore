@@ -5,4 +5,3 @@ dist/atomic
 tests/main.js
 .DS_Store
 .vscode
-package-lock.json
