@@ -1,4 +1,4 @@
-import {IHashable, IIndexed, IBlankable, ISplittable, ITemplate, ICoercible, IReducible, ICollection, ISeqable, INext, ISeq, IInclusive, IAppendable, IPrependable, ILookup, IFn, IComparable, IEmptyableCollection} from "../../protocols.js";
+import {ICloneable, IHashable, IIndexed, IBlankable, ISplittable, ITemplate, ICoercible, IReducible, ICollection, ISeqable, INext, ISeq, IInclusive, IAppendable, IPrependable, ILookup, IFn, IComparable, IEmptyableCollection} from "../../protocols.js";
 import {does, identity, constantly, unbind, overload, isString} from "../../core.js";
 import {implement} from "../protocol.js";
 import {isReduced, unreduced} from "../reduced.js";
@@ -111,6 +111,7 @@ function hash(self) {
 export default does(
   iindexed,
   keying("String"),
+  implement(ICloneable, {clone: identity}),
   implement(IHashable, {hash}),
   implement(ISplittable, {split}),
   implement(IBlankable, {blank}),

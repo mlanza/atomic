@@ -1,11 +1,11 @@
 import {foldkv, overload, partial, unary, type, curry, tee, toggles, identity, obj, partly, comp, doto, does, branch, unspread, applying, execute, noop, constantly, once, isFunction, isString} from "./core.js";
 import {ICoercible, IForkable, ILogger, IDeref, IFn, IAssociative, ICloneable, IHierarchy, ILookup, ISeq} from "./protocols.js";
-import {maybe, opt, satisfies, spread, each, duration, remove, sort, flip, realized, apply, realize, isNil, reFindAll, mapkv, period, selectKeys, mapVals, reMatches, test, date, emptyList, cons, days, recurrence, emptyArray} from "./types.js";
+import {maybe, toArray, opt, satisfies, spread, each, duration, remove, sort, flip, realized, apply, realize, isNil, reFindAll, mapkv, period, selectKeys, mapVals, reMatches, test, date, emptyList, cons, days, recurrence, emptyArray} from "./types.js";
 import {isBlank, str, replace} from "./types/string.js";
 import {isSome} from "./types/nil.js";
 import _config from "./config.js";
 import {implement, specify, behaves} from "./types/protocol/concrete.js";
-import {into, concat, detect, map, mapa, splice, drop, join, some, last, takeWhile, dropWhile, filter} from "./types/lazy-seq.js";
+import {into, concat, detect, map, mapa, splice, drop, join, some, last, butlast, takeWhile, dropWhile, filter} from "./types/lazy-seq.js";
 export const config = _config;
 export {filter} from "./types/lazy-seq.js";
 export {iterable} from "./types/lazy-seq/behave.js";
@@ -159,24 +159,43 @@ function cleanlyN(f, ...args){
 
 export const cleanly = overload(null, curry(cleanlyN, 2), cleanlyN);
 
-function mod3(obj, key, f){
-  if (key in obj) {
-    obj[key] = f(obj[key]); //must be a mutable copy
+function drill(self, path){
+  const keys = toArray(path);
+  let obj = self;
+  for(const key of keys){
+    obj = obj[key];
   }
   return obj;
 }
 
-function modN(obj, key, value, ...args){
-  return args.length > 0 ? modN(mod3(obj, key, value), ...args) : mod3(obj, key, value);
+// `edit` and `plop` provide addressable data but depend only on `ICloneable`, not `ILookup` and `IAssociative`.
+export function edit(self, key, f){
+  return editIn(self, [key], f);
 }
 
-const mod = overload(null, null, null, mod3, modN);
+export function editIn(self, path, f){
+  const addr = p.clone(path);
+  let obj = self |> drill(?, path) |> p.clone;
+  obj = f(obj) || obj; //use command or query
+  while (addr.length) {
+    let parent = self |> drill(?, butlast(addr)) |> p.clone;
+    let key = last(addr);
+    parent[key] = obj;
+    obj = parent;
+    addr.pop();
+  }
+  return obj;
+}
 
-//Has the api of `assoc` and behaves like `update` persistently updating object attributes.  Depends on `clone` but not `lookup` or `assoc`.
-export function edit(obj, ...args){
-  const copy = p.clone(obj);
-  args.unshift(copy);
-  return modN.apply(copy, args);
+export function plop(self, key, value){
+  return plopIn(self, [key], value);
+}
+
+export function plopIn(self, path, value){
+  const key = last(path);
+  return editIn(self, toArray(butlast(path)), function(obj){
+    obj[key] = value;
+  });
 }
 
 export function deconstruct(dur, ...units){
