@@ -58,38 +58,22 @@ QUnit.test("hashing", function(assert){
   same([{blackwidow: "Avenger"}, _.date(774), [1, 2]], [{blackwidow: "Avenger"}, _.date(774), [1, 2]]);
 });
 
-QUnit.test("routing", function(assert){ //not just for fns!
-  const c = _.coalesce(
-    _.guard(_.signature(_.isString), _.str(?, "!")),
-    _.guard(_.signature(_.isNumber), _.mult(?, 2)));
+QUnit.test("poor man's multimethod", function(assert){
+  const join = _.guard(_.signature(_.isArray), _.join("", _));
+  const exclaim = _.guard(_.signature(_.isString), _.str(?, "!"));
+  const double = _.guard(_.signature(_.isNumber), _.mult(?, 2));
 
-  const r = _.router()
-    |> _.addRoute(?, _.signature(_.isString), _.str(?, "!"))
-    |> _.addRoute(?, _.signature(_.isNumber), _.mult(?, 2))
-
-  const s = _.invokable(r);
-
-  const website = _.right(
-    _.router(),
-    _.addRoute(?, /users\((\d+)\)\/entries\((\d+)\)/i, _.posn(parseInt, parseInt), function(user, entry){
-      return `showing entry ${entry} for ${user}`;
-    }),
-    _.addRoute(?, /blog(\?p=\d+)/i, _.posn(_.fromQueryString), function(qs){
-      return `showing pg ${qs.p}`;
-    }),
-    _.invokable);
-
+  const c = _.coalesce(join, exclaim, double);
   assert.equal(_.invoke(c, 1), 2);
   assert.equal(_.invoke(c, "timber"), "timber!");
   assert.equal(c(1), 2);
   assert.equal(c("timber"), "timber!");
-  assert.equal(_.invoke(r, 1), 2);
-  assert.equal(_.invoke(r, "timber"), "timber!");
-  assert.equal(s(1), 2);
-  assert.equal(s("timber"), "timber!");
-  assert.equal(website("users(11)/entries(3)"), "showing entry 3 for 11");
-  assert.equal(website("blog?p=99"), "showing pg 99");
+  assert.equal(c(["a","c","e"]), "ace");
 
+  const d = _.coalesce(exclaim, double); //initial config
+  const e = _.coalesce(d, join); //added later
+  assert.equal(e("timber"), "timber!");
+  assert.equal(e(["a","c","e"]), "ace");
 });
 
 QUnit.test("validation", function(assert){
