@@ -11,6 +11,8 @@ import {replace} from "./concrete.js";
 import * as p from "./protocols.js";
 import {keying} from "../../protocols/imapentry/concrete.js";
 
+const clone = identity;
+
 function split1(str){
   return str.split("");
 }
@@ -111,7 +113,7 @@ function hash(self) {
 export default does(
   iindexed,
   keying("String"),
-  implement(ICloneable, {clone: identity}),
+  implement(ICloneable, {clone}),
   implement(IHashable, {hash}),
   implement(ISplittable, {split}),
   implement(IBlankable, {blank}),

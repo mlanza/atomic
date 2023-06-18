@@ -24,4 +24,4 @@ export function cmd(target){
   });
 }
 
-window.cmd = cmd;
+Object.assign(globalThis, {cmd});
