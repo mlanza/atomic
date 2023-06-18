@@ -159,7 +159,7 @@ function cleanlyN(f, ...args){
 
 export const cleanly = overload(null, curry(cleanlyN, 2), cleanlyN);
 
-function drill(self, path){
+export function grab(self, path){
   const keys = toArray(path);
   let obj = self;
   for(const key of keys){
@@ -168,17 +168,16 @@ function drill(self, path){
   return obj;
 }
 
-// `edit` and `plop` provide addressable data but depend only on `ICloneable`, not `ILookup` and `IAssociative`.
 export function edit(self, key, f){
   return editIn(self, [key], f);
 }
 
 export function editIn(self, path, f){
   const addr = p.clone(path);
-  let obj = self |> drill(?, path) |> p.clone;
+  let obj = self |> grab(?, path) |> p.clone;
   obj = f(obj) || obj; //use command or query
   while (addr.length) {
-    let parent = self |> drill(?, butlast(addr)) |> p.clone;
+    let parent = self |> grab(?, butlast(addr)) |> p.clone;
     let key = last(addr);
     parent[key] = obj;
     obj = parent;

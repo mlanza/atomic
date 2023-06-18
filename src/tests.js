@@ -126,6 +126,55 @@ QUnit.test("validation", function(assert){
   //TODO add `when` to validate conditiontionally or allow condition to be checked before registering the validation?
 });
 
+QUnit.test("edit/plop/grab", function(assert){
+  function Kangaroo(name, pouch) {
+    this.name = name;
+    this.pouch = pouch;
+  }
+
+  function clone(self){
+    return new Kangaroo(self.name, self.pouch);
+  }
+
+  // `edit` and `plop` provide addressable data but depend only on `ICloneable`, not `ILookup` and `IAssociative`.
+  _.doto(Kangaroo, _.implement(_.ICloneable, {clone}));
+
+  const boo = new Kangaroo("Boo", new Kangaroo("Louie", new Kangaroo("Haunch", null)));
+  const boo2 = _.plopIn(boo, ["pouch", "pouch", "name"], "Gloria");
+  const boo3 = _.editIn(boo, ["pouch", "pouch"], function(kangaroo){
+    kangaroo.pouch = 1;
+  });
+  const boo4 = _.plop(boo, "name", "Foo");
+  assert.ok(boo !== boo2);
+  assert.ok(_.grab(boo2, ["pouch", "name"]) == "Louie");
+  assert.ok(_.grab(boo , ["pouch", "pouch", "name"]) == "Haunch");
+  assert.ok(_.grab(boo2, ["pouch", "pouch", "name"]) == "Gloria");
+  assert.ok(_.grab(boo , ["pouch", "pouch", "pouch"]) == null);
+  assert.ok(_.grab(boo3, ["pouch", "pouch", "pouch"]) == 1);
+  assert.ok(_.grab(boo4, ["name"]) == "Foo");
+
+  //the default implementation of clone should suffice
+  function Wallaby(name, pouch){
+    this.name = name;
+    this.pouch = pouch;
+  }
+
+  const shy = new Wallaby("Shy", new Wallaby("Flora", new Wallaby("Victor", null)));
+  const shy2 = _.plopIn(shy, ["pouch", "pouch", "name"], "Valerie");
+  assert.ok(shy !== shy2);
+  assert.ok(_.grab(shy , ["pouch", "pouch", "name"]) == "Victor");
+  assert.ok(_.grab(shy2, ["pouch", "pouch", "name"]) == "Valerie");
+
+  const stooges2 = _.plop(stooges, 1, "Shemp");
+  const stooges3 = _.plop(stooges, 3, "Corey");
+  const stooges4 = _.edit(stooges, 2, _.upperCase);
+
+  assert.ok(_.eq(["Larry", "Curly", "Moe"], stooges));
+  assert.ok(_.eq(["Larry", "Shemp", "Moe"], stooges2));
+  assert.ok(_.eq(["Larry", "Curly", "Moe", "Corey"], stooges3));
+  assert.ok(_.eq(["Larry", "Curly", "MOE"], stooges4));
+});
+
 QUnit.test("best", function(assert){
   assert.ok(_.best(_.lt, stooges) === "Curly");
   assert.ok(_.best(_.mapArgs(_.count, _.lt), stooges) === "Moe");

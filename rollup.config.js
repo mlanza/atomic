@@ -26,7 +26,6 @@ export default [{
     resolve(),
     rollupImportMapPlugin({
       "imports": {
-        "immutable": "../immutable.js",
         "atomic/core": "./core.js",
         "atomic/dom": "./dom.js",
         "atomic/reactives": "./reactives.js",
