@@ -1,9 +1,10 @@
 import _ from "atomic_/core";
 import dom from "atomic_/dom";
 import $ from "atomic_/reactives";
-//import sh from "atomic_/shell";
 import vd from "atomic_/validates";
+//#if _EXPERIMENTAL
 import mut from "atomic_/transients";
+//#endif
 
 const stooges = ["Larry","Curly","Moe"],
       pieces  = {pawn: 1, knight: 3, bishop: 3, rook: 5, queen: 10, king: Infinity},
@@ -207,8 +208,10 @@ QUnit.test("dom", function(assert){
   assert.equal(moe |> dom.text, "Moe Howard", "Found by tag");
   assert.deepEqual(stooges |> dom.sel("li", ?) |> _.map(_.get(?, "id"), ?) |> _.toArray, ["moe", "curly", "larry"], "Extracted ids");
   assert.equal({givenName: "Curly", surname: "Howard"} |> who |> dom.text, "Curly Howard");
+//#if _EXPERIMENTAL
   assert.deepEqual(_.fluent(moe, dom.classes, mut.conj(?, "main"), _.deref), ["main"]);
   assert.equal(_.fluent(moe, dom.attr(?, "data-tagged", "tests"), _.get(?, "data-tagged")), "tests");
+//#endif
   stooges |> dom.append(?, div({id: 'branding'}, span("Three Blind Mice")));
   assert.ok(stooges |> dom.sel("#branding", ?) |> _.first |> (el => _.ako(el, HTMLDivElement)), "Found by id");
   assert.deepEqual(stooges |> dom.sel("#branding span", ?) |> _.map(dom.text, ?) |> _.first, "Three Blind Mice", "Read text content");
@@ -223,6 +226,7 @@ QUnit.test("dom", function(assert){
   assert.equal(branding |> _.parent |> _.first, null, "Removed");
 });
 
+//#if _EXPERIMENTAL
 QUnit.test("jQueryesque functor", function(assert){
   const {ol, li, span} = dom.tags(["ol", "li", "span"]);
   const jq = _.members(function(els){ //configure members functor, it upholds the collectiveness of contents
@@ -239,6 +243,7 @@ QUnit.test("jQueryesque functor", function(assert){
   const cavepersons = jq(bedrock, dom.sel(".Family", ?), dom.sel("span", ?), dom.text, _.lowerCase);
   assert.deepEqual(_.toArray(cavepersons), ["fred", "wilma", "barney", "betty"]);
 });
+//#endif
 
 QUnit.test("lazy-seq", function(assert){
   const effects = [],
@@ -469,6 +474,7 @@ QUnit.test("duration", function(assert){
 
 });
 
+//#if _EXPERIMENTAL
 QUnit.test("record", function(assert){
   function Person(name, surname, dob){
     this.attrs = {name, surname, dob};
@@ -491,6 +497,7 @@ QUnit.test("record", function(assert){
   assert.equal(sean |> _.get(?, "surname"), "Penn");
   assert.equal(_.count(robin), 3);
 });
+//#endif
 
 QUnit.test("observable sharing", function(assert){
   function exec(oo, nn, desc){

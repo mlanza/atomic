@@ -5,7 +5,9 @@ import jscc from 'rollup-plugin-jscc';
 import { rollupImportMapPlugin } from "rollup-plugin-import-map";
 
 const _CROSSREALM = process.argv.indexOf("--crossrealm") == -1 ? 0 : 1;
-console.log("crossrealm", _CROSSREALM);
+const _EXPERIMENTAL = process.argv.indexOf("--experimental") == -1 ? 0 : 1;
+
+console.log({_CROSSREALM, _EXPERIMENTAL});
 
 export default [{
   input: [
@@ -35,7 +37,7 @@ export default [{
       }
     }),
     jscc({
-      values: {_CROSSREALM},
+      values: {_CROSSREALM, _EXPERIMENTAL},
     }),
     babel({
       exclude: 'node_modules/**',
@@ -61,6 +63,9 @@ export default [{
         "atomic_/transients": "./lib/atomic_/transients.js",
         "atomic_/validates": "./lib/atomic_/validates.js"
       }
+    }),
+    jscc({
+      values: {_CROSSREALM, _EXPERIMENTAL},
     }),
     babel({
       exclude: 'node_modules/**',

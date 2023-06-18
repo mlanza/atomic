@@ -432,7 +432,6 @@ ICoercible.addMethod([Promise, Promise], identity);
 ICoercible.addMethod([T.Right, Promise], unfork);
 ICoercible.addMethod([T.Left, Promise], unfork);
 ICoercible.addMethod([Error, Promise], unfork);
-ICoercible.addMethod([T.Okay, Promise], unfork);
 ICoercible.addMethod([T.Task, Promise], unfork);
 ICoercible.addMethod([Object, Object], identity);
 ICoercible.addMethod([Array, Object], function(self){
@@ -442,7 +441,10 @@ ICoercible.addMethod([Array, Object], function(self){
   }, {}, self);
 });
 ICoercible.addMethod([Array, Array], identity);
+//#if _EXPERIMENTAL
+ICoercible.addMethod([T.Okay, Promise], unfork);
 ICoercible.addMethod([T.Multimap, Array], comp(Array.from, p.seq));
+//#endif
 ICoercible.addMethod([T.Concatenated, Array], reduceToArray);
 ICoercible.addMethod([T.EmptyList, Array], emptyArray);
 ICoercible.addMethod([T.List, Array], reduceToArray);
@@ -459,7 +461,6 @@ ICoercible.addMethod([T.LazySeq, Array], function(xs){
   }
   return zs;
 });
-ICoercible.addMethod([T.Multimap, Array], comp(Array.from, p.seq));
 ICoercible.addMethod([Object, Array], reduceToArray);
 ICoercible.addMethod([String, Array], function(self){
   return self.split("");
