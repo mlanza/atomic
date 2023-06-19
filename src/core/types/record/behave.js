@@ -2,27 +2,23 @@ import {does, constructs} from "../../core.js";
 import {implement} from "../protocol.js";
 import {reduced} from "../reduced/construct.js";
 import {is} from "../../protocols/imapentry/concrete.js";
-import {IReducible, IKVReducible, IEquiv, ICoercible, IAssociative, ISeqable, ILookup, ICounted, IMap, ISeq, IEmptyableCollection} from "../../protocols.js";
+import {IReducible, IKVReducible, IEquiv, IAssociative, ISeqable, ILookup, ICounted, IMap, ISeq, IEmptyableCollection} from "../../protocols.js";
 import * as p from "./protocols.js";
 
-function coerce(self, Type){
-  return is(Type, Object) ? self.attrs : p.coerce(self.attrs, Type);
-}
-
 function contains(self, key){
-  return self.attrs.hasOwnProperty(key);
+  return self.hasOwnProperty(key);
 }
 
 function lookup(self, key){
-  return p.get(self.attrs, key);
+  return self[key];
 }
 
 function seq(self){
-  return p.seq(self.attrs);
+  return p.seq(Object.entries(self));
 }
 
 function count(self){
-  return p.count(self.attrs);
+  return p.count(keys(self));
 }
 
 function first(self){
@@ -34,19 +30,23 @@ function rest(self){
 }
 
 function keys(self){
-  return p.keys(self.attrs);
+  return Object.keys(self);
 }
 
 function vals(self){
-  return p.vals(self.attrs);
+  return Object.values(self);
 }
 
 function assoc(self, key, value){
-  return Object.assign(p.clone(self), {attrs: p.assoc(self.attrs, key, value)});
+  const copy = p.clone(self);
+  copy[key] = value;
+  return copy;
 }
 
 function dissoc(self, key){
-  return Object.assign(p.clone(self), {attrs: p.dissoc(self.attrs, key)});
+  const copy = p.clone(self);
+  delete copy[key];
+  return copy;
 }
 
 function equiv(self, other){
@@ -56,7 +56,7 @@ function equiv(self, other){
 }
 
 function empty(self){
-  return Object.assign(p.clone(self), {attrs: {}});
+  return Object.create(self.constructor.prototype);
 }
 
 function reduce(self, f, init){
@@ -71,10 +71,8 @@ function reducekv(self, f, init){
   }, init, p.keys(self));
 }
 
-export function construct(Type){
-  return function record(attrs){
-    return Object.assign(Object.create(Type.prototype), {attrs: attrs});
-  }
+export function construct(Type, attrs){
+  return Object.assign(new Type(), attrs);
 }
 
 export function emptyable(Type){
@@ -89,7 +87,6 @@ export default does(
   implement(IReducible, {reduce}),
   implement(IKVReducible, {reducekv}),
   implement(IEquiv, {equiv}),
-  implement(ICoercible, {coerce}),
   implement(IEmptyableCollection, {empty}),
   implement(IAssociative, {assoc, contains}),
   implement(ILookup, {lookup}),

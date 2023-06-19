@@ -477,14 +477,20 @@ QUnit.test("duration", function(assert){
 //#if _EXPERIMENTAL
 QUnit.test("record", function(assert){
   function Person(name, surname, dob){
-    this.attrs = {name, surname, dob};
+    this.name = name;
+    this.surname = surname;
+    this.dob = dob;
   }
+  _.ICoercible.addMethod([Object, Person], _.construct(Person, _));
+  _.ICoercible.addMethod([Person, Object], person => Object.assign({}, person));
   _.record(Person);
-  const sean  = new Person("Sean", "Penn", _.date(1960, 8, 17));
+  const sean = new Person("Sean", "Penn", _.date(1960, 8, 17));
   const person = _.constructs(Person);
   const robin = person("Robin", "Wright", new Date(1966, 3, 8));
   const dylan = _.construct(Person, {name: "Dylan", surname: "Penn", dob: _.date(1991, 4, 13)});
   const $robin = $.cell(_.journal(robin));
+  const dylanp = _.coerce({name: "Dylan", surname: "Penn", dob: _.date(1991, 4, 13)}, Person);
+  const robino = _.coerce(robin, Object);
   assert.equal($robin |> _.deref |> _.deref |> _.get(?, "surname"), "Wright");
   _.swap($robin, _.fmap(_, _.assoc(?, "surname", "Penn")));
   assert.equal($robin |> _.deref |> _.deref |> _.get(?, "surname"), "Penn");
@@ -495,6 +501,8 @@ QUnit.test("record", function(assert){
   assert.equal(robin |> _.get(?, "surname"), "Wright");
   assert.equal(robin |> _.assoc(?, "surname", "Penn") |> _.get(?, "surname"), "Penn");
   assert.equal(sean |> _.get(?, "surname"), "Penn");
+  assert.equal(dylan |> _.get(?, "surname"), "Penn");
+  assert.equal(dylan |> _.assoc(?, "surname", "McDermott") |> _.get(?, "surname"), "McDermott");
   assert.equal(_.count(robin), 3);
 });
 //#endif
