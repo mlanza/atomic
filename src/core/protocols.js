@@ -51,4 +51,5 @@ export * from "./protocols/iset/instance.js";
 export * from "./protocols/isplittable/instance.js";
 export * from "./protocols/iswappable/instance.js";
 export * from "./protocols/itemplate/instance.js";
+export * from "./protocols/itopic/instance.js";
 export * from "./protocols/iomissible/instance.js";

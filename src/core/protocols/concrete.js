@@ -51,4 +51,5 @@ export * from "./iset/concrete.js";
 export * from "./isplittable/concrete.js";
 export * from "./iswappable/concrete.js";
 export * from "./itemplate/concrete.js";
+export * from "./itopic/concrete.js";
 export * from "./iomissible/concrete.js";

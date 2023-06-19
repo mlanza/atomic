@@ -7,7 +7,7 @@ import {replace} from "../string/concrete.js";
 import {range} from "../range/construct.js";
 import {iequiv} from "../empty-list/behave.js";
 import {revSeq} from "../rev-seq.js";
-import {filter, mapa, concat as merge} from "../lazy-seq.js";
+import {filtera, mapa, concat as merge} from "../lazy-seq.js";
 import {emptyArray as empty} from "./construct.js";
 import {keying} from "../../protocols/imapentry/concrete.js";
 import {hashSeq as hash} from "../../protocols/ihashable/hashers.js";
@@ -73,7 +73,7 @@ function reducekv(xs, f, init){
 }
 
 function omit(self, value){
-  return filter(function(x){
+  return filtera(function(x){
     return x !== value;
   }, self);
 }
