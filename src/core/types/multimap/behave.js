@@ -1,4 +1,4 @@
-import {does, comp} from "../../core.js";
+import {doto, comp} from "../../core.js";
 import {implement} from "../protocol.js";
 import {ISeq, ICoercible, IReducible, IKVReducible, ISeqable, ICollection, ILookup, IMap, IAssociative} from "../../protocols.js";
 import {map, concatenated} from "../lazy-seq.js";
@@ -6,10 +6,6 @@ import {emptyList} from "../empty-list/construct.js";
 import record from "../record/behave.js";
 import * as p from "./protocols.js";
 import {keying} from "../../protocols/imapentry/concrete.js";
-
-function lookup(self, key){
-  return self[key] || [];
-}
 
 function seq(self){
   return concatenated(map(function(key){
@@ -21,7 +17,7 @@ function seq(self){
 
 function assoc(self, key, value){
   const copy = p.clone(self);
-  copy[key] = p.conj(lookup(self, key), value);
+  copy[key] = p.conj(p.get(self, key), value);
   return copy;
 }
 
@@ -37,10 +33,16 @@ function reducekv(self, f, init){
   }, init);
 }
 
-export default does(
-  record,
-  implement(IReducible, {reduce}),
-  implement(IKVReducible, {reducekv}),
-  implement(ISeqable, {seq}),
-  implement(ILookup, {lookup}),
-  implement(IAssociative, {assoc}));
+export default function(Type, empty = []){ //empty set?
+  function lookup(self, key){
+    return self[key] || empty;
+  }
+  doto(
+    Type,
+    record,
+    implement(IReducible, {reduce}),
+    implement(IKVReducible, {reducekv}),
+    implement(ISeqable, {seq}),
+    implement(ILookup, {lookup}),
+    implement(IAssociative, {assoc}));
+}
