@@ -486,9 +486,13 @@ QUnit.test("multimap", function(assert){
   const robin = person(["Robin"], ["Wright", "Penn"], [new Date(1966, 3, 8)]);
   const entries = _.chain(robin, _.seq, _.toArray);
   assert.deepEqual(entries, [["name", "Robin"],["surname", "Wright"],["surname","Penn"],["dob",new Date(1966, 3, 8)]]);
-  const robbie = _.assoc(robin, "name", "Robbie");
+  const robbie = _.assert(robin, "name", "Robbie");
   const name = _.get(robbie, "name");
   assert.deepEqual(name,["Robin","Robbie"]);
+  assert.ok(_.confirm(robbie, "name", "Robbie"));
+  const robbie2 = _.retract(robbie, "name", "Robin");
+  const name2 = _.get(robbie2, "name");
+  assert.deepEqual(name2, ["Robbie"]);
 });
 
 QUnit.test("record", function(assert){

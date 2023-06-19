@@ -1,7 +1,7 @@
 import {doto, comp} from "../../core.js";
 import {implement} from "../protocol.js";
-import {ISeq, ICoercible, IReducible, IKVReducible, ISeqable, ICollection, ILookup, IMap, IAssociative} from "../../protocols.js";
-import {map, concatenated} from "../lazy-seq.js";
+import {ITopic, IReducible, IKVReducible, ISeqable} from "../../protocols.js";
+import {map, detect, concatenated} from "../lazy-seq.js";
 import {emptyList} from "../empty-list/construct.js";
 import record from "../record/behave.js";
 import * as p from "./protocols.js";
@@ -13,12 +13,6 @@ function seq(self){
       return [key, value];
     }, p.seq(p.get(self, key)) || emptyList());
   }, p.keys(self)));
-}
-
-function assoc(self, key, value){
-  const copy = p.clone(self);
-  copy[key] = p.conj(p.get(self, key), value);
-  return copy;
 }
 
 function reduce(self, f, init){
@@ -34,15 +28,29 @@ function reducekv(self, f, init){
 }
 
 export default function(Type, empty = []){ //empty set?
-  function lookup(self, key){
-    return self[key] || empty;
+  function confirm(self, key, value){
+    return detect(p.equiv(?, value), p.get(self, key));
   }
+
+  function assert(self, key, value){
+    const copy = p.clone(self),
+          values = p.get(self, key, empty);
+    copy[key] = p.conj(values, value);
+    return copy;
+  }
+
+  function retract(self, key, value){
+    const copy = p.clone(self),
+          values = p.get(self, key, empty);
+    copy[key] = p.omit(values, value);
+    return copy;
+  }
+
   doto(
     Type,
     record,
+    implement(ITopic, {assert, retract, confirm}),
     implement(IReducible, {reduce}),
     implement(IKVReducible, {reducekv}),
-    implement(ISeqable, {seq}),
-    implement(ILookup, {lookup}),
-    implement(IAssociative, {assoc}));
+    implement(ISeqable, {seq}));
 }
