@@ -443,7 +443,6 @@ ICoercible.addMethod([Array, Object], function(self){
 ICoercible.addMethod([Array, Array], identity);
 //#if _EXPERIMENTAL
 ICoercible.addMethod([T.Okay, Promise], unfork);
-ICoercible.addMethod([T.Multimap, Array], comp(Array.from, p.seq));
 //#endif
 ICoercible.addMethod([T.Concatenated, Array], reduceToArray);
 ICoercible.addMethod([T.EmptyList, Array], emptyArray);

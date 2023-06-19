@@ -475,6 +475,22 @@ QUnit.test("duration", function(assert){
 });
 
 //#if _EXPERIMENTAL
+QUnit.test("multimap", function(assert){
+  function Person(name, surname, dob){
+    this.name = name;
+    this.surname = surname;
+    this.dob = dob;
+  }
+  const person = _.constructs(Person);
+  _.multimap(Person);
+  const robin = person(["Robin"], ["Wright", "Penn"], [new Date(1966, 3, 8)]);
+  const entries = _.chain(robin, _.seq, _.toArray);
+  assert.deepEqual(entries, [["name", "Robin"],["surname", "Wright"],["surname","Penn"],["dob",new Date(1966, 3, 8)]]);
+  const robbie = _.assoc(robin, "name", "Robbie");
+  const name = _.get(robbie, "name");
+  assert.deepEqual(name,["Robin","Robbie"]);
+});
+
 QUnit.test("record", function(assert){
   function Person(name, surname, dob){
     this.name = name;
