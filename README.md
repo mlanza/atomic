@@ -1,45 +1,40 @@
 # Atomic
-Write [Clojuresque](https://changelog.com/posts/rich-hickeys-greatest-hits) [functional core, imperative shell](https://www.destroyallsoftware.com/screencasts/catalog/functional-core-imperative-shell) programs in JavaScript.
+Write [ClojureScript](https://clojurescript.org) in JavaScript without a transpiler.
 
 Highlights:
 
 * well suited for web apps
+* use [functional core, imperative shell](https://www.destroyallsoftware.com/screencasts/catalog/functional-core-imperative-shell)
 * deploy the code you write — point free, composed, pipelines, no build required
 * [nil-punning](https://ericnormand.me/article/nil-punning) handles null in sensible ways,
 * [core](src/core) (much of the Clojure standard lib)
 * [protocols](src/core/protocols) at the foundation
 * [reactives](src/reactives) (FRP)
 
-Atomic provides a robust core for web development sufficient for standard use cases with no additional libraries.
+Atomic is protocol oriented.  Objects are seen as as [abstract types](https://en.wikipedia.org/wiki/Abstract_data_type) exhibiting certain behaviors irrespective of their concrete types.  This kind of polymorphism is largely what makes Clojure so good at transforming data.
 
-Atomic is functional first.  Since functions are preferred to methods, an explicit `self` passed into the first position is more normative than the use of `this`.
+Atomic is functional first.  Functions are preferred to methods.  This makes sense given how protocols view types as abstractions.
 
-Atomic, because it is built from the ground up using protocols, sees objects as [abstract](https://en.wikipedia.org/wiki/Abstract_data_type) rather than concrete types.  Don't ask "What's your type?" but rather "What's your behavior?  Your interface?"  Objects implement behaviors and what's more important than their behavior is the role they play.
+Atomic has no maps or vectors but uses objects and arrays in the same capacity.  It had previously integrated these types via  [Immutable.js](https://immutable-js.com) but, in practice, objects and arrays filled the gap well enough it wasn't worth the cost of loading a library to occassionally use maps and vectors.  Its integration [was dropped](https://github.com/mlanza/atomic/commit/8e1787f6974df5bfbb53a371a261e09b5efee8ee).
 
-Integrating with third-party types is a seamless affair since protocols allow a consistent, familiar api across types.  This makes it easy to experiment with new types or substitute new types for old types.  When concrete types are replaced dependent programs are none the wiser!
+Still, Atomic makes integrating third-party types into its consistent, familiar api seamless via protocols as was demonstrated.
 
-[Immutable.js](https://immutable-js.com) was fully integrated.  However, in practice, the cost of the additional library was rarely worth loading it over the network so [integration was dropped](https://github.com/mlanza/atomic/commit/8e1787f6974df5bfbb53a371a261e09b5efee8ee).  But protocols made its types blend in seamlessly.
-
-[Autopartial](./tests/autopartial.js) delivers [point-free programming](https://en.wikipedia.org/wiki/Tacit_programming) without a build step.  Without this technique and until [pipeline operators](https://github.com/tc39/proposal-pipeline-operator) and [partial application](https://github.com/tc39/proposal-partial-application) land in JavaScript proper [the points](./tests/autopartial-less.js) must remain.
+Don't care for [point programming](./tests/autopartial-less.js)?  [Autopartial](./tests/autopartial.js) delivers [point-free programming](https://en.wikipedia.org/wiki/Tacit_programming) without a build step up until [pipeline operators](https://github.com/tc39/proposal-pipeline-operator) and [partial application](https://github.com/tc39/proposal-partial-application) reach stage maturity.
 
 ## Premise
-JavaScript does functional programming pretty dang well.  It may not do it as well languages with native FP facilities but libraries fill the gaps just fine.
+JavaScript does functional programming pretty dang well.  It may not do it as well languages with native FP facilities but libraries fill the gap just fine.
 
 Initially, Atomic was born from an experiment answering:
 
-> Can't the necessary types for idiomatic Clojure be implemented in JavaScript, directly, so a build step is unnecessary?
+> Why not do ClojureScript directly in JavaScript and eliminate the transpiler?
 
-Here's the ephiphany: since languages are just facilities plus syntax, if one can set aside syntax, facilities can make transpilation superfluous.  That's what Atomic does.  It provides semantics of Clojure and protocols straight away in JavaScript.
-
-It has been used continuously in production since 2015.  It was kept private initially to avoid the open source shackles of issue and enhancement requests and the concern for breaking changes.  In response to inquiry, it was only recently made public.
+Here's the ephiphany: since languages are just facilities plus syntax, if one can set aside syntax, the right facilities make transpilation superfluous.
 
 ## Purity Through Discipline
 
-Historically, since JavaScript has lacked immutables purity is gained through discipline.  A function receiving mutable arguments must, as a rule, not mutate them.  *So in Atomic objects and arrays and dates are held as immutables and not mutated* because of a lack of more appropriate facilities.
+Historically, since JavaScript has lacked certain value types purity is gained through discipline.  A function receiving mutable arguments must, as a rule, not mutate them.  *So in Atomic objects and arrays and dates are held as immutables and not mutated*.
 
-JavaScript is, however, getting [records and tuples](https://tc39.es/proposal-record-tuple/) and [temporals](https://github.com/tc39/proposal-temporal) to fill this gap.  These new primitives will be the value type counterparts to the reference types which have always been.
-
-When that happens, a future release of Atomic will restore their reference type status.
+JavaScript is filling this gap, however, with [records and tuples](https://tc39.es/proposal-record-tuple/) and [temporals](https://github.com/tc39/proposal-temporal).  When this happens Atomic will restore objects, arrays and dates to their reference type status.
 
 ## Getting Started
 
@@ -64,17 +59,7 @@ The atom equivalent and the type which houses an app's big bang [world state](ht
 
 Like [xstream](https://staltz.com/why-we-built-xstream.html) it doesn't rely on many operators.  And implementation experience has seen how hot observables are usually easier to handle correctly than cold ones.  These notions have, thus, been baked into the defaults.
 
-The holy trinity of modules is `core`, `reactives`, and `dom`.  The others are situational.  And because protocols have proven more than sufficient, multimethods were rarely needed.
-
-Although Clojure's `transients` were implemented so all the familiar functions can be used against mutables too, in practice, this module wasn't used as anticipated when it came to native objects and arrays.  Rather one ceased using the library and fell back on treating objects and arrays, privately, as mutables.  The use of this module was, thus, primarily relegated to always-mutable types, like DOM elements, for which this library has no immutable counterpart.
-
-Typical module assignments follow:
-* `_` → `core` (it also doubles as a partial application placeholder)
-* `$` → `reactives`
-* `dom` → `dom`
-* `mut` → `transients`
-
-These assignments can be readily imported by entering [`cmd()`](./dist/cmd.js) from a browser console where Atomic is loaded.  This facilitates interactive development.
+The holy trinity of modules—`core`, `reactives`, and `dom`—are imported as `_`, `$` and `dom`.  The `_` also doubles as a partial application placeholder when using autopartial.  To facilitate interactive development these assignments can be readily imported by entering [`cmd()`](./dist/cmd.js) from a browser console where Atomic is loaded.
 
 Since many of its core functions are taken directly from Clojure one can often use its documentation.  Here are a handful of its bread and butter functions:
 * [`swap`](https://clojuredocs.org/clojure.core/swap!)
@@ -91,8 +76,6 @@ In the absence of threading macros, several key functions exist (see these demon
 * `maybe` (a null-handling pipeline)
 * `comp`
 * `pipe`
-
-See the various READMEs disbursed among the source modules for a bit more help.
 
 ## Changes
 
@@ -163,7 +146,3 @@ Applying the Clojure mindset directly in JavaScript is possible with the right f
 * [temporal](https://github.com/tc39/proposal-temporal)
 
 The protocol implementations will remain indefinitely as they are the core of the library.
-
-## Footnote
-
-Its author, perhaps obviously so by now, is a [strategy board games](https://boardgamegeek.com/boardgame/2955/mexica) superfan!
