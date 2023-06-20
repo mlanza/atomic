@@ -1,7 +1,8 @@
-import {does, constructs, fold, multi} from "../../core.js";
+import {doto, constructs, fold, multi, constantly} from "../../core.js";
 import {implement} from "../protocol.js";
 import {reduced} from "../reduced/construct.js";
 import {is} from "../../protocols/imapentry/concrete.js";
+import {map, mapcat, detect, concatenated} from "../lazy-seq.js";
 import {ITopic, IReducible, IKVReducible, IEquiv, IAssociative, ISeqable, ILookup, ICounted, IMap, ISeq, IEmptyableCollection} from "../../protocols.js";
 import * as p from "./protocols.js";
 import {isObject} from "../object/concrete.js";
@@ -13,10 +14,6 @@ function contains(self, key){
 
 function lookup(self, key){
   return self[key];
-}
-
-function seq(self){
-  return p.count(self) ? p.seq(Object.entries(self)) : null;
 }
 
 function count(self){
@@ -58,15 +55,15 @@ function equiv(self, other){
 }
 
 function reduce(self, f, init){
-  return p.reduce(function(memo, key){
-    return f(memo, [key, lookup(self, key)]);
-  }, init, p.keys(self));
+  return p.reduce(function(memo, pair){
+    return f(memo, pair);
+  }, init, seq(self));
 }
 
 function reducekv(self, f, init){
-  return p.reduce(function(memo, key){
-    return f(memo, key, lookup(self, key));
-  }, init, p.keys(self));
+  return reduce(self, function(memo, [key, value]){
+    return f(memo, key, value);
+  }, init);
 }
 
 export function construct(Type, attrs){
@@ -80,21 +77,42 @@ export function emptyable(Type){
   implement(IEmptyableCollection, {empty}, Type);
 }
 
-const behave = does(
-  emptyable,
-  implement(ITopic, {assert: assoc}),
-  implement(IReducible, {reduce}),
-  implement(IKVReducible, {reducekv}),
-  implement(IEquiv, {equiv}),
-  implement(IAssociative, {assoc, contains}),
-  implement(ILookup, {lookup}),
-  implement(IMap, {dissoc, keys, vals}),
-  implement(ISeq, {first, rest}),
-  implement(ICounted, {count}),
-  implement(ISeqable, {seq}));
+export default function(Type, defaults = constantly(null), multiple = constantly(false)){
+  function seq(self){
+    return p.count(self) ? p.seq(mapcat(function([key, value]){
+      return multiple(defaults(key)) ? map(function(value){
+        return [key, value];
+      }, value) : [[key, value]];
+    }, Object.entries(self))) : null;
+  }
 
-export default function(Type){
-  behave(Type);
+  function confirm(self, key, value){
+    return multiple(key) ? detect(p.equiv(?, value), p.get(self, key)) : p.equiv(value, p.get(self, key));
+  }
+
+  function assert(self, key, value){
+    return assoc(self, key, multiple(key) ? p.conj(p.get(self, key, defaults(key)), value) : value);
+  }
+
+  function retract(self, key, value){
+    const copy = p.clone(self);
+    copy[key] = multiple(key) ? p.omit(p.get(self, key, defaults(key)), value) : dissoc(self, key);
+    return copy;
+  }
+
+  doto(Type,
+    emptyable,
+    implement(ITopic, {assert, retract, confirm}),
+    implement(IReducible, {reduce}),
+    implement(IKVReducible, {reducekv}),
+    implement(IEquiv, {equiv}),
+    implement(IAssociative, {assoc, contains}),
+    implement(ILookup, {lookup}),
+    implement(IMap, {dissoc, keys, vals}),
+    implement(ISeq, {first, rest}),
+    implement(ICounted, {count}),
+    implement(ISeqable, {seq}));
+
   return multi(function(init, ...args){
     if (!args.length) {
       if (isObject(init)) {

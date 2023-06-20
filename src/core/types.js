@@ -1,7 +1,6 @@
 export * from "./types/empty-list.js";
 export * from "./types/number.js";
 export * from "./types/lazy-seq.js";
-export * from "./types/multimap.js";
 export * from "./types/array.js";
 export * from "./types/boolean.js";
 export * from "./types/concatenated.js";
