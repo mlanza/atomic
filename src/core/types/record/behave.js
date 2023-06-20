@@ -55,10 +55,6 @@ function equiv(self, other){
   }, true);
 }
 
-function empty(self){
-  return Object.create(self.constructor.prototype);
-}
-
 function reduce(self, f, init){
   return p.reduce(function(memo, key){
     return f(memo, [key, lookup(self, key)]);
@@ -87,7 +83,6 @@ export default does(
   implement(IReducible, {reduce}),
   implement(IKVReducible, {reducekv}),
   implement(IEquiv, {equiv}),
-  implement(IEmptyableCollection, {empty}),
   implement(IAssociative, {assoc, contains}),
   implement(ILookup, {lookup}),
   implement(IMap, {dissoc, keys, vals}),

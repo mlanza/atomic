@@ -474,7 +474,6 @@ QUnit.test("duration", function(assert){
 
 });
 
-//#if _EXPERIMENTAL
 QUnit.test("multimap", function(assert){
   function Person(name, surname, dob){
     this.name = name;
@@ -525,7 +524,6 @@ QUnit.test("record", function(assert){
   assert.equal(dylan |> _.assoc(?, "surname", "McDermott") |> _.get(?, "surname"), "McDermott");
   assert.equal(_.count(robin), 3);
 });
-//#endif
 
 QUnit.test("observable sharing", function(assert){
   function exec(oo, nn, desc){
