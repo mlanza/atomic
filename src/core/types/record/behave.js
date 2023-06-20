@@ -9,6 +9,7 @@ import * as p from "./protocols.js";
 import {isObject} from "../object/concrete.js";
 import {isArray} from "../array/concrete.js";
 import {array} from "../array/construct.js";
+import {includes} from "../object/protocols.js";
 
 function seq(self){
   return p.seq(mapcat(function(key){
@@ -105,12 +106,7 @@ export default function(Type, defaults = constantly(null), multiple = constantly
   function dissoc(self, key){
     const copy = p.clone(self);
     delete copy[key];
-    for(const req of required){
-      if (!(key in copy)) {
-        return p.coerce(copy, Object);
-      }
-    }
-    return copy;
+    return includes(required, key) ? p.coerce(copy, Object) : copy;
   }
 
   const retract = overload(null, null, p.dissoc, retract3);
