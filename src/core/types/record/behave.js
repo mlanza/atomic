@@ -78,7 +78,7 @@ export function emptyable(Type){
   implement(IEmptyableCollection, {empty}, Type);
 }
 
-export default does(
+const behave = does(
   emptyable,
   implement(IReducible, {reduce}),
   implement(IKVReducible, {reducekv}),
@@ -89,3 +89,8 @@ export default does(
   implement(ISeq, {first, rest}),
   implement(ICounted, {count}),
   implement(ISeqable, {seq}));
+
+export default function(Type){
+  behave(Type);
+  return constructs(Type);
+}
