@@ -1,9 +1,11 @@
-import {does, constructs} from "../../core.js";
+import {does, constructs, fold, multi} from "../../core.js";
 import {implement} from "../protocol.js";
 import {reduced} from "../reduced/construct.js";
 import {is} from "../../protocols/imapentry/concrete.js";
-import {IReducible, IKVReducible, IEquiv, IAssociative, ISeqable, ILookup, ICounted, IMap, ISeq, IEmptyableCollection} from "../../protocols.js";
+import {ITopic, IReducible, IKVReducible, IEquiv, IAssociative, ISeqable, ILookup, ICounted, IMap, ISeq, IEmptyableCollection} from "../../protocols.js";
 import * as p from "./protocols.js";
+import {isObject} from "../object/concrete.js";
+import {isArray} from "../array/concrete.js";
 
 function contains(self, key){
   return self.hasOwnProperty(key);
@@ -80,6 +82,7 @@ export function emptyable(Type){
 
 const behave = does(
   emptyable,
+  implement(ITopic, {assert: assoc}),
   implement(IReducible, {reduce}),
   implement(IKVReducible, {reducekv}),
   implement(IEquiv, {equiv}),
@@ -92,5 +95,16 @@ const behave = does(
 
 export default function(Type){
   behave(Type);
-  return constructs(Type);
+  return multi(function(init, ...args){
+    if (!args.length) {
+      if (isObject(init)) {
+        return construct(Type, ?);
+      } else if (isArray(init)) {
+        return fold(function(memo, [key, value]){
+          return p.assert(memo, key, value);
+        }, construct(Type, {}), ?);
+      }
+    }
+    return constructs(Type);
+  });
 }
