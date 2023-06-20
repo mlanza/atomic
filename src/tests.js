@@ -515,10 +515,12 @@ QUnit.test("multirecord", function(assert){
   const entries = _.chain(robin, _.seq, _.toArray);
   assert.deepEqual(entries, [["name", "Robin"], ["surname", "Wright"], ["surname","Penn"], ["dob",new Date(1966, 3, 8)]]);
   const robbie = _.assert(robin, "name", "Robbie");
-  const name = _.get(robbie, "name");
-  assert.deepEqual(name,["Robin","Robbie"]);
-  assert.ok(_.confirm(robbie, "name", "Robbie"));
-  const robbie2 = _.retract(robbie, "name", "Robin");
+  assert.deepEqual(_.get(robbie, "name"), ["Robin", "Robbie"]);
+  assert.ok(_.verify(robbie, "name", "Robin"));
+  assert.ok(_.verify(robbie, "name", "Robbie"));
+  const robbie2 = _.chain(robbie,
+      _.retract(?, "name", "Robin"),
+      _.retract(?, "dob"));
   const name2 = _.get(robbie2, "name");
   assert.deepEqual(name2, ["Robbie"]);
 });

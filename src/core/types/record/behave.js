@@ -1,12 +1,20 @@
-import {doto, constructs, fold, multi, constantly} from "../../core.js";
+import {doto, overload, constructs, fold, multi, constantly, identity} from "../../core.js";
 import {implement} from "../protocol.js";
 import {reduced} from "../reduced/construct.js";
 import {is} from "../../protocols/imapentry/concrete.js";
 import {map, mapcat, detect, concatenated} from "../lazy-seq.js";
+import {maybe} from "../just/construct.js";
 import {ITopic, IReducible, IKVReducible, IEquiv, IAssociative, ISeqable, ILookup, ICounted, IMap, ISeq, IEmptyableCollection} from "../../protocols.js";
 import * as p from "./protocols.js";
 import {isObject} from "../object/concrete.js";
 import {isArray} from "../array/concrete.js";
+import {array} from "../array/construct.js";
+
+function seq(self){
+  return p.seq(mapcat(function(key){
+    return map(array(key, ?), p.asserts(self, key));
+  }, p.keys(self)));
+}
 
 function contains(self, key){
   return self.hasOwnProperty(key);
@@ -78,31 +86,31 @@ export function emptyable(Type){
 }
 
 export default function(Type, defaults = constantly(null), multiple = constantly(false)){
-  function seq(self){
-    return p.count(self) ? p.seq(mapcat(function([key, value]){
-      return multiple(defaults(key)) ? map(function(value){
-        return [key, value];
-      }, value) : [[key, value]];
-    }, Object.entries(self))) : null;
-  }
-
-  function confirm(self, key, value){
-    return multiple(key) ? detect(p.equiv(?, value), p.get(self, key)) : p.equiv(value, p.get(self, key));
+  function asserts(self, key){
+    return maybe(p.get(self, key), multiple(key) ? identity : array);
   }
 
   function assert(self, key, value){
     return assoc(self, key, multiple(key) ? p.conj(p.get(self, key, defaults(key)), value) : value);
   }
 
-  function retract(self, key, value){
-    const copy = p.clone(self);
-    copy[key] = multiple(key) ? p.omit(p.get(self, key, defaults(key)), value) : dissoc(self, key);
+  function retract3(self, key, value){
+    let copy = self;
+    if (multiple(key)) {
+      copy = p.clone(self);
+      copy[key] = p.omit(p.get(self, key, defaults(key)), value);
+    } else if (p.equiv(p.get(self, key), value)) {
+      copy = p.clone(self);
+      copy[key] = dissoc(self, key);
+    }
     return copy;
   }
 
+  const retract = overload(null, null, p.dissoc, retract3);
+
   doto(Type,
     emptyable,
-    implement(ITopic, {assert, retract, confirm}),
+    implement(ITopic, {asserts, assert, retract}),
     implement(IReducible, {reduce}),
     implement(IKVReducible, {reducekv}),
     implement(IEquiv, {equiv}),
