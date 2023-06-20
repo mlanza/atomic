@@ -480,8 +480,7 @@ QUnit.test("multimap", function(assert){
     this.surname = surname;
     this.dob = dob;
   }
-  const person = _.constructs(Person);
-  _.multimap(Person);
+  const person = _.multimap(Person);
   const robin = person(["Robin"], ["Wright", "Penn"], [new Date(1966, 3, 8)]);
   const entries = _.chain(robin, _.seq, _.toArray);
   assert.deepEqual(entries, [["name", "Robin"],["surname", "Wright"],["surname","Penn"],["dob",new Date(1966, 3, 8)]]);
@@ -502,9 +501,8 @@ QUnit.test("record", function(assert){
   }
   _.ICoercible.addMethod([Object, Person], _.construct(Person, _));
   _.ICoercible.addMethod([Person, Object], person => Object.assign({}, person));
-  _.record(Person);
-  const sean = new Person("Sean", "Penn", _.date(1960, 8, 17));
-  const person = _.constructs(Person);
+  const person = _.record(Person);
+  const sean = person("Sean", "Penn", _.date(1960, 8, 17));
   const robin = person("Robin", "Wright", new Date(1966, 3, 8));
   const dylan = _.construct(Person, {name: "Dylan", surname: "Penn", dob: _.date(1991, 4, 13)});
   const $robin = $.cell(_.journal(robin));

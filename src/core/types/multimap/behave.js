@@ -46,11 +46,14 @@ export default function(Type, empty = []){ //empty set?
     return copy;
   }
 
+  const construct = record(Type);
+
   doto(
     Type,
-    record,
     implement(ITopic, {assert, retract, confirm}),
     implement(IReducible, {reduce}),
     implement(IKVReducible, {reducekv}),
     implement(ISeqable, {seq}));
+
+  return construct;
 }
