@@ -10,6 +10,7 @@ export function defs(construct, keys){
     return _.assoc(memo, key, construct(key));
   }, {}, keys);
 }
+
 export function dispatchable(Cursor){ //from `atomic/reactives`
 
   function dispatch(self, command){
@@ -22,16 +23,6 @@ export function dispatchable(Cursor){ //from `atomic/reactives`
      _.implement(IDispatch, {dispatch}));
 
 }
-
-(function(){
-  function dispatch(self, args){
-    return self.f(...args);
-  }
-
-  _.doto(_.Router,
-    _.implement(IDispatch, {dispatch}));
-
-})();
 
 (function(){
 

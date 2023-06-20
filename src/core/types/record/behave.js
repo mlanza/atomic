@@ -14,7 +14,7 @@ function lookup(self, key){
 }
 
 function seq(self){
-  return p.seq(Object.entries(self));
+  return p.count(self) ? p.seq(Object.entries(self)) : null;
 }
 
 function count(self){
