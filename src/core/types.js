@@ -1,9 +1,7 @@
 export * from "./types/empty-list.js";
 export * from "./types/number.js";
 export * from "./types/lazy-seq.js";
-//#if _EXPERIMENTAL
 export * from "./types/multimap.js";
-//#endif
 export * from "./types/array.js";
 export * from "./types/boolean.js";
 export * from "./types/concatenated.js";
@@ -35,9 +33,7 @@ export * from "./types/period.js";
 export * from "./types/promise.js";
 export * from "./types/protocol.js";
 export * from "./types/range.js";
-//#if _EXPERIMENTAL
 export * from "./types/record.js";
-//#endif
 export * from "./types/recurrence.js";
 export * from "./types/reduced.js";
 export * from "./types/reg-exp.js";
