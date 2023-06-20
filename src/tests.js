@@ -481,9 +481,9 @@ QUnit.test("multimap", function(assert){
     this.dob = dob;
   }
   const person = _.multimap(Person);
-  const robin = person(["Robin"], ["Wright", "Penn"], [new Date(1966, 3, 8)]);
+  const robin = person([["name", "Robin"], ["surname", "Wright"], ["surname", "Penn"], ["dob", new Date(1966, 3, 8)]]);
   const entries = _.chain(robin, _.seq, _.toArray);
-  assert.deepEqual(entries, [["name", "Robin"],["surname", "Wright"],["surname","Penn"],["dob",new Date(1966, 3, 8)]]);
+  assert.deepEqual(entries, [["name", "Robin"], ["surname", "Wright"], ["surname","Penn"], ["dob",new Date(1966, 3, 8)]]);
   const robbie = _.assert(robin, "name", "Robbie");
   const name = _.get(robbie, "name");
   assert.deepEqual(name,["Robin","Robbie"]);
@@ -499,12 +499,12 @@ QUnit.test("record", function(assert){
     this.surname = surname;
     this.dob = dob;
   }
-  _.ICoercible.addMethod([Object, Person], _.construct(Person, _));
-  _.ICoercible.addMethod([Person, Object], person => Object.assign({}, person));
   const person = _.record(Person);
-  const sean = person("Sean", "Penn", _.date(1960, 8, 17));
+  _.ICoercible.addMethod([Object, Person], person);
+  _.ICoercible.addMethod([Person, Object], person => Object.assign({}, person));
+  const dylan = person({name: "Dylan", surname: "Penn", dob: _.date(1991, 4, 13)});
+  const sean = person([["name", "Sean"], ["surname", "Penn"], ["dob", _.date(1960, 8, 17)]]);
   const robin = person("Robin", "Wright", new Date(1966, 3, 8));
-  const dylan = _.construct(Person, {name: "Dylan", surname: "Penn", dob: _.date(1991, 4, 13)});
   const $robin = $.cell(_.journal(robin));
   const dylanp = _.coerce({name: "Dylan", surname: "Penn", dob: _.date(1991, 4, 13)}, Person);
   const robino = _.coerce(robin, Object);

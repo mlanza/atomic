@@ -8,3 +8,4 @@ export * from "../../protocols/iequiv/concrete.js";
 export * from "../../protocols/ireducible/concrete.js";
 export * from "../../protocols/icloneable/concrete.js";
 export * from "../../protocols/icoercible/concrete.js";
+export * from "../../protocols/itopic/concrete.js";
