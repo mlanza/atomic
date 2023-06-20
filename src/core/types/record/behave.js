@@ -4,7 +4,7 @@ import {reduced} from "../reduced/construct.js";
 import {is} from "../../protocols/imapentry/concrete.js";
 import {map, mapcat, detect, concatenated} from "../lazy-seq.js";
 import {maybe} from "../just/construct.js";
-import {ITopic, IReducible, IKVReducible, IEquiv, IAssociative, ISeqable, ILookup, ICounted, IMap, ISeq, IEmptyableCollection} from "../../protocols.js";
+import {ITopic, ICoercible, IReducible, IKVReducible, IEquiv, IAssociative, ISeqable, ILookup, ICounted, IMap, ISeq, IEmptyableCollection} from "../../protocols.js";
 import * as p from "./protocols.js";
 import {isObject} from "../object/concrete.js";
 import {isArray} from "../array/concrete.js";
@@ -50,12 +50,6 @@ function assoc(self, key, value){
   return copy;
 }
 
-function dissoc(self, key){
-  const copy = p.clone(self);
-  delete copy[key];
-  return copy;
-}
-
 function equiv(self, other){
   return p.count(self) === p.count(other) && reducekv(self, function(memo, key, value){
     return memo ? p.equiv(p.get(other, key), value) : reduced(memo);
@@ -86,6 +80,8 @@ export function emptyable(Type){
 }
 
 export default function(Type, defaults = constantly(null), multiple = constantly(false)){
+  const required = Object.keys(new Type());
+
   function asserts(self, key){
     return maybe(p.get(self, key), multiple(key) ? identity : array);
   }
@@ -106,7 +102,22 @@ export default function(Type, defaults = constantly(null), multiple = constantly
     return copy;
   }
 
+  function dissoc(self, key){
+    const copy = p.clone(self);
+    delete copy[key];
+    for(const req of required){
+      if (!(key in copy)) {
+        return p.coerce(copy, Object);
+      }
+    }
+    return copy;
+  }
+
   const retract = overload(null, null, p.dissoc, retract3);
+  const make = constructs(Type);
+
+  ICoercible.addMethod([Object, Type], make);
+  ICoercible.addMethod([Type, Object], attrs => Object.assign({}, attrs));
 
   doto(Type,
     emptyable,
@@ -131,6 +142,6 @@ export default function(Type, defaults = constantly(null), multiple = constantly
         }, construct(Type, {}), ?);
       }
     }
-    return constructs(Type);
+    return make;
   });
 }
