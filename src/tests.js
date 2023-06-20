@@ -481,8 +481,6 @@ QUnit.test("record", function(assert){
     this.dob = dob;
   }
   const person = _.record(Person);
-  _.ICoercible.addMethod([Object, Person], person);
-  _.ICoercible.addMethod([Person, Object], person => Object.assign({}, person));
   const dylan = person({name: "Dylan", surname: "Penn", dob: _.date(1991, 4, 13)});
   const sean = person([["name", "Sean"], ["surname", "Penn"], ["dob", _.date(1960, 8, 17)]]);
   const robin = person("Robin", "Wright", new Date(1966, 3, 8));
