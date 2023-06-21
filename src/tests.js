@@ -502,6 +502,38 @@ QUnit.test("record", function(assert){
   assert.equal(_.count(robin), 3);
 });
 
+//protocols as discriminated unions: https://www.typescriptlang.org/docs/handbook/2/narrowing.html#discriminated-unions
+QUnit.test("area:polymorphism", function(assert){
+  function Circle(radius){
+    this.radius = radius;
+  }
+  function Square(sideLength){
+    this.sideLength = sideLength;
+  }
+  const IArea = _.protocol({
+    area: null
+  });
+  const circle = _.constructs(Circle),
+        square = _.constructs(Square),
+        area = IArea.area;
+  {
+    function area(circle){
+      return circle.radius * circle.radius * Math.PI;
+    }
+    _.doto(Circle, _.implement(IArea, {area}));
+  }
+  {
+    function area(square){
+      return square.sideLength * square.sideLength;
+    }
+    _.doto(Square, _.implement(IArea, {area}));
+  }
+  const s = square(7),
+        c = circle(8);
+  assert.ok(area(s) === 49);
+  assert.ok(area(c) === 201.06192982974676);
+});
+
 QUnit.test("multirecord", function(assert){
   function Person(name, surname, dob){
     this.name = name;
