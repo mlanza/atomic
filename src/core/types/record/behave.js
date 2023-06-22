@@ -11,6 +11,8 @@ import {isArray} from "../array/concrete.js";
 import {array} from "../array/construct.js";
 import {includes} from "../object/protocols.js";
 
+//TODO IHashable
+
 function seq(self){
   return p.seq(mapcat(function(key){
     return map(array(key, ?), p.asserts(self, key));
@@ -80,23 +82,16 @@ export function emptyable(Type){
   implement(IEmptyableCollection, {empty}, Type);
 }
 
-export default function(Type, defaults = constantly(null), multiple = constantly(false)){
-  const required = Object.keys(new Type());
-
+function record(Type, defaults){
   function asserts(self, key){
-    return maybe(p.get(self, key), multiple(key) ? identity : array);
+    return maybe(p.get(self, key), array);
   }
 
-  function assert(self, key, value){
-    return assoc(self, key, multiple(key) ? p.conj(p.get(self, key, defaults(key)), value) : value);
-  }
+  const assert = assoc;
 
   function retract3(self, key, value){
     let copy = self;
-    if (multiple(key)) {
-      copy = p.clone(self);
-      copy[key] = p.omit(p.get(self, key, defaults(key)), value);
-    } else if (p.equiv(p.get(self, key), value)) {
+    if (p.equiv(p.get(self, key), value)) {
       copy = p.clone(self);
       copy[key] = dissoc(self, key);
     }
@@ -106,7 +101,7 @@ export default function(Type, defaults = constantly(null), multiple = constantly
   function dissoc(self, key){
     const copy = p.clone(self);
     delete copy[key];
-    return includes(required, key) ? p.coerce(copy, Object) : copy;
+    return includes(Object.keys(new Type()), key) ? p.coerce(copy, Object) : copy;
   }
 
   const retract = overload(null, null, p.dissoc, retract3);
@@ -140,4 +135,46 @@ export default function(Type, defaults = constantly(null), multiple = constantly
     }
     return make;
   });
+}
+
+function multirecord(Type, defaults, multiple){
+  const make = record(Type, defaults);
+
+  function asserts(self, key){
+    return maybe(p.get(self, key), multiple(key) ? identity : array);
+  }
+
+  function assert(self, key, value){
+    return assoc(self, key, multiple(key) ? p.conj(p.get(self, key, defaults(key)), value) : value);
+  }
+
+  function retract3(self, key, value){
+    let copy = self;
+    if (multiple(key)) {
+      copy = p.clone(self);
+      copy[key] = p.omit(p.get(self, key, defaults(key)), value);
+    } else if (p.equiv(p.get(self, key), value)) {
+      copy = p.clone(self);
+      copy[key] = dissoc(self, key);
+    }
+    return copy;
+  }
+
+  function dissoc(self, key){
+    const copy = p.clone(self);
+    delete copy[key];
+    return includes(Object.keys(new Type()), key) ? p.coerce(copy, Object) : copy;
+  }
+
+  const retract = overload(null, null, p.dissoc, retract3);
+
+  doto(Type,
+    implement(ITopic, {asserts, assert, retract}),
+    implement(IMap, {dissoc}));
+
+  return make;
+}
+
+export default function(Type, options = {defaults: constantly(null)}){
+  return options.multiple ? multirecord(Type, options.defaults, options.multiple) : record(Type, options.defaults);
 }
