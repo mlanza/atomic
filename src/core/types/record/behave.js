@@ -123,18 +123,18 @@ function record(Type, defaults){
     implement(ICounted, {count}),
     implement(ISeqable, {seq}));
 
-  return multi(function(init, ...args){
-    if (!args.length) {
-      if (isObject(init)) {
-        return construct(Type, ?);
-      } else if (isArray(init)) {
-        return fold(function(memo, [key, value]){
-          return p.assert(memo, key, value);
-        }, construct(Type, {}), ?);
-      }
+  function from(init){
+    if (isObject(init)) {
+      return construct(Type, ?);
+    } else if (isArray(init)) {
+      return fold(function(memo, [key, value]){
+        return p.assert(memo, key, value);
+      }, construct(Type, {}), ?);
     }
     return make;
-  });
+  }
+
+  return multi(overload(null, from, constantly(make)));
 }
 
 function multirecord(Type, defaults, multiple){
