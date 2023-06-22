@@ -474,34 +474,6 @@ QUnit.test("duration", function(assert){
 
 });
 
-QUnit.test("record", function(assert){
-  function Person(name, surname, dob){
-    this.name = name;
-    this.surname = surname;
-    this.dob = dob;
-  }
-  const person = _.record(Person);
-  const dylan = person({name: "Dylan", surname: "Penn", dob: _.date(1991, 4, 13)});
-  const sean = person([["name", "Sean"], ["surname", "Penn"], ["dob", _.date(1960, 8, 17)]]);
-  const robin = person("Robin", "Wright", new Date(1966, 3, 8));
-  const $robin = $.cell(_.journal(robin));
-  const dylanp = _.coerce({name: "Dylan", surname: "Penn", dob: _.date(1991, 4, 13)}, Person);
-  const robino = _.coerce(robin, Object);
-  assert.equal($robin |> _.deref |> _.deref |> _.get(?, "surname"), "Wright");
-  _.swap($robin, _.fmap(_, _.assoc(?, "surname", "Penn")));
-  assert.equal($robin |> _.deref |> _.deref |> _.get(?, "surname"), "Penn");
-  _.swap($robin, _.undo);
-  assert.equal($robin |> _.deref |> _.deref |> _.get(?, "surname"), "Wright");
-  _.swap($robin, _.redo);
-  assert.equal($robin |> _.deref |> _.deref |> _.get(?, "surname"), "Penn");
-  assert.equal(robin |> _.get(?, "surname"), "Wright");
-  assert.equal(robin |> _.assoc(?, "surname", "Penn") |> _.get(?, "surname"), "Penn");
-  assert.equal(sean |> _.get(?, "surname"), "Penn");
-  assert.equal(dylan |> _.get(?, "surname"), "Penn");
-  assert.equal(dylan |> _.assoc(?, "surname", "McDermott") |> _.get(?, "surname"), "McDermott");
-  assert.equal(_.count(robin), 3);
-});
-
 //protocols as discriminated unions: https://www.typescriptlang.org/docs/handbook/2/narrowing.html#discriminated-unions
 QUnit.test("area:polymorphism", function(assert){
   function Circle(radius){
@@ -534,13 +506,41 @@ QUnit.test("area:polymorphism", function(assert){
   assert.ok(area(c) === 201.06192982974676);
 });
 
+QUnit.test("record", function(assert){
+  function Person(name, surname, dob){
+    this.name = name;
+    this.surname = surname;
+    this.dob = dob;
+  }
+  const person = _.record(Person);
+  const dylan = person({name: "Dylan", surname: "Penn", dob: _.date(1991, 4, 13)});
+  const sean = person([["name", "Sean"], ["surname", "Penn"], ["dob", _.date(1960, 8, 17)]]);
+  const robin = person("Robin", "Wright", new Date(1966, 3, 8));
+  const $robin = $.cell(_.journal(robin));
+  const dylanp = _.coerce({name: "Dylan", surname: "Penn", dob: _.date(1991, 4, 13)}, Person);
+  const robino = _.coerce(robin, Object);
+  assert.equal($robin |> _.deref |> _.deref |> _.get(?, "surname"), "Wright");
+  _.swap($robin, _.fmap(_, _.assoc(?, "surname", "Penn")));
+  assert.equal($robin |> _.deref |> _.deref |> _.get(?, "surname"), "Penn");
+  _.swap($robin, _.undo);
+  assert.equal($robin |> _.deref |> _.deref |> _.get(?, "surname"), "Wright");
+  _.swap($robin, _.redo);
+  assert.equal($robin |> _.deref |> _.deref |> _.get(?, "surname"), "Penn");
+  assert.equal(robin |> _.get(?, "surname"), "Wright");
+  assert.equal(robin |> _.assoc(?, "surname", "Penn") |> _.get(?, "surname"), "Penn");
+  assert.equal(sean |> _.get(?, "surname"), "Penn");
+  assert.equal(dylan |> _.get(?, "surname"), "Penn");
+  assert.equal(dylan |> _.assoc(?, "surname", "McDermott") |> _.get(?, "surname"), "McDermott");
+  assert.equal(_.count(robin), 3);
+});
+
 QUnit.test("multirecord", function(assert){
   function Person(name, surname, dob){
     this.name = name;
     this.surname = surname;
     this.dob = dob;
   }
-  const person = _.record(Person, _.constantly([]), _.constantly(true));
+  const person = _.record(Person, {defaults: _.constantly([]), multiple: _.constantly(true)});
   const robin = person([["name", "Robin"], ["surname", "Wright"], ["surname", "Penn"], ["dob", new Date(1966, 3, 8)]]);
   const entries = _.chain(robin, _.seq, _.toArray);
   assert.deepEqual(entries, [["name", "Robin"], ["surname", "Wright"], ["surname","Penn"], ["dob",new Date(1966, 3, 8)]]);
