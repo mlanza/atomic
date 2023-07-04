@@ -792,7 +792,7 @@ export const best = overload(null, best1, best2);
 export function scan(n, xs){ //TODO add transducer
   return lazySeq(function(){
     const ys = take2(n, xs);
-    return p.count(ys) === n ? cons(ys, scan2(n, p.rest(xs))) : emptyList();
+    return p.count(ys) === n ? cons(ys, scan(n, p.rest(xs))) : emptyList();
   });
 }
 
