@@ -5,6 +5,7 @@ import {reduced, unreduced, isReduced} from "../reduced.js";
 import {keying} from "../../protocols/imapentry/concrete.js";
 import {hashSeq as hash} from "../../protocols/ihashable/hashers.js";
 import {set, emptySet} from "./construct.js";
+import {lazyIterable} from "../lazy-seq/concrete.js";
 
 function seq(self){
   return count(self) ? self : null;
@@ -37,13 +38,13 @@ function first(self){
 function rest(self){
   const iter = self.values();
   iter.next();
-  return _.lazyIterable(iter);
+  return lazyIterable(iter);
 }
 
 function next(self){
   const iter = self.values();
   iter.next();
-  return _.lazyIterable(iter, null);
+  return lazyIterable(iter, null);
 }
 
 function count(self){
@@ -61,7 +62,7 @@ function reduce(self, f, init){
     memo = f(memo, ISeq.first(coll));
     coll = INext.next(coll);
   }
-  return _.unreduced(memo);
+  return unreduced(memo);
 }
 
 function merge(self, other){

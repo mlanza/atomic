@@ -776,7 +776,7 @@ export const braid = overload(null, null, map, braid3, braid4, braidN);
 
 function best1(better){ //transducer
   return function(rf){
-    return _.overload(rf, rf, better);
+    return overload(rf, rf, better);
   }
 }
 
