@@ -13,13 +13,13 @@ Highlights:
 
 Atomic is protocol oriented.  Objects are seen as as [abstract types](https://en.wikipedia.org/wiki/Abstract_data_type) exhibiting certain behaviors irrespective of their concrete types.  This kind of polymorphism is largely what makes Clojure so good at transforming data.
 
-Atomic is functional first.  Functions are preferred to methods.  This makes sense given how protocols view types as abstractions.
+Atomic is [functional first](functional-first.md).  Functions are preferred to methods.  This makes sense given how protocols view types as abstractions.
 
 Atomic has no maps or vectors but uses objects and arrays in the same capacity.  It had previously integrated these types via  [Immutable.js](https://immutable-js.com) but, in practice, objects and arrays filled the gap well enough it wasn't worth the cost of loading a library to occassionally use maps and vectors.  Its integration [was dropped](https://github.com/mlanza/atomic/commit/8e1787f6974df5bfbb53a371a261e09b5efee8ee).
 
 Still, Atomic makes integrating third-party types into its consistent, familiar api seamless via protocols as was demonstrated.
 
-Don't care for [point programming](./tests/autopartial-less.js)?  [Autopartial](./tests/autopartial.js) delivers [point-free programming](https://en.wikipedia.org/wiki/Tacit_programming) without a build step up until [pipeline operators](https://github.com/tc39/proposal-pipeline-operator) and [partial application](https://github.com/tc39/proposal-partial-application) reach stage maturity.
+Don't care for [point programming](tests/autopartial-less.js)?  [Autopartial](tests/autopartial.js) delivers [point-free programming](https://en.wikipedia.org/wiki/Tacit_programming) without a build step up until [pipeline operators](https://github.com/tc39/proposal-pipeline-operator) and [partial application](https://github.com/tc39/proposal-partial-application) reach stage maturity.
 
 ## Premise
 JavaScript does functional programming pretty dang well.  It may not do it as well languages with native FP facilities but libraries fill the gap just fine.
