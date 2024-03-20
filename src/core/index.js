@@ -411,6 +411,16 @@ export function unfork(self){
   });
 }
 
+export function attempt(f, ...args){
+  return Promise.all(args).then(function(args){
+    try {
+      return Promise.resolve(f(...args));
+    } catch (ex) {
+      return Promise.reject(ex);
+    }
+  });
+}
+
 function reduceToArray(self){
   return p.reduce(function(memo, value){
     memo.push(value);
