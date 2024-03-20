@@ -150,15 +150,12 @@ export function plugging(placeholder){
 
 export const placeholder = {};
 export const plug = plugging(placeholder);
+export const part = plug;
 
 export function partial(f, ...xs){
   return function(...ys){
     return f.apply(this, [...xs, ...ys]);
   }
-}
-
-export function partly(f){
-  return partial(plug, f);
 }
 
 export function lift(g, f){ //also `lift(attempt, f)`
@@ -167,9 +164,9 @@ export function lift(g, f){ //also `lift(attempt, f)`
   }
 }
 
-export function deferring(f){
-  return lift(partial, f);
-}
+export const partly = lift(part, ?);
+export const partially = lift(partial, ?);
+export const deferring = partially;
 
 export function factory(f, ...args){
   return deferring(partial(f, ...args));
