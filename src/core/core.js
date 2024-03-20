@@ -161,10 +161,14 @@ export function partly(f){
   return partial(plug, f);
 }
 
-export function deferring(f){
+export function lift(g, f){ //also `lift(attempt, f)`
   return function(...args){
-    return partial(f, ...args);
+    return g.call(this, f, ...args);
   }
+}
+
+export function deferring(f){
+  return lift(partial, f);
 }
 
 export function factory(f, ...args){
