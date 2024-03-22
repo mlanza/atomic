@@ -106,9 +106,7 @@ function assoc(self, key, value){
   if (lookup(self, key) === value) {
     return self;
   }
-  const arr = Array.from(self);
-  arr.splice(key, 1, value);
-  return arr;
+  return self.with(key, value);
 }
 
 function contains(self, key){
