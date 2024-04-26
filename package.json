@@ -8,6 +8,7 @@
     "autopartial": "deno run ./tests/autopartial.js",
     "autopartial-less": "deno run ./tests/autopartial-less.js"
   },
+  "type": "module",
   "engines": {
     "node": ">= 17.4.0",
     "npm": ">= 8.0.0"
