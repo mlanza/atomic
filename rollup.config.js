@@ -1,10 +1,10 @@
-import babel from '@rollup/plugin-babel';
+import {babel} from '@rollup/plugin-babel';
 import resolve from '@rollup/plugin-node-resolve';
 import json  from '@rollup/plugin-json';
 import jscc from 'rollup-plugin-jscc';
 import { terser } from "rollup-plugin-terser";
 import { rollupImportMapPlugin } from "rollup-plugin-import-map";
-
+console.log("b",babel)
 const _CROSSREALM = process.argv.indexOf("--crossrealm") == -1 ? 0 : 1;
 const _EXPERIMENTAL = process.argv.indexOf("--experimental") == -1 ? 0 : 1;
 const _RELEASE = process.argv.indexOf("--release") == -1 ? 0 : 1;
@@ -23,7 +23,7 @@ export default [{
   output: {
     dir: 'dist/atomic',
     format: 'esm',
-    interop: false
+    interop: "esModule"
   },
   external: [],
   plugins: [
