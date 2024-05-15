@@ -37,7 +37,7 @@ JavaScript does functional programming pretty dang well and continues to add pro
 * [pipeline operator](https://github.com/tc39/proposal-pipeline-operator)
 * [temporal](https://github.com/tc39/proposal-temporal)
 
-Of all of the above, first-class protocols is the most critical one which, for some odd reason, has failed to gain community support.  Developers it seems are failing to experience and realize the tremendous value add that only protocols provide.  They're the centerpiece of Atomic and, by extension, Clojure.  Clojure would not be Clojure without them!
+Of all of the above, first-class protocols is the most critical one which, for some odd reason, has failed to gain community support.  Developers it seems are failing to experience and realize the tremendous value add that only protocols provide.  They're the centerpiece of Clojure and, by extension, Atomic.  Clojure would not be Clojure without them!
 
 In the meantime, the gaps in these facilities are filled by libraries like this one.
 
@@ -134,7 +134,7 @@ The benefit of starting with simulations is they're free of messy unpredictabili
 
 Atomic has been used for developing and deploying (to typical web hosts, Deno, SharePoint, Cloudflare, and Power Apps) a variety of production apps for years and has most recently been used to create digital card and board games.
 
-These examples epitomize the above guidance:
+These examples model how one might write a program in Atomic:
 
 * [Todo](https://github.com/mlanza/todo)
 * [Treasure Quest](https://github.com/mlanza/treasure-quest)
