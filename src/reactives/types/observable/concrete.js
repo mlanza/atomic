@@ -165,28 +165,30 @@ function time(){
   return _.date().getTime();
 }
 
-function tick3(interval, {precision = 100, frame = 0}, f = time){
+function tick3(interval, frame = 0, f = time){
   return observable(function(observer){
     const seed = performance.now();
     const target = seed + frame * interval;
     const self = {seed, target, frame, stopped: false};
     function callback(){
-      if (self.target <= performance.now()) {
+      self.offage = self.target - performance.now();
+      if (self.offage <= 0) {
         pub(observer, f(self));
-        self.frame += self.frame;
+        self.frame += 1;
         self.target = self.seed + self.frame * interval;
       }
-      self.stopped || setTimeout(callback, precision);
+      self.stopped || setTimeout(callback, Math.round(Math.max(0, self.offage), 0));
     }
     setTimeout(callback, 0);
     return function(){
       self.stopped = true;
+      complete(observer);
     }
   });
 }
 
 function tick2(interval, f = time){
-  return tick3(interval, {precision: 100, frame: 0}, f);
+  return tick3(interval, 0, f);
 }
 
 const tick = _.overload(null, tick2(?, time), tick2, tick3);
