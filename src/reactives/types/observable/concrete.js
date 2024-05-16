@@ -171,13 +171,13 @@ function tick3(interval, frame = 0, f = time){
     const target = seed + frame * interval;
     const self = {seed, target, frame, stopped: false};
     function callback(){
-      self.offage = self.target - performance.now();
-      if (self.offage <= 0) {
+      self.offage = performance.now() - self.target;
+      if (self.offage >= 0) {
         pub(observer, f(self));
         self.frame += 1;
         self.target = self.seed + self.frame * interval;
       }
-      const delay = Math.abs(Math.round(Math.max(0, self.offage), 0));
+      const delay = Math.abs(Math.round(Math.min(0, self.offage), 0));
       self.stopped || setTimeout(callback, delay);
     }
     setTimeout(callback, 0);
