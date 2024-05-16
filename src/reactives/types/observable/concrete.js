@@ -177,7 +177,8 @@ function tick3(interval, frame = 0, f = time){
         self.frame += 1;
         self.target = self.seed + self.frame * interval;
       }
-      self.stopped || setTimeout(callback, Math.round(Math.max(0, self.offage), 0));
+      const delay = Math.abs(Math.round(Math.max(0, self.offage), 0));
+      self.stopped || setTimeout(callback, delay);
     }
     setTimeout(callback, 0);
     return function(){
