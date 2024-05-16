@@ -192,7 +192,7 @@ function tick2(interval, f = time){
   return tick3(interval, 0, f);
 }
 
-const tick = _.overload(null, tick2(?, time), tick2, tick3);
+const tick = _.overload(null, tick2, tick2, tick3);
 
 function when2(interval, f){
   return seed(f, tick(interval, f));
