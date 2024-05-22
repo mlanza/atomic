@@ -40,7 +40,7 @@ reg({_, $});
 
 function cmd(target = globalThis){
   Object.assign(target, registry);
-  _.log("Commands loaded", registry);
+  log("Commands loaded", registry);
 }
 
 Object.assign(globalThis, {reg, cmd});
