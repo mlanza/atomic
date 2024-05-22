@@ -1,37 +1,46 @@
-const registry = {};
+import _ from "./atomic_/core.js";
+import $ from "./atomic_/reactives.js";
 
-export function reg(symbol, path){
-  if (arguments.length == 1) {
-    Object.assign(registry, symbol);
-  } else {
-    registry[symbol] = path;
+export const registry = {};
+const params = new URLSearchParams(location.search);
+const monitor = params.get("monitor")?.split(",");
+const nomonitor = params.get("nomonitor")?.split(",");
+
+const monitors = monitor ? function(key){
+  return monitor.includes("*") || monitor.includes(key);
+} : nomonitor ? function(key){
+  return !nomonitor.includes(key);
+} : _.noop;
+
+function log(...args){
+  const l = registry.log || _.log;
+  l(...args);
+}
+
+function monitoring(symbol, object){
+  if (monitors(symbol) && _.satisfies($.ISubscribe, object)) {
+    $.sub(object, _.partial(log, symbol));
   }
 }
 
-async function cmds(){
-  const mods = await Promise.all(Object.entries(registry).map(function([symbol, path]){
-    return typeof path == "string" ? import(path).then(function(mod){
-      return [symbol, mod];
-    }) : Promise.resolve([symbol, {default: path}]);
-  }));
-  return mods.reduce(function(memo, [symbol, mod]){
-    memo[symbol] = mod.default;
-    return memo;
-  }, {});
+function register(symbols){
+  Object.assign(registry, symbols);
 }
 
-export function cmd(target){
-  cmds().then(function(cmds){
-    Object.assign(target || globalThis, cmds);
-    console.log("Commands loaded", cmds);
-  });
+function registerWithMonitoring(symbols){
+  register(symbols);
+  for(const [symbol, object] of Object.entries(symbols)){
+    monitoring(symbol, object);
+  }
 }
 
-reg("_", "./atomic_/core.js");
-reg("dom", "./atomic_/dom.js");
-reg("$", "./atomic_/reactives.js");
-reg("sh", "./atomic_/shell.js");
-reg("vd", "./atomic_/validates.js");
-reg("mut", "./atomic_/transients.js");
+export const reg = monitors === _.noop ? register : registerWithMonitoring;
 
-Object.assign(globalThis, {cmd});
+reg({_, $});
+
+function cmd(target = globalThis){
+  Object.assign(target, registry);
+  _.log("Commands loaded", registry);
+}
+
+Object.assign(globalThis, {reg, cmd});
