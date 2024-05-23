@@ -1,5 +1,5 @@
 import * as _ from "atomic/core";
-import * as mut from "atomic/transients";
+import * as $ from "atomic/shell";
 
 function count(self){
   return self.node.attributes.length;
@@ -74,6 +74,6 @@ export default _.does(
   _.implement(_.IInclusive, {includes}),
   _.implement(_.IAssociative, {contains}),
   _.implement(_.ILookup, {lookup}),
-  _.implement(mut.ITransientMap, {dissoc}),
-  _.implement(mut.ITransientEmptyableCollection, {empty}),
-  _.implement(mut.ITransientAssociative, {assoc}));
+  _.implement($.ITransientMap, {dissoc}),
+  _.implement($.ITransientEmptyableCollection, {empty}),
+  _.implement($.ITransientAssociative, {assoc}));

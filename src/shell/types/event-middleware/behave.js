@@ -1,5 +1,5 @@
 import * as _ from "atomic/core";
-import * as $ from "atomic/reactives";
+import * as $ from "atomic/shell";
 import {IMiddleware} from "../../protocols.js";
 
 function handle(self, event, next){

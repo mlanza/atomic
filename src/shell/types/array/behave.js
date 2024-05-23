@@ -1,5 +1,5 @@
 import * as _ from "atomic/core";
-import {IPersistent, ITransientMap, ITransientInsertable, ITransientEmptyableCollection, ITransientReversible, ITransientOmissible, ITransientAssociative, ITransientAppendable, ITransientPrependable, ITransientCollection} from "../../protocols.js";
+import {IPersistent, ITransientMap, ITransientInsertable, ITransientEmptyableCollection, ITransientReversible, ITransientOmissible, ITransientAssociative, ITransientAppendable, ITransientPrependable, ITransientCollection} from "../../../transients/protocols.js";
 
 function before(self, reference, inserted){
   const pos = self.indexOf(reference);

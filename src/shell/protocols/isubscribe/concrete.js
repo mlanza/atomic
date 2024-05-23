@@ -1,5 +1,5 @@
 import * as _ from "atomic/core";
-import {pub} from "../../protocols/ipublish/concrete.js";
+import {pub} from "../ipublish/concrete.js";
 import {ISubscribe} from "./instance.js";
 
 function sub3(source, xf, sink){

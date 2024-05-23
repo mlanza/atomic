@@ -1,5 +1,5 @@
 import * as _ from "atomic/core";
-import * as mut from "atomic/transients";
+import * as $ from "atomic/shell";
 import * as p from "../../protocols/concrete.js";
 import {element, isElement} from "../element/construct.js";
 import {IValue, IText} from "../../protocols.js";
@@ -42,7 +42,7 @@ const text  = _.comp(_.either(?, ""), access(p.text)),
 
 export default _.does(
   _.keying("HTMLSelectElement"),
-  _.implement(mut.ITransientCollection, {conj}),
-  _.implement(mut.ITransientAppendable, {append: conj}),
+  _.implement($.ITransientCollection, {conj}),
+  _.implement($.ITransientAppendable, {append: conj}),
   _.implement(IValue, {value}),
   _.implement(IText, {text}));

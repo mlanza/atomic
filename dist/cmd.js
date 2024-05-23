@@ -1,5 +1,5 @@
 import _ from "./atomic_/core.js";
-import $ from "./atomic_/reactives.js";
+import $ from "./atomic_/shell.js";
 
 export const registry = {};
 const params = new URLSearchParams(location.search);

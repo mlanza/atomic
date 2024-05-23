@@ -1,6 +1,6 @@
 import _ from "atomic_/core";
 import dom from "atomic_/dom";
-import $ from "atomic_/reactives";
+import $ from "atomic_/shell";
 import vd from "atomic_/validates";
 //#if _EXPERIMENTAL
 import mut from "atomic_/transients";

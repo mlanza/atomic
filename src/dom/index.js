@@ -1,6 +1,5 @@
 import * as _ from "atomic/core";
-import * as $ from "atomic/reactives";
-import * as mut from "atomic/transients";
+import * as $ from "atomic/shell";
 import * as p from "./protocols/concrete.js";
 import {element, elementns} from "./types/element/construct.js";
 import {mounts} from "./protocols/imountable/concrete.js";
@@ -12,7 +11,7 @@ export * from "./types.js";
 export * from "./protocols.js";
 export * from "./protocols/concrete.js";
 export * from "./shared.js";
-export {append, prepend, before, after, omit, empty} from "atomic/transients"; //TODO is reexporting a good idea?
+export {append, prepend, before, after, omit, empty} from "atomic/shell"; //TODO is reexporting a good idea?
 import {behaviors} from "./behaviors.js";
 export * from "./behaviors.js";
 export const behave = _.behaves(behaviors, ?);
@@ -264,7 +263,7 @@ export const toFragment = _.ICoercible.toFragment;
   function embeddables(self, doc){
     function embed(el){
       _.each(function(entry){
-        mut.assoc(el, _.key(entry), _.val(entry)); //attributes
+        $.assoc(el, _.key(entry), _.val(entry)); //attributes
       }, self);
     }
     return [embed];
@@ -293,7 +292,7 @@ _.ICoercible.addMethod([T.NestedAttrs, Object], _.deref);
 function stylesheet2(href, document){
   if (!p.sel1(`link[href='${href}']`, document)) {
     const stylesheet = element(document, "link", {type: "text/css", rel: "stylesheet", href});
-    mut.append(document.body, stylesheet);
+    $.append(document.body, stylesheet);
   }
 }
 

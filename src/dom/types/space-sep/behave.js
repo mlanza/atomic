@@ -1,5 +1,5 @@
 import * as _ from "atomic/core";
-import * as mut from "atomic/transients";
+import * as $ from "atomic/shell";
 
 function seq(self){
   const text = self.element.getAttribute(self.key);
@@ -38,5 +38,5 @@ export default _.does(
   _.implement(_.IDeref, {deref}),
   _.implement(_.IInclusive, {includes}),
   _.implement(_.ICounted, {count}),
-  _.implement(mut.ITransientOmissible, {omit}),
-  _.implement(mut.ITransientCollection, {conj}));
+  _.implement($.ITransientOmissible, {omit}),
+  _.implement($.ITransientCollection, {conj}));

@@ -1,5 +1,5 @@
 import * as _ from "atomic/core";
-import * as $ from "atomic/reactives";
+import * as $ from "atomic/shell";
 import {IMountable} from "./instance.js";
 
 export const isMountable = _.satisfies(IMountable, ?);
