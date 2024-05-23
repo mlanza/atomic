@@ -38,5 +38,5 @@ export default _.does(
   _.implement(_.IDeref, {deref}),
   _.implement(_.IInclusive, {includes}),
   _.implement(_.ICounted, {count}),
-  _.implement($.ITransientOmissible, {omit}),
-  _.implement($.ITransientCollection, {conj}));
+  _.implement($.IOmissible, {omit}),
+  _.implement($.ICollection, {conj}));

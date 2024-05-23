@@ -2,9 +2,6 @@ import _ from "atomic_/core";
 import dom from "atomic_/dom";
 import $ from "atomic_/shell";
 import vd from "atomic_/validates";
-//#if _EXPERIMENTAL
-import mut from "atomic_/transients";
-//#endif
 
 const stooges = ["Larry","Curly","Moe"],
       pieces  = {pawn: 1, knight: 3, bishop: 3, rook: 5, queen: 10, king: Infinity},
@@ -209,7 +206,7 @@ QUnit.test("dom", function(assert){
   assert.deepEqual(stooges |> dom.sel("li", ?) |> _.map(_.get(?, "id"), ?) |> _.toArray, ["moe", "curly", "larry"], "Extracted ids");
   assert.equal({givenName: "Curly", surname: "Howard"} |> who |> dom.text, "Curly Howard");
 //#if _EXPERIMENTAL
-  assert.deepEqual(_.fluent(moe, dom.classes, mut.conj(?, "main"), _.deref), ["main"]);
+  assert.deepEqual(_.fluent(moe, dom.classes, $.conj(?, "main"), _.deref), ["main"]);
   assert.equal(_.fluent(moe, dom.attr(?, "data-tagged", "tests"), _.get(?, "data-tagged")), "tests");
 //#endif
   stooges |> dom.append(?, div({id: 'branding'}, span("Three Blind Mice")));

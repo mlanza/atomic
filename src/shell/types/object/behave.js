@@ -1,5 +1,5 @@
 import * as _ from "atomic/core";
-import {IPersistent, ITransientOmissible, ITransientAssociative, ITransientEmptyableCollection, ITransientCollection, ITransientMap} from "../../../transients/protocols.js";
+import {IPersistent, IOmissible, IAssociative, IEmptyableCollection, ICollection, IMap} from "../../../transients/protocols.js";
 
 function omit(self, entry){
   const key = _.key(entry);
@@ -38,7 +38,7 @@ function persistent(self){
 
 export default _.does(
   _.implement(IPersistent, {persistent}),
-  _.implement(ITransientCollection, {conj}),
-  _.implement(ITransientEmptyableCollection, {empty}),
-  _.implement(ITransientAssociative, {assoc}),
-  _.implement(ITransientMap, {dissoc}));
+  _.implement(ICollection, {conj}),
+  _.implement(IEmptyableCollection, {empty}),
+  _.implement(IAssociative, {assoc}),
+  _.implement(IMap, {dissoc}));

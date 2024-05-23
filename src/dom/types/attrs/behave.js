@@ -74,6 +74,6 @@ export default _.does(
   _.implement(_.IInclusive, {includes}),
   _.implement(_.IAssociative, {contains}),
   _.implement(_.ILookup, {lookup}),
-  _.implement($.ITransientMap, {dissoc}),
-  _.implement($.ITransientEmptyableCollection, {empty}),
-  _.implement($.ITransientAssociative, {assoc}));
+  _.implement($.IMap, {dissoc}),
+  _.implement($.IEmptyableCollection, {empty}),
+  _.implement($.IAssociative, {assoc}));

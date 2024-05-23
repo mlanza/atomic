@@ -1,5 +1,5 @@
 import * as _ from "atomic/core";
-import {ITransientAssociative, ITransientMap} from "../../protocols.js";
+import {IAssociative, IMap} from "../../protocols.js";
 
 function assoc(self, key, value){
   self.set(key, value);
@@ -26,5 +26,5 @@ export default _.does(
   _.implement(_.ICounted, {count}),
   _.implement(_.ILookup, {lookup}),
   _.implement(_.IAssociative, {contains}),
-  _.implement(ITransientMap, {dissoc}),
-  _.implement(ITransientAssociative, {assoc}));
+  _.implement(IMap, {dissoc}),
+  _.implement(IAssociative, {assoc}));

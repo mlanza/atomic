@@ -42,7 +42,7 @@ const text  = _.comp(_.either(?, ""), access(p.text)),
 
 export default _.does(
   _.keying("HTMLSelectElement"),
-  _.implement($.ITransientCollection, {conj}),
-  _.implement($.ITransientAppendable, {append: conj}),
+  _.implement($.ICollection, {conj}),
+  _.implement($.IAppendable, {append: conj}),
   _.implement(IValue, {value}),
   _.implement(IText, {text}));

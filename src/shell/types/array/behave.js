@@ -1,5 +1,5 @@
 import * as _ from "atomic/core";
-import {IPersistent, ITransientMap, ITransientInsertable, ITransientEmptyableCollection, ITransientReversible, ITransientOmissible, ITransientAssociative, ITransientAppendable, ITransientPrependable, ITransientCollection} from "../../../transients/protocols.js";
+import {IPersistent, IMap, IInsertable, IEmptyableCollection, IReversible, IOmissible, IAssociative, IAppendable, IPrependable, ICollection} from "../../../transients/protocols.js";
 
 function before(self, reference, inserted){
   const pos = self.indexOf(reference);
@@ -55,12 +55,12 @@ function persistent(self){
 
 export default _.does(
   _.implement(IPersistent, {persistent}),
-  _.implement(ITransientInsertable, {before, after}),
-  _.implement(ITransientCollection, {conj: append, unconj}),
-  _.implement(ITransientEmptyableCollection, {empty}),
-  _.implement(ITransientOmissible, {omit}),
-  _.implement(ITransientAssociative, {assoc}),
-  _.implement(ITransientReversible, {reverse}),
-  _.implement(ITransientMap, {dissoc}),
-  _.implement(ITransientAppendable, {append}),
-  _.implement(ITransientPrependable, {prepend}));
+  _.implement(IInsertable, {before, after}),
+  _.implement(ICollection, {conj: append, unconj}),
+  _.implement(IEmptyableCollection, {empty}),
+  _.implement(IOmissible, {omit}),
+  _.implement(IAssociative, {assoc}),
+  _.implement(IReversible, {reverse}),
+  _.implement(IMap, {dissoc}),
+  _.implement(IAppendable, {append}),
+  _.implement(IPrependable, {prepend}));
