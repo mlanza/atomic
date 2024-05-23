@@ -37,13 +37,13 @@ JavaScript does functional programming pretty dang well and continues to add pro
 * [pipeline operator](https://github.com/tc39/proposal-pipeline-operator)
 * [temporal](https://github.com/tc39/proposal-temporal)
 
-Of all of the above, first-class protocols is the most critical one which, for some odd reason, has failed to gain community support.  Developers it seems are failing to experience and realize the tremendous value add that only protocols provide.  They're the centerpiece of Clojure and, by extension, Atomic.  Clojure would not be Clojure without them!
+Of all of the above, first-class protocols is the most critical one which, for some odd reason, has failed to gain community support.  Developers it seems are failing to experience and realize the tremendous value add only protocols provide.  They're the centerpiece of Clojure and, by extension, Atomic.  Clojure would not be Clojure without them!
 
 In the meantime, the gaps in these facilities are filled by libraries like this one.
 
 ## Purity Through Discipline
 
-Historically, since JavaScript lacks value types (i.e. records and tuples](https://tc39.es/proposal-record-tuple/) and [temporals](https://github.com/tc39/proposal-temporal)) purity is gained through discipline.  A function which receives mutable types must, as a rule, not mutate them.  *So in Atomic objects, arrays and dates are, as a rule, not mutated*.
+Historically, since JavaScript lacks value types (i.e. [records and tuples](https://tc39.es/proposal-record-tuple/) and [temporals](https://github.com/tc39/proposal-temporal)) purity is gained through discipline.  A function which receives mutable types must, as a rule, not mutate them.  *So in Atomic objects, arrays and dates are, as a rule, not mutated*.
 
 JavaScript aims to fill these gaps, but is not there yet.  When it happens Atomic will restore objects, arrays and dates to their reference type status.
 

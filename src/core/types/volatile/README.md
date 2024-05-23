@@ -1,7 +1,7 @@
 # Volatile
 
-Volatiles hold state using a type whose modifying commands are queries which actually provide a replacement.  The use of a volatile gains all a type's swappable queries.  There is no need for a transient counterpart.
+Volatiles is a state container without sub/pub.  It is uses persistent, swappable data as the basis of its statefulness.
 
 ## Swappability
 
-To avoid transient protocols, a volatile allows the use of `_.vswap(middleware, _.conj(_, handler))` instead of `mut.conj(middleware, handler)`.  This avoids the need for a transient when long-term performance is not a concern.  This bypasses the need to load the [atomic/transients](../../../transients) module.
+To avoid dependence on a transient and its protocols (e.g. [atomic/transients](../../../transients)), a volatile allows the use of `_.vswap(middleware, _.conj(_, handler))` instead of `mut.conj(middleware, handler)`.  This is useful when, due to updates being infrequent, its performance trade-off is not a concern.
