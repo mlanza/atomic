@@ -1,5 +1,5 @@
 import * as _ from "atomic/core";
-import * as mut from "atomic/transients";
+import * as $ from "atomic/shell";
 import * as p from "../../protocols/concrete.js";
 import {IDispatch, IMiddleware} from "../../protocols.js";
 
@@ -20,6 +20,6 @@ function dispatch(self, message){
 
 export default _.does(
   _.keying("Bus"),
-  _.implement(mut.ITransientCollection, {conj}),
+  _.implement($.ITransientCollection, {conj}),
   _.implement(IDispatch, {dispatch}),
   _.implement(IMiddleware, {handle}));

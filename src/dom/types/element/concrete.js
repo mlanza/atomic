@@ -1,5 +1,5 @@
 import * as _ from "atomic/core";
-import * as mut from "atomic/transients";
+import * as $ from "atomic/shell";
 
 export function replaceWith(self, other){
   const parent = _.parent(self),
@@ -9,7 +9,7 @@ export function replaceWith(self, other){
 
 export function wrap(self, other){
   replaceWith(self, other);
-  mut.append(other, self);
+  $.append(other, self);
 }
 
 export function isVisible(el){

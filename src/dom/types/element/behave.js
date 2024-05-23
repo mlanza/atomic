@@ -1,6 +1,5 @@
 import * as _ from "atomic/core";
-import * as $ from "atomic/reactives";
-import * as mut from "atomic/transients";
+import * as $ from "atomic/shell";
 import * as p from "../../protocols/concrete.js";
 import {isMountable} from "../../protocols/imountable/concrete.js"
 import {IHtml, IValue, IText, IContent, IHideable, IEmbeddable, ISelectable} from "../../protocols.js";
@@ -13,11 +12,11 @@ export const hidden = _.comp(_.includes(?, hides), nestedAttrs(?, "style"));
 const toggle = _.partial(_.toggles, show, hide, hidden);
 
 function hide(self){
-  mut.conj(nestedAttrs(self, "style"), hides);
+  $.conj(nestedAttrs(self, "style"), hides);
 }
 
 function show(self){
-  mut.omit(nestedAttrs(self, "style"), hides); //TODO mut unconj
+  $.omit(nestedAttrs(self, "style"), hides); //TODO mut unconj
 }
 
 function embeddables(self){
@@ -365,17 +364,17 @@ export default _.does(
   _.implement(IText, {text}),
   _.implement(IHtml, {html}),
   _.implement(IEmbeddable, {embeddables}),
-  _.implement(mut.ITransientEmptyableCollection, {empty}),
-  _.implement(mut.ITransientInsertable, {before, after}),
+  _.implement($.ITransientEmptyableCollection, {empty}),
+  _.implement($.ITransientInsertable, {before, after}),
   _.implement(_.IInclusive, {includes}),
   _.implement(IHideable, {show, hide, toggle}),
-  _.implement(mut.ITransientOmissible, {omit}),
+  _.implement($.ITransientOmissible, {omit}),
   _.implement(_.ICloneable, {clone}),
-  _.implement(mut.ITransientAppendable, {append}),
-  _.implement(mut.ITransientPrependable, {prepend}),
-  _.implement(mut.ITransientCollection, {conj}),
+  _.implement($.ITransientAppendable, {append}),
+  _.implement($.ITransientPrependable, {prepend}),
+  _.implement($.ITransientCollection, {conj}),
   _.implement(_.ILookup, {lookup}),
   _.implement(_.IMap, {keys, vals}),
-  _.implement(mut.ITransientMap, {dissoc}),
+  _.implement($.ITransientMap, {dissoc}),
   _.implement(_.IAssociative, {contains}),
-  _.implement(mut.ITransientAssociative, {assoc}));
+  _.implement($.ITransientAssociative, {assoc}));

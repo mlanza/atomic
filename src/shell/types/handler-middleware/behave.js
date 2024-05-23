@@ -1,5 +1,5 @@
 import * as _ from "atomic/core";
-import * as mut from "atomic/transients";
+import * as $ from "atomic/shell";
 import * as p from "../../protocols/concrete.js";
 import {IMiddleware} from "../../protocols.js";
 
@@ -18,5 +18,5 @@ function handle(self, message, next){
 
 export default _.does(
   _.keying("HandlerMiddleware"),
-  _.implement(mut.ITransientAssociative, {assoc}),
+  _.implement($.ITransientAssociative, {assoc}),
   _.implement(IMiddleware, {handle}));
