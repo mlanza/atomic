@@ -4,12 +4,11 @@ Write [ClojureScript](https://clojurescript.org) in JavaScript without a transpi
 Highlights:
 
 * well suited for web apps
-* use [functional core, imperative shell](https://www.destroyallsoftware.com/screencasts/catalog/functional-core-imperative-shell)
 * deploy the code you write — point free, composed, pipelines, no build required
+* implements much Clojure's standard library
+* [functional core](src/core), [imperative shell](src/shell) w/ FRP
 * [nil-punning](https://ericnormand.me/article/nil-punning) handles null in sensible ways,
-* [core](src/core) (much of the Clojure standard lib)
 * [protocols](src/core/protocols) at the foundation
-* [reactives](src/reactives) (FRP)
 
 Atomic is protocol oriented.  Objects are treated as [abstract types](https://en.wikipedia.org/wiki/Abstract_data_type) per their behaviors irrespective of their concrete types.  This flavor of polymorphism is what makes Clojure so good at transforming data.
 
@@ -62,15 +61,13 @@ Implementing a small app is a good first step for someone unfamiliar with the he
 
 ## Modules
 
-The `core` module provides the foundation.  If a UI is needed, reach for the `reactives` and `dom` modules, where the former provides FRP and the latter, tools for use in the, ahem, DOM.
-
-Elm sold FRP.  So by the time CSP appeared in `core.async` that ship had already sailed, so Atomic is based on reactives.
+The `core` module provides the foundation for the functional core, `shell` for the imperative shell and `dom` for the UI.  Elm sold FRP.  So by the time CSP appeared in `core.async` that ship had already sailed.  `shell` is based on reactives.
 
 Its state container, the bucket which houses an app's big bang [world state](https://docs.racket-lang.org/teachpack/2htdpuniverse.html), is the `cell`.  It's mostly equivalent to a Clojure atom.  The main exception is it invokes the callback upon subscription the way an Rx [subject](https://rxjs.dev/guide/subject) does.  This choice has well suited the developing of user interfaces.
 
 Like [xstream](https://staltz.com/why-we-built-xstream.html) it doesn't rely on many operators.  And implementation experience has seen how hot observables are easier to handle correctly than cold ones.  These notions have, thus, been baked into the defaults.
 
-The typical UI imports `core`, `reactives`, and `dom` as `_`, `$` and `dom` respectively.  The `_` doubles as a partial application placeholder when using autopartial.  To facilitate interactive development these assignments can be readily imported by entering [`cmd()`](./dist/cmd.js) from a browser console where Atomic is loaded.
+The typical UI imports `core`, `shell`, and `dom` as `_`, `$` and `dom` respectively.  The `_` doubles as a partial application placeholder when using autopartial.  To facilitate interactive development these assignments can be readily imported by entering [`cmd()`](./dist/cmd.js) from a browser console where Atomic is loaded.
 
 Since many of its core functions are taken directly from Clojure one can often use its documentation.  Here are a handful of its bread and butter functions:
 * [`swap`](https://clojuredocs.org/clojure.core/swap!)
