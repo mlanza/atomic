@@ -16,7 +16,7 @@ function hide(self){
 }
 
 function show(self){
-  $.omit(nestedAttrs(self, "style"), hides); //TODO mut unconj
+  $.omit(nestedAttrs(self, "style"), hides); //TODO $.unconj
 }
 
 function embeddables(self){
@@ -364,17 +364,17 @@ export default _.does(
   _.implement(IText, {text}),
   _.implement(IHtml, {html}),
   _.implement(IEmbeddable, {embeddables}),
-  _.implement($.ITransientEmptyableCollection, {empty}),
-  _.implement($.ITransientInsertable, {before, after}),
+  _.implement($.IEmptyableCollection, {empty}),
+  _.implement($.IInsertable, {before, after}),
   _.implement(_.IInclusive, {includes}),
   _.implement(IHideable, {show, hide, toggle}),
-  _.implement($.ITransientOmissible, {omit}),
+  _.implement($.IOmissible, {omit}),
   _.implement(_.ICloneable, {clone}),
-  _.implement($.ITransientAppendable, {append}),
-  _.implement($.ITransientPrependable, {prepend}),
-  _.implement($.ITransientCollection, {conj}),
+  _.implement($.IAppendable, {append}),
+  _.implement($.IPrependable, {prepend}),
+  _.implement($.ICollection, {conj}),
   _.implement(_.ILookup, {lookup}),
   _.implement(_.IMap, {keys, vals}),
-  _.implement($.ITransientMap, {dissoc}),
+  _.implement($.IMap, {dissoc}),
   _.implement(_.IAssociative, {contains}),
-  _.implement($.ITransientAssociative, {assoc}));
+  _.implement($.IAssociative, {assoc}));

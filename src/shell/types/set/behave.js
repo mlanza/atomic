@@ -1,5 +1,5 @@
 import * as _ from "atomic/core";
-import {IPersistent, ITransientSet, ITransientEmptyableCollection, ITransientCollection} from "../../protocols.js";
+import {IPersistent, ISet, IEmptyableCollection, ICollection} from "../../protocols.js";
 
 function seq(self){
   return count(self) ? self : null;
@@ -65,6 +65,6 @@ export default _.does(
   _.implement(_.ICounted, {count}),
   _.implement(_.INext, {next}),
   _.implement(_.ISeq, {first, rest}),
-  _.implement(ITransientEmptyableCollection, {empty}),
-  _.implement(ITransientCollection, {conj}),
-  _.implement(ITransientSet, {disj})); //TODO unite
+  _.implement(IEmptyableCollection, {empty}),
+  _.implement(ICollection, {conj}),
+  _.implement(ISet, {disj})); //TODO unite

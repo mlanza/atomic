@@ -20,6 +20,6 @@ function dispatch(self, message){
 
 export default _.does(
   _.keying("Bus"),
-  _.implement($.ITransientCollection, {conj}),
+  _.implement($.ICollection, {conj}),
   _.implement(IDispatch, {dispatch}),
   _.implement(IMiddleware, {handle}));

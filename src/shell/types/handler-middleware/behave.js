@@ -18,5 +18,5 @@ function handle(self, message, next){
 
 export default _.does(
   _.keying("HandlerMiddleware"),
-  _.implement($.ITransientAssociative, {assoc}),
+  _.implement($.IAssociative, {assoc}),
   _.implement(IMiddleware, {handle}));
