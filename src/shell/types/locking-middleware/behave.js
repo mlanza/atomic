@@ -1,4 +1,6 @@
 import * as _ from "atomic/core";
+import * as $ from "atomic/shell";
+
 import * as p from "../../protocols/concrete.js";
 import {IMiddleware} from "../../protocols/imiddleware/instance.js";
 
@@ -12,7 +14,7 @@ function handle(self, message, next){
     if (self.queued.length) {
       const queued = self.queued;
       self.queued = [];
-      _.log("draining queued", queued);
+      $.log("draining queued", queued);
       _.each(p.dispatch(self.bus, ?), queued);
     }
   }
