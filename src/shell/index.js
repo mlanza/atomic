@@ -1,7 +1,7 @@
 import * as _ from "atomic/core";
 import * as p from "./protocols/concrete.js";
 import * as t from "./transducers.js";
-import {IPublish, ISubscribe} from "./protocols.js";
+import {ILogger, IPublish, ISubscribe} from "./protocols.js";
 import {reducible} from "./shared.js";
 import {Cell, cell} from "./types/cell/construct.js";
 import {Subject, subject} from "./types/subject/construct.js";
@@ -12,9 +12,27 @@ export * from "./types.js";
 export * from "./protocols.js";
 export * from "./protocols/concrete.js";
 
+function called4(fn, message, context, logger){
+  return function(){
+    const meta = Object.assign({}, context, {fn, arguments});
+    p.log(logger, message, meta);
+    return meta.results = fn.apply(this, arguments);
+  }
+}
+
+function called3(fn, message, context){
+  return called4(fn, message, context, config.logger);
+}
+
+function called2(fn, message){
+  return called3(fn, message, {});
+}
+
+export const called = _.overload(null, null, called2, called3, called4);
+
 export function collect(cell){
   return function(value){ //return observer
-    _.swap(cell, _.conj(?, value));
+    p.swap(cell, _.conj(?, value));
   }
 }
 
@@ -157,3 +175,42 @@ export function dispatchable(Cursor){ //from `atomic/shell`
 })();
 
 _.ICoercible.addMethod([Set, Array], Array.from);
+
+(function(){
+
+  function log(self, ...args){
+    self.log(...args);
+  }
+
+  _.doto(console, //TODO move to dom?
+    _.specify(ILogger, {log}));
+
+  _.doto(_.Nil,
+    _.implement(ILogger, {log: _.noop}));
+
+})();
+
+export function severityLogger(logger, severity){
+  const f = logger[severity].bind(logger);
+  function log(self, ...args){
+    f(...args);
+  }
+  return _.doto({logger, severity},
+    _.specify(ILogger, {log}));
+}
+
+export function metaLogger(logger, ...meta){
+  function log(self, ...args){
+    p.log(logger, ...[...mapa(execute, meta), ...args]);
+  }
+  return _.doto({logger, meta},
+    _.specify(ILogger, {log}));
+}
+
+export function labelLogger(logger, ...labels){
+  function log(self, ...args){
+    p.log(logger, ...[...labels, ...args]);
+  }
+  return _.doto({logger, labels},
+    _.specify(ILogger, {log}));
+}

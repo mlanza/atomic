@@ -1,6 +1,6 @@
 import * as _ from "atomic/core";
 import * as p from "../../protocols/concrete.js";
-import {IPublish, ISubscribe} from "../../protocols.js";
+import {ISwappable, IResettable, IPublish, ISubscribe} from "../../protocols.js";
 
 function path(self){
   return self.path;
@@ -11,13 +11,13 @@ function deref(self){
 }
 
 function reset(self, value){
-  _.swap(self.source, function(state){
+  p.swap(self.source, function(state){
     return _.assocIn(state, self.path, value);
   });
 }
 
 function swap(self, f){
-  _.swap(self.source, function(state){
+  p.swap(self.source, function(state){
     return _.updateIn(state, self.path, f);
   });
 }
@@ -33,7 +33,7 @@ export default _.does(
   //_.implement(_.IDisposable, {dispose}), TODO
   _.implement(_.IPath, {path}),
   _.implement(_.IDeref, {deref}),
-  _.implement(_.IResettable, {reset}),
-  _.implement(_.ISwappable, {swap}),
+  _.implement(IResettable, {reset}),
+  _.implement(ISwappable, {swap}),
   _.implement(ISubscribe, {sub}),
   _.implement(IPublish, {pub: reset}));

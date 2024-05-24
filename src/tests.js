@@ -517,11 +517,11 @@ QUnit.test("record", function(assert){
   const dylanp = _.coerce({name: "Dylan", surname: "Penn", dob: _.date(1991, 4, 13)}, Person);
   const robino = _.coerce(robin, Object);
   assert.equal($robin |> _.deref |> _.deref |> _.get(?, "surname"), "Wright");
-  _.swap($robin, _.fmap(_, _.assoc(?, "surname", "Penn")));
+  $.swap($robin, _.fmap(_, _.assoc(?, "surname", "Penn")));
   assert.equal($robin |> _.deref |> _.deref |> _.get(?, "surname"), "Penn");
-  _.swap($robin, _.undo);
+  $.swap($robin, _.undo);
   assert.equal($robin |> _.deref |> _.deref |> _.get(?, "surname"), "Wright");
-  _.swap($robin, _.redo);
+  $.swap($robin, _.redo);
   assert.equal($robin |> _.deref |> _.deref |> _.get(?, "surname"), "Penn");
   assert.equal(robin |> _.get(?, "surname"), "Wright");
   assert.equal(robin |> _.assoc(?, "surname", "Penn") |> _.get(?, "surname"), "Penn");
@@ -612,7 +612,7 @@ QUnit.test("cell", function(assert){
   assert.equal(clicks |> _.deref, 0);
   const tallied = dom.click(tally);
   var unsub = $.sub(tallied, function(){
-    _.swap(clicks, _.inc);
+    $.swap(clicks, _.inc);
   });
   $.sub(tallied, _.noop);
   tally.click();
@@ -625,20 +625,20 @@ QUnit.test("cell", function(assert){
   const msink  = _.fmap(source, _.inc);
   const msinkc = $.cell();
   $.sub(msink, msinkc);
-  _.swap(source, _.inc);
+  $.swap(source, _.inc);
   assert.equal(clicks |> _.deref, 1);
   assert.equal(source |> _.deref, 1);
   assert.equal(dest   |> _.deref, 2);
   assert.equal(msinkc |> _.deref, 2);
   const bucket = $.cell([], $.subject(), _.pipe(_.get(?, 'length'), _.lt(?, 3))),
         states = $.cell([]);
-  bucket |> $.sub(?, state => states |> _.swap(?, _.conj(?, state)));
-  bucket |> _.swap(?, _.conj(?, "ice"));
-  bucket |> _.swap(?, _.conj(?, "champagne"));
+  bucket |> $.sub(?, state => states |> $.swap(?, _.conj(?, state)));
+  bucket |> $.swap(?, _.conj(?, "ice"));
+  bucket |> $.swap(?, _.conj(?, "champagne"));
   assert.throws(function(){
-    bucket |> _.swap(?, _.conj(?, "soda"));
+    bucket |> $.swap(?, _.conj(?, "soda"));
   });
-  bucket |> _.swap(?, _.assoc(?, 1, "wine"));
+  bucket |> $.swap(?, _.assoc(?, 1, "wine"));
   assert.deepEqual(bucket |> _.deref, ["ice", "wine"]);
   assert.deepEqual(states |> _.deref, [[], ["ice"], ["ice", "champagne"], ["ice", "wine"]]);
 });
@@ -656,8 +656,8 @@ QUnit.test("immutable updates", function(assert){
           _.conj(?, ["Andrew Ridgeley", "George Michaels"]),
           _.assocIn(?, [0, 0], "Daryl"),
           _.assocIn(?, [0, 1], "John"));
-  duos |> $.sub(?, state => states |> _.swap(?, _.conj(?, state)));
-  duos |> _.swap(?, txn);
+  duos |> $.sub(?, state => states |> $.swap(?, _.conj(?, state)));
+  duos |> $.swap(?, txn);
   assert.equal(states |> _.deref |> _.count, 2, "original + transaction");
   assert.deepEqual(duos |> _.deref, [["Daryl", "John"], ["Laurel", "Hardy"], ["Andrew Ridgeley", "George Michaels"]]);
   assert.notOk(d0 |> _.isIdentical(?, get0(duos)), "new container for");

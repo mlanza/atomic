@@ -16,4 +16,8 @@ export * from "./iprependable/concrete.js";
 export * from "./iomissible/concrete.js";
 export * from "./iinsertable/concrete.js";
 export * from "./ireversible/concrete.js";
-
+export * from "./iswappable/concrete.js";
+export * from "./iresettable/concrete.js";
+export * from "./isend/concrete.js";
+export * from "./iqueryable/concrete.js";
+export * from "./ilogger/concrete.js";
