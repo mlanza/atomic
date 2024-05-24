@@ -19,7 +19,6 @@ export * from "./types/lens.js";
 export * from "./types/list.js";
 //#if _EXPERIMENTAL
 export * from "./types/members.js";
-export * from "./types/mutable.js";
 //#endif
 export * from "./types/multimethod.js";
 export * from "./types/nil.js";
@@ -49,4 +48,3 @@ export * from "./types/uid.js";
 //#if _EXPERIMENTAL
 export * from "./types/verified.js";
 //#endif
-export * from "./types/volatile.js";

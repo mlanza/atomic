@@ -5,9 +5,9 @@ import {reducible, mergable} from "../../shared.js";
 
 function sub(self, observer){
   if (!self.terminated) {
-    _.vswap(self.observers, _.conj(?, observer));
+    p.conj(self.observers, observer);
     return _.once(function(){
-      _.vswap(self.observers, _.unconj(?, observer));
+      p.unconj(self.observers, observer);
     });
   } else {
     throw new Error("Cannot subscribe to a terminated Subject.");
@@ -24,7 +24,7 @@ function err(self, error){
   if (!self.terminated){
     self.terminated = {how: "error", error};
     notify(self, p.err(?, error));
-    _.vswap(self.observers, _.empty); //release references
+    p.empty(self.observers); //release references
   }
 }
 
@@ -32,7 +32,7 @@ function complete(self){
   if (!self.terminated){
     self.terminated = {how: "complete"};
     notify(self, p.complete);
-    _.vswap(self.observers, _.empty); //release references
+    p.empty(self.observers); //release references
   }
 }
 
@@ -41,7 +41,7 @@ function closed(self){
 }
 
 function notify(self, f){
-  _.each(f, _.deref(self.observers));
+  _.each(f, self.observers);
 }
 
 export default _.does(
