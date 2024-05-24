@@ -12,4 +12,4 @@ function map0(){
   return new Map();
 }
 
-export const createMap = _.overload(map0, map1); //cannot reuse `map`
+export const hashMap = _.overload(map0, map1); //cannot reuse `map`
