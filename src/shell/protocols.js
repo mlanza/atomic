@@ -16,3 +16,8 @@ export * from "./protocols/iprependable/instance.js";
 export * from "./protocols/iomissible/instance.js";
 export * from "./protocols/iinsertable/instance.js";
 export * from "./protocols/ireversible/instance.js";
+export * from "./protocols/iswappable/instance.js";
+export * from "./protocols/iresettable/instance.js";
+export * from "./protocols/isend/instance.js";
+export * from "./protocols/iqueryable/instance.js";
+export * from "./protocols/ilogger/instance.js";

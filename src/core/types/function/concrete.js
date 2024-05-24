@@ -5,7 +5,6 @@ import {toArray} from "../../types/array/concrete.js";
 import {opt} from "../../types/just/construct.js";
 import {satisfies, specify}  from "../protocol.js";
 import * as p from "./protocols.js";
-import {ILogger} from "../../protocols/ilogger/instance.js";
 
 export function spread(f){
   return function(args){

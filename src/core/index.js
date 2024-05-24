@@ -1,5 +1,5 @@
 import {foldkv, overload, partial, unary, type, curry, tee, toggles, identity, obj, partly, comp, doto, does, branch, unspread, applying, execute, noop, constantly, once, isFunction, isString} from "./core.js";
-import {ICoercible, IForkable, ILogger, IDeref, IFn, IAssociative, ICloneable, IHierarchy, ILookup, ISeq} from "./protocols.js";
+import {ICoercible, IForkable, IDeref, IFn, IAssociative, ICloneable, IHierarchy, ILookup, ISeq} from "./protocols.js";
 import {maybe, toArray, opt, satisfies, spread, each, duration, remove, sort, flip, realized, apply, realize, isNil, reFindAll, mapkv, period, selectKeys, mapVals, reMatches, test, date, emptyList, cons, days, recurrence, emptyArray} from "./types.js";
 import {isBlank, str, replace} from "./types/string.js";
 import {isSome} from "./types/nil.js";
@@ -24,24 +24,6 @@ import {behaviors} from "./behaviors.js";
 export * from "./behaviors.js";
 export const behave = behaves(behaviors, ?);
 
-function called4(fn, message, context, logger){
-  return function(){
-    const meta = Object.assign({}, context, {fn, arguments});
-    p.log(logger, message, meta);
-    return meta.results = fn.apply(this, arguments);
-  }
-}
-
-function called3(fn, message, context){
-  return called4(fn, message, context, config.logger);
-}
-
-function called2(fn, message){
-  return called3(fn, message, {});
-}
-
-export const called = overload(null, null, called2, called3, called4);
-
 function fillProp(obj, key, value){
   if (!obj.hasOwnProperty(key)) {
     Object.defineProperty(obj, key, {
@@ -60,45 +42,6 @@ function equals(other){
 fillProp(Object.prototype, "equals", equals);
 
 export const numeric = test(/^\d+$/i, ?);
-
-(function(){
-
-  function log(self, ...args){
-    self.log(...args);
-  }
-
-  doto(console,
-    specify(ILogger, {log}));
-
-  doto(T.Nil,
-    implement(ILogger, {log: noop}));
-
-})();
-
-export function severityLogger(logger, severity){
-  const f = logger[severity].bind(logger);
-  function log(self, ...args){
-    f(...args);
-  }
-  return doto({logger, severity},
-    specify(ILogger, {log}));
-}
-
-export function metaLogger(logger, ...meta){
-  function log(self, ...args){
-    p.log(logger, ...[...mapa(execute, meta), ...args]);
-  }
-  return doto({logger, meta},
-    specify(ILogger, {log}));
-}
-
-export function labelLogger(logger, ...labels){
-  function log(self, ...args){
-    p.log(logger, ...[...labels, ...args]);
-  }
-  return doto({logger, labels},
-    specify(ILogger, {log}));
-}
 
 export function peek(logger){
   return tee(p.log(logger, ?));

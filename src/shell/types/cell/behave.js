@@ -1,6 +1,6 @@
 import * as _ from 'atomic/core';
 import * as p from "../../protocols/concrete.js";
-import {IPublish, ISubscribe} from "../../protocols.js";
+import {ISwappable, IResettable, IPublish, ISubscribe} from "../../protocols.js";
 import {reducible, mergable} from "../../shared.js";
 
 function pub(self, value){
@@ -47,7 +47,7 @@ export default _.does(
   _.keying("Cell"),
   _.implement(_.IDisposable, {dispose}),
   _.implement(_.IDeref, {deref}),
-  _.implement(_.IResettable, {reset: pub}),
-  _.implement(_.ISwappable, {swap}),
+  _.implement(IResettable, {reset: pub}),
+  _.implement(ISwappable, {swap}),
   _.implement(ISubscribe, {sub}),
   _.implement(IPublish, {pub, err, complete, closed}));
