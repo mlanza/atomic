@@ -13,7 +13,7 @@ const monitors = monitor ? function(key){
 } : _.noop;
 
 function log(...args){
-  const l = registry.log || _.log;
+  const l = registry.log || $.log;
   l(...args);
 }
 

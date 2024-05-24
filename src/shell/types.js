@@ -11,3 +11,6 @@ export * from "./types/event.js";
 export * from "./types/handler-middleware.js";
 export * from "./types/locking-middleware.js";
 export * from "./types/tee-middleware.js";
+export * from "./types/map.js";
+export * from "./types/weak-map.js";
+export * from "./types/set.js";
