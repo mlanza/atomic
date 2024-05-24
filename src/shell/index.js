@@ -11,7 +11,7 @@ import {IDispatch} from "./protocols/idispatch/instance.js";
 export * from "./types.js";
 export * from "./protocols.js";
 export * from "./protocols/concrete.js";
-export {doto} from "atomic/core"; //needed in core, but better called from here to make its side-effecting nature explicit
+export {doto, each} from "atomic/core";
 
 export function collect(cell){
   return function(value){ //return observer
