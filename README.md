@@ -15,7 +15,7 @@ JavaScript has no means of safely [extending natives and third-party types](http
 
 Atomic is [functional first](functional-first.md).  Functions are preferred to methods.  This makes sense given how protocols treat things as abstractions.
 
-Atomic has no maps or vectors but used objects and arrays as [records and tuples](https://tc39.es/proposal-record-tuple/) before these new types were even proposed.  It had previously integrated them via [Immutable.js](https://immutable-js.com) but, in practice, since objects and arrays filled the gap well enough it wasn't worth the cost of another library, its integration [was dropped](https://github.com/mlanza/atomic/commit/8e1787f6974df5bfbb53a371a261e09b5efee8ee).  This bit of history serves to demonstrate how protocols can seamlessly integrate disparate types into a consistent api.  By abstracting over types (and wherever they came from) one reasons about objects from a higher plane.
+Atomic has no [maps](https://clojuredocs.org/clojure.core/hash-map) or [vectors](https://clojuredocs.org/clojure.core/vector) but used objects and arrays as faux [records and tuples](https://tc39.es/proposal-record-tuple/) since before these new types were even proposed.  It had previously integrated them via [Immutable.js](https://immutable-js.com) but, in practice, using objects and arrays as persistents worked well enough it wasn't worth the cost of another library.  Its integration [was dropped](https://github.com/mlanza/atomic/commit/8e1787f6974df5bfbb53a371a261e09b5efee8ee).  This bit of history serves to demonstrate how protocols can seamlessly integrate disparate types into a consistent api.  Concrete types, even third-party ones, can be regarded as abstract things, by their apis.
 
 Don't care for [point programming](tests/autopartial-less.js)?  [Autopartial](tests/autopartial.js) delivers [point-free programming](https://en.wikipedia.org/wiki/Tacit_programming) without a build step up until [pipeline operators](https://github.com/tc39/proposal-pipeline-operator) and [partial application](https://github.com/tc39/proposal-partial-application) reach stage maturity.
 
@@ -42,7 +42,7 @@ Atomic provides the necessary facilities and showcases how even plain JavaScript
 
 Since JavaScript lacks certain value types (i.e. [records and tuples](https://tc39.es/proposal-record-tuple/) and [temporals](https://github.com/tc39/proposal-temporal)), purity has historically been gained through discipline.  Atomic makes this still easier.
 
-It permits reference types to be optionally treated as immutable value types.  It provides mutable and/or immutable protocols for interacting with natives so arrays can be treated as arrays or tuples (pseudo [vectors](https://clojuredocs.org/clojure.core/vector)) and objects as objects or records (pseudo [hash maps](https://clojuredocs.org/clojure.core/hash-map)).  Yet, again, protocols reduce mountains to mole hills.
+It permits reference types to be optionally treated as immutable value types.  It provides mutable and/or immutable protocols for interacting with natives so arrays can double as [tuples](https://tc39.es/proposal-record-tuple/) and objects as [records](https://tc39.es/proposal-record-tuple/).  Yet, again, protocols reduce mountains to mole hills.
 
 ## Getting Started
 
