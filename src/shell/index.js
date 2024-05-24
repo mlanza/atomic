@@ -122,7 +122,7 @@ export const renderDiff = _.overload(null, null, renderDiff2, renderDiff3);
   }
 
   _.doto(Function,
-    reducible, //makes fns work as observers like `cell`, e.g. `$.connect($.tick(3000), _.see("foo"))`
+    reducible, //makes fns work as observers like `cell`, e.g. `$.connect($.tick(3000), $.see("foo"))`
     _.implement(IPublish, {pub, err: _.noop, complete: _.noop, closed: _.noop}));
 
 })();

@@ -7,26 +7,24 @@ Highlights:
 * deploy the code you write — point free, composed, pipelines, no build required
 * implements much Clojure's standard library
 * [functional core](src/core), [imperative shell](src/shell) w/ FRP
-* [nil-punning](https://ericnormand.me/article/nil-punning) handles null in sensible ways,
-* [protocols](src/core/protocols) at the foundation
+* [nil-punning](https://ericnormand.me/article/nil-punning) handles null in sensible ways
 
-Atomic is protocol oriented.  Objects are treated as [abstract types](https://en.wikipedia.org/wiki/Abstract_data_type) per their behaviors irrespective of their concrete types.  This flavor of polymorphism is what makes Clojure so good at transforming data.
+Atomic is [protocol oriented](src/core/protocols) to its very foundation.  Objects are treated as [abstract types](https://en.wikipedia.org/wiki/Abstract_data_type) per their behaviors irrespective of their concrete types.  This flavor of polymorphism is what makes Clojure so good at transforming data.
 
 JavaScript has no means of safely [extending natives and third-party types](https://en.wikipedia.org/wiki/Monkey_patch).  [Protocols](https://clojure.org/reference/protocols), which are the most apt solution to this problem, have [yet to be adopted](https://github.com/tc39/proposal-first-class-protocols) into the language.
 
 Atomic is [functional first](functional-first.md).  Functions are preferred to methods.  This makes sense given how protocols treat things as abstractions.
 
-Atomic has no maps or vectors but used objects and arrays as [records and tuples](https://tc39.es/proposal-record-tuple/) before the proposal formalized the idea.  It had previously integrated them via [Immutable.js](https://immutable-js.com) but, in practice, since objects and arrays filled the gap well enough it wasn't worth the cost of another library, its integration [was dropped](https://github.com/mlanza/atomic/commit/8e1787f6974df5bfbb53a371a261e09b5efee8ee).
-
+Atomic has no maps or vectors but used objects and arrays as [records and tuples](https://tc39.es/proposal-record-tuple/) before these new types were even proposed.  It had previously integrated them via [Immutable.js](https://immutable-js.com) but, in practice, since objects and arrays filled the gap well enough it wasn't worth the cost of another library, its integration [was dropped](https://github.com/mlanza/atomic/commit/8e1787f6974df5bfbb53a371a261e09b5efee8ee).  This bit of history serves to demonstrate how protocols aid in seamlessly integrating disparate libraries.
 
 Don't care for [point programming](tests/autopartial-less.js)?  [Autopartial](tests/autopartial.js) delivers [point-free programming](https://en.wikipedia.org/wiki/Tacit_programming) without a build step up until [pipeline operators](https://github.com/tc39/proposal-pipeline-operator) and [partial application](https://github.com/tc39/proposal-partial-application) reach stage maturity.
 
 ## Premise
-Initially, Atomic was born from an experiment answering:
+Atomic was born from an experiment answering:
 
 > Why not do ClojureScript directly in JavaScript and eliminate the transpiler?
 
-Here's the ephiphany: since languages are just facilities plus syntax, if one can set aside syntax, the right facilities can make transpilation superfluous.
+The ephiphany: since languages are just facilities plus syntax, if one can set aside syntax, the right facilities can make transpilation superfluous.
 
 JavaScript does functional programming pretty dang well and continues to add proper facilities.
 
@@ -61,11 +59,9 @@ Implementing a small app is a good first step for someone unfamiliar with the he
 
 ## Modules
 
-The `core` module provides the foundation for the functional core, `shell` for the imperative shell and `dom` for the UI.  Elm sold FRP.  So by the time CSP appeared in `core.async` that ship had already sailed.  `shell` is based on reactives.
+The `core` module is the basis for the functional core, `shell` for the imperative shell and `dom` for the UI.  Elm sold FRP, so by the time CSP appeared in `core.async` that ship had already sailed.  `shell` is based on reactives.
 
-Its state container, the bucket which houses an app's big bang [world state](https://docs.racket-lang.org/teachpack/2htdpuniverse.html), is the `cell`.  It's mostly equivalent to a Clojure atom.  The main exception is it invokes the callback upon subscription the way an Rx [subject](https://rxjs.dev/guide/subject) does.  This choice has well suited the developing of user interfaces.
-
-Like [xstream](https://staltz.com/why-we-built-xstream.html) it doesn't rely on many operators.  And implementation experience has seen how hot observables are easier to handle correctly than cold ones.  These notions have, thus, been baked into the defaults.
+Its state container, the bucket which houses an app's big bang [world state](https://docs.racket-lang.org/teachpack/2htdpuniverse.html), is the `cell`.  It's mostly equivalent to a Clojure atom.  The main exception is it invokes the callback upon subscription the way an Rx [subject](https://rxjs.dev/guide/subject) does.  This is well suited to the developing of user interfaces.  And like [xstream](https://staltz.com/why-we-built-xstream.html) it doesn't rely on many operators, providing a simple but sufficient platform for FRP.
 
 The typical UI imports `core`, `shell`, and `dom` as `_`, `$` and `dom` respectively.  The `_` doubles as a partial application placeholder when using autopartial.  To facilitate interactive development these assignments can be readily imported by entering [`cmd()`](./dist/cmd.js) from a browser console where Atomic is loaded.
 
@@ -77,7 +73,7 @@ Since many of its core functions are taken directly from Clojure one can often u
 * [`assoc`](https://clojuredocs.org/clojure.core/assoc)
 * [`assocIn`](https://clojuredocs.org/clojure.core/assoc-in)
 
-The beauty of these functions (kudos to Hickey!) is how they allow one to surgically replace the state held in a state container without mutating it.
+The beauty of these functions (kudos to Hickey!) is how easy they make it to surgically replace the state held in a state container without mutating it.
 
 In the absence of threading macros and pipeline syntax several functions exist (see these demonstrated in the example programs) to facilitate pipelines and composition:
 * `chain` (a normal pipeline)
@@ -85,9 +81,13 @@ In the absence of threading macros and pipeline syntax several functions exist (
 * `comp`
 * `pipe`
 
-## Changes
+## Vendoring As A Safety Net
 
-Because Atomic has been used primarily by a small, internal audience, the change process has not been formalized to protect a wider audience.  However, it is easy to safely try.  [Vendor](https://stackoverflow.com/questions/26217488/what-is-vendoring) a copy into your project.  This eliminates the pressure of keeping up with releases.
+The author's philosophy is to sparingly add libraries, to keep projects lean.  [Dependencies breed](https://tonsky.me/blog/disenchantment/).  The ever-changing landscape of modern libraries (Vue, React, Angular, Svelte, etc.) brim with excellent ideas, yet the author continually ships working software without them.
+
+Rather, and only when a deficit is felt, are the ideas, not the dependencies, grafted in.  This prevents fast-moving vendors from dictating schedules and alleviates the pressure of falling out of step with the latest release.
+
+Because Atomic has been used primarily by a small, internal audience, the change process hasn't been formalized to protect a wider audience.  The author [vendors it](https://stackoverflow.com/questions/26217488/what-is-vendoring) into his projects to eliminate the pressure of keeping up with releases.  This permits safe use.
 
 ## Guidance for Writing Apps
 
@@ -103,19 +103,15 @@ This entire effort begins with [forethought](https://www.youtube.com/watch?v=f84
 
 If an app involves animation, as a turn-based board game would, ponder this aspect too.  How one renders elements which are animated is often different from how one renders those which aren't.  Fortunately, CSS is now capable of driving most animations without the help of additional libraries.
 
-Sparingly add libraries.  Keep projects lean.  [Dependencies breed](https://tonsky.me/blog/disenchantment/).  The ever-changing landscape of modern libraries (Vue, React, Angular, Svelte, etc.) brims with excellent ideas, yet the author has continually met customer requirements without necessitating any of them.
-
-Rather, and only when the deficit is truly felt, graft in the idea, not the dependency.  It permits the local team and not the vendor team to dictate the schedule.  It also alleviates the pressure of falling out of step with the latest release.
-
 ## Progressive Enhancement
 
-One begins routinely with a simple core and shell and potentially layers in other useful concepts.
+One begins routinely with a functional core, then headless shell and gradually develops toward the level of sophistication one wants, grafting on one layer at a time.
 
 The `journal` type can be added to provide undo/redo and permit stepping forward and backward along a timeline.
 
 Add a layer to process change via commands and events, in its simplest form, both represented as plain old JavaScript objects.  Commands (yin) belong in the impure world (imperative shell), and events (yang) the pure world (functional core).
 
-Events are folded into the world state via a master reduction.  And both events and commands can be readily sent over the wire or captured in logs.  When captured, they provide a complete and auditable history, one which can be readily examined from the browser console.
+Events are folded into the world state as a reduction.  And both events and commands can be sent over the wire or captured in logs.  When captured, they provide a complete and auditable history, one which can be readily examined from the browser console.
 
 ## A Tale of Two Worlds
 
