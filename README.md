@@ -24,7 +24,7 @@ Atomic was born from an experiment answering:
 
 > Why not do ClojureScript directly in JavaScript and eliminate the transpiler?
 
-The ephiphany: since languages are just facilities plus syntax, if one can set aside syntax, the right facilities can make transpilation superfluous.
+The ephiphany: since languages are just facilities plus syntax, if one can set aside syntax, the right facilities can eliminate a build step.
 
 JavaScript does functional programming pretty dang well and continues to add proper facilities.
 
@@ -36,7 +36,7 @@ JavaScript does functional programming pretty dang well and continues to add pro
 
 Of all of the above, first-class protocols is the most critical one which, for some odd reason, has failed to gain community support.  Developers it seems are failing to experience and realize the tremendous value add only protocols provide.  They're the centerpiece of Clojure and, by extension, Atomic.  Clojure would not be Clojure without them!
 
-In the meantime, the gaps in these facilities are filled by libraries like this one.
+Atomic provides the necessary facilities and showcases how even plain JavaScript can adopt the Clojure mindset!
 
 ## Purity Through Discipline
 
@@ -136,9 +136,3 @@ These examples model how one might write a program in Atomic:
 DOM events are oft handled using an `$.on` which is similar to [jQuery's](https://api.jquery.com/on).
 
 While creating a [virtual dom](https://reactjs.org/docs/faq-internals.html) had been considered for inclusion in the library, state diffing is not always needed.  When needed, however, `$.hist` provides two frames (the present and the immediate past) of world state history for reconciling the UI.
-
-## Contingent Improvements
-
-Applying the Clojure mindset directly in JavaScript is possible with the right facilities.  Atomic exists to showcase the fact.
-
-As mentioned, some of its gaps are being filled by various T39 proposals.  When they land in the [caniuse baseline](https://web.dev/blog/baseline2023), portions of Atomic will be rewritten.
