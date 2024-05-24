@@ -1,10 +1,12 @@
 # Command vs. Query Protocols
 
-In JavaScript arrays and objects are mutable reference types.  But Atomic provides a protocol for operating against them as if they were immutable, value types.  The `core` module *predominantly* exposes pure operations.  It does have some side-effecting operations too, because in order to define what the module exports these mutating operations are useful.  Thus, `core` does have some seemingly out-of-place operations (e.g. `_.each`, `_.doto`, `_.implement`).  To clarify their purpose as side-effecting operations they are also exported from `shell` (e.g. `$.each`, `$.doto`).  Your programs should access them via `$` to call out their side-effecting nature.
+In JavaScript arrays and objects are mutable reference types.  But Atomic provides a protocol for operating against them as if they were immutable, value types.  The `core` module *predominantly* exposes pure operations.
 
-Since `core` (exported as `_`) treats types, even reference types like objects and arrays, as immutable value types, its operations, rather than mutate the subject, return a modified copy.  That's the essence of what a persistent type is.  And persistent types (even faux ones) are the basis of any simulation one wishes to run inside a functional core.  While protocols and functions can emulate commands, they're always only queries.
+It does have side-effecting operations too, because any moderately robust functional programming library relies on, just to build itself, a modest number of mutating operations.  So `core` includes the likes of `each` and `doto`.  But these operations are reexported from `shell` so that external consumers who call them can be notably more pronounced about their side effecting nature (e.g. `$.each`, `$.doto`).
 
-But the imperative `shell` (exported as `$`) is about actually doing things, modifying things.  Its operations, primarily commands, produce the side effects a program requires to get work done.
+Since `core` (exported as `_`) treats types, even reference types like objects and arrays, as immutable value types, its operations, rather than mutate the subject, return a modified copy.  That's the essence of what a persistent type is.  Persistent types (even faux ones) are the basis of simulations, which is effectively what functional programming is good at.  While pure, persistent protocols and functions can emulate commands, they're always only queries.
+
+But the imperative `shell` (exported as `$`) is about actually doing things, modifying things.  Its operations, primarily commands, produce the side effects required to get work done.
 
 ```js
 const stooges = ["Moe", "Larry", "Shemp"];
@@ -16,9 +18,9 @@ const stooges = ["Moe", "Larry", "Shemp"];
 $.conj(stooges, "Corey"); //shell op, a command
 ```
 
-The first example is simulation.  The second, side-effecting reality.  See how, in the first, `conj` returns a result because it's a query and how, in the second, it doesn't because it's a command?
+The first example is simulation.  The second, side-effecting reality.  See how, in the first, `conj` returns a result because it's a query and how, in the second, it doesn't because it's a command.
 
-What should be dawning on you is that even non-persistent types, like arrays, can be treated as such.  The choice is in the protocol, the functions–pure or impure–one uses to operate against a thing.
+This demonstrates how reference types, like arrays, can, if desired, be treated as value types.  The choice is in the protocol, the functions–pure or impure–one uses to operate against a thing.
 
 ## Naming
 
