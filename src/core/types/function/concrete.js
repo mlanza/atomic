@@ -1,4 +1,4 @@
-import {doto, overload, identity, partial, slice, execute, isFunction} from "../../core.js";
+import {overload, identity, partial, slice, execute, isFunction} from "../../core.js";
 import config from "../../config.js";
 import {isNil}  from "../nil.js";
 import {toArray} from "../../types/array/concrete.js";

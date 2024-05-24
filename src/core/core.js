@@ -189,10 +189,6 @@ export function tee(f){
   }
 }
 
-export function see(...labels){
-  return tee(partial(console.log, ...labels));
-}
-
 export function doto(obj, ...effects){
   const len = effects.length;
   for(let i = 0; i < len; i++){

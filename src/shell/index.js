@@ -12,24 +12,6 @@ export * from "./types.js";
 export * from "./protocols.js";
 export * from "./protocols/concrete.js";
 
-function called4(fn, message, context, logger){
-  return function(){
-    const meta = Object.assign({}, context, {fn, arguments});
-    p.log(logger, message, meta);
-    return meta.results = fn.apply(this, arguments);
-  }
-}
-
-function called3(fn, message, context){
-  return called4(fn, message, context, config.logger);
-}
-
-function called2(fn, message){
-  return called3(fn, message, {});
-}
-
-export const called = _.overload(null, null, called2, called3, called4);
-
 export function collect(cell){
   return function(value){ //return observer
     p.swap(cell, _.conj(?, value));
@@ -150,7 +132,7 @@ export function defs(construct, keys){
   }, {}, keys);
 }
 
-export function dispatchable(Cursor){ //from `atomic/shell`
+export function dispatchable(Cursor){
 
   function dispatch(self, command){
     p.dispatch(self.source, _.update(command, "path", function(path){
@@ -177,20 +159,18 @@ export function dispatchable(Cursor){ //from `atomic/shell`
 _.ICoercible.addMethod([Set, Array], Array.from);
 
 (function(){
-
   function log(self, ...args){
     self.log(...args);
   }
 
-  _.doto(console, //TODO move to dom?
+  _.doto(console,
     _.specify(ILogger, {log}));
-
-  _.doto(_.Nil,
-    _.implement(ILogger, {log: _.noop}));
-
 })();
 
-export function severityLogger(logger, severity){
+_.doto(_.Nil,
+  _.implement(ILogger, {log: _.noop}));
+
+function severity(logger, severity){
   const f = logger[severity].bind(logger);
   function log(self, ...args){
     f(...args);
@@ -199,18 +179,54 @@ export function severityLogger(logger, severity){
     _.specify(ILogger, {log}));
 }
 
-export function metaLogger(logger, ...meta){
+function inspect(logger, ...effects){
   function log(self, ...args){
-    p.log(logger, ...[...mapa(execute, meta), ...args]);
+    p.log(logger, ...[..._.mapa(_.execute, effects), ...args]);
   }
-  return _.doto({logger, meta},
+  return _.doto({logger, effects},
     _.specify(ILogger, {log}));
 }
 
-export function labelLogger(logger, ...labels){
+function label(logger, ...labels){
   function log(self, ...args){
     p.log(logger, ...[...labels, ...args]);
   }
   return _.doto({logger, labels},
     _.specify(ILogger, {log}));
 }
+
+//composable loggers
+export const loggers = {
+  severity, inspect, label
+}
+
+/*
+const warn = $.loggers.severity(console, "warn");
+const when = $.loggers.inspect(warn, _.date); //can interrogate current value of state container
+const b = $.loggers.label(when, "basement");
+const br = $.loggers.label(b, "boiler room"); //a nested part of program
+$.log(br, "pressure high!");
+
+*/
+
+export function see(...labels){
+  return _.tee(_.partial(p.log, ...labels));
+}
+
+function called4(fn, message, context, logger){
+  return function(){
+    const meta = Object.assign({}, context, {fn, arguments});
+    p.log(logger, message, meta);
+    return meta.results = fn.apply(this, arguments);
+  }
+}
+
+function called3(fn, message, context){
+  return called4(fn, message, context, config.logger);
+}
+
+function called2(fn, message){
+  return called3(fn, message, {});
+}
+
+export const called = _.overload(null, null, called2, called3, called4);

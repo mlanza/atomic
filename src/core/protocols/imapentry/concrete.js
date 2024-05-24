@@ -1,4 +1,4 @@
-import {doto, does, type, comp, identity, constantly, overload, pre, signature, isString, isFunction} from "../../core.js";
+import {does, type, comp, identity, constantly, overload, pre, signature, isString, isFunction} from "../../core.js";
 import {IMapEntry} from "./instance.js";
 import {specify, satisfies} from "../../types/protocol/concrete.js";
 import {hashTag} from "../../protocols/ihashable/concrete"; //preassign hashTag to types; useful when lib is loaded crossrealm

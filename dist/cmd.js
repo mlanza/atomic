@@ -12,14 +12,9 @@ const monitors = monitor ? function(key){
   return !nomonitor.includes(key);
 } : _.noop;
 
-function log(...args){
-  const l = registry.log || $.log;
-  l(...args);
-}
-
 function monitoring(symbol, object){
   if (monitors(symbol) && _.satisfies($.ISubscribe, object)) {
-    $.sub(object, _.partial(log, symbol));
+    $.sub(object, _.partial($.log, symbol));
   }
 }
 
@@ -40,7 +35,7 @@ reg({_, $});
 
 function cmd(target = globalThis){
   Object.assign(target, registry);
-  log("Commands loaded", registry);
+  $.log("Commands loaded", registry);
 }
 
 Object.assign(globalThis, {reg, cmd});

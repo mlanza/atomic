@@ -1,4 +1,4 @@
-import {identity, overload, doto, complement, does, slice} from "../../core.js";
+import {identity, overload, complement, does, slice} from "../../core.js";
 import {implement, satisfies} from "../protocol.js";
 import {IHashable, IMergable, IBlankable, IMap, IFlatMappable, ICoercible, IFunctor, IInsertable, IOmissible, IReversible, IMapEntry, IEquiv, IReducible, IKVReducible, IAppendable, IPrependable, IInclusive, ICollection, INext, ISeq, IFind, ISeqable, IIndexed, IAssociative, ISequential, IEmptyableCollection, IFn, ICounted, ILookup, ICloneable} from "../../protocols.js";
 import {reduced, unreduced, isReduced} from "../reduced.js";
