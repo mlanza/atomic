@@ -11,6 +11,7 @@ import {IDispatch} from "./protocols/idispatch/instance.js";
 export * from "./types.js";
 export * from "./protocols.js";
 export * from "./protocols/concrete.js";
+export {doto} from "atomic/core"; //needed in core, but better called from here to make its side-effecting nature explicit
 
 export function collect(cell){
   return function(value){ //return observer
@@ -195,22 +196,34 @@ function label(logger, ...labels){
     _.specify(ILogger, {log}));
 }
 
-//composable loggers
-export const loggers = {
+//composable logging
+export const logging = {
   severity, inspect, label
 }
 
 /*
-const warn = $.loggers.severity(console, "warn");
-const when = $.loggers.inspect(warn, _.date); //can interrogate current value of state container
-const b = $.loggers.label(when, "basement");
-const br = $.loggers.label(b, "boiler room"); //a nested part of program
+const {severity, inspect, label} = $.logging;
+const warn = severity(console, "warn");
+const when = inspect(warn, _.date); //can interrogate current value of state container
+const b = label(when, "basement");
+const br = label(b, "boiler room"); //a nested part of program
 $.log(br, "pressure high!");
 
 */
 
+export function tee(f){
+  return function(value){
+    f(value);
+    return value;
+  }
+}
+
+export function peek(logger){
+  return tee(p.log(logger, ?));
+}
+
 export function see(...labels){
-  return _.tee(_.partial(p.log, ...labels));
+  return tee(_.partial(p.log, ...labels));
 }
 
 function called4(fn, message, context, logger){

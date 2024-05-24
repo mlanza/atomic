@@ -1,4 +1,4 @@
-import {foldkv, overload, partial, unary, type, curry, tee, toggles, identity, obj, partly, comp, doto, does, branch, unspread, applying, execute, noop, constantly, once, isFunction, isString} from "./core.js";
+import {foldkv, overload, partial, unary, type, curry, toggles, identity, obj, partly, comp, doto, does, branch, unspread, applying, execute, noop, constantly, once, isFunction, isString} from "./core.js";
 import {ICoercible, IForkable, IDeref, IFn, IAssociative, ICloneable, IHierarchy, ILookup, ISeq} from "./protocols.js";
 import {maybe, toArray, opt, satisfies, spread, each, duration, remove, sort, flip, realized, apply, realize, isNil, reFindAll, mapkv, period, selectKeys, mapVals, reMatches, test, date, emptyList, cons, days, recurrence, emptyArray} from "./types.js";
 import {isBlank, str, replace} from "./types/string.js";
@@ -42,10 +42,6 @@ function equals(other){
 fillProp(Object.prototype, "equals", equals);
 
 export const numeric = test(/^\d+$/i, ?);
-
-export function peek(logger){
-  return tee(p.log(logger, ?));
-}
 
 function siblings(self){
   const parent = p.parent(self);
