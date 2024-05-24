@@ -55,10 +55,10 @@ export default [{
     resolve(),
     rollupImportMapPlugin({
       "imports": {
-        "atomic_/core": "./lib/atomic_/core.js",
-        "atomic_/shell": "./lib/atomic_/shell.js",
-        "atomic_/dom": "./lib/atomic_/dom.js",
-        "atomic_/validates": "./lib/atomic_/validates.js"
+        "atomic_/core": "./libs/atomic_/core.js",
+        "atomic_/shell": "./libs/atomic_/shell.js",
+        "atomic_/dom": "./libs/atomic_/dom.js",
+        "atomic_/validates": "./libs/atomic_/validates.js"
       }
     }),
     jscc({
