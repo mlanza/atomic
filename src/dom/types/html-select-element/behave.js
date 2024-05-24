@@ -22,7 +22,7 @@ function access(f){
       return f(option) == value;
     }, options);
     if (chosen) {
-      _.each(function(option){
+      $.each(function(option){
         const selected = f(option) == value;
         if (option.selected != selected) {
           option.selected = selected;

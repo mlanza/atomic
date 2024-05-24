@@ -191,10 +191,10 @@ function omit2(self, node){
     self.removeChild(node);
   } else if (_.satisfies(_.ISequential, node)) {
     const keys = node;
-    _.each(self.removeAttribute.bind(self), keys);
+    $.each(self.removeAttribute.bind(self), keys);
   } else if (isAttrs(node)) {
     const attrs = node;
-    _.each(function(entry){
+    $.each(function(entry){
       const key = entry[0], value = entry[1];
       let curr = lookup(self, key);
       if (_.isObject(curr)){

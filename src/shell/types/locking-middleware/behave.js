@@ -15,7 +15,7 @@ function handle(self, message, next){
       const queued = self.queued;
       self.queued = [];
       $.log("draining queued", queued);
-      _.each(p.dispatch(self.bus, ?), queued);
+      $.each(p.dispatch(self.bus, ?), queued);
     }
   }
 }
