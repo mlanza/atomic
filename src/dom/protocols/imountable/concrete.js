@@ -10,7 +10,7 @@ export function mounts(self){
   const parent = _.parent(self);
 
   if (parent) {
-    _.each(function(key){
+    $.each(function(key){
       $.trigger(self, key, {bubbles: true, detail: {parent}});
     }, ["mounting", "mounted"]); //ensure hooks trigger even if already mounted
   }

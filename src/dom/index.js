@@ -262,7 +262,7 @@ export const toFragment = _.ICoercible.toFragment;
 
   function embeddables(self, doc){
     function embed(el){
-      _.each(function(entry){
+      $.each(function(entry){
         $.assoc(el, _.key(entry), _.val(entry)); //attributes
       }, self);
     }
