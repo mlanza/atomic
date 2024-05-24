@@ -1,5 +1,6 @@
 import _ from "./atomic_/core.js";
 import $ from "./atomic_/shell.js";
+import dom from "./atomic_/dom.js";
 
 export const registry = {};
 const params = new URLSearchParams(location.search);
@@ -31,7 +32,7 @@ function registerWithMonitoring(symbols){
 
 export const reg = monitors === _.noop ? register : registerWithMonitoring;
 
-reg({_, $});
+reg({_, $, dom});
 
 function cmd(target = globalThis){
   Object.assign(target, registry);
