@@ -15,7 +15,3 @@ export * from "./types/event.js";
 export * from "./types/handler-middleware.js";
 export * from "./types/locking-middleware.js";
 export * from "./types/tee-middleware.js";
-//#if _EXPERIMENTAL
-export * from "./types/volatile.js";
-export * from "./types/mutable.js";
-//#endif
