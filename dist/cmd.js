@@ -32,11 +32,21 @@ function registerWithMonitoring(symbols){
 
 export const reg = monitors === _.noop ? register : registerWithMonitoring;
 
-reg({_, $, dom});
-
-function cmd(target = globalThis){
+function cmd1(target = globalThis){
   Object.assign(target, registry);
-  $.log("Commands loaded", registry);
+  $.log("Loaded", registry);
 }
 
-Object.assign(globalThis, {reg, cmd});
+async function cmd3(symbol, path, target = globalThis){
+  const obj = await import(path);
+  target[symbol] = Object.keys(obj).length == 1 && obj.default != null ? obj.default : obj;
+  $.log(`Loaded: ${symbol}`, obj);
+}
+
+export const cmd = _.overload(cmd1, cmd1, cmd3, cmd3);
+
+export default cmd;
+
+reg({_, $, dom});
+
+Object.assign(globalThis, {cmd});
