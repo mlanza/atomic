@@ -182,13 +182,6 @@ export function multi(dispatch){
   }
 }
 
-export function tee(f){
-  return function(value){
-    f(value);
-    return value;
-  }
-}
-
 export function doto(obj, ...effects){
   const len = effects.length;
   for(let i = 0; i < len; i++){

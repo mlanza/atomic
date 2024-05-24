@@ -620,7 +620,7 @@ QUnit.test("cell", function(assert){
   tally.click();
   const source = $.cell(0);
   const dest = $.cell();
-  const sink   = $.pipe(source, _.map(_.inc), _.map(_.tee($.pub(dest, ?))));
+  const sink   = $.pipe(source, _.map(_.inc), _.map($.tee($.pub(dest, ?))));
   $.connect(sink, $.subject());
   const msink  = _.fmap(source, _.inc);
   const msinkc = $.cell();
