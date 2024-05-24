@@ -15,7 +15,7 @@ JavaScript has no means of safely [extending natives and third-party types](http
 
 Atomic is [functional first](functional-first.md).  Functions are preferred to methods.  This makes sense given how protocols treat things as abstractions.
 
-Atomic has no maps or vectors but used objects and arrays as [records and tuples](https://tc39.es/proposal-record-tuple/) before these new types were even proposed.  It had previously integrated them via [Immutable.js](https://immutable-js.com) but, in practice, since objects and arrays filled the gap well enough it wasn't worth the cost of another library, its integration [was dropped](https://github.com/mlanza/atomic/commit/8e1787f6974df5bfbb53a371a261e09b5efee8ee).  This bit of history serves to demonstrate how protocols aid in seamlessly integrating disparate libraries.
+Atomic has no maps or vectors but used objects and arrays as [records and tuples](https://tc39.es/proposal-record-tuple/) before these new types were even proposed.  It had previously integrated them via [Immutable.js](https://immutable-js.com) but, in practice, since objects and arrays filled the gap well enough it wasn't worth the cost of another library, its integration [was dropped](https://github.com/mlanza/atomic/commit/8e1787f6974df5bfbb53a371a261e09b5efee8ee).  This bit of history serves to demonstrate how protocols can seamlessly integrate disparate types into a consistent api.  By abstracting over types (and wherever they came from) one reasons about objects from a higher plane.
 
 Don't care for [point programming](tests/autopartial-less.js)?  [Autopartial](tests/autopartial.js) delivers [point-free programming](https://en.wikipedia.org/wiki/Tacit_programming) without a build step up until [pipeline operators](https://github.com/tc39/proposal-pipeline-operator) and [partial application](https://github.com/tc39/proposal-partial-application) reach stage maturity.
 
@@ -24,7 +24,7 @@ Atomic was born from an experiment answering:
 
 > Why not do ClojureScript directly in JavaScript and eliminate the transpiler?
 
-The ephiphany: since languages are just facilities plus syntax, if one can set aside syntax, the right facilities can eliminate a build step.
+The ephiphany: since languages are just facilities plus syntax, if one can set aside syntax, the right facilities can eliminate build steps.
 
 JavaScript does functional programming pretty dang well and continues to add proper facilities.
 
@@ -38,11 +38,11 @@ Of all of the above, first-class protocols is the most critical one which, for s
 
 Atomic provides the necessary facilities and showcases how even plain JavaScript can adopt the Clojure mindset!
 
-## Purity Through Discipline
+## Purity Through Protocol
 
-Historically, since JavaScript lacks value types (i.e. [records and tuples](https://tc39.es/proposal-record-tuple/) and [temporals](https://github.com/tc39/proposal-temporal)) purity is gained through discipline.  A function which receives mutable types must, as a rule, not mutate them.  *So in Atomic objects, arrays and dates are, as a rule, not mutated*.
+Since JavaScript lacks certain value types (i.e. [records and tuples](https://tc39.es/proposal-record-tuple/) and [temporals](https://github.com/tc39/proposal-temporal)), purity has historically been gained through discipline.  Atomic makes this still easier.
 
-JavaScript aims to fill these gaps, but is not there yet.  When it happens Atomic will restore objects, arrays and dates to their reference type status.
+It permits reference types to be optionally treated as immutable value types.  It provides mutable and/or immutable protocols for interacting with natives so arrays can be treated as arrays or tuples (pseudo [vectors](https://clojuredocs.org/clojure.core/vector)) and objects as objects or records (pseudo [hash maps](https://clojuredocs.org/clojure.core/hash-map)).  Yet, again, protocols reduce mountains to mole hills.
 
 ## Getting Started
 
@@ -125,7 +125,7 @@ The benefit of starting with simulations is they're free of messy unpredictabili
 
 ## Atomic in Action
 
-Atomic has been used for developing and deploying (to typical web hosts, Deno, SharePoint, Cloudflare, and Power Apps) a variety of production apps for years and has most recently been used to create digital card and board games.
+Atomic has been used for developing and deploying to typical web hosts, Deno, Supabase, SharePoint, Cloudflare, and Power Apps and various production apps for years.
 
 These examples model how one might write a program in Atomic:
 
