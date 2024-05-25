@@ -24,23 +24,6 @@ import {behaviors} from "./behaviors.js";
 export * from "./behaviors.js";
 export const behave = behaves(behaviors, ?);
 
-function fillProp(obj, key, value){
-  if (!obj.hasOwnProperty(key)) {
-    Object.defineProperty(obj, key, {
-      value,
-      writable: true,
-      enumerable: false,
-      configurable: true
-    });
-  }
-}
-
-function equals(other){
-  return p.equiv(this, other);
-}
-
-fillProp(Object.prototype, "equals", equals);
-
 export const numeric = test(/^\d+$/i, ?);
 
 function siblings(self){
