@@ -1,7 +1,7 @@
 import {identity, overload, does, slice} from "../../core.js";
 import {implement} from "../protocol.js";
 import * as p from "../../protocols/concrete.js";
-import {IRevertible, IResettable, IAssociative, ILookup, IFunctor, IDeref, ICounted} from "../../protocols.js";
+import {IRevertible, IAssociative, ILookup, IFunctor, IDeref, ICounted} from "../../protocols.js";
 import {Journal} from "./construct.js";
 import {keying} from "../../protocols/imapentry/concrete.js";
 import {splice} from "../lazy-seq/concrete.js";
@@ -39,13 +39,13 @@ function redoable(self){
   return self.pos > 0;
 }
 
-function reset(self){
+function revert(self){
   const at = p.count(self.history) - 1,
         state = p.nth(self.history, at);
   return new Journal(at, self.max, self.history, state);
 }
 
-function resettable(self){
+function revertible(self){
   return self.pos !== p.count(self.history) - 1;
 }
 
@@ -66,5 +66,4 @@ export default does(
   keying("Journal"),
   implement(IDeref, {deref}),
   implement(IFunctor, {fmap}),
-  implement(IResettable, {reset, resettable}),
-  implement(IRevertible, {undo, redo, flush, crunch, flushable, crunchable, undoable, redoable, revision}));
+  implement(IRevertible, {undo, redo, revert, flush, crunch, flushable, crunchable, undoable, redoable, revertible, revision}));
