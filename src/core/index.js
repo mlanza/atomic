@@ -1,4 +1,4 @@
-import {foldkv, overload, partial, unary, type, curry, toggles, identity, obj, partly, comp, doto, does, branch, unspread, applying, execute, noop, constantly, fold, once, isFunction, isString} from "./core.js";
+import {foldkv, overload, partial, unary, type, curry, toggles, identity, obj, partly, comp, doto, does, branch, unspread, applying, execute, noop, constantly, once, isFunction, isString} from "./core.js";
 import {ICoercible, IForkable, IDeref, IFn, IAssociative, ICloneable, IHierarchy, ILookup, ISeq} from "./protocols.js";
 import {maybe, toArray, opt, satisfies, spread, duration, remove, sort, flip, realized, apply, realize, isNil, reFindAll, mapkv, period, selectKeys, mapVals, reMatches, test, date, emptyList, cons, days, recurrence, emptyArray} from "./types.js";
 import {isBlank, str, replace} from "./types/string.js";
@@ -147,11 +147,14 @@ export function deconstruct(dur, ...units){
 
 export const toQueryString = opt(mapkv(str(?, "=", ?), ?), join("&", ?), collapse("?", ?));
 
-export function fromQueryString(url){
-  return fold(function (params, match) {
-    const key = decodeURIComponent(match[1]), val = decodeURIComponent(match[2]);
-    params[key] = val;
-  }, {}, reFindAll(/[?&]([^=&]*)=([^=&]*)/g, url));
+export function fromQueryString(search){
+  const params = new URLSearchParams(search),
+        keys = Array.from(params.keys());
+  const obj = {};
+  for(const key of keys){
+    obj[key] = params.get(key);
+  }
+  return obj;
 }
 
 function distinct0(){ //transducer
