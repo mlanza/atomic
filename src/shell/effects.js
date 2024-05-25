@@ -33,7 +33,7 @@ function dorun1(coll){
 function dorun2(n, coll){
   let xs = _.seq(coll);
   while (xs && n > 0) {
-    n++;
+    n--;
     xs = _.next(xs);
   }
 }
