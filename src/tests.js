@@ -256,7 +256,7 @@ QUnit.test("lazy-seq", function(assert){
   assert.ok(effects.length === 1);
   _.second(xs);
   assert.ok(effects.length === 2);
-  _.doall(xs);
+  $.doall(xs);
   assert.ok(effects.length === 10);
   assert.ok(_.blank(blank));
   assert.ok(!_.blank(nums));

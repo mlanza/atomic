@@ -1,4 +1,5 @@
 import * as _ from "atomic/core";
+import * as $ from "../../effects.js";
 import * as p from "../../protocols/concrete.js";
 import {IPublish, ISubscribe} from "../../protocols.js";
 import {reducible, mergable} from "../../shared.js";
@@ -41,7 +42,7 @@ function closed(self){
 }
 
 function notify(self, f){
-  _.each(f, self.observers);
+  $.each(f, self.observers);
 }
 
 export default _.does(

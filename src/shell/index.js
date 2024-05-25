@@ -1,4 +1,5 @@
 import * as _ from "atomic/core";
+import * as $ from "./effects.js";
 import * as p from "./protocols/concrete.js";
 import * as t from "./transducers.js";
 import {ILogger, IPublish, ISubscribe} from "./protocols.js";
@@ -11,7 +12,8 @@ import {IDispatch} from "./protocols/idispatch/instance.js";
 export * from "./types.js";
 export * from "./protocols.js";
 export * from "./protocols/concrete.js";
-export {doto, each} from "atomic/core";
+export * from "./effects.js";
+export {doto, rand, randNth, shuffle, specify, implement, uid, guid} from "atomic/core"; //reexport side effecting ops
 
 export function collect(cell){
   return function(value){ //return observer
@@ -53,7 +55,7 @@ function fmap(source, f){
   return map(f, source);
 }
 
-_.each(_.implement(_.IFunctor, {fmap}), [Cell, Subject, Observable]);
+$.each(_.implement(_.IFunctor, {fmap}), [Cell, Subject, Observable]);
 
 function fromPromise2(promise, init){
   return share(Observable.fromPromise(promise), cell(init));
