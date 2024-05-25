@@ -249,6 +249,7 @@ export function when(pred, ...xs) {
   return last(map(realize, pred ? xs : null));
 }
 
+//#if _EXPERIMENTAL
 export function readable(keys){
   const lookup = keys ? function(self, key){
     if (!p.includes(keys, key)) {
@@ -287,7 +288,7 @@ export function writable(keys){
     implement(ICloneable, {clone}),
     implement(IAssociative, {assoc, contains}));
 }
-
+//#endif
 
 function scanKey1(better){
   return partial(scanKey, better);
