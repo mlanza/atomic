@@ -15,9 +15,9 @@ export * from "./types/indexed.js";
 export * from "./types/journal.js";
 export * from "./types/just.js";
 export * from "./types/left.js";
-export * from "./types/lens.js";
 export * from "./types/list.js";
 //#if _EXPERIMENTAL
+export * from "./types/lens.js";
 export * from "./types/members.js";
 //#endif
 export * from "./types/multimethod.js";

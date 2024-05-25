@@ -4,7 +4,9 @@ import {first} from "../iseq.js";
 import {count} from "../icounted/concrete.js";
 import {deref} from "../ideref/concrete.js";
 import {path} from "../ipath/concrete.js";
+//#if _EXPERIMENTAL
 import {lens} from "../../types/lens/construct.js";
+//#endif
 import {cons} from "../../types/list/construct.js";
 import {emptyList} from "../../types/empty-list/construct.js";
 import {map, mapcat, remove, concat} from "../../types/lazy-seq/concrete.js";
@@ -42,4 +44,6 @@ export function leaves(self){
   return remove(comp(count, children), descendants(self));
 }
 
+//#if _EXPERIMENTAL
 export const asLeaves = comp(map(juxt(path, deref), ?), leaves, lens);
+//#endif
