@@ -29,6 +29,33 @@ QUnit.test("inheritance chain", function(assert){
   assert.equal(_.name(greg), "Gregory");
 });
 
+QUnit.test("pure random", function(assert){
+  const alt = _.chance(8675309);
+  const remember = alt.serialize();
+  function randoms(alt){
+    const uid = _.uids(5, alt.random);
+    const [uid1, uid2, uid3] = _.toArray(_.repeatedly(3, uid));
+    assert.equal(uid1.id, "L4wM2");
+    assert.equal(uid2.id, "U0iFA");
+    assert.equal(uid3.id, "AHeZ8");
+    const guid = _.guids(alt.random);
+    const [guid1, guid2, guid3] = _.toArray(_.repeatedly(3, guid));
+    assert.equal(guid1.id, "18ebd681-151f-05d2-bebf-e9ea3fd094b5");
+    assert.equal(guid2.id, "f948e64b-f1fb-255a-52de-b3777c27201e");
+    assert.equal(guid3.id, "92803dce-b800-f706-8741-47bbe155125b");
+    const [i1, i2, i3] = _.toArray(_.repeatedly(3, _.partial(_.randInt, alt.random, 100)));
+    assert.equal(i1, 30);
+    assert.equal(i2, 16);
+    assert.equal(i3, 11);
+    const [r1, r2, r3] = _.toArray(_.repeatedly(3, _.partial(_.rand, alt.random, 1)));
+    assert.equal(r1, 0.6288899967912585);
+    assert.equal(r2, 0.47766544623300433);
+    assert.equal(r3, 0.12775464728474617);
+  }
+  randoms(alt);
+  randoms(_.Chance.deserialize(remember));
+});
+
 QUnit.test("type checks", function(assert){
   assert.ok(_.isArray([]));
   assert.ok(_.isObject({}));

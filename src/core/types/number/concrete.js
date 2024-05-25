@@ -63,26 +63,22 @@ export function clamp(self, min, max){
   return self < min ? min : self > max ? max : self;
 }
 
-function rand0(){
-  return Math.random();
-}
-
 function rand1(n){
-  return Math.random() * n;
+  return rand2(Math.random, n);
 }
 
-function rand2(f = Math.random, n){
-  return f() * n;
+function rand2(random = Math.random, n){
+  return random() * n;
 }
 
-export const rand = overload(rand0, rand1, rand2);
+export const rand = overload(Math.random, rand1, rand2);
 
 function randInt1(n){
-  return Math.floor(rand(n));
+  return randInt2(Math.random, n);
 }
 
-function randInt2(f, n){
-  return Math.floor(rand(f, n));
+function randInt2(random = Math.random, n){
+  return Math.floor(random() * n);
 }
 
 export const randInt = overload(null, randInt1, randInt2);

@@ -18,10 +18,12 @@ export class Chance {
 
   static deserialize(serialized) {
     const {seed, hash} = JSON.parse(serialized);
-    return new Chance(seed, hash);
+    return chance(seed, hash);
   }
 }
 
 export function chance(seed = Math.random(), hash = 1779033703 ^ seed){
-  return new Chance(seed, hash);
+  const chance = new Chance(seed, hash);
+  chance.random = chance.random.bind(chance);
+  return chance; //making it a drop-in replacement for Math.random
 }

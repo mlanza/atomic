@@ -5,8 +5,8 @@ import {IEquiv} from "../iequiv/instance.js";
 
 const cache = Symbol("hashcode");
 
-export function hashTag(){
-  const tag = Math.random(0);
+export function hashTag(random = Math.random){
+  const tag = random(0);
   return function(self){
     if (!self[cache]){
       self[cache] = tag;
