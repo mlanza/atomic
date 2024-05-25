@@ -1,5 +1,5 @@
 import {ISequential} from "../../protocols.js";
-import {identity, constantly, overload, complement, comp, partial, slice, applying, unspread} from "../../core.js";
+import {identity, or, constantly, overload, complement, comp, partial, slice, applying, unspread} from "../../core.js";
 import {EmptyList, emptyList} from "../empty-list/construct.js";
 import {emptyArray, array} from "../array/construct.js";
 import {toArray} from "../array/concrete.js";
@@ -142,6 +142,46 @@ export function some(f, coll){
   return null;
 }
 
+function someFn1(p){
+  function f1(x){
+    return p(x);
+  }
+  function f2(x, y){
+    return p(x) || p(y);
+  }
+  function f3(x, y, z){
+    return p(x) || p(y) || p(z);
+  }
+  function fn(x, y, z, ...args){
+    return f3(x, y, z) || some(p, args);
+  }
+  return overload(constantly(null), f1, f2, f3, fn);
+}
+
+function someFn2(p1, p2){
+  function f1(x){
+    return p1(x) || p2(x);
+  }
+  function f2(x, y){
+    return p1(x) || p1(y) || p2(x) || p2(y);
+  }
+  function f3(x, y, z){
+    return p1(x) || p1(y) || p1(z) || p2(x) || p2(y) || p2(z);
+  }
+  function fn(x, y, z, ...args){
+    return f3(x, y, z) || some(or(p1, p2), args);
+  }
+  return overload(constantly(null), f1, f2, f3, fn);
+}
+
+function someFnN(...ps){
+  function fn(...args){
+    return some(or(...ps), args);
+  }
+  return overload(constantly(null), fn);
+}
+
+export const someFn = overload(null, someFn1, someFn2, someFnN);
 export const notSome = comp(not, some);
 export const notAny  = notSome;
 
