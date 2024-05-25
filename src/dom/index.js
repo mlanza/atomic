@@ -75,7 +75,7 @@ function attr2(self, key){
     return self.getAttribute(key);
   } else {
     const pairs = key;
-    _.eachkv(attr3(self, ?, ?), pairs);
+    $.eachkv(attr3(self, ?, ?), pairs);
   }
 }
 
@@ -100,7 +100,7 @@ function removeAttr2(self, key){
   self.removeAttribute(key);
 }
 
-export const removeAttr = _.overload(null, null, removeAttr2, _.doing(removeAttr2));
+export const removeAttr = _.overload(null, null, removeAttr2, $.doing(removeAttr2));
 
 function prop3(self, key, value){
   self[key] = value;

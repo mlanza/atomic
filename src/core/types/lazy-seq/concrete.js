@@ -98,71 +98,6 @@ function into3(to, xform, from){
 
 export const into = overload(emptyArray, identity, into2, into3);
 
-//TODO unnecessary if CQS pattern is that commands return self
-function doing1(f){
-  return doing2(f, identity);
-}
-
-function doing2(f, order){
-  return function(self, ...xs){
-    each(f(self, ?), order(xs));
-  }
-}
-
-export const doing = overload(null, doing1, doing2); //mutating counterpart to `reducing`
-
-export function each(f, xs){
-  let ys = p.seq(xs);
-  while(ys){
-    f(p.first(ys));
-    ys = p.next(ys);
-  }
-}
-
-function doseq3(f, xs, ys){
-  each(function(x){
-    each(function(y){
-      f(x, y);
-    }, ys);
-  }, xs);
-}
-
-function doseq4(f, xs, ys, zs){
-  each(function(x){
-    each(function(y){
-      each(function(z){
-        f(x, y, z);
-      }, zs);
-    }, ys);
-  }, xs);
-}
-
-function doseqN(f, xs, ...colls){
-  each(function(x){
-    if (p.seq(colls)) {
-      apply(doseq, function(...args){
-        apply(f, x, args);
-      }, colls);
-    } else {
-      f(x);
-    }
-  }, xs || []);
-}
-
-export const doseq = overload(null, null, each, doseq3, doseq4, doseqN);
-
-export function eachkv(f, xs){
-  each(function([key, value]){
-    return f(key, value);
-  }, entries(xs));
-}
-
-export function eachvk(f, xs){
-  each(function([key, value]){
-    return f(value, key);
-  }, entries(xs));
-}
-
 function entries2(xs, keys){
   return p.seq(keys) ? lazySeq(function(){
     return cons([p.first(keys), p.get(xs, p.first(keys))], entries2(xs, p.rest(keys)));
@@ -735,7 +670,6 @@ function mapIndexed1(f){ //transducer
 
 export const butlast     = partial(dropLast, 1);
 export const initial     = butlast;
-export const eachIndexed = withIndex(each);
 export const mapIndexed  = overload(null, mapIndexed1, withIndex(map));
 export const keepIndexed = overload(null, keepIndexed1, withIndex(keep));
 export const splitAt     = juxt(take, drop);
@@ -815,34 +749,6 @@ export const isDistinct = overload(null, constantly(true), function(a, b){
   return a !== b;
 }, isDistinctN);
 
-function dorun1(coll){
-  let xs = p.seq(coll);
-  while(xs){
-    xs = p.next(xs);
-  }
-}
-
-function dorun2(n, coll){
-  let xs = p.seq(coll);
-  while(xs && n > 0){
-    n++;
-    xs = p.next(xs);
-  }
-}
-
-export const dorun = overload(null, dorun1, dorun2);
-
-function doall1(coll){
-  dorun(coll);
-  return coll;
-}
-
-function doall2(n, coll){
-  dorun(n, coll);
-  return coll;
-}
-
-export const doall = overload(null, doall1, doall2);
 
 export function iterate(f, x){
   return lazySeq(function(){
@@ -853,10 +759,6 @@ export function iterate(f, x){
 export const integers  = range(Number.MIN_SAFE_INTEGER, Number.MAX_SAFE_INTEGER, 1);
 export const positives = range(1, Number.MAX_SAFE_INTEGER, 1);
 export const negatives = range(-1, Number.MIN_SAFE_INTEGER, -1);
-
-export function dotimes(n, f){
-  each(f, range(n))
-}
 
 export function randNth(coll){
   return p.nth(coll, randInt(p.count(coll)));
