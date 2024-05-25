@@ -43,7 +43,3 @@ export const siblings = IHierarchy.siblings;
 export function leaves(self){
   return remove(comp(count, children), descendants(self));
 }
-
-//#if _EXPERIMENTAL
-export const asLeaves = comp(map(juxt(path, deref), ?), leaves, lens);
-//#endif
