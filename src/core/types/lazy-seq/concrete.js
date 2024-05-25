@@ -760,9 +760,17 @@ export const integers  = range(Number.MIN_SAFE_INTEGER, Number.MAX_SAFE_INTEGER,
 export const positives = range(1, Number.MAX_SAFE_INTEGER, 1);
 export const negatives = range(-1, Number.MIN_SAFE_INTEGER, -1);
 
-export function randNth(coll){
-  return p.nth(coll, randInt(p.count(coll)));
+function randNth1(coll){
+  return randNth2(Math.random, coll);
 }
+
+function randNth2(random = Math.random, coll){
+  return p.nth(coll, randInt(random, p.count(coll)));
+}
+
+export const randNth = overload(null, randNth1, randNth2);
+
+export const pluck = randNth;
 
 export function cond(...xs){
   const conditions = isEven(p.count(xs)) ? xs : Array.from(concat(butlast(xs), [constantly(true), last(xs)]));

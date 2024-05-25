@@ -10,9 +10,9 @@ export const val = IMapEntry.val;
 
 const kind = Symbol("kind");
 
-function uid() {
-  const head = (Math.random() * 46656) | 0,
-        tail = (Math.random() * 46656) | 0;
+function uid(random = Math.random) {
+  const head = (random() * 46656) | 0,
+        tail = (random() * 46656) | 0;
   return ("000" + head.toString(36)).slice(-3) + ("000" + tail.toString(36)).slice(-3);
 }
 
@@ -29,18 +29,18 @@ export function ako(self, type){
   return is2(self, type) || (proto && ako(proto, type));
 }
 
-function keyed(label){
-  const id = `${label}-${uid()}`;
+function keyed(label, random = Math.random){
+  const id = `${label}-${uid(random)}`;
   return function(Type){
     Type[kind] = id;
   }
 }
 
-export function keying(label){
+export function keying(label, random = Math.random){
   if (!isString(label)) {
     throw new Error("Label must be a string");
   }
-  return does(keyed(label), hashTag(), label ? function(Type){
+  return does(keyed(label, random), hashTag(), label ? function(Type){
     Type[Symbol.toStringTag] = label;
   } : noop);
 }
@@ -55,11 +55,11 @@ export function ako(self, constructor){
   return self instanceof constructor;
 }
 
-export function keying(label){
+export function keying(label, random = Math.random){
   if (!isString(label)) {
     throw new Error("Label must be a string");
   }
-  return does(hashTag(), label ? function(Type){
+  return does(hashTag(random), label ? function(Type){
     Type[Symbol.toStringTag] = label;
   } : noop);
 }
