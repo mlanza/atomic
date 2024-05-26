@@ -530,6 +530,17 @@ QUnit.test("area:polymorphism", function(assert){
   assert.ok(area(c) === 201.06192982974676);
 });
 
+QUnit.test("coercion", function(assert){
+  assert.ok(_.eq(_.coerce(_.range(3), Array), Array.from(_.range(3)), _.toArray(_.range(3)), _.coerce([0,1,2], Array)));
+  assert.ok(_.eq(_.coerce(_.set([2,4,2,5]), Array), [2,4,5]));
+  assert.ok(_.eq(_.coerce([2,5,2,4], Set), _.set([2,4,5])));
+  assert.ok(_.eq(_.coerce(_.concat(_.range(3), _.range(2)), Array), [0,1,2,0,1]));
+  assert.ok(_.eq(_.coerce(_.cons(1, _.cons(2)), Array), _.coerce(_.list(1, 2), Array), [1,2]));
+  assert.ok(_.eq(_.cons(1, _.cons(2)), _.list(1, 2)));
+  assert.ok(_.eq(_.coerce(null, Array), []));
+  assert.ok(_.eq(_.coerce("eggs", Array), Array.from(_.seq("eggs")), ["e","g","g","s"]));
+});
+
 QUnit.test("record", function(assert){
   function Person(name, surname, dob){
     this.name = name;
