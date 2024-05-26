@@ -1,12 +1,14 @@
 import {implement, satisfies} from "../protocol.js";
 import {identity, does} from "../../core.js";
-import {IFunctor, IForkable, IDeref} from "../../protocols.js";
+import {IFunctor, IFlatMappable, IForkable, IDeref} from "../../protocols.js";
 import {keying} from "../../protocols/imapentry/concrete.js";
 import {left} from "./construct.js";
-import monadic from "../../monadic.js";
 
 const fmap = identity;
-const flat = identity;
+
+function flat(self){
+  return self.value instanceof Right || self.value instanceof Left ? self.value : self;
+}
 
 function fork(self, reject, resolve){
   reject(self.value);
@@ -18,7 +20,7 @@ function deref(self){
 
 export default does(
   keying("Left"),
-  monadic(left, flat),
   implement(IDeref, {deref}),
-  implement(IForkable, {fork}),
-  implement(IFunctor, {fmap}));
+  implement(IFunctor, {fmap}),
+  implement(IFlatMappable, {flat}),
+  implement(IForkable, {fork}));
