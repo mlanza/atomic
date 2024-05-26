@@ -1,6 +1,6 @@
 import {foldkv, overload, partial, unary, type, curry, toggles, identity, obj, partly, comp, doto, does, branch, unspread, applying, execute, noop, constantly, once, isFunction, isString, pipe} from "./core.js";
 import {ICoercible, IForkable, IDeref, IFn, IAssociative, ICloneable, IHierarchy, ILookup, ISeq} from "./protocols.js";
-import {set, maybe, toArray, opt, satisfies, spread, duration, remove, sort, flip, realized, apply, realize, isNil, reFindAll, mapkv, period, selectKeys, mapVals, reMatches, test, date, emptyList, cons, days, recurrence, emptyArray} from "./types.js";
+import {set, maybe, toArray, opt, satisfies, spread, duration, remove, sort, flip, realized, apply, realize, isNil, reFindAll, mapkv, period, selectKeys, mapVals, reMatches, test, date, emptyList, cons, list, days, recurrence, emptyArray} from "./types.js";
 import {isBlank, str, replace} from "./types/string.js";
 import {isSome} from "./types/nil.js";
 import _config from "./config.js";
@@ -379,6 +379,7 @@ ICoercible.addMethod([T.Okay, Promise], unfork);
 ICoercible.addMethod([T.Concatenated, Array], unary(Array.from));
 ICoercible.addMethod([T.EmptyList, Array], emptyArray);
 ICoercible.addMethod([T.List, Array], unary(Array.from));
+ICoercible.addMethod([Array, T.List], unary(spread(list)));
 ICoercible.addMethod([T.Range, Array], unary(Array.from));
 ICoercible.addMethod([T.Nil, Array], emptyArray);
 ICoercible.addMethod([T.IndexedSeq, Array], unary(Array.from));
