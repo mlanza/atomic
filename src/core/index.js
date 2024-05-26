@@ -1,6 +1,6 @@
-import {foldkv, overload, partial, unary, type, curry, toggles, identity, obj, partly, comp, doto, does, branch, unspread, applying, execute, noop, constantly, once, isFunction, isString} from "./core.js";
+import {foldkv, overload, partial, unary, type, curry, toggles, identity, obj, partly, comp, doto, does, branch, unspread, applying, execute, noop, constantly, once, isFunction, isString, pipe} from "./core.js";
 import {ICoercible, IForkable, IDeref, IFn, IAssociative, ICloneable, IHierarchy, ILookup, ISeq} from "./protocols.js";
-import {maybe, toArray, opt, satisfies, spread, duration, remove, sort, flip, realized, apply, realize, isNil, reFindAll, mapkv, period, selectKeys, mapVals, reMatches, test, date, emptyList, cons, days, recurrence, emptyArray} from "./types.js";
+import {set, maybe, toArray, opt, satisfies, spread, duration, remove, sort, flip, realized, apply, realize, isNil, reFindAll, mapkv, period, selectKeys, mapVals, reMatches, test, date, emptyList, cons, days, recurrence, emptyArray} from "./types.js";
 import {isBlank, str, replace} from "./types/string.js";
 import {isSome} from "./types/nil.js";
 import _config from "./config.js";
@@ -353,9 +353,7 @@ function reduceToArray(self){
 }
 
 ICoercible.addMethod([Set, Array], unary(Array.from));
-ICoercible.addMethod([Array, Set], function(coll){
-  return new Set(coll);
-});
+ICoercible.addMethod([Array, Set], unary(set));
 ICoercible.addMethod([Number, String], unary(str));
 ICoercible.addMethod([Number, Date], unary(date));
 ICoercible.addMethod([T.Duration, T.Duration], identity);
@@ -378,23 +376,13 @@ ICoercible.addMethod([Array, Array], identity);
 //#if _EXPERIMENTAL
 ICoercible.addMethod([T.Okay, Promise], unfork);
 //#endif
-ICoercible.addMethod([T.Concatenated, Array], reduceToArray);
+ICoercible.addMethod([T.Concatenated, Array], unary(Array.from));
 ICoercible.addMethod([T.EmptyList, Array], emptyArray);
-ICoercible.addMethod([T.List, Array], reduceToArray);
-ICoercible.addMethod([T.Range, Array], reduceToArray);
+ICoercible.addMethod([T.List, Array], unary(Array.from));
+ICoercible.addMethod([T.Range, Array], unary(Array.from));
 ICoercible.addMethod([T.Nil, Array], emptyArray);
-ICoercible.addMethod([T.IndexedSeq, Array], reduceToArray);
+ICoercible.addMethod([T.IndexedSeq, Array], unary(Array.from));
 ICoercible.addMethod([T.RevSeq, Array], unary(Array.from));
-ICoercible.addMethod([T.LazySeq, Array], function(xs){
-  let ys = xs;
-  const zs = [];
-  while (p.seq(ys) != null) {
-    zs.push(p.first(ys));
-    ys = p.rest(ys);
-  }
-  return zs;
-});
+ICoercible.addMethod([T.LazySeq, Array], unary(Array.from))
 ICoercible.addMethod([Object, Array], reduceToArray);
-ICoercible.addMethod([String, Array], function(self){
-  return self.split("");
-});
+ICoercible.addMethod([String, Array], p.split(?, ""));
