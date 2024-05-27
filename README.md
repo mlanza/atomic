@@ -8,6 +8,7 @@ Highlights:
 * implements much Clojure's standard library
 * [functional core](src/core), [imperative shell](src/shell) w/ FRP
 * [nil-punning](https://ericnormand.me/article/nil-punning) handles null in sensible ways
+* tacit style via [placeholder partial](/placeholder-partial.md)
 
 Atomic is [protocol oriented](src/core/protocols) to its very foundation.  Objects are treated as [abstract types](https://en.wikipedia.org/wiki/Abstract_data_type) per their behaviors irrespective of their concrete types.  This flavor of polymorphism is what makes Clojure so good at transforming data.
 
@@ -16,8 +17,6 @@ JavaScript has no means of safely [extending natives and third-party types](http
 Atomic is [functional first](functional-first.md).  Functions are preferred to methods.  This makes sense given how protocols treat things as abstractions.
 
 Atomic has no [maps](https://clojuredocs.org/clojure.core/hash-map) or [vectors](https://clojuredocs.org/clojure.core/vector) but used objects and arrays as faux [records and tuples](https://tc39.es/proposal-record-tuple/) since before these new types were even proposed.  It had previously integrated them via [Immutable.js](https://immutable-js.com) but, in practice, using objects and arrays as persistents worked well enough it wasn't worth the cost of another library.  Its integration [was dropped](https://github.com/mlanza/atomic/commit/8e1787f6974df5bfbb53a371a261e09b5efee8ee).  This bit of history serves to demonstrate how protocols can seamlessly integrate disparate types into a consistent api.  Concrete types, even third-party ones, can be regarded as abstract things, by their apis.
-
-Don't care for [point programming](tests/autopartial-less.js)?  [Autopartial](tests/autopartial.js) delivers [point-free programming](https://en.wikipedia.org/wiki/Tacit_programming) without a build step up until [pipeline operators](https://github.com/tc39/proposal-pipeline-operator) and [partial application](https://github.com/tc39/proposal-partial-application) reach stage maturity.
 
 ## Premise
 Atomic was born from an experiment answering:
@@ -53,7 +52,7 @@ npm install
 npm run bundle
 ```
 
-Copy the contents of `dist` to `lib` in a project then import from either `lib\atomic` or `lib\atomic_` depending on whether [autopartial](./tests/autopartial.js) is wanted.
+Copy the contents of `dist` to `libs` in a project then import from either `libs\atomic` or `libs\atomic_` depending on whether [placeholder partial](./placeholder-partial.md) is wanted.
 
 Implementing a small app is a good first step for someone unfamiliar with the herein described approach.
 
@@ -63,7 +62,7 @@ The `core` module is the basis for the functional core, `shell` for the imperati
 
 Its state container, the bucket which houses an app's big bang [world state](https://docs.racket-lang.org/teachpack/2htdpuniverse.html), is the `cell`.  It's mostly equivalent to a Clojure atom.  The main exception is it invokes the callback upon subscription the way an Rx [subject](https://rxjs.dev/guide/subject) does.  This is well suited to the developing of user interfaces.  And like [xstream](https://staltz.com/why-we-built-xstream.html) it doesn't rely on many operators, providing a simple but sufficient platform for FRP.
 
-The typical UI imports the trifecta—`core`, `shell`, and `dom`—as `_`, `$` and `dom` respectively.  The `_` doubles as a partial application placeholder when using autopartial.  To facilitate interactive development these assignments can be readily imported by entering [`cmd()`](./dist/cmd.js) from a browser console where Atomic is loaded.
+The typical UI imports the trifecta—`core`, `shell`, and `dom`—as `_`, `$` and `dom` respectively.  The `_` doubles as a partial application placeholder when using [placeholder partial](./placeholder-partial.md).  To facilitate interactive development these assignments can be readily imported by entering [`cmd()`](./dist/cmd.js) from a browser console where Atomic is loaded.
 
 Since many of its core functions are taken directly from Clojure one can often use its documentation.  Here are a handful of its bread and butter functions:
 * [`swap`](https://clojuredocs.org/clojure.core/swap!)
