@@ -4,9 +4,7 @@
   "scripts": {
     "bundle": "rollup --config",
     "develop": "rollup --config --watch",
-    "tests": "static ./tests",
-    "autopartial": "deno run ./tests/autopartial.js",
-    "autopartial-less": "deno run ./tests/autopartial-less.js"
+    "tests": "static ./tests"
   },
   "type": "module",
   "engines": {
