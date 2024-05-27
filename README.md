@@ -62,7 +62,7 @@ The `core` module is the basis for the functional core, `shell` for the imperati
 
 Its state container, the bucket which houses an app's big bang [world state](https://docs.racket-lang.org/teachpack/2htdpuniverse.html), is the `cell`.  It's mostly equivalent to a Clojure atom.  The main exception is it invokes the callback upon subscription the way an Rx [subject](https://rxjs.dev/guide/subject) does.  This is well suited to the developing of user interfaces.  And like [xstream](https://staltz.com/why-we-built-xstream.html) it doesn't rely on many operators, providing a simple but sufficient platform for FRP.
 
-The typical UI imports the trifecta—`core`, `shell`, and `dom`—as `_`, `$` and `dom` respectively.  The `_` doubles as a partial application placeholder when using [placeholder partial](./placeholder-partial.md).  To facilitate interactive development these assignments can be readily imported by entering [`cmd()`](./dist/cmd.js) from a browser console where Atomic is loaded.
+The typical UI imports the trifecta—`core`, `shell`, and `dom`—as `_`, `$` and `dom` respectively.  The `_` doubles as a partial application placeholder when using [placeholder partial](./placeholder-partial.md).  [To facilitate interactive development](./interactive-development.md) these can be readily imported into the console.
 
 Since many of its core functions are taken directly from Clojure one can often use its documentation.  Here are a handful of its bread and butter functions:
 * [`swap`](https://clojuredocs.org/clojure.core/swap!)
