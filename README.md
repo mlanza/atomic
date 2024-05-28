@@ -4,7 +4,7 @@ Write [ClojureScript](https://clojurescript.org) in JavaScript without a transpi
 Highlights:
 
 * well suited for web apps
-* deploy the code you write — [point-free pipelines and partial application](/placeholder-partial.md), no build required
+* deploy the code you write — [point-free pipelines and partial application](docs/placeholder-partial.md), no build required
 * implements much of Clojure's standard library
 * [functional core](src/core), [imperative shell](src/shell) w/ FRP
 * [nil-punning](https://ericnormand.me/article/nil-punning) handles null in sensible ways
@@ -16,7 +16,7 @@ Atomic is [protocol oriented](src/core/protocols) to its very foundation.  Objec
 
 Protocols also provide the only safe means of dynamically [extending natives and third-party types](https://en.wikipedia.org/wiki/Monkey_patch).  In short, [its first-class citizenship status](https://github.com/tc39/proposal-first-class-protocols) is long overdue.  Atomic fills the gaping hole.
 
-Atomic is [functional first](functional-first.md).  Functions are preferred to methods.  This makes sense when abstractions are prefered to concretions.
+Atomic is [functional first](docs/functional-first.md).  Functions are preferred to methods.  This makes sense when abstractions are prefered to concretions.
 
 Atomic has no [maps](https://clojuredocs.org/clojure.core/hash-map) or [vectors](https://clojuredocs.org/clojure.core/vector) though it once integrated them in via [Immutable.js](https://immutable-js.com).  It turns out it didn't need them.  Treating objects and arrays as value types worked so well the integration [was dropped](https://github.com/mlanza/atomic/commit/8e1787f6974df5bfbb53a371a261e09b5efee8ee).  It wasn't worth the cost of loading the library.  This bit of history is noted to demonstrate how, through protocols, third-party types can be easily conformed to any standardized api.
 
@@ -35,7 +35,7 @@ JavaScript does functional programming pretty dang well and continues to add pro
 * [pipeline operator](https://github.com/tc39/proposal-pipeline-operator)
 * [temporal](https://github.com/tc39/proposal-temporal)
 
-Atomic provides facilities to showcase how any language—even JavaScript!—[can adopt the Clojure mindset](adopting-the-clojure-mindset.md).
+Atomic provides facilities to showcase how any language—even JavaScript!—[can adopt the Clojure mindset](docs/adopting-the-clojure-mindset.md).
 
 ## Purity Through Protocol
 
@@ -52,7 +52,7 @@ npm install
 npm run bundle
 ```
 
-Copy the contents of `dist` to `libs` in a project then import from either `libs\atomic` or `libs\atomic_` depending on whether [placeholder partial](./placeholder-partial.md) is wanted.
+Copy the contents of `dist` to `libs` in a project then import from either `libs\atomic` or `libs\atomic_` depending on whether [placeholder partial](docs/placeholder-partial.md) is wanted.
 
 Implementing a small app is a good first step for someone unfamiliar with building one around a state container.
 
@@ -60,11 +60,11 @@ Implementing a small app is a good first step for someone unfamiliar with buildi
 
 A typical app imports the trifecta—`core`, `shell`, and `dom`—as `_`, `$` and `dom` respectively.  These provide what's necessary for building a functional core, an imperative shell, and a user interface, everything an app needs.  These modules hint at a 3-part architecture—a core, shell, and ui.  Pragmatically, the shell will often also contain the ui, so 2 parts (a `core` and a `shell` module) will usually be good enough.
 
-To facilitate [interactive development](./interactive-development.md) these modules can be readily loaded into the console.  The `_` doubles as a [placeholder for partial application](./placeholder-partial.md).
+To facilitate [interactive development](docs/interactive-development.md) these modules can be readily loaded into the console.  The `_` doubles as a [placeholder for partial application](docs/placeholder-partial.md).
 
 The state container keeps an app's [world state](https://docs.racket-lang.org/teachpack/2htdpuniverse.html).  In Atomic this is a cell.  It's mostly equivalent to a Clojure atom.  The only significant difference is it invokes its callback upon subscription the way an Rx [subject](https://rxjs.dev/guide/subject) does.
 
-Since Elm had already sold FRP by the time CSP appeared in `core.async`, Atomic is based on reactives and state containers.  The [world state is addressable](./addressable-data.md) and can employ the Clojure methodology for surgically updating state.
+Since Elm had already sold FRP by the time CSP appeared in `core.async`, Atomic is based on reactives and state containers.  The [world state is addressable](docs/addressable-data.md) and can employ the Clojure methodology for surgically updating state.
 
 In the absence of threading macros and pipeline syntax several functions exist (see these demonstrated in the example programs) to facilitate pipelines and composition:
 * `chain` (a normal pipeline)
