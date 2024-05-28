@@ -15,6 +15,10 @@ export * from "./protocols/concrete.js";
 export * from "./effects.js";
 export {doto, rand, randNth, shuffle, specify, implement, uid, guid} from "atomic/core"; //reexport side effecting ops
 
+import {behaviors} from "./behaviors.js";
+export * from "./behaviors.js";
+export const behave = _.behaves(behaviors, ?);
+
 export function collect(cell){
   return function(value){ //return observer
     p.swap(cell, _.conj(?, value));
@@ -245,3 +249,5 @@ function called2(fn, message){
 }
 
 export const called = _.overload(null, null, called2, called3, called4);
+
+
