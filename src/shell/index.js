@@ -241,7 +241,7 @@ function called4(fn, message, context, logger){
 }
 
 function called3(fn, message, context){
-  return called4(fn, message, context, config.logger);
+  return called4(fn, message, context, _.config.logger);
 }
 
 function called2(fn, message){
