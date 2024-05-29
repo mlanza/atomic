@@ -1,6 +1,4 @@
-# Core
-
-## Cross-realm operability
+# Cross-realm operability
 
 Most libraries don't work across frames due to each having its own copy of the host's constructors.  This renders certain coding practices (relying on `instanceof` or constructor comparisons) unreliable.
 
@@ -10,11 +8,11 @@ See:
 
 To work around the issue Atomic applies symbolic names to constructors.  These same names can be applied to constructors in other frames.  Doing this guarantees identical constructors (from different frames) share a common identity.  This enables `is` and `ako` (while `CROSSREALM=1`) to unambiguously identify objects.
 
-Third-party code including most polyfills (even natives) should be considered unreliable as there is no consistent means by which developers have tackled cross-realm operability.  Only fully-controlled code with no external dependencies (unknowns) can be trusted!
+Third-party code including most polyfills (even natives) should be considered unreliable and so there is no consistent means by which developers have tackled cross-realm operability.  Only fully-controlled code with no external dependencies (unknowns) can be trusted!
 
 Set `CROSSREALM=1` to compile cross-realm operable bundles and `CROSSREALM=0` when not needed as this option is not cost free.
 
-### Fostering Cross-realm Module Use
+### Cross-realm Dos & Don'ts
 
 * Don't use `instanceof`.  Use `ako`.
 * Don't check constructors.  Use `is`.
@@ -25,15 +23,15 @@ Set `CROSSREALM=1` to compile cross-realm operable bundles and `CROSSREALM=0` wh
 
 ## Extending Foreign Hosts
 
-Behaviors can be assigned to types if foreign hosts so they understand a module's protocols.  Each module exports a `behave` function which imbues behavior to an environment.
+Behaviors can be assigned to types if foreign hosts so they understand a module's protocols.  Each module exports a `behave` function which imbues behavior to a select environment/window.
 
 ```javascript
-import * as core from "atomic/core";
+import * as _ from "atomic/core";
 import * as dom from "atomic/dom";
 
-core.behave(window); //includes all known types
-core.behave({Array, Object}); //includes only specified types
+_.behave(window); //includes all known types
+_.behave({Array, Object}); //includes only specified types
 dom.behave(window);
 dom.behave({Window, Location, HTMLDocument});
 ```
-Behaviors (and names) are automatically imbued in the frame in which a module loads.  It is only necessary to manually imbue behaviors to any foreign frames which interact (send data to) with the current.
+Behaviors (and names) are automatically imbued in the frame in which a module loads.  It is only necessary to manually imbue behaviors into foreign frames which pass objects into the current.

@@ -4,21 +4,23 @@ Write [ClojureScript](https://clojurescript.org) in JavaScript without a transpi
 Highlights:
 
 * well suited for web apps
-* deploy the code you write — [point-free pipelines and partial application](docs/placeholder-partial.md), no build required
-* implements much of Clojure's standard library
-* [functional core](src/core), [imperative shell](src/shell) w/ FRP
+* deploy the modules you write, not bundles, no build required
+* [point-free pipelines and partial application](docs/placeholder-partial.md)
+* use a familiar Clojure api and [way of thinking](docs/adopting-the-clojure-mindset.md)
+* functional core, imperative shell w/ FRP
 * [nil-punning](https://ericnormand.me/article/nil-punning) handles null in sensible ways
 
+Atomic is [protocol oriented](src/core/protocols) to its very foundation.  It's more freeing to think in terms of apis and behaviors than [in types](https://en.wikipedia.org/wiki/Abstract_data_type).
 
-Atomic is [protocol oriented](src/core/protocols) to its very foundation.  Objects are treated as [abstract types](https://en.wikipedia.org/wiki/Abstract_data_type) per their behaviors, without regard to their concrete types.
+[Protocols](https://clojure.org/reference/protocols) are the centerpiece of Clojure and, by extension, Atomic.  They provide the only safe means of [dynamically extending natives and third-party types](./docs/protocols-for-dynamic-extension.md).  They make [cross-realm operability](./docs/cross-realm-operability.md) possible.
 
-[Protocols](https://clojure.org/reference/protocols) are the centerpiece of Clojure and, by extension, Atomic.  They offer a flavor of polymorphism that sets Clojure apart as a data-transforming juggernaut.  Clojure would not be Clojure without them!
+Atomic is [functional first](docs/functional-first.md).  This makes sense given that function, not methods, are first class.  Why choose a paradigm which limits [the places you'll go](https://en.wikipedia.org/wiki/Oh%2C_the_Places_You'll_Go!).
 
-Protocols also provide the only safe means of dynamically [extending natives and third-party types](https://en.wikipedia.org/wiki/Monkey_patch).  In short, [its first-class citizenship status](https://github.com/tc39/proposal-first-class-protocols) is long overdue.  Atomic fills the gaping hole.
+Atomic has no [maps](https://clojuredocs.org/clojure.core/hash-map) or [vectors](https://clojuredocs.org/clojure.core/vector) though it once integrated them via [Immutable.js](https://immutable-js.com).  It turns out it didn't need them.  Treating objects and arrays as value types worked so well the integration [was dropped](https://github.com/mlanza/atomic/commit/8e1787f6974df5bfbb53a371a261e09b5efee8ee).  It wasn't worth the cost of loading the library.  This bit of history is noted to chalk up another one for protocols.  They so seamlessly blend third-party types into a desired api, they all but disappear.
 
-Atomic is [functional first](docs/functional-first.md).  Functions are preferred to methods.  This makes sense when abstractions are prefered to concretions.
+Since JavaScript lacks a complete set of value types (e.g. [records, tuples](https://tc39.es/proposal-record-tuple/) and [temporals](https://github.com/tc39/proposal-temporal)), purity becomes a matter of discipline, or protocol.  Atomic permits even reference types, like objects and arrays, to be optionally, as a matter of protocol selection, [treated as value types](./docs/command-query-protocols.md).
 
-Atomic has no [maps](https://clojuredocs.org/clojure.core/hash-map) or [vectors](https://clojuredocs.org/clojure.core/vector) though it once integrated them in via [Immutable.js](https://immutable-js.com).  It turns out it didn't need them.  Treating objects and arrays as value types worked so well the integration [was dropped](https://github.com/mlanza/atomic/commit/8e1787f6974df5bfbb53a371a261e09b5efee8ee).  It wasn't worth the cost of loading the library.  This bit of history is noted to demonstrate how, through protocols, third-party types can be easily conformed to any standardized api.
+Yet, again, protocols reduce mountains to mole hills. In short, [their first-class citizenship status](https://github.com/tc39/proposal-first-class-protocols) is long overdue.
 
 ## Premise
 Atomic was born out of the question:
@@ -35,16 +37,9 @@ JavaScript does functional programming pretty dang well and continues to add pro
 * [pipeline operator](https://github.com/tc39/proposal-pipeline-operator)
 * [temporal](https://github.com/tc39/proposal-temporal)
 
-Atomic provides facilities to showcase how any language—even JavaScript!—[can adopt the Clojure mindset](docs/adopting-the-clojure-mindset.md).
-
-## Purity Through Protocol
-
-Since JavaScript lacks [records and tuples](https://tc39.es/proposal-record-tuple/) and [temporals](https://github.com/tc39/proposal-temporal), purity was maintained through the discipline of writing pure functions.  Atomic makes this still easier.
-
-It permits any type, even reference types like objects and arrays, to be optionally treated as value types.  Yet, again, protocols reduce mountains to mole hills.
+Atomic showcases [the Clojure way](docs/adopting-the-clojure-mindset.md) in build-free JavaScript.
 
 ## Getting Started
-
 Build it from the command line:
 
 ```sh
@@ -52,74 +47,279 @@ npm install
 npm run bundle
 ```
 
-Copy the contents of `dist` to `libs` in a project then import from either `libs\atomic` or `libs\atomic_` depending on whether [placeholder partial](docs/placeholder-partial.md) is wanted.
+Set up your project:
 
-Implementing a small app is a good first step for someone unfamiliar with building one around a state container.
+```sh
+$ mkdir sokoban # for instance
+$ cd sokoban
+$ mkdir libs
+$ touch index.html
+$ touch ./libs/sokoban.js
+$ touch ./libs/app.js
+```
 
-## Modules
+Copy the Atomic `dist` folder's contents to the `libs` folder.  [Vendoring it](https://stackoverflow.com/questions/26217488/what-is-vendoring) permits safe use and alleviate the pressure of keeping up with change.
 
-A typical app imports the trifecta—`core`, `shell`, and `dom`—as `_`, `$` and `dom` respectively.  These provide what's necessary for building a functional core, an imperative shell, and a user interface, everything an app needs.  These modules hint at a 3-part architecture—a core, shell, and ui.  Pragmatically, the shell will often also contain the ui, so 2 parts (a `core` and a `shell` module) will usually be good enough.
+Copy the following contents to the respective 3 files you just created:
 
-To facilitate [interactive development](docs/interactive-development.md) these modules can be readily loaded into the console.  The `_` doubles as a [placeholder for partial application](docs/placeholder-partial.md).
+```javascript
+// ./libs/sokoban.js - named for your domain, pure functions go here
+import _ from "./atomic_/core.js";
+```
 
-The state container keeps an app's [world state](https://docs.racket-lang.org/teachpack/2htdpuniverse.html).  In Atomic this is a cell.  It's mostly equivalent to a Clojure atom.  The only significant difference is it invokes its callback upon subscription the way an Rx [subject](https://rxjs.dev/guide/subject) does.
+```javascript
+// ./libs/app.js - everything else goes here
+import _ from "./atomic_/core.js";
+import $ from "./atomic_/shell.js";
+import {reg} from "./cmd.js";
+import * as s from "./sokoban.js";
+```
 
-Since Elm had already sold FRP by the time CSP appeared in `core.async`, Atomic is based on reactives and state containers.  The [world state is addressable](docs/addressable-data.md) and can employ the Clojure methodology for surgically updating state.
+```html
+<!-- ./index.html  -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Sokoban</title>
+    <link rel="stylesheet" href="style.css">
+    <script type="module" src="./libs/app.js"></script>
+  </head>
+  <body>
+  </body>
+</html>
+```
 
-In the absence of threading macros and pipeline syntax several functions exist (see these demonstrated in the example programs) to facilitate pipelines and composition:
-* `chain` (a normal pipeline)
-* `maybe` (a null-handling pipeline)
-* `comp`
-* `pipe`
+This set of files hints at an architecture.  Your [FCIS program](https://www.destroyallsoftware.com/screencasts/catalog/functional-core-imperative-shell) begins with a core (`sokoban`) and shell (`app`) module of its own.  Pragmatically, `app` may eventually contain the UI logic (and import `dom`), but it could also be implemented as a headless component to permit a separate `ui` module.  Right now, the UI concern is a long way off.
 
-## Vendoring As A Safety Net
+Your first task, in `app`, is to create a state container for your [world state](https://docs.racket-lang.org/teachpack/2htdpuniverse.html) and define its `init` state in your pure module.  It'll likely be some amalgam of objects and arrays but, depending on the app, it could be anything.
 
-Because Atomic has been used primarily by a small, internal audience, the change process hasn't been formalized to protect a wider audience.  [Vendoring it](https://stackoverflow.com/questions/26217488/what-is-vendoring) into a project permits safe use and alleviates the pressure of keeping up with change.
+```javascript
+// ./libs/sokoban.js
+function init(){
+  /* depends on what your app is about */
+}
+```
+```javascript
+// ./libs/app.js
+const $state = $.cell(s.init());
 
-## Guidance for Writing Apps
+reg({$state}); //register container to aid in interactive development
+```
+Then begin fleshing out your core with domain logic, nothing but pure functions and using them to tell your app's story.  Everything else including the program machinery (cells, signals, routers, queues, buffers, buses, etc.) and glue code goes into `app`.
 
-Start by housing a world state made up of plain objects and arrays in a state container.  It'll likely have been created via an  `init` function or loaded from a data store.
+Keep `app` trivially simple, at first.  For a time it'll provide little more than the harness necessary to run the simulation.  Then, to begin interacting with it, you'll want to serve it:
 
-Then write pure, [swappable](https://clojuredocs.org/clojure.core/swap!) functions which drive transitions based on anticipated user actions.  These will be used later to actuate side effects in the imperative shell/UI layer(s).
+```sh
+$ static . # server of choice
+```
 
-The essence of "easy to reason about" falls out of purity.  When the world state can be readily examined in the browser console after each and every transition identifying broken functions becomes a less onerous task.
+Bring it up in the browser:
 
-Next, begin the imperative shell.  This is everything else including the UI.  Often this happens once the core is complete.  Not all apps have data, however, which is simple enough to visually digest from the browser console.  In such situations one may be unable to get by without the visuals a UI provides and the shell may need to be created earlier and develop in parallel.
+http://127.0.0.1:8080/?monitor=*
 
-This entire effort begins with [forethought](https://www.youtube.com/watch?v=f84n5oFoZBc), preliminary work, and perhaps a bit of notetaking.  Think first about the shape of the data, then the functions (and, potentially, commands/events) which transform it, and lastly how the UI looks and how it utilizes this.  For more complex apps, roughing out the UI in HTML/CSS will help guide the work.  Not everything needs working out, but having a sense of how things fit together and how the UI works before writing the first line of code helps avoid snafus.
+Remember to add the `monitor` query param to aid monitoring from the console.  Expose your browser's developer tools.  From its console enter:
 
-If an app involves animation, ponder this aspect too.  How one renders elements which are animated is often different from how one renders those which aren't.  Fortunately, modern CSS can now do what once required libraries.
+```sh
+cmd()
+```
 
-## Progressive Enhancement
+This loads the globals needed to facilitate [interactive development](./docs/interactive-development.md).  You'll be operating from your text editor and browser console for the unforeseeable future.
 
-One begins routinely with a functional core, then headless shell and gradually develops toward the level of sophistication one wants, grafting on one layer at a time.
+This'll mean writing some version of the following line:
 
-The `journal` type can be added to provide undo/redo and permit stepping forward and backward along a timeline.
+```javascript
+$.swap($state, /* TBD */); //TODO write a pure function
+```
 
-Add a layer to process change via commands and events, in its simplest form, both represented as plain old JavaScript objects.  Commands (yin) belong in the impure world (imperative shell), and events (yang) the pure world (functional core).
+The TBD part is filled with a pure, [swappable](https://clojuredocs.org/clojure.core/swap!) function.  These are used to drive transitions based on anticipated user actions in the app.  This can be done from the code and/or from the browser console.
 
-Events are folded into the world state as a reduction.  And both events and commands can be sent over the wire or captured in logs.  When captured, they provide a complete and auditable history, one which can be readily examined from the browser console.
+### Stand up the simulation
 
-## A Tale of Two Worlds
+For a while, you'll be adding different variations of the above line, one after the other, to tell some version of a story your app tells.  This is what it means to [start with simulation](docs/start-with-simulation.md).
 
-Rather than one, the developer writes two programs, edits two files, straddles two worlds.  To get why this is done, first understand what the pure world actually is: simulation.
+This initial work is the sweet spot of functional programming.  The essence of "easy to reason about" falls out of the focus on purity.  It's hard to beat a model which reduces a program to a flip book, halts time, and permits any page and its subsequent to be readily examined or compared.  There's immeasurable good in learning to tease the pure out of the impure, of embracing the boundary between simulation and messy reality.
 
-The functional core is where the domain logic goes and the imperative shell where the glue code or program architecture (routers, queues, buffers, buses, etc.) goes.  The core simulates what your program is actually about (managing to-dos) and the shell provides the machinery (all the types and operations which, from a user's perspective, have nothing to do with managing to-dos) necessary to transform these simulations into realities.
+The core simulates what your program is about and the shell actuates its effects.  The core is the domain, playing sokoban or [managing to-dos](https://doesideas.com/programming/todo/), for example, a library of pure functions.  The shell, having little to do the domain, provides the plumbing necessary to make things happen.  It transforms effect into simulation and vice versa.  Commands flow in.  Events flow out.  The core directs, the shell orchestrates.
 
-The shell transforms effect into simulation and vice versa.  Commands flow in.  Events flow out.  The core provides the direction, the shell the orchestration.
+The first objective is to flesh out the core by writing the functions needed to express what the story is about, what the program does.  A state container, all by itself, provides sufficient machinery to get you there.
 
-The benefit of starting with simulations is they're free of messy unpredictability, are easy to write tests against, and can be fully controlled.  Putting it another way, they're like flipbooks where time can be stopped and any page and its subsequent examined.  This model is easier to reason about, develop, troubleshoot, and fix than the imperative model alone.
+It's only when the core is somewhat complete, the shell is finally connected to a UI.
+
+### Stand up the user interface
+
+The guts of most programs can be fully realized from what is effectively the browser command line.  The UI, although it comes much later, will eventually be needed.  And hooking up both sides of the one-way data flow is how one graduates from simulation to reality.
+
+Subscribe to the simulation and project to the DOM:
+```javascript
+$.sub($state, function(state){
+  /* render the UI and replace or patch the DOM */
+});
+
+```
+
+Subscribe to the DOM and feed the simulation:
+```javascript
+const el = dom.sel1("#sokoban"); //your root element
+
+//prefer event delegation to subscribing to elements directly
+$.on(el, "click", "button.up", (e) => $.swap($state, s.up));
+
+$.on(document, "keydown", function(e){
+  if (e.key === "ArrowUp") {
+    e.preventDefault();
+    $.swap($state, s.up);
+  }
+});
+
+```
+
+Define intermediary signals if you like:
+```javascript
+function which(key){
+  return _.filter(_.pipe(_.get(_, "key"), _.eq(_, key)));
+}
+
+const $keys = $.chan(document, "keydown");
+
+//create desired signals...
+const $up = $.pipe($keys, which("ArrowUp"));
+const $down = $.pipe($keys, which("ArrowDown"));
+const $left = $.pipe($keys, which("ArrowLeft"));
+const $right = $.pipe($keys, which("ArrowRight"));
+
+//...and subscribe to them.
+$.sub($up, (e) => $.swap($state, s.up));
+$.sub($down, (e) => $.swap($state, s.down));
+$.sub($left, (e) => $.swap($state, s.left));
+$.sub($right, (e) => $.swap($state, s.right));
+
+//alternately, more concisely, do both at once:
+$.sub($keys, which("ArrowUp"), (e) => $.swap($state, s.up));
+$.sub($keys, which("ArrowDown"), (e) => $.swap($state, s.down));
+$.sub($keys, which("ArrowLeft"), (e) => $.swap($state, s.left));
+$.sub($keys, which("ArrowRight"), (e) => $.swap($state, s.right));
+```
+
+While creating a [virtual dom](https://reactjs.org/docs/faq-internals.html) had been considered for inclusion in the library, state diffing is not always needed.  When needed, compare snapshots instead.
+
+```javascript
+const $hist = $.hist($state);
+
+$.sub($hist, function([curr, prior]){
+  /* diff your snapshots */
+});
+
+```
+Having access to two frames makes identifying what changed fairly simple.  Based on how the data is structured, one can readily check that entire sections of the app are unchanged since data representations are persistent.
+
+That basically means, as a rule, the parts of the data model which haven't changed can be compared cheaply by identity in the current and prior frames.  That's because the original objects, if unchanged, will have been reused in the newer snapshot.
+
+The `prior` snapshot will be `null` in the very first rendering.  That's useful for knowing when to render the full UI or, most of the time, patch it.
+
+Alternately, one can abstract this further.
+
+```javascript
+// pull some list of favorites into its own signal
+const $favs = $.map(_.get(_, "favorites"), $state);
+```
+As desired, split your app into separate signals.  Since these signals automatically perform the identity comparison, they won't fire unless there's been a change.
+
+There's no templating language.  Everything is programmatic composition.  In this example, `ul` and `li` and `favorites` are all partially-applied functions:
+
+```javascript
+const ul = dom.tag("ul"),
+      li = dom.tag("li");
+
+const favorites =
+  ul({id: "favorites", class: "fancy"},
+    _.map(li, _)); //composed
+
+const target = dom.sel("#favs", el);
+
+$.sub($favs, function(favs){
+  dom.html(target, favorites(favs));
+});
+
+//a tacit, transduced alternative:
+$.sub($favs, _.map(favorites), dom.html(target, _));
+```
+
+But as composing functions can be hard to grasp and harder to debug, when you're not used to it, you can always fall back on functions.
+
+```javascript
+function favorites(favs){
+  debugger
+  return ul(_.map(li, favs));
+}
+
+```
+```html
+<div id="favs">
+  <!-- `dom.html` overwrites everything or patching not always required -->
+  <ul>
+    <li>Columbo</li>
+    <li>Prison Break</li>
+    <li>Suits</li>
+    <li>The Good Doctor</li>
+    <li>The Gilded Age</li>
+  </ul>
+</div>
+```
+
+Compose views which read structured data:
+
+```javascript
+const suit = {
+  fname: "Harvey",
+  lname: "Specter",
+  salary: 725000,
+  dob: new Date(1972, 0, 22),
+  address: ["333 Bay Street", "New York, NY  10001"]
+}
+
+const {address, div} = dom.tags(["address", "div"]);
+
+const mailingLabel =
+  address(
+    div(
+      _.comp(_.upperCase, _.get(_, "fname")), " ",
+      _.comp(_.upperCase, _.get(_, "lname"))),
+    _.map(div, _.get(_, "address")));
+
+dom.append(envelop,
+  stamp(),
+  returnLabel(),
+  mailingLabel(suit));
+```
+```html
+<address>
+  <div>HARVEY SPECTER</div>
+  <div>333 Bay Street</div>
+  <div>New York, NY  10001</div>
+</address>
+```
+
+### Progressively enhance
+
+While imperative shell of an app has humble beginnings, one can gradually grafts layers of sophistication onto its reactive core.  Keep 'em simple or evolve 'em.
+
+For example, add [journal](./src/core/types/journal) to facilitate undo/redo and stepping forward and backward along a timeline.
+
+Initially, commands are just pure functions and events just native DOM events, but these can be reified into JSON-serializable objects to faciliate being sent over the wire, or recorded in auditable histories.  The core can then be wrapped with a command bus api and facilitate a host of middleware features.
+
+It's as much as you want, or as little.
+
+### Be ever minding your big picture
+
+The entire effort is preceded and interleaved with [thought](https://www.youtube.com/watch?v=f84n5oFoZBc) and/or note-taking.  This has a lot to do starting with a good data model, anticipating how the UI (and potentially its animations) will look and behave, and having some idea of the evolutionary steps planned for the app.
+
+It may be useful to rough out the UI early on.  Thinking through things — ideally, during lunchtime walks! — and clarifying the big picture for how they work and fit together will minimize potential downstream snafus.
 
 ## Atomic in Action
 
-Atomic has been deployed to web apps/hosts, Deno, Supabase, SharePoint, Cloudflare, and Power Apps.
-
-These examples model how one might write a program in Atomic:
+See these sample programs to learn more:
 
 * [Todo](https://github.com/mlanza/todo)
 * [Treasure Quest](https://github.com/mlanza/treasure-quest)
 * [Pickomino](https://github.com/mlanza/pickomino)
-
-DOM events are oft handled using an `$.on` which is similar to [jQuery's](https://api.jquery.com/on).
-
-While creating a [virtual dom](https://reactjs.org/docs/faq-internals.html) had been considered for inclusion in the library, state diffing is not always needed.  When needed, however, `$.hist` provides two frames (the present and the immediate past) of world state history for reconciling the UI.
