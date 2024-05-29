@@ -1,9 +1,9 @@
 import * as _ from "atomic/core";
-import * as $ from "atomic/shell";
+import * as p from "../../protocols/concrete.js";
 import {IMiddleware} from "../../protocols.js";
 
 function handle(self, event, next){
-  $.pub(self.emitter, event);
+  p.pub(self.emitter, event);
   next(event);
 }
 

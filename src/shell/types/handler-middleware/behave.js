@@ -1,10 +1,9 @@
 import * as _ from "atomic/core";
-import * as $ from "atomic/shell";
 import * as p from "../../protocols/concrete.js";
-import {IMiddleware} from "../../protocols.js";
+import {IMiddleware, IAssociative} from "../../protocols.js";
 
 function assoc(self, key, handler){
-  self.handlers = _.assoc(self.handlers, key, handler);
+  p.assoc(self.handlers, key, handler);
 }
 
 function handle(self, message, next){
@@ -18,5 +17,5 @@ function handle(self, message, next){
 
 export default _.does(
   _.keying("HandlerMiddleware"),
-  _.implement($.IAssociative, {assoc}),
+  _.implement(IAssociative, {assoc}),
   _.implement(IMiddleware, {handle}));
