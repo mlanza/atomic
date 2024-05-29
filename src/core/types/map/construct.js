@@ -1,7 +1,8 @@
-import * as _ from "atomic/core";
+import {is} from "../../protocols/imapentry/concrete.js";
+import {overload} from "../../core.js";
 
 export function isMap(self){
-  return _.is(self, Map);
+  return is(self, Map);
 }
 
 function map1(obj){
@@ -12,4 +13,4 @@ function map0(){
   return new Map();
 }
 
-export const hashMap = _.overload(map0, map1); //cannot reuse `map`
+export const hashMap = overload(map0, map1); //cannot reuse `map`
