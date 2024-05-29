@@ -28,10 +28,6 @@ One can use partial, [as underscore does](https://underscorejs.org/#partial), bu
     $.log);
 ```
 
-If you regularly write in the tacit style, your modules can be [repackaged](/dist/atomic_/) as shadow modules.  These modules imbue exported functions with optional partial application via a feature called placeholder partial.
-
-Add a trailing underscore to any folder exposing shadow modules to make them explicit.
-
 With placeholder partial the tacit aesthetic is restored:
 ```js
   _.chain(_.range(10),
@@ -40,4 +36,20 @@ With placeholder partial the tacit aesthetic is restored:
     $.log);
 ```
 
+If you regularly write in the tacit style, your modules can be [repackaged](/dist/atomic_/) as shadow modules.  These modules imbue exported functions with optional partial application via a feature called placeholder partial.
 
+Atomic modules are reexported this way. The trailing underscore in the folder name makes the use explicit.  When defaults are imported from shadow modules, the feature's available for use.  When the modules are imported directly, it's not.
+
+The reason for allowing the choice is the feature is made possible by decorating functions, which adds a little overhead to calling them.  All this gets you partial application minus a build step.  If you're building anyway, there's no point.
+
+```js
+//placeholder partial wanted
+import _ from "./libs/atomic_/core.js"; //the universal placeholder character
+import $ from "./libs/atomic_/shell.js";
+import dom from "./libs/atomic_/dom.js";
+
+//placeholder partial not wanted
+import * as _ from "./libs/atomic/core.js";
+import * as $ from "./libs/atomic/shell.js";
+import * as dom from "./libs/atomic/dom.js";
+```

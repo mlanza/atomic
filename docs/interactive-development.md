@@ -1,4 +1,4 @@
-# The Interactive Development of Components
+# Interactive Development
 
 Interactive development makes programming a pleasure.  Atomic wants to aid interactivity.
 

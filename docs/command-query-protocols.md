@@ -1,4 +1,4 @@
-# Command vs. Query Protocols
+# Command vs. query protocols
 
 In JavaScript arrays and objects are mutable reference types.  But Atomic provides a protocol for operating against them as if they were immutable, value types.  The `core` module *predominantly* exposes pure operations.
 
