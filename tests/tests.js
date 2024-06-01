@@ -3,6 +3,7 @@ import dom from "../dist/atomic_/dom.js";
 import $ from "../dist/atomic_/shell.js";
 import vd from "../dist/atomic_/validates.js";
 import {failed, test} from "./test.js";
+import "../dist/cmd.js";
 
 const stooges = ["Larry","Curly","Moe"],
       pieces  = {pawn: 1, knight: 3, bishop: 3, rook: 5, queen: 10, king: Infinity},
