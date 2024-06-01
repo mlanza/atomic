@@ -28,7 +28,7 @@ function slice(...args){
 }
 Array.prototype.slice = slice; //patched!
 ```
-That a method takes a foothold on a prototype is the reason this has always been dangerous.  Once a new method moves into the old address, any third-party libs your app uses will, without consent or awareness, be obliged to use the new, modified behavior.
+That a method takes a foothold on a prototype is the reason this is dangerous.  Once a new method moves into the old address, any third-party libs your app uses will, without consent or awareness, be obliged to use the new, modified behavior.
 
 The alternative is to move the behavior to a new address.  But no matter what you call it, this is awkard since you mean for it to fully replace the original implementation insomuchas your app is concerned.
 
@@ -38,8 +38,9 @@ function slice(...args){
 }
 Array.prototype.altSlice = slice; //take up residence elsewhere
 ```
+This makes no sense.  Once you realize you have to change every reference in your app from `slice` to `altSlice` anyway, you see you might as well write a function to do the job.
 
-The fight for residence is a problem protocols don't suffer.  That's because the protocols exists as abstractions independent of types and prototypes.
+The fight for residence is a problem functions and protocols don't suffer.  That's because they exists independent of types and prototypes.
 
 Let's rewind.
 
@@ -66,11 +67,11 @@ const ys = slice(xs, 5, 7); //the `mystuff`, not `natives` behavior!
 
 /* some variation of this repeats at line 490, 525, 1091, etc. */
 ```
-Protocols dodge the contention issue altogether because they're not vying to gain a foothold anywhere.
+Protocols dodge the name collision issue altogether because they're not vying for a foothold anywhere.
 
 They also guarantee a drop-in replacement couldn't possibly harm a third-party library.  The original `ISliceable` protocol and its `slice` export exist unscathed in their original module.  This is, again, because protocols, like functions, exist outside of the types they operate against.
 
-Atomic takes full advantage of this in its `core` and `shell` libraries.  Both libraries define `ICollection.conj` and `IAssociative.assoc`.  Both the protocol objects and their exported functions share identical names.  This makes it possible to safely import both into a module and chose when to use one or the other.
+Atomic takes full advantage of this in its `core` and `shell` libraries.  Both libraries define `ICollection.conj` and `IAssociative.assoc`.  Both the protocol objects and their exported functions share identical names.  This makes it possible to safely import both into a module and chose when to use one or the other.  Same name, different identity.  Just like there's probably more than one Jonathan Smith in the world.
 
 ```javascript
 import _ from "./libs/atomic_/core.js";

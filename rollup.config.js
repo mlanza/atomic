@@ -44,31 +44,4 @@ export default [{
     json(),
     _RELEASE ? terser() : null
   ]
-},{
-  input: ['src/tests.js'],
-  output: {
-    file: 'tests/main.js',
-    format: 'esm',
-    interop: false
-  },
-  plugins: [
-    resolve(),
-    rollupImportMapPlugin({
-      "imports": {
-        "atomic_/core": "./libs/atomic_/core.js",
-        "atomic_/shell": "./libs/atomic_/shell.js",
-        "atomic_/dom": "./libs/atomic_/dom.js",
-        "atomic_/validates": "./libs/atomic_/validates.js"
-      }
-    }),
-    jscc({
-      values: {_CROSSREALM, _EXPERIMENTAL},
-    }),
-    babel({
-      exclude: 'node_modules/**',
-      babelHelpers: 'bundled'
-    }),
-    json()
-  ],
-  external: []
 }];
