@@ -92,6 +92,7 @@ import * as s from "./sokoban.js";
 
 This set of files hints at an architecture.  Your [FCIS program](https://www.destroyallsoftware.com/screencasts/catalog/functional-core-imperative-shell) begins with a core (`sokoban`) and shell (`app`) module of its own.  Pragmatically, `app` may eventually contain the UI logic (and import `dom`), but it could also be implemented as a headless component to permit a separate `ui` module.  Right now, the UI concern is a long way off.
 
+### Stand up the simulation
 Your first task, in `app`, is to create a state container for your [world state](https://docs.racket-lang.org/teachpack/2htdpuniverse.html) and define its `init` state in your pure module.  It'll likely be some amalgam of objects and arrays but, depending on the app, it could be anything.
 
 ```javascript
@@ -133,8 +134,6 @@ $.swap($state, /* TBD */); //TODO write a pure function
 ```
 
 The TBD part is filled with a pure, [swappable](https://clojuredocs.org/clojure.core/swap!) function.  These are used to drive transitions based on anticipated user actions in the app.  This can be done from the code and/or from the browser console.
-
-### Stand up the simulation
 
 For a while, you'll be adding different variations of the above line, one after the other, to tell some version of a story your app tells.  This is what it means to [start with simulation](docs/start-with-simulation.md).
 
@@ -312,7 +311,7 @@ It's as much as you want, or as little.
 
 ### Be ever minding your big picture
 
-The entire effort is preceded and interleaved with [thought](https://www.youtube.com/watch?v=f84n5oFoZBc) and/or note-taking.  This has a lot to do starting with a good data model, anticipating how the UI (and potentially its animations) will look and behave, and having some idea of the evolutionary steps planned for the app.
+The entire effort is preceded and interleaved with [thought](https://www.youtube.com/watch?v=f84n5oFoZBc) and/or note-taking.  This depends largely on starting with a good data model, anticipating how the UI (and potentially its animations) will look and behave, and having some idea of the evolutionary steps planned for the app.
 
 It may be useful to rough out the UI early on.  Thinking through things — ideally, during lunchtime walks! — and clarifying the big picture for how they work and fit together will minimize potential downstream snafus.
 
