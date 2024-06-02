@@ -4,12 +4,18 @@ const failures = {
 };
 const extenders = [];
 
-export function failed(callback){
-  failures.subscribers.push(callback);
+function pipe(f, ...fs){
+  return function(...args){
+    let result = f(...args);
+    for(const f of fs){
+      result = f(result);
+    }
+    return result;
+  }
 }
 
-export function adding(callback){
-  extenders.push(callback);
+function identity(obj){
+  return obj;
 }
 
 function fail(){
@@ -24,6 +30,14 @@ function counter(start = 1){
   return function(){
     return c++;
   }
+}
+
+export function failed(callback){
+  failures.subscribers.push(callback);
+}
+
+export function tests(callback){
+  extenders.push(callback);
 }
 
 export function test(title, callback, options = {}){
@@ -69,14 +83,9 @@ export function test(title, callback, options = {}){
     }
   }
 
-  const tools = {assert, equals, notEquals, check, compare, throws};
-  const ext = options.extend || function identity(a){ return a; };
-  for(const extend of extenders){
-    const additions = ext(extend(tools) || {});
-    Object.assign(tools, additions);
-  }
+  const f = pipe(options.tests || identity, ...extenders);
 
-  callback(tools);
+  callback(f({assert, equals, notEquals, check, compare, throws}));
 }
 
 export default test;
