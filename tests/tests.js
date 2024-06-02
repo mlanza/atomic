@@ -84,12 +84,7 @@ test("type checks", function({assert}){
   assert(_.isObject({}));
 });
 
-test("hashing", function({assert, equals, notEquals}){
-  function same(x, y){
-    equals(_.hash(x), _.hash(y));
-    equals(_.hash(x), _.hash(x));
-    assert(_.equiv(x, y));
-  }
+test("hashing", function({assert, same, equals, notEquals}){
   const div = dom.tag("div");
   const hi = div("hi");
   notEquals(_.hash(div("hi")), _.hash(div("hi")));
@@ -104,6 +99,16 @@ test("hashing", function({assert, equals, notEquals}){
   same(_.date(999), _.date(999));
   same({blackwidow: "Avenger"}, {blackwidow: "Avenger"});
   //same([{blackwidow: "Avenger"}, _.date(774), [1, 2]], [{blackwidow: "Avenger"}, _.date(774), [1, 2]]);
+}, {
+  tests: function(tests){ //add custom test
+    const {equals, assert} = tests;
+    function same(x, y, re = null){
+      equals(_.hash(x), _.hash(y), re);
+      equals(_.hash(x), _.hash(x), re);
+      assert(_.equiv(x, y), re);
+    }
+    return {same, ...tests};
+  }
 });
 
 test("multimethods", function({equals}){ //https://www.braveclojure.com/multimethods-records-protocols/
