@@ -2,7 +2,7 @@ import _ from "../dist/atomic_/core.js";
 import dom from "../dist/atomic_/dom.js";
 import $ from "../dist/atomic_/shell.js";
 import vd from "../dist/atomic_/validates.js";
-import {failed, adding, test} from "./test.js";
+import {failed, tests, test} from "./test.js";
 import "../dist/cmd.js";
 
 const stooges = ["Larry","Curly","Moe"],
@@ -16,13 +16,19 @@ failed(function(count){
   img.setAttribute("data-count", count);
 });
 
-adding(function({check, compare}){
+function ako(tests){ //uncommon
+  const {compare} = tests;
+  const ako = compare(_.ako);
+  return {...tests, ako};
+}
+
+tests(function(tests){ //common
+  const {compare, check} = tests;
   const eq = compare(_.eq);
   const notEq = compare(_.notEq);
-  const ako = compare(_.ako);
   const isSome = check(_.isSome, {reason: "expected something"});
   const isNil = check(_.isNil, {reason: "expected nothing"});
-  return {eq, notEq, ako, isSome, isNil};
+  return {...tests, eq, notEq, isSome, isNil};
 });
 
 test("inheritance chain", function({assert, equals}){
@@ -229,7 +235,7 @@ test("validation", function({assert, ako, equals, notEquals, isNil, isSome}){
   ako(anon.constraint, vd.Required);
   isSome(status);
   //TODO add `when` to validate conditiontionally or allow condition to be checked before registering the validation?
-});
+}, {tests: ako});
 
 test("edit/plop/grab", function({assert, isNil, notEquals, equals, eq}){
   function Kangaroo(name, pouch) {
@@ -308,7 +314,7 @@ test("embeddables", function({assert, eq, equals}){
   eq(names(frag), ["Moe", "Larry", "Curly", "Shemp", "Corey"]);
 });
 
-test("dom", function({assert, eq, equals, ako}){
+test("dom", function({assert, ako, eq, equals}){
   const {ul, li, div, span} = dom.tags(dom.element(document), _.expands, ["ul", "li", "div", "span"]);
   const duo = _.doto(
     dom.fragment(),
@@ -347,9 +353,9 @@ test("dom", function({assert, eq, equals, ako}){
   const branding = _.chain(stooges, dom.sel("#branding", _), _.first);
   dom.omit(branding);
   equals(_.chain(branding, _.parent, _.first), null, "Removed");
-});
+}, {tests: ako});
 
-_.members && test("jQueryesque functor", function({assert, eq}){
+_.members && test("jQueryesque functor", function({assert, eq, ako}){
   const {ol, li, span} = dom.tags(["ol", "li", "span"]);
   const jq = _.members(function(els){ //configure members functor, it upholds the collectiveness of contents
     return dom.isElement(_.first(els)) ? _.distinct(els) : els; //guarantee distinctness - but only for elements
@@ -366,7 +372,7 @@ _.members && test("jQueryesque functor", function({assert, eq}){
   eq(_.toArray(cavepersons), ["fred", "wilma", "barney", "betty"]);
 });
 
-test("lazy-seq", function({assert, equals, notEquals, eq, ako}){
+test("lazy-seq", function({assert, ako, equals, notEquals, eq}){
   const effects = [],
         push    = effects.push.bind(effects),
         xs      = _.map(push, _.range(10)),
@@ -390,7 +396,7 @@ test("lazy-seq", function({assert, equals, notEquals, eq, ako}){
   notEquals(_.seq(nums), null);
   eq(_.toArray(nums), [0,1,2]);
   eq(_.toArray(blank), []);
-});
+}, {tests: ako});
 
 test("transducers", function({assert, eq}){
   const useFeat = location.href.indexOf("feature=next") > -1;
