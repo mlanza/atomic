@@ -23,12 +23,13 @@ function ako(tests){ //uncommon
 }
 
 tests(function(tests){ //common
-  const {compare, check} = tests;
+  const {compare, compareAll, check} = tests;
   const eq = compare(_.eq);
+  const allEq = compareAll(_.eq);
   const notEq = compare(_.notEq);
   const isSome = check(_.isSome, {reason: "expected something"});
   const isNil = check(_.isNil, {reason: "expected nothing"});
-  return {...tests, eq, notEq, isSome, isNil};
+  return {...tests, eq, notEq, allEq, isSome, isNil};
 });
 
 test("inheritance chain", function({assert, equals}){
@@ -111,7 +112,8 @@ test("hashing", function({assert, same, equals, notEquals}){
   }
 });
 
-test("multimethods", function({equals}){ //https://www.braveclojure.com/multimethods-records-protocols/
+// https://www.braveclojure.com/multimethods-records-protocols/
+test("multimethods", function({equals}){
   const fullMoon = _.multimethod(_.get(_, "wereType"),
     ({name}) => `${name} will stay up all night fantasy footballing`);
   _.addMethod(fullMoon, "wolf", ({name}) => `${name} will howl and murder`);
@@ -132,7 +134,8 @@ test("multimethods", function({equals}){ //https://www.braveclojure.com/multimet
   equals(types("String 1", "String 2"), "Two strings!");
 });
 
-test("protcols", function({equals}){ //https://www.braveclojure.com/multimethods-records-protocols/
+//https://www.braveclojure.com/multimethods-records-protocols/
+test("protcols", function({equals}){
   const IPsychodynamics = _.protocol({
     thoughts: (x) =>  "The data type's innermost thoughts",
     feelingsAbout: () => "Feelings about self or other"
@@ -510,7 +513,7 @@ test("iappendable/iprependable", function({eq}){
 
 test("sequences", function({assert, equals, eq, isNil}){
   eq(_.chain(["A","B","C"], _.cycle, _.take(5, _), _.toArray), ["A","B","C","A","B"]);
-  eq(_.chain(_.positives, _.take(5, _), _.toArray), [1,2,3,4,5]);
+  eq(_.chain(_.positives, _.take(5, _), _.toArray), [0,1,2,3,4]);
   eq(_.chain(["A","B","C"], _.rest, _.toArray), ["B", "C"]);
   eq(_.chain(_.repeatedly(3, _.constantly(4)), _.toArray), [4,4,4]);
   eq(_.chain(stooges, _.concat(_, ["Shemp","Corey"]), _.toArray), ["Larry","Curly","Moe","Shemp","Corey"]);
@@ -524,7 +527,7 @@ test("sequences", function({assert, equals, eq, isNil}){
   eq(_.chain(["A","B",["C","D"],["E", ["F", "G"]]], _.flatten, _.toArray), ["A","B","C","D","E","F","G"]);
   eq(_.chain([null, ""], _.flatten, _.toArray), [null, ""]);
   eq(_.chain(pieces, _.selectKeys(_, ["pawn", "knight"])), {pawn: 1, knight: 3});
-  eq(_.chain(["A","B","C","D","E"], _.interleave(_, _.repeat("="), _.positives), _.toArray), ["A","=",1,"B","=",2,"C","=",3,"D","=",4,"E","=",5]);
+  eq(_.chain(["A","B","C","D","E"], _.interleave(_, _.repeat("="), _.positives), _.toArray), ["A","=",0,"B","=",1,"C","=",2,"D","=",3,"E","=",4]);
   eq(_.chain([1,2,3], _.interleave(_, [10,11,12]), _.toArray), [1,10,2,11,3,12]);
   assert(_.chain([false, true], _.some(_.isTrue, _)));
   assert(_.chain([false, true], _.some(_.isFalse, _)));
@@ -603,7 +606,7 @@ test("duration", function({assert, equals}){
   equals(_.deref(_.add(newYearsEve, _.days(1), _.hours(7))), 1577880000000);  //7am New Year's Day
 });
 
-//protocols as discriminated unions: https://www.typescriptlang.org/docs/handbook/2/narrowing.html#discriminated-unions
+// https://www.typescriptlang.org/docs/handbook/2/narrowing.html#discriminated-unions
 test("area:polymorphism", function({equals}){
   function Circle(radius){
     this.radius = radius;
@@ -646,6 +649,230 @@ test("coercion", function({eq}){
   eq(_.coerce("eggs", Array), Array.from(_.seq("eggs")), ["e","g","g","s"]);
 });
 
+// https://www.braveclojure.com/core-functions-in-depth/
+test("treating lists, vectors, sets, and maps as sequences", function({eq, allEq, equals, assert}){
+  function titleize(topic){
+    return _.str(topic, " for the Brave and True");
+  }
+
+  eq(_.map(titleize, ["Hamsters", "Ragnarok"]), _.list("Hamsters for the Brave and True", "Ragnarok for the Brave and True"));
+  eq(_.map(titleize, ["Empathy", "Decorating"]), _.list("Empathy for the Brave and True", "Decorating for the Brave and True"));
+  eq(_.map(titleize, _.set(["Elbows", "Soap Carving"])), _.list("Elbows for the Brave and True", "Soap Carving for the Brave and True"));
+  eq(_.map((x) => titleize(_.second(x)), {"uncomfortable-thing": "Winking"}), _.list("Winking for the Brave and True"));
+  eq(_.map(_.inc, [1,2,3]), _.list(2,3,4));
+  eq(_.map(_.str, ["a", "b", "c"], ["A", "B", "C"]), _.list("aA", "bB", "cC"));
+  eq(_.list("aA", "bB", "cC"), _.list(_.str("a", "A"), _.str("b", "B"), _.str("c", "C")));
+
+  const humanConsumption = [8.1, 7.3, 6.6, 5.0];
+  const critterConsumption = [0.0, 0.2, 0.3, 1.1];
+  function unifyDietData(human, critter){
+    return {human, critter};
+  }
+
+  eq(
+    _.map(unifyDietData, humanConsumption, critterConsumption),
+    _.list(
+      {human: 8.1, critter: 0.0},
+      {human: 7.3, critter: 0.2},
+      {human: 6.6, critter: 0.3},
+      {human: 5.0, critter: 1.1}));
+
+  const sum = _.reduce(_.add, _);
+  const avg = (xs) => _.divide(sum(xs), _.count(xs));
+  function stats(numbers){
+    return _.map(_.invoke(_, numbers), [sum, _.count, avg]);
+  }
+  eq(stats([3, 4, 10]), _.list(17, 3, 17/3));
+  eq(stats([80, 1, 44, 13, 6]), _.list(144, 5, 144/5));
+
+  const identities = [
+    {alias: "Batman",  real: "Bruce Wayne"},
+    {alias: "Spider-Man", real: "Peter Parker"},
+    {alias: "Santa", real: "Your mom"},
+    {alias: "Easter Bunny", real: "Your dad"}
+  ];
+
+  allEq([
+    _.mapa(_.invoke(_, "real"), identities),
+    _.mapa(_.get(_, "real"), identities),
+    _.list("Bruce Wayne", "Peter Parker", "Your mom", "Your dad")]);
+
+  allEq([
+    _.reduce(function(memo, [key, val]){
+      return _.assoc(memo, key, _.inc(val));
+    }, {}, {max: 30, min: 10}),
+    _.assoc(_.assoc({}, "max", _.inc(30)), "min", _.inc(10)),
+    {max: 31, min: 11}]);
+
+  eq(_.reduce(function(memo, [key, val]){
+    return val > 4 ? _.assoc(memo, key, val) : memo;
+  }, {}, {human: 4.1, critter: 3.9}), {human: 4.1});
+
+  eq(_.take(3, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]), _.list(1, 2, 3))
+  eq(_.drop(3, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]), _.list(4, 5, 6, 7, 8, 9, 10));
+
+  const foodJournal = [
+    {month: 1, day: 1, human: 5.3, critter: 2.3},
+    {month: 1, day: 2, human: 5.1, critter: 2.0},
+    {month: 2, day: 1, human: 4.9, critter: 2.1},
+    {month: 2, day: 2, human: 5.0, critter: 2.5},
+    {month: 3, day: 1, human: 4.2, critter: 3.3},
+    {month: 3, day: 2, human: 4.0, critter: 3.8},
+    {month: 4, day: 1, human: 3.7, critter: 3.9},
+    {month: 4, day: 2, human: 3.7, critter: 3.6}
+  ];
+  eq(_.takeWhile(function(x){
+    return x.month < 3;
+  }, foodJournal),
+  _.list(
+    {month: 1, day: 1, human: 5.3, critter: 2.3},
+    {month: 1, day: 2, human: 5.1, critter: 2.0},
+    {month: 2, day: 1, human: 4.9, critter: 2.1},
+    {month: 2, day: 2, human: 5.0, critter: 2.5}));
+
+  eq(_.dropWhile(function(x){
+    return x.month < 3;
+  }, foodJournal),
+  _.list(
+    {month: 3, day: 1, human: 4.2, critter: 3.3},
+    {month: 3, day: 2, human: 4.0, critter: 3.8},
+    {month: 4, day: 1, human: 3.7, critter: 3.9},
+    {month: 4, day: 2, human: 3.7, critter: 3.6}));
+
+  eq(
+    _.chain(foodJournal,
+      _.dropWhile(_.pipe(_.get(_, "month"), _.lt(_, 2)), _),
+      _.takeWhile(_.pipe(_.get(_, "month"), _.lt(_, 4)), _)),
+  _.list(
+    {month: 2, day: 1, human: 4.9, critter: 2.1},
+    {month: 2, day: 2, human: 5.0, critter: 2.5},
+    {month: 3, day: 1, human: 4.2, critter: 3.3},
+    {month: 3, day: 2, human: 4.0, critter: 3.8}));
+
+  eq(
+    _.filter(_.pipe(_.get(_, "human"), _.lt(_, 5)), foodJournal),
+    _.list(
+      {month: 2, day: 1, human: 4.9, critter: 2.1},
+      {month: 3, day: 1, human: 4.2, critter: 3.3},
+      {month: 3, day: 2, human: 4.0, critter: 3.8},
+      {month: 4, day: 1, human: 3.7, critter: 3.9},
+      {month: 4, day: 2, human: 3.7, critter: 3.6}));
+
+  eq(
+    _.filter(_.pipe(_.get(_, "month"), _.lt(_, 3)), foodJournal),
+    _.list(
+      {month: 1, day: 1, human: 5.3, critter: 2.3},
+      {month: 1, day: 2, human: 5.1, critter: 2.0},
+      {month: 2, day: 1, human: 4.9, critter: 2.1},
+      {month: 2, day: 2, human: 5.0, critter: 2.5}));
+
+  equals(_.some(_.pipe(_.get(_, "critter"), _.gt(_, 5)), foodJournal), null)
+  assert(_.some(_.pipe(_.get(_, "critter"), _.gt(_, 3)), foodJournal));
+
+  eq(
+    _.some(_.and(_.pipe(_.get(_, "critter"), _.gt(_, 3)), _.identity), foodJournal),
+    {month: 3, day: 1, human: 4.2, critter: 3.3});
+
+  eq(
+    _.sort([3, 1, 2]),
+    _.list(1, 2, 3));
+
+  eq(
+    _.sortBy(_.count, ["aaa", "c", "bb"]),
+    _.list("c", "bb", "aaa"));
+
+  eq(
+    _.concat([1, 2], [3, 4]),
+    _.list(1, 2, 3, 4));
+
+  eq(
+    _.concat(_.take(8, _.repeat("na")), ["Batman!"]),
+    _.list("na", "na", "na", "na", "na", "na", "na", "na", "Batman!"));
+
+  const randInt = _.randInt(_.chance(100).random, _);
+
+  eq(
+    _.take(3, _.repeatedly(() => randInt(10))),
+    _.list(1, 7, 2));
+
+  eq(
+    _.take(10, _.filter(_.isEven, _.positives)),
+    _.list(0, 2, 4, 6, 8, 10, 12, 14, 16, 18));
+
+  eq(
+    _.cons(0, _.list(2, 4, 6)),
+    _.list(0, 2, 4, 6));
+
+  assert(_.isEmpty([]));
+  assert(!_.isEmpty(["no!"]));
+
+  eq(
+    _.map(_.identity, {sunlightReaction: "Glitter!"}),
+    _.list(["sunlightReaction", "Glitter!"]));
+
+  eq(_.map(_.identity, ["garlic", "sesame oil", "fried eggs"]),
+    _.list("garlic", "sesame oil", "fried eggs"));
+
+  eq(_.into([], _.map(_.identity, ["garlic", "sesame oil", "fried eggs"])),
+    ["garlic", "sesame oil", "fried eggs"]);
+
+  eq(_.map(_.identity, ["garlic clove", "garlic clove"]),
+    _.list("garlic clove", "garlic clove"));
+
+  eq(_.into(_.set([]), _.map(_.identity, ["garlic clove", "garlic clove"])),
+    _.list("garlic clove"));
+
+  eq(_.into({"favorite emotion": "gloomy"}, [["sunlight reaction", "Glitter!"]]),
+    {"favorite emotion": "gloomy", "sunlight reaction": "Glitter!"});
+
+  eq(_.into(["cherry"], _.list("pine", "spruce"))
+    ["cherry", "pine", "spruce"]);
+
+  eq(_.into({"favorite animal": "kitty"}, {"least favorite smell": "dog",
+    "relationship with teenager": "creepy"}),
+    {"favorite animal": "kitty", "least favorite smell": "dog",
+    "relationship with teenager": "creepy"});
+
+  eq(_.conj([0], [1]),
+    [0, [1]]);
+
+  eq(_.into([0], [1]),
+    [0, 1]);
+
+  eq(_.conj([0], 1),
+    [0, 1]);
+
+  eq(_.conj([0], 1, 2, 3, 4),
+    [0, 1, 2, 3, 4]);
+
+  equals(_.max(0, 1, 2), 2);
+
+  eq(_.max([0, 1, 2]), [0, 1, 2]);
+
+  equals(_.apply(_.max, [0, 1, 2]), 2);
+
+  const add10 = _.partial(_.add, 10);
+  equals(add10(3), 13);
+  equals(add10(5), 15);
+
+  const addMissingElements =
+  _.partial(_.conj, ["water", "earth", "air"]);
+
+  eq(addMissingElements("unobtainium", "adamantium"),
+    ["water", "earth", "air", "unobtainium", "adamantium"]);
+
+  function partial(fn, ...applied){
+    return function(...args){
+      return _.apply(fn, _.into(applied, args));
+    }
+  }
+
+  const add20 = partial(_.add, 20);
+
+  eq(add20(3), 23);
+
+});
+
 test("records", function({assert, eq, equals}){
   function WereWolf(name, title){
     this.name = name;
@@ -658,6 +885,21 @@ test("records", function({assert, eq, equals}){
 
   equals(_.get(jacob, "name"), "Jacob");
   eq(jacob, wereWolf("Jacob", "Lead Shirt Discarder"));
+  eq(_.assoc(jacob, "title", "Lead Third Wheel"), wereWolf("Jacob", "Lead Third Wheel"));
+  eq(_.dissoc(jacob, "title"), {name: "Jacob"}, "losing title makes it a plain object");
+
+  const IWereCreature = _.protocol({
+    fullMoon: null
+  });
+
+  function fullMoon({name, title}){
+    return _.str(name, " will howl and murder");
+  }
+
+  _.doto(WereWolf,
+    _.implement(IWereCreature, {fullMoon}));
+
+  equals(fullMoon(lucian), "Lucian will howl and murder");
 });
 
 test("record", function({assert, equals}){
@@ -855,12 +1097,12 @@ test("indexed-seq", function({assert, equals}){
   equals(_.chain(nums, _.reduce(_.add, 0, _)), 39);
 });
 
-test("equality", function({eq, assert}){
+test("equality", function({eq, allEq, assert}){
   assert(_.chain("Curly", _.eq(_, "Curly")), "Equal strings");
   assert(!_.chain("Curlers", _.eq(_, "Curly")), "Unequal strings");
   assert(_.chain("Curlers", _.notEq(_, "Curly")), "Unequal strings");
   const rng = _.range(3);
-  eq(rng, rng, _.range(3), rng, [0,1,2], rng, _.cons(0, _.range(1,3)), _.initial(_.range(4)), "Communicative sequences");
+  allEq([rng, rng, _.range(3), rng, [0,1,2], rng, _.cons(0, _.range(1,3)), _.initial(_.range(4)), rng], "Communicative sequences");
   assert(_.chain(45, _.eq(_, 45)), "Equal numbers");
   assert(_.chain([1, 2, 3], _.eq(_, [1, 2, 3])), "Equal arrays");
   assert(!_.chain([1, 2, 3], _.eq(_, [2, 3])), "Unequal arrays");

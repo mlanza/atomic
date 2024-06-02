@@ -797,7 +797,7 @@ export function iterate(f, x){
 }
 
 export const integers  = range(Number.MIN_SAFE_INTEGER, Number.MAX_SAFE_INTEGER, 1);
-export const positives = range(1, Number.MAX_SAFE_INTEGER, 1);
+export const positives = range(0, Number.MAX_SAFE_INTEGER, 1);
 export const negatives = range(-1, Number.MIN_SAFE_INTEGER, -1);
 
 function randNth1(coll){

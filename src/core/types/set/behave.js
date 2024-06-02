@@ -6,6 +6,8 @@ import {keying} from "../../protocols/imapentry/concrete.js";
 import {hashSeq as hash} from "../../protocols/ihashable/hashers.js";
 import {set, emptySet} from "./construct.js";
 import {lazyIterable} from "../lazy-seq/concrete.js";
+import {iequiv} from "../empty-list/behave.js";
+import * as p from "../../protocols/concrete.js";
 
 function seq(self){
   return count(self) ? self : null;
@@ -70,8 +72,8 @@ function merge(self, other){
 }
 
 function equiv(self, other){
-  return count(self) === count(other) && reduce(self, function(memo, value){
-    return memo && includes(other, value) ? true : reduced(false);
+  return count(self) === p.count(other) && reduce(self, function(memo, value){
+    return memo && p.includes(other, value) ? true : reduced(false);
   }, true);
 }
 
