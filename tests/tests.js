@@ -91,6 +91,27 @@ test("hashing", function({assert}){
   //same([{blackwidow: "Avenger"}, _.date(774), [1, 2]], [{blackwidow: "Avenger"}, _.date(774), [1, 2]]);
 });
 
+test("multimethod", function({assert}){
+  const fullMoon = _.multimethod(_.get(_, "wereType"),
+    ({name}) => `${name} will stay up all night fantasy footballing`);
+  _.addMethod(fullMoon, "wolf", ({name}) => `${name} will howl and murder`);
+  _.addMethod(fullMoon, "simmons", ({name}) => `${name} will encourage people and sweat to the oldies`);
+  _.addMethod(fullMoon, "bill murray", ({name}) => `${name} will be the most likeable celebrity`);
+  _.addMethod(fullMoon, null, ({name}) => `${name} will stay at home and eat ice cream`);
+
+  assert(fullMoon({wereType: "office worker", name: "Jimmy from sales"}) === "Jimmy from sales will stay up all night fantasy footballing");
+  assert(fullMoon({wereType: "wolf", name: "Rachel from next door"}) === "Rachel from next door will howl and murder");
+  assert(fullMoon({wereType: "simmons", name: "Andy the baker"}) === "Andy the baker will encourage people and sweat to the oldies");
+  assert(fullMoon({wereType: "bill murray", name: "Laura the intern"}) === "Laura the intern will be the most likeable celebrity");
+  assert(fullMoon({wereType: null, name: "Martin the nurse"}) === "Martin the nurse will stay at home and eat ice cream");
+  assert(fullMoon({name: "Jocco the vet"}) === "Jocco the vet will stay at home and eat ice cream"); //undefined/null is nil
+
+  const types = _.multimethod((x, y) => [typeof x, typeof y]);
+  _.addMethod(types, ["string", "string"], ()=> "Two strings!");
+
+  assert(types("String 1", "String 2") === "Two strings!")
+});
+
 test("poor man's multimethod", function({assert}){
   const join = _.guard(_.signature(_.isArray), _.join("", _));
   const exclaim = _.guard(_.signature(_.isString), _.str(_, "!"));
