@@ -361,8 +361,6 @@ ICoercible.addMethod([T.Period, T.Duration], function(self){
   return self.end == null || self.start == null ? duration(Number.POSITIVE_INFINITY) : duration(self.end - self.start);
 });
 ICoercible.addMethod([Promise, Promise], identity);
-ICoercible.addMethod([T.Right, Promise], unfork);
-ICoercible.addMethod([T.Left, Promise], unfork);
 ICoercible.addMethod([Error, Promise], unfork);
 ICoercible.addMethod([T.Task, Promise], unfork);
 ICoercible.addMethod([Object, Object], identity);
@@ -374,6 +372,8 @@ ICoercible.addMethod([Array, Object], function(self){
 });
 ICoercible.addMethod([Array, Array], identity);
 //#if _EXPERIMENTAL
+ICoercible.addMethod([T.Right, Promise], unfork);
+ICoercible.addMethod([T.Left, Promise], unfork);
 ICoercible.addMethod([T.Okay, Promise], unfork);
 //#endif
 ICoercible.addMethod([T.Concatenated, Array], unary(Array.from));

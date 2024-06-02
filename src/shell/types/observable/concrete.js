@@ -102,7 +102,7 @@ function interact(key, f, el){
 
 function indexed(sources){
   return observable(function(observer){
-    return _.right(sources,
+    return _.chain(sources,
       _.mapIndexed(function(key, source){
         return sub(source, function(value){
           pub(observer, {key, value});
