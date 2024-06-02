@@ -54,7 +54,7 @@ function assoc(self, key, value){
 }
 
 function equiv(self, other){
-  return p.count(self) === p.count(other) && reducekv(self, function(memo, key, value){
+  return self?.constructor === other?.constructor && p.count(self) === p.count(other) && reducekv(self, function(memo, key, value){
     return memo ? p.equiv(p.get(other, key), value) : reduced(memo);
   }, true);
 }

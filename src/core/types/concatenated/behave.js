@@ -4,9 +4,10 @@ import {isReduced, unreduced} from "../reduced.js";
 import {apply} from "../function/concrete.js";
 import {EmptyList, emptyList} from "../empty-list.js";
 import ilazyseq, {iterable, reductive} from "../lazy-seq/behave.js";
+import {iequiv} from "../empty-list/behave.js";
 import {mapa, concat} from "../lazy-seq/concrete.js";
 import {LazySeq} from "../lazy-seq/construct.js";
-import {IHashable, ICoercible, ICollection, INext, ISeq, ICounted, ISeqable, IIndexed, IReducible, IKVReducible, ISequential, IEmptyableCollection} from "../../protocols.js";
+import {IHashable, IEquiv, ICoercible, ICollection, INext, ISeq, ICounted, ISeqable, IIndexed, IReducible, IKVReducible, ISequential, IEmptyableCollection} from "../../protocols.js";
 import * as p from "./protocols.js";
 import {keying} from "../../protocols/imapentry/concrete.js";
 import {hashSeq as hash} from "../../protocols/ihashable/hashers.js";
@@ -58,6 +59,7 @@ function count(self){
 
 export default does(
   iterable,
+  iequiv,
   //TODO reductive?
   keying("Concatenated"),
   implement(IKVReducible, {reducekv}),

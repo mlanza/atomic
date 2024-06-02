@@ -71,8 +71,14 @@ export function test(title, callback, options = {}){
     }
   }
 
-  const equals = compare((a, b) => a === b, {str: (a) => a});
-  const notEquals = compare((a, b) => a !== b, {str: (a) => a});
+  function compareAll(eq, {str = JSON.stringify, reason = null} = {}){
+    return function(xs, re = reason){
+      assert(eq(...xs), re, str(xs));
+    }
+  }
+
+  const equals = compare((a, b) => a === b);
+  const notEquals = compare((a, b) => a !== b);
 
   function throws(f, re = "an exception"){
     try {
@@ -83,9 +89,9 @@ export function test(title, callback, options = {}){
     }
   }
 
-  const f = pipe(options.tests || identity, ...extenders);
+  const f = pipe(...[...extenders, options.tests || identity]);
 
-  callback(f({assert, equals, notEquals, check, compare, throws}));
+  callback(f({assert, equals, notEquals, check, compare, compareAll, throws}));
 }
 
 export default test;
