@@ -3,6 +3,8 @@ const failures = {
   subscribers: []
 };
 const extenders = [];
+const params = new URLSearchParams(location.search);
+const selectTitle = params.get("title");
 
 function pipe(f, ...fs){
   return function(...args){
@@ -41,6 +43,10 @@ export function tests(callback){
 }
 
 export function test(title, callback, options = {}){
+  if (selectTitle && !title.includes(selectTitle)) {
+    return;
+  }
+
   const count = counter();
 
   //everything must go through `assert`
@@ -89,8 +95,9 @@ export function test(title, callback, options = {}){
     }
   }
 
-  const f = pipe(...[...extenders, options.tests || identity]);
+  console.log(`${location.href}?title=${encodeURIComponent(title)}`);
 
+  const f = pipe(...[...extenders, options.tests || identity]);
   callback(f({assert, equals, notEquals, check, compare, compareAll, throws}));
 }
 

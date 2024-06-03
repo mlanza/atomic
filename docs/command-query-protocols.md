@@ -1,18 +1,15 @@
 # Command vs. query protocols
 
-In JavaScript arrays and objects are mutable reference types.  But Atomic provides a protocol for operating against them as if they were immutable, value types.  The `core` module *predominantly* exposes pure operations.
+In JavaScript arrays and objects are mutable reference types.
 
-It does have side-effecting operations too, because any moderately robust functional programming library relies on, just to build itself, a modest number of mutating operations.  So `core` includes the likes of `doto`.  But these operations are reexported from `shell` so that external consumers who call them can be notably more pronounced about their side effecting nature (e.g. `$.doto`).
+The `core` (exported as `_`) provides a protocol for operating against them as if they were immutable, value types (i.e. persistent types).  This means its operations, rather than mutate subjects, return modified copies.  Persistent types (even faux ones) are the basis of simulations, which is effectively what functional programming is good at.  While persistent protocols and functions emulate commands, they're actually queries.
 
-Since `core` (exported as `_`) treats types, even reference types like objects and arrays, as immutable value types, its operations, rather than mutate the subject, return a modified copy.  That's the essence of what a persistent type is.  Persistent types (even faux ones) are the basis of simulations, which is effectively what functional programming is good at.  While pure, persistent protocols and functions can emulate commands, they're always only queries.
-
-But the imperative `shell` (exported as `$`) is about actually doing things, modifying things.  Its operations, primarily commands, produce the side effects required to get work done.
+The `shell` (exported as `$`) is about actually doing things, modifying things.  Its protcols operate against reference types treating them as they actually are.  Thus, its operations are actually commands and do, indeed, produce the side effects required to get work done.
 
 ```js
 const stooges = ["Moe", "Larry", "Shemp"];
 const troupe = _.conj(stooges, "Corey"); //core op, a query
 ```
-
 ```js
 const stooges = ["Moe", "Larry", "Shemp"];
 $.conj(stooges, "Corey"); //shell op, a command
@@ -20,7 +17,7 @@ $.conj(stooges, "Corey"); //shell op, a command
 
 The first example is simulation.  The second, side-effecting reality.  See how, in the first, `conj` returns a result because it's a query and how, in the second, it doesn't because it's a command.
 
-This demonstrates how reference types, like arrays, can, if desired, be treated as value types.  The choice is in the protocol, the functions–pure or impure–one uses to operate against a thing.
+This demonstrates how reference types, like arrays, can, if desired, be handled as persistent types.  The choice is in the protocol, the functions–pure or impure–one uses to operate against a thing.  There are obvious performance implications surrounding the choice, but for the use cases common to many apps, not enough to be perceptible.
 
 ## Naming
 
