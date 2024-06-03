@@ -27,8 +27,8 @@ tests(function(tests){ //common
   const eq = compare(_.eq);
   const allEq = compareAll(_.eq);
   const notEq = compare(_.notEq);
-  const isSome = check(_.isSome, {reason: "expected something"});
-  const isNil = check(_.isNil, {reason: "expected nothing"});
+  const isSome = check(_.isSome, {expect: "something"});
+  const isNil = check(_.isNil, {expect: "nothing"});
   return {...tests, eq, notEq, allEq, isSome, isNil};
 });
 
