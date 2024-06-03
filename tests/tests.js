@@ -102,11 +102,11 @@ test("hashing", function({assert, same, equals, notEquals}){
   //same([{blackwidow: "Avenger"}, _.date(774), [1, 2]], [{blackwidow: "Avenger"}, _.date(774), [1, 2]]);
 }, {
   tests: function(tests){ //add custom test
-    const {equals, assert} = tests;
+    const {eq, equals, assert} = tests;
     function same(x, y, re = null){
       equals(_.hash(x), _.hash(y), re);
       equals(_.hash(x), _.hash(x), re);
-      assert(_.equiv(x, y), re);
+      eq(x, y, re);
     }
     return {same, ...tests};
   }
