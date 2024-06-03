@@ -638,15 +638,15 @@ test("area:polymorphism", function({equals}){
   equals(area(c), 201.06192982974676);
 });
 
-test("coercion", function({eq}){
-  eq(_.coerce(_.range(3), Array), Array.from(_.range(3)), _.toArray(_.range(3)), _.coerce([0,1,2], Array));
+test("coercion", function({eq, allEq}){
+  allEq([_.coerce(_.range(3), Array), Array.from(_.range(3)), _.toArray(_.range(3)), _.coerce([0,1,2], Array)]);
   eq(_.coerce(_.set([2,4,2,5]), Array), [2,4,5]);
   eq(_.coerce([2,5,2,4], Set), _.set([2,4,5]));
   eq(_.coerce(_.concat(_.range(3), _.range(2)), Array), [0,1,2,0,1]);
-  eq(_.coerce(_.cons(1, _.cons(2)), Array), _.coerce(_.list(1, 2), Array), [1,2]);
+  allEq([_.coerce(_.cons(1, _.cons(2)), Array), _.coerce(_.list(1, 2), Array), [1,2]]);
   eq(_.cons(1, _.cons(2)), _.list(1, 2));
   eq(_.coerce(null, Array), []);
-  eq(_.coerce("eggs", Array), Array.from(_.seq("eggs")), ["e","g","g","s"]);
+  allEq([_.coerce("eggs", Array), Array.from(_.seq("eggs")), ["e","g","g","s"]]);
 });
 
 // https://www.braveclojure.com/core-functions-in-depth/
