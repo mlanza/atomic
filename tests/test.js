@@ -42,6 +42,9 @@ export function tests(callback){
   extenders.push(callback);
 }
 
+function noop(){
+}
+
 export function test(title, callback, options = {}){
   if (selectTitle && !title.includes(selectTitle)) {
     return;
@@ -50,48 +53,51 @@ export function test(title, callback, options = {}){
   const count = counter();
 
   //everything must go through `assert`
-  function assert(pass, re = "expected"){
+  function assert(pass, expect = null, explain = noop){
     const num = count();
-    const reason = re ? ['—', re] : [];
+    const reason = expect ? ['—', expect] : [];
     const test = [title, num, ...reason];
     try {
       if (!pass) {
         fail();
-        throw new Error(`Other than ${re}`);
+        throw new Error(expect ? `Expected: ${expect}` : "Failed!");
       }
       console.info.apply(this, test);
     } catch (ex) {
-      console.error.apply(this, [...test, ex]);
+      console.error.apply(this, [...test, ex, explain()]);
     }
   }
 
-  function check(f, {str = JSON.stringify, reason = null} = {}){
-    return function(obj, re = reason){
-      assert(f(obj), re, str(obj));
+  function check(f, options = {}){
+    const {str = JSON.stringify} = options;
+    return function(obj, expect = options.expect){
+      assert(f(obj), expect, () => str(obj));
     }
   }
 
-  function compare(eq, {str = JSON.stringify, reason = null} = {}){
-    return function(a, b, re = reason){
-      assert(eq(a, b), re, `${str(a)} !== ${str(b)}`);
+  function compare(eq, options = {}){
+    const {str = JSON.stringify} = options;
+    return function(a, b, expect = options.expect){
+      assert(eq(a, b), expect, () => `${str(a)} !== ${str(b)}`);
     }
   }
 
-  function compareAll(eq, {str = JSON.stringify, reason = null} = {}){
-    return function(xs, re = reason){
-      assert(eq(...xs), re, str(xs));
+  function compareAll(eq, options = {}){
+    const {str = JSON.stringify} = options;
+    return function(xs, expect = options.expect){
+      assert(eq(...xs), expect, () => str(xs));
     }
   }
 
   const equals = compare((a, b) => a === b);
   const notEquals = compare((a, b) => a !== b);
 
-  function throws(f, re = "an exception"){
+  function throws(f, expect = "must throw"){
     try {
       f();
-      assert(false, re); //shouldn't get here
+      assert(false, expect); //shouldn't get here
     } catch (ex) {
-      assert(true, re); //should get here
+      assert(true, expect); //should get here
     }
   }
 
