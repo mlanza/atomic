@@ -289,6 +289,14 @@ export const toFragment = _.ICoercible.toFragment;
 _.ICoercible.addMethod([NodeList, Array], Array.from);
 _.ICoercible.addMethod([T.SpaceSeparated, Array], _.comp(Array.from, _.seq));
 _.ICoercible.addMethod([T.NestedAttrs, Object], _.deref);
+_.ICoercible.addMethod([URLSearchParams, Object], _.into({}, ?));
+_.ICoercible.addMethod([Object, URLSearchParams], function(obj){
+  const params = new URLSearchParams();
+  for(const [key, value] of Object.entries(obj)){
+    params.set(key, value);
+  };
+  return params;
+});
 
 function stylesheet2(href, document){
   if (!p.sel1(`link[href='${href}']`, document)) {

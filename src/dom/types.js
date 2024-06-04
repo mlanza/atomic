@@ -13,4 +13,5 @@ export * from "./types/nested-attrs.js";
 export * from "./types/node-list.js";
 export * from "./types/props.js";
 export * from "./types/space-sep.js";
+export * from "./types/url-search-params.js";
 export * from "./types/xml-document.js";

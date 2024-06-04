@@ -128,18 +128,6 @@ export function deconstruct(dur, ...units){
   }, units);
 }
 
-export const toQueryString = opt(mapkv(str(?, "=", ?), ?), join("&", ?), collapse("?", ?));
-
-export function fromQueryString(search){
-  const params = new URLSearchParams(search),
-        keys = Array.from(params.keys());
-  const obj = {};
-  for(const key of keys){
-    obj[key] = params.get(key);
-  }
-  return obj;
-}
-
 function distinct0(){ //transducer
   return function(rf){
     const seen = new Set();
