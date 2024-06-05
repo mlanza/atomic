@@ -1,7 +1,6 @@
-import {ICloneable, IHashable, IIndexed, IBlankable, ISplittable, ITemplate, ICoercible, IReducible, ICollection, ISeqable, ISeq, IInclusive, IAppendable, IPrependable, ILookup, IFn, IComparable, IEmptyableCollection} from "../../protocols.js";
+import {ICloneable, IHashable, IIndexed, IBlankable, ISplittable, ITemplate, ICoercible, IReducible, IKVReducible, ICollection, ISeqable, ISeq, IInclusive, IAppendable, IPrependable, ILookup, IFn, IComparable, IEmptyableCollection} from "../../protocols.js";
 import {does, identity, constantly, unbind, overload, isString} from "../../core.js";
 import {implement} from "../protocol.js";
-import {isReduced, unreduced} from "../reduced.js";
 import {lazySeq} from "../lazy-seq/construct.js";
 import {cons} from "../list/construct.js";
 import {iindexed} from "../array/behave.js";
@@ -10,6 +9,7 @@ import {emptyString} from "./construct.js";
 import {replace} from "./concrete.js";
 import * as p from "./protocols.js";
 import {keying} from "../../protocols/imapentry/concrete.js";
+import {reduce, reducekv} from "../../shared.js";
 
 const clone = identity;
 
@@ -84,16 +84,6 @@ function includes(self, str){
   return self.includes(str);
 }
 
-function reduce(self, f, init){
-  let memo = init;
-  let coll = p.seq(self);
-  while(coll && !isReduced(memo)){
-    memo = f(memo, p.first(coll));
-    coll = p.next(coll);
-  }
-  return unreduced(memo);
-}
-
 function hash(self) {
   var hash = 0,
     i, chr;
@@ -116,6 +106,7 @@ export default does(
   implement(ITemplate, {fill}),
   implement(ICollection, {conj}),
   implement(IReducible, {reduce}),
+  implement(IKVReducible, {reducekv}),
   implement(IComparable, {compare}),
   implement(IInclusive, {includes}),
   implement(IAppendable, {append: conj}),

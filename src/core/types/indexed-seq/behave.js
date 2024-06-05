@@ -2,7 +2,6 @@ import {identity, overload, does} from "../../core.js";
 import {implement} from "../protocol.js";
 import {indexedSeq} from "./construct.js";
 import {revSeq} from "../../types/rev-seq/construct.js";
-import {isReduced, unreduced} from "../../types/reduced.js";
 import {drop, detect, concat} from "../lazy-seq/concrete.js";
 import {emptyArray} from "../../types/array/construct.js";
 import {iequiv} from "../../types/empty-list/behave.js";
@@ -12,6 +11,7 @@ import * as p from "./protocols.js";
 import {keying} from "../../protocols/imapentry/concrete.js";
 import {hashKeyed as hash} from "../../protocols/ihashable/hashers.js";
 import {next} from "../../protocols/iseq/concrete.js";
+import {reduce, reducekv} from "../../shared.js";
 
 function reverse(self){
   let c = count(self);
@@ -74,25 +74,6 @@ function rest(self){
 
 function count(self){
   return p.count(self.seq) - self.start;
-}
-
-function reduce(self, f, init){
-  let memo = init,
-      coll = p.seq(self);
-  while (coll && !isReduced(memo)){
-    memo = f(memo, p.first(coll));
-    coll = next(coll);
-  }
-  return unreduced(memo);
-}
-
-function reducekv(self, f, init){
-  let idx = 0;
-  return reduce(self, function(memo, value){
-    memo = f(memo, idx, value);
-    idx += 1;
-    return memo;
-  }, init);
 }
 
 function includes(self, x){

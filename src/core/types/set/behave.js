@@ -1,7 +1,7 @@
 import {identity, overload, doto, complement, does, slice} from "../../core.js";
 import {implement, satisfies} from "../protocol.js";
-import {IHashable, ISet, IMergable, IMap, IEquiv, IReducible, IInclusive, ICollection, ISeq, IFind, ISeqable, IIndexed, ISequential, IEmptyableCollection, ICounted, ICloneable} from "../../protocols.js";
-import {reduced, unreduced, isReduced} from "../reduced.js";
+import {IHashable, ISet, IMergable, IMap, IEquiv, IReducible, IKVReducible, IInclusive, ICollection, ISeq, IFind, ISeqable, IIndexed, ISequential, IEmptyableCollection, ICounted, ICloneable} from "../../protocols.js";
+import {reduced} from "../reduced.js";
 import {keying} from "../../protocols/imapentry/concrete.js";
 import {hashSeq as hash} from "../../protocols/ihashable/hashers.js";
 import {set, emptySet} from "./construct.js";
@@ -9,6 +9,7 @@ import {lazyIterable} from "../lazy-seq/concrete.js";
 import {iequiv} from "../empty-list/behave.js";
 import * as p from "../../protocols/concrete.js";
 import {next} from "../../protocols/iseq/concrete.js";
+import {reduce, reducekv} from "../../shared.js";
 
 function seq(self){
   return count(self) ? self : null;
@@ -52,16 +53,6 @@ function clone(self){
   return new self.constructor(Array.from(self));
 }
 
-function reduce(self, f, init){
-  let memo = init;
-  let coll = seq(self);
-  while(coll){
-    memo = f(memo, ISeq.first(coll));
-    coll = next(coll);
-  }
-  return unreduced(memo);
-}
-
 function merge(self, other){
   return set([...self, ...other]);
 }
@@ -79,6 +70,7 @@ export default does(
   implement(IMergable, {merge}),
   implement(IHashable, {hash}),
   implement(IReducible, {reduce}),
+  implement(IKVReducible, {reducekv}),
   implement(ISeqable, {seq}),
   implement(IInclusive, {includes}),
   implement(ICloneable, {clone}),
