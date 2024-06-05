@@ -1,7 +1,6 @@
 import {does} from "../../core.js";
 import {implement} from "../protocol.js";
 import {ICoercible, IInversive, ISequential, IEquiv, IReducible, IKVReducible, ISeqable, ICounted, ISeq, IInclusive, IIndexed} from "../../protocols.js";
-import {unreduced, isReduced} from "../reduced.js";
 import {drop} from "../lazy-seq.js";
 import {iterable} from "../lazy-seq/behave.js";
 import {emptyable} from "../record/behave.js";
@@ -9,7 +8,7 @@ import {equiv as _equiv} from "../empty-list/behave.js";
 import {Range} from "./construct.js";
 import * as p from "./protocols.js";
 import {keying} from "../../protocols/imapentry/concrete.js";
-import {next} from "../../protocols/iseq/concrete.js";
+import {reduce, reducekv} from "../../shared.js";
 
 function seq(self){
   return p.equiv(self.start, self.end) || (self.step == null && self.direction == null && self.start == null && self.end == null) ? null : self;
@@ -27,27 +26,6 @@ function rest(self){
 
 function equiv(self, other){
   return p.kin(self, other) ? p.alike(self, other) : _equiv(self, other);
-}
-
-function reduce(self, f, init){
-  let memo = init,
-      coll = seq(self);
-  while(!isReduced(memo) && coll){
-    memo = f(memo, p.first(coll));
-    coll = next(coll);
-  }
-  return unreduced(memo);
-}
-
-function reducekv(self, f, init){
-  let memo = init,
-      coll = seq(self),
-      n = 0;
-  while(!isReduced(memo) && coll){
-    memo = f(memo, n++, p.first(coll));
-    coll = next(coll);
-  }
-  return unreduced(memo);
 }
 
 function inverse(self){

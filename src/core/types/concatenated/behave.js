@@ -1,6 +1,5 @@
 import {identity, does} from "../../core.js";
 import {implement} from "../protocol.js";
-import {isReduced, unreduced} from "../reduced.js";
 import {apply} from "../function/concrete.js";
 import {EmptyList, emptyList} from "../empty-list.js";
 import ilazyseq, {iterable, reductive} from "../lazy-seq/behave.js";
@@ -9,9 +8,9 @@ import {mapa, concat} from "../lazy-seq/concrete.js";
 import {LazySeq} from "../lazy-seq/construct.js";
 import {IHashable, IEquiv, ICoercible, ICollection, ISeq, ICounted, ISeqable, IIndexed, IReducible, IKVReducible, ISequential, IEmptyableCollection} from "../../protocols.js";
 import * as p from "./protocols.js";
-import {next} from "../../protocols/iseq/concrete.js";
 import {keying} from "../../protocols/imapentry/concrete.js";
 import {hashSeq as hash} from "../../protocols/ihashable/hashers.js";
+import {reduce, reducekv} from "../../shared.js";
 
 function conj(self, x){
   return new self.constructor(p.conj(self.colls, [x]));
@@ -23,28 +22,6 @@ function first(self){
 
 function rest(self){
   return apply(concat, p.rest(p.first(self.colls)), p.rest(self.colls));
-}
-
-function reduce(self, f, init){
-  let memo = init,
-      remaining = self;
-  while(!isReduced(memo) && p.seq(remaining)){
-    memo = f(memo, p.first(remaining))
-    remaining = next(remaining);
-  }
-  return unreduced(memo);
-}
-
-function reducekv(self, f, init){
-  let memo = init,
-      remaining = self,
-      idx = 0;
-  while(!isReduced(memo) && p.seq(remaining)){
-    memo = f(memo, idx, p.first(remaining))
-    remaining = next(remaining);
-    idx++;
-  }
-  return unreduced(memo);
 }
 
 function count(self){

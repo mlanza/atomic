@@ -1,7 +1,7 @@
 import {overload, identity, does, partial, comp} from "../../core.js";
 import {implement} from "../protocol.js";
 import {IBlankable, ICompactible, IFunctor, IReversible, IOmissible, ICoercible, IInclusive, IFind, IEquiv, ICollection, ISeq, IReducible, IKVReducible, ISeqable, ISequential, IIndexed, IEmptyableCollection, ICounted, IAppendable, IPrependable} from "../../protocols.js";
-import {isReduced, reduced, unreduced} from "../reduced.js";
+import {reduced} from "../reduced.js";
 import {cons} from "../list/construct.js";
 import {map, filter, remove, detect, concat} from "./concrete.js";
 import {emptyList} from "../empty-list/construct.js";
@@ -10,6 +10,7 @@ import {iequiv} from "../empty-list/behave.js";
 import {keying} from "../../protocols/imapentry/concrete.js";
 import * as p from "./protocols.js";
 import {next} from "../../protocols/iseq/concrete.js";
+import {reduce, reducekv} from "../../shared.js";
 
 const compact1 = partial(filter, identity);
 
@@ -71,7 +72,7 @@ function rest(self){
 function nth(self, n){
   let xs  = self,
       idx = 0;
-  while(xs){
+  while (xs) {
     let x = p.first(xs);
     if (idx === n) {
       return x;
@@ -93,27 +94,6 @@ function idx(self, x){
     xs = next(xs);
   }
   return null;
-}
-
-function reduce(xs, f, init){
-  let memo = init,
-      ys = p.seq(xs);
-  while(ys && !isReduced(memo)){
-    memo = f(memo, p.first(ys));
-    ys = next(ys);
-  }
-  return unreduced(memo);
-}
-
-function reducekv(xs, f, init){
-  let memo = init,
-      ys = p.seq(xs),
-      idx = 0;
-  while(ys && !isReduced(memo)){
-    memo = f(memo, idx++, p.first(ys));
-    ys = next(ys);
-  }
-  return unreduced(memo);
 }
 
 function count(self){
