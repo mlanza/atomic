@@ -33,7 +33,6 @@ export * from "./imapentry/concrete.js";
 export * from "./imergable/concrete.js";
 export * from "./imultipliable/concrete.js";
 export * from "./inamable/concrete.js";
-export * from "./inext/concrete.js";
 export * from "./iotherwise/concrete.js";
 export * from "./ipath/concrete.js";
 export * from "./iprependable/concrete.js";

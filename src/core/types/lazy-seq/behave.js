@@ -1,6 +1,6 @@
 import {overload, identity, does, partial, comp} from "../../core.js";
 import {implement} from "../protocol.js";
-import {IBlankable, ICompactible, IFunctor, IReversible, IOmissible, ICoercible, IInclusive, IFind, IEquiv, ICollection, INext, ISeq, IReducible, IKVReducible, ISeqable, ISequential, IIndexed, IEmptyableCollection, ICounted, IAppendable, IPrependable} from "../../protocols.js";
+import {IBlankable, ICompactible, IFunctor, IReversible, IOmissible, ICoercible, IInclusive, IFind, IEquiv, ICollection, ISeq, IReducible, IKVReducible, ISeqable, ISequential, IIndexed, IEmptyableCollection, ICounted, IAppendable, IPrependable} from "../../protocols.js";
 import {isReduced, reduced, unreduced} from "../reduced.js";
 import {cons} from "../list/construct.js";
 import {map, filter, remove, detect, concat} from "./concrete.js";
@@ -9,6 +9,7 @@ import {toArray} from "../array/concrete.js";
 import {iequiv} from "../empty-list/behave.js";
 import {keying} from "../../protocols/imapentry/concrete.js";
 import * as p from "./protocols.js";
+import {next} from "../../protocols/iseq/concrete.js";
 
 const compact1 = partial(filter, identity);
 
@@ -39,7 +40,7 @@ function iterate(self){
   return {
     next: function(){
       let result = p.seq(state) ? {value: p.first(state), done: false} : {done: true};
-      state = p.next(state);
+      state = next(state);
       return result;
     }
   };
@@ -67,10 +68,6 @@ function rest(self){
   return p.rest(self.perform());
 }
 
-function next(self){
-  return p.seq(p.rest(self));
-}
-
 function nth(self, n){
   let xs  = self,
       idx = 0;
@@ -80,7 +77,7 @@ function nth(self, n){
       return x;
     }
     idx++;
-    xs = p.next(xs);
+    xs = next(xs);
   }
   return null;
 }
@@ -93,7 +90,7 @@ function idx(self, x){
       return n;
     }
     n++;
-    xs = p.next(xs);
+    xs = next(xs);
   }
   return null;
 }
@@ -103,7 +100,7 @@ function reduce(xs, f, init){
       ys = p.seq(xs);
   while(ys && !isReduced(memo)){
     memo = f(memo, p.first(ys));
-    ys = p.next(ys);
+    ys = next(ys);
   }
   return unreduced(memo);
 }
@@ -114,7 +111,7 @@ function reducekv(xs, f, init){
       idx = 0;
   while(ys && !isReduced(memo)){
     memo = f(memo, idx++, p.first(ys));
-    ys = p.next(ys);
+    ys = next(ys);
   }
   return unreduced(memo);
 }
@@ -167,5 +164,4 @@ export default does(
   implement(IFind, {find}),
   implement(IEmptyableCollection, {empty: emptyList}),
   implement(ISeq, {first, rest}),
-  implement(ISeqable, {seq}),
-  implement(INext, {next}));
+  implement(ISeqable, {seq}));

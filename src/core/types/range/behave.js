@@ -1,6 +1,6 @@
 import {does} from "../../core.js";
 import {implement} from "../protocol.js";
-import {ICoercible, IInversive, ISequential, INext, IEquiv, IReducible, IKVReducible, ISeqable, ICounted, ISeq, IInclusive, IIndexed} from "../../protocols.js";
+import {ICoercible, IInversive, ISequential, IEquiv, IReducible, IKVReducible, ISeqable, ICounted, ISeq, IInclusive, IIndexed} from "../../protocols.js";
 import {unreduced, isReduced} from "../reduced.js";
 import {drop} from "../lazy-seq.js";
 import {iterable} from "../lazy-seq/behave.js";
@@ -9,6 +9,7 @@ import {equiv as _equiv} from "../empty-list/behave.js";
 import {Range} from "./construct.js";
 import * as p from "./protocols.js";
 import {keying} from "../../protocols/imapentry/concrete.js";
+import {next} from "../../protocols/iseq/concrete.js";
 
 function seq(self){
   return p.equiv(self.start, self.end) || (self.step == null && self.direction == null && self.start == null && self.end == null) ? null : self;
@@ -19,10 +20,6 @@ function first(self){
 }
 
 function rest(self){
-  return p.next(self) || new self.constructor(self.end, self.end, self.step, self.direction);
-}
-
-function next(self){
   if (!seq(self)) return null;
   const stepped = p.add(self.start, self.step);
   return self.end == null || (p.compare(stepped, self.end) * self.direction) < 0 ? new self.constructor(stepped, self.end, self.step, self.direction) : null;
@@ -37,7 +34,7 @@ function reduce(self, f, init){
       coll = seq(self);
   while(!isReduced(memo) && coll){
     memo = f(memo, p.first(coll));
-    coll = p.next(coll);
+    coll = next(coll);
   }
   return unreduced(memo);
 }
@@ -48,7 +45,7 @@ function reducekv(self, f, init){
       n = 0;
   while(!isReduced(memo) && coll){
     memo = f(memo, n++, p.first(coll));
-    coll = p.next(coll);
+    coll = next(coll);
   }
   return unreduced(memo);
 }
@@ -110,6 +107,5 @@ export default does(
   implement(ISeqable, {seq}),
   implement(IReducible, {reduce}),
   implement(IKVReducible, {reducekv}),
-  implement(INext, {next}),
   implement(ISeq, {first, rest}),
   implement(IEquiv, {equiv}));

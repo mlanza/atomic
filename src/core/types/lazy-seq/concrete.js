@@ -16,6 +16,7 @@ import {lazySeq} from "../lazy-seq/construct.js";
 import {Concatenated} from "../concatenated/construct.js";
 import {satisfies} from "../protocol/concrete.js";
 import * as p from "./protocols.js";
+import {next} from "../../protocols/iseq/concrete.js";
 
 export function concatenated(xs){
   const colls = filter2(p.seq, xs);
@@ -137,7 +138,7 @@ export function some(f, coll){
     if (value) {
       return value;
     }
-    xs = p.next(xs);
+    xs = next(xs);
   }
   return null;
 }
@@ -191,7 +192,7 @@ export function every(pred, coll){
     if (!pred(p.first(xs))){
       return false;
     }
-    xs = p.next(xs);
+    xs = next(xs);
   }
   return true;
 }
@@ -438,7 +439,7 @@ function interleaveN(...colls){
 
 export function interleaved(colls){
   return p.seq(filter2(isNil, colls)) ? emptyList() : lazySeq(function(){
-    return cons(map2(p.first, colls), interleaved(map2(p.next, colls)));
+    return cons(map2(p.first, colls), interleaved(map2(next, colls)));
   });
 }
 
@@ -501,7 +502,7 @@ export function partitionBy(f, xs){
         val  = f(head),
         run  = cons(head, takeWhile2(function(x){
           return val === f(x);
-        }, p.next(coll)));
+        }, next(coll)));
   return cons(run, partitionBy(f, p.seq(drop(p.count(run), coll))));
 }
 
@@ -536,7 +537,7 @@ function lastN2(n, coll){
     while (ys.length > n) {
       ys.shift();
     }
-    xs = p.next(xs)
+    xs = next(xs)
   }
   return ys;
 }
@@ -549,7 +550,7 @@ function last0(){
 
 function last1(coll){
   let xs = coll, ys = null;
-  while (ys = p.next(xs)) {
+  while (ys = next(xs)) {
     xs = ys;
   }
   return p.first(xs);
@@ -573,10 +574,10 @@ function thin2(equiv, coll){
   return p.seq(coll) ? lazySeq(function(){
     let xs = p.seq(coll);
     const last = p.first(xs);
-    while(p.next(xs) && p.equiv(p.first(p.next(xs)), last)) {
-      xs = p.next(xs);
+    while(next(xs) && p.equiv(p.first(next(xs)), last)) {
+      xs = next(xs);
     }
-    return cons(last, thin2(p.equiv, p.next(xs)));
+    return cons(last, thin2(p.equiv, next(xs)));
   }) : coll;
 }
 

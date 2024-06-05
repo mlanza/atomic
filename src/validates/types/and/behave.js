@@ -28,14 +28,9 @@ function seq(self){
   return _.seq(self.constraints) ? self : null;
 }
 
-function next(self){
-  return _.seq(rest(self));
-}
-
 export default _.does(
   _.keying("And"),
   _.implement(_.ISeqable, {seq}),
-  _.implement(_.INext, {next}),
   _.implement(_.IEmptyableCollection, {empty}),
   _.implement(_.ICollection, {conj}),
   _.implement(_.ISeq, {first, rest}),
