@@ -33,7 +33,6 @@ export * from "./protocols/imapentry/instance.js";
 export * from "./protocols/imergable/instance.js";
 export * from "./protocols/imultipliable/instance.js";
 export * from "./protocols/inamable/instance.js";
-export * from "./protocols/inext/instance.js";
 export * from "./protocols/iotherwise/instance.js";
 export * from "./protocols/ipath/instance.js";
 export * from "./protocols/iprependable/instance.js";

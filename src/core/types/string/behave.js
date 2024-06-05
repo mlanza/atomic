@@ -1,4 +1,4 @@
-import {ICloneable, IHashable, IIndexed, IBlankable, ISplittable, ITemplate, ICoercible, IReducible, ICollection, ISeqable, INext, ISeq, IInclusive, IAppendable, IPrependable, ILookup, IFn, IComparable, IEmptyableCollection} from "../../protocols.js";
+import {ICloneable, IHashable, IIndexed, IBlankable, ISplittable, ITemplate, ICoercible, IReducible, ICollection, ISeqable, ISeq, IInclusive, IAppendable, IPrependable, ILookup, IFn, IComparable, IEmptyableCollection} from "../../protocols.js";
 import {does, identity, constantly, unbind, overload, isString} from "../../core.js";
 import {implement} from "../protocol.js";
 import {isReduced, unreduced} from "../reduced.js";
@@ -73,11 +73,7 @@ function first(self){
 }
 
 function rest(self){
-  return next(self) || "";
-}
-
-function next(self){
-  return self.substring(1) || null;
+  return self.substring(1) || "";
 }
 
 function prepend(self, head){
@@ -129,5 +125,4 @@ export default does(
   implement(IIndexed, {nth: lookup}),
   implement(ILookup, {lookup}),
   implement(ISeqable, {seq}),
-  implement(ISeq, {first, rest}),
-  implement(INext, {next}));
+  implement(ISeq, {first, rest}));

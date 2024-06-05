@@ -1,6 +1,7 @@
 import {ISeq} from "./instance.js";
 import {comp, overload} from "../../core.js";
 import {reduced} from "../../types/reduced/construct.js";
+import {seq} from "../iseqable/concrete.js";
 
 function first0(){ //transducer
   return function(rf){
@@ -12,3 +13,4 @@ function first0(){ //transducer
 
 export const first = overload(first0, ISeq.first);
 export const rest = ISeq.rest;
+export const next = comp(seq, rest);

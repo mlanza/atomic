@@ -7,10 +7,11 @@ import {drop, detect, concat} from "../lazy-seq/concrete.js";
 import {emptyArray} from "../../types/array/construct.js";
 import {iequiv} from "../../types/empty-list/behave.js";
 import {iterable} from "../lazy-seq/behave.js";
-import {IHashable, ICoercible, IEquiv, IReversible, IMapEntry, IFind, IInclusive, IAssociative, IAppendable, IPrependable, ICollection, INext, ICounted, IReducible, IKVReducible, ISeq, ISeqable, ISequential, IIndexed, ILookup, IFn, IEmptyableCollection} from "../../protocols.js";
+import {IHashable, ICoercible, IEquiv, IReversible, IMapEntry, IFind, IInclusive, IAssociative, IAppendable, IPrependable, ICollection, ICounted, IReducible, IKVReducible, ISeq, ISeqable, ISequential, IIndexed, ILookup, IFn, IEmptyableCollection} from "../../protocols.js";
 import * as p from "./protocols.js";
 import {keying} from "../../protocols/imapentry/concrete.js";
 import {hashKeyed as hash} from "../../protocols/ihashable/hashers.js";
+import {next} from "../../protocols/iseq/concrete.js";
 
 function reverse(self){
   let c = count(self);
@@ -43,11 +44,6 @@ function append(self, x){
 
 function prepend(self, x){
   return concat([x], self);
-}
-
-function next(self){
-  const pos = self.start + 1;
-  return pos < p.count(self.seq) ? indexedSeq(self.seq, pos) : null;
 }
 
 function nth(self, idx){
@@ -85,7 +81,7 @@ function reduce(self, f, init){
       coll = p.seq(self);
   while (coll && !isReduced(memo)){
     memo = f(memo, p.first(coll));
-    coll = p.next(coll);
+    coll = next(coll);
   }
   return unreduced(memo);
 }
@@ -125,7 +121,6 @@ export default does(
   implement(IFn, {invoke: lookup}),
   implement(ILookup, {lookup}),
   implement(ICollection, {conj: append}),
-  implement(INext, {next}),
   implement(ISeq, {first, rest}),
   implement(ISeqable, {seq: identity}),
   implement(ICounted, {count}));

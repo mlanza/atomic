@@ -68,7 +68,6 @@ export default _.does(
   }),
   _.implement(_.ICounted, {count}),
   _.implement(_.ISeqable, {seq}),
-  _.implement(_.INext, {next}),
   _.implement(_.ISeq, {first, rest}),
   _.implement(_.IMap, {keys, vals}),
   _.implement(_.IInclusive, {includes}),

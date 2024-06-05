@@ -1,17 +1,19 @@
 import {does, identity, constructs, branch, overload, isString} from "../../core.js";
 import {implement} from "../protocol.js";
-import {IHashable, IMergable, IBlankable, ICompactible, IComparable, IOmissible, INext, ICollection, IEquiv, IReducible, IKVReducible, ISeqable, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, IFn, IMap, ISeq, ICoercible, ICloneable, IInclusive, ITemplate} from "../../protocols.js";
+import {IHashable, IMergable, IBlankable, ICompactible, IComparable, IOmissible, ICollection, IEquiv, IReducible, IKVReducible, ISeqable, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, IFn, IMap, ISeq, ICoercible, ICloneable, IInclusive, ITemplate} from "../../protocols.js";
 import {reduced} from "../reduced.js";
 import {lazySeq, into, map} from "../lazy-seq.js";
 import {cons} from "../list.js";
 import {apply} from "../function/concrete.js";
 import {satisfies} from "../protocol/concrete.js";
 import {update} from "../../protocols/iassociative/concrete.js";
+import {emptyList} from "../empty-list/construct.js";
 import {emptyObject} from "../object/construct.js";
 import {descriptive, isObject} from "../object/concrete.js";
 import * as p from "./protocols.js";
 import {keying} from "../../protocols/imapentry/concrete.js";
 import {hashKeyed as hash} from "../../protocols/ihashable/hashers.js";
+import {next} from "../../protocols/iseq/concrete.js";
 
 const keys = Object.keys;
 const vals = Object.values;
@@ -103,23 +105,15 @@ function first(self){
   return key ? [key, lookup(self, key)] : null;
 }
 
+function rest2(self, keys){
+  return p.seq(keys) ? lazySeq(function(){
+    const key = p.first(keys);
+    return cons([key, lookup(self, key)], rest2(self, next(keys)));
+  }) : emptyList();
+}
+
 function rest(self){
-  return next(self) || {};
-}
-
-function next2(self, keys){
-  if (p.seq(keys)) {
-    return lazySeq(function(){
-      const key = p.first(keys);
-      return cons([key, lookup(self, key)], next2(self, p.next(keys)));
-    });
-  } else {
-    return null;
-  }
-}
-
-function next(self){
-  return next2(self, p.next(keys(self)));
+  return rest2(self, next(keys(self)));
 }
 
 function dissoc(self, key){
@@ -192,7 +186,6 @@ export default does(
   implement(IMap, {dissoc, keys, vals}),
   implement(IFn, {invoke: lookup}),
   implement(ISeq, {first, rest}),
-  implement(INext, {next}),
   implement(ILookup, {lookup}),
   implement(IEmptyableCollection, {empty: emptyObject}),
   implement(IAssociative, {assoc, contains}),

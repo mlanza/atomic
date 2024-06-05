@@ -1,6 +1,6 @@
 import {identity, overload, complement, does, slice} from "../../core.js";
 import {implement, satisfies} from "../protocol.js";
-import {IHashable, IMergable, IBlankable, IMap, IFlatMappable, ICoercible, IFunctor, IInsertable, IOmissible, IReversible, IMapEntry, IEquiv, IReducible, IKVReducible, IAppendable, IPrependable, IInclusive, ICollection, INext, ISeq, IFind, ISeqable, IIndexed, IAssociative, ISequential, IEmptyableCollection, IFn, ICounted, ILookup, ICloneable} from "../../protocols.js";
+import {IHashable, IMergable, IBlankable, IMap, IFlatMappable, ICoercible, IFunctor, IInsertable, IOmissible, IReversible, IMapEntry, IEquiv, IReducible, IKVReducible, IAppendable, IPrependable, IInclusive, ICollection, ISeq, IFind, ISeqable, IIndexed, IAssociative, ISequential, IEmptyableCollection, IFn, ICounted, ILookup, ICloneable} from "../../protocols.js";
 import {reduced, unreduced, isReduced} from "../reduced.js";
 import {indexedSeq} from "../indexed-seq.js";
 import {replace} from "../string/concrete.js";
@@ -134,10 +134,6 @@ function prepend(self, x){
   return [x, ...self];
 }
 
-function next(self){
-  return self.length > 1 ? rest(self) : null;
-}
-
 function first(self){
   return self[0];
 }
@@ -207,5 +203,4 @@ export default does(
   implement(IBlankable, {blank}),
   implement(ISeqable, {seq}),
   implement(ICollection, {conj: append, unconj}),
-  implement(INext, {next}),
   implement(ISeq, {first, rest}));
