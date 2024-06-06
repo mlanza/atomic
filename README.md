@@ -10,11 +10,9 @@ Highlights:
 * functional core, imperative shell w/ FRP
 * [nil-punning](https://ericnormand.me/article/nil-punning) handles null in sensible ways
 
-Atomic is [protocol oriented](src/core/protocols) to its very foundation.  It's more freeing to think in terms of apis and behaviors than [in types](https://en.wikipedia.org/wiki/Abstract_data_type).
+Atomic is [protocol oriented](src/core/protocols) to its very foundation.  Since [protocols](https://clojure.org/reference/protocols) are the centerpiece of Clojure, they are, by extension, Atomic too.  They provide the only safe means of [dynamically extending natives and third-party types](./docs/protocols-for-dynamic-extension.md).  They make [cross-realm operability](./docs/cross-realm-operability.md) possible.  Plus, it's better to think [abstractly about apis and behaviors](https://en.wikipedia.org/wiki/Abstract_data_type), giving them greater attention than types.
 
-[Protocols](https://clojure.org/reference/protocols) are the centerpiece of Clojure and, by extension, Atomic.  They provide the only safe means of [dynamically extending natives and third-party types](./docs/protocols-for-dynamic-extension.md).  They make [cross-realm operability](./docs/cross-realm-operability.md) possible.
-
-Atomic is [functional first](docs/functional-first.md).  This makes sense given that function, not methods, are first class.  Why choose a paradigm which limits [the places you'll go](https://en.wikipedia.org/wiki/Oh%2C_the_Places_You'll_Go!).
+Atomic is [functional first](docs/functional-first.md).  This makes sense given that functions, not methods, are first class.  Why choose a paradigm which limits [the places you'll go](https://en.wikipedia.org/wiki/Oh%2C_the_Places_You'll_Go!).
 
 Atomic has no [maps](https://clojuredocs.org/clojure.core/hash-map) or [vectors](https://clojuredocs.org/clojure.core/vector) though it once integrated them via [Immutable.js](https://immutable-js.com).  It turns out it didn't need them.  Treating objects and arrays as value types worked so well the integration [was dropped](https://github.com/mlanza/atomic/commit/8e1787f6974df5bfbb53a371a261e09b5efee8ee).  It wasn't worth the cost of loading the library.  This bit of history is noted to chalk up another one for protocols.  They so seamlessly blend third-party types into a desired api, they all but disappear.
 
