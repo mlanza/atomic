@@ -4,6 +4,7 @@ export * from "./types/weak-map.js";
 export * from "./types/set.js";
 export * from "./types/atom.js";
 export * from "./types/cursor.js";
+export * from "./types/object.js";
 export * from "./types/observable.js";
 export * from "./types/observer.js";
 export * from "./types/subject.js";

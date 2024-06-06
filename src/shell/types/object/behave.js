@@ -1,5 +1,5 @@
 import * as _ from "atomic/core";
-import {IPersistent, IOmissible, IAssociative, IEmptyableCollection, ICollection, IMap} from "../../../transients/protocols.js";
+import {IPersistent, IOmissible, IAssociative, IEmptyableCollection, ICollection, IMap} from "../../protocols.js";
 
 function omit(self, entry){
   const key = _.key(entry);
