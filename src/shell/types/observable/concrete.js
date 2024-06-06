@@ -87,7 +87,7 @@ function seed1(source){
   return seed2(_.constantly(null), source);
 }
 
-//adds an immediate value upon subscription as with cells.
+//adds an immediate value upon subscription as with atoms.
 export const seed = _.overload(null, seed1, seed2);
 
 function computed(f, source){
@@ -130,7 +130,7 @@ function splay2(sources, blank){
 
 const splay = _.overload(null, splay1, splay2);
 
-//sources must publish an initial value immediately upon subscription as cells do.
+//sources must publish an initial value immediately upon subscription as atoms do.
 function latest(sources){
   const nil = {}, source = splay2(sources, nil);
   return observable(function(observer){
