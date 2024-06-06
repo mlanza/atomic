@@ -13,6 +13,7 @@ export * from "./core.js";
 export * from "./types.js";
 export * from "./protocols.js";
 export * from "./protocols/concrete.js";
+export {sequence} from "./shared.js";
 import * as p from "./protocols/concrete.js";
 import * as T from "./types.js";
 import {extend, forward} from "./types/protocol/concrete.js";
