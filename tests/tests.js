@@ -10,6 +10,18 @@ const stooges = ["Larry","Curly","Moe"],
       court   = {jack: 11, queen: 12, king: 13},
       worth   = {pieces, court};
 
+function werewolves(){ //pseudo-module
+  function WereWolf(name, title){
+    this.name = name;
+    this.title = title;
+  }
+  const wereWolf = _.record(WereWolf);
+  const david = wereWolf("David", "London Tourist");
+  const jacob = wereWolf("Jacob", "Lead Shirt Discarder");
+  const lucian = wereWolf({name: "Lucian", title: "CEO of Melodrama"});
+  return {WereWolf, wereWolf, david, jacob, lucian};
+}
+
 failed(function(count){
   const img = document.querySelector("#icon");
   img.setAttribute("src", "./failed.svg");
@@ -81,8 +93,22 @@ test("pure random", function({equals}){
 });
 
 test("type checks", function({assert}){
+  const {WereWolf, wereWolf, david, jacob, lucian} = werewolves();
   assert(_.isArray([]));
   assert(_.isObject({}));
+  assert(_.isString("swannodette"));
+  assert(_.isFunction(_.noop));
+  assert(_.isNumber(42));
+  assert(_.isDate(_.date()));
+  assert(_.is(_.date(), Date));
+  assert(_.ako(_.date(), Date)); //inheritance chain
+  assert(_.is(_.concat([1, 2], [3, 4]), _.Concatenated));
+  assert(_.is(_.range(5), _.Range));
+  assert(_.is(_.take(2, _.range(5)), _.LazySeq));
+  assert(_.is(david, WereWolf));
+  assert(!_.is(david, Object)); //treat plain objects as objects, otherwise nearly everything would be
+  assert(!_.isObject(david));
+  assert(!_.isObject([]));
 });
 
 test("hashing", function({assert, same, equals, notEquals}){
@@ -874,15 +900,7 @@ test("treating lists, vectors, sets, and maps as sequences", function({eq, allEq
 });
 
 test("records", function({assert, eq, equals}){
-  function WereWolf(name, title){
-    this.name = name;
-    this.title = title;
-  }
-  const wereWolf = _.record(WereWolf);
-  const david = wereWolf("David", "London Tourist");
-  const jacob = wereWolf("Jacob", "Lead Shirt Discarder");
-  const lucian = wereWolf({name: "Lucian", title: "CEO of Melodrama"});
-
+  const {WereWolf, wereWolf, david, jacob, lucian} = werewolves();
   equals(_.get(jacob, "name"), "Jacob");
   eq(jacob, wereWolf("Jacob", "Lead Shirt Discarder"));
   eq(_.assoc(jacob, "title", "Lead Third Wheel"), wereWolf("Jacob", "Lead Third Wheel"));
