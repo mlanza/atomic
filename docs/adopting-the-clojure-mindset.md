@@ -33,7 +33,7 @@ function assoc(self, key, value){ //query/simulated
   return replacement; //return value
 }
 
-const $harvey = $.cell({lname: "Specter"});
+const $harvey = $.atom({lname: "Specter"});
 $.swap($harvey, _.assoc(_, "fname", "Harvey"));
 const fname = _.chain($harvey, _.deref, _.get(_, "fname")); // "Harvey"
 ```
@@ -58,7 +58,7 @@ Immutable `assoc` is a query, mutable `assoc` a command.  The one emulates chang
 
 Immutable `assoc` is tailor-made for truly persistent types, like records.  But even without them, it can be implemented against plain objects.
 
-The same applies to `conj` or any other command one imagines.  Change against any type can be simulated.  All simulation requires is an atom or, in Atomic, a cell.  The cell contains the state and [`swap`](https://clojuredocs.org/clojure.core/swap!)s updates against it using simulated commands.
+The same applies to `conj` or any other command one imagines.  Change against any type can be simulated.  All simulation requires is an atom.  The atom contains the state and [`swap`](https://clojuredocs.org/clojure.core/swap!)s updates against it using simulated commands.
 
 What this effectively means is the above table can, as desired, be fully realized so that any mutable operation can be simulated, which is to say written as a reductive operation.  What this reaveals is all programs are, at their very centers, [reductions](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/Reduce).
 

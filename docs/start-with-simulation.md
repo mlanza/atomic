@@ -39,7 +39,7 @@ This is just one possibility.  There are many ways to model this.  And that's la
 ## Activate the simulation with a state container
 But a functional program is not going to do well with its state assigned to a constant.  While the functional core is pure, it needs a harness in which the simulation can run.  It provides a means of transitioning from one state to the next.
 
-In Atomic, that means is provided by a state container: a cell.  It's mostly equivalent to a Clojure atom.  The only significant difference is it invokes its callback upon subscription the way an Rx [subject](https://rxjs.dev/guide/subject) does.  The state held in these containers is [addressable](./addressable-data.md) and can employ the Clojure methodology for surgically updating it.
+In Atomic, that means is provided by a state container: an atom.  The only real difference from Clojure's implementation is it invokes its callback upon subscription the way an Rx [subject](https://rxjs.dev/guide/subject) does, but the traditional behavior is possible by overriding the `primingSub` option.  The state held in atoms is [addressable](./addressable-data.md) and can employ the Clojure methodology for surgically updating it.
 
 The initial program would look more like this:
 
@@ -61,14 +61,14 @@ function init(){
   }
 }
 
-const $ttt = $.cell(init());
+const $ttt = $.atom(init());
 
 ```
 
-This is, in fact, where Atomic got its name.  It arose from every app's humble beginning of a bit of state being plunked into a state container.  This reactive, observable container is the core ⚛️ of a program/component.
+This is, in fact, where Atomic got its name.  It arose from every app's humble beginning of a bit of state being plunked into a state container.  This atom is the core ⚛️ of every program/component.
 
 ## Seed the simulation using a function
-In this version `init` seeds the initial state.  Why the function?  Why not just drop the initial state into the cell?
+In this version `init` seeds the initial state.  Why the function?  Why not just drop the initial state into the atom?
 
 That could work.  But since most programs are configurable, whether they're launched from the command line (and receive options) or a browser (and receive query params), better to start with a consistent pattern.
 
@@ -77,7 +77,7 @@ Right now, `init` receives no arguments. But what if the number of rounds could 
 The point of using the function is consistency.  The creation of something from nothing begins with a big bang.  Let that be a function.
 
 ## Model the simulation's transitions
-Having moved the game into a cell now makes it possible to `swap` state updates, one step at a time.
+Having moved the game into an atom now makes it possible to `swap` state updates, one step at a time.
 
 At this stage, given the starting data, what seems to be the first logical step?  The players need specified.
 
@@ -146,7 +146,7 @@ Take a look.
 Simulations require a harness...
 
 ```js
-const $ttt = $.cell(init());
+const $ttt = $.atom(init());
 ```
 
 ...and actions to move a story forward:

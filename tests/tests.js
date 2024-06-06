@@ -435,7 +435,7 @@ test("lazy-seq", function({assert, ako, equals, notEquals, eq}){
 test("transducers", function({assert, eq}){
   const useFeat = location.href.indexOf("feature=next") > -1;
   function compare(source, xf, expect, desc){
-    const $b = $.cell([]);
+    const $b = $.atom([]);
     $.sub($.toObservable(source), xf, $.collect($b));
     const a = _.transduce(xf, _.conj, [], source),
           b = _.deref($b);
@@ -930,7 +930,7 @@ test("record", function({assert, equals}){
   const dylan = person({name: "Dylan", surname: "Penn", dob: _.date(1991, 4, 13)});
   const sean = person([["name", "Sean"], ["surname", "Penn"], ["dob", _.date(1960, 8, 17)]]);
   const robin = person("Robin", "Wright", new Date(1966, 3, 8));
-  const $robin = $.cell(_.journal(robin));
+  const $robin = $.atom(_.journal(robin));
   const dylanp = _.coerce({name: "Dylan", surname: "Penn", dob: _.date(1991, 4, 13)}, Person);
   const robino = _.coerce(robin, Object);
   equals(_.chain($robin, _.deref, _.deref, _.get(_, "surname")), "Wright");
@@ -971,46 +971,46 @@ test("multirecord", function({assert, eq}){
 
 test("observable sharing", function({eq, assert}){
   function exec(oo, nn, desc){
-    var o = {ex: oo, result: $.cell([])},
-        n = {ex: nn, result: $.cell([])};
+    var o = {ex: oo, result: $.atom([])},
+        n = {ex: nn, result: $.atom([])};
     $.sub(o.ex, $.collect(o.result));
     $.sub(n.ex, $.collect(n.result));
     eq(_.deref(o.result), _.deref(n.result), desc);
     return {old: o, new: n};
   }
 
-  const $double = $.cell(2);
-  const $name = $.cell("Larry");
+  const $double = $.atom(2);
+  const $name = $.atom("Larry");
   const fn = _.pipe(_.repeat(_, _), _.toArray);
-  exec($.map(fn, $double, $name), $.Observable.map(fn, $double, $name), "$.map v. $.calc with cells");
+  exec($.map(fn, $double, $name), $.Observable.map(fn, $double, $name), "$.map v. $.calc with atoms");
 
   const $triple = $.toObservable(_.range(3));
-  const $thrice = $.cell(0);
+  const $thrice = $.atom(0);
   let $ten = $.Observable.fixed(10);
   exec($.map(_.add, $triple, $ten), $.Observable.map(_.add, $triple, $ten), "$.fixed");
   $ten = $.fixed(10);
   exec($.map(_.add, $triple, $ten), $.Observable.map(_.add, $triple, $ten), "$.map");
 
-  const $a  = $.cell(0),
-        $ac = $.cell([]),
-        $ao = $.cell([]);
+  const $a  = $.atom(0),
+        $ac = $.atom([]),
+        $ao = $.atom([]);
   $.sub($a, $.collect($ac));
   $.connect($triple, $a);
   $.sub($triple, $.collect($ao));
   eq(_.deref($ac), _.deref($ao));
 
-  const $b  = $.cell(0),
-        $bc = $.cell([]),
-        $bs = $.cell([]);
+  const $b  = $.atom(0),
+        $bc = $.atom([]),
+        $bs = $.atom([]);
   $.sub($b, $.collect($bc));
   $.connect($triple, $b);
   $.sub($triple, $.collect($bs));
   eq(_.deref($bc), _.deref($bs));
 
   const $ca = $.subject(),
-        $cc = $.cell([]),
-        $cs = $.cell([]),
-        $cf = $.cell([]);
+        $cc = $.atom([]),
+        $cs = $.atom([]),
+        $cf = $.atom([]);
   const bump = _.map(_.inc);
   $.sub($.pipe($triple, bump), $.collect($cc));
   $.sub($triple, bump, $.collect($cs));
@@ -1020,10 +1020,10 @@ test("observable sharing", function({eq, assert}){
   eq(_.deref($cs), _.deref($cc), "$.sub v. $.pipe");
 });
 
-test("cell", function({assert, eq, equals, throws}){
+test("atom", function({assert, eq, equals, throws}){
   const button = dom.tag('button');
   const tally = button("Tally");
-  const clicks = $.cell(0);
+  const clicks = $.atom(0);
   tally.click();
   equals(_.deref(clicks), 0);
   const tallied = dom.click(tally);
@@ -1034,20 +1034,20 @@ test("cell", function({assert, eq, equals, throws}){
   tally.click();
   unsub();
   tally.click();
-  const source = $.cell(0);
-  const dest = $.cell();
+  const source = $.atom(0);
+  const dest = $.atom();
   const sink   = $.pipe(source, _.map(_.inc), _.map($.tee($.pub(dest, _))));
   $.connect(sink, $.subject());
   const msink  = _.fmap(source, _.inc);
-  const msinkc = $.cell();
+  const msinkc = $.atom();
   $.sub(msink, msinkc);
   $.swap(source, _.inc);
   equals(_.deref(clicks), 1);
   equals(_.deref(source), 1);
   equals(_.deref(dest), 2);
   equals(_.deref(msinkc), 2);
-  const bucket = $.cell([], $.subject(), _.pipe(_.get(_, 'length'), _.lt(_, 3))),
-        states = $.cell([]);
+  const bucket = $.atom([], {validate: _.pipe(_.get(_, 'length'), _.lt(_, 3))}),
+        states = $.atom([]);
   _.chain(bucket, $.sub(_, state => _.chain(states, $.swap(_, _.conj(_, state)))));
   _.chain(bucket, $.swap(_, _.conj(_, "ice")));
   _.chain(bucket, $.swap(_, _.conj(_, "champagne")));
@@ -1058,14 +1058,14 @@ test("cell", function({assert, eq, equals, throws}){
 });
 
 test("immutable updates", function({eq, equals, notEquals, assert}){
-  const duos = $.cell([["Hall", "Oates"], ["Laurel", "Hardy"]]),
+  const duos = $.atom([["Hall", "Oates"], ["Laurel", "Hardy"]]),
         get0 = _.pipe(_.deref, _.nth(_, 0)),
         get1 = _.pipe(_.deref, _.nth(_, 1)),
         get2 = _.pipe(_.deref, _.nth(_, 2)),
         d0 = get0(duos),
         d1 = get1(duos),
         d2 = get2(duos),
-        states = $.cell([]),
+        states = $.atom([]),
         txn = _.pipe(
           _.conj(_, ["Andrew Ridgeley", "George Michaels"]),
           _.assocIn(_, [0, 0], "Daryl"),

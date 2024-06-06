@@ -101,11 +101,11 @@ function init(){
 ```
 ```javascript
 // ./libs/app.js
-const $state = $.cell(s.init());
+const $state = $.atom(s.init());
 
 reg({$state}); //register container to aid in interactive development
 ```
-Then begin fleshing out your core with domain logic, nothing but pure functions and using them to tell your app's story.  Everything else including the program machinery (cells, signals, routers, queues, buffers, buses, etc.) and glue code goes into `app`.
+Then begin fleshing out your core with domain logic, nothing but pure functions and using them to tell your app's story.  Everything else including the program machinery (atoms, signals, routers, queues, buffers, buses, etc.) and glue code goes into `app`.
 
 Keep `app` trivially simple, at first.  For a time it'll provide little more than the harness necessary to run the simulation.  Then, to begin interacting with it, you'll want to serve it:
 
