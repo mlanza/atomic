@@ -8,7 +8,6 @@ import {set, emptySet} from "./construct.js";
 import {lazyIterable} from "../lazy-seq/concrete.js";
 import {iequiv} from "../empty-list/behave.js";
 import * as p from "../../protocols/concrete.js";
-import {next} from "../../protocols/iseq/concrete.js";
 import {reduce, reducekv} from "../../shared.js";
 
 function seq(self){
@@ -50,7 +49,7 @@ function count(self){
 }
 
 function clone(self){
-  return new self.constructor(Array.from(self));
+  return new self.constructor(self);
 }
 
 function merge(self, other){
