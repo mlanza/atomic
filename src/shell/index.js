@@ -4,7 +4,8 @@ import * as p from "./protocols/concrete.js";
 import * as t from "./transducers.js";
 import {ILogger, IPublish, ISubscribe} from "./protocols.js";
 import {reducible} from "./shared.js";
-import {Cell, cell} from "./types/cell/construct.js";
+import {Atom, atom} from "./types/atom/construct.js";
+export {atom as cell} from "./types/atom/construct.js"; //preserve legacy name
 import {Subject, subject} from "./types/subject/construct.js";
 import {Observable, shared, share, pipe} from "./types/observable.js";
 import {Observer} from "./types/observer/construct.js";
@@ -19,9 +20,9 @@ import {behaviors} from "./behaviors.js";
 export * from "./behaviors.js";
 export const behave = _.behaves(behaviors, ?);
 
-export function collect(cell){
+export function collect(atom){
   return function(value){ //return observer
-    p.swap(cell, _.conj(?, value));
+    p.swap(atom, _.conj(?, value));
   }
 }
 
@@ -42,27 +43,27 @@ function connectN(source){
 ISubscribe.transducing = connect3;
 
 export const connect = _.overload(null, null, connect2, connect3, connectN); //returns `unsub` fn
-export const map = shared(cell, Observable.map);
-export const then = shared(cell, Observable.resolve, Observable.map);
-export const interact = shared(cell, Observable.interact);
+export const map = shared(atom, Observable.map);
+export const then = shared(atom, Observable.resolve, Observable.map);
+export const interact = shared(atom, Observable.interact);
 export const fromEvent = shared(subject, Observable.fromEvent);
-export const computed = shared(cell, Observable.computed);
-export const fixed = shared(cell, Observable.fixed);
-export const latest = shared(cell, Observable.latest);
-export const splay = shared(cell, Observable.splay);
+export const computed = shared(atom, Observable.computed);
+export const fixed = shared(atom, Observable.fixed);
+export const latest = shared(atom, Observable.latest);
+export const splay = shared(atom, Observable.splay);
 export const tick = shared(subject, Observable.tick);
-export const when = shared(cell, Observable.when);
-export const toggles = shared(cell, Observable.toggles);
-export const hist = shared(cell, Observable.hist);
+export const when = shared(atom, Observable.when);
+export const toggles = shared(atom, Observable.toggles);
+export const hist = shared(atom, Observable.hist);
 
 function fmap(source, f){
   return map(f, source);
 }
 
-$.each(_.implement(_.IFunctor, {fmap}), [Cell, Subject, Observable]);
+$.each(_.implement(_.IFunctor, {fmap}), [Atom, Subject, Observable]);
 
 function fromPromise2(promise, init){
-  return share(Observable.fromPromise(promise), cell(init));
+  return share(Observable.fromPromise(promise), atom(init));
 }
 
 export const fromPromise = _.overload(null, fromPromise2(?, null), fromPromise2);
@@ -128,7 +129,7 @@ export const renderDiff = _.overload(null, null, renderDiff2, renderDiff3);
   }
 
   _.doto(Function,
-    reducible, //makes fns work as observers like `cell`, e.g. `$.connect($.tick(3000), $.see("foo"))`
+    reducible, //makes fns work as observers like `atom`, e.g. `$.connect($.tick(3000), $.see("foo"))`
     _.implement(IPublish, {pub, err: _.noop, complete: _.noop, closed: _.noop}));
 
 })();

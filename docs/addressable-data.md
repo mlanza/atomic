@@ -17,7 +17,7 @@ With Atomic functions, the names which match Clojure functions are usually the f
 Like Clojure, addressable data is replaced via a succession of [swap!](https://clojuredocs.org/clojure.core/swap!) operations.
 
 ```js
-const $state = $.cell(/* real estate data */);
+const $state = $.atom(/* real estate data */);
 $.swap($state, _.assocIn(_, ["property-manager", "address", "street"], "101 Boardwalk Place"));
 const condo = _.chain($state, _.deref, _.get(_, "condos"), _.detect(_.comp(_.gte(_, 500000), _.get(_, "price")), _));
 $.swap($state, _.updateIn(_, ["condos", condo, "price"], _.mult(_, .9))); //offer 10% discount

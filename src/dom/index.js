@@ -25,13 +25,13 @@ export const ready = _.assume(isHTMLDocument, document, function ready(document,
   }
 });
 
-export const hash = $.shared($.cell, function(window){
+export const hash = $.shared($.atom, function(window){
   return $.computed(function(e){
     return window.location.hash;
   }, $.chan(window, "hashchange"));
 });
 
-export const focus = $.shared($.cell, function(el){
+export const focus = $.shared($.atom, function(el){
   return $.toggles(el, "focus", "blur", function(){
     return el === el.ownerDocument.activeElement;
   });
@@ -41,7 +41,7 @@ export const click = $.shared($.subject, function(el){
   return $.chan(el, "click");
 });
 
-export const hover = $.shared($.cell, function(el){
+export const hover = $.shared($.atom, function(el){
   return $.toggles(el, "mouseenter", "mouseleave", _.constantly(false));
 });
 
@@ -55,7 +55,7 @@ function scan(step, init){ //transducer
   }
 }
 
-export const depressed = $.shared($.cell, function(el){
+export const depressed = $.shared($.atom, function(el){
   return $.seed(
     _.constantly([]),
     $.pipe(

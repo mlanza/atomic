@@ -9,7 +9,7 @@ function pub(self, value){
       self.state = value;
       p.pub(self.observer, value);
     } else {
-      throw new Error("Cell update failed - invalid value.");
+      throw new Error("Atom update failed - invalid value.");
     }
   }
 }
@@ -25,7 +25,7 @@ function closed(self){
 }
 
 function sub(self, observer){
-  p.pub(observer, self.state); //to prime subscriber state
+  self.primingSub && p.pub(observer, self.state);
   return p.sub(self.observer, observer); //return unsubscribe fn
 }
 
@@ -44,7 +44,7 @@ function dispose(self){
 export default _.does(
   reducible,
   mergable,
-  _.keying("Cell"),
+  _.keying("Atom"),
   _.implement(_.IDisposable, {dispose}),
   _.implement(_.IDeref, {deref}),
   _.implement(IResettable, {reset: pub}),
