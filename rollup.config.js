@@ -42,6 +42,14 @@ export default [{
       babelHelpers: 'inline'
     }),
     json(),
-    _RELEASE ? terser({mangle: false}) : null
+    terser({
+      compress: _RELEASE,
+      mangle: false,
+      format: {
+        indent_level: 2,
+        comments: false,
+        beautify: true
+      }
+    })
   ]
 }];
