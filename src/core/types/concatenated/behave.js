@@ -33,7 +33,6 @@ function count(self){
 export default does(
   iterable,
   iequiv,
-  //TODO reductive?
   keying("Concatenated"),
   implement(IKVReducible, {reducekv}),
   implement(IReducible, {reduce}),

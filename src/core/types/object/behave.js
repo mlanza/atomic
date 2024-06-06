@@ -13,7 +13,7 @@ import {descriptive, isObject} from "../object/concrete.js";
 import * as p from "./protocols.js";
 import {keying} from "../../protocols/imapentry/concrete.js";
 import {hashKeyed as hash} from "../../protocols/ihashable/hashers.js";
-import {next} from "../../protocols/iseq/concrete.js";
+import {reduceWith, reducekvWith, first, rest} from "../../shared.js";
 
 const keys = Object.keys;
 const vals = Object.values;
@@ -100,22 +100,6 @@ function lookup(self, key){
   return self[key];
 }
 
-function first(self){
-  const key = p.first(keys(self));
-  return key ? [key, lookup(self, key)] : null;
-}
-
-function rest2(self, keys){
-  return p.seq(keys) ? lazySeq(function(){
-    const key = p.first(keys);
-    return cons([key, lookup(self, key)], rest2(self, next(keys)));
-  }) : emptyList();
-}
-
-function rest(self){
-  return rest2(self, next(keys(self)));
-}
-
 function dissoc(self, key){
   if (p.contains(self, key)) {
     const result = clone(self);
@@ -155,17 +139,8 @@ function clone(self){
   return Object.assign({}, self);
 }
 
-function reduce(self, f, init){
-  return p.reduce(function(memo, key){
-    return f(memo, [key, lookup(self, key)]);
-  }, init, keys(self));
-}
-
-function reducekv(self, f, init){
-  return p.reduce(function(memo, key){
-    return f(memo, key, lookup(self, key));
-  }, init, keys(self));
-}
+const reduce = reduceWith(seq);
+const reducekv = reducekvWith(seq);
 
 export default does(
   keying("Object"),
