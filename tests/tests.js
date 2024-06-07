@@ -271,7 +271,7 @@ test("validation", function({assert, ako, equals, notEquals, isNil, isSome}){
   //TODO add `when` to validate conditiontionally or allow condition to be checked before registering the validation?
 }, {tests: ako});
 
-test("edit/plop/grab", function({assert, isNil, notEquals, equals, eq}){
+_.plop && test("edit/plop/grab", function({assert, isNil, notEquals, equals, eq}){
   function Kangaroo(name, pouch) {
     this.name = name;
     this.pouch = pouch;

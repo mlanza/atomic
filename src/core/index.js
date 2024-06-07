@@ -91,6 +91,7 @@ export function grab(self, path){
   return obj;
 }
 
+//#if _EXPERIMENTAL
 export function edit(self, key, f){
   return editIn(self, [key], f);
 }
@@ -119,6 +120,7 @@ export function plopIn(self, path, value){
     obj[key] = value;
   });
 }
+//#endif
 
 export function deconstruct(dur, ...units){
   let memo = dur;
