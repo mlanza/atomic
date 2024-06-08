@@ -30,13 +30,11 @@ export function construct(Type, attrs){
 }
 
 export function emptyable(Type){
-  function empty(){
-    return new Type();
-  }
+  const empty = constantly(new Type());
   implement(IEmptyableCollection, {empty}, Type);
 }
 
-function record(Type, defaults){
+export function record(Type){
   function clone(self){
     return Object.assign(new Type(), self);
   }
@@ -92,8 +90,8 @@ function record(Type, defaults){
   return multi(overload(null, from, constantly(make)));
 }
 
-function multirecord(Type, defaults, multiple){
-  const make = record(Type, defaults);
+export function multirecord(Type, {defaults, multiple} = {defaults: constantly([]), multiple: constantly(true)}){
+  const make = record(Type);
 
   function asserts(self, key){
     return maybe(p.get(self, key), multiple(key) ? identity : array);
@@ -128,8 +126,4 @@ function multirecord(Type, defaults, multiple){
     implement(IMap, {dissoc}));
 
   return make;
-}
-
-export default function(Type, options = {defaults: constantly(null)}){
-  return options.multiple ? multirecord(Type, options.defaults, options.multiple) : record(Type, options.defaults);
 }
