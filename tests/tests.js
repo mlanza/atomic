@@ -12,14 +12,12 @@ const stooges = ["Larry","Curly","Moe"],
       worth   = {pieces, court};
 
 //pseudo-modules
-function people(multiple){
-  function Person(name, surname, dob){
+function people(){
+  return function Person(name, surname, dob){
     this.name = name;
     this.surname = surname;
     this.dob = dob;
   }
-  const person = multiple ? _.record(Person, {defaults: _.constantly([]), multiple: _.constantly(true)}) : _.record(Person);
-  return {Person, person};
 }
 
 function werewolves(){
@@ -935,7 +933,8 @@ test("records", function({assert, eq, equals}){
 });
 
 test("record", function({assert, equals}){
-  const {Person, person} = people(false);
+  const Person = people();
+  const person = _.record(Person);
   const dylan = person({name: "Dylan", surname: "Penn", dob: _.date(1991, 4, 13)});
   const sean = person([["name", "Sean"], ["surname", "Penn"], ["dob", _.date(1960, 8, 17)]]);
   const robin = person("Robin", "Wright", new Date(1966, 3, 8));
@@ -958,7 +957,8 @@ test("record", function({assert, equals}){
 });
 
 test("multirecord", function({assert, eq}){
-  const {Person, person} = people(true);
+  const Person = people();
+  const person = _.multirecord(Person);
   const robin = person([["name", "Robin"], ["surname", "Wright"], ["surname", "Penn"], ["dob", new Date(1966, 3, 8)]]);
   const entries = _.chain(robin, _.seq, _.toArray);
   eq(entries, [["name", "Robin"], ["surname", "Wright"], ["surname","Penn"], ["dob",new Date(1966, 3, 8)]]);
