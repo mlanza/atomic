@@ -5,12 +5,24 @@ import vd from "../dist/atomic_/validates.js";
 import {failed, tests, test} from "./test.js";
 import "../dist/cmd.js";
 
+//common data
 const stooges = ["Larry","Curly","Moe"],
       pieces  = {pawn: 1, knight: 3, bishop: 3, rook: 5, queen: 10, king: Infinity},
       court   = {jack: 11, queen: 12, king: 13},
       worth   = {pieces, court};
 
-function werewolves(){ //pseudo-module
+//pseudo-modules
+function people(multiple){
+  function Person(name, surname, dob){
+    this.name = name;
+    this.surname = surname;
+    this.dob = dob;
+  }
+  const person = multiple ? _.record(Person, {defaults: _.constantly([]), multiple: _.constantly(true)}) : _.record(Person);
+  return {Person, person};
+}
+
+function werewolves(){
   function WereWolf(name, title){
     this.name = name;
     this.title = title;
@@ -22,6 +34,7 @@ function werewolves(){ //pseudo-module
   return {WereWolf, wereWolf, david, jacob, lucian};
 }
 
+//configuration
 failed(function(count){
   const img = document.querySelector("#icon");
   img.setAttribute("src", "./failed.svg");
@@ -44,6 +57,7 @@ tests(function(tests){ //common
   return {...tests, eq, notEq, allEq, isSome, isNil};
 });
 
+//tests
 test("inheritance chain", function({assert, equals}){
   function Person(fname, lname){
     this.fname = fname;
@@ -921,12 +935,7 @@ test("records", function({assert, eq, equals}){
 });
 
 test("record", function({assert, equals}){
-  function Person(name, surname, dob){
-    this.name = name;
-    this.surname = surname;
-    this.dob = dob;
-  }
-  const person = _.record(Person);
+  const {Person, person} = people(false);
   const dylan = person({name: "Dylan", surname: "Penn", dob: _.date(1991, 4, 13)});
   const sean = person([["name", "Sean"], ["surname", "Penn"], ["dob", _.date(1960, 8, 17)]]);
   const robin = person("Robin", "Wright", new Date(1966, 3, 8));
@@ -949,12 +958,7 @@ test("record", function({assert, equals}){
 });
 
 test("multirecord", function({assert, eq}){
-  function Person(name, surname, dob){
-    this.name = name;
-    this.surname = surname;
-    this.dob = dob;
-  }
-  const person = _.record(Person, {defaults: _.constantly([]), multiple: _.constantly(true)});
+  const {Person, person} = people(true);
   const robin = person([["name", "Robin"], ["surname", "Wright"], ["surname", "Penn"], ["dob", new Date(1966, 3, 8)]]);
   const entries = _.chain(robin, _.seq, _.toArray);
   eq(entries, [["name", "Robin"], ["surname", "Wright"], ["surname","Penn"], ["dob",new Date(1966, 3, 8)]]);

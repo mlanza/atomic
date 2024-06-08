@@ -38,7 +38,7 @@ function merge(...maps){
 }
 
 function blank(self){
-  return keys(self).length === 0;
+  return p.keys(self).length === 0;
 }
 
 function compact1(self){
@@ -57,8 +57,8 @@ const compact = overload(null, compact1, compact2);
 
 function omit(self, entry){
   const key = p.key(entry);
-  if (includes(self, entry)) {
-    const result = clone(self);
+  if (p.includes(self, entry)) {
+    const result = p.clone(self);
     delete result[key];
     return result;
   } else {
@@ -81,13 +81,13 @@ function conj(self, entry){
 }
 
 function equiv(self, other){
-  return self === other ? true : descriptive(other) && p.count(p.keys(self)) === p.count(p.keys(other)) && p.reduce(function(memo, key){
+  return descriptive(other) && p.count(p.keys(self)) === p.count(p.keys(other)) && p.reduce(function(memo, key){
     return memo ? p.equiv(p.get(self, key), p.get(other, key)) : reduced(memo);
   }, true, p.keys(self));
 }
 
 function find(self, key){
-  return contains(self, key) ? [key, lookup(self, key)] : null;
+  return p.contains(self, key) ? [key, p.get(self, key)] : null;
 }
 
 function includes(self, entry){
@@ -102,7 +102,7 @@ function lookup(self, key){
 
 function dissoc(self, key){
   if (p.contains(self, key)) {
-    const result = clone(self);
+    const result = p.clone(self);
     delete result[key];
     return result;
   } else {
@@ -114,7 +114,7 @@ function assoc(self, key, value){
   if (p.get(self, key) === value) {
     return self;
   } else {
-    const result = clone(self);
+    const result = p.clone(self);
     result[key] = value;
     return result;
   }
@@ -125,14 +125,14 @@ function contains(self, key){
 }
 
 function seq(self){
-  if (!count(self)) return null;
+  if (!p.count(self)) return null;
   return map(function(key){
-    return [key, lookup(self, key)];
-  }, keys(self));
+    return [key, p.get(self, key)];
+  }, p.keys(self));
 }
 
 function count(self){
-  return keys(self).length;
+  return p.keys(self).length;
 }
 
 function clone(self){

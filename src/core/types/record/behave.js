@@ -4,14 +4,14 @@ import {reduced} from "../reduced/construct.js";
 import {is} from "../../protocols/imapentry/concrete.js";
 import {map, mapcat, detect, concatenated} from "../lazy-seq.js";
 import {maybe} from "../just/construct.js";
-import {ITopic, ICoercible, IReducible, IKVReducible, IEquiv, IAssociative, ISeqable, ILookup, ICounted, IMap, ISeq, IEmptyableCollection} from "../../protocols.js";
-import * as p from "./protocols.js";
+import {ITopic, ICloneable, ICoercible, IReducible, IKVReducible, IEquiv, IAssociative, ISeqable, ILookup, ICounted, IMap, ISeq, IEmptyableCollection} from "../../protocols.js";
+import {keying} from "../../protocols/imapentry/concrete.js";
 import {isObject} from "../object/concrete.js";
 import {isArray} from "../array/concrete.js";
 import {array} from "../array/construct.js";
 import {includes} from "../object/protocols.js";
-
-//TODO IHashable
+import * as p from "./protocols.js";
+import behave from "../object/behave.js";
 
 function seq(self){
   return p.seq(mapcat(function(key){
@@ -19,56 +19,10 @@ function seq(self){
   }, p.keys(self)));
 }
 
-function contains(self, key){
-  return self.hasOwnProperty(key);
-}
-
-function lookup(self, key){
-  return self[key];
-}
-
-function count(self){
-  return p.count(keys(self));
-}
-
-function first(self){
-  return p.first(seq(self));
-}
-
-function rest(self){
-  return p.rest(seq(self));
-}
-
-function keys(self){
-  return Object.keys(self);
-}
-
-function vals(self){
-  return Object.values(self);
-}
-
-function assoc(self, key, value){
-  const copy = p.clone(self);
-  copy[key] = value;
-  return copy;
-}
-
 function equiv(self, other){
-  return self?.constructor === other?.constructor && p.count(self) === p.count(other) && reducekv(self, function(memo, key, value){
+  return self.constructor === other?.constructor && p.count(self) === p.count(other) && p.reducekv(function(memo, key, value){
     return memo ? p.equiv(p.get(other, key), value) : reduced(memo);
-  }, true);
-}
-
-function reduce(self, f, init){
-  return p.reduce(function(memo, pair){
-    return f(memo, pair);
-  }, init, seq(self));
-}
-
-function reducekv(self, f, init){
-  return reduce(self, function(memo, [key, value]){
-    return f(memo, key, value);
-  }, init);
+  }, true, self);
 }
 
 export function construct(Type, attrs){
@@ -83,17 +37,21 @@ export function emptyable(Type){
 }
 
 function record(Type, defaults){
+  function clone(self){
+    return Object.assign(new Type(), self);
+  }
+
   function asserts(self, key){
     return maybe(p.get(self, key), array);
   }
 
-  const assert = assoc;
+  const assert = p.assoc;
 
   function retract3(self, key, value){
     let copy = self;
     if (p.equiv(p.get(self, key), value)) {
       copy = p.clone(self);
-      copy[key] = dissoc(self, key);
+      copy[key] = p.dissoc(self, key);
     }
     return copy;
   }
@@ -111,16 +69,13 @@ function record(Type, defaults){
   ICoercible.addMethod([Type, Object], attrs => Object.assign({}, attrs));
 
   doto(Type,
+    behave,
     emptyable,
+    keying(Type.name),
+    implement(ICloneable, {clone}),
     implement(ITopic, {asserts, assert, retract}),
-    implement(IReducible, {reduce}),
-    implement(IKVReducible, {reducekv}),
     implement(IEquiv, {equiv}),
-    implement(IAssociative, {assoc, contains}),
-    implement(ILookup, {lookup}),
-    implement(IMap, {dissoc, keys, vals}),
-    implement(ISeq, {first, rest}),
-    implement(ICounted, {count}),
+    implement(IMap, {dissoc}),
     implement(ISeqable, {seq}));
 
   function from(init){
@@ -145,7 +100,7 @@ function multirecord(Type, defaults, multiple){
   }
 
   function assert(self, key, value){
-    return assoc(self, key, multiple(key) ? p.conj(p.get(self, key, defaults(key)), value) : value);
+    return p.assoc(self, key, multiple(key) ? p.conj(p.get(self, key, defaults(key)), value) : value);
   }
 
   function retract3(self, key, value){
@@ -155,7 +110,7 @@ function multirecord(Type, defaults, multiple){
       copy[key] = p.omit(p.get(self, key, defaults(key)), value);
     } else if (p.equiv(p.get(self, key), value)) {
       copy = p.clone(self);
-      copy[key] = dissoc(self, key);
+      copy[key] = p.dissoc(self, key);
     }
     return copy;
   }
