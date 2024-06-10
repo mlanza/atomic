@@ -15,8 +15,7 @@ export default [{
   input: [
     'src/core.js',
     'src/shell.js',
-    'src/dom.js',
-    'src/validates.js'
+    'src/dom.js'
   ],
   output: {
     dir: 'dist/atomic',
@@ -30,8 +29,7 @@ export default [{
       "imports": {
         "atomic/core": "./core.js",
         "atomic/shell": "./shell.js",
-        "atomic/dom": "./dom.js",
-        "atomic/validates": "./validates.js"
+        "atomic/dom": "./dom.js"
       }
     }),
     jscc({
