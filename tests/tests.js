@@ -1,7 +1,6 @@
 import _ from "../dist/atomic_/core.js";
 import dom from "../dist/atomic_/dom.js";
 import $ from "../dist/atomic_/shell.js";
-import vd from "../dist/atomic_/validates.js";
 import {failed, tests, test} from "./test.js";
 import "../dist/cmd.js";
 
@@ -39,12 +38,6 @@ failed(function(count){
   img.setAttribute("data-count", count);
 });
 
-function ako(tests){ //uncommon
-  const {compare} = tests;
-  const ako = compare(_.ako);
-  return {...tests, ako};
-}
-
 tests(function(tests){ //common
   const {compare, compareAll, check} = tests;
   const eq = compare(_.eq);
@@ -52,7 +45,8 @@ tests(function(tests){ //common
   const notEq = compare(_.notEq);
   const isSome = check(_.isSome, {expect: "something"});
   const isNil = check(_.isNil, {expect: "nothing"});
-  return {...tests, eq, notEq, allEq, isSome, isNil};
+  const ako = compare(_.ako);
+  return {...tests, eq, notEq, allEq, isSome, isNil, ako};
 });
 
 //tests
@@ -249,40 +243,6 @@ test("poor man's multimethod", function({equals}){
   equals(e(["a","c","e"]), "ace");
 });
 
-test("validation", function({assert, ako, equals, notEquals, isNil, isSome}){
-  const zipCode = /^\d{5}(-\d{1,4})?$/;
-  const birth = "7/10/1926";
-  const past = vd.or(Date, vd.anno({type: "past"}, _.lt(_, new Date())));
-  const herman = {name: ["Herman", "Munster"], status: "married", dob: new Date(birth)};
-  const person = vd.and(
-    vd.required('name', vd.and(vd.collOf(String), vd.card(2, 2))),
-    vd.optional('status', vd.and(String, vd.choice(["single", "married", "divorced"]))),
-    vd.optional('dob', past));
-
-  const [dob] = vd.check(person, _.assoc(herman, "dob", birth));
-  const [name, names] = vd.check(person, _.assoc(herman, "name", [1]));
-  const [anon] = vd.check(person, _.dissoc(herman, "name"));
-  const [status] = vd.check(person, _.assoc(herman, "status", "separated"));
-
-  isNil(vd.check(zipCode, "17055"));
-  isNil(vd.check(zipCode, 17055));
-  isNil(vd.check(zipCode, "17055-0001"));
-  isSome(vd.check(zipCode, ""));
-  isSome(vd.check(zipCode, null));
-  isSome(vd.check(zipCode, "1705x-0001"));
-  isSome(vd.check(Number, "7"));
-  isNil(vd.check(Number, parseInt, "7"));
-  isNil(vd.check(vd.range("start", "end"), {start: 1, end: 5}));
-  isNil(vd.check(vd.range("start", "end"), {start: 1, end: 1}));
-  isSome(vd.check(vd.range("start", "end"), {start: 5, end: 1}));
-  equals(dob.constraint, Date);
-  equals(name.constraint, String);
-  isSome(names);
-  ako(anon.constraint, vd.Required);
-  isSome(status);
-  //TODO add `when` to validate conditiontionally or allow condition to be checked before registering the validation?
-}, {tests: ako});
-
 _.plop && test("edit/plop/grab", function({assert, isNil, notEquals, equals, eq}){
   function Kangaroo(name, pouch) {
     this.name = name;
@@ -399,7 +359,7 @@ test("dom", function({assert, ako, eq, equals}){
   const branding = _.chain(stooges, dom.sel("#branding", _), _.first);
   dom.omit(branding);
   equals(_.chain(branding, _.parent, _.first), null, "Removed");
-}, {tests: ako});
+});
 
 _.members && test("jQueryesque functor", function({assert, eq, ako}){
   const {ol, li, span} = dom.tags(["ol", "li", "span"]);
@@ -442,7 +402,7 @@ test("lazy-seq", function({assert, ako, equals, notEquals, eq}){
   notEquals(_.seq(nums), null);
   eq(_.toArray(nums), [0,1,2]);
   eq(_.toArray(blank), []);
-}, {tests: ako});
+});
 
 test("transducers", function({assert, eq}){
   const useFeat = location.href.indexOf("feature=next") > -1;
