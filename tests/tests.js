@@ -1118,3 +1118,60 @@ test("predicates", function({assert, equals}){
   assert(_.excludes(cinco, 11, 5, -3));
   assert(!_.includes(cinco, -1, -2, -3));
 });
+
+test("H2O: protocols as finite state machine", function({assert, throws, isSome, isNil}){
+  const IIce = _.protocol({
+    melt: null
+  });
+  const IMist = _.protocol({
+    condense: null
+  });
+  const IWater = _.protocol({
+    freeze: null,
+    vaporize: null
+  });
+
+  const {freeze, vaporize} = IWater;
+  const {condense} = IMist;
+  const {melt} = IIce;
+
+  function Ice(){}
+  function Water(){}
+  function Mist(){}
+
+  function ice(){
+    return new Ice();
+  }
+
+  function water(){
+    return new Water();
+  }
+
+  function mist(){
+    return new Mist();
+  }
+
+  $.doto(Water,
+    _.implement(IWater, {freeze: ice, vaporize: mist}));
+  $.doto(Ice,
+    _.implement(IIce, {melt: water}));
+  $.doto(Mist,
+    _.implement(IMist, {condense: water}));
+
+  const $state = $.atom(water());
+
+  //only appropriate transitions exist in various states and allowed transitions can be checked
+  assert(_.chain($state, _.deref) instanceof Water, "start with water");
+  $.swap($state, freeze);
+  assert(_.chain($state, _.deref) instanceof Ice, "water freezes to ice");
+  isSome(_.chain($state, _.deref, _.satisfies(IIce, _)), "frozen transitions allowed");
+  isNil(_.chain($state, _.deref, _.satisfies(IMist, _)), "gaseous transitions disallowed");
+  throws(function(){
+    $.swap($state, condense); //cannot condense ice, illegal action
+  }, "cannot condense that which is already condensed");
+  $.swap($state, melt);
+  assert(_.chain($state, _.deref) instanceof Water, "ice melts to water");
+  $.swap($state, vaporize);
+  assert(_.chain($state, _.deref) instanceof Mist, "water vaporizes to mist");
+  assert(_.chain($state, _.deref, _.satisfies(IMist, _)), "mist has the behavior of mist");
+});
