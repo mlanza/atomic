@@ -1119,11 +1119,11 @@ test("predicates", function({assert, equals}){
   assert(!_.includes(cinco, -1, -2, -3));
 });
 
-test("H2O: protocols as finite state machine", function({assert, throws, isSome, isNil}){
+test("H2O: protocols as finite state machine, temperature-assumed model", function({assert, throws, isSome, isNil}){
   const IIce = _.protocol({
     melt: null
   });
-  const IMist = _.protocol({
+  const ISteam = _.protocol({
     condense: null
   });
   const IWater = _.protocol({
@@ -1132,12 +1132,12 @@ test("H2O: protocols as finite state machine", function({assert, throws, isSome,
   });
 
   const {freeze, vaporize} = IWater;
-  const {condense} = IMist;
+  const {condense} = ISteam;
   const {melt} = IIce;
 
   function Ice(){}
   function Water(){}
-  function Mist(){}
+  function Steam(){}
 
   function ice(){
     return new Ice();
@@ -1147,16 +1147,16 @@ test("H2O: protocols as finite state machine", function({assert, throws, isSome,
     return new Water();
   }
 
-  function mist(){
-    return new Mist();
+  function steam(){
+    return new Steam();
   }
 
   $.doto(Water,
-    _.implement(IWater, {freeze: ice, vaporize: mist}));
+    _.implement(IWater, {freeze: ice, vaporize: steam}));
   $.doto(Ice,
     _.implement(IIce, {melt: water}));
-  $.doto(Mist,
-    _.implement(IMist, {condense: water}));
+  $.doto(Steam,
+    _.implement(ISteam, {condense: water}));
 
   const $state = $.atom(water());
 
@@ -1165,13 +1165,74 @@ test("H2O: protocols as finite state machine", function({assert, throws, isSome,
   $.swap($state, freeze);
   assert(_.chain($state, _.deref) instanceof Ice, "water freezes to ice");
   isSome(_.chain($state, _.deref, _.satisfies(IIce, _)), "frozen transitions allowed");
-  isNil(_.chain($state, _.deref, _.satisfies(IMist, _)), "gaseous transitions disallowed");
+  isNil(_.chain($state, _.deref, _.satisfies(ISteam, _)), "gaseous transitions disallowed");
   throws(function(){
     $.swap($state, condense); //cannot condense ice, illegal action
   }, "cannot condense that which is already condensed");
   $.swap($state, melt);
   assert(_.chain($state, _.deref) instanceof Water, "ice melts to water");
   $.swap($state, vaporize);
-  assert(_.chain($state, _.deref) instanceof Mist, "water vaporizes to mist");
-  assert(_.chain($state, _.deref, _.satisfies(IMist, _)), "mist has the behavior of mist");
+  assert(_.chain($state, _.deref) instanceof Steam, "water vaporizes to steam");
+  assert(_.chain($state, _.deref, _.satisfies(ISteam, _)), "steam has the behavior of steam");
+});
+
+test("H2O: protocols as finite state machine, temperature-specified model", function({assert, throws, isSome, isNil}){
+  const IH2O = _.protocol({
+    heat: null,
+    cool: null
+  });
+
+  function Ice(celcius){
+    this.celcius = celcius;
+  }
+  function Water(celcius){
+    this.celcius = celcius;
+  }
+  function Steam(celcius){
+    this.celcius = celcius;
+  }
+
+  function temp(self){ //exported for use w/ water
+    const {celcius} = self;
+    return celcius;
+  }
+
+  function water(celcius){ //constructor ensure valid state
+    if (celcius <= 0) {
+      return new Ice(celcius);
+    } else if (celcius >= 100) {
+      return new Steam(celcius);
+    } else {
+      return new Water(celcius);
+    }
+  }
+
+  const heat = _.partly(function(self, increase){
+    return water(temp(self) + increase);
+  })
+
+  const cool = _.partly(function(self, decrease){
+    return water(temp(self) - decrease);
+  });
+
+  $.doto(Water,
+    _.implement(IH2O, {heat, cool}));
+  $.doto(Ice,
+    _.implement(IH2O, {heat, cool}));
+  $.doto(Steam,
+    _.implement(IH2O, {heat, cool}));
+
+  const $state = $.atom(water(10));
+
+  //heat/cool are readily available in all stages
+  assert(_.chain($state, _.deref) instanceof Water, "start with water");
+  $.swap($state, cool(_, 20));
+  assert(_.chain($state, _.deref) instanceof Ice, "water cools to ice");
+  isSome(_.chain($state, _.deref, _.satisfies(IH2O, _)), "all states use H2O protocol");
+  $.swap($state, cool(_, 10)); //ice remains ice
+  assert(_.chain($state, _.deref) instanceof Ice, "ice cools to ice");
+  $.swap($state, heat(_, 50));
+  assert(_.chain($state, _.deref) instanceof Water, "ice melts to water");
+  $.swap($state, heat(_, 100));
+  assert(_.chain($state, _.deref) instanceof Steam, "water vaporizes to steam");
 });
