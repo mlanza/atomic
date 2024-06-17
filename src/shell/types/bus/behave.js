@@ -1,8 +1,8 @@
 import * as _ from "atomic/core";
 import * as p from "../../protocols/concrete.js";
-import {IDispatch, IMiddleware, ICollection} from "../../protocols.js";
+import {IDispatch, IMiddleware} from "../../protocols.js";
 
-function conj(self, middleware){
+function addMiddleware(self, middleware){
   p.conj(self.middlewares, middleware);
 }
 
@@ -19,6 +19,5 @@ function dispatch(self, message){
 
 export default _.does(
   _.keying("Bus"),
-  _.implement(ICollection, {conj}),
   _.implement(IDispatch, {dispatch}),
-  _.implement(IMiddleware, {handle}));
+  _.implement(IMiddleware, {handle, addMiddleware}));

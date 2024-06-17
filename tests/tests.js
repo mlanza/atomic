@@ -1236,3 +1236,41 @@ test("H2O: protocols as finite state machine, temperature-specified model", func
   $.swap($state, heat(_, 100));
   assert(_.chain($state, _.deref) instanceof Steam, "water vaporizes to steam");
 });
+
+test("Turnstile: protocols as finite state machine", function({assert, throws, isSome, isNil}){
+  const ITurnstile = _.protocol({
+    coin: null,
+    push: null
+  });
+
+  const {coin, push} = ITurnstile;
+
+  function LockedTurnstile(){}
+  function UnlockedTurnstile(){}
+
+  function locked(){
+    return new LockedTurnstile();
+  }
+  function unlocked(){
+    return new UnlockedTurnstile();
+  }
+
+  $.doto(LockedTurnstile,
+    _.implement(ITurnstile, {coin: unlocked}));
+  $.doto(UnlockedTurnstile,
+    _.implement(ITurnstile, {push: locked}));
+
+  const turnstile = _.satisfies(ITurnstile, _),
+        pushable = _.satisfies(ITurnstile, "push", _),
+        payable = _.satisfies(ITurnstile, "coin", _);
+
+  const ts0 = locked();
+  assert(!pushable(ts0), "cannot push a locked turnstile");
+  assert(payable(ts0), "can pay a locked turnstile");
+  assert(turnstile(ts0), "behaves as turnstile");
+  const ts1 = _.chain(ts0, coin);
+  assert(ts1 instanceof UnlockedTurnstile, "unlocks after receiving coin");
+  assert(pushable(ts1), "can push an unlocked turnstile");
+  assert(!payable(ts1), "cannot pay an unlocked turnstile");
+  assert(turnstile(ts1), "behaves as turnstile");
+});
