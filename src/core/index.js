@@ -82,6 +82,7 @@ function cleanlyN(f, ...args){
 
 export const cleanly = overload(null, curry(cleanlyN, 2), cleanlyN);
 
+//#if _EXPERIMENTAL
 export function grab(self, path){
   const keys = toArray(path);
   let obj = self;
@@ -91,7 +92,6 @@ export function grab(self, path){
   return obj;
 }
 
-//#if _EXPERIMENTAL
 export function edit(self, key, f){
   return editIn(self, [key], f);
 }
