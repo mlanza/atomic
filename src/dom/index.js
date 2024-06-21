@@ -151,30 +151,6 @@ export function hasClass(self, name){
   return self.classList.contains(name);
 }
 
-function mount3(render, config, el){
-  return mount4(_.constantly(null), render, config, el);
-}
-
-function mount4(create, render, config, el){
-  config.what && $.trigger(el, config.what + ":installing", {bubbles: true, detail: {config}});
-  $.trigger(el, "installing", {bubbles: true, detail: {config}});
-
-  const bus = create(config),
-        detail = {config, bus};
-
-  el |> $.on(?, "mounting mounted", function(e){
-    Object.assign(e.detail, detail);
-  });
-  el |> render(?, config, bus);
-  el |> mounts;
-
-  config.what && $.trigger(el, config.what + ":installed", {bubbles: true, detail});
-  $.trigger(el, "installed", {bubbles: true, detail});
-  return bus;
-}
-
-export const mount = _.overload(null, null, null, mount3, mount4);
-
 export const markup = _.obj(function(name, ...contents){
   const attrs = _.map(function(entry){
     return _.template("{0}=\"{1}\"", _.key(entry), _.replace(_.val(entry), /"/g, '&quot;'));
