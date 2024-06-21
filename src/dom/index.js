@@ -129,12 +129,12 @@ function removeStyle3(self, key, value) {
 
 export const removeStyle = _.overload(null, null, removeStyle2, removeStyle3);
 
-export function addClass(self, name){
-  self.classList.add(name);
+export function addClass(self, ...names){
+  self.classList.add(...names);
 }
 
-export function removeClass(self, name){
-  self.classList.remove(name);
+export function removeClass(self, ...names){
+  self.classList.remove(...names);
 }
 
 function toggleClass2(self, name){
