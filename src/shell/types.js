@@ -7,6 +7,8 @@ export * from "./types/cursor.js";
 export * from "./types/object.js";
 export * from "./types/observable.js";
 export * from "./types/observer.js";
+export * from "./types/persistent-map.js";
+export * from "./types/persistent-set.js";
 export * from "./types/subject.js";
 export * from "./types/bus.js";
 export * from "./types/command.js";

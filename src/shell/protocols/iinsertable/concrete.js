@@ -16,7 +16,7 @@ function beforeN(self, ...els) {
   let ref = self;
   while (els.length) {
     let el = els.pop();
-    ITransientInsertable.before(ref, el);
+    IInsertable.before(ref, el);
     ref = el;
   }
 }

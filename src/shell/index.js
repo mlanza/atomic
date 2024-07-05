@@ -15,10 +15,25 @@ export * from "./protocols.js";
 export * from "./protocols/concrete.js";
 export * from "./effects.js";
 export {doto, rand, randNth, shuffle, specify, implement, uid, guid} from "atomic/core"; //reexport side effecting ops
-
 import {behaviors} from "./behaviors.js";
+import {nativeMap} from "./types/map.js";
 export * from "./behaviors.js";
 export const behave = _.behaves(behaviors, ?);
+
+function into2(to, from){
+  return _.reduce(function(memo, value){
+    p.conj(memo, value);
+    return memo;
+  }, to, from);
+}
+function into3(to, xform, from){
+  return _.transduce(xform, function(memo, value){
+    p.conj(memo, value);
+    return memo;
+  }, to, from);
+}
+
+export const into = _.overload(null, null, into2, into3);
 
 export function collect(atom){
   return function(value){ //return observer
@@ -43,7 +58,7 @@ function connectN(source){
 ISubscribe.transducing = connect3;
 
 export const connect = _.overload(null, null, connect2, connect3, connectN); //returns `unsub` fn
-export const map = shared(atom, Observable.map);
+export const map = _.overload(nativeMap, nativeMap, shared(atom, Observable.map));
 export const then = shared(atom, Observable.resolve, Observable.map);
 export const interact = shared(atom, Observable.interact);
 export const fromEvent = shared(subject, Observable.fromEvent);

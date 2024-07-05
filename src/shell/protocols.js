@@ -4,8 +4,6 @@ export * from "./protocols/isubscribe/instance.js";
 export * from "./protocols/idispatch/instance.js";
 export * from "./protocols/ieventprovider/instance.js";
 export * from "./protocols/imiddleware/instance.js";
-export * from "./protocols/ipersistent/instance.js";
-export * from "./protocols/itransient/instance.js";
 export * from "./protocols/icollection/instance.js";
 export * from "./protocols/iemptyablecollection/instance.js";
 export * from "./protocols/iassociative/instance.js";

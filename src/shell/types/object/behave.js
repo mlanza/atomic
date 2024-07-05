@@ -1,5 +1,5 @@
 import * as _ from "atomic/core";
-import {IPersistent, IOmissible, IAssociative, IEmptyableCollection, ICollection, IMap} from "../../protocols.js";
+import {IOmissible, IAssociative, IEmptyableCollection, ICollection, IMap} from "../../protocols.js";
 
 function omit(self, entry){
   const key = _.key(entry);
@@ -32,12 +32,7 @@ function empty(self){
   }
 }
 
-function persistent(self){
-  return self;
-}
-
 export default _.does(
-  _.implement(IPersistent, {persistent}),
   _.implement(ICollection, {conj}),
   _.implement(IEmptyableCollection, {empty}),
   _.implement(IAssociative, {assoc}),

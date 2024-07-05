@@ -4,8 +4,6 @@ export * from "./isubscribe/concrete.js";
 export * from "./idispatch/concrete.js";
 export * from "./ieventprovider/concrete.js";
 export * from "./imiddleware/concrete.js";
-export * from "./ipersistent/concrete.js";
-export * from "./itransient/concrete.js";
 export * from "./iassociative/concrete.js";
 export * from "./imap/concrete.js";
 export * from "./iset/concrete.js";
