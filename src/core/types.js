@@ -31,6 +31,8 @@ export * from "./types/rev-seq.js";
 export * from "./types/series.js";
 export * from "./types/set.js";
 export * from "./types/map.js";
+export * from "./types/persistent-map.js";
+export * from "./types/persistent-set.js";
 export * from "./types/weak-map.js";
 export * from "./types/symbol.js";
 export * from "./types/string.js";

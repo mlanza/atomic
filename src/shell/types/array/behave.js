@@ -1,5 +1,5 @@
 import * as _ from "atomic/core";
-import {IPersistent, IMap, IInsertable, IEmptyableCollection, IReversible, IOmissible, IAssociative, IAppendable, IPrependable, ICollection} from "../../protocols.js";
+import {IMap, IInsertable, IEmptyableCollection, IReversible, IOmissible, IAssociative, IAppendable, IPrependable, ICollection} from "../../protocols.js";
 
 function before(self, reference, inserted){
   const pos = self.indexOf(reference);
@@ -49,12 +49,7 @@ function omit(self, value){
   }
 }
 
-function persistent(self){
-  return self;
-}
-
 export default _.does(
-  _.implement(IPersistent, {persistent}),
   _.implement(IInsertable, {before, after}),
   _.implement(ICollection, {conj: append, unconj}),
   _.implement(IEmptyableCollection, {empty}),

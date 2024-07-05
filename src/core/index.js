@@ -2,6 +2,7 @@ import {foldkv, overload, partial, unary, type, curry, toggles, identity, obj, p
 import {ICoercible, IForkable, IDeref, IFn, IAssociative, ICloneable, IHierarchy, ILookup, ISeq} from "./protocols.js";
 import {set, maybe, toArray, opt, satisfies, spread, duration, remove, sort, flip, realized, apply, realize, isNil, reFindAll, mapkv, period, selectKeys, mapVals, reMatches, test, date, emptyList, cons, list, days, recurrence, emptyArray} from "./types.js";
 import {isBlank, str, replace} from "./types/string.js";
+import {persistentSet, PersistentSet} from "./types/persistent-set/construct.js";
 import {isSome} from "./types/nil.js";
 import _config from "./config.js";
 import {implement, specify, behaves} from "./types/protocol/concrete.js";
@@ -133,22 +134,18 @@ export function deconstruct(dur, ...units){
 
 function distinct0(){ //transducer
   return function(rf){
-    const seen = new Set();
+    let seen = persistentSet();
     return overload(rf, rf, function(memo, value){
-      if (seen.has(value)) {
+      if (p.includes(seen, value)) {
         return memo;
       }
-      seen.add(value);
+      seen = p.conj(seen, value);
       return rf(memo, value);
     });
   }
 }
 
-function distinct1(xs){
-  return p.coerce(new Set(p.coerce(xs, Array)), Array);
-}
-
-export const distinct = overload(distinct0, distinct1);
+export const distinct = overload(distinct0, persistentSet);
 export const unique = distinct;
 
 export const second = branch(satisfies(ISeq, ?), comp(ISeq.first, ISeq.rest), p.prop("second"));
@@ -343,7 +340,9 @@ function reduceToArray(self){
   }, [], self);
 }
 
+ICoercible.addMethod([PersistentSet, Array], into([], ?));
 ICoercible.addMethod([Set, Array], unary(Array.from));
+ICoercible.addMethod([Array, PersistentSet], into(set([]), ?));
 ICoercible.addMethod([Array, Set], unary(set));
 ICoercible.addMethod([Number, String], unary(str));
 ICoercible.addMethod([Number, Date], unary(date));

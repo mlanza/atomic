@@ -4,7 +4,6 @@ import {IHashable, ISet, IMergable, IMap, IEquiv, IReducible, IKVReducible, IInc
 import {reduced} from "../reduced.js";
 import {keying} from "../../protocols/imapentry/concrete.js";
 import {hashSeq as hash} from "../../protocols/ihashable/hashers.js";
-import {set, emptySet} from "./construct.js";
 import {lazyIterable} from "../lazy-seq/concrete.js";
 import {iequiv} from "../empty-list/behave.js";
 import * as p from "../../protocols/concrete.js";
@@ -15,7 +14,7 @@ function seq(self){
 }
 
 function empty(self){
-  return emptySet();
+  return new Set();
 }
 
 function disj(self, value){
@@ -53,7 +52,7 @@ function clone(self){
 }
 
 function merge(self, other){
-  return set([...self, ...other]);
+  return new Set([...self, ...other]);
 }
 
 function equiv(self, other){

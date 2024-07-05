@@ -59,8 +59,8 @@ export function assocIn(self, keys, value){
   switch (keys.length) {
     case 1:
       assoc(self, key, value);
+      break;
     default:
       assoc(self, key, assocIn(_.get(self, key), _.toArray(_.rest(keys)), value));
   }
 }
-

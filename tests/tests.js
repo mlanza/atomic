@@ -50,6 +50,58 @@ tests(function(tests){ //common
 });
 
 //tests
+test("persistent maps", function({assert, eq, isNil}){
+  const v1 = _.map([
+    [[1, 2], "Harvey"],
+    [[3, 4], "Mike"],
+    [[5, 6], "Jessica"],
+    [{princess: true}, "Megan"],
+    [{princess: true}, "Rachel"]
+  ]);
+  const v2 = _.chain(v1,
+    _.dissoc(_, [5, 6]));
+
+  const kvs1 = _.reducekv(_.conj, [], v2);
+  const kvs2 = _.reduce(function(memo, [key, val]){
+    return _.conj(memo, key, val);
+  }, [], v2);
+
+  eq(_.get(v2, [1, 2]), "Harvey");
+  eq(_.get(v2, [3, 4]), "Mike");
+  eq(_.get(v2, {princess: true}), "Rachel");
+  eq(_.get(v1, [5, 6]), "Jessica");
+  isNil(_.get(v2, [5, 6]));
+  eq(_.count(v1), 4);
+  eq(_.count(v2), 3);
+  eq(kvs1, kvs2);
+});
+
+test("persistent sets", function({assert, eq, isNil}){
+  const v1 = _.persistentSet([
+      [1, 2],
+      [3, 4],
+      [5, 6],
+      {princess: true},
+      {princess: true}]);
+
+  const v2 = _.chain(v1,
+    _.disj(_, [5, 6]));
+
+  const vals = _.reduce(_.conj, [], v2);
+
+  assert(_.includes(v2, [1, 2]));
+  assert(_.includes(v2, [3, 4]));
+  assert(_.includes(v2, {princess: true}));
+  assert(_.includes(v1, [5, 6]));
+  assert(!_.includes(v2, [5, 6]));
+  eq(_.count(v1), 4);
+  eq(_.count(v2), 3);
+  eq(vals, [
+    [1, 2],
+    [3, 4],
+    {princess: true}]);
+});
+
 test("inheritance chain", function({assert, equals}){
   function Person(fname, lname){
     this.fname = fname;

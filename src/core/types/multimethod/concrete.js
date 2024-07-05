@@ -1,9 +1,6 @@
-import {hash} from "../../protocols/ihashable/concrete.js";
+import {IAssociative} from "../../protocols/iassociative/instance.js";
 
 export function addMethod(self, key, handler){
-  const hashcode = hash(key);
   const mm = self.behavior ? self.behavior : self;
-  const potentials = (mm.methods[hashcode] = mm.methods[hashcode] || []);
-  potentials.push([key, handler]);
-  return self;
+  mm.methods = IAssociative.assoc(mm.methods, key, handler);
 }
