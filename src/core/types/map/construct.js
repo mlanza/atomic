@@ -13,4 +13,4 @@ function map0(){
   return new Map();
 }
 
-export const hashMap = overload(map0, map1); //cannot reuse `map`
+export const nativeMap = overload(map0, map1); //cannot reuse `map`
