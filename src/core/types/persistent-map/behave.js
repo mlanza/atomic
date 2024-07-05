@@ -15,7 +15,7 @@ function getHashIndex(self, key){
   const h = hash(key);
   const candidates = self.mapped[h] || null;
   const idx = detectIndex(function([k, v]){
-    return p.equiv(key, k);
+    return self.equals(key, k);
   }, candidates);
   return {h, idx, candidates};
 }
@@ -33,7 +33,7 @@ function assoc(self, key, value){
     p.assoc(self.mapped, h, [[key, value]]) :
     idx == null ? p.update(self.mapped, h, p.conj(?, [key, value])) : p.assocIn(self.mapped, [h, idx], [key, value]);
   const length = idx == null ? self.length + 1 : self.length;
-  return new PersistentMap(mapped, length);
+  return new PersistentMap(mapped, length, self.equals);
 }
 
 function lookup(self, key){
@@ -51,11 +51,11 @@ function dissoc(self, key){
     return self;
   }
   if (p.count(candidates) === 1) {
-    return new PersistentMap(p.dissoc(self.mapped, h), self.length - 1);
+    return new PersistentMap(p.dissoc(self.mapped, h), self.length - 1, self.equals);
   }
   return new PersistentMap(p.assoc(self.mapped, h, filtera(function([k, v]){
-    return !p.equiv(key, k);
-  }, candidates)), self.length - 1);
+    return !self.equals(key, k);
+  }, candidates)), self.length - 1, self.equals);
 }
 
 function keys(self){
@@ -72,7 +72,7 @@ function contains(self, key) {
 }
 
 function includes(self, [key, val]){
-  return contains(self, key) && p.equiv(val, lookup(self, key));
+  return contains(self, key) && self.equals(val, lookup(self, key));
 }
 
 function seq(self){

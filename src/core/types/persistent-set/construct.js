@@ -5,9 +5,9 @@ export function PersistentSet(coll){
   this.coll = coll;
 }
 
-export function persistentSet(xs = []){
+export function persistentSet(xs = [], equals = p.equiv){
   const ys = Array.from(xs);
-  const set = new PersistentSet(persistentMap());
+  const set = new PersistentSet(persistentMap([], equals));
   return ys.length ? p.conj(set, ...ys) : set;
 }
 
