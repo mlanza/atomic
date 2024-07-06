@@ -132,22 +132,25 @@ export function deconstruct(dur, ...units){
   }, units);
 }
 
-function distinct0(){ //transducer
-  return function(rf){
-    let seen = persistentSet();
-    return overload(rf, rf, function(memo, value){
-      if (p.includes(seen, value)) {
-        return memo;
-      }
-      seen = p.conj(seen, value);
-      return rf(memo, value);
-    });
+export function distinctly(equals){
+  function distinct0(){ //transducer
+    return function(rf){
+      let seen = persistentSet([], equals);
+      return overload(rf, rf, function(memo, value){
+        if (p.includes(seen, value)) {
+          return memo;
+        }
+        seen = p.conj(seen, value);
+        return rf(memo, value);
+      });
+    }
   }
+  const distinct1 = persistentSet(?, equals);
+  return overload(distinct0, distinct1);
 }
 
-export const distinct = overload(distinct0, persistentSet);
+export const distinct = distinctly(p.equiv);
 export const unique = distinct;
-
 export const second = branch(satisfies(ISeq, ?), comp(ISeq.first, ISeq.rest), p.prop("second"));
 
 export function expands(f){
