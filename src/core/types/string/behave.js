@@ -1,4 +1,4 @@
-import {ICloneable, IHashable, IIndexed, IBlankable, ISplittable, ITemplate, ICoercible, IReducible, IKVReducible, ICollection, ISeqable, ISeq, IInclusive, IAppendable, IPrependable, ILookup, IFn, IComparable, IEmptyableCollection} from "../../protocols.js";
+import {ICloneable, IHashable, IIndexed, IBlankable, ISplittable, ITemplate, IReducible, IKVReducible, ICollection, ISeqable, ISeq, IInclusive, IAppendable, IPrependable, ILookup, IFn, IComparable, IEmptyableCollection} from "../../protocols.js";
 import {does, identity, constantly, unbind, overload, isString} from "../../core.js";
 import {implement} from "../protocol.js";
 import {lazySeq} from "../lazy-seq/construct.js";

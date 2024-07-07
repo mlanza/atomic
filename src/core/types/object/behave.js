@@ -1,6 +1,6 @@
 import {does, identity, constructs, branch, overload, isString} from "../../core.js";
 import {implement} from "../protocol.js";
-import {IHashable, IMergable, IBlankable, ICompactible, IComparable, IOmissible, ICollection, IEquiv, IReducible, IKVReducible, ISeqable, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, IFn, IMap, ISeq, ICoercible, ICloneable, IInclusive, ITemplate} from "../../protocols.js";
+import {IHashable, IMergable, IBlankable, ICompactible, IComparable, IOmissible, ICollection, IEquiv, IReducible, IKVReducible, ISeqable, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, IFn, IMap, ISeq, ICloneable, IInclusive, ITemplate} from "../../protocols.js";
 import {reduced} from "../reduced.js";
 import {lazySeq, into, map} from "../lazy-seq.js";
 import {cons} from "../list.js";

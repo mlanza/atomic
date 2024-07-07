@@ -1,6 +1,6 @@
 import {invoke} from "../../protocols/ifn/concrete.js";
 import {persistentMap} from "../../types/persistent-map/construct.js";
-import {partial} from "../../core.js";
+import {partial, type} from "../../core.js";
 
 export function Multimethod(dispatch, methods, fallback){
   this.dispatch = dispatch;

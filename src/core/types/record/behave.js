@@ -2,14 +2,16 @@ import {doto, overload, constructs, fold, multi, constantly, identity} from "../
 import {implement} from "../protocol.js";
 import {reduced} from "../reduced/construct.js";
 import {is} from "../../protocols/imapentry/concrete.js";
+import {addMethod} from "../multimethod/concrete.js";
 import {map, mapcat, detect, concatenated} from "../lazy-seq.js";
 import {maybe} from "../just/construct.js";
-import {ITopic, ICloneable, ICoercible, IReducible, IKVReducible, IEquiv, IAssociative, ISeqable, ILookup, ICounted, IMap, ISeq, IEmptyableCollection} from "../../protocols.js";
+import {ITopic, ICloneable, IReducible, IKVReducible, IEquiv, IAssociative, ISeqable, ILookup, ICounted, IMap, ISeq, IEmptyableCollection} from "../../protocols.js";
 import {keying} from "../../protocols/imapentry/concrete.js";
 import {isObject} from "../object/concrete.js";
 import {isArray} from "../array/concrete.js";
 import {array} from "../array/construct.js";
 import {includes} from "../object/protocols.js";
+import {coerce} from "../../coerce.js";
 import * as p from "./protocols.js";
 import behave from "../object/behave.js";
 
@@ -57,14 +59,14 @@ export function record(Type){
   function dissoc(self, key){
     const copy = p.clone(self);
     delete copy[key];
-    return includes(Object.keys(new Type()), key) ? p.coerce(copy, Object) : copy;
+    return includes(Object.keys(new Type()), key) ? coerce(copy, Object) : copy;
   }
 
   const retract = overload(null, null, p.dissoc, retract3);
   const make = constructs(Type);
 
-  ICoercible.addMethod([Object, Type], make);
-  ICoercible.addMethod([Type, Object], attrs => Object.assign({}, attrs));
+  addMethod(coerce, [Object, Type], make);
+  addMethod(coerce, [Type, Object], attrs => Object.assign({}, attrs));
 
   doto(Type,
     behave,
@@ -116,7 +118,7 @@ export function multirecord(Type, {defaults, multiple} = {defaults: constantly([
   function dissoc(self, key){
     const copy = p.clone(self);
     delete copy[key];
-    return includes(Object.keys(new Type()), key) ? p.coerce(copy, Object) : copy;
+    return includes(Object.keys(new Type()), key) ? coerce(copy, Object) : copy;
   }
 
   const retract = overload(null, null, p.dissoc, retract3);

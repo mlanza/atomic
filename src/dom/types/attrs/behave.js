@@ -63,9 +63,11 @@ function empty(self){
 
 export default _.does(
   _.keying("Attrs"),
-  _.ICoercible.addMethod(_.array(?, Array), function(self){
-    return _.toArray(next2(self, 0));
-  }),
+  function(Type){
+    _.addMethod(_.coerce, [Type, Array], function(self){
+      return _.toArray(next2(self, 0));
+    })
+  },
   _.implement(_.ICounted, {count}),
   _.implement(_.ISeqable, {seq}),
   _.implement(_.ISeq, {first, rest}),

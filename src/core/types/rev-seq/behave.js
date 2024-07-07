@@ -3,7 +3,7 @@ import {implement} from "../protocol.js";
 import {EmptyList, emptyList} from "../../types/empty-list/construct.js";
 import {cons} from "../../types/list/construct.js";
 import {range} from "../../types/range/construct.js";
-import {ISequential, ICoercible, ILookup, IMap, ICloneable, IReducible, IKVReducible, ICollection, IEmptyableCollection, ISeq, ICounted, ISeqable, IIndexed} from "../../protocols.js";
+import {ISequential, ILookup, IMap, ICloneable, IReducible, IKVReducible, ICollection, IEmptyableCollection, ISeq, ICounted, ISeqable, IIndexed} from "../../protocols.js";
 import {revSeq} from "./construct.js";
 import {iterable} from "../lazy-seq/behave.js";
 import {map} from "../lazy-seq/concrete.js";

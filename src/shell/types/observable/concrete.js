@@ -264,8 +264,10 @@ function fromSource(source){ //can be used to cover a source making it readonly
   return observable(sub(source, ?));
 }
 
+export const fromEvent = chan;
+
 export function toObservable(self){
-  const f = _.satisfies(_.ICoercible, "toObservable", self);
+  const f = _.method(_.coerce, self, Observable);
   if (f) {
     return f(self);
   } else if (_.satisfies(ISubscribe, "sub", self)) {
@@ -275,12 +277,7 @@ export function toObservable(self){
   }
 }
 
-_.extend(_.ICoercible, {toObservable: null});
+_.addMethod(_.coerce, [Observable, Observable], _.identity);
+_.addMethod(_.coerce, [Promise, Observable], fromPromise);
 
-_.doto(Observable,
-  _.implement(_.ICoercible, {toObservable: _.identity}));
-
-_.doto(Promise,
-  _.implement(_.ICoercible, {toObservable: fromPromise}));
-
-Object.assign(Observable, {latest, map, hist, splay, indexed, computed, fromSource, fromEvent: chan, fromPromise, interact, fixed, tick, when, resolve, toggles});
+Object.assign(Observable, {latest, map, hist, splay, indexed, computed, fromSource, fromEvent, fromPromise, interact, fixed, tick, when, resolve, toggles});

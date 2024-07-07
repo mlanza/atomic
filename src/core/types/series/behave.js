@@ -1,6 +1,6 @@
 import {does, constructs} from "../../core.js";
 import {implement} from "../protocol.js";
-import {ICoercible, IReducible, ISeqable, ISeq, IInclusive, IAppendable, IPrependable, ICounted, ISequential, IEmptyableCollection} from "../../protocols.js";
+import {IReducible, ISeqable, ISeq, IInclusive, IAppendable, IPrependable, ICounted, ISequential, IEmptyableCollection} from "../../protocols.js";
 import {iterable} from "../lazy-seq/behave.js";
 import * as p from "./protocols.js";
 import {keying} from "../../protocols/imapentry/concrete.js";
