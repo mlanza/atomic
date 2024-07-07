@@ -2,7 +2,7 @@ import {isPromise} from "./construct.js";
 import {fmap} from "../../protocols/ifunctor/concrete.js";
 import {fork} from "../../protocols/iforkable/concrete.js";
 import {detect} from "../lazy-seq/concrete.js"
-import {coerce} from "../../protocols/icoercible/concrete.js";
+import {coerce} from "../../coerce.js";
 
 export const toPromise = coerce(?, Promise);
 

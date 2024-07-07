@@ -1,6 +1,6 @@
 import {does} from "../../core.js";
 import {implement} from "../protocol.js";
-import {ICoercible, IInversive, ISequential, IEquiv, IReducible, IKVReducible, ISeqable, ICounted, ISeq, IInclusive, IIndexed} from "../../protocols.js";
+import {IInversive, ISequential, IEquiv, IReducible, IKVReducible, ISeqable, ICounted, ISeq, IInclusive, IIndexed} from "../../protocols.js";
 import {drop} from "../lazy-seq.js";
 import {iterable} from "../lazy-seq/behave.js";
 import {emptyable} from "../record/behave.js";

@@ -1,9 +1,10 @@
 import {overload, comp, constructs, branch} from "../../core.js";
 import {mult} from "../../protocols/imultipliable/concrete.js";
 import {isNumber} from "../number/concrete.js";
+import {coerce} from "../../coerce.js";
 import * as p from "./protocols.js";
 
-export const toDuration = p.coerce(?, Duration);
+export const toDuration = coerce(?, Duration);
 
 export function Duration(units){
   this.units = units;

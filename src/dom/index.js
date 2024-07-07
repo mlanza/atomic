@@ -205,9 +205,7 @@ export const option = _.assume(isHTMLDocument, document, _.overload(null, null, 
   return element(document, "option", {value: key}, value);
 }));
 
-_.extend(_.ICoercible, {toFragment: null});
-
-export const toFragment = _.ICoercible.toFragment;
+export const toFragment = _.coerce(?, DocumentFragment);
 
 (function(){
 
@@ -219,8 +217,9 @@ export const toFragment = _.ICoercible.toFragment;
     return (doc || document).createRange().createContextualFragment(self);
   }
 
+  _.addMethod(_.coerce, [String, DocumentFragment], toFragment);
+
   _.doto(String,
-    _.implement(_.ICoercible, {toFragment}),
     _.implement(IEmbeddable, {embeddables}));
 
 })();
@@ -256,17 +255,18 @@ export const toFragment = _.ICoercible.toFragment;
     return (doc || document).createRange().createContextualFragment("");
   };
 
+  _.addMethod(_.coerce, [_.Nil, DocumentFragment], toFragment);
+
   _.doto(_.Nil,
-    _.implement(_.ICoercible, {toFragment}),
     _.implement(IEmbeddable, {embeddables: _.emptyList}));
 
 })();
 
-_.ICoercible.addMethod([NodeList, Array], Array.from);
-_.ICoercible.addMethod([T.SpaceSeparated, Array], _.comp(Array.from, _.seq));
-_.ICoercible.addMethod([T.NestedAttrs, Object], _.deref);
-_.ICoercible.addMethod([URLSearchParams, Object], _.into({}, ?));
-_.ICoercible.addMethod([Object, URLSearchParams], function(obj){
+_.addMethod(_.coerce, [NodeList, Array], Array.from);
+_.addMethod(_.coerce, [T.SpaceSeparated, Array], _.comp(Array.from, _.seq));
+_.addMethod(_.coerce, [T.NestedAttrs, Object], _.deref);
+_.addMethod(_.coerce, [URLSearchParams, Object], _.into({}, ?));
+_.addMethod(_.coerce, [Object, URLSearchParams], function(obj){
   const params = new URLSearchParams();
   for(const [key, value] of Object.entries(obj)){
     params.set(key, value);

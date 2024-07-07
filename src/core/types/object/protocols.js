@@ -13,4 +13,3 @@ export * from "../../protocols/iseqable/concrete.js";
 export * from "../../protocols/iinclusive/concrete.js";
 export * from "../../protocols/iemptyablecollection/concrete.js";
 export * from "../../protocols/ifn/concrete.js";
-export * from "../../protocols/icoercible/concrete.js";

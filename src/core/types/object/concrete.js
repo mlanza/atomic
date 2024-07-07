@@ -4,10 +4,11 @@ import {reducing} from "../../protocols/ireducible/concrete.js";
 import {overload, branch, isFunction} from "../../core.js";
 import {satisfies} from "../protocol/concrete.js";
 import {emptyObject} from "./construct.js";
+import {coerce} from "../../coerce.js";
 import * as p from "./protocols.js";
 import {is} from "../../protocols/imapentry/concrete.js";
 
-export const toObject = p.coerce(?, Object);
+export const toObject = coerce(?, Object);
 
 export function isObject(self){
   return is(self, Object);

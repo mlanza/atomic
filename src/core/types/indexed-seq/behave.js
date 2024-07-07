@@ -6,7 +6,7 @@ import {drop, detect, concat} from "../lazy-seq/concrete.js";
 import {emptyArray} from "../../types/array/construct.js";
 import {iequiv} from "../../types/empty-list/behave.js";
 import {iterable} from "../lazy-seq/behave.js";
-import {IHashable, ICoercible, IEquiv, IReversible, IMapEntry, IFind, IInclusive, IAssociative, IAppendable, IPrependable, ICollection, ICounted, IReducible, IKVReducible, ISeq, ISeqable, ISequential, IIndexed, ILookup, IFn, IEmptyableCollection} from "../../protocols.js";
+import {IHashable, IEquiv, IReversible, IMapEntry, IFind, IInclusive, IAssociative, IAppendable, IPrependable, ICollection, ICounted, IReducible, IKVReducible, ISeq, ISeqable, ISequential, IIndexed, ILookup, IFn, IEmptyableCollection} from "../../protocols.js";
 import * as p from "./protocols.js";
 import {keying} from "../../protocols/imapentry/concrete.js";
 import {hashKeyed as hash} from "../../protocols/ihashable/hashers.js";

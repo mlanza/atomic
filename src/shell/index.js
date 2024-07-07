@@ -179,7 +179,7 @@ export function dispatchable(Cursor){
 
 })();
 
-_.ICoercible.addMethod([Set, Array], Array.from);
+_.addMethod(_.coerce, [Set, Array], Array.from);
 
 (function(){
   function log(self, ...args){
@@ -266,3 +266,8 @@ function called2(fn, message){
 
 export const called = _.overload(null, null, called2, called3, called4);
 
+//optimizated for large sequences
+_.addMethod(_.coerce, [Array, Object], arr => into({}, arr));
+_.addMethod(_.coerce, [Object, Array], obj => into([], obj));
+_.addMethod(_.coerce, [_.PersistentSet, Array], set => into([], set));
+_.addMethod(_.coerce, [Array, _.PersistentSet], arr => into(set([]), arr));

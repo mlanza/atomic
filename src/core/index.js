@@ -1,5 +1,6 @@
 import {foldkv, overload, partial, unary, type, curry, toggles, identity, obj, partly, comp, doto, does, branch, unspread, applying, execute, noop, constantly, once, isFunction, isString, pipe} from "./core.js";
-import {ICoercible, IForkable, IDeref, IFn, IAssociative, ICloneable, IHierarchy, ILookup, ISeq} from "./protocols.js";
+import {IForkable, IDeref, IFn, IAssociative, ICloneable, IHierarchy, ILookup, ISeq} from "./protocols.js";
+import {addMethod} from "./types/multimethod/concrete.js";
 import {set, maybe, toArray, opt, satisfies, spread, duration, remove, sort, flip, realized, apply, realize, isNil, reFindAll, mapkv, period, selectKeys, mapVals, reMatches, test, date, emptyList, cons, list, days, recurrence, emptyArray} from "./types.js";
 import {isBlank, str, replace} from "./types/string.js";
 import {persistentSet, PersistentSet} from "./types/persistent-set/construct.js";
@@ -20,6 +21,9 @@ import * as T from "./types.js";
 import {extend, forward} from "./types/protocol/concrete.js";
 import {Protocol} from "./types/protocol/construct.js";
 import iprotocol from "./types/protocol/behave.js";
+import {coerce} from "./coerce.js";
+export * from "./coerce.js";
+
 iprotocol(Protocol);
 
 import {behaviors} from "./behaviors.js";
@@ -320,12 +324,6 @@ function absorb2(tgt, src){
 
 export const absorb = overload(constantly({}), identity, absorb2, p.reducing(absorb2));
 
-export function unfork(self){
-  return new Promise(function(resolve, reject){
-    p.fork(self, reject, resolve);
-  });
-}
-
 export function attempt(f, ...args){
   return Promise.all(args).then(function(args){
     try {
@@ -336,47 +334,41 @@ export function attempt(f, ...args){
   });
 }
 
-function reduceToArray(self){
-  return p.reduce(function(memo, value){
-    memo.push(value);
-    return memo;
-  }, [], self);
+export function unfork(self){
+  return new Promise(function(resolve, reject){
+    p.fork(self, reject, resolve);
+  });
 }
 
-ICoercible.addMethod([PersistentSet, Array], into([], ?));
-ICoercible.addMethod([Set, Array], unary(Array.from));
-ICoercible.addMethod([Array, PersistentSet], into(set([]), ?));
-ICoercible.addMethod([Array, Set], unary(set));
-ICoercible.addMethod([Number, String], unary(str));
-ICoercible.addMethod([Number, Date], unary(date));
-ICoercible.addMethod([T.Duration, T.Duration], identity);
-ICoercible.addMethod([T.Period, T.Duration], function(self){
+addMethod(coerce, [T.PersistentSet, Array], into([], ?));
+addMethod(coerce, [Set, Array], unary(Array.from));
+addMethod(coerce, [Array, T.PersistentSet], into(set([]), ?));
+addMethod(coerce, [Array, Set], arr => new Set(arr));
+addMethod(coerce, [Number, String], unary(str));
+addMethod(coerce, [Number, Date], unary(date));
+addMethod(coerce, [T.Duration, T.Duration], identity);
+addMethod(coerce, [T.Period, T.Duration], function(self){
   return self.end == null || self.start == null ? duration(Number.POSITIVE_INFINITY) : duration(self.end - self.start);
 });
-ICoercible.addMethod([Promise, Promise], identity);
-ICoercible.addMethod([Error, Promise], unfork);
-ICoercible.addMethod([T.Task, Promise], unfork);
-ICoercible.addMethod([Object, Object], identity);
-ICoercible.addMethod([Array, Object], function(self){
-  return p.reduce(function(memo, [key, value]){
-    memo[key] = value;
-    return memo;
-  }, {}, self);
-});
-ICoercible.addMethod([Array, Array], identity);
+addMethod(coerce, [Promise, Promise], identity);
+addMethod(coerce, [Error, Promise], unfork);
+addMethod(coerce, [T.Task, Promise], unfork);
+addMethod(coerce, [Object, Object], identity);
+addMethod(coerce, [Array, Object], into({}, ?));
+addMethod(coerce, [Array, Array], identity);
 //#if _EXPERIMENTAL
-ICoercible.addMethod([T.Right, Promise], unfork);
-ICoercible.addMethod([T.Left, Promise], unfork);
-ICoercible.addMethod([T.Okay, Promise], unfork);
+addMethod(coerce, [T.Right, Promise], unfork);
+addMethod(coerce, [T.Left, Promise], unfork);
+addMethod(coerce, [T.Okay, Promise], unfork);
 //#endif
-ICoercible.addMethod([T.Concatenated, Array], unary(Array.from));
-ICoercible.addMethod([T.EmptyList, Array], emptyArray);
-ICoercible.addMethod([T.List, Array], unary(Array.from));
-ICoercible.addMethod([Array, T.List], unary(spread(list)));
-ICoercible.addMethod([T.Range, Array], unary(Array.from));
-ICoercible.addMethod([T.Nil, Array], emptyArray);
-ICoercible.addMethod([T.IndexedSeq, Array], unary(Array.from));
-ICoercible.addMethod([T.RevSeq, Array], unary(Array.from));
-ICoercible.addMethod([T.LazySeq, Array], unary(Array.from))
-ICoercible.addMethod([Object, Array], reduceToArray);
-ICoercible.addMethod([String, Array], p.split(?, ""));
+addMethod(coerce, [T.Concatenated, Array], unary(Array.from));
+addMethod(coerce, [T.EmptyList, Array], emptyArray);
+addMethod(coerce, [T.List, Array], unary(Array.from));
+addMethod(coerce, [Array, T.List], unary(spread(list)));
+addMethod(coerce, [T.Range, Array], unary(Array.from));
+addMethod(coerce, [T.Nil, Array], emptyArray);
+addMethod(coerce, [T.IndexedSeq, Array], unary(Array.from));
+addMethod(coerce, [T.RevSeq, Array], unary(Array.from));
+addMethod(coerce, [T.LazySeq, Array], unary(Array.from))
+addMethod(coerce, [Object, Array], into([], ?));
+addMethod(coerce, [String, Array], p.split(?, ""));
