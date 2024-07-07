@@ -50,25 +50,22 @@ export function overload(){
   }
 }
 
-export function comp(){
-  const fs = arguments, start = fs.length - 2, f = fs[fs.length - 1];
-  return function(){
-    let memo = f.apply(this, arguments);
-    for(let i = start; i > -1; i--) {
-      const f = fs[i];
-      memo = f.call(this, memo);
-    }
-    return memo;
+function compN(...fs){
+  const f = fs.pop();
+  return function(...args){
+    return fs.reduceRight(function(memo, f){
+      return f.call(this, memo);
+    }, f.apply(this, args));
   }
 }
 
+export const comp = overload(constantly(identity), identity, compN);
+
 function pipeN(f, ...fs){
-  return function(){
-    let memo = f.apply(this, arguments);
-    for(const f of fs) {
-      memo = f.call(this, memo);
-    }
-    return memo;
+  return function(...args){
+    return fs.reduce(function(memo, f){
+      return f.call(this, memo);
+    }, f.apply(this, args));
   }
 }
 
@@ -385,7 +382,6 @@ export function nary(f, length){
 export function arity(f, length){
   return ([nullary, unary, binary, ternary, quaternary][length] || nary)(f, length);
 }
-
 
 export function fold(f, init, xs){
   let memo = init, to = xs.length - 1, r = {};
