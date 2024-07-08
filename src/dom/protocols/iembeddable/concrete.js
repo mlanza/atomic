@@ -6,12 +6,12 @@ import {IEmbeddable} from "./instance.js";
 export const embeddables = IEmbeddable.embeddables;
 
 function embed3(add, parent, children){
-  children
-    |> _.flatten
-    |> _.mapcat(embeddables(?, parent.ownerDocument), ?)
-    |> $.each(function(child){
-          _.isFunction(child) ? child(parent, add) : add(parent, child);
-        }, ?);
+  _.chain(children,
+    _.flatten,
+    _.mapcat(embeddables(?, parent.ownerDocument), ?),
+    $.each(function(child){
+      _.isFunction(child) ? child(parent, add) : add(parent, child);
+    }, ?));
 }
 
 function embed2(parent, children){

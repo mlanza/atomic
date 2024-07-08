@@ -1,4 +1,4 @@
-import {foldkv, overload, partial, unary, type, curry, toggles, identity, obj, partly, comp, doto, does, branch, unspread, applying, execute, noop, constantly, once, isFunction, isString, pipe} from "./core.js";
+import {foldkv, overload, partial, unary, type, curry, toggles, identity, obj, partly, comp, doto, does, branch, unspread, applying, execute, noop, constantly, once, isFunction, isString, pipe, chain} from "./core.js";
 import {IForkable, IDeref, IFn, IAssociative, ICloneable, IHierarchy, ILookup, ISeq} from "./protocols.js";
 import {addMethod} from "./types/multimethod/concrete.js";
 import {set, maybe, toArray, opt, satisfies, spread, duration, remove, sort, flip, realized, apply, realize, isNil, reFindAll, mapkv, period, selectKeys, mapVals, reMatches, test, date, emptyList, cons, list, days, recurrence, emptyArray} from "./types.js";
@@ -103,10 +103,10 @@ export function edit(self, key, f){
 
 export function editIn(self, path, f){
   const addr = p.clone(path);
-  let obj = self |> grab(?, path) |> p.clone;
+  let obj = chain(self, grab(?, path), p.clone);
   obj = f(obj) || obj; //use command or query
   while (addr.length) {
-    let parent = self |> grab(?, butlast(addr)) |> p.clone;
+    let parent = chain(self, grab(?, butlast(addr)), p.clone);
     let key = last(addr);
     parent[key] = obj;
     obj = parent;
@@ -234,10 +234,8 @@ function include3(self, value, want){
 
 export const include = overload(null, null, include2, include3);
 
-export function inventory(obj){ //can be used to expose all module exports
-  return obj |> Object.keys |> join(",\n", ?) |> str("{\n", ?, "\n}");
-}
-
+//can be used to expose all module exports
+export const inventory = pipe(Object.keys, join(",\n", ?), str("{\n", ?, "\n}"));
 export const fmt = expands(str);
 
 export function when(pred, ...xs) {
