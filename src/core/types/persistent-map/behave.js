@@ -20,7 +20,10 @@ function getHashIndex(self, key){
   return {h, idx, candidates};
 }
 
-const clone = identity;
+function clone(self){
+  return new PersistentMap(p.clone(self.mapped), self.length, self.equals);
+}
+
 const empty = constantly(persistentMap());
 
 function conj(self, [key, value]){
