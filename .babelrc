@@ -4,7 +4,6 @@
   ],
   "plugins": [
     "@babel/plugin-proposal-partial-application",
-    ["@babel/plugin-proposal-pipeline-operator", {"proposal": "fsharp"}],
-    "@babel/plugin-transform-arrow-functions"
+    ["@babel/plugin-proposal-pipeline-operator", {"proposal": "fsharp"}]
   ]
 }
