@@ -1,4 +1,4 @@
-import {does, overload} from "../../core.js";
+import {does, overload, chain} from "../../core.js";
 import {implement} from "../protocol.js";
 import {emptyable} from "../record/behave.js";
 import {Duration} from "../duration/construct.js";
@@ -22,7 +22,7 @@ function split3(self, step, n){
 const split = overload(null, null, split2, split3);
 
 function add(self, dur){
-  return p.end(self) ? new self.constructor(p.start(self), self |> p.end |> p.add(?, dur)) : self;
+  return p.end(self) ? new self.constructor(p.start(self), chain(self, p.end, p.add(?, dur))) : self;
 }
 
 function merge(self, other){

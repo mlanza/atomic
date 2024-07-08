@@ -1,4 +1,4 @@
-import {does, identity, constructs, branch, overload, isString} from "../../core.js";
+import {does, identity, constructs, branch, overload, isString, chain} from "../../core.js";
 import {implement} from "../protocol.js";
 import {IHashable, IMergable, IBlankable, ICompactible, IComparable, IOmissible, ICollection, IEquiv, IReducible, IKVReducible, ISeqable, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, IFn, IMap, ISeq, ICloneable, IInclusive, ITemplate} from "../../protocols.js";
 import {reduced} from "../reduced.js";
@@ -21,10 +21,10 @@ const vals = Object.values;
 function fill(self, params){
   return p.reducekv(function(memo, key, value){
     return p.assoc(memo, key,
-      value |> branch(
+      chain(value, branch(
         isString, p.fill(?, params),
         isObject, fill(?, params),
-        identity));
+        identity)));
   }, {}, self);
 }
 

@@ -254,7 +254,7 @@ function guard2(pred, f){
 }
 
 function guard3(value, pred, f){
-  return value |> guard2(pred, f);
+  return chain(value, guard2(pred, f));
 }
 
 export const guard = overload(null, guard1, guard2, guard3);
