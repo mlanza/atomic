@@ -83,56 +83,6 @@ function fromPromise2(promise, init){
 
 export const fromPromise = _.overload(null, fromPromise2(?, null), fromPromise2);
 
-//enforce sequential nature of operations
-function isolate1(f){ //TODO treat operations as promises
-  const queue = [];
-  return function(){
-    const ready = queue.length === 0;
-    queue.push(arguments);
-    if (ready) {
-      while (queue.length) {
-        const args = _.first(queue);
-        try {
-          f.apply(null, args);
-          p.trigger(args[0], "mutate", {bubbles: true});
-        } finally {
-          queue.shift();
-        }
-      }
-    }
-  }
-}
-
-export const isolate = _.overload(t.isolate, isolate1);
-
-function render3(el, obs, f){
-  return p.sub(obs, isolate0(), function(state){
-    f(el, state);
-    p.trigger(el, "mutate", {bubbles: true}); //TODO rename
-  });
-}
-
-function render2(state, f){
-  return render3(?, state, f);
-}
-
-export const render = _.overload(null, null, render2, render3);
-
-function renderDiff3(el, obs, f){
-  return p.sub(obs, t.isolate(), t.hist(2), function(history){
-    const args = [el].concat(history);
-    f.apply(this, args); //overload arity 2 & 3 for initial and diff rendering
-    p.trigger(el, "mutate", {bubbles: true}); //TODO rename
-  });
-}
-
-function renderDiff2(state, f){
-  return renderDiff3(?, state, f);
-}
-
-//TODO replace render after migration
-export const renderDiff = _.overload(null, null, renderDiff2, renderDiff3);
-
 (function(){
 
   function dispatch(self, args){
