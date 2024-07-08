@@ -11,7 +11,7 @@ Enter protocols.
 
 They're underappreciated in the JS community, namely, because, in JS, apart from libraries like Atomic, they don't exist.  But the problem of wanting to safely, dynamically extend natives and/or third-party types is a solved problem.  That is, protocols ([of the Clojure variety](https://clojure.org/reference/protocols)) are the solution.
 
-The reason is rooted in the difference between methods and functions.  Methods, you know, are attached to the types they operate against.  Functions exist independent of any attachment, same as protocols.  That is, protocols exist in a plane of the their own over and above the types against which they operate.
+The reason is rooted in the difference between methods and functions.  Methods, you know, are attached to the types they operate against.  Functions exist independent of any attachment, same as protocols.  That is, protocols exist in a plane of their own over and above the types against which they operate.
 
 If you're trying to implement a more appropriate version of `splice` for an Array, for example, you're competing for real estate since methods take residence on a prototype.
 
@@ -36,7 +36,7 @@ function slice(...args){
 }
 Array.prototype.altSlice = slice; //take up residence elsewhere
 ```
-This makes no sense.  Once you realize you have to change every reference in your app from `slice` to `altSlice` anyway, you see you might as well replace it with a function.
+This makes no sense.  Once you realize you have to change every reference in your app from `slice` to `altSlice` anyway, you might as well replace it with a function.
 
 The fight for residence is a problem protocols don't suffer.  That's because they exist independent of types and prototypes.   They're switch statements which indefinitely remain open to extension, by yourself and third parties alike, because of their abstract nature.  They reify the concept of a behavior for an indefinite number of types.
 
@@ -69,7 +69,7 @@ const ys = slice(xs, 5, 7); //the `mystuff`, not `natives` behavior!
 ```
 Protocols dodge the name collision issue altogether because they're not vying for a foothold anywhere.
 
-They also guarantee a drop-in replacement couldn't possibly harm a third-party library.  The original `ISliceable` protocol and its `slice` export exist unscathed in their original module.  This is, again, because protocols, like functions, exist outside of the types they operate against.
+They also guarantee a drop-in replacement couldn't possibly harm a third-party library.  The original `ISliceable` protocol and its `slice` export exist unscathed in their original module.  This is, again, because protocols, like functions, exist outside the types they operate against.
 
 Atomic takes full advantage of this in its `core` and `shell` libraries.  Both libraries define `ICollection.conj` and `IAssociative.assoc`.  Both the protocol objects and their exported functions share identical names.  This makes it possible to safely import both into a module and chose when to use one or the other.  Same name, different identity.  Just like the world's many Jonathan Smiths.
 
