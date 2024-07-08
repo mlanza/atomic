@@ -8,7 +8,10 @@ import {reduce, reducekv} from "../../shared.js";
 import {IMergable, ICloneable, IEquiv, IInclusive, ISet, ISeqable, ISeq, ICollection, ICounted, IEmptyableCollection, IReducible, IKVReducible} from "../../protocols.js";
 import * as p from "./protocols.js";
 
-const clone = identity;
+function clone(self){
+  return new PersistentSet(p.clone(self.coll));
+}
+
 const empty = constantly(persistentSet());
 
 function disj(self, value){
