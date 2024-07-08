@@ -14,7 +14,7 @@ function seq(self){
 }
 
 function empty(self){
-  return new Set();
+  return new self.constructor([]);
 }
 
 function disj(self, value){
@@ -48,11 +48,11 @@ function count(self){
 }
 
 function clone(self){
-  return new self.constructor(self);
+  return new self.constructor(Array.from(self));
 }
 
 function merge(self, other){
-  return new Set([...self, ...other]);
+  return new self.constructor([...self, ...other]);
 }
 
 function equiv(self, other){

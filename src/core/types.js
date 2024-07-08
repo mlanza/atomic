@@ -34,6 +34,7 @@ export * from "./types/map.js";
 export * from "./types/persistent-map.js";
 export * from "./types/persistent-set.js";
 export * from "./types/weak-map.js";
+export * from "./types/weak-set.js";
 export * from "./types/symbol.js";
 export * from "./types/string.js";
 export * from "./types/task.js";
