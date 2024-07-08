@@ -270,4 +270,4 @@ export const called = _.overload(null, null, called2, called3, called4);
 _.addMethod(_.coerce, [Array, Object], arr => into({}, arr));
 _.addMethod(_.coerce, [Object, Array], obj => into([], obj));
 _.addMethod(_.coerce, [_.PersistentSet, Array], set => into([], set));
-_.addMethod(_.coerce, [Array, _.PersistentSet], arr => into(set([]), arr));
+_.addMethod(_.coerce, [Array, _.PersistentSet], arr => into(_.set([]), arr));
