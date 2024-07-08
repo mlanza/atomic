@@ -37,7 +37,7 @@ export default [{
     }),
     babel({
       exclude: 'node_modules/**',
-      babelHelpers: 'inline'
+      babelHelpers: 'bundled'
     }),
     json(),
     terser({

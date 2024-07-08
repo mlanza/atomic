@@ -16,7 +16,6 @@
     "@babel/core": "^7.17.6",
     "@babel/plugin-proposal-partial-application": "^7.16.7",
     "@babel/plugin-proposal-pipeline-operator": "^7.17.6",
-    "@babel/plugin-transform-arrow-functions": "^7.16.7",
     "@babel/plugin-transform-regenerator": "^7.16.7",
     "@babel/plugin-transform-runtime": "^7.16.10",
     "@babel/preset-env": "^7.16.11",
