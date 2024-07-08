@@ -350,27 +350,19 @@ export function nullary(f){
 }
 
 export function unary(f){
-  return function(a){
-    return f(a);
-  }
+  return (a) => f(a);
 }
 
 export function binary(f){
-  return function(a, b){
-    return f(a, b);
-  }
+  return (a, b) => f(a, b);
 }
 
 export function ternary(f){
-  return function(a, b, c){
-    return f(a, b, c);
-  }
+  return (a, b, c) => f(a, b, c);
 }
 
 export function quaternary(f){
-  return function(a, b, c, d){
-    return f(a, b, c, d);
-  }
+  return (a, b, c, d) => f(a, b, c, d);
 }
 
 export function nary(f, length){
