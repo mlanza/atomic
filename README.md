@@ -131,7 +131,7 @@ This'll mean writing the following line over and over:
 $.swap($state, /* TODO */);
 ```
 
-Plug `$.swap` with a pure, [swappable](https://clojuredocs.org/clojure.core/swap!) function.  These functions you supply drive transitions based on anticipated user actions.  They can be authored/issued via the browser console and/or the code.
+Plug `$.swap` with a pure, [swappable](https://clojuredocs.org/clojure.core/swap!) function.  The functions you supply drive transitions based on anticipated user actions.  They can be authored/issued via the browser console and/or the code.
 
 For a while, you'll be writing and issuing pure functions to tell some version of a story your app tells.  This is what it means to [start with simulation](docs/start-with-simulation.md).
 
