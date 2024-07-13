@@ -206,6 +206,6 @@ $.sub($ttt, function(snapshot){
 This approach reduces programs, those being developed and those already in the wild, to flip books making developing and debugging them easier.  All the developer must primarily understand is how to read and compare snapshots.
 
 ### It's headless
-It's possible to develop a functional core and have a simulated game arrive at a final state apart from a proper user interface.  Because of its transparency, the browser console offers a rudimentary command-line interface.  [Interacting with it](./docs/interactive-development.md) is as simple as reading state snapshots and issuing commands against the state container.
+It's possible to develop a functional core and have a simulated game arrive at a final state apart from a proper user interface.  Because of its transparency, the browser console offers a rudimentary command-line interface.  [Interacting with it](./interactive-development.md) is as simple as reading state snapshots and issuing commands against the state container.
 
 When it comes to getting a program up and running, this conveniently permits the messy, imperative parts, like the user interface, be deferred.  With just a little imagination, one stands up a logical v1 core and simulates a program lifecycle all from a basic, headless shell.
