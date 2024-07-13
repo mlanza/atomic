@@ -115,7 +115,7 @@ $ static . # server of choice
 
 Bring it up in the browser:
 
-http://127.0.0.1:8080/?monitor=*
+[http://127.0.0.1:8080/?monitor=*](http://127.0.0.1:8080/?monitor=*)
 
 Remember to add the `monitor` query param to aid monitoring from the console.  Expose your browser's developer tools.  From its console enter:
 
@@ -128,16 +128,16 @@ This loads the globals needed to facilitate [interactive development](./docs/int
 This'll mean writing some version of the following line:
 
 ```javascript
-$.swap($state, /* TBD */); //TODO write a pure function
+$.swap($state, /* TBD */); //TODO you decide what goes here
 ```
 
-The TBD part is filled with a pure, [swappable](https://clojuredocs.org/clojure.core/swap!) function.  These are used to drive transitions based on anticipated user actions in the app.  This can be done from the code and/or from the browser console.
+Plug TBD with a pure, [swappable](https://clojuredocs.org/clojure.core/swap!) function you write.  These functions drive transitions based on anticipated user actions.  They can be authored/issued via the browser console and/or the code.
 
-For a while, you'll be adding different variations of the above line, one after the other, to tell some version of a story your app tells.  This is what it means to [start with simulation](docs/start-with-simulation.md).
+For a while, you'll be writing and issuing pure functions to tell some version of a story your app tells.  This is what it means to [start with simulation](docs/start-with-simulation.md).
 
-This initial work is the sweet spot of functional programming.  The essence of "easy to reason about" falls out of the focus on purity.  It's hard to beat a model which reduces a program to a flip book, halts time, and permits any page and its subsequent to be readily examined or compared.  There's immeasurable good in learning to tease the pure out of the impure, of embracing the boundary between simulation and messy reality.
+This makes functional programming a pleasure.  The essence of "easy to reason about" falls out of the focus on purity.  It's hard to beat a model which reduces a program to a flip book, halts time, and permits any page and its subsequent to be readily examined or compared.  There's immeasurable good in learning to tease the pure out of the impure, of embracing the boundary between simulation and messy reality.
 
-The core simulates what your program is about and the shell actuates its effects.  The core is the domain, playing sokoban or [managing to-dos](https://doesideas.com/programming/todo/), for example, a library of pure functions.  The shell, having little to do the domain, provides the plumbing necessary to make things happen.  It transforms effect into simulation and vice versa.  Commands flow in.  Events flow out.  The core directs, the shell orchestrates.
+The domain module (the core) simulates what your program is about, the app module (the shell) actuates its effects.  The domain module, playing sokoban or [managing to-dos](https://doesideas.com/programming/todo/), for example, is a library of pure functions.  The app module, having little to do the domain, provides the plumbing necessary to make things happen.  It transforms effect into simulation and vice versa.  Commands flow in.  Events flow out.  The core directs, the shell orchestrates.
 
 The first objective is to flesh out the core by writing the functions needed to express what the story is about, what the program does.  A state container, all by itself, provides sufficient machinery to get you there.
 
