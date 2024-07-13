@@ -125,13 +125,13 @@ cmd()
 
 This loads the globals needed to facilitate [interactive development](./docs/interactive-development.md).  You'll be operating from your text editor and browser console for the unforeseeable future.
 
-This'll mean writing some version of the following line:
+This'll mean writing the following line over and over:
 
 ```javascript
-$.swap($state, /* TBD */); //TODO you decide what goes here
+$.swap($state, /* TODO */);
 ```
 
-Plug TBD with a pure, [swappable](https://clojuredocs.org/clojure.core/swap!) function you write.  These functions drive transitions based on anticipated user actions.  They can be authored/issued via the browser console and/or the code.
+Plug `$.swap` with a pure, [swappable](https://clojuredocs.org/clojure.core/swap!) function.  These functions you supply drive transitions based on anticipated user actions.  They can be authored/issued via the browser console and/or the code.
 
 For a while, you'll be writing and issuing pure functions to tell some version of a story your app tells.  This is what it means to [start with simulation](docs/start-with-simulation.md).
 
