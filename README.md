@@ -319,4 +319,5 @@ See these sample programs to learn more:
 
 * [Todo](https://github.com/mlanza/todo)
 * [Treasure Quest](https://github.com/mlanza/treasure-quest)
+* [Sokoban](https://github.com/mlanza/sokoban)
 * [Pickomino](https://github.com/mlanza/pickomino)
