@@ -52,8 +52,8 @@ $ mkdir sokoban # for instance
 $ cd sokoban
 $ mkdir libs
 $ touch index.html
-$ touch ./sokoban.js
-$ touch ./main.js
+$ touch sokoban.js
+$ touch main.js
 ```
 
 Copy the Atomic `dist` folder's contents to the `libs` folder.  [Vendoring it](https://stackoverflow.com/questions/26217488/what-is-vendoring) permits safe use and alleviate the pressure of keeping up with change.
