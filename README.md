@@ -52,8 +52,8 @@ $ mkdir sokoban # for instance
 $ cd sokoban
 $ mkdir libs
 $ touch index.html
-$ touch ./libs/sokoban.js
-$ touch ./libs/app.js
+$ touch ./sokoban.js
+$ touch ./app.js
 ```
 
 Copy the Atomic `dist` folder's contents to the `libs` folder.  [Vendoring it](https://stackoverflow.com/questions/26217488/what-is-vendoring) permits safe use and alleviate the pressure of keeping up with change.
@@ -61,12 +61,12 @@ Copy the Atomic `dist` folder's contents to the `libs` folder.  [Vendoring it](h
 Copy the following contents to the respective 3 files you just created:
 
 ```javascript
-// ./libs/sokoban.js - named for your domain, pure functions go here
+// ./sokoban.js - named for your domain, pure functions go here
 import _ from "./atomic_/core.js";
 ```
 
 ```javascript
-// ./libs/app.js - everything else goes here
+// ./app.js - everything else goes here
 import _ from "./atomic_/core.js";
 import $ from "./atomic_/shell.js";
 import {reg} from "./cmd.js";
@@ -94,13 +94,13 @@ This set of files hints at an architecture.  Your [FCIS program](https://www.des
 Your first task, in `app`, is to create a state container for your [world state](https://docs.racket-lang.org/teachpack/2htdpuniverse.html) and define its `init` state in your pure module.  It'll likely be some amalgam of objects and arrays but, depending on the app, it could be anything.
 
 ```javascript
-// ./libs/sokoban.js
+// ./sokoban.js
 function init(){
   /* depends on what your app is about */
 }
 ```
 ```javascript
-// ./libs/app.js
+// ./app.js
 const $state = $.atom(s.init());
 
 reg({$state}); //register container to aid in interactive development
@@ -137,7 +137,7 @@ For a while, you'll be writing and issuing pure functions to tell some version o
 
 This makes functional programming a pleasure.  The essence of "easy to reason about" falls out of the focus on purity.  It's hard to beat a model which reduces a program to a flip book, halts time, and permits any page and its subsequent to be readily examined or compared.  There's immeasurable good in learning to tease the pure out of the impure, of embracing the boundary between simulation and messy reality.
 
-The domain module (the core) simulates what your program is about, the app module (the shell) actuates its effects.  The domain module, playing sokoban or [managing to-dos](https://doesideas.com/programming/todo/), for example, is a library of pure functions.  The app module, having little to do the domain, provides the plumbing necessary to make things happen.  It transforms effect into simulation and vice versa.  Commands flow in.  Events flow out.  The core directs, the shell orchestrates.
+The domain module (the core) simulates what your program is about, the app module (the shell) actuates its effects.  The domain module, playing [Sokoban](https://github.com/mlanza/sokoban) or managing [To-dos](https://doesideas.com/programming/todo/), for example, is a library of pure functions.  The app module, having little to do the domain, provides the plumbing necessary to make things happen.  It transforms effect into simulation and vice versa.  Commands flow in.  Events flow out.  The core directs, the shell orchestrates.
 
 The first objective is to flesh out the core by writing the functions needed to express what the story is about, what the program does.  A state container, all by itself, provides sufficient machinery to get you there.
 
@@ -318,6 +318,6 @@ It may be useful to rough out the UI early on.  Thinking through things — idea
 See these sample programs to learn more:
 
 * [Todo](https://github.com/mlanza/todo)
-* [Treasure Quest](https://github.com/mlanza/treasure-quest)
 * [Sokoban](https://github.com/mlanza/sokoban)
+* [Treasure Quest](https://github.com/mlanza/treasure-quest)
 * [Pickomino](https://github.com/mlanza/pickomino)
