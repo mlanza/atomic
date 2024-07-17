@@ -36,7 +36,7 @@ With placeholder partial the tacit aesthetic is restored:
     $.log);
 ```
 
-If you regularly write in the tacit style, your modules can be [repackaged](/dist/atomic_/) as shadow modules.  These modules imbue exported functions with optional partial application via a feature called placeholder partial.
+If you write in the tacit style, your modules can be [repackaged](/dist/atomic_/) as shadow modules.  These modules imbue exported functions with optional partial application via a feature called placeholder partial.
 
 Atomic modules are reexported this way. The trailing underscore in the folder name makes the use explicit.  When defaults are imported from shadow modules, the feature's available for use.  When the modules are imported directly, it's not.
 
