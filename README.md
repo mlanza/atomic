@@ -318,7 +318,6 @@ It may be useful to rough out the UI early on.  Thinking through things — idea
 
 See these sample programs to learn more:
 
-* [Todo](https://github.com/mlanza/todo)
 * [Sokoban](https://github.com/mlanza/sokoban)
+* [Todo](https://github.com/mlanza/todo)
 * [Treasure Quest](https://github.com/mlanza/treasure-quest)
-* [Pickomino](https://github.com/mlanza/pickomino)
