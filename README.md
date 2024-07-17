@@ -56,7 +56,7 @@ $ touch sokoban.js
 $ touch main.js
 ```
 
-Copy the Atomic `dist` folder's contents to the `libs` folder.  [Vendoring it](https://stackoverflow.com/questions/26217488/what-is-vendoring) permits safe use and alleviate the pressure of keeping up with change.
+Copy the Atomic `dist` folder's contents to the `libs` folder.  [Vendoring it](https://stackoverflow.com/questions/26217488/what-is-vendoring) permits safe use and alleviates the pressure of keeping up with change.
 
 Copy the following contents to the respective 3 files you just created:
 
