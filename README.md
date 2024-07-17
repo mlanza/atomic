@@ -54,6 +54,7 @@ $ mkdir libs
 $ touch index.html
 $ touch sokoban.js
 $ touch main.js
+$ touch main.css
 ```
 
 Copy the Atomic `dist` folder's contents to the `libs` folder.  [Vendoring it](https://stackoverflow.com/questions/26217488/what-is-vendoring) permits safe use and alleviates the pressure of keeping up with change.
@@ -62,14 +63,14 @@ Copy the following contents to the respective 3 files you just created:
 
 ```javascript
 // ./sokoban.js - named for your domain, pure functions go here
-import _ from "./atomic_/core.js";
+import _ from "./libs/atomic_/core.js";
 ```
 
 ```javascript
 // ./main.js - everything else goes here
-import _ from "./atomic_/core.js";
-import $ from "./atomic_/shell.js";
-import {reg} from "./cmd.js";
+import _ from "./libs/atomic_/core.js";
+import $ from "./libs/atomic_/shell.js";
+import {reg} from "./libs/cmd.js";
 import * as s from "./sokoban.js";
 ```
 
@@ -80,8 +81,8 @@ import * as s from "./sokoban.js";
   <head>
     <meta charset="utf-8">
     <title>Sokoban</title>
-    <link rel="stylesheet" href="style.css">
     <script type="module" src="./main.js"></script>
+    <link rel="stylesheet" href="./main.css">
   </head>
   <body>
   </body>
@@ -105,7 +106,7 @@ const $state = $.atom(s.init());
 
 reg({$state}); //register container to aid in interactive development
 ```
-Then begin fleshing out your core with domain logic, nothing but pure functions and using them to tell your app's story.  Everything else including the program machinery (atoms, signals, routers, queues, buffers, buses, etc.) and glue code goes into `app`.
+Then begin fleshing out your core with domain logic, nothing but pure functions and using them to tell your app's story.  Everything else including the program machinery (atoms, signals, routers, queues, buffers, buses, etc.) and glue code goes into `main`.
 
 Keep `main` trivially simple, at first.  For a time it'll provide little more than the harness necessary to run the simulation.  Then, to begin interacting with it, you'll want to serve it:
 
