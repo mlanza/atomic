@@ -140,17 +140,32 @@ _.addMethod(_.coerce, [Set, Array], Array.from);
     _.specify(ILogger, {log}));
 })();
 
+(function(){
+  function log(self, ...args){
+    self(...args);
+  }
+
+  _.doto(Function,
+    _.implement(ILogger, {log}));
+})();
+
 _.doto(_.Nil,
   _.implement(ILogger, {log: _.noop}));
 
-function severity(logger, severity){
-  const f = logger[severity].bind(logger);
+function severity2(logger, severity){
+  const f = _.get(logger, severity, _.noop);
   function log(self, ...args){
     f(...args);
   }
   return _.doto({logger, severity},
     _.specify(ILogger, {log}));
 }
+
+function severity1(severity){
+  return severity2(_.config.logger, severity);
+}
+
+const severity = _.overload(null, severity1, severity2);
 
 function inspect(logger, ...effects){
   function log(self, ...args){
