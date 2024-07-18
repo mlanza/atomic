@@ -6,11 +6,28 @@ import {opt} from "../../types/just/construct.js";
 import {satisfies, specify}  from "../protocol.js";
 import * as p from "./protocols.js";
 
-export function spread(f){
+function spread1(f){
   return function(args){
     return f(...toArray(args));
   }
 }
+
+function spread2(f, idx){
+  return function(...args){
+    const out = [];
+    for(let i = 0; i < args.length; i++){
+      const arg = args[i];
+      if (i === idx){
+        out.push(...arg);
+      } else {
+        out.push(arg);
+      }
+    }
+    return f(...out);
+  }
+}
+
+export const spread = overload(null, spread1, spread2);
 
 export function parsedo(re, xf, callback){
   return opt(re, xf, spread(callback));

@@ -198,11 +198,28 @@ export function does(...effects){
   }
 }
 
-export function unspread(f){
+function unspread1(f){
   return function(...args){
     return f(args);
   }
 }
+
+function unspread2(f, start, len = Infinity){
+  const end = start + len;
+  return function(...args){
+    const out = [];
+    const tgt = [];
+    for(let i = 0; i < args.length; i++){
+      if (i === start){
+        out.push(tgt);
+      }
+      (i < start || i > end ? out : tgt).push(args[i]);
+    }
+    return f(...out);
+  }
+}
+
+export const unspread = overload(null, unspread1, unspread2);
 
 export function once(f){
   const pending = {};

@@ -50,6 +50,22 @@ tests(function(tests){ //common
 });
 
 //tests
+test("targeted spread/unspread", function({eq}){
+
+  const required = ["title", "id"],
+        args = ["users", 50];
+
+  const params = _.chain(
+    _.map(_.array, required, args),
+    _.reduce(_.spread(_.assoc, 1), _.first(_.drop(required.length, args)) || {}, _));
+
+  const pairs = _.reducekv(_.unspread(_.conj, 1), [], {ace: 1, king: 2});
+
+  eq({title: "users", id: 50}, params);
+  eq([["ace", 1], ["king", 2]], pairs);
+
+});
+
 test("persistent maps", function({assert, eq, isNil}){
   const v1 = _.map([
     [[1, 2], "Harvey"],
