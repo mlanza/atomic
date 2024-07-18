@@ -5,10 +5,8 @@ import {set, maybe, toArray, opt, satisfies, spread, duration, remove, sort, fli
 import {isBlank, str, replace} from "./types/string.js";
 import {persistentSet, PersistentSet} from "./types/persistent-set/construct.js";
 import {isSome} from "./types/nil.js";
-import _config from "./config.js";
 import {implement, specify, behaves} from "./types/protocol/concrete.js";
 import {into, concat, detect, map, mapa, splice, drop, join, some, last, butlast, takeWhile, dropWhile, filter} from "./types/lazy-seq.js";
-export const config = _config;
 export {filter} from "./types/lazy-seq.js";
 export {iterable} from "./types/lazy-seq/behave.js";
 export * from "./core.js";
