@@ -173,17 +173,10 @@ function tags2(engine, keys){
 
 function tags3(engine, f, keys) {
   const tag = _.factory(engine);
-  return _.chain(keys,
-    _.concat(?, [null]),
-    _.scan(2, ?),
-    _.toArray,
-    _.fold(function(memo, keys){
-      const [key, nextKey] = _.toArray(keys);
-      if (_.isString(key)) {
-        memo[key] = f(_.isArray(nextKey) ? _.isString(_.first(nextKey)) ? tag(...nextKey) : tag(key, ...nextKey) : tag(key));
-      }
+  return _.fold(function(memo, key){
+      memo[key] = f(tag(key));
       return memo;
-    }, {}, ?));
+    }, {}, keys);
 }
 
 export function svg(doc = document, tags = ["svg", "g", "symbol", "defs", "clipPath", "metadata", "path", "line", "circle", "rect", "ellipse", "polygon", "polyline", "image", "text", "tspan"]){
