@@ -16,3 +16,5 @@ export function tasked(promised){
     });
   }
 }
+
+export const fetch = tasked(globalThis.fetch);
