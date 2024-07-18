@@ -10,6 +10,8 @@ import {Subject, subject} from "./types/subject/construct.js";
 import {Observable, shared, share, pipe} from "./types/observable.js";
 import {Observer} from "./types/observer/construct.js";
 import {IDispatch} from "./protocols/idispatch/instance.js";
+import _config from "./config.js";
+export const config = _config;
 export * from "./types.js";
 export * from "./protocols.js";
 export * from "./protocols/concrete.js";
@@ -162,7 +164,7 @@ function severity2(logger, severity){
 }
 
 function severity1(severity){
-  return severity2(_.config.logger, severity);
+  return severity2(config.logger, severity);
 }
 
 const severity = _.overload(null, severity1, severity2);
@@ -222,7 +224,7 @@ function called4(fn, message, context, logger){
 }
 
 function called3(fn, message, context){
-  return called4(fn, message, context, _.config.logger);
+  return called4(fn, message, context, config.logger);
 }
 
 function called2(fn, message){
