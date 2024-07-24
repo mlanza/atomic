@@ -1,4 +1,5 @@
 import * as _ from "atomic/core";
+import {IMap} from "../imap/instance.js";
 import {IAssociative} from "./instance.js";
 export const assoc = IAssociative.assoc;
 
@@ -62,5 +63,19 @@ export function assocIn(self, keys, value){
       break;
     default:
       assoc(self, key, assocIn(_.get(self, key), _.toArray(_.rest(keys)), value));
+      break;
+  }
+}
+
+export function dissocIn(self, keys){
+  let key = keys[0];
+  switch (keys.length) {
+    case 1:
+      IMap.dissoc(self, key);
+      break;
+    default:
+      const ks = _.slice(keys), k = ks.pop();
+      IMap.dissoc(_.getIn(self, ks), k);
+      break;
   }
 }

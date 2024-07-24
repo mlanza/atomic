@@ -1,4 +1,5 @@
 import {IAssociative} from "./instance.js";
+import {IMap} from "../imap/instance.js";
 import {overload, slice, branch, identity} from "../../core.js";
 import {toArray} from "../../types/array/concrete.js";
 import {reducekv} from "../ikvreducible.js";
@@ -22,6 +23,19 @@ export function assocIn(self, keys, value){
       return IAssociative.assoc(self, key, value);
     default:
       return IAssociative.assoc(self, key, assocIn(get(self, key), toArray(rest(keys)), value));
+  }
+}
+
+export function dissocIn(self, keys){
+  let key = keys[0];
+  switch (keys.length) {
+    case 0:
+      return self;
+    case 1:
+      return IMap.dissoc(self, key);
+    default:
+      const ks = slice(keys), k = ks.pop();
+      return updateIn3(self, ks, IMap.dissoc(?, k));
   }
 }
 
