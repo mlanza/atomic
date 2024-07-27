@@ -16,7 +16,7 @@ Atomic is [functional first](docs/functional-first.md).  This makes sense given 
 
 Atomic has Clojure-like [maps](https://clojuredocs.org/clojure.core/hash-map) and [vectors](https://clojuredocs.org/clojure.core/vector) via `atomic/immutables` (imported as `imm`) courtesy of an integrated [Immutable.js](https://immutable-js.com) and its `imm.map` and `imm.list`.  Protocols so seamlessly blend third-party types into an api, except for their instantiation, one might not even notice their use.  Chalk up another one for protocols!
 
-Since JavaScript lacks a complete set of value types (e.g. [records, tuples](https://tc39.es/proposal-record-tuple/) and [temporals](https://github.com/tc39/proposal-temporal)), purity becomes a matter of discipline, or protocol.  Atomic permits even reference types, like objects and arrays, to be optionally, as a matter of protocol selection, [treated as value types](./docs/command-query-protocols.md).
+Since JavaScript lacks a complete set of value types (e.g. [records, tuples](https://tc39.es/proposal-record-tuple/) and [temporals](https://github.com/tc39/proposal-temporal)), purity becomes a matter of discipline, or protocol.  Atomic permits even reference types, like objects and arrays, to be optionally, as a matter of protocol selection, [treated as value types](./docs/command-query-protocols.md).  In many cases, natives perform well enough to not warrant loading the immutables library.  For heavier lifts, load it and drop a persistent into your constructors.  You're done!
 
 Yet, again, protocols reduce mountains to mole hills. In short, [their first-class citizenship status](https://github.com/tc39/proposal-first-class-protocols) is long overdue.
 
