@@ -1,6 +1,7 @@
 import _ from "../dist/atomic_/core.js";
 import dom from "../dist/atomic_/dom.js";
 import $ from "../dist/atomic_/shell.js";
+import imm from "../dist/atomic_/immutables.js";
 import {failed, tests, test} from "./test.js";
 import "../dist/cmd.js";
 
@@ -50,6 +51,22 @@ tests(function(tests){ //common
 });
 
 //tests
+test("immutables", function({assert}){
+  const x = imm.set();
+  const y = _.conj(x, 6, 7);
+  assert(_.equiv(y, imm.set([7, 6, 7])));
+  assert(_.equiv(y, _.disj(imm.set([7, 6, 8]), 8)));
+  assert(_.includes(y, 7));
+  assert(!_.includes(y, 9));
+  assert(_.first(y) === 6);
+  const z = imm.map({jack: 11, queen: 12, king: 13});
+  assert(_.equiv(_.first(z), ["jack", 11]));
+  assert(_.get(z, "king") === 13);
+  assert(_.get(z, "jester") == null);
+  assert(_.get(_.conj(z, ["ten", 10]), "ten") === 10);
+  assert(_.equiv(_.dissoc(z, "jack"), _.conj(imm.map(), ["queen", 12], ["king", 13])));
+});
+
 test("targeted spread/unspread", function({eq}){
 
   const required = ["title", "id"],
@@ -186,6 +203,11 @@ test("type checks", function({assert}){
 });
 
 test("hashing", function({assert, same, equals, notEquals}){
+  const m = _.chain(imm.map(),
+    _.assoc(_, _.date(999), 111),
+    _.assoc(_, [1, 7, 0, 1, 1], 17070),
+    _.assoc(_, {"blackwidow": "Avenger"}, "Natasha"),
+    _.assoc(_, "mustard", "ketchup"));
   const div = dom.tag("div");
   const hi = div("hi");
   notEquals(_.hash(div("hi")), _.hash(div("hi")));
@@ -200,6 +222,9 @@ test("hashing", function({assert, same, equals, notEquals}){
   same(_.date(999), _.date(999));
   same({blackwidow: "Avenger"}, {blackwidow: "Avenger"});
   same([{blackwidow: "Avenger"}, _.date(774), [1, 2]], [{blackwidow: "Avenger"}, _.date(774), [1, 2]]);
+  equals(_.get(m, _.date(999)), 111);
+  //TODO equals(_.get(m, {blackwidow: "Avenger"}), "Natasha");
+  equals(_.get(m, "mustard"), "ketchup");
 }, {
   tests: function(tests){ //add custom test
     const {eq, equals, assert} = tests;

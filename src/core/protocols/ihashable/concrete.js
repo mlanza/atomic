@@ -31,3 +31,11 @@ export function hash(self){
     return self[cache];
   }
 }
+
+function _IsValueObject(maybeValue) { //from ImmutableJS
+  return Boolean(maybeValue && typeof maybeValue.equals === 'function' && typeof maybeValue.hashCode === 'function');
+}
+
+export function isValueObject(self){
+  return (satisfies(IHashable, self) && satisfies(IEquiv, self)) || _IsValueObject(self);
+}

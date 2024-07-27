@@ -2,6 +2,7 @@ import {babel} from '@rollup/plugin-babel';
 import resolve from '@rollup/plugin-node-resolve';
 import json  from '@rollup/plugin-json';
 import jscc from 'rollup-plugin-jscc';
+import replace from '@rollup/plugin-replace';
 import { terser } from "rollup-plugin-terser";
 import { rollupImportMapPlugin } from "rollup-plugin-import-map";
 
@@ -15,21 +16,24 @@ export default [{
   input: [
     'src/core.js',
     'src/shell.js',
-    'src/dom.js'
+    'src/dom.js',
+    'src/immutables.js'
   ],
   output: {
     dir: 'dist/atomic',
     format: 'esm',
     interop: "esModule"
   },
-  external: [],
+  external: ["immutable", "../immutable.js"],
   plugins: [
     resolve(),
     rollupImportMapPlugin({
       "imports": {
+       // "immutable": "../immutable.js",
         "atomic/core": "./core.js",
         "atomic/shell": "./shell.js",
-        "atomic/dom": "./dom.js"
+        "atomic/dom": "./dom.js",
+        "atomic/immutables": "./immutables.js"
       }
     }),
     jscc({
@@ -48,6 +52,14 @@ export default [{
         comments: false,
         beautify: true
       }
+    }),
+    replace({
+      'import * as T from "immutable"': 'import * as T from "../immutable.js"',
+      'import { Map, List, Set, OrderedMap, OrderedSet } from "immutable"': 'import { Map, List, Set, OrderedMap, OrderedSet } from "../immutable.js"',
+      'export { List, OrderedMap, OrderedSet } from "immutable"': 'export { List, OrderedMap, OrderedSet } from "../immutable.js"',
+      'import * as T from "./immutable.js"': 'import * as T from "../immutable.js"',
+      delimiters: ['', ''],
+      preventAssignment: true
     })
   ]
 }];

@@ -30,6 +30,26 @@ export const behave = behaves(behaviors, ?);
 
 export const numeric = test(/^\d+$/i, ?);
 
+(function(){
+  function fillProp(obj, key, value){
+    if (!obj.hasOwnProperty(key)) {
+      Object.defineProperty(obj, key, {
+        value,
+        writable: true,
+        enumerable: false,
+        configurable: true
+      });
+    }
+  }
+
+  function equals(other){
+    return p.equiv(this, other);
+  }
+
+  fillProp(Object.prototype, "equals", equals);
+
+})(); //immutable.js integration
+
 function siblings(self){
   const parent = p.parent(self);
   if (parent){
