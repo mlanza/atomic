@@ -1,10 +1,11 @@
-import {does} from "../../core.js";
+import {does, nullary} from "../../core.js";
 import {satisfies} from "../../types/protocol/concrete.js";
 import {IHashable} from "./instance.js";
 import {IEquiv} from "../iequiv/instance.js";
 
 const cache = Symbol("hashcode");
 
+//arbitrary tags added to reference objects
 export function hashTag(random = Math.random){
   const tag = random(0);
   return function(self){
@@ -17,12 +18,11 @@ export function hashTag(random = Math.random){
 export function hash(self){
   if (self == null) {
     return 0;
-  } else if (self.hashCode){
-    return self.hashCode();
   } else if (self[cache]) {
     return self[cache];
   }
-  const hash = satisfies(IHashable, "hash", self);
+
+  const hash = self.hashCode ? nullary(self.hashCode.bind(self)) : satisfies(IHashable, "hash", self);
   if (hash){
     const hashcode = hash(self);
     return Object.isFrozen(self) ? hashcode : (self[cache] = hashcode);
@@ -37,5 +37,5 @@ function _IsValueObject(maybeValue) { //from ImmutableJS
 }
 
 export function isValueObject(self){
-  return (satisfies(IHashable, self) && satisfies(IEquiv, self)) || _IsValueObject(self);
+  return satisfies(IHashable, self) && satisfies(IEquiv, self) || _IsValueObject(self);
 }

@@ -278,6 +278,12 @@ export function detectIndex(pred, xs){
   return found ? found[0] : null;
 }
 
+export function detectKey(pred, obj){
+  return p.reducekv(function(memo, key, value){
+    return pred(value) ? reduced(key) : null;
+  }, null, obj);
+}
+
 export function cycle(coll){
   return p.seq(coll) ? lazySeq(function(){
     return cons(p.first(coll), concat(p.rest(coll), cycle(coll)));
