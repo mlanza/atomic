@@ -4,6 +4,7 @@ import {overload, slice, branch, identity} from "../../core.js";
 import {toArray} from "../../types/array/concrete.js";
 import {reducekv} from "../ikvreducible.js";
 import {reducing} from "../ireducible.js";
+import {equiv} from "../iequiv.js";
 import {rest} from "../iseq.js";
 import {get} from "../ilookup.js";
 
@@ -92,7 +93,7 @@ function updateInN(self, keys, f) {
 export const updateIn = overload(null, null, null, updateIn3, updateIn4, updateIn5, updateIn6, updateInN);
 
 function contains3(self, key, value){
-  return IAssociative.contains(self, key) && get(self, key) === value;
+  return IAssociative.contains(self, key) && equiv(get(self, key), value);
 }
 
 export const contains = overload(null, null, IAssociative.contains, contains3);

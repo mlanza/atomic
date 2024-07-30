@@ -1196,7 +1196,7 @@ test("predicates", function({assert, equals}){
   const cinco = _.range(5),
         any = _.someFn(_.includes(cinco, _)), //or
         all = _.everyPred(_.includes(cinco, _)); //and
-  assert(_.chain({ace: 1, king: 2, queen: 3}, _.subsumes(_, {ace: 1, king: 2})));
+  assert(_.chain({ace: 1, king: 2, queen: 3}, _.where(_, {ace: 1, king: 2})));
   equals(_.any(3, 1), 3);
   equals(_.any(null, 1), 1);
   equals(_.all(3, 1), 1);

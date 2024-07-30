@@ -19,7 +19,7 @@ export function descriptive(self){
   return satisfies(ILookup, self) && satisfies(IMap, self) && !satisfies(IIndexed, self);
 }
 
-export function subsumes(self, other){
+export function where(self, other){
   return p.reducekv(function(memo, key, value){
     return memo ? p.contains(self, key, value) : reduced(memo);
   }, true, other);
@@ -31,6 +31,13 @@ export function juxtVals(self, value){
   return p.reducekv(function(memo, key, f){
     return p.assoc(memo, key, isFunction(f) ? f(value) : f);
   }, emptied(self), self);
+}
+
+export function evolve(template, obj){ //see ramda
+  return template ? p.reducekv(function(memo, key, value){
+    const f = p.get(template, key);
+    return p.assoc(memo, key, isFunction(f) ? f(value) : alter(f, value));
+  }, emptied(obj), obj) : obj;
 }
 
 export function selectKeys(self, keys){
