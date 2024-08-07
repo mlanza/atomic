@@ -1,6 +1,7 @@
 import {IFn, IMap, IIndexed, IReducible, IKVReducible, ILookup, IInclusive, IAssociative, IEmptyableCollection} from "../../protocols.js";
 import {apply} from "../function.js";
 import {reducing} from "../../protocols/ireducible/concrete.js";
+import {reduced} from "../../types/reduced/construct.js";
 import {overload, branch, isFunction} from "../../core.js";
 import {satisfies} from "../protocol/concrete.js";
 import {emptyObject} from "./construct.js";
