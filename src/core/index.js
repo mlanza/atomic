@@ -1,10 +1,11 @@
 import {foldkv, overload, partial, unary, type, curry, toggles, identity, obj, partly, comp, doto, does, branch, unspread, applying, execute, noop, constantly, once, isFunction, isString, pipe, chain} from "./core.js";
-import {IForkable, IDeref, IFn, IAssociative, ICloneable, IHierarchy, ILookup, ISeq} from "./protocols.js";
+import {IForkable, IDeref, IFn, IAssociative, ISequential, ICloneable, IHierarchy, ILookup, ISeq} from "./protocols.js";
 import {addMethod} from "./types/multimethod/concrete.js";
 import {set, maybe, toArray, opt, satisfies, spread, duration, remove, sort, flip, realized, apply, realize, isNil, reFindAll, mapkv, period, selectKeys, mapVals, reMatches, test, date, emptyList, cons, list, days, recurrence, emptyArray} from "./types.js";
 import {isBlank, str, replace} from "./types/string.js";
 import {persistentSet, PersistentSet} from "./types/persistent-set/construct.js";
 import {isSome} from "./types/nil.js";
+import {descriptive} from "./types/object/concrete.js";
 import {implement, specify, behaves} from "./types/protocol/concrete.js";
 import {into, concat, detect, map, mapa, splice, drop, join, some, last, butlast, takeWhile, dropWhile, filter} from "./types/lazy-seq.js";
 export {filter} from "./types/lazy-seq.js";
@@ -328,7 +329,7 @@ function absorb2(tgt, src){
     if (was == null) {
       absorbed = value;
     } else if (descriptive(value)) {
-      absorbed = into(p.empty(was), absorb(was, value));
+      absorbed = into(p.empty(was), absorb2(was, value));
     } else if (satisfies(ISequential, value)) {
       absorbed = into(p.empty(was), concat(was, value));
     } else {
