@@ -15,7 +15,7 @@ function str2(x, y){
 }
 
 export function camelToDashed(str){
-  return str.replace(/[A-Z]/, function(x) { return "-" + x.toLowerCase() })
+  return str.replace(/[A-Z]/g, function(x) { return "-" + x.toLowerCase() })
 }
 
 export const startsWith = unbind(String.prototype.startsWith);
