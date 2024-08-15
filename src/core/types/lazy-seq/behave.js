@@ -1,6 +1,6 @@
 import {overload, identity, does, partial, comp} from "../../core.js";
 import {implement} from "../protocol.js";
-import {IBlankable, ICompactible, IFunctor, IReversible, IOmissible, IInclusive, IFind, IEquiv, ICollection, ISeq, IReducible, IKVReducible, ISeqable, ISequential, IIndexed, IEmptyableCollection, ICounted, IAppendable, IPrependable} from "../../protocols.js";
+import {ICompactible, IFunctor, IReversible, IOmissible, IInclusive, IFind, IEquiv, ICollection, ISeq, IReducible, IKVReducible, ISeqable, ISequential, IIndexed, IEmptyableCollection, ICounted, IAppendable, IPrependable} from "../../protocols.js";
 import {reduced} from "../reduced.js";
 import {cons} from "../list/construct.js";
 import {map, filter, remove, detect, concat} from "./concrete.js";
@@ -30,10 +30,6 @@ function conj(self, value){
 
 function seq(self){
   return p.seq(self.perform());
-}
-
-function blank(self){
-  return seq(self) == null;
 }
 
 function iterate(self){
@@ -132,7 +128,6 @@ export default does(
   implement(ISequential),
   implement(IIndexed, {nth, idx}),
   implement(IReversible, {reverse}),
-  implement(IBlankable, {blank}),
   implement(ICompactible, {compact}),
   implement(IInclusive, {includes}),
   implement(IOmissible, {omit}),

@@ -487,8 +487,8 @@ test("lazy-seq", function({assert, ako, equals, notEquals, eq}){
   equals(effects.length, 2);
   $.doall(xs);
   equals(effects.length, 10);
-  assert(_.blank(blank));
-  assert(!_.blank(nums));
+  assert(_.isEmpty(blank));
+  assert(!_.isEmpty(nums));
   ako(_.rest(blank), _.EmptyList);
   ako(_.rest(nums), _.LazySeq);
   equals(_.seq(blank), null);

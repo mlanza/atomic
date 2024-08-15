@@ -1,7 +1,6 @@
 export * from "./iaddable/concrete.js";
 export * from "./iappendable/concrete.js";
 export * from "./iassociative/concrete.js";
-export * from "./iblankable/concrete.js";
 export * from "./ibounded/concrete.js";
 export * from "./iflatmappable/concrete.js";
 export * from "./icloneable/concrete.js";
