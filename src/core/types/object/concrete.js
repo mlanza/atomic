@@ -79,7 +79,7 @@ function defaults2(self, defaults){
 
 export const defaults = overload(null, null, defaults2, reducing(defaults2));
 
-export function compile(self){
+export function toFunction(self){
   return isFunction(self) ? self : function(...args){
     return apply(p.invoke, self, args);
   }
