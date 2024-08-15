@@ -1,6 +1,6 @@
 import {identity, constantly, does} from "../../core.js";
 import {satisfies, implement} from "../protocol.js";
-import {IEquiv, IBlankable, IInclusive, IReversible, ISeq, ISeqable, ISequential, IEmptyableCollection, IKVReducible, IReducible, ICounted, IOmissible, IPrependable, IAppendable} from "../../protocols.js";
+import {IEquiv, IInclusive, IReversible, ISeq, ISeqable, ISequential, IEmptyableCollection, IKVReducible, IReducible, ICounted, IOmissible, IPrependable, IAppendable} from "../../protocols.js";
 import {emptyList, EmptyList} from "../../types/empty-list/construct.js";
 import {keying} from "../../protocols/imapentry/concrete.js";
 import * as p from "./protocols.js";
@@ -31,7 +31,6 @@ export default does(
   implement(ISequential),
   implement(IPrependable, {prepend}),
   implement(IAppendable, {append}),
-  implement(IBlankable, {blank: constantly(true)}),
   implement(IReversible, {reverse: emptyList}),
   implement(ICounted, {count: constantly(0)}),
   implement(IOmissible, {omit: identity}),

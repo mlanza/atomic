@@ -1,6 +1,6 @@
 import {does, identity, constructs, branch, overload, isString, chain} from "../../core.js";
 import {implement} from "../protocol.js";
-import {IHashable, IMergable, IBlankable, ICompactible, IComparable, IOmissible, ICollection, IEquiv, IReducible, IKVReducible, ISeqable, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, IFn, IMap, ISeq, ICloneable, IInclusive, ITemplate} from "../../protocols.js";
+import {IHashable, IMergable, ICompactible, IComparable, IOmissible, ICollection, IEquiv, IReducible, IKVReducible, ISeqable, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, IFn, IMap, ISeq, ICloneable, IInclusive, ITemplate} from "../../protocols.js";
 import {reduced} from "../reduced.js";
 import {lazySeq, into, map} from "../lazy-seq.js";
 import {cons} from "../list.js";
@@ -35,10 +35,6 @@ function merge(...maps){
       return memo;
     }, memo, p.seq(map));
   }, {}, maps);
-}
-
-function blank(self){
-  return p.keys(self).length === 0;
 }
 
 function compact1(self){
@@ -146,7 +142,6 @@ export default does(
   keying("Object"),
   implement(IHashable, {hash}),
   implement(ITemplate, {fill}),
-  implement(IBlankable, {blank}),
   implement(IMergable, {merge}),
   implement(ICompactible, {compact}),
   implement(IEquiv, {equiv}),

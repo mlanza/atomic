@@ -1,7 +1,6 @@
 export * from "./protocols/iaddable/instance.js";
 export * from "./protocols/iappendable/instance.js";
 export * from "./protocols/iassociative/instance.js";
-export * from "./protocols/iblankable/instance.js";
 export * from "./protocols/ibounded/instance.js";
 export * from "./protocols/icloneable/instance.js";
 export * from "./protocols/icollection/instance.js";

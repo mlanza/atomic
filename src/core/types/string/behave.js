@@ -1,4 +1,4 @@
-import {ICloneable, IHashable, IIndexed, IBlankable, ISplittable, ITemplate, IReducible, IKVReducible, ICollection, ISeqable, ISeq, IInclusive, IAppendable, IPrependable, ILookup, IFn, IComparable, IEmptyableCollection} from "../../protocols.js";
+import {ICompactible, ICloneable, IHashable, IIndexed, ISplittable, ITemplate, IReducible, IKVReducible, ICollection, ISeqable, ISeq, IInclusive, IAppendable, IPrependable, ILookup, IFn, IComparable, IEmptyableCollection} from "../../protocols.js";
 import {does, identity, constantly, unbind, overload, isString} from "../../core.js";
 import {implement} from "../protocol.js";
 import {lazySeq} from "../lazy-seq/construct.js";
@@ -12,6 +12,10 @@ import {keying} from "../../protocols/imapentry/concrete.js";
 import {reduce, reducekv} from "../../shared.js";
 
 const clone = identity;
+
+function compact(str){
+  return str.trim();
+}
 
 function split1(str){
   return str.split("");
@@ -40,10 +44,6 @@ function fill(self, params){
   return p.reducekv(function(text, key, value){
     return replace(text, new RegExp("\\{" + key + "\\}", 'ig'), value);
   }, self, params);
-}
-
-function blank(self){
-  return self.trim().length === 0;
 }
 
 function compare(self, other){
@@ -99,10 +99,10 @@ function hash(self) {
 export default does(
   iindexed,
   keying("String"),
+  implement(ICompactible, {compact}),
   implement(ICloneable, {clone}),
   implement(IHashable, {hash}),
   implement(ISplittable, {split}),
-  implement(IBlankable, {blank}),
   implement(ITemplate, {fill}),
   implement(ICollection, {conj}),
   implement(IReducible, {reduce}),

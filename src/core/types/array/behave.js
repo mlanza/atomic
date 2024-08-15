@@ -1,6 +1,6 @@
 import {identity, overload, complement, does, slice} from "../../core.js";
 import {implement, satisfies} from "../protocol.js";
-import {IHashable, IMergable, IBlankable, IMap, IFlatMappable, IFunctor, IInsertable, IOmissible, IReversible, IMapEntry, IEquiv, IReducible, IKVReducible, IAppendable, IPrependable, IInclusive, ICollection, ISeq, IFind, ISeqable, IIndexed, IAssociative, ISequential, IEmptyableCollection, IFn, ICounted, ILookup, ICloneable} from "../../protocols.js";
+import {IHashable, IMergable, IMap, IFlatMappable, IFunctor, IInsertable, IOmissible, IReversible, IMapEntry, IEquiv, IReducible, IKVReducible, IAppendable, IPrependable, IInclusive, ICollection, ISeq, IFind, ISeqable, IIndexed, IAssociative, ISequential, IEmptyableCollection, IFn, ICounted, ILookup, ICloneable} from "../../protocols.js";
 import {reduced, unreduced, isReduced} from "../reduced.js";
 import {indexedSeq} from "../indexed-seq.js";
 import {replace} from "../string/concrete.js";
@@ -161,8 +161,6 @@ function fmap(self, f){
   return mapa(f, self);
 }
 
-const blank = complement(seq);
-
 export const iindexed = does(
   implement(IIndexed, {nth, idx}),
   implement(ICounted, {count}));
@@ -200,7 +198,6 @@ export default does(
   implement(IKVReducible, {reducekv}),
   implement(ILookup, {lookup}),
   implement(IAssociative, {assoc, contains}),
-  implement(IBlankable, {blank}),
   implement(ISeqable, {seq}),
   implement(ICollection, {conj: append, unconj}),
   implement(ISeq, {first, rest}));

@@ -3,6 +3,7 @@ import {isReduced, reduced, unreduced} from "./types/reduced.js";
 import * as s from "./protocols/iseq/concrete.js"
 import {conj} from "./protocols/icollection/concrete.js";
 import {seq} from "./protocols/iseqable/concrete.js";
+import {compact} from "./protocols/icompactible/concrete.js";
 import {get} from "./protocols/ilookup/concrete.js";
 import {keys} from "./protocols/imap/concrete.js";
 import {lazySeq} from "./types/lazy-seq/construct.js";
@@ -10,6 +11,10 @@ import {map, mapIndexed} from "./types/lazy-seq/concrete.js";
 import {cons} from "./types/list/construct.js";
 import {emptyList} from "./types/empty-list/construct.js";
 import {array} from "./types/array/construct.js";
+
+export function blot(self){
+  return seq(compact(self)) ? self : null;
+}
 
 export const seqIndexed = mapIndexed(array, ?);
 
