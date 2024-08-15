@@ -1,5 +1,5 @@
 import {pipe, constantly} from "../../core.js";
-import {set} from "../persistent-set/construct.js";
+import {set} from "../hash-set/construct.js";
 import {reduce} from "../../protocols/ireducible/concrete.js";
 import {assoc} from "../../protocols/iassociative/concrete.js";
 import {hash} from "../../protocols/ihashable/concrete.js";

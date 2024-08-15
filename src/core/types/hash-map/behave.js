@@ -4,7 +4,7 @@ import {hash} from "../../protocols/ihashable/concrete.js";
 import {detectIndex, filtera, map, mapcat, into} from "../lazy-seq/concrete.js";
 import {assocIn} from "../../protocols/iassociative/concrete.js";
 import {getIn} from "../../protocols/ilookup/concrete.js";
-import {persistentMap, PersistentMap} from "./construct.js";
+import {hashMap, HashMap} from "./construct.js";
 import {reduced} from "../reduced.js";
 import {keying} from "../../protocols/imapentry/concrete.js";
 import {reduceWith, reducekvWith} from "../../shared.js";
@@ -21,10 +21,10 @@ function getHashIndex(self, key){
 }
 
 function clone(self){
-  return new PersistentMap(p.clone(self.mapped), self.length, self.equals);
+  return new HashMap(p.clone(self.mapped), self.length, self.equals);
 }
 
-const empty = constantly(persistentMap());
+const empty = constantly(hashMap());
 
 function conj(self, [key, value]){
   return assoc(self, key, value);
@@ -36,7 +36,7 @@ function assoc(self, key, value){
     p.assoc(self.mapped, h, [[key, value]]) :
     idx == null ? p.update(self.mapped, h, p.conj(?, [key, value])) : p.assocIn(self.mapped, [h, idx], [key, value]);
   const length = idx == null ? self.length + 1 : self.length;
-  return new PersistentMap(mapped, length, self.equals);
+  return new HashMap(mapped, length, self.equals);
 }
 
 function lookup(self, key){
@@ -54,9 +54,9 @@ function dissoc(self, key){
     return self;
   }
   if (p.count(candidates) === 1) {
-    return new PersistentMap(p.dissoc(self.mapped, h), self.length - 1, self.equals);
+    return new HashMap(p.dissoc(self.mapped, h), self.length - 1, self.equals);
   }
-  return new PersistentMap(p.assoc(self.mapped, h, filtera(function([k, v]){
+  return new HashMap(p.assoc(self.mapped, h, filtera(function([k, v]){
     return !self.equals(key, k);
   }, candidates)), self.length - 1, self.equals);
 }
@@ -104,7 +104,7 @@ const reduce = reduceWith(seq);
 const reducekv = reducekvWith(seq);
 
 export default does(
-  keying("PersistentMap"),
+  keying("HashMap"),
   implement(IMergable, {merge}),
   implement(ICollection, {conj}),
   implement(IEmptyableCollection, {empty}),

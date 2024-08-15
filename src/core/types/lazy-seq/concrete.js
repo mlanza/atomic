@@ -7,7 +7,7 @@ import {randInt, isEven} from "../number/concrete.js";
 import {reduced} from "../reduced/construct.js";
 import {not} from "../boolean.js";
 import {isNil, isSome} from "../nil.js";
-import {persistentMap} from "../persistent-map/construct.js";
+import {hashMap} from "../hash-map/construct.js";
 import {cons} from "../list/construct.js";
 import {maybe} from "../just/construct.js";
 import {range} from "../range/construct.js";
@@ -65,10 +65,10 @@ function mapN(f, ...tail){
 }
 
 const map1m = multi(function(f){
-  return isFunction(f) ? map1 : persistentMap;
+  return isFunction(f) ? map1 : hashMap;
 });
 
-export const map  = overload(persistentMap, map1m, map2, map3, mapN);
+export const map  = overload(hashMap, map1m, map2, map3, mapN);
 export const mapa = comp(toArray, map);
 
 export function mapArgs(xf, f){
