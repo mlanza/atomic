@@ -110,7 +110,7 @@ test("persistent maps", function({assert, eq, isNil}){
 });
 
 test("persistent sets", function({assert, eq, isNil}){
-  const v1 = _.persistentSet([
+  const v1 = _.hashSet([
       [1, 2],
       [3, 4],
       [5, 6],

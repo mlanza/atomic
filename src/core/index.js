@@ -4,7 +4,7 @@ import {addMethod} from "./types/multimethod/concrete.js";
 import {set, maybe, toArray, opt, satisfies, spread, duration, remove, sort, flip, realized, apply, realize, isNil, reFindAll, mapkv, period, selectKeys, mapVals, reMatches, test, date, emptyList, cons, list, days, recurrence, emptyArray} from "./types.js";
 import {str, replace} from "./types/string.js";
 import {blottable} from "./shared.js";
-import {persistentSet, PersistentSet} from "./types/persistent-set/construct.js";
+import {hashSet, HashSet} from "./types/hash-set/construct.js";
 import {isSome} from "./types/nil.js";
 import {descriptive} from "./types/object/concrete.js";
 import {implement, specify, behaves} from "./types/protocol/concrete.js";
@@ -159,7 +159,7 @@ export function deconstruct(dur, ...units){
 export function distinctly(equals){
   function distinct0(){ //transducer
     return function(rf){
-      let seen = persistentSet([], equals);
+      let seen = hashSet([], equals);
       return overload(rf, rf, function(memo, value){
         if (p.includes(seen, value)) {
           return memo;
@@ -169,7 +169,7 @@ export function distinctly(equals){
       });
     }
   }
-  const distinct1 = persistentSet(?, equals);
+  const distinct1 = hashSet(?, equals);
   return overload(distinct0, distinct1);
 }
 
@@ -358,9 +358,9 @@ export function unfork(self){
   });
 }
 
-addMethod(coerce, [T.PersistentSet, Array], into([], ?));
+addMethod(coerce, [T.HashSet, Array], into([], ?));
 addMethod(coerce, [Set, Array], unary(Array.from));
-addMethod(coerce, [Array, T.PersistentSet], into(set([]), ?));
+addMethod(coerce, [Array, T.HashSet], into(set([]), ?));
 addMethod(coerce, [Array, Set], arr => new Set(arr));
 addMethod(coerce, [Number, String], unary(str));
 addMethod(coerce, [Number, Date], unary(date));

@@ -1,7 +1,7 @@
 import {does, overload, identity, constantly} from "../../core.js";
 import {implement} from "../protocol.js";
 import {map, into} from "../lazy-seq/concrete.js";
-import {persistentSet, PersistentSet} from "./construct.js";
+import {hashSet, HashSet} from "./construct.js";
 import {reduced} from "../reduced.js";
 import {keying} from "../../protocols/imapentry/concrete.js";
 import {reduce, reducekv} from "../../shared.js";
@@ -9,13 +9,13 @@ import {IMergable, ICloneable, IEquiv, IInclusive, ISet, ISeqable, ISeq, ICollec
 import * as p from "./protocols.js";
 
 function clone(self){
-  return new PersistentSet(p.clone(self.coll));
+  return new HashSet(p.clone(self.coll));
 }
 
-const empty = constantly(persistentSet());
+const empty = constantly(hashSet());
 
 function disj(self, value){
-  return includes(self, value) ? new PersistentSet(p.dissoc(self.coll, value)) : self;
+  return includes(self, value) ? new HashSet(p.dissoc(self.coll, value)) : self;
 }
 
 function includes(self, value){
@@ -23,7 +23,7 @@ function includes(self, value){
 }
 
 function conj(self, value){
-  return includes(self, value) ? self : new PersistentSet(p.assoc(self.coll, value, value));
+  return includes(self, value) ? self : new HashSet(p.assoc(self.coll, value, value));
 }
 
 function count(self){
@@ -53,7 +53,7 @@ function merge(self, other){
 }
 
 export default does(
-  keying("PersistentSet"),
+  keying("HashSet"),
   implement(IMergable, {merge}),
   implement(ICollection, {conj}),
   implement(ISet, {disj}),

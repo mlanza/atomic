@@ -3,7 +3,7 @@ import {ICollection, IEmptyableCollection, ISet} from "../../protocols.js";
 import * as p from "../../protocols/concrete.js";
 
 function empty(self){
-  self.coll = _.persistentMap();
+  self.coll = _.hashMap();
 }
 
 function conj(self, value){
