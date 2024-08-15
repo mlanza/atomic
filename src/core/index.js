@@ -2,7 +2,8 @@ import {foldkv, overload, partial, unary, type, curry, toggles, identity, obj, p
 import {IForkable, IDeref, IFn, IAssociative, ISequential, ICloneable, IHierarchy, ILookup, ISeq} from "./protocols.js";
 import {addMethod} from "./types/multimethod/concrete.js";
 import {set, maybe, toArray, opt, satisfies, spread, duration, remove, sort, flip, realized, apply, realize, isNil, reFindAll, mapkv, period, selectKeys, mapVals, reMatches, test, date, emptyList, cons, list, days, recurrence, emptyArray} from "./types.js";
-import {isBlank, str, replace} from "./types/string.js";
+import {str, replace} from "./types/string.js";
+import {blottable} from "./shared.js";
 import {persistentSet, PersistentSet} from "./types/persistent-set/construct.js";
 import {isSome} from "./types/nil.js";
 import {descriptive} from "./types/object/concrete.js";
@@ -208,7 +209,7 @@ export function elapsed(self){
 }
 
 export function collapse(...args){
-  return some(isBlank, args) ? "" : join("", args);
+  return some(blottable, args) ? "" : join("", args);
 }
 
 function impartable(f){
