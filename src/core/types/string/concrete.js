@@ -2,10 +2,6 @@ import {overload, unbind} from "../../core.js";
 import {reducing} from "../../protocols/ireducible/concrete.js";
 import {emptyString} from "./construct.js";
 
-export function isBlank(str){
-  return str == null || typeof str === "string" && str.trim().length === 0;
-}
-
 function str1(x){
   return x == null ? "" : x.toString();
 }
@@ -15,7 +11,7 @@ function str2(x, y){
 }
 
 export function camelToDashed(str){
-  return str.replace(/[A-Z]/g, function(x) { return "-" + x.toLowerCase() })
+  return str.replace(/[A-Z]/g, x => "-" + x.toLowerCase());
 }
 
 export const startsWith = unbind(String.prototype.startsWith);

@@ -16,6 +16,10 @@ export function blot(self){
   return seq(compact(self)) ? self : null;
 }
 
+export function blottable(self){
+  return blot(self) == null;
+}
+
 export const seqIndexed = mapIndexed(array, ?);
 
 const sequence1 = map(identity, ?);
