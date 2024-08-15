@@ -1,4 +1,4 @@
-import {ICompactible, ICloneable, IHashable, IIndexed, ISplittable, ITemplate, IReducible, IKVReducible, ICollection, ISeqable, ISeq, IInclusive, IAppendable, IPrependable, ILookup, IFn, IComparable, IEmptyableCollection} from "../../protocols.js";
+import {ICompactible, ICloneable, IHashable, IIndexed, ISplittable, IReducible, IKVReducible, ICollection, ISeqable, ISeq, IInclusive, IAppendable, IPrependable, ILookup, IFn, IComparable, IEmptyableCollection} from "../../protocols.js";
 import {does, identity, constantly, unbind, overload, isString} from "../../core.js";
 import {implement} from "../protocol.js";
 import {lazySeq} from "../lazy-seq/construct.js";
@@ -39,12 +39,6 @@ function split3(str, pattern, n){
 }
 
 const split = overload(null, split1, unbind(String.prototype.split), split3)
-
-function fill(self, params){
-  return p.reducekv(function(text, key, value){
-    return replace(text, new RegExp("\\{" + key + "\\}", 'ig'), value);
-  }, self, params);
-}
 
 function compare(self, other){
   return self === other ? 0 : self > other ? 1 : -1;
@@ -103,7 +97,6 @@ export default does(
   implement(ICloneable, {clone}),
   implement(IHashable, {hash}),
   implement(ISplittable, {split}),
-  implement(ITemplate, {fill}),
   implement(ICollection, {conj}),
   implement(IReducible, {reduce}),
   implement(IKVReducible, {reducekv}),
