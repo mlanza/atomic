@@ -1,6 +1,6 @@
-import {does, identity, constructs, branch, overload, isString, chain} from "../../core.js";
+import {does, identity, constructs, branch, overload, chain} from "../../core.js";
 import {implement} from "../protocol.js";
-import {IHashable, IMergable, ICompactible, IOmissible, ICollection, IEquiv, IReducible, IKVReducible, ISeqable, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, IFn, IMap, ISeq, ICloneable, IInclusive, ITemplate} from "../../protocols.js";
+import {IHashable, IMergable, ICompactible, IOmissible, ICollection, IEquiv, IReducible, IKVReducible, ISeqable, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, IFn, IMap, ISeq, ICloneable, IInclusive} from "../../protocols.js";
 import {reduced} from "../reduced.js";
 import {lazySeq, into, map} from "../lazy-seq.js";
 import {cons} from "../list.js";
@@ -9,7 +9,7 @@ import {satisfies} from "../protocol/concrete.js";
 import {update} from "../../protocols/iassociative/concrete.js";
 import {emptyList} from "../empty-list/construct.js";
 import {emptyObject} from "../object/construct.js";
-import {descriptive, isObject} from "../object/concrete.js";
+import {descriptive} from "../object/concrete.js";
 import * as p from "./protocols.js";
 import {keying} from "../../protocols/imapentry/concrete.js";
 import {hashKeyed as hash} from "../../protocols/ihashable/hashers.js";
@@ -17,16 +17,6 @@ import {reduceWith, reducekvWith, first, rest} from "../../shared.js";
 
 const keys = Object.keys;
 const vals = Object.values;
-
-function fill(self, params){
-  return p.reducekv(function(memo, key, value){
-    return p.assoc(memo, key,
-      chain(value, branch(
-        isString, p.fill(?, params),
-        isObject, fill(?, params),
-        identity)));
-  }, {}, self);
-}
 
 function merge(...maps){
   return p.reduce(function(memo, map){
@@ -135,7 +125,6 @@ const reducekv = reducekvWith(seq);
 export default does(
   keying("Object"),
   implement(IHashable, {hash}),
-  implement(ITemplate, {fill}),
   implement(IMergable, {merge}),
   implement(ICompactible, {compact}),
   implement(IEquiv, {equiv}),
