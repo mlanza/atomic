@@ -1,6 +1,6 @@
 import {does, identity, constructs, branch, overload, isString, chain} from "../../core.js";
 import {implement} from "../protocol.js";
-import {IHashable, IMergable, ICompactible, IComparable, IOmissible, ICollection, IEquiv, IReducible, IKVReducible, ISeqable, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, IFn, IMap, ISeq, ICloneable, IInclusive, ITemplate} from "../../protocols.js";
+import {IHashable, IMergable, ICompactible, IOmissible, ICollection, IEquiv, IReducible, IKVReducible, ISeqable, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, IFn, IMap, ISeq, ICloneable, IInclusive, ITemplate} from "../../protocols.js";
 import {reduced} from "../reduced.js";
 import {lazySeq, into, map} from "../lazy-seq.js";
 import {cons} from "../list.js";
@@ -60,12 +60,6 @@ function omit(self, entry){
   } else {
     return self;
   }
-}
-
-function compare(self, other){ //assume like keys, otherwise use your own comparator!
-  return p.equiv(self, other) ? 0 : descriptive(other) ? p.reduce(function(memo, key){
-    return memo == 0 ? p.compare(p.get(self, key), p.get(other, key)) : reduced(memo);
-  }, 0, p.keys(self)) : -1;
 }
 
 function conj(self, entry){
@@ -150,7 +144,6 @@ export default does(
   implement(IInclusive, {includes}),
   implement(ICollection, {conj}),
   implement(ICloneable, {clone}),
-  implement(IComparable, {compare}),
   implement(IReducible, {reduce}),
   implement(IKVReducible, {reducekv}),
   implement(IMap, {dissoc, keys, vals}),
