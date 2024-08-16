@@ -36,10 +36,8 @@ function keys(self){
 
 function seq(self){
   return p.seq(map(function(key){
-    const part = self.partition(key);
-    const value = p.getIn(self.parts, [part, key]);
-    return [key, value];
-  }, keys(self.parts)));
+    return [key, p.get(self, key)];
+  }, keys(self)));
 }
 
 export default does(
