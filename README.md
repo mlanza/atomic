@@ -318,6 +318,7 @@ It may be useful to rough out the UI early on.  Thinking through things — idea
 
 See these sample programs to learn more:
 
-* [Sokoban](https://github.com/mlanza/sokoban)
 * [Todo](https://github.com/mlanza/todo)
+* [Sokoban](https://github.com/mlanza/sokoban)
+* [Boulder Dash](https://github.com/mlanza/boulder-dash)
 * [Treasure Quest](https://github.com/mlanza/treasure-quest)
