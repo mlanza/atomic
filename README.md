@@ -133,7 +133,7 @@ Then begin fleshing out your core with domain logic, nothing but pure functions 
 
 Keep `main` trivially simple, at first.  For a time it'll provide little more than the harness necessary to run the simulation.
 
-The `reg` line in `main` is important.  Take a detour and understand [how it faciliates interactive development](./docs/interactive-development.md) before continuing.
+The `reg` line in `main` is important.  Ensure you grasp how the registry is used to facilitate [interactive development](./docs/interactive-development.md) as that's central to everything.
 
 To begin interacting with the app, you'll need to serve it:
 
@@ -145,7 +145,7 @@ Launch the app in the browser, remembering the `monitor` query parameter:
 
 [http://127.0.0.1:8080/?monitor=*](http://127.0.0.1:8080/?monitor=*)
 
-Finally, to bootstrap the command line, expose the browser's Developer Tools and from its console enter:
+Finally, to bootstrap the command line in the browser, expose its Developer Tools, and from its console enter:
 
 ```sh
 cmd()
