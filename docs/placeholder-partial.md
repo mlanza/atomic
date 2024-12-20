@@ -53,3 +53,5 @@ import * as _ from "./libs/atomic/core.js";
 import * as $ from "./libs/atomic/shell.js";
 import * as dom from "./libs/atomic/dom.js";
 ```
+
+Placeholder partial is preferred to currying due to the library's Clojure-like preference for varadic functions.  Currying works best with fixed-arity, not variadic functions.  Placeholder partial (`e.g. const double = _.mult(2, _)`) clearly identifies which overloaded arity is targeted by the function call.
