@@ -2,9 +2,9 @@
 
 Most languages have reference types and value types, mutables and immutables.  JavaScript is no different, but has gaps in its value types (e.g. [records and tuples](https://github.com/tc39/proposal-record-tuple) and [temporals](https://github.com/tc39/proposal-temporal)).
 
-And while functional programming does better when a robust set of value types are present, it's not seriously hindered when they're not.  It can treat reference types as value types.
+And while functional programming does better when a robust set of value types are present, it's not seriously hindered when they're not.  It can treat reference types as value types.  That said, although Atomic provides several types of maps, sets, etc., it will usually suffice to use plain old objects and arrays and to consider alternatives only when performance becomes a concern.
 
-Briefly, recall that command-query separation wants query functions to return a value but not command functions.  The stark absence of a return value calls it out as a command.
+Briefly, recall how [command-query separation](./command-query-separation.md) expects queries to return a value, but not commands.  The stark absence of a return value from a function identifies it as a command.
 
 ```js
 const obj = {title: "Lt.", lname: "Columbo"};
@@ -13,18 +13,40 @@ const shows = ["Columbo", "The Good Doctor"];
 
 |Action|Pure World (`core`) |Impure World (`shell`)|
 |-|-|-|
-|Read property|`_.get(obj, "lname")`|N/A|
+|Read property|`_.get(obj, "lname")`|`_.get(obj, "lname")`|
 |Write property|`_.assoc(obj, "lname", "Specter")` | `$.assoc(obj, "lname", "Specter")`|
 |Add element|`_.conj(shows, "Suits")` | `$.conj(shows, "Suits)` |
 
 The above demonstrates a couple important ideas.
 
-Some operations are natively queries.  Queries remain queries whether they're used in the pure or impure part of a program.  So `get` is always a read operation, or a query. There is no mutable counterpart.  It's simply not needed.
+Some operations, like `get`, are naturally queries, and can be used in either the pure or impure part of a program without causing harm.  Because queries are safe they move freely to both spaces.  But because naturally impure, mutable operations, like `$.assoc` can cause harm, they can't.  Rather one must write a safe, simulated version of the command (`_.assoc`) or, rather, reduce it to a query for this to happen.
 
-Furthermore, associativity (e.g. `assoc`) is a concept which involves adding/changing a property on some target.  Since any command (e.g. side effect) can be simulated, `assoc` can be implemented as either an impure/mutable operation or as a pure/immutable operation.  The `assoc` protocol exists in both the pure (`_`) and impure (`$`) worlds.  To be clear, there's immutable `assoc`, and mutable `assoc`, two distinctly different protocols sharing a common name.
+Consider what `$.assoc` is about.  It is an operation which adds a property/value pair to some entity/object by mutating it.  The `_.assoc` version simulates that effect.  Thus, `$.assoc` has a side effect while `_.assoc` does not.  The actuating/simulating command divide is visibly demonstrated in the module from which it's imported—`shell` as `$` and `core` as `_`.
 
-Commands can be simulated by writing a function which returns a replacement for the subject.  That is, a simulated `assoc` takes a subject and the key and value it wants to associate to it but, without touching the actual subject, returns a new object which is the aggregate of the original and the association(s) applied against it.
+In each module there is an identically named `IAssociative` protocol presenting an `assoc` operation.  The module of its origin, not the name, defines its identity and purpose.  The one module actuates effects, the other simulates them.
 
+Recall per [command-query separation](./command-query-separation.md) commands ordinarily return nothing.  This is useful.  Because in one instance you write an operation which takes a subject and its operands, actuates some effect against the subject and returns nothing.  In the other you write an operation which takes a subject and its operands and returns a replacement subject, the subject as it would exist had the side effects been applied directly to it.  A command's natural lack of a return value makes this possible.
+
+In both instances `assoc` has the veneer of a command—that is, an operation which changes an object in some way.  The one actually does and the other provides an updated copy of the original so as to maintain purity.  This distinction is everything.
+
+Its divide revolves around atoms.  Some data structure is held in an atom, so that its contents can be swapped.  The divide made possible by simulated commands and atoms allows a program to separate the pure from the impure.  It relegates the mutation away from the object snapshot held in an atom and to the atom itself.
+
+The atom's contents are cleanly replaced so the object(s) it holds is never actually mutated.  Only the atom's bucket is mutated.  Its contents are swapped, one image for another.
+
+The impure, messy world has no atom and applies effects directly against subjects:
+```js
+//basis for mutable `assoc` protocol
+function assoc(self, key, value){ //command/actuated
+  self[key] = value;
+  //no return value;
+}
+
+const harvey = {lname: "Specter"};
+$.assoc(harvey, "fname", "Harvey");
+const fname = harvey.fname; // "Harvey"
+```
+
+The *purer* world relies on an atom to dramatically constrain the how and where of mutation:
 ```js
 //basis for immutable `assoc` protocol
 function assoc(self, key, value){ //query/simulated
@@ -38,37 +60,22 @@ $.swap($harvey, _.assoc(_, "fname", "Harvey"));
 const fname = _.chain($harvey, _.deref, _.get(_, "fname")); // "Harvey"
 ```
 
-These are simulated or faux commands, because they are pure and don't acutally mutate anything.  The `assoc` is pure, the `swap` impure.  This approach allows immutability and mutability to be teased apart.  It affords a specific strategy for controlling state change.
+I say "purer" because although the mutation has not been eliminated it has been neatly managed.  Purity has been introduced and confined to the atom.
 
-An ordinary command is impure actually changes the subject.  In accordance with command-query separation, it has no return value.
+The `$.assoc` function is a command.  It actuates.
 
-```js
-//basis for mutable `assoc` protocol
-function assoc(self, key, value){ //command/actuated
-  self[key] = value;
-  //no return value;
-}
+The `_.assoc` function is a query.  It simulates.  It is a special kind of query, what I call a simulated command, a faux command, or a persistent command.  The *persistent* correlates to persistent types which are types designed around and optimized for simulated effect.
 
-const harvey = {lname: "Specter"};
-$.assoc(harvey, "fname", "Harvey");
-const fname = harvey.fname; // "Harvey"
-```
+Thus, `assoc` is a command which was ported from the impure realm to the pure and, thus, spans both.  The same with `conj` and countless other commands.
 
-Immutable `assoc` is a query, mutable `assoc` a command.  The one emulates change.  The other actuates it.  Thus, `_`s signal emulation, `$`s actuation.
+All simulation requires is an atom and a protocol which models effects with simulated commands.  The atom keeps the state and uses them to [`swap`](https://clojuredocs.org/clojure.core/swap!) updates against it.
 
-Immutable `assoc` is tailor-made for truly persistent types, like records.  But even without them, it can be implemented against plain objects.
+This reveals how any mutable operation can be simulated, which is to say written as a reductive operation.  It further reveals how all programs are, at their very centers, [reductions](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/Reduce)—that is, some initial value (held by an atom) and a potentially indefinite series of operations (simulated commands swapped against the atom) for advancing the user story.
 
-The same applies to `conj` or any other command one imagines.  Change against any type can be simulated.  All simulation requires is an atom.  The atom contains the state and [`swap`](https://clojuredocs.org/clojure.core/swap!)s updates against it using simulated commands.
-
-What this effectively means is the above table can, as desired, be fully realized so that any mutable operation can be simulated, which is to say written as a reductive operation.  What this reaveals is all programs are, at their very centers, [reductions](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/Reduce).
-
-That's the cornerstone of how Clojure models state change.  And where Clojure actually has a robust set of persistent types, JavaScript doesn't.  So Atomic uses reference types and pure protocols/functions to emulate persistent types.  In practice, this proves performant enough to be of little concern.
+That cornerstone for how Clojure models state change is what Atomic adopted.  JavaScript, unlike Clojure, does not have a robust set of persistent types.  So Atomic uses reference types and simulated commands to the same end.  In practice, this proves performant enough to be of little concern.
 
 ## To What End?
 
-The point of discussing the two worlds, the pure and the impure, is to delinate the difference and to clearly demonstrate how side effects can be simulated before actuated.
+There's an immense value proposition in learning to tease the pure out of the impure.  While the result of simulating (in the atom) before actuating (reflecting change in the environment, data stores and/or interface) is a program doing essentially the same things but with another layer, it would be short sighted to conclude it only adds complexity.
 
-The value of handling state in this manner is hard to understand in the small.  But there's an immense value proposition in learning to tease apart the pure and impure parts only to reconnect them.
-
-While the end result, simulated change becoming actual change achieves the same result as before, it would be short sighted to assert the extra layer adds complexity.  This separation makes a program significantly easier to understand, develop, test and maintain than when the parts were intertwined.  It provides a useful lens for seeing what a program logically is and what it does.
-
+The added layer almost always pays for itself.  It provides a useful boundary between where effects are actuated and the more important logical domain, making it far easier to understand, test and maintain the latter.
