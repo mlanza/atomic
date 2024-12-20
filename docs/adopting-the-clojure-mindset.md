@@ -2,9 +2,9 @@
 
 Most languages have reference types and value types, mutables and immutables.  JavaScript is no different, but has gaps in its value types (e.g. [records and tuples](https://github.com/tc39/proposal-record-tuple) and [temporals](https://github.com/tc39/proposal-temporal)).
 
-And while functional programming does better when a robust set of value types are present, it's not seriously hindered when they're not.  It can treat reference types as value types.
+And while functional programming does better when a robust set of value types are present, it's not seriously hindered when they're not.  It can treat reference types as value types.  That said, although Atomic provides several types of maps, sets, etc., it will usually suffice to use plain old objects and arrays and to consider alternatives only when performance becomes a concern.
 
-Briefly, recall that command-query separation wants query functions to return a value but not command functions.  The stark absence of a return value calls it out as a command.
+Briefly, recall how [command-query separation](./command-query-separation.md) wants query functions to return a value but not command functions.  The stark absence of a return value calls it out as a command.
 
 ```js
 const obj = {title: "Lt.", lname: "Columbo"};
@@ -38,7 +38,7 @@ $.swap($harvey, _.assoc(_, "fname", "Harvey"));
 const fname = _.chain($harvey, _.deref, _.get(_, "fname")); // "Harvey"
 ```
 
-These are simulated or faux commands, because they are pure and don't acutally mutate anything.  The `assoc` is pure, the `swap` impure.  This approach allows immutability and mutability to be teased apart.  It affords a specific strategy for controlling state change.
+These are simulated commands (a.k.a., faux or persistent commands), because they are pure and don't acutally mutate anything.  The `assoc` is pure, the `swap` impure.  This approach allows immutability and mutability to be teased apart.  It affords a specific strategy for controlling state change.
 
 An ordinary command is impure actually changes the subject.  In accordance with command-query separation, it has no return value.
 

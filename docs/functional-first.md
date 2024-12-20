@@ -1,13 +1,24 @@
 # Choosing functions over methods
 
-Atomic unilaterally prefers functions over methods because:
+Atomic unilaterally prefers functions over methods because they:
 
-* Functions compose
-* Functions are first class (e.g. they go everywhere)
-* Functions minimize the need to bind or reference `this`
-* Functions are potentially polymorphic
+* compose
+* are first class (e.g. they go everywhere)
+* Fminimize the need to bind or reference `this`
+* are potentially polymorphic
 
-Furthermore, Atomic is fundamentally protocol oriented.  Since protocols are themselves just functions, they do everything functions do.  *For all intents and purposes, the two concepts are interchangable.*
+Furthermore, Atomic is fundamentally protocol oriented.  Its protocols are exposed through functions.  Multimethods, too, are just functions.  Though the implementation details of a function may vary, their differences should not prohibit them from being used interchangably.  They all retain a first-class status.  Take "function", wherever it appears, to be an umbrella term for a plain function, a protocol, or a multimethod.
+
+In general, whenever polymorphism was needed, Atomic preferred protocols to multimethods.
+
+## Writing function guidance
+
+Some additional considerations for functions are they:
+
+* can take `self` as a parameter (usually the first) as an alternative to `this`
+* should use recursion sparingly due to the potential for a stack overflow
+* can be overloaded (via `overload`)
+* are the preferred means to instantiating objects (thus `new` will usually be hidden from view)
 
 ## Instantiating objects
 Atomic continues to prefer constructor functions over class syntax.  While thought was given to rewriting types using class syntax, once the feature entered the language, a problem soon became apparent.
@@ -47,9 +58,9 @@ function journal1(state){
 const journal = overload(null, journal1, journal2);
 ```
 
-Due to these rules, a module consumer won't generally use the `new` keyword.
+Due to these rules, a module consumer won't generally use the `new` keyword.  Furthermore, providing overloaded or even alternative factory functions, there can be numerous abstract ways for creating instances of a type.
 
-Also, note another rule.  Never do work in the constructor function.  When setup work must be done, save it for the factory function.
+Never do work in a constructor function.  Save it for the factory function.  See how `Journal` (above) does nothing but assign its arguments to its properties.
 
 ```javascript
 //implementing protocols to define a behavior...
@@ -94,4 +105,3 @@ const day = dow(now);
 
 The distinction between concrete and abstract functions is this.  A concrete function has a single known type.  An abstract function, also known as a protocol, has an indefinite number of known types.
 
-While multimethods are implemented in Atomic, protocols are the strongly preferred form of polymorphism.
