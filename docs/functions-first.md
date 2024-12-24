@@ -5,7 +5,7 @@ Prefers function over methods because they:
 * compose
 * are first class (e.g., they go everywhere)
 * minimize the need to bind or reference `this`
-* may actually be multimethods or polymorphic protocols
+* may actually be multimethods or protocols
 
 That last deserves some explanation.  The true nature of a function may be unknown.  It may be a function, or a multimethod, or one operation for some protocol.  Take "function," wherever it appears, to potentially be any of these.  This makes all of them first class and interchangeable.
 
@@ -15,26 +15,26 @@ Some additional considerations for functions are they:
 
 * can take `self` as a parameter (usually the first) as an alternative to `this`
 * should use recursion sparingly due to the potential for a stack overflow
-* can be overloaded (via `overload`)
-* are the preferred means to instantiating objects (thus `new` will usually be hidden from view)
+* can be overloaded (via `overload`, see `journal` and `dow` below)
+* are the preferred means to instantiating objects (thus hiding `new` from the type consumer)
 
 ## Instantiating objects
-Atomic prefers constructor functions over class syntax.  While thought was given to rewriting types using class syntax once the feature entered the language, a problem soon became apparent.
+The strategy for creating instances of a type are:
 
-A type implemented as a class would more sensibly implement its behavior using methods.  And to permit those types to operate within a primarily functional paradigm, those methods (not being first class) would have to also be bound to functions.  This would introduce a layer of indirection, add overhead, and degrade performance.
+* The module providing a type calls `new` in the factory function(s) it exports
+* The module consuming a type calls the provided factory function(s)
+* A constructor function does nothing more than assign arguments to properties
+* A factory function performs whatever work is necessary to instantiate an object of a type
+* All properties are declared as public but treated as private
 
-This is unfortunate because classes introduce truly private properties, a prerequisite to proper encapsulation.  But before this possibility came into being, the standard had already been to declare all properties publicly and, as a rule, treat them as private.  So there's no need to underscore prefix a property (e.g. `_fname`) since even `fname` should be considered private.
+While consideration was given to using the class syntax added to the language well after Atomic was created to gain truly private properties, the idea was abandoned as ill suited to the functional paradigm.
 
-That's still the rule.  Properties, with the exception of those on plain objects, which are themselves treated as DTOs, are accessed/updated via functions.
+Classes must define methods to access private properties.  Since Atomic prefers functions, all methods must be unbound as functions.  `unbind` conveniently does this.  Calling these unbound functions, however, suffers a performance hit that calling the functions deliberately written for use with a type do not.  Thus, working from classes adds overhead.
 
-The strategy for birthing objects remains:
+Rather privacy remains a matter of discipline.  All properties are public but treated as private.  There's no need to prefix property names with underscores.  Use `fname` instead of `_fname`.  Except with plain objects, properties are not to be accessed directly.  Use functions to encapsuate access.
 
-* Don't call a constructor function directly
-* Call factory functions instead to birth objects
-* Make properties public but treat them as private
-* Define an object's api using functions
+See how the discussed principles are demonstrated in the code snippets to follow.
 
-## Implementing abstract behaviors
 ```javascript
 //constructor function
 function Journal(pos, max, history, state){
@@ -56,33 +56,11 @@ function journal1(state){
 const journal = overload(null, journal1, journal2);
 ```
 
-Due to these rules, a module consumer won't generally use the `new` keyword.  Furthermore, providing overloaded or even alternative factory functions, there can be numerous abstract ways for creating instances of a type.
-
-Never do work in a constructor function.  Save it for the factory function.  See how `Journal` (above) does nothing but assign its arguments to its properties.
-
-```javascript
-//implementing protocols to define a behavior...
-const behave =
-  does(
-    implement(IDeref, {deref}),
-    implement(IFunctor, {fmap}),
-    implement(IRevertible, {undo, redo, ...}));
-
-//...and applying it to a constructor.
-behave(Journal);
-```
-Having this behavior readily applicable as a function is useful for [cross-realm patching](./cross-realm-operatility.md).  If not for this potential need, the behavior might've been directly applied to the constructor.
-
-```javascript
-//direct application
-doto(Journal,
-  implement(IDeref, {deref}),
-  implement(IFunctor, {fmap}),
-  implement(IRevertible, {undo, redo, ...}));
-```
-
 ## Implementing concrete behaviors
-Some types have concrete functions.  A concrete function, the perfect candidate for an actual method, is something which applies to a single known type.
+
+Concrete functions are implemented to interact with a single known type.
+
+Here the day of the week function exists only for dates:
 
 ```javascript
 function dow1(self){
@@ -101,5 +79,34 @@ const now = _.date();
 const day = dow(now);
 ```
 
-The distinction between concrete and abstract functions is this.  A concrete function has a single known type.  An abstract function, also known as a protocol, has an indefinite number of known types.
+## Implementing abstract behaviors
 
+[Abstract thinking](./abstraction-thinking.md) closely relates to protocols which provide the foundation by which an indefinite number of types can abide some behavior.  If a type can have a behavior, there must be a way of imbuing it.
+
+Here `Journal` behavior associated with the `IDeref`, `IFunctor` and `IRevertible` protocols is composed or packaged as a `behave` function:
+
+```javascript
+//package the facets of a behavior...
+const behave =
+  does(
+    implement(IDeref, {deref}),
+    implement(IFunctor, {fmap}),
+    implement(IRevertible, {undo, redo, /*...*/}));
+
+//...and applying it to a constructor.
+behave(Journal);
+```
+By first packaging the behavior, it can be readily applied to choice constructors.  This is useful for [cross-realm patching](./cross-realm-operatility.md) and for composing behaviors and for applying them to still other types.
+
+If none of that is needed, what was done in 2 steps could be done in 1:
+
+```javascript
+doto(Journal, //apply behavior directly
+  implement(IDeref, {deref}),
+  implement(IFunctor, {fmap}),
+  implement(IRevertible, {undo, redo, /*...*/}));
+```
+
+When creating new types, one ordinarily considers and implements both its concrete functions and its abstract functions.  These are, respectively, the behaviors which are and which are not exclusive to the type.
+
+When creating new behaviors they will ordinarily begin as concrete functions for a single known type.  When it is discovered the behavior applies to other types, they can be promoted into abstract functions, the kind that define protocols.  The generality is things begin in the concrete and, only when needed, move toward abstraction.

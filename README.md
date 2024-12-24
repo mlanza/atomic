@@ -10,11 +10,11 @@ Highlights:
 * functional core, imperative shell w/ FRP
 * [nil-punning](https://ericnormand.me/article/nil-punning) handles null in sensible ways
 
-Atomic is [functions first](docs/functions-first.md).  Methods only limit [the places you'll go](https://en.wikipedia.org/wiki/Oh%2C_the_Places_You'll_Go!).
+Atomic is [functions first](docs/functions-first.md) as methods only limit [the places you'll go](https://en.wikipedia.org/wiki/Oh%2C_the_Places_You'll_Go!).
 
 Atomic is built around [protocols](src/core/protocols).  Since [they're the centerpiece](https://clojure.org/reference/protocols) of Clojure, they are, by extension, Atomic too.  They provide the only safe means of [dynamically extending natives and third-party types](./docs/protocols-for-dynamic-extension.md).  They make [cross-realm operability](./docs/cross-realm-operability.md) possible.  They also, for the good of the functional paradigm, shift focus to thinking [abstractly about apis and behaviors](./docs/abstraction-thinking.md) over types.
 
-Since JavaScript lacks a complete set of value types (e.g. [records, tuples](https://tc39.es/proposal-record-tuple/) and [temporals](https://github.com/tc39/proposal-temporal)), reference types can be used instead.  Maintaining purity, thus, becomes a matter of discipline.  In Atomic reference types like objects and arrays can be optionally, as a matter of protocol selection, [treated as value types](./docs/command-query-protocols.md).
+Since JavaScript currently lacks compound value types such as [records, tuples](https://tc39.es/proposal-record-tuple/) and [temporals](https://github.com/tc39/proposal-temporal), reference types can be used instead.  Purity is instead maintained as a matter of discipline.  In Atomic reference types like objects and arrays can be optionally, as a matter of protocol selection, [treated as value types](docs/mutables-for-immutables.md).
 
 Atomic has structures comparable to Clojure's [maps](https://clojuredocs.org/clojure.core/hash-map) and [vectors](https://clojuredocs.org/clojure.core/vector) as well as seamless [Immutable.js](https://immutable-js.com) integration.  Since objects and arrays are cheap and usually perform well enough, they're to be preferred.  Plus, due to protocols, if the need arises, one can always drop in a replacement type later with almost no refactoring.  Mountains are reduced to mole hills!
 
@@ -93,7 +93,7 @@ import {reg} from "./libs/cmd.js";
 These initial files hint at a [FCIS](https://www.destroyallsoftware.com/screencasts/catalog/functional-core-imperative-shell) architecture.  It has a core (`sokoban`) and shell (`main`) module of its own.  Pragmatically, `main` may eventually contain the GUI logic and utilize the `dom` import, but right now that's a long way off.
 
 ### Stand up the simulation
-Your first task, in `main`, is to create a state container for your [world state](https://docs.racket-lang.org/teachpack/2htdpuniverse.html) and define its `init` state in your pure module.  It'll likely be a compound data structure (i.e., objects and arrays), but it could be anything.
+Your first task in `main` is to create a state container for your [world state](https://docs.racket-lang.org/teachpack/2htdpuniverse.html) and define its `init` state in your pure module.  It'll likely be a compound data structure (i.e., objects and arrays), but it could be anything.
 
 The data structure I chose is roughly as follows, but model yours as you see fit.  There's not one right way of doing this.
 
@@ -132,7 +132,7 @@ reg({$state, s}); //registry aids interactivity
 ```
 Then begin fleshing out your core with domain logic, nothing but pure functions and using them to tell your app's story.  Everything else including the program machinery (atoms, signals, routers, queues, buffers, buses, etc.) and glue code goes into `main`.
 
-Keep `main` trivially simple, at first.  For a time it'll provide little more than the harness necessary to run the simulation.
+Keep `main` trivially simple at first.  For a time this lone atom provides all the harness necessary to run the simulation.
 
 The `reg` line in `main` is important.  Ensure you grasp how the registry is used to facilitate [interactive development](./docs/interactive-development.md) as that's central to everything.
 
@@ -187,15 +187,13 @@ $.swap($state, s.up); //nonconfigured counterpart/alternative
 $.swap($state, s.move("down"));
 $.swap($state, s.down);
 ```
-The above separation of files illustrate well the pendulum of initial activity.  You write functions in `sokoban` only to execute them in `main` and/or from the console.  This facilitates your telling some version of a story your app tells.  This is what it means to [start with simulation](docs/start-with-simulation.md).
+The above separation of files illustrate well the pendulum of initial activity.  You write functions in `sokoban` only to execute them in `main` and/or from the console.  This enables your app to tell its story.  This is what it means to [start with simulation](docs/start-with-simulation.md).
 
-This makes functional programming a pleasure.  The essence of "easy to reason about" falls out of the focus on purity.  It's hard to beat a model which reduces a program to a flip book, halts time, and permits any page and its subsequent to be readily examined and compared.  There's immeasurable good in learning to tease the pure out of the impure, of embracing the boundary between simulation and messy reality.
+Telling a story from the confines of an atom is what makes this approach a pleasure.  The value in learning to tease the pure from the impure is the resulting simulation is far easier to reason about, use, and maintain than the messy reality of imperative code.  It's hard to beat a model which reduces a program to a flip book, halts time, and permits any page and its subsequent to be readily examined and compared.
 
-The domain module (the core) simulates what your program is about, the main module (the shell) actuates its effects.  The domain module, playing [Sokoban](https://github.com/mlanza/sokoban/blob/main/sokoban.js) or managing [To-dos](https://github.com/mlanza/todo/blob/main/todo.js), for example, is a library of pure functions.  The main module, having little to do the domain, provides the plumbing necessary to make things happen.  It transforms effect into simulation and vice versa.  Commands flow in.  Events flow out.  The core directs, the shell orchestrates.
+The domain module (the core) simulates what your program is about, the main module (the shell) actuates its effects.  The domain module, playing [Sokoban](https://github.com/mlanza/sokoban/blob/main/sokoban.js) or managing [To-dos](https://github.com/mlanza/todo/blob/main/todo.js), for example, is a library of pure functions.  The main module provides the plumbing necessary to make things happen.  It transforms effect into simulation and vice versa.  Commands flow in.  Events flow out.  The core directs, the shell orchestrates.
 
-The first objective is to flesh out the core by writing the functions needed to express what the story is about, what the program does.  A state container, all by itself, provides sufficient machinery to get you there.
-
-It's only when the core is somewhat complete, the shell is connected to a UI.
+The first objective is to flesh out the core by writing the functions needed to express what the story is about, what the program does.  That and an atom is all you initially need.  It's only when that's mostly done, the shell gets its UI.
 
 ### Stand up the user interface
 

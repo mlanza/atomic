@@ -54,4 +54,16 @@ import * as $ from "./libs/atomic/shell.js";
 import * as dom from "./libs/atomic/dom.js";
 ```
 
-Placeholder partial is preferred to currying due to the library's Clojure-like preference for varadic functions.  Currying works best with fixed-arity, not variadic functions.  Placeholder partial (`e.g. const double = _.mult(2, _)`) clearly identifies which overloaded arity is targeted by the function call.
+Placeholder partial (see the exported functions `impart`, `plug` and `partly`) is preferred to currying (see `curry`) due to the library's Clojure-like preference for varadic functions.  Currying works well with fixed-arity functions, not variadics.
+
+See how placeholder partial makes arity selection explicit:
+
+```js
+const triple = _.mult(3, _); //unary function
+const fullName3 = _.str(_, " ", _, " ", _); //ternary function, initial included
+const fullName2 = _.str(_, " ", _); //binary function, initial excluded
+const fullName = _.overload(null, null, fullName2, fullName3); //variadic
+const doe = fullName(_, "Doe"); //explicity select the binary overload and return a unary
+const john = doe("John"),
+      jane = doe("Jane");
+```

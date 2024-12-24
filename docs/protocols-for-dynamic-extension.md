@@ -90,6 +90,6 @@ $.conj(actors, "Gabriel Macht"); //actuating `conj`
 $.conj(actors, "Patrick J. Adams");
 $.log(actors); //=> ["Gabriel Macht", "Patrick J. Adams"]
 ```
-And although `_.conj` and `$.conj` are closely related, and perhaps deserve to share a name, they're fundamentally different.  [One simulates, the other actuates](./command-query-protocols.md).  Atomic has a slew of same-named protocols sitting on either side of the purity dividing line.
+And although `_.conj` and `$.conj` are closely related, and perhaps deserve to share a name, they're fundamentally different.  [One simulates, the other actuates](simulating-actuating.md).  Atomic has a slew of same-named protocols sitting on either side of the purity divide.
 
 The use of protocols adds a layer of indirection and imposes a small cost over calling concrete type-specific functions, but gaining generality and a simplified api makes it worth it.
