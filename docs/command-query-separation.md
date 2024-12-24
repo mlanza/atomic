@@ -12,11 +12,7 @@ The benefit of CQS is that it becomes easy to read code and discern where side e
 
 > 💡**Principle**: Command-query separation is good pratice for writing functions.  Prefer return-nothing to return-something commands.
 
-## Simulating commands
-
-Commands can be simulated.  That is, you can take an ordinarily side-effecting function and write an alternative version which is query.
-
-In the alternate version, the function accepts a subject potentially along with operands and returns a new subject.  That subject can is a near-clone of the original except with the change applied.  A function which is actually a query but which is used to simulate a command is called a **faux command**.  It is commonly used against an atom to simulate change before actualizing it.  It is discussed further under [command-query protocols](./command-query-protocols.md).  The `ICloneable` protocol may prove helpful for writing these.
+See [simulating and actuating](simulating-actuating.md) to learn how any why some commands are rewritten as simulated commands or queries.
 
 [^1]: Not to be confused with a command POJO (e.g., an object/message) whose corollary is an event POJO.  Commands and events, in that context, are messages where in this context they're operations.
 

@@ -32,7 +32,7 @@ type ShoppingCart =
     | PaidCart of PaidCartData
 ```
 
-The 3 concrete types here fall under the abstraction `Cart`.  Where the former example offers an umbrella category, Shape, and the 3 disparate types the program is aware of, the latter example offers a single concept, Cart, in 3 different forms.
+The 3 concrete types here fall under the abstraction `ShoppingCart`.  Where the former example offers an umbrella category, `Shape`, and the 3 disparate types the program is aware of, the latter example offers a single concept, `ShoppingCart`, in 3 different forms.
 
 Protocols, being just another approach to polymorphism, can well handle both scenarios.  Furthermore, because JavaScript is a dynamic language, they can be adapted at runtime by anyone who wants to extend the abstraction.  This may be the original developer or a third-party developer.
 
@@ -59,7 +59,7 @@ Seed the atom with an initial state:
 const $cart = $.atom(emptyCart);
 ```
 
-Provide a [persistent command](./command-query-protocols.md) for transitioning the state:
+Provide a [faux command](simulating-actuating.md) for transitioning the state:
 
 ```js
 function paid(payment){

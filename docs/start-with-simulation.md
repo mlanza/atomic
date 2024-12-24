@@ -195,7 +195,7 @@ When anything goes wrong, when the resulting snapshot of the state doesn't add u
 ### It's easier to identify and fix faulty logic
 When a bad snapshot emerges, there's a precise operation/step to account for it.  "This frame looks fine, but the next one doesn't."
 
-Furthermore, when a complete record of snapshots have been captured, a developer can take the last good snapshot and interactively debug/reapply the simulated command which brought it to the bad state.
+Furthermore, when a complete record of snapshots have been captured, a developer can take the last good snapshot and interactively debug/reapply the faux command which brought it to the bad state.
 
 ```js
 const frames = []; // capture snapshots?
