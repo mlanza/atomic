@@ -14,11 +14,11 @@ Atomic is [functions first](docs/functions-first.md) as methods only limit [the 
 
 Atomic is built around [protocols](src/core/protocols).  Since [they're the centerpiece](https://clojure.org/reference/protocols) of Clojure, they are, by extension, Atomic too.  They provide the only safe means of [dynamically extending natives and third-party types](./docs/protocols-for-dynamic-extension.md).  They make [cross-realm operability](./docs/cross-realm-operability.md) possible.  They also, for the good of the functional paradigm, shift focus to thinking [abstractly about apis and behaviors](./docs/abstraction-thinking.md) over types.
 
-Since JavaScript currently lacks compound value types such as [records, tuples](https://tc39.es/proposal-record-tuple/) and [temporals](https://github.com/tc39/proposal-temporal), reference types can be used instead.  Purity is instead maintained as a matter of discipline.  In Atomic reference types like objects and arrays can be optionally, as a matter of protocol selection, [treated as value types](docs/mutables-for-immutables.md).
+Since JavaScript currently lacks compound value types such as [records, tuples](https://tc39.es/proposal-record-tuple/) and [temporals](https://github.com/tc39/proposal-temporal), reference types can be used instead.  Purity is instead maintained as a matter of discipline.  In Atomic reference types like objects, arrays and dates can be optionally, as a matter of protocol selection, [treated as value types](docs/mutables-for-immutables.md).
 
-Atomic has structures comparable to Clojure's [maps](https://clojuredocs.org/clojure.core/hash-map) and [vectors](https://clojuredocs.org/clojure.core/vector) as well as seamless [Immutable.js](https://immutable-js.com) integration.  Since objects and arrays are cheap and usually perform well enough, they're to be preferred.  Plus, due to protocols, if the need arises, one can always drop in a replacement type later with almost no refactoring.  Mountains are reduced to mole hills!
+Atomic has structures comparable to Clojure's [maps](https://clojuredocs.org/clojure.core/hash-map) and [vectors](https://clojuredocs.org/clojure.core/vector) as well as seamless [Immutable.js](https://immutable-js.com) integration.  Since objects and arrays are cheap and usually perform well enough, they're to be preferred.
 
-As you can see, the [first-class status of protocols](https://github.com/tc39/proposal-first-class-protocols) in the language is long overdue!
+Plus, if the need arises, one can always drop in a replacement type later with almost no refactoring.  Yet again, protocols reduce mountains to mole hills!  This is why their [first-class status in the language](https://github.com/tc39/proposal-first-class-protocols) is so sorely overdue!
 
 ## Premise
 Atomic was born out of the question:
@@ -27,7 +27,7 @@ Atomic was born out of the question:
 
 The ephiphany: since languages are just facilities plus syntax, if one sets aside syntax, having the right facilities can eliminate the build step.
 
-JavaScript does functional programming but, with just a few more facilities, could be amazing:
+Any language can do functional programming pretty dang well given the right facilities.  JavaScript is no exception.  The proper measure is getting them adopted into the language.
 
 * [first-class protocols](https://github.com/tc39/proposal-first-class-protocols)
 * [records & tuples](https://github.com/tc39/proposal-record-tuple)
@@ -35,7 +35,7 @@ JavaScript does functional programming but, with just a few more facilities, cou
 * [pipeline operator](https://github.com/tc39/proposal-pipeline-operator)
 * [temporal](https://github.com/tc39/proposal-temporal)
 
-Atomic bridges the gap to showcase [the Clojure way](docs/adopting-the-clojure-mindset.md)!
+Until then, Atomic bridges the facilities gap to showcase [the Clojure way](docs/adopting-the-clojure-mindset.md)!
 
 ## Getting Started
 Build it from the command line:
@@ -130,7 +130,7 @@ const $state = $.atom(s.init());
 
 reg({$state, s}); //registry aids interactivity
 ```
-Then begin fleshing out your core with domain logic, nothing but pure functions and using them to tell your app's story.  Everything else including the program machinery (atoms, signals, routers, queues, buffers, buses, etc.) and glue code goes into `main`.
+Then begin fleshing out your `sokoban` core with domain logic, nothing but pure functions and using them to tell your app's story.  Everything else including the program machinery (atoms, signals, routers, queues, buffers, buses, etc.) and glue code goes into `main`.
 
 Keep `main` trivially simple at first.  For a time this lone atom provides all the harness necessary to run the simulation.
 
@@ -152,11 +152,11 @@ Finally, to bootstrap the command line in the browser, expose its Developer Tool
 cmd()
 ```
 
-Anticipate operating from your text editor and browser console.  This'll involve writing commands (pure functions), adding them to and exporting them from the core module (e.g., `sokoban`), and routinely issuing swaps against your atom.
+Anticipate operating from your text editor and browser console.  This'll involve [writing faux commands](./docs/simulating-actuating.md), adding them to and exporting them from the `sokoban` core module, and routinely issuing swaps against your atom.
 
 Plug `$.swap` with a pure, [swappable](https://clojuredocs.org/clojure.core/swap!) function, some command for driving state transitions based on anticipated user actions.  These commands can be issued via the browser console and/or the `main` module.  Waffle between both.  Use whichever you prefer.  The `main` module is useful for recording command sequences.
 
-Don't worry about what goes into `main` in the early stage.  It's temporary at best.  Fleshing out the core module is the initial focus.
+Don't worry about what goes into `main` in the early stage.  It's temporary at best.  Focus on fleshing out the core `sokoban` module.
 
 The functions you write must at minimum receive the app state as an argument, but they'll oft be accompanied by other arguments to permit configurability.  The choice for whether or not a command is configurable is yours.  It's often unavoidable.
 

@@ -19,15 +19,15 @@ const shows = ["Columbo", "The Good Doctor"];
 
 Consider that associating (`assoc`) is about adding a property/value pair to some entity/object.  It can be either actuated or simulated.  Thus, `$.assoc` is impure and has side effects while `_.assoc` is pure and does not.
 
-The actuating/simulating command divide is made visible by the import.  `shell` imports as `$`.  This is primarily where impure functions are kept.  `core` imports as `_`.  This is primarily where pure functions are kept.
+The actuating/simulating divide is determined by the import.  `shell` imports as `$`.  This is primarily where impure functions are kept.  `core` imports as `_`.  This is primarily where pure functions are kept.
 
-In each module there is an identically named `IAssociative` protocol presenting an `assoc` operation.  The module of its origin, not the name, defines its identity and purpose.  The one module actuates effects, the other only simulates them.  Thus, although sharing a common protocol name and functions, the one dispenses *commands*, the other *queries*.
+In each module there is an identically named `IAssociative` protocol presenting an `assoc` operation.  The module of origin, not the name, defines its identity and purpose.  The one module actuates effects, the other only simulates them.  Thus, although sharing a common protocol name and functions, the one dispenses *commands*, the other *queries*.
 
 Recall how [command-query separation](./command-query-separation.md) expects commands to return nothing.  This is useful.  Because in one instance you write an operation which takes a subject and its operands, actuates some effect against the subject and returns nothing.  In the other you write an operation which takes a subject and its operands and returns a replacement subject, the subject as it would exist had the side effects been applied directly to it.  A command's natural lack of a return value makes this possible.
 
 In both instances `assoc` has the veneer of a side-effecting operation or command.  The impure one actually changes its subject and the pure one provides an updated copy of it.  This command division applies not only to legitimate value types and persistent types but [also to reference types like objects and arrays](./mutables-for-immutables.md).
 
-Understanding the reason and purpose in using a simulated command instead of an actual command is vital.  The divide between simulating and actuating revolves around the atom.  Some data structure is held in it, so its contents can be swapped, one image for another.  In this way, the inside of the atom is a pure, functional core.  The atom itself and the environment in which it operates is an impure, imperative shell.
+Understanding the reason and purpose in using a simulated command instead of an actual command is vital.  The atom is the divide between simulating and actuating.  Some data structure is held in it, so its contents can be swapped, one image for another.  In this way, the inside of the atom is a pure, functional core.  The atom itself and the environment in which it operates is an impure, imperative shell.
 
 The impure, messy world has no atom and applies effects directly against subjects:
 ```js
@@ -58,9 +58,9 @@ const fname = _.chain($harvey, _.deref, _.get(_, "fname")); // "Harvey"
 
 The `$.assoc` function is a command.  It actuates.
 
-The `_.assoc` function is a query.  It simulates.  It is a *simulated* or *faux command* in that it is actually a query meant to simulate change.  These simulated commands are frequently used with atoms.
+The `_.assoc` function is a query.  It simulates.  It is a *faux command* or *simulated command* or just *command*—simulation understood—intended for use with an atom.
 
-Thus, `assoc` command was ported from the impure realm into the pure and, thus, spans both.  The same with `conj` and countless other commands.
+Thus, the `assoc` command was ported from the impure realm into the pure and, thus, spans both.  The same with `conj` and countless other "commands."
 
 Here effects are actuated directly:
 ```js
@@ -77,7 +77,7 @@ const $stooges = $.atom(["Moe", "Larry", "Shemp"]);
 $.swap($stooges, _.conj(_, "Corey")); //queries simulate
 ```
 
-To actuate the effects, the program would also have to subscribe to and react to any updates made in the atom.  The most convenient way to provide feedback is sending the updates to the log.
+To actuate the effects, the program would also subscribe to and react to updates made in the atom.  Thus, anything which is simulated will also be actuated somehow.   One convenient way is sending these updates to the log.
 
 ```js
 $.sub($stooges, $.log);
@@ -89,11 +89,11 @@ This is the equivalent of:
 $.sub($stooges, console.log.bind(console));
 ```
 
-A more robust app would ordinarily subscribe to updates in order to render a graphical representation in the DOM.
+A typical app would render these updates to a GUI in the DOM.
 
-One might be falsely led to believe that if one uses `_.assoc` in the simulating part of the program one would probably use `$.assoc` in the actuating part.  That is not the case.
+The parallel snippets shown above might lead one to believe an `_.assoc` in the simulating part of the app would correlate to an `$.assoc` in the actuating part.  That's feasible, but not obligatory.  The snippets demonstrate, rather, how actual commands can be converted to faux commands and vice versa.  Nothing more.
 
-What's being managed inside an atom, the simuation, revolves around the domain model and what the user is doing to it.  What's being managed outside the atom in the imperative shell revolves around giving the user a GUI and reacting to his inputs.  Because the responsibilies are wholly different, there's no reason for a simulated `_.assoc` to correlate to an actuated `$.assoc`.  It's feasible, but not obligatory.  The parallel examples were offered to demonstrate how actual commands can be converted to faux commands and vice versa, nothing more.
+What's being simulated inside the atom is what the user is doing.  What's being actuated outside it is the GUI.  Whenever simulation is added to an app, actuation follows.  Though they work together, they are different responsibilities.
 
 ## Naming
 
