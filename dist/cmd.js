@@ -5,8 +5,8 @@ import imm from "./atomic_/immutables.js";
 
 export const registry = {};
 const params = new URLSearchParams(location.search);
-const monitor = params.get("monitor")?.split(",");
-const nomonitor = params.get("nomonitor")?.split(",");
+const monitor = _.maybe(params.get("monitor"), _.split(_, ","));
+const nomonitor = _.maybe(params.get("nomonitor"), _.split(_, ","));
 
 const monitors = monitor ? function(key){
   return monitor.includes("*") || monitor.includes(key);

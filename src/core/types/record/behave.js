@@ -22,7 +22,10 @@ function seq(self){
 }
 
 function equiv(self, other){
-  return self.constructor === other?.constructor && p.count(self) === p.count(other) && p.reducekv(function(memo, key, value){
+  if ((self == null && other != null) || (self != null && other == null)) {
+    return false;
+  }
+  return self.constructor === other.constructor && p.count(self) === p.count(other) && p.reducekv(function(memo, key, value){
     return memo ? p.equiv(p.get(other, key), value) : reduced(memo);
   }, true, self);
 }

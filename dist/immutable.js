@@ -3172,7 +3172,7 @@ var List = /*@__PURE__*/(function (IndexedCollection) {
   List.prototype = Object.create( IndexedCollection && IndexedCollection.prototype );
   List.prototype.constructor = List;
 
-  List.of = function of (/*...values*/) {
+  List.of = function of (/*values*/) {
     return this(arguments);
   };
 
