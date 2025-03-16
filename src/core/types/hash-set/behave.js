@@ -1,5 +1,6 @@
 import {does, overload, identity, constantly} from "../../core.js";
 import {implement} from "../protocol.js";
+import {iterable, reductive} from "../lazy-seq/behave.js";
 import {map, into} from "../lazy-seq/concrete.js";
 import {hashSet, HashSet} from "./construct.js";
 import {reduced} from "../reduced.js";
@@ -53,6 +54,8 @@ function merge(self, other){
 }
 
 export default does(
+  iterable,
+  reductive,
   keying("HashSet"),
   implement(IMergable, {merge}),
   implement(ICollection, {conj}),

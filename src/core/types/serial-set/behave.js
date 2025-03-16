@@ -1,6 +1,7 @@
 import {serialSet, SerialSet} from "./construct.js"
 import {chain, does} from "../../core.js";
 import {maybe} from  "../just/construct.js";
+import {iterable, reductive} from "../lazy-seq/behave.js";
 import {map} from "../lazy-seq/concrete.js";
 import {implement} from "../../types/protocol/concrete.js";
 import {reduceWith} from "../../shared.js";
@@ -38,6 +39,8 @@ function empty(self){
 const reduce = reduceWith(seq);
 
 export default does(
+  iterable,
+  reductive,
   implement(IReducible, {reduce}),
   implement(ISeq, {first, rest}),
   implement(IEmptyableCollection, {empty}),

@@ -2,7 +2,7 @@ import {identity, does} from "../../core.js";
 import {implement} from "../protocol.js";
 import {apply} from "../function/concrete.js";
 import {EmptyList, emptyList} from "../empty-list.js";
-import ilazyseq, {iterable, reductive} from "../lazy-seq/behave.js";
+import {iterable, reductive} from "../lazy-seq/behave.js";
 import {iequiv} from "../empty-list/behave.js";
 import {mapa, concat} from "../lazy-seq/concrete.js";
 import {LazySeq} from "../lazy-seq/construct.js";
