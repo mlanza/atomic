@@ -1,6 +1,6 @@
 import {identity, overload, complement, does, slice} from "../../core.js";
 import {implement, satisfies} from "../protocol.js";
-import {IHashable, IMergable, IMap, IFlatMappable, IFunctor, IInsertable, IOmissible, IReversible, IMapEntry, IEquiv, IReducible, IKVReducible, IAppendable, IPrependable, IInclusive, ICollection, ISeq, IFind, ISeqable, IIndexed, IAssociative, ISequential, IEmptyableCollection, IFn, ICounted, ILookup, ICloneable} from "../../protocols.js";
+import {IAddable, IHashable, IMergable, IMap, IFlatMappable, IFunctor, IInsertable, IOmissible, IReversible, IMapEntry, IEquiv, IReducible, IKVReducible, IAppendable, IPrependable, IInclusive, ICollection, ISeq, IFind, ISeqable, IIndexed, IAssociative, ISequential, IEmptyableCollection, IFn, ICounted, ILookup, ICloneable} from "../../protocols.js";
 import {reduced, unreduced, isReduced} from "../reduced.js";
 import {indexedSeq} from "../indexed-seq.js";
 import {replace} from "../string/concrete.js";
@@ -146,6 +146,10 @@ function includes(self, x){
   return self.includes(x);
 }
 
+function add(self, x){
+  return includes(self, x) ? self : append(self, x);
+}
+
 function count(self){
   return self.length;
 }
@@ -199,5 +203,6 @@ export default does(
   implement(ILookup, {lookup}),
   implement(IAssociative, {assoc, contains}),
   implement(ISeqable, {seq}),
+  implement(IAddable, {add}),
   implement(ICollection, {conj: append, unconj}),
   implement(ISeq, {first, rest}));
