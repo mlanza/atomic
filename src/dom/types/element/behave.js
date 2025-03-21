@@ -18,7 +18,7 @@ function toggles5(on, off, _, self, want){
   return want ? on(self) : off(self);
 }
 
-const toggles = overload(null, null, null, null, toggles4, toggles5);
+const toggles = _.overload(null, null, null, null, toggles4, toggles5);
 const toggle = _.partial(toggles, show, hide, hidden);
 
 function hide(self){
