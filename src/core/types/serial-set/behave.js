@@ -2,11 +2,12 @@ import {serialSet, SerialSet} from "./construct.js"
 import {chain, does} from "../../core.js";
 import {maybe} from  "../just/construct.js";
 import {iterable, reductive} from "../lazy-seq/behave.js";
-import {map} from "../lazy-seq/concrete.js";
+import {map, mapa} from "../lazy-seq/concrete.js";
 import {implement} from "../../types/protocol/concrete.js";
 import {reduceWith} from "../../shared.js";
+import {hashSeq as hash} from "../../protocols/ihashable/hashers.js";
 import * as p from "../../protocols/concrete.js";
-import {ILookup, IReducible, IInclusive, ISeqable, ICollection, ISeq, ISet, IEmptyableCollection} from "../../protocols.js";
+import {ICloneable, IMergable, IHashable, IFunctor, IFn, ILookup, IReducible, IInclusive, ISeqable, ICollection, ISeq, ISet, IEmptyableCollection} from "../../protocols.js";
 
 function first(self){
   return maybe(self, p.seq, p.first);
@@ -17,15 +18,19 @@ function rest(self){
 }
 
 function conj(self, value){
-  return new SerialSet(p.assoc(self.coll, self.serialize(value), value), self.serialize);
+  return serialSet(p.assoc(self.coll, self.serialize(value), value), self.serialize);
 }
 
 function disj(self, value){
-  return new SerialSet(p.dissoc(self.coll, self.serialize(value)), self.serialize);
+  return serialSet(p.dissoc(self.coll, self.serialize(value)), self.serialize);
 }
 
 function includes(self, value){
   return p.contains(self.coll, self.serialize(value));
+}
+
+function lookup(self, value){
+  return includes(self, value) ? value : null;
 }
 
 function seq(self){
@@ -36,7 +41,19 @@ function empty(self){
   return serialSet([], self.serialize);
 }
 
+function clone(self){
+  return serialSet([...self], self.serialize);
+}
+
+function merge(self, other){
+  return new self.constructor([...self, ...other], self.serialize);
+}
+
 const reduce = reduceWith(seq);
+
+function fmap(self, f){
+  return serialSet(mapa(f, self), self.serialize);
+}
 
 export default does(
   iterable,
@@ -47,4 +64,10 @@ export default does(
   implement(ICollection, {conj}),
   implement(ISet, {disj}),
   implement(IInclusive, {includes}),
+  implement(ILookup, {lookup}),
+  implement(IFn, {invoke: lookup}),
+  implement(IFunctor, {fmap}),
+  implement(IHashable, {hash}),
+  implement(IMergable, {merge}),
+  implement(ICloneable, {clone}),
   implement(ISeqable, {seq}));
