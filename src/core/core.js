@@ -302,16 +302,6 @@ export function isNative(f) {
   return (/\{\s*\[native code\]\s*\}/).test('' + f);
 }
 
-function toggles4(on, off, want, self){
-  return want(self) ? on(self) : off(self);
-}
-
-function toggles5(on, off, _, self, want){
-  return want ? on(self) : off(self);
-}
-
-export const toggles = overload(null, null, null, null, toggles4, toggles5);
-
 export function detach(method){
   return function(obj, ...args){
     return obj[method](...args);

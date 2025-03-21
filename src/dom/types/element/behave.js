@@ -9,7 +9,17 @@ import {matches} from "../../shared.js";
 
 const hides = ["display", "none"];
 export const hidden = _.comp(_.includes(?, hides), nestedAttrs(?, "style"));
-const toggle = _.partial(_.toggles, show, hide, hidden);
+
+function toggles4(on, off, want, self){
+  return want(self) ? on(self) : off(self);
+}
+
+function toggles5(on, off, _, self, want){
+  return want ? on(self) : off(self);
+}
+
+const toggles = _.overload(null, null, null, null, toggles4, toggles5);
+const toggle = _.partial(toggles, show, hide, hidden);
 
 function hide(self){
   $.conj(nestedAttrs(self, "style"), hides);
