@@ -1,4 +1,5 @@
 import {partSet, PartSet} from "./construct.js"
+import {keying} from "../../protocols/imapentry/concrete.js";
 import {chain, does} from "../../core.js";
 import {maybe} from  "../just/construct.js";
 import {iterable, reductive} from "../lazy-seq/behave.js";
@@ -57,6 +58,7 @@ const reduce = reduceWith(seq);
 export default does(
   iterable,
   reductive,
+  keying("PartSet"),
   implement(ISeq, {first, rest}),
   implement(IReducible, {reduce}),
   implement(ICollection, {conj}),
