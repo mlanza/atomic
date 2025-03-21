@@ -1,4 +1,4 @@
-import {foldkv, overload, partial, unary, type, curry, toggles, identity, obj, partly, comp, doto, does, branch, unspread, applying, execute, noop, constantly, once, isFunction, isString, pipe, chain} from "./core.js";
+import {foldkv, overload, partial, unary, type, curry, identity, obj, partly, comp, doto, does, branch, unspread, applying, execute, noop, constantly, once, isFunction, isString, pipe, chain} from "./core.js";
 import {IForkable, IDeref, IFn, IAssociative, ISequential, ICloneable, IHierarchy, ILookup, ISeq} from "./protocols.js";
 import {addMethod} from "./types/multimethod/concrete.js";
 import {set, maybe, toArray, opt, satisfies, spread, duration, remove, sort, flip, realized, apply, realize, isNil, reFindAll, mapkv, period, selectKeys, mapVals, reMatches, test, date, emptyList, cons, list, days, recurrence, emptyArray} from "./types.js";
