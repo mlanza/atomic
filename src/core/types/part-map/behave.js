@@ -1,10 +1,12 @@
 import {partMap, PartMap} from "./construct.js"
-import {chain, does} from "../../core.js";
+import {keying} from "../../protocols/imapentry/concrete.js";
+import {comp, chain, does} from "../../core.js";
 import {maybe} from  "../just/construct.js";
 import {concatenated, map, mapa} from "../lazy-seq/concrete.js";
 import {implement} from "../../types/protocol/concrete.js";
 import * as p from "../../protocols/concrete.js";
-import {ILookup, IAssociative, ISeqable, IMap} from "../../protocols.js";
+import {ICounted, ILookup, IAssociative, ISeq, ISeqable, IMap} from "../../protocols.js";
+import {first, rest, reduceWith, reducekvWith} from "../../shared.js";
 
 function lookup(self, key){
   const part = self.partition(key);
@@ -40,8 +42,17 @@ function seq(self){
   }, keys(self)));
 }
 
+const count = comp(p.count, keys);
+const reduce = reduceWith(seq);
+const reducekv = reducekvWith(seq);
+
 export default does(
+  keying("PartMap"),
   implement(ILookup, {lookup}),
   implement(IAssociative, {assoc, contains}),
+  implement(ICounted, {count}),
+  implement(IReducible, {reduce}),
+  implement(IKVReducible, {reducekv}),
+  implement(ISeq, {first, rest}),
   implement(ISeqable, {seq}),
   implement(IMap, {keys, dissoc}));
