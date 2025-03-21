@@ -1,12 +1,13 @@
 import {does, overload, identity, constantly} from "../../core.js";
 import {implement} from "../protocol.js";
 import {iterable, reductive} from "../lazy-seq/behave.js";
-import {map, into} from "../lazy-seq/concrete.js";
+import {map, mapa, into} from "../lazy-seq/concrete.js";
 import {hashSet, HashSet} from "./construct.js";
+import {hashSeq as hash} from "../../protocols/ihashable/hashers.js";
 import {reduced} from "../reduced.js";
 import {keying} from "../../protocols/imapentry/concrete.js";
 import {reduce, reducekv} from "../../shared.js";
-import {IMergable, ICloneable, IEquiv, IInclusive, ISet, ISeqable, ISeq, ICollection, ICounted, IEmptyableCollection, IReducible, IKVReducible} from "../../protocols.js";
+import {IHashable, IFunctor, IFn, ILookup, IMergable, ICloneable, IEquiv, IInclusive, ISet, ISeqable, ISeq, ICollection, ICounted, IEmptyableCollection, IReducible, IKVReducible} from "../../protocols.js";
 import * as p from "./protocols.js";
 
 function clone(self){
@@ -21,6 +22,10 @@ function disj(self, value){
 
 function includes(self, value){
   return p.contains(self.coll, value);
+}
+
+function lookup(self, value){
+  return p.contains(self.coll, value) ? value : null;
 }
 
 function conj(self, value){
@@ -53,6 +58,10 @@ function merge(self, other){
   return into(self, other);
 }
 
+function fmap(self, f){
+  return hashSet(mapa(f, self));
+}
+
 export default does(
   iterable,
   reductive,
@@ -62,6 +71,10 @@ export default does(
   implement(ISet, {disj}),
   implement(IEquiv, {equiv}),
   implement(IInclusive, {includes}),
+  implement(ILookup, {lookup}),
+  implement(IFn, {invoke: lookup}),
+  implement(IFunctor, {fmap}),
+  implement(IHashable, {hash}),
   implement(IReducible, {reduce}),
   implement(IKVReducible, {reducekv}),
   implement(IEmptyableCollection, {empty}),

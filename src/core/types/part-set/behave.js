@@ -5,7 +5,8 @@ import {iterable, reductive} from "../lazy-seq/behave.js";
 import {map, concatenated} from "../lazy-seq/concrete.js";
 import {implement} from "../../types/protocol/concrete.js";
 import * as p from "../../protocols/concrete.js";
-import {IReducible, ICollection, IEmptyableCollection, IInclusive, ISet, ISeq, ISeqable} from "../../protocols.js";
+import {hashSeq as hash} from "../../protocols/ihashable/hashers.js";
+import {IHashable, IFn, ILookup, IReducible, ICollection, IEmptyableCollection, IInclusive, ISet, ISeq, ISeqable} from "../../protocols.js";
 import {hashClamp} from "../part-map/construct.js";
 import {reduceWith} from "../../shared.js";
 
@@ -25,6 +26,10 @@ function disj(self, value){
 function includes(self, value){
   const part = self.partition(value);
   return maybe(self.parts, p.get(?, part), p.includes(?, value));
+}
+
+function lookup(self, value){
+  return includes(self, value) ? value : null;
 }
 
 function seq(self){
@@ -58,4 +63,7 @@ export default does(
   implement(IEmptyableCollection, {empty}),
   implement(ISet, {disj}),
   implement(IInclusive, {includes}),
+  implement(ILookup, {lookup}),
+  implement(IFn, {invoke: lookup}),
+  implement(IHashable, {hash}),
   implement(ISeqable, {seq}));
