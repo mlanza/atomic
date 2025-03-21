@@ -37,7 +37,7 @@ export function juxtVals(self, value){
 export function evolve(template, obj){ //see ramda
   return template ? p.reducekv(function(memo, key, value){
     const f = p.get(template, key);
-    return p.assoc(memo, key, isFunction(f) ? f(value) : alter(f, value));
+    return p.assoc(memo, key, isFunction(f) ? f(value) : f != null ? evolve(f, value) : value);
   }, emptied(obj), obj) : obj;
 }
 
@@ -48,9 +48,7 @@ export function selectKeys(self, keys){
 }
 
 export function removeKeys(self, keys){
-  return p.reducekv(function(memo, key, value){
-    return p.includes(keys, key) ? memo : p.assoc(memo, key, value);
-  }, emptied(self), self);
+  return p.dissoc(self, ...keys);
 }
 
 export function mapKeys(self, f){
