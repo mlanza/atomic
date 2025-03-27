@@ -4,7 +4,7 @@
   "scripts": {
     "bundle": "rollup --config",
     "develop": "rollup --config --watch",
-    "tests": "static ."
+    "serve": "static ."
   },
   "type": "module",
   "engines": {

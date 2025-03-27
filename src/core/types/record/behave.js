@@ -1,9 +1,9 @@
-import {doto, overload, constructs, fold, multi, constantly, identity} from "../../core.js";
+import {doto, overload, constructs, fold, chain, multi, constantly, identity} from "../../core.js";
 import {implement} from "../protocol.js";
 import {reduced} from "../reduced/construct.js";
 import {is} from "../../protocols/imapentry/concrete.js";
 import {addMethod} from "../multimethod/concrete.js";
-import {map, mapcat, detect, concatenated} from "../lazy-seq.js";
+import {map, mapa, mapcat, detect, concatenated} from "../lazy-seq.js";
 import {maybe} from "../just/construct.js";
 import {ITopic, ICloneable, IReducible, IKVReducible, IEquiv, IAssociative, ISeqable, ILookup, ICounted, IMap, ISeq, IEmptyableCollection} from "../../protocols.js";
 import {keying} from "../../protocols/imapentry/concrete.js";
@@ -15,10 +15,12 @@ import {coerce} from "../../coerce.js";
 import * as p from "./protocols.js";
 import behave from "../object/behave.js";
 
+function assert1(self){
+  return mapcat(p.assert(self, ?), p.keys(self));
+}
+
 function seq(self){
-  return p.seq(mapcat(function(key){
-    return map(array(key, ?), p.asserts(self, key));
-  }, p.keys(self)));
+  return p.seq(assert1(self));
 }
 
 function equiv(self, other){
@@ -44,11 +46,13 @@ export function record(Type){
     return Object.assign(new Type(), self);
   }
 
-  function asserts(self, key){
-    return maybe(p.get(self, key), array);
+  function assert2(self, key){
+    return maybe(p.get(self, key), array, fold(function(memo, value){
+      return [key, value];
+    }, [], ?));
   }
 
-  const assert = p.assoc;
+  const assert = overload(assert1, assert2, p.assoc);
 
   function retract3(self, key, value){
     let copy = self;
@@ -76,7 +80,7 @@ export function record(Type){
     emptyable,
     keying(Type.name),
     implement(ICloneable, {clone}),
-    implement(ITopic, {asserts, assert, retract}),
+    implement(ITopic, {assert, retract}),
     implement(IEquiv, {equiv}),
     implement(IMap, {dissoc}),
     implement(ISeqable, {seq}));
@@ -98,13 +102,17 @@ export function record(Type){
 export function multirecord(Type, {defaults, multiple} = {defaults: constantly([]), multiple: constantly(true)}){
   const make = record(Type);
 
-  function asserts(self, key){
-    return maybe(p.get(self, key), multiple(key) ? identity : array);
+  function assert2(self, key){
+    return maybe(p.get(self, key), multiple(key) ? identity : array, fold(function(memo, value){
+      return p.conj(memo, [key, value]);
+    }, [], ?));
   }
 
-  function assert(self, key, value){
+  function assert3(self, key, value){
     return p.assoc(self, key, multiple(key) ? p.conj(p.get(self, key, defaults(key)), value) : value);
   }
+
+  const assert = overload(null, assert1, assert2, assert3);
 
   function retract3(self, key, value){
     let copy = self;
@@ -127,7 +135,7 @@ export function multirecord(Type, {defaults, multiple} = {defaults: constantly([
   const retract = overload(null, null, p.dissoc, retract3);
 
   doto(Type,
-    implement(ITopic, {asserts, assert, retract}),
+    implement(ITopic, {assert, retract}),
     implement(IMap, {dissoc}));
 
   return make;

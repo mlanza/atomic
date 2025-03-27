@@ -22,7 +22,7 @@ function includes(self, entry){
 }
 
 function omit(self, entry){
-  includes(self, entry) && _dissoc(self, _.key(entry));
+  includes(self, entry) && _.dissoc(self, _.key(entry));
 }
 
 function conj(self, entry){
