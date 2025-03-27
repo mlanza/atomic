@@ -357,10 +357,12 @@ export function unfork(self){
   });
 }
 
+addMethod(coerce, [T.HashMap, Array], into([], ?));
 addMethod(coerce, [T.HashSet, Array], into([], ?));
 addMethod(coerce, [Set, Array], unary(Array.from));
 addMethod(coerce, [Array, T.HashSet], into(set([]), ?));
 addMethod(coerce, [Array, Set], arr => new Set(arr));
+addMethod(coerce, [Array, T.HashMap], T.hashMap);
 addMethod(coerce, [Number, String], unary(str));
 addMethod(coerce, [Number, Date], unary(date));
 addMethod(coerce, [T.Duration, T.Duration], identity);

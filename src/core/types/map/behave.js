@@ -2,8 +2,8 @@ import {overload, does} from "../../core.js";
 import {keying} from "../../protocols/imapentry/concrete.js";
 import {implement, satisfies} from "../protocol.js";
 import {lazyIterable} from "../lazy-seq/concrete.js";
-import {ICounted, ICollection, ILookup, IAssociative, IMap, ICloneable, ISeqable, ISeq, IReducible, IKVReducible} from "../../protocols.js";
-import {first, rest, reduceWith, reducekvWith} from "../../shared.js";
+import {ITopic, ICounted, ICollection, ILookup, IAssociative, IMap, ICloneable, ISeqable, ISeq, IReducible, IKVReducible} from "../../protocols.js";
+import {assert, retract, first, rest, reduceWith, reducekvWith} from "../../shared.js";
 
 function seq(self){
   return lazyIterable(self.entries());
@@ -54,6 +54,7 @@ const reducekv = reducekvWith(seq);
 
 export default does(
   keying("Map"),
+  implement(ITopic, {assert, retract}),
   implement(ICounted, {count}),
   implement(ICollection, {conj}),
   implement(ILookup, {lookup}),

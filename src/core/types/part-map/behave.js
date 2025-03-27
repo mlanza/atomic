@@ -5,8 +5,8 @@ import {maybe} from  "../just/construct.js";
 import {concatenated, map, mapa} from "../lazy-seq/concrete.js";
 import {implement} from "../../types/protocol/concrete.js";
 import * as p from "../../protocols/concrete.js";
-import {ICounted, ILookup, IAssociative, ISeq, ISeqable, IMap} from "../../protocols.js";
-import {first, rest, reduceWith, reducekvWith} from "../../shared.js";
+import {ITopic, ICounted, ILookup, IAssociative, ISeq, ISeqable, IMap} from "../../protocols.js";
+import {first, rest, reduceWith, reducekvWith, assert, retract} from "../../shared.js";
 
 function lookup(self, key){
   const part = self.partition(key);
@@ -53,6 +53,7 @@ export default does(
   implement(ICounted, {count}),
   implement(IReducible, {reduce}),
   implement(IKVReducible, {reducekv}),
+  implement(ITopic, {assert, retract}),
   implement(ISeq, {first, rest}),
   implement(ISeqable, {seq}),
   implement(IMap, {keys, dissoc}));

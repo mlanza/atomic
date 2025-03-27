@@ -1,6 +1,6 @@
 import {does, identity, constructs, branch, overload, chain} from "../../core.js";
 import {implement} from "../protocol.js";
-import {IHashable, IMergable, ICompactible, IOmissible, ICollection, IEquiv, IReducible, IKVReducible, ISeqable, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, IFn, IMap, ISeq, ICloneable, IInclusive} from "../../protocols.js";
+import {ITopic, IHashable, IMergable, ICompactible, IOmissible, ICollection, IEquiv, IReducible, IKVReducible, ISeqable, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, IFn, IMap, ISeq, ICloneable, IInclusive} from "../../protocols.js";
 import {reduced} from "../reduced.js";
 import {lazySeq, into, map} from "../lazy-seq.js";
 import {cons} from "../list.js";
@@ -13,7 +13,7 @@ import {descriptive} from "../object/concrete.js";
 import * as p from "./protocols.js";
 import {keying} from "../../protocols/imapentry/concrete.js";
 import {hashKeyed as hash} from "../../protocols/ihashable/hashers.js";
-import {reduceWith, reducekvWith, first, rest} from "../../shared.js";
+import {reduceWith, reducekvWith, first, rest, assert, retract} from "../../shared.js";
 
 const keys = Object.keys;
 const vals = Object.values;
@@ -139,6 +139,7 @@ export default does(
   implement(IFn, {invoke: lookup}),
   implement(ISeq, {first, rest}),
   implement(ILookup, {lookup}),
+  implement(ITopic, {assert, retract}),
   implement(IEmptyableCollection, {empty: emptyObject}),
   implement(IAssociative, {assoc, contains}),
   implement(ISeqable, {seq}),

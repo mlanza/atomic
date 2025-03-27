@@ -5,8 +5,8 @@ import {maybe} from  "../just/construct.js";
 import {map} from "../lazy-seq/concrete.js";
 import {implement} from "../../types/protocol/concrete.js";
 import * as p from "../../protocols/concrete.js";
-import {ICollection, ICounted, ISeq, ILookup, IAssociative, ISeqable, IMap} from "../../protocols.js";
-import {first, rest, reduceWith, reducekvWith} from "../../shared.js";
+import {ITopic, ICollection, ICounted, ISeq, ILookup, IAssociative, ISeqable, IMap} from "../../protocols.js";
+import {first, rest, reduceWith, reducekvWith, assert, retract} from "../../shared.js";
 
 function lookup(self, key){
   return p.getIn(self.index, [self.serialize(key), 1]);
@@ -46,6 +46,7 @@ const reducekv = reducekvWith(seq);
 
 export default does(
   keying("SerialMap"),
+  implement(ITopic, {assert, retract}),
   implement(ILookup, {lookup}),
   implement(IAssociative, {assoc, contains}),
   implement(ICollection, {conj}),

@@ -7,8 +7,8 @@ import {getIn} from "../../protocols/ilookup/concrete.js";
 import {hashMap, HashMap} from "./construct.js";
 import {reduced} from "../reduced.js";
 import {keying} from "../../protocols/imapentry/concrete.js";
-import {reduceWith, reducekvWith} from "../../shared.js";
-import {IMergable, ICollection, ICloneable, IEquiv, IKVReducible, IReducible, ISeq, ISeqable, ILookup, IAssociative, ICounted, IMap, IInclusive, IEmptyableCollection} from "../../protocols.js";
+import {reduceWith, reducekvWith, assert, retract} from "../../shared.js";
+import {ITopic, IMergable, ICollection, ICloneable, IEquiv, IKVReducible, IReducible, ISeq, ISeqable, ILookup, IAssociative, ICounted, IMap, IInclusive, IEmptyableCollection} from "../../protocols.js";
 import * as p from "./protocols.js";
 
 function getHashIndex(self, key){
@@ -105,6 +105,7 @@ const reducekv = reducekvWith(seq);
 
 export default does(
   keying("HashMap"),
+  implement(ITopic, {assert, retract}),
   implement(IMergable, {merge}),
   implement(ICollection, {conj}),
   implement(IEmptyableCollection, {empty}),
