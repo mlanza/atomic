@@ -2,7 +2,6 @@ import {partSet, PartSet} from "./construct.js"
 import {keying} from "../../protocols/imapentry/concrete.js";
 import {chain, does} from "../../core.js";
 import {maybe} from  "../just/construct.js";
-import {iterable, reductive} from "../lazy-seq/behave.js";
 import {map, concatenated} from "../lazy-seq/concrete.js";
 import {implement} from "../../types/protocol/concrete.js";
 import * as p from "../../protocols/concrete.js";
@@ -10,6 +9,7 @@ import {hashSeq as hash} from "../../protocols/ihashable/hashers.js";
 import {IHashable, IFn, ILookup, IReducible, ICollection, IEmptyableCollection, IInclusive, ISet, ISeq, ISeqable} from "../../protocols.js";
 import {hashClamp} from "../part-map/construct.js";
 import {reduceWith} from "../../shared.js";
+import behave from "../set/behave.js";
 
 function conj(self, value){
   const part = self.partition(value);
@@ -56,8 +56,7 @@ function empty(self){
 const reduce = reduceWith(seq);
 
 export default does(
-  iterable,
-  reductive,
+  behave,
   keying("PartSet"),
   implement(ISeq, {first, rest}),
   implement(IReducible, {reduce}),

@@ -2,13 +2,13 @@ import {serialSet, SerialSet} from "./construct.js"
 import {keying} from "../../protocols/imapentry/concrete.js";
 import {chain, does} from "../../core.js";
 import {maybe} from  "../just/construct.js";
-import {iterable, reductive} from "../lazy-seq/behave.js";
 import {map, mapa} from "../lazy-seq/concrete.js";
 import {implement} from "../../types/protocol/concrete.js";
 import {reduceWith} from "../../shared.js";
 import {hashSeq as hash} from "../../protocols/ihashable/hashers.js";
 import * as p from "../../protocols/concrete.js";
 import {ICloneable, IMergable, IHashable, IFunctor, IFn, ILookup, IReducible, IInclusive, ISeqable, ICollection, ISeq, ISet, IEmptyableCollection} from "../../protocols.js";
+import behave from "../set/behave.js";
 
 function first(self){
   return maybe(self, p.seq, p.first);
@@ -57,8 +57,7 @@ function fmap(self, f){
 }
 
 export default does(
-  iterable,
-  reductive,
+  behave,
   keying("SerialSet"),
   implement(IReducible, {reduce}),
   implement(ISeq, {first, rest}),

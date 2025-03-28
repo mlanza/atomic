@@ -48,11 +48,11 @@ export function record(Type){
 
   function assert2(self, key){
     return maybe(p.get(self, key), array, fold(function(memo, value){
-      return [key, value];
+      return p.conj(memo, [key, value]);
     }, [], ?));
   }
 
-  const assert = overload(assert1, assert2, p.assoc);
+  const assert = overload(null, assert1, assert2, p.assoc);
 
   function retract3(self, key, value){
     let copy = self;

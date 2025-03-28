@@ -1,6 +1,5 @@
 import {does, overload, identity, constantly} from "../../core.js";
 import {implement} from "../protocol.js";
-import {iterable, reductive} from "../lazy-seq/behave.js";
 import {map, mapa, into} from "../lazy-seq/concrete.js";
 import {hashSet, HashSet} from "./construct.js";
 import {hashSeq as hash} from "../../protocols/ihashable/hashers.js";
@@ -9,6 +8,7 @@ import {keying} from "../../protocols/imapentry/concrete.js";
 import {reduce, reducekv} from "../../shared.js";
 import {IHashable, IFunctor, IFn, ILookup, IMergable, ICloneable, IEquiv, IInclusive, ISet, ISeqable, ISeq, ICollection, ICounted, IEmptyableCollection, IReducible, IKVReducible} from "../../protocols.js";
 import * as p from "./protocols.js";
+import behave from "../set/behave.js";
 
 function clone(self){
   return new HashSet(p.clone(self.coll));
@@ -54,17 +54,14 @@ function rest(self){
   return p.rest(seq(self));
 }
 
-function merge(self, other){
-  return into(self, other);
-}
+const merge = into;
 
 function fmap(self, f){
   return hashSet(mapa(f, self));
 }
 
 export default does(
-  iterable,
-  reductive,
+  behave,
   keying("HashSet"),
   implement(IMergable, {merge}),
   implement(ICollection, {conj}),
@@ -81,5 +78,4 @@ export default does(
   implement(ICloneable, {clone}),
   implement(ISeq, {first, rest}),
   implement(ISeqable, {seq}),
-  implement(ICounted, {count})
-);
+  implement(ICounted, {count}));

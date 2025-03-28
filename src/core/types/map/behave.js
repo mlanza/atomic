@@ -2,8 +2,8 @@ import {overload, does} from "../../core.js";
 import {keying} from "../../protocols/imapentry/concrete.js";
 import {implement, satisfies} from "../protocol.js";
 import {lazyIterable} from "../lazy-seq/concrete.js";
-import {ITopic, ICounted, ICollection, ILookup, IAssociative, IMap, ICloneable, ISeqable, ISeq, IReducible, IKVReducible} from "../../protocols.js";
-import {assert, retract, first, rest, reduceWith, reducekvWith} from "../../shared.js";
+import {IFn, ICounted, IEmptyableCollection, ILookup, IAssociative, IMap, ICloneable, ISeqable} from "../../protocols.js";
+import behave from "../object/behave.js";
 
 function seq(self){
   return lazyIterable(self.entries());
@@ -23,10 +23,6 @@ function clone(self){
 
 function contains(self, key){
   return self.has(key);
-}
-
-function conj(self, [key, value]){
-  return assoc(self, key, value);
 }
 
 function assoc(self, key, value){
@@ -49,18 +45,18 @@ function count(self){
   return self.size;
 }
 
-const reduce = reduceWith(seq);
-const reducekv = reducekvWith(seq);
+function empty(self){
+  return new self.constructor([]);
+}
 
 export default does(
+  behave,
   keying("Map"),
-  implement(ITopic, {assert, retract}),
+  implement(ICloneable, {clone}),
+  implement(IFn, {invoke: lookup}),
+  implement(IEmptyableCollection, {empty}),
   implement(ICounted, {count}),
-  implement(ICollection, {conj}),
   implement(ILookup, {lookup}),
   implement(IAssociative, {contains, assoc}),
   implement(ISeqable, {seq}),
-  implement(ISeq, {first, rest}),
-  implement(IReducible, {reduce}),
-  implement(IKVReducible, {reducekv}),
   implement(IMap, {dissoc, keys, vals}));
