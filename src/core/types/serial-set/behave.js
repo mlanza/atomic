@@ -2,12 +2,10 @@ import {serialSet, SerialSet} from "./construct.js"
 import {keying} from "../../protocols/imapentry/concrete.js";
 import {chain, does} from "../../core.js";
 import {maybe} from  "../just/construct.js";
-import {map, mapa} from "../lazy-seq/concrete.js";
+import {mapa} from "../lazy-seq/concrete.js";
 import {implement} from "../../types/protocol/concrete.js";
-import {reduceWith} from "../../shared.js";
-import {hashSeq as hash} from "../../protocols/ihashable/hashers.js";
 import * as p from "../../protocols/concrete.js";
-import {ICloneable, IMergable, IHashable, IFunctor, IFn, ILookup, IReducible, IInclusive, ISeqable, ICollection, ISeq, ISet, IEmptyableCollection} from "../../protocols.js";
+import {ICloneable, IMergable, IFunctor, IFn, ILookup, IInclusive, ISeqable, ICollection, ISeq, ISet, IEmptyableCollection} from "../../protocols.js";
 import behave from "../set/behave.js";
 
 function first(self){
@@ -50,8 +48,6 @@ function merge(self, other){
   return new self.constructor([...self, ...other], self.serialize);
 }
 
-const reduce = reduceWith(seq);
-
 function fmap(self, f){
   return serialSet(mapa(f, self), self.serialize);
 }
@@ -59,7 +55,6 @@ function fmap(self, f){
 export default does(
   behave,
   keying("SerialSet"),
-  implement(IReducible, {reduce}),
   implement(ISeq, {first, rest}),
   implement(IEmptyableCollection, {empty}),
   implement(ICollection, {conj}),
@@ -68,7 +63,6 @@ export default does(
   implement(ILookup, {lookup}),
   implement(IFn, {invoke: lookup}),
   implement(IFunctor, {fmap}),
-  implement(IHashable, {hash}),
   implement(IMergable, {merge}),
   implement(ICloneable, {clone}),
   implement(ISeqable, {seq}));
