@@ -7,8 +7,6 @@ import * as p from "../../protocols/concrete.js";
 import behave from "../object/behave.js";
 import {ILookup, IAssociative, ISeqable, IMap} from "../../protocols.js";
 
-const second = p.nth(?, 1);
-
 function lookup(self, key){
   return p.getIn(self.index, [self.serialize(key), 1]);
 }
@@ -30,11 +28,11 @@ function keys(self){
 }
 
 function vals(self){
-  return map(second, p.seq(self.index));
+  return map(p.nth(?, 1), p.seq(self.index));
 }
 
 function seq(self){
-  return p.seq(self.index) ? map(second, p.seq(self.index)) : null;
+  return p.seq(self.index) ? vals(self) : null;
 }
 
 export default does(
