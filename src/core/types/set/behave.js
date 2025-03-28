@@ -4,7 +4,8 @@ import {IFunctor, IFn, ILookup, IHashable, ISet, IMergable, IMap, IEquiv, IReduc
 import {reduced} from "../reduced.js";
 import {keying} from "../../protocols/imapentry/concrete.js";
 import {hashSeq as hash} from "../../protocols/ihashable/hashers.js";
-import {lazyIterable, mapa} from "../lazy-seq/concrete.js";
+import {lazyIterable, mapa, mapIndexed} from "../lazy-seq/concrete.js";
+import {iterable, reductive} from "../lazy-seq/behave.js";
 import {iequiv} from "../empty-list/behave.js";
 import * as p from "../../protocols/concrete.js";
 import {reduce, reducekv} from "../../shared.js";
@@ -71,6 +72,8 @@ function fmap(self, f){
 
 export default does(
   keying("Set"),
+  iterable,
+  reductive,
   implement(ISequential),
   implement(IEquiv, {equiv}),
   implement(IMergable, {merge}),

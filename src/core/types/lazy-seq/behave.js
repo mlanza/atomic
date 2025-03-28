@@ -12,13 +12,7 @@ import * as p from "./protocols.js";
 import {next} from "../../protocols/iseq/concrete.js";
 import {reduce, reducekv} from "../../shared.js";
 
-const compact1 = partial(filter, identity);
-
-function compact2(self, pred){
-  return remove(pred, self);
-}
-
-const compact = overload(null, compact1, compact2);
+const compact = partial(filter, identity);
 
 function fmap(self, f){
   return map(f, self);

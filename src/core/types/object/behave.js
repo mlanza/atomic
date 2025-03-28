@@ -1,8 +1,8 @@
-import {does, identity, constructs, branch, overload, chain} from "../../core.js";
+import {does, identity, constructs, branch, overload, comp, chain} from "../../core.js";
 import {implement} from "../protocol.js";
 import {ITopic, IHashable, IMergable, ICompactible, IOmissible, ICollection, IEquiv, IReducible, IKVReducible, ISeqable, IFind, ICounted, IAssociative, IEmptyableCollection, ILookup, IFn, IMap, ISeq, ICloneable, IInclusive} from "../../protocols.js";
 import {reduced} from "../reduced.js";
-import {lazySeq, into, map} from "../lazy-seq.js";
+import {lazySeq, into, map, mapcat} from "../lazy-seq.js";
 import {cons} from "../list.js";
 import {apply} from "../function/concrete.js";
 import {satisfies} from "../protocol/concrete.js";
@@ -10,36 +10,29 @@ import {update} from "../../protocols/iassociative/concrete.js";
 import {emptyList} from "../empty-list/construct.js";
 import {emptyObject} from "../object/construct.js";
 import {descriptive} from "../object/concrete.js";
-import * as p from "./protocols.js";
 import {keying} from "../../protocols/imapentry/concrete.js";
 import {hashKeyed as hash} from "../../protocols/ihashable/hashers.js";
-import {reduceWith, reducekvWith, first, rest, assert, retract} from "../../shared.js";
+import {reduceWith, reducekvWith} from "../../shared.js";
+import * as p from "./protocols.js";
 
 const keys = Object.keys;
 const vals = Object.values;
 
-function merge(...maps){
-  return p.reduce(function(memo, map){
-    return p.reduce(function(memo, [key, value]){
-      memo[key] = value;
-      return memo;
-    }, memo, p.seq(map));
-  }, {}, maps);
+function first(self){
+  return p.first(p.seq(self));
 }
 
-function compact1(self){
-  return compact2(self, function([_, value]){
-    return value == null;
-  });
+function rest(self){
+  return p.rest(p.seq(self));
 }
 
-function compact2(self, pred){
+const merge = into;
+
+function compact(self){
   return p.reducekv(function(memo, key, value){
-    return pred([key, value]) ? memo : p.assoc(memo, key, value);
-  }, {}, self);
+    return value == null ? memo : p.assoc(memo, key, value);
+  }, p.empty(self), self);
 }
-
-const compact = overload(null, compact1, compact2);
 
 function omit(self, entry){
   const key = p.key(entry);
@@ -52,12 +45,8 @@ function omit(self, entry){
   }
 }
 
-function conj(self, entry){
-  const key = p.key(entry),
-        val = p.val(entry);
-  const result = p.clone(self);
-  result[key] = val;
-  return result;
+function conj(self, [key, value]){
+  return p.assoc(self, key, value);
 }
 
 function equiv(self, other){
@@ -70,10 +59,8 @@ function find(self, key){
   return p.contains(self, key) ? [key, p.get(self, key)] : null;
 }
 
-function includes(self, entry){
-  const key = p.key(entry),
-        val = p.val(entry);
-  return self[key] === val;
+function includes(self, [key, value]){
+  return p.contains(self, key) && p.equiv(p.get(self, key), value);
 }
 
 function lookup(self, key){
@@ -105,22 +92,34 @@ function contains(self, key){
 }
 
 function seq(self){
-  if (!p.count(self)) return null;
-  return map(function(key){
+  return p.count(self) ? map(function(key){
     return [key, p.get(self, key)];
-  }, p.keys(self));
-}
-
-function count(self){
-  return p.keys(self).length;
+  }, p.keys(self)) : null;
 }
 
 function clone(self){
   return Object.assign({}, self);
 }
 
-const reduce = reduceWith(seq);
-const reducekv = reducekvWith(seq);
+function assert2(self, key){
+  return p.contains(self, key) ? [[key, p.get(self, key)]] : null;
+}
+
+function assert1(self){
+  return p.seq(mapcat(assert2(self, ?), p.keys(self)));
+}
+
+export const assert = overload(null, assert1, assert2, p.assoc);
+
+function retract3(self, key, value){
+  return p.equiv(p.get(self, key), value) ? p.dissoc(self, key) : self;
+}
+
+export const retract = overload(null, null, p.dissoc, retract3);
+
+const reduce = reduceWith(p.seq);
+const reducekv = reducekvWith(p.seq);
+const count = comp(p.count, p.keys);
 
 export default does(
   keying("Object"),

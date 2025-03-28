@@ -1,15 +1,13 @@
 import {identity, unspread, comp, overload} from "./core.js";
 import {isReduced, reduced, unreduced} from "./types/reduced.js";
 import * as s from "./protocols/iseq/concrete.js"
-import {conj} from "./protocols/icollection/concrete.js";
 import {seq} from "./protocols/iseqable/concrete.js";
 import {compact} from "./protocols/icompactible/concrete.js";
 import {get} from "./protocols/ilookup/concrete.js";
-import {assoc, contains} from "./protocols/iassociative/concrete.js";
 import {equiv} from "./protocols/iequiv/concrete.js";
 import {keys, dissoc} from "./protocols/imap/concrete.js";
 import {lazySeq} from "./types/lazy-seq/construct.js";
-import {map, mapcat, mapIndexed} from "./types/lazy-seq/concrete.js";
+import {map, mapIndexed} from "./types/lazy-seq/concrete.js";
 import {cons} from "./types/list/construct.js";
 import {emptyList} from "./types/empty-list/construct.js";
 import {array} from "./types/array/construct.js";
@@ -41,22 +39,6 @@ function sequence3(xform, ...colls){
 
 export const sequence = overload(null, sequence1, sequence2, sequence3);
 
-export function first(self){
-  const key = s.first(keys(self));
-  return key ? [key, get(self, key)] : null;
-}
-
-function rest2(self, keys){
-  return seq(keys) ? lazySeq(function(){
-    const key = s.first(keys);
-    return cons([key, get(self, key)], rest2(self, s.next(keys)));
-  }) : emptyList();
-}
-
-export function rest(self){
-  return rest2(self, s.next(keys(self)));
-}
-
 export function reduceWith(seq){
   return function reduce(xs, f, init){
     let memo = init,
@@ -84,19 +66,3 @@ export function reducekvWith(seq){
 
 export const reduce = reduceWith(seq);
 export const reducekv = reducekvWith(seqIndexed);
-
-function assert2(self, key){
-  return contains(self, key) ? [[key, get(self, key)]] : null;
-}
-
-function assert1(self){
-  return seq(mapcat(assert2(self, ?), keys(self)));
-}
-
-export const assert = overload(null, assert1, assert2, assoc);
-
-function retract3(self, key, value){
-  return equiv(get(self, key), value) ? dissoc(self, key) : self;
-}
-
-export const retract = overload(null, null, dissoc, retract3);
