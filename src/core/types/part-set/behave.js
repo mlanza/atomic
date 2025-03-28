@@ -5,10 +5,7 @@ import {maybe} from  "../just/construct.js";
 import {map, concatenated} from "../lazy-seq/concrete.js";
 import {implement} from "../../types/protocol/concrete.js";
 import * as p from "../../protocols/concrete.js";
-import {hashSeq as hash} from "../../protocols/ihashable/hashers.js";
-import {IHashable, IFn, ILookup, IReducible, ICollection, IEmptyableCollection, IInclusive, ISet, ISeq, ISeqable} from "../../protocols.js";
-import {hashClamp} from "../part-map/construct.js";
-import {reduceWith} from "../../shared.js";
+import {IFn, ILookup, ICollection, IEmptyableCollection, IInclusive, ISet, ISeq, ISeqable} from "../../protocols.js";
 import behave from "../set/behave.js";
 
 function conj(self, value){
@@ -53,18 +50,14 @@ function empty(self){
   return new PartSet(self.partition, self.store, p.empty(self.parts));
 }
 
-const reduce = reduceWith(seq);
-
 export default does(
   behave,
   keying("PartSet"),
   implement(ISeq, {first, rest}),
-  implement(IReducible, {reduce}),
   implement(ICollection, {conj}),
   implement(IEmptyableCollection, {empty}),
   implement(ISet, {disj}),
   implement(IInclusive, {includes}),
   implement(ILookup, {lookup}),
   implement(IFn, {invoke: lookup}),
-  implement(IHashable, {hash}),
   implement(ISeqable, {seq}));

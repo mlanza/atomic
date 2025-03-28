@@ -61,9 +61,9 @@ function merge(self, other){
 }
 
 function equiv(self, other){
-  return count(self) === p.count(other) && reduce(self, function(memo, value){
+  return p.count(self) === p.count(other) && p.reduce(function(memo, value){
     return memo && p.includes(other, value) ? true : reduced(false);
-  }, true);
+  }, true, self);
 }
 
 function fmap(self, f){
