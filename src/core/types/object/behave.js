@@ -60,7 +60,7 @@ function find(self, key){
 }
 
 function includes(self, [key, value]){
-  return p.contains(self, key) && p.equiv(p.get(self, key), value);
+  return p.contains(self, key, value);
 }
 
 function lookup(self, key){

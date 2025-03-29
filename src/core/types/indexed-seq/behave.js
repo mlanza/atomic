@@ -7,11 +7,11 @@ import {emptyArray} from "../../types/array/construct.js";
 import {iequiv} from "../../types/empty-list/behave.js";
 import {iterable} from "../lazy-seq/behave.js";
 import {IHashable, IEquiv, IReversible, IMapEntry, IFind, IInclusive, IAssociative, IAppendable, IPrependable, ICollection, ICounted, IReducible, IKVReducible, ISeq, ISeqable, ISequential, IIndexed, ILookup, IFn, IEmptyableCollection} from "../../protocols.js";
-import * as p from "./protocols.js";
 import {keying} from "../../protocols/imapentry/concrete.js";
 import {hashKeyed as hash} from "../../protocols/ihashable/hashers.js";
 import {next} from "../../protocols/iseq/concrete.js";
 import {reduce, reducekv} from "../../shared.js";
+import * as p from "./protocols.js";
 
 function reverse(self){
   let c = count(self);
@@ -77,9 +77,7 @@ function count(self){
 }
 
 function includes(self, x){
-  return detect(function(y){
-    return y === x;
-  }, drop(self.start, self.seq));
+  return detect(p.equiv(x, ?), drop(self.start, self.seq));
 }
 
 export default does(
