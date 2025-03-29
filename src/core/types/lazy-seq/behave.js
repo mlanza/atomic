@@ -1,4 +1,4 @@
-import {overload, identity, does, partial, comp} from "../../core.js";
+import {overload, identity, does, partial, comp, complement} from "../../core.js";
 import {implement} from "../protocol.js";
 import {ICompactible, IFunctor, IReversible, IOmissible, IInclusive, IFind, IEquiv, ICollection, ISeq, IReducible, IKVReducible, ISeqable, ISequential, IIndexed, IEmptyableCollection, ICounted, IAppendable, IPrependable} from "../../protocols.js";
 import {reduced} from "../reduced.js";
@@ -8,9 +8,9 @@ import {emptyList} from "../empty-list/construct.js";
 import {toArray} from "../array/concrete.js";
 import {iequiv} from "../empty-list/behave.js";
 import {keying} from "../../protocols/imapentry/concrete.js";
-import * as p from "./protocols.js";
 import {next} from "../../protocols/iseq/concrete.js";
 import {reduce, reducekv} from "../../shared.js";
+import * as p from "./protocols.js";
 
 const compact = partial(filter, identity);
 
@@ -97,15 +97,11 @@ function append(self, other){
 }
 
 function omit(self, value){
-  return remove(function(x){
-    return x === value;
-  }, self);
+  return remove(p.equiv(value, ?), self);
 }
 
 function includes(self, value){
-  return detect(function(x){
-    return x === value;
-  }, self);
+  return detect(p.equiv(value, ?), self);
 }
 
 const reverse = comp(p.reverse, toArray);

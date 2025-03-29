@@ -8,9 +8,7 @@ function seq(self){
 
 function includes(self, text){
   const xs = seq(self);
-  return xs && _.filter(function(t){
-    return t == text;
-  }, xs);
+  return xs && _.filter(_.equiv(text, ?), xs);
 }
 
 function conj(self, text){
@@ -18,9 +16,8 @@ function conj(self, text){
 }
 
 function omit(self, text){
-  self.element.setAttribute(self.key, _.filtera(function(t){
-    return t !== text;
-  }, seq(self)).join(" "));
+  self.element.setAttribute(self.key,
+    _.filtera(_.complement(_.equiv(text, ?)), seq(self)).join(" "));
 }
 
 function deref(self){

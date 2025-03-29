@@ -83,8 +83,8 @@ function contains(self, key){
   return self.has(key);
 }
 
-function includes(self, pair) {
-  return lookup(self, _.key(pair)) == _.val(pair);
+function includes(self, [key, value]) {
+  return _.equiv(lookup(self, key), value);
 }
 
 export default _.does(

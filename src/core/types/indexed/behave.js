@@ -8,6 +8,7 @@ import {iterable, reductive} from "../lazy-seq/behave.js";
 import {keying} from "../../protocols/imapentry/concrete.js";
 import {range} from "../../types/range/construct.js";
 import {hashKeyed as hash} from "../../protocols/ihashable/hashers.js";
+import * as p from "../../protocols.js";
 
 function count(self){
   return self.obj.length;
@@ -30,9 +31,7 @@ function seq(self) {
 }
 
 function includes(self, value){
-  return !!some(function(x){
-    return x === value;
-  }, self);
+  return !!some(p.equiv(value, ?), self);
 }
 
 function keys(self){

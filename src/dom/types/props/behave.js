@@ -17,8 +17,8 @@ function dissoc(self, key){
   delete self.node[key];
 }
 
-function includes(self, entry){
-  return self.node[_.key(entry)] === _.val(entry);
+function includes(self, [key, value]){
+  return _.equiv(self.node[key], value);
 }
 
 function omit(self, entry){

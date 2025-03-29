@@ -51,8 +51,8 @@ function contains(self, key){
   return self.node.hasAttribute(key);
 }
 
-function includes(self, pair) {
-  return lookup(self, _.key(pair)) == _.val(pair);
+function includes(self, [key, value]){
+  return _.contains(self, key, value);
 }
 
 function empty(self){

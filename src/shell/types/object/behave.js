@@ -1,17 +1,14 @@
 import * as _ from "atomic/core";
 import {IOmissible, IAssociative, IEmptyableCollection, ICollection, IMap} from "../../protocols.js";
 
-function omit(self, entry){
-  const key = _.key(entry);
-  if (_.includes(self, entry)) {
+function omit(self, [key, value]){
+  if (_.includes(self, [key, value])) {
     delete self[key];
   }
 }
 
-function conj(self, entry){
-  const key = _.key(entry),
-        val = _.val(entry);
-  self[key] = val;
+function conj(self, [key, value]){
+  self[key] = value;
 }
 
 function dissoc(self, key){
