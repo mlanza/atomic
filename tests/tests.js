@@ -166,6 +166,19 @@ test("hashable entries in hash set", persistentSets(_.set));
 test("hashable entries in serial set", persistentSets(_.serialSet));
 test("hashable entries in immutablejs set", persistentSets(imm.set));
 
+test("content equality", function({assert, eq, notEq}){
+  const inita = [1, 2, 3, 3],
+        inito = {ace: 1, king: "Henry"};
+  eq(_.set(inita), $.set(inita));
+  eq(_.set(inita), imm.set(inita));
+  eq(_.set(inita), _.set([3, 3, 2, 1]));
+  eq(_.map(inito), $.map(inito));
+  eq(_.map(inito), imm.map(inito));
+  eq(_.map(inito), _.map({king: "Henry", ace: 1}));
+  notEq(_.map(inito), _.map({king: "Henry", ace: 2}));
+  notEq(inita, [3, 3, 2, 1]);
+});
+
 test("inheritance chain", function({assert, equals}){
   function Person(fname, lname){
     this.fname = fname;
