@@ -3,12 +3,16 @@ import * as $ from "atomic/shell";
 import * as p from "../../protocols/concrete.js";
 import {isMountable} from "../../protocols/imountable/concrete.js"
 import {IHtml, IValue, IText, IContent, IHideable, IEmbeddable, ISelectable} from "../../protocols.js";
-import {nestedAttrs} from "../nested-attrs/construct.js";
 import {isElement} from "../element/construct.js";
-import {matches} from "../../shared.js";
+import {matches, hidden} from "../../shared.js";
 
-const hides = ["display", "none"];
-export const hidden = _.comp(_.includes(?, hides), nestedAttrs(?, "style"));
+export function hide(el){
+  el.style.display = "none";
+}
+
+export function show(el){
+  el.style.display = "";
+}
 
 function toggles4(on, off, want, self){
   return want(self) ? on(self) : off(self);
@@ -20,14 +24,6 @@ function toggles5(on, off, _, self, want){
 
 const toggles = _.overload(null, null, null, null, toggles4, toggles5);
 const toggle = _.partial(toggles, show, hide, hidden);
-
-function hide(self){
-  $.conj(nestedAttrs(self, "style"), hides);
-}
-
-function show(self){
-  $.omit(nestedAttrs(self, "style"), hides); //TODO $.unconj
-}
 
 function embeddables(self){
   function embed(parent, add){

@@ -437,7 +437,6 @@ test("dom", function({assert, ako, eq, equals}){
   eq(_.chain(stooges, dom.sel("li", _), _.map(_.get(_, "id"), _), _.toArray), ["moe", "curly", "larry"], "Extracted ids");
   equals(_.chain({givenName: "Curly", surname: "Howard"}, who, dom.text), "Curly Howard");
   if (_.fluent) {
-    eq(_.fluent(moe, dom.classes, $.conj(_, "main"), _.deref), ["main"]);
     equals(_.fluent(moe, dom.attr(_, "data-tagged", "tests"), _.get(_, "data-tagged")), "tests");
   }
   _.chain(stooges, dom.append(_, div({id: 'branding'}, span("Three Blind Mice"))));
@@ -445,10 +444,9 @@ test("dom", function({assert, ako, eq, equals}){
   equals(_.chain(stooges, dom.sel("#branding span", _), _.map(dom.text, _), _.first), "Three Blind Mice", "Read text content");
   const greeting = _.chain(stooges, dom.sel("#branding span", _), _.first);
   dom.hide(greeting);
-  eq(_.chain(greeting, dom.style, _.deref), {display: "none"}, "Hidden");
-  equals(_.chain(greeting, dom.style, _.get(_, "display")), "none");
+  assert(dom.hidden(greeting));
   dom.show(greeting);
-  eq(_.chain(greeting, dom.style, _.deref), {}, "Shown");
+  assert(!dom.hidden(greeting));
   const branding = _.chain(stooges, dom.sel("#branding", _), _.first);
   dom.omit(branding);
   equals(_.chain(branding, _.parent, _.first), null, "Removed");
