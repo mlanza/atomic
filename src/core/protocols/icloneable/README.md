@@ -1,9 +1,7 @@
 # Cloneable
 
-Makes a copy of an object, usually for immediate modification.
+Makes a copy of an object.  This likely signals a modification is coming.
 
-* `clone(self)` - Returns a shallow copy of an object.
+* `clone(self)` - Returns a copy of an object.
 
-In JavaScript land arrays and objects are mutable values.  In Atomic land they are treated as immutable values because no provided operation will, as a rule, mutate them.  Although `identity` provides a working implemention for `clone` it's self defeating.  Cloning signals mutations are coming.
-
-It may not be necessary to clone inner objects.
+In JavaScript arrays and objects are reference types and, thus, mutable.  In Atomic, however, they may be treated as immutables.  Use `identity` only as the implemention for `clone` for truly immutable types.  Otherwise, have it return a shallow copy.

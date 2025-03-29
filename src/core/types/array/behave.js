@@ -14,7 +14,7 @@ import {hashSeq as hash} from "../../protocols/ihashable/hashers.js";
 import {equiv} from "../../protocols/iequiv/concrete.js";
 
 function clone(self){
-  return slice(self)
+  return slice(self);
 }
 
 function _before(self, reference, inserted){

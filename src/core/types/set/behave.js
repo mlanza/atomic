@@ -1,6 +1,6 @@
 import {identity, overload, doto, complement, does, slice} from "../../core.js";
 import {implement, satisfies} from "../protocol.js";
-import {IFunctor, IFn, ILookup, IHashable, ISet, IMergable, IMap, IEquiv, IReducible, IKVReducible, IInclusive, ICollection, ISeq, IFind, ISeqable, IIndexed, ISequential, IEmptyableCollection, ICounted, ICloneable} from "../../protocols.js";
+import {IOmissible, IFunctor, IFn, ILookup, IHashable, ISet, IMergable, IMap, IEquiv, IReducible, IKVReducible, IInclusive, ICollection, ISeq, IFind, ISeqable, IIndexed, ISequential, IEmptyableCollection, ICounted, ICloneable} from "../../protocols.js";
 import {reduced} from "../reduced.js";
 import {keying} from "../../protocols/imapentry/concrete.js";
 import {hashSeq as hash} from "../../protocols/ihashable/hashers.js";
@@ -75,6 +75,7 @@ export default does(
   iterable,
   reductive,
   implement(ISequential),
+  implement(IOmissible, {omit: disj}),
   implement(IEquiv, {equiv}),
   implement(IMergable, {merge}),
   implement(IHashable, {hash}),
