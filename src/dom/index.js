@@ -256,8 +256,6 @@ export const toFragment = _.coerce(?, DocumentFragment);
 })();
 
 _.addMethod(_.coerce, [NodeList, Array], Array.from);
-_.addMethod(_.coerce, [T.SpaceSeparated, Array], _.comp(Array.from, _.seq));
-_.addMethod(_.coerce, [T.NestedAttrs, Object], _.deref);
 _.addMethod(_.coerce, [URLSearchParams, Object], _.into({}, ?));
 _.addMethod(_.coerce, [Object, URLSearchParams], function(obj){
   const params = new URLSearchParams();

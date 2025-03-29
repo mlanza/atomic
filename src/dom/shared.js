@@ -14,3 +14,7 @@ export function assert(el, selector){
     throw new InvalidHostElementError(el, selector);
   }
 }
+
+export function hidden(el){
+  return document.contains(el) ? window.getComputedStyle(el).display === "none" : el.style.display === "none";
+}
