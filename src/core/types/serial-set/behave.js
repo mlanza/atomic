@@ -5,7 +5,7 @@ import {maybe} from  "../just/construct.js";
 import {mapa} from "../lazy-seq/concrete.js";
 import {implement} from "../../types/protocol/concrete.js";
 import * as p from "../../protocols/concrete.js";
-import {ICloneable, IMergable, IFunctor, IFn, ILookup, IInclusive, ISeqable, ICollection, ISeq, ISet, IEmptyableCollection} from "../../protocols.js";
+import {ICounted, ICloneable, IMergable, IFunctor, IFn, ILookup, IInclusive, ISeqable, ICollection, ISeq, ISet, IEmptyableCollection} from "../../protocols.js";
 import behave from "../set/behave.js";
 
 function first(self){
@@ -17,11 +17,11 @@ function rest(self){
 }
 
 function conj(self, value){
-  return serialSet(p.assoc(self.coll, self.serialize(value), value), self.serialize);
+  return new SerialSet(p.assoc(self.coll, self.serialize(value), value), self.serialize);
 }
 
 function disj(self, value){
-  return serialSet(p.dissoc(self.coll, self.serialize(value)), self.serialize);
+  return new SerialSet(p.dissoc(self.coll, self.serialize(value)), self.serialize);
 }
 
 function includes(self, value){
@@ -52,10 +52,15 @@ function fmap(self, f){
   return serialSet(mapa(f, self), self.serialize);
 }
 
+function count(self){
+  return ICounted.count(self.coll);
+}
+
 export default does(
   behave,
   keying("SerialSet"),
   implement(ISeq, {first, rest}),
+  implement(ICounted, {count}),
   implement(IEmptyableCollection, {empty}),
   implement(ICollection, {conj}),
   implement(ISet, {disj, unite: conj}),

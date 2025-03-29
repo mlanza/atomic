@@ -38,6 +38,10 @@ function reducekv(self, f, init){
   }, init, keys(self));
 }
 
+function reduce(self, f, init){
+  return _.reduce(f, init, seq(self));
+}
+
 function merge(self, other){
   return _.reducekv(_.assoc, self, other);
 }
@@ -61,6 +65,7 @@ function equiv(self, other){
 export default _.does(
   _.iterable,
   _.keying("Map"),
+  _.implement(_.IReducible, {reduce}),
   _.implement(_.IKVReducible, {reducekv}),
   _.implement(_.IEquiv, {equiv}),
   _.implement(_.IMergable, {merge}),

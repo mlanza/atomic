@@ -350,6 +350,7 @@ export function unfork(self){
 
 addMethod(coerce, [T.HashMap, Array], into([], ?));
 addMethod(coerce, [T.HashSet, Array], into([], ?));
+addMethod(coerce, [T.SerialSet, Array], into([], ?));
 addMethod(coerce, [Set, Array], unary(Array.from));
 addMethod(coerce, [Array, T.HashSet], into(set([]), ?));
 addMethod(coerce, [Array, Set], arr => new Set(arr));
