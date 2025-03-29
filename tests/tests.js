@@ -67,10 +67,9 @@ test("hash set", sets(_.set));
 test("serial set", sets(_.serialSet));
 test("immutablejs set", sets(imm.set));
 
-function maps(map){
+function maps(map, init){
   return function({assert}){
-    //TODO const z = map({jack: 11, queen: 12, king: 13});
-    const z = map([['jack', 11], ['queen', 12], ['king', 13]]);
+    const z = map(init);
     assert(_.equiv(_.first(z), ["jack", 11]));
     assert(_.get(z, "king") === 13);
     assert(_.get(z, "jester") == null);
@@ -79,10 +78,14 @@ function maps(map){
   }
 }
 
-test("map", maps($.map));
-test("hash map", maps(_.map));
-test("serial map", maps(_.serialMap));
-test("immutablejs map", maps(imm.map));
+test("map from entries", maps($.map, [['jack', 11], ['queen', 12], ['king', 13]]));
+test("hash map from entries", maps(_.map, [['jack', 11], ['queen', 12], ['king', 13]]));
+test("serial map from entries", maps(_.serialMap, [['jack', 11], ['queen', 12], ['king', 13]]));
+test("immutablejs map from entries", maps(imm.map, [['jack', 11], ['queen', 12], ['king', 13]]));
+test("map from object", maps($.map, {jack: 11, queen: 12, king: 13}));
+test("hash map from object", maps(_.map, {jack: 11, queen: 12, king: 13}));
+test("serial map from object", maps(_.serialMap, {jack: 11, queen: 12, king: 13}));
+test("immutablejs map from object", maps(imm.map, {jack: 11, queen: 12, king: 13}));
 
 test("targeted spread/unspread", function({eq}){
 

@@ -2,8 +2,8 @@ import * as _ from "atomic/core";
 
 export const isMap = _.is(?, Map);
 
-function map1(obj){
-  return new Map(obj);
+function map1(entries = []){
+  return new Map(_.toArray(entries));
 }
 
 function map0(){

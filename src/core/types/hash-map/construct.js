@@ -1,17 +1,15 @@
 import {IAssociative} from "../../protocols/iassociative/instance.js";
 import {equiv} from "../../protocols/iequiv/concrete.js";
+import {reduce} from "../../protocols/ireducible/concrete.js";
 
-export function HashMap(mapped, length, equals){
+export function HashMap(mapped = {}, length = 0, equals = equiv){
   this.mapped = mapped;
   this.length = length;
   this.equals = equals;
 }
 
-export function hashMap(xs = [], equals = equiv){
-  const entries = Array.from(xs);
-  let map = new HashMap({}, 0, equals);
-  for(const [key, value] of entries){
-    map = IAssociative.assoc(map, key, value);
-  }
-  return map;
+export function hashMap(entries = [], equals = equiv){
+  return reduce(function(memo, [key, value]){
+    return IAssociative.assoc(memo, key, value);
+  }, new HashMap({}, 0, equals), entries); //entries could be an object
 }
