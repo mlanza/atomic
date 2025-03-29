@@ -50,22 +50,39 @@ tests(function(tests){ //common
   return {...tests, eq, notEq, allEq, isSome, isNil, ako};
 });
 
-//tests
-test("immutables", function({assert}){
-  const x = imm.set();
-  const y = _.conj(x, 6, 7);
-  assert(_.equiv(y, imm.set([7, 6, 7])));
-  assert(_.equiv(y, _.disj(imm.set([7, 6, 8]), 8)));
-  assert(_.includes(y, 7));
-  assert(!_.includes(y, 9));
-  assert(_.first(y) === 6);
-  const z = imm.map({jack: 11, queen: 12, king: 13});
-  assert(_.equiv(_.first(z), ["jack", 11]));
-  assert(_.get(z, "king") === 13);
-  assert(_.get(z, "jester") == null);
-  assert(_.get(_.conj(z, ["ten", 10]), "ten") === 10);
-  assert(_.equiv(_.dissoc(z, "jack"), _.conj(imm.map(), ["queen", 12], ["king", 13])));
-});
+function sets(set){
+  return function({assert}){
+    const x = set();
+    const y = _.conj(x, 6, 7);
+    assert(_.equiv(y, set([7, 6, 7])));
+    assert(_.equiv(y, _.disj(set([7, 6, 8]), 8)));
+    assert(_.includes(y, 7));
+    assert(!_.includes(y, 9));
+    assert(_.first(y) === 6);
+  }
+}
+
+test("set", sets($.set));
+test("hash set", sets(_.set));
+test("serial set", sets(_.serialSet));
+test("immutablejs set", sets(imm.set));
+
+function maps(map){
+  return function({assert}){
+    //TODO const z = map({jack: 11, queen: 12, king: 13});
+    const z = map([['jack', 11], ['queen', 12], ['king', 13]]);
+    assert(_.equiv(_.first(z), ["jack", 11]));
+    assert(_.get(z, "king") === 13);
+    assert(_.get(z, "jester") == null);
+    assert(_.get(_.conj(z, ["ten", 10]), "ten") === 10);
+    assert(_.equiv(_.dissoc(z, "jack"), _.conj(imm.map(), ["queen", 12], ["king", 13])));
+  }
+}
+
+test("map", maps($.map));
+test("hash map", maps(_.map));
+test("serial map", maps(_.serialMap));
+test("immutablejs map", maps(imm.map));
 
 test("targeted spread/unspread", function({eq}){
 
@@ -83,57 +100,68 @@ test("targeted spread/unspread", function({eq}){
 
 });
 
-test("persistent maps", function({assert, eq, isNil}){
-  const v1 = _.map([
-    [[1, 2], "Harvey"],
-    [[3, 4], "Mike"],
-    [[5, 6], "Jessica"],
-    [{princess: true}, "Megan"],
-    [{princess: true}, "Rachel"]
-  ]);
-  const v2 = _.chain(v1,
-    _.dissoc(_, [5, 6]));
+function persistentMaps(map){
+  return function({assert, eq, isNil}){
+    const v1 = map([
+      [[1, 2], "Harvey"],
+      [[3, 4], "Mike"],
+      [[5, 6], "Jessica"],
+      [{princess: true}, "Megan"],
+      [{princess: true}, "Rachel"]
+    ]);
+    const v2 = _.chain(v1,
+      _.dissoc(_, [5, 6]));
 
-  const kvs1 = _.reducekv(_.conj, [], v2);
-  const kvs2 = _.reduce(function(memo, [key, val]){
-    return _.conj(memo, key, val);
-  }, [], v2);
+    const kvs1 = _.reducekv(_.conj, [], v2);
+    const kvs2 = _.reduce(function(memo, [key, val]){
+      return _.conj(memo, key, val);
+    }, [], v2);
 
-  eq(_.get(v2, [1, 2]), "Harvey");
-  eq(_.get(v2, [3, 4]), "Mike");
-  eq(_.get(v2, {princess: true}), "Rachel");
-  eq(_.get(v1, [5, 6]), "Jessica");
-  isNil(_.get(v2, [5, 6]));
-  eq(_.count(v1), 4);
-  eq(_.count(v2), 3);
-  eq(kvs1, kvs2);
-});
+    eq(_.get(v2, [1, 2]), "Harvey");
+    eq(_.get(v2, [3, 4]), "Mike");
+    eq(_.get(v2, {princess: true}), "Rachel");
+    eq(_.get(v1, [5, 6]), "Jessica");
+    isNil(_.get(v2, [5, 6]));
+    eq(_.count(v1), 4);
+    eq(_.count(v2), 3);
+    eq(kvs1, kvs2);
+  }
+}
 
-test("persistent sets", function({assert, eq, isNil}){
-  const v1 = _.hashSet([
-      [1, 2],
-      [3, 4],
-      [5, 6],
-      {princess: true},
-      {princess: true}]);
+test("hashable keys in hash map", persistentMaps(_.map));
+test("hashable keys in serial map", persistentMaps(_.serialMap));
+test("hashable keys in immutablejs map", persistentMaps(imm.map));
 
-  const v2 = _.chain(v1,
-    _.disj(_, [5, 6]));
+function persistentSets(set){
+  return function({assert, eq, isNil}){
+    const v1 = set([
+        [1, 2],
+        [3, 4],
+        [5, 6],
+        {princess: true},
+        {princess: true}]);
 
-  const vals = _.reduce(_.conj, [], v2);
+    const v2 = _.chain(v1,
+      _.disj(_, [5, 6]));
 
-  assert(_.includes(v2, [1, 2]));
-  assert(_.includes(v2, [3, 4]));
-  assert(_.includes(v2, {princess: true}));
-  assert(_.includes(v1, [5, 6]));
-  assert(!_.includes(v2, [5, 6]));
-  eq(_.count(v1), 4);
-  eq(_.count(v2), 3);
-  eq(vals, [
-    [1, 2],
-    [3, 4],
-    {princess: true}]);
-});
+    const vals = _.reduce(_.conj, [], v2);
+    const expected = [[1, 2], [3, 4], {princess: true}];
+
+    eq(_.coerce(v2, Array), expected);
+    assert(_.includes(v2, [1, 2]));
+    assert(_.includes(v2, [3, 4]));
+    assert(_.includes(v2, {princess: true}));
+    assert(_.includes(v1, [5, 6]));
+    assert(!_.includes(v2, [5, 6]));
+    eq(_.count(v1), 4);
+    eq(_.count(v2), 3);
+    eq(vals, expected);
+  }
+}
+
+test("hashable entries in hash set", persistentSets(_.set));
+test("hashable entries in serial set", persistentSets(_.serialSet));
+test("hashable entries in immutablejs set", persistentSets(imm.set));
 
 test("inheritance chain", function({assert, equals}){
   function Person(fname, lname){
