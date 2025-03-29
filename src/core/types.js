@@ -39,11 +39,11 @@ export * from "./types/symbol.js";
 export * from "./types/string.js";
 export * from "./types/task.js";
 export * from "./types/uid.js";
-//#if _EXPERIMENTAL
 export * from "./types/part-map.js";
 export * from "./types/part-set.js";
 export * from "./types/serial-map.js";
 export * from "./types/serial-set.js";
+//#if _EXPERIMENTAL
 export * from "./types/members.js";
 export * from "./types/okay.js";
 export * from "./types/left.js";

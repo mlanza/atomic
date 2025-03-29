@@ -6,5 +6,5 @@ function embeddables(self){
 }
 
 export default _.does(
-  _.keying("Attrs"),
+  _.keying("Comment"),
   _.implement(IEmbeddable, {embeddables}));
