@@ -3,7 +3,7 @@ import {implement} from "../protocol.js";
 import {map, mapa, into} from "../lazy-seq/concrete.js";
 import {hashSet, HashSet} from "./construct.js";
 import {keying} from "../../protocols/imapentry/concrete.js";
-import {IFunctor, IFn, ILookup, IMergable, ICloneable, IInclusive, ISet, ISeqable, ISeq, ICollection, ICounted, IEmptyableCollection} from "../../protocols.js";
+import {IOmissible, IFunctor, IFn, ILookup, IMergable, ICloneable, IInclusive, ISet, ISeqable, ISeq, ICollection, ICounted, IEmptyableCollection} from "../../protocols.js";
 import * as p from "./protocols.js";
 import behave from "../set/behave.js";
 
@@ -56,6 +56,7 @@ function fmap(self, f){
 export default does(
   behave,
   keying("HashSet"),
+  implement(IOmissible, {omit: disj}),
   implement(IMergable, {merge}),
   implement(ICollection, {conj}),
   implement(ISet, {disj, unite: conj}),

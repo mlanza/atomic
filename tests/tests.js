@@ -548,10 +548,28 @@ test("transducers", function({assert, eq}){
   eq(_.chain([1, 3, 2, 2, 3], _.into([], _.filter(_.isEven), _)), [2, 2]);
 });
 
-test("iinclusive", function({assert}){
+test("includes, excludes, contains", function({assert, eq}){
   const charlie = {name: "Charlie", iq: 120, hitpoints: 30};
-  assert(_.chain(charlie, _.includes(_, ["name", "Charlie"])));
-  assert(!_.chain(charlie, _.includes(_, ["name", "Charles"])));
+  assert(_.includes(charlie, ["name", "Charlie"]));
+  assert(!_.excludes(charlie, ["name", "Charlie"]));
+  assert(_.contains(charlie, "name"));
+  assert(!_.contains(charlie, "nickname"));
+  assert(_.contains(charlie, "name", "Charlie"));
+  assert(!_.includes(charlie, ["name", "Charles"]));
+  assert(_.excludes(charlie, ["name", "Charles"]));
+  assert(!_.contains(charlie, "name", "Charles"));
+  eq(_.include(charlie, ["name", "Charles"]), {name: "Charles", iq: 120, hitpoints: 30});
+  eq(_.exclude(charlie, ["iq", 120], ["hitpoints", 30]), {name: "Charlie"});
+
+  const nums = [2, 1, 2, 3];
+  eq(_.include(nums, 3, 4), [2, 1, 2, 3, 4]);
+  eq(_.conj(nums, 3, 4), [2, 1, 2, 3, 3, 4]);
+  eq(_.exclude(nums, 2), [1, 3]);
+
+  const nums2 = _.set([2, 1, 2, 3]);
+  eq(_.include(nums2, 3, 4), _.set([2, 1, 3, 4]));
+  eq(_.conj(nums2, 3, 4), _.set([2, 1, 3, 4]));
+  eq(_.exclude(nums2, 2), _.set([1, 3]));
 });
 
 test("ilookup", function({assert, equals, eq, isNil}){

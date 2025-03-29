@@ -5,7 +5,7 @@ import {maybe} from  "../just/construct.js";
 import {mapa} from "../lazy-seq/concrete.js";
 import {implement} from "../../types/protocol/concrete.js";
 import * as p from "../../protocols/concrete.js";
-import {ICounted, ICloneable, IMergable, IFunctor, IFn, ILookup, IInclusive, ISeqable, ICollection, ISeq, ISet, IEmptyableCollection} from "../../protocols.js";
+import {IOmissible, ICounted, ICloneable, IMergable, IFunctor, IFn, ILookup, IInclusive, ISeqable, ICollection, ISeq, ISet, IEmptyableCollection} from "../../protocols.js";
 import behave from "../set/behave.js";
 
 function first(self){
@@ -59,6 +59,7 @@ function count(self){
 export default does(
   behave,
   keying("SerialSet"),
+  implement(IOmissible, {omit: disj}),
   implement(ISeq, {first, rest}),
   implement(ICounted, {count}),
   implement(IEmptyableCollection, {empty}),
