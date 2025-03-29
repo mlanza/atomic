@@ -53,6 +53,8 @@ export function juxt(...fs){
   }
 }
 
+export const kv = juxt(p.key, p.val);
+
 function apply2(f, args){
   return f.apply(null, toArray(args));
 }
