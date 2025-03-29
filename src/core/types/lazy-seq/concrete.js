@@ -122,7 +122,7 @@ export function mapkv(f, xs){
   }, entries(xs));
 }
 
-export function mapvk(f, xs){ //TODO necessary, given `mapkv`?
+export function mapvk(f, xs){
   return map2(function([key, value]){
     return f(value, key);
   }, entries(xs));

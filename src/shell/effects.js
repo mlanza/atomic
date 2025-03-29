@@ -10,7 +10,6 @@ export function each(f, xs){
 
 export const eachIndexed = _.withIndex(each);
 
-//TODO unnecessary if CQS pattern is that commands return self
 function doing1(f){
   return doing2(f, _.identity);
 }

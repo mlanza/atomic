@@ -16,4 +16,4 @@ function conj(self, value){
 export default _.does(
   _.implement(IEmptyableCollection, {empty}),
   _.implement(ICollection, {conj}),
-  _.implement(ISet, {disj})); //TODO unite
+  _.implement(ISet, {disj, unite: conj}));

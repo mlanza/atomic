@@ -19,6 +19,6 @@ function disj(self, value){
 }
 
 export default _.does(
-  _.implement(ISet, {disj}),
+  _.implement(ISet, {disj, unite: conj}),
   _.implement(IEmptyableCollection, {empty}),
   _.implement(ICollection, {conj}));

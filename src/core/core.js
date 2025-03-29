@@ -453,9 +453,7 @@ export function either(memo, value){
   return memo || value;
 }
 
-export function isIdentical(x, y){
-  return x === y; //TODO Object.is?
-}
+export const isIdentical = Object.is;
 
 export function everyPred(...preds){
   return function(){

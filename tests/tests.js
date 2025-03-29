@@ -223,7 +223,7 @@ test("hashing", function({assert, same, equals, notEquals}){
   same({blackwidow: "Avenger"}, {blackwidow: "Avenger"});
   same([{blackwidow: "Avenger"}, _.date(774), [1, 2]], [{blackwidow: "Avenger"}, _.date(774), [1, 2]]);
   equals(_.get(m, _.date(999)), 111);
-  //TODO equals(_.get(m, {blackwidow: "Avenger"}), "Natasha");
+  equals(_.get(m, {blackwidow: "Avenger"}), "Natasha");
   equals(_.get(m, "mustard"), "ketchup");
 }, {
   tests: function(tests){ //add custom test

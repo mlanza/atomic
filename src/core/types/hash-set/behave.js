@@ -58,7 +58,7 @@ export default does(
   keying("HashSet"),
   implement(IMergable, {merge}),
   implement(ICollection, {conj}),
-  implement(ISet, {disj}),
+  implement(ISet, {disj, unite: conj}),
   implement(IInclusive, {includes}),
   implement(ILookup, {lookup}),
   implement(IFn, {invoke: lookup}),

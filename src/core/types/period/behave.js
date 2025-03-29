@@ -49,7 +49,7 @@ function equiv(self, other){
   return other != null && p.equiv(self.start, other.start) && p.equiv(self.end, other.end);
 }
 
-function compare(self, other){ //TODO test with sort of periods
+function compare(self, other){
   return p.compare(other.start, self.start) || p.compare(other.end, self.end);
 }
 
