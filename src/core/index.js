@@ -244,15 +244,6 @@ function decorating4(target, source, pred, f){
 
 export const decorating = overload(null, null, decorating2, decorating3, decorating4);
 
-function include1(f){
-  function include(self, value){
-    return p.includes(self, value) ? self : f(self, value);
-  }
-  return overload(null, include1, include, p.reducing(include));
-}
-
-export const include = include1(p.conj);
-
 //can be used to expose all module exports
 export const inventory = pipe(Object.keys, join(",\n", ?), str("{\n", ?, "\n}"));
 export const fmt = expands(str);

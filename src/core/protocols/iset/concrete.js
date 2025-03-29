@@ -34,3 +34,4 @@ export const unite = overload(null, null, ISet.unite, reducing(ISet.unite));
 export const union = overload(null, identity, union2, reducing(union2));
 export const intersection = overload(null, null, intersection2, reducing(intersection2));
 export const difference = overload(null, null, difference2, reducing(difference2));
+export const include = unite;

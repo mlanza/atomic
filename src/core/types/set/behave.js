@@ -90,4 +90,4 @@ export default does(
   implement(ISeq, {first, rest}),
   implement(IEmptyableCollection, {empty}),
   implement(ICollection, {conj}),
-  implement(ISet, {disj}));
+  implement(ISet, {disj, unite: conj}));

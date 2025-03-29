@@ -11,7 +11,7 @@ export * from "./types.js";
 export * from "./protocols.js";
 export * from "./protocols/concrete.js";
 export * from "./shared.js";
-export {append, prepend, before, after, omit, empty} from "atomic/shell"; //TODO is reexporting a good idea?
+export {append, prepend, before, after, omit, empty} from "atomic/shell";
 
 import {behaviors} from "./behaviors.js";
 export * from "./behaviors.js";

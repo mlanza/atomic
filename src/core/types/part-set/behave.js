@@ -56,7 +56,7 @@ export default does(
   implement(ISeq, {first, rest}),
   implement(ICollection, {conj}),
   implement(IEmptyableCollection, {empty}),
-  implement(ISet, {disj}),
+  implement(ISet, {disj, unite: conj}),
   implement(IInclusive, {includes}),
   implement(ILookup, {lookup}),
   implement(IFn, {invoke: lookup}),
