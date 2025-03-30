@@ -19,3 +19,4 @@ export * from "./iresettable/concrete.js";
 export * from "./isend/concrete.js";
 export * from "./iqueryable/concrete.js";
 export * from "./ilogger/concrete.js";
+export * from "./itopic/concrete.js";

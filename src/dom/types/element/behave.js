@@ -134,9 +134,11 @@ function lookup(self, key){
   return self.getAttribute(key);
 }
 
-function contains(self, key){
+function contains2(self, key){
   return self.hasAttribute(key);
 }
+
+const contains = _.overload(null, _.constantly(_.looseEq), contains2);
 
 function parent(self){
   return self && self.parentNode;
@@ -200,8 +202,7 @@ function omit2(self, node){
     $.each(self.removeAttribute.bind(self), keys);
   } else if (isAttrs(node)) {
     const attrs = node;
-    $.each(function(entry){
-      const key = entry[0], value = entry[1];
+    $.each(function([key, value]){
       let curr = lookup(self, key);
       if (_.isObject(curr)){
         curr = mapa(function(pair){
@@ -229,7 +230,7 @@ function includes(self, target){
     }, true, keys);
   } else if (isAttrs(target)) {
     return _.reducekv(function(memo, key, value){
-      return memo ? lookup(self, key) == value : reduced(memo);
+      return memo ? _.contains(self, key, value) : reduced(memo);
     }, true, target);
   } else {
     return _.detect(_.isString(target) ? function(node){
@@ -364,6 +365,7 @@ export default _.does(
   icontents,
   ievented,
   iselectable,
+  _.implement($.ITopic, _.itopic(assoc, dissoc, {equals: _.looseEq})),
   _.keying("Element"),
   _.implement(_.IReducible, {reduce}),
   _.implement(IValue, {value}),

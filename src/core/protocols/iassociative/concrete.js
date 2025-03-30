@@ -93,10 +93,11 @@ function updateInN(self, keys, f) {
 export const updateIn = overload(null, null, null, updateIn3, updateIn4, updateIn5, updateIn6, updateInN);
 
 function contains3(self, key, value){
-  return IAssociative.contains(self, key) && equiv(get(self, key), value);
+  const equals = IAssociative.contains(self) || equiv;
+  return IAssociative.contains(self, key) && equals(get(self, key), value);
 }
 
-export const contains = overload(null, null, IAssociative.contains, contains3);
+export const contains = overload(null, IAssociative.contains, IAssociative.contains, contains3);
 export const rewrite = branch(IAssociative.contains, update, identity);
 export const prop = overload(null, function(key){
   return overload(null, v => get(v, key), v => assoc(v, key, v));

@@ -75,8 +75,8 @@ function attr2(self, key){
   if (_.isString(key)) {
     return self.getAttribute(key);
   } else {
-    const pairs = key;
-    $.eachkv(attr3(self, ?, ?), pairs);
+    const entries = key;
+    $.each(([key, value]) => attr3(self, key, value), entries);
   }
 }
 
@@ -95,7 +95,7 @@ function attrN(self, ...kvps){
   }
 }
 
-export const attr = _.overload(null, null, attr2, attr3, attrN);
+export const attr = _.overload(null, _.comp(_.into({}, ?), $.assert), attr2, attr3, attrN);
 
 function removeAttr2(self, key){
   self.removeAttribute(key);

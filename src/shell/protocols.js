@@ -19,3 +19,4 @@ export * from "./protocols/iresettable/instance.js";
 export * from "./protocols/isend/instance.js";
 export * from "./protocols/iqueryable/instance.js";
 export * from "./protocols/ilogger/instance.js";
+export * from "./protocols/itopic/instance.js";

@@ -455,6 +455,8 @@ export function either(memo, value){
 
 export const isIdentical = Object.is;
 
+export const looseEq = (a, b) => a == b;
+
 export function everyPred(...preds){
   return function(){
     return fold(function(memo, arg){
