@@ -79,12 +79,14 @@ function vals(self){
   return _.lazyIterable(self.values());
 }
 
-function contains(self, key){
+function contains2(self, key){
   return self.has(key);
 }
 
+const contains = _.overload(null, _.constantly(_.looseEq), contains2);
+
 function includes(self, [key, value]) {
-  return _.equiv(lookup(self, key), value);
+  return _.contains(self, key, value);
 }
 
 export default _.does(

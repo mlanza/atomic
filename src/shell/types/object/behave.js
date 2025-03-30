@@ -1,5 +1,5 @@
 import * as _ from "atomic/core";
-import {IOmissible, IAssociative, IEmptyableCollection, ICollection, IMap} from "../../protocols.js";
+import {ITopic, IOmissible, IAssociative, IEmptyableCollection, ICollection, IMap} from "../../protocols.js";
 
 function omit(self, [key, value]){
   if (_.includes(self, [key, value])) {
@@ -30,6 +30,7 @@ function empty(self){
 }
 
 export default _.does(
+  _.implement(ITopic, _.itopic(assoc, dissoc)),
   _.implement(ICollection, {conj}),
   _.implement(IEmptyableCollection, {empty}),
   _.implement(IAssociative, {assoc}),

@@ -12,7 +12,7 @@ import {emptyObject} from "../object/construct.js";
 import {descriptive} from "../object/concrete.js";
 import {keying} from "../../protocols/imapentry/concrete.js";
 import {hashKeyed as hash} from "../../protocols/ihashable/hashers.js";
-import {reduceWith, reducekvWith} from "../../shared.js";
+import {reduceWith, reducekvWith, itopic} from "../../shared.js";
 import * as p from "./protocols.js";
 
 const keys = Object.keys;
@@ -101,28 +101,13 @@ function clone(self){
   return Object.assign({}, self);
 }
 
-function assert2(self, key){
-  return p.contains(self, key) ? [[key, p.get(self, key)]] : null;
-}
-
-function assert1(self){
-  return p.seq(mapcat(assert2(self, ?), p.keys(self)));
-}
-
-export const assert = overload(null, assert1, assert2, p.assoc);
-
-function retract3(self, key, value){
-  return p.equiv(p.get(self, key), value) ? p.dissoc(self, key) : self;
-}
-
-export const retract = overload(null, null, p.dissoc, retract3);
-
 const reduce = reduceWith(p.seq);
 const reducekv = reducekvWith(p.seq);
 const count = comp(p.count, p.keys);
 
 export default does(
   keying("Object"),
+  implement(ITopic, itopic(p.assoc, p.dissoc)),
   implement(IHashable, {hash}),
   implement(IMergable, {merge}),
   implement(ICompactible, {compact}),
@@ -138,7 +123,6 @@ export default does(
   implement(IFn, {invoke: lookup}),
   implement(ISeq, {first, rest}),
   implement(ILookup, {lookup}),
-  implement(ITopic, {assert, retract}),
   implement(IEmptyableCollection, {empty: emptyObject}),
   implement(IAssociative, {assoc, contains}),
   implement(ISeqable, {seq}),
