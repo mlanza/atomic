@@ -78,7 +78,7 @@ function dissoc(self, key){
 }
 
 function assoc(self, key, value){
-  if (p.get(self, key) === value) {
+  if (p.equiv(p.get(self, key), value)) {
     return self;
   } else {
     const result = p.clone(self);
