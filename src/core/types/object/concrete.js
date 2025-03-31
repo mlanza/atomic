@@ -21,7 +21,7 @@ export function descriptive(self){
 }
 
 export function where(self, other){
-  return p.reducekv(function(memo, key, value){
+  return p.reduce(function(memo, [key, value]){
     return memo ? p.contains(self, key, value) : reduced(memo);
   }, true, other);
 }

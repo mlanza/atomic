@@ -4,7 +4,7 @@ import * as p from "../../protocols/concrete.js";
 import {isMountable} from "../../protocols/imountable/concrete.js"
 import {IHtml, IValue, IText, IContent, IHideable, IEmbeddable, ISelectable} from "../../protocols.js";
 import {isElement} from "../element/construct.js";
-import {matches, hidden} from "../../shared.js";
+import {matches, hidden, remove as omit} from "../../shared.js";
 
 export function hide(el){
   el.style.display = "none";
@@ -63,10 +63,6 @@ function after(self, content){
 }
 
 const conj = append;
-
-function isAttrs(self){
-  return !_.ako(self, Node) && _.descriptive(self);
-}
 
 const eventConstructors = {
   "click": MouseEvent,
@@ -190,54 +186,12 @@ export function siblings(self){
   return _.concat(prevSiblings(self), nextSiblings(self));
 }
 
-function omit1(self){
-  omit2(parent(self), self);
-}
-
-function omit2(self, node){
-  if (isElement(node)) {
-    self.removeChild(node);
-  } else if (_.satisfies(_.ISequential, node)) {
-    const keys = node;
-    $.each(self.removeAttribute.bind(self), keys);
-  } else if (isAttrs(node)) {
-    const attrs = node;
-    $.each(function([key, value]){
-      let curr = lookup(self, key);
-      if (_.isObject(curr)){
-        curr = mapa(function(pair){
-          return pair.join(": ") + "; ";
-        }, _.toArray(curr)).join("").trim();
-      }
-      curr == value && dissoc(self, key);
-    }, attrs);
-  } else if (_.isString(node)) {
-    node = includes(self, node);
-    self.removeChild(node);
-  }
-}
-
-export const omit = _.overload(null, omit1, omit2);
-
-//TODO too overloaded, impure protocol
 function includes(self, target){
-  if (isElement(target)) {
-    return _.detect(_.isIdentical(target, ?), children(self));
-  } else if (_.satisfies(_.ISequential, target)){
-    const keys = target;
-    return _.reduce(function(memo, key){
-      return memo ? self.hasAttribute(key) : reduced(memo);
-    }, true, keys);
-  } else if (isAttrs(target)) {
-    return _.reducekv(function(memo, key, value){
-      return memo ? _.contains(self, key, value) : reduced(memo);
-    }, true, target);
+  if (_.isArray(target)){
+    const [key, value] = target;
+    return _.contains(self, key, value);
   } else {
-    return _.detect(_.isString(target) ? function(node){
-      return node.nodeType === Node.TEXT_NODE && node.data === target;
-    } : function(node){
-      return node === target;
-    }, contents(self));
+    return !!_.detect(_.isIdentical(target, ?), contents(self));
   }
 }
 
