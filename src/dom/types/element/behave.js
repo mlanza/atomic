@@ -191,7 +191,7 @@ function includes(self, target){
     const [key, value] = target;
     return _.contains(self, key, value);
   } else {
-    return !!_.detect(_.isIdentical(target, ?), contents(self));
+    return !!_.detect(_.isIdentical(target, ?), children(self));
   }
 }
 
