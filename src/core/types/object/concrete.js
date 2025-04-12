@@ -15,7 +15,7 @@ export function isObject(self){
   return is(self, Object);
 }
 
-//an entity is has descriptive key/value pairs whereas an array does not.
+//an entity/object has descriptive key/value pairs whereas an array does not.
 export function descriptive(self){
   return satisfies(ILookup, self) && satisfies(IMap, self) && !satisfies(IIndexed, self);
 }
