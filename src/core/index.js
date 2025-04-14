@@ -11,6 +11,7 @@ import {implement, specify, behaves} from "./types/protocol/concrete.js";
 import {into, concat, detect, map, mapa, splice, drop, join, some, last, butlast, takeWhile, dropWhile, filter} from "./types/lazy-seq.js";
 export {filter} from "./types/lazy-seq.js";
 export {iterable} from "./types/lazy-seq/behave.js";
+import {lazySeq} from "./types/lazy-seq/construct.js";
 export * from "./core.js";
 export * from "./types.js";
 export * from "./protocols.js";
@@ -156,10 +157,10 @@ export function deconstruct(dur, ...units){
   }, units);
 }
 
-export function distinctly(equals){
+export function distinctly(set){
   function distinct0(){ //transducer
     return function(rf){
-      let seen = hashSet([], equals);
+      let seen = set;
       return overload(rf, rf, function(memo, value){
         if (p.includes(seen, value)) {
           return memo;
@@ -169,11 +170,29 @@ export function distinctly(equals){
       });
     }
   }
-  const distinct1 = hashSet(?, equals);
-  return overload(distinct0, distinct1);
+
+  function distinct1(coll){
+    return distinct2(coll, set);
+  }
+
+  function distinct2(coll, seen){
+    return p.seq(coll) ? lazySeq(function(){
+      let xs = coll;
+      while (p.seq(xs)) {
+        let x = p.first(xs);
+        xs = p.rest(xs);
+        if (!p.includes(seen, x)) {
+          return cons(x, distinct2(xs, p.conj(seen, x)));
+        }
+      }
+      return emptyList();
+    }) : emptyList();
+  }
+
+  return overload(distinct0, distinct1, distinct2);
 }
 
-export const distinct = distinctly(p.equiv);
+export const distinct = distinctly(hashSet([], p.equiv));
 export const unique = distinct;
 export const second = branch(satisfies(ISeq, ?), comp(ISeq.first, ISeq.rest), p.prop("second"));
 
