@@ -1,4 +1,5 @@
 import {IFn, IMap, IIndexed, IReducible, IKVReducible, ILookup, IInclusive, IAssociative, IEmptyableCollection} from "../../protocols.js";
+import {curry} from "../../core.js";
 import {apply} from "../function.js";
 import {reducing} from "../../protocols/ireducible/concrete.js";
 import {reduced} from "../../types/reduced/construct.js";
@@ -28,11 +29,11 @@ export function where(self, other){
 
 const emptied = branch(satisfies(IEmptyableCollection), p.empty, emptyObject);
 
-export function juxtVals(self, value){
+export const juxtVals = curry(function(self, value){
   return p.reducekv(function(memo, key, f){
     return p.assoc(memo, key, isFunction(f) ? f(value) : f);
   }, emptied(self), self);
-}
+});
 
 export function evolve(template, obj){ //see ramda
   return template ? p.reducekv(function(memo, key, value){
