@@ -29,7 +29,7 @@ export function where(self, other){
 
 const emptied = branch(satisfies(IEmptyableCollection), p.empty, emptyObject);
 
-export const juxtVals = curry(function(self, value){
+export const juxto = curry(function(self, value){
   return p.reducekv(function(memo, key, f){
     return p.assoc(memo, key, isFunction(f) ? f(value) : f);
   }, emptied(self), self);
