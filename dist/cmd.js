@@ -1,10 +1,9 @@
 import _ from "./atomic_/core.js";
 import $ from "./atomic_/shell.js";
-import dom from "./atomic_/dom.js";
 import imm from "./atomic_/immutables.js";
 
 export const registry = {};
-const params = new URLSearchParams(location.search);
+const params = new URLSearchParams(globalThis.location ? location.search : "");
 const monitor = _.maybe(params.get("monitor"), _.split(_, ","));
 const nomonitor = _.maybe(params.get("nomonitor"), _.split(_, ","));
 
@@ -48,6 +47,8 @@ export const cmd = _.overload(cmd1, cmd1, cmd3, cmd3);
 
 export default cmd;
 
-reg({_, $, dom, imm});
+const dom = globalThis.document ? (await import("./atomic_/dom.js")).default : null;
+
+_.chain({_, $, imm, dom}, _.compact, reg);
 
 Object.assign(globalThis, {cmd});
