@@ -177,8 +177,8 @@ export function up(state){
 export function down(state){
   //algorithm for moving down
 }
-
 ```
+
 ```javascript
 // ./main.js
 $.swap($state, s.move("up")); //configured
@@ -187,6 +187,7 @@ $.swap($state, s.up); //nonconfigured counterpart/alternative
 $.swap($state, s.move("down"));
 $.swap($state, s.down);
 ```
+
 The above separation of files illustrate well the pendulum of initial activity.  You write functions in `sokoban` only to execute them in `main` and/or from the console.  This enables your app to tell its story.  This is what it means to [start with simulation](docs/start-with-simulation.md).
 
 Telling a story from the confines of an atom is what makes this approach a pleasure.  The value in learning to tease the pure from the impure is the resulting simulation is far easier to reason about, use, and maintain than the messy reality of imperative code.  It's hard to beat a model which reduces a program to a flip book, halts time, and permits any page and its subsequent to be readily examined and compared.
@@ -204,8 +205,8 @@ The first sides of the data flow is handling outputs or rendering.  It involves 
 $.sub($state, function(state){
   /* render and/or patch the DOM */
 });
-
 ```
+
 The second side of the data flow is handling inputs or responding.  It involves subscribing to the DOM and feeding the simulation.
 
 ```javascript
@@ -220,7 +221,6 @@ $.on(document, "keydown", function(e){
     $.swap($state, s.up);
   }
 });
-
 ```
 
 Use event delegation so that no matter how many elements get created or destroyed over the life of the app, the handlers need only be wired up once.  Or subscribe to events on elements which never get destroyed.
@@ -346,7 +346,7 @@ During this stage, you wire up the app to react to user interactions.  Once comp
 
 An app begins as a tiny reactive core and one grafts layers onto it.  It can be kept simple or evolved toward increasing sophistication.
 
-The initial commands are pure functions triggered by DOM events and swapped against an atom.  These commands, however, can be reified into [POJOs](https://en.wikipedia.org/wiki/Plain_old_Java_object), sent to a command bus, over the wire, and/or logged to auditable histories.  Middleware can be introduced.
+The initial commands are pure functions often attached to DOM events and swapped against an atom.  These commands, however, can be reified into messages, and [sent to an actor](./docs/make-it-act.md) playing the role of a command bus. The benefit of messages is they can be sent over the wire, and/or logged to auditable histories.  They allow middleware to be introduced.
 
 Add a [journal](./src/core/types/journal) to facilitate undo/redo and step backwards and forwards in time.
 
