@@ -1,3 +1,4 @@
+export * from "./iactor/concrete.js";
 export * from "./iaddable/concrete.js";
 export * from "./iappendable/concrete.js";
 export * from "./iassociative/concrete.js";

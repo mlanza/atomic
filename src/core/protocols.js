@@ -1,3 +1,4 @@
+export * from "./protocols/iactor/instance.js";
 export * from "./protocols/iaddable/instance.js";
 export * from "./protocols/iappendable/instance.js";
 export * from "./protocols/iassociative/instance.js";
