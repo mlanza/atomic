@@ -9,4 +9,6 @@ Represents an actor which receives and processes commands.
 * `glance(self)` - returns effects accumulated for external actors, but not yet drained
 * `drain(self)` - returns the actor without the effects
 
-The actor set up during dependency injection determines how commands are processed and whether the component (what it does during `act`) is pure or impure.  The potential for side effects exists.
+The `undone` check isn’t about realtime undo/redo — that’s what [journals](../../types/journal/) handle. It’s about reversibility as a system-level feature: can the user ask the system to roll this action back? Keep in mind that as more actions accumulate, something reversible now may later become irreversible. Events—often logged in the backend—record an `undoable` flag to track this capability.
+
+See [Make It Act](../../../../docs/make-it-act.md) for further details.

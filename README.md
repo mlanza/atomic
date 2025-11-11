@@ -14,7 +14,7 @@ Atomic is [functions first](docs/functions-first.md) as methods only limit [the 
 
 Atomic is built around [protocols](src/core/protocols).  Since [they're the centerpiece](https://clojure.org/reference/protocols) of Clojure, they are, by extension, Atomic too.  They provide the only safe means of [dynamically extending natives and third-party types](./docs/protocols-for-dynamic-extension.md).  They make [cross-realm operability](./docs/cross-realm-operability.md) possible.  They also, for the good of the functional paradigm, shift focus to thinking [abstractly about apis and behaviors](./docs/abstraction-thinking.md) over types.
 
-Since JavaScript currently lacks compound value types such as [records, tuples](https://tc39.es/proposal-record-tuple/) and [temporals](https://github.com/tc39/proposal-temporal), reference types can be used instead.  Purity is instead maintained as a matter of discipline.  In Atomic reference types like objects, arrays and dates can be optionally, as a matter of protocol selection, [treated as value types](docs/mutables-for-immutables.md).
+Since JavaScript has gaps in its value types, reference types can be used instead.  Purity is attained through discipline.  In Atomic reference types like objects, arrays and dates can be optionally, as a matter of protocol selection, [treated as value types](docs/mutables-for-immutables.md).
 
 Atomic has structures comparable to Clojure's [maps](https://clojuredocs.org/clojure.core/hash-map) and [vectors](https://clojuredocs.org/clojure.core/vector) as well as seamless [Immutable.js](https://immutable-js.com) integration.  Since objects and arrays are cheap and usually perform well enough, they're to be preferred.
 
@@ -30,7 +30,7 @@ The ephiphany: since languages are just facilities plus syntax, if one sets asid
 Any language can do functional programming pretty dang well given the right facilities.  JavaScript is no exception.  The proper measure is getting them adopted into the language.
 
 * [first-class protocols](https://github.com/tc39/proposal-first-class-protocols)
-* [records & tuples](https://github.com/tc39/proposal-record-tuple)
+* ~~[records & tuples](https://github.com/tc39/proposal-record-tuple)~~ [composites](https://github.com/tc39/proposal-composites)
 * [partial application](https://github.com/tc39/proposal-partial-application)
 * [pipeline operator](https://github.com/tc39/proposal-pipeline-operator)
 * [temporal](https://github.com/tc39/proposal-temporal)

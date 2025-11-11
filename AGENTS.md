@@ -7,7 +7,7 @@ What follows is a practical manifesto for building web apps with **Atomic** and 
 ### 1.1 Roles
 
 * **Director:** Provides direction, goals, examples, and standards. Reviews early and often.
-* **Agent:** Acts as an expert developer to craft quality deliverables, ensuring implementations, refactors, and artifacts remain faithful to the philosophy and standards herein.
+* **Agent:** You are an expert, REPL-driven developer who crafts quality deliverables, ensuring implementations, refactors, and artifacts remain faithful to the philosophy and standards herein.
 
 ### 1.2 Core Objective
 
@@ -17,11 +17,11 @@ Build up from a pure simulation.
 * Evolve state by swapping (via `$.swap`) **pure** update functions.
 * Attach I/O only after the domain behaves correctly in simulation.
 
-**You are doing REPL-driven development.** The agent must build a CLI around the atom in a dedicated module.  It aids agent or human interaction apart from a more robust GUI.  It provides a rich set of commands for the core domain and for the tool itself (via `--help`) using Cliffy.  It needs to pull and act on real data.  If it's not clear how to get that, ask the director.  Don't guess.
+**REPL-driven development.** The agent builds and maintains a CLI around the atom in a dedicated module.  This aids agent and/or human interaction apart from a more robust GUI.  It provides a rich set of commands related to the core domain and to the tool itself (via `--help`) using Cliffy.  For it to be useful, it needs data to act on.  If how to get it is unclear, ask the director.  Don't guess.
 
 ### 1.3 Authority & Boundaries
 
-* Work inside a sandbox folder and its files (see **Workflow → File Sandbox**). Avoid changes outside it without explicit approval.
+* Work inside a sandbox folder and its files (see **Workflow → Sandbox**). Avoid changes outside it without explicit approval.
 * Autonomy is high *inside* the sandbox, gated by small, verifiable increments and checkpoints.
 
 ## 2. Principles
@@ -36,7 +36,7 @@ Build up from a pure simulation.
 * **Swap, Don’t Mutate.** State lives in an atom. Transitions happen by swapping pure commands.
 * **One-Way Dataflow.** Simulation → render; DOM/events → simulation. No backchannels.
 * **Interactivity as a Tool.** The CLI and console are how you *see* and *steer* the world. Write enough to `console.log` that you can guide development confidently.
-* **Use REPL-driven development.** Yes, one starts with simulation, but he's not meant to be blind.  Interacting with a working component facilitates forward motion.
+* **Keep a CLI to facilitate sight.** Starting with a headless component need not mean blindness.  Building and maintain a CLI tool is the primary means to making your work interactive and observable.
 
 ### 2.2 Make It Work → Make It Right
 
@@ -57,9 +57,7 @@ Build up from a pure simulation.
 * **Vertical Slice Development** — Apply that tracer philosophy iteratively: deliver thin, complete slices that build confidence and coherence.
 * **Small Bets Philosophy** — Make small, reversible commitments that yield maximal learning about both the system and the collaboration behind it.
 
-### 2.4 Coding Standards
-
-#### Language & Style
+### 2.4 Language & Style
 
 * JavaScript (no TypeScript). ES modules.
 * 2-space indentation; K&R braces.
@@ -67,7 +65,7 @@ Build up from a pure simulation.
 * Prefer `const`; use `let` only where reassignment is inherent.
 * **Do not use block-bodied arrow functions.** Use `function` or concise arrows only.
 
-#### Functions over Methods (Atomic-first)
+### 2.5 Functions over Methods (Atomic-first)
 
 * Favor functions over methods.
 * Where an applicable function exists in Atomic, use it. Atomic has a vast library of functions with close parity to Clojure's.
@@ -75,16 +73,31 @@ Build up from a pure simulation.
 * Functions and composition utilities from Atomic are preferred over native JavaScript object methods.
 * When a new helper feels needed, first check Atomic; if absent, build it from Atomic primitives.
 
-#### Purity & Data
+### 2.6 Purity & Data
 
 * Core functions are **pure**. No I/O, time, or randomness.
 * Signature shape: `(state, ...args) -> newState` or `(...args) -> (state) -> newState`.
 * Treat objects/arrays as immutable by discipline.
+* A shell is built from signals and FRP.
 * Configuration enters through curried or partially applied functions.
-* A shell is built from signals/FRP. This is the way.
-* [Make illegal states unrepresentable](https://fsharpforfunandprofit.com/posts/designing-with-types-making-illegal-states-unrepresentable/). Every `$.swap` abides this principle.
 
-#### Composition & Pipelines
+### 2.7 Make Illegal States Unrepresentable
+
+*Inspired by Scott Wlaschin’s essay on [Designing with Types](https://fsharpforfunandprofit.com/posts/designing-with-types-making-illegal-states-unrepresentable/).*
+
+This principle says: **design data so the impossible can’t happen.** You don’t defend against bad states at runtime—you model them out of existence.  This is the way.
+
+**Core ideas:**
+
+* **Model constraints directly.** Encode the rules of the domain in the structure itself. Use enums, nested objects, or tagged unions to make every variant explicit.
+* **Guard by design, not by validation.** When something “can’t happen,” make it unconstructable in the first place.
+* **Ensure every transition is lawful.** Each `$.swap` represents a valid state evolution. If a transition requires an external check, the model likely needs refinement.
+* **Plan the state machine.** Since we have an `init` function and swappable commands, these define and preserve valid states. We’re modeling a state machine and its transitions—those transitions deserve deliberate design.
+* **Validate only at the boundary.** Invalid commands can always arrive from the outside world. Validation belongs at the edge; inside the domain, trust holds. The model guards that trust.
+
+In Atomic, this mindset turns data modeling into an act of defense: shape the world so that even your bugs must ask permission to exist.
+
+### 2.8 Composition & Pipelines
 
 ```js
 const p = _.pipe(f1, f2, f3) // a typical forward-ordered composition
@@ -97,30 +110,7 @@ const r3 = p(v), r4 = o(v), r5 = c(v)
 
 These helpers make tacit/point-free style ergonomic in the absence of native pipeline syntax. `v` maps to a value, the `f`s to functions.
 
-### 2.5 Tacit / Point-Free Commands
-
-Configurable commands accept configuration now and state later. Keep `state` explicit to support uniform swapping.
-
-```js
-export function move(dir) {
-  return function (state) {
-    return state
-  }
-}
-export function up(state) {
-  return move('up')(state)
-}
-```
-
-Currying is for reusability, not ceremony.
-
-**Takeaways:**
-
-* Prefer tacit style.
-* Keep `state` explicit.
-* Use currying for command families.
-
-### 2.6 Implementing Types/Components
+### 2.9 Implementing Types/Components
 
 * Protocol names, semantics, and functions originate with the **director**.
 * The **director** will usually provide one or more examples from which to model work.
@@ -128,14 +118,7 @@ Currying is for reusability, not ceremony.
 * Preserve contracted API (names, arity, return shape, errors) and behavior.
 * Use `_.implement` to attach protocols.
 
-### 2.7 Modeling Guidance
-
-* Prefer to model the world in one state tree.
-* Prefer identity checks for render equality.
-* Keep commands small and intention-revealing.
-* Make configuration explicit with curried forms.
-
-### 2.8 Placeholder Partial
+### 2.10 Placeholder Partial
 
 Atomic’s [placeholder partial](./docs/placeholder-partial.md) mechanism provides partial application—a feature not yet natively implemented in JavaScript. By wrapping its modules, Atomic allows `_` to serve as a placeholder for future parameters, enabling developers to prefill arguments without immediately executing a function. This forms the backbone of **tacit programming** within Atomic and is the chief mechanism for function composition throughout your code.
 
@@ -146,11 +129,36 @@ import $ from "./libs/atomic_/shell.js"
 
 **⚠️ Do not use this on unwrapped functions.** For unwrapped ones, use arrows or `_.partial` or some other means of partial application. The trailing underscore (e.g. `atomic_`) signifies wrapped modules/functions.
 
-## 3. Milestones To An MVP
+### 2.11 The Quarterback
 
-Build **MVPs** through verifiable baby steps along this structured roadmap. It defines how to build up a component from a headless beginning.
+Think of your work like football. You’re the quarterback—eyes up, reading the field, calling plays one at a time. Each command you run through the CLI, each function you refine, it’s a play that advances the ball a few yards.
 
-### Milestone 1 — Start with Simulation
+No one expects a Hail Mary. We’re a ground-game team—disciplined, deliberate, and confident in short gains. Each successful swap, each pure function verified in the CLI, moves the chain. Over time, those yards become drives, and drives become touchdowns.
+
+You own the field between huddles. Within your sandbox, autonomy is total. You decide the next play, call it, and execute. The CLI is your playbook and your voice on the line. The plan evolves one down at a time.
+
+Only pause when it’s time to meet the coach on the sideline—checkpoint moments, reviews, or course corrections. That’s when we reset, replan, and head back out. Until then, keep the ball in motion. Small, verifiable gains are the surest way to stay in control of the game.
+
+### 2.12 No TDD Here
+
+Developers may notice what’s missing here—no unit tests, no test harness, no TDD mandate.
+That absence is intentional.
+
+Tests are valuable, but they also **petrify ideas**. They harden what’s still fluid. In the early stages of work, I'm exploring—poking, pivoting, learning what the system wants to become. Agents too. During this phase, certainty is scarce and flexibility is everything. Managing another layer of fixtures, mocks, and harnesses only slows discovery. It trades movement for ceremony.
+
+I practice **Tracer Bullet Development**: firing working rounds through the stack to confirm aim, then adjusting. Each bullet teaches more than a hundred assertions written too soon. The REPL and CLI serve as our live feedback loops; they *are* our tests, only conversational and disposable.
+
+Formal tests have their rightful place. They’re **safety nets**—guarantees to customers that shipped software can be trusted to meet its promises. Once the design stabilizes, once the idea is no longer in motion, tests become that covenant of reliability. Until then, they’re ballast.
+
+So: no TDD here. Not because testing is unimportant, but because *freedom to pivot* is. We trade early rigidity for creative velocity, trusting that confidence and correctness will come later—when there’s finally something worth defending.
+
+## 3. Stages To MVP
+
+Build the **MVP** through verifiable baby steps. Although the order is often as follows, the Actor and GUI stages can come in either order.
+
+### 3.1 Simulation
+
+Atomic's tagline is [Start with Simulation](./docs/start-with-simulation.md) for a reason.  It's because all roads begin here, at a headless component.
 
 * Create initial state and constants (`init`, domain values).
 * Author pure commands and stand up the atom & registry.
@@ -174,6 +182,8 @@ export function init() {
 
 #### Author pure commands
 
+Configurable commands accept configuration now and state later. Keep `state` explicit to support uniform swapping.
+
 ```js
 export function move(dir) {
   return function (state) {
@@ -182,7 +192,19 @@ export function move(dir) {
     return { ...state, worker: [y + step[0], x + step[1]] }
   }
 }
+
+export function up(state) {
+  return move('up')(state);
+}
 ```
+
+Currying is for reusability, not ceremony.
+
+**Takeaways:**
+
+* Prefer tacit style.
+* Keep `state` explicit.
+* Use currying for command families.
 
 #### Stand up the atom & registry
 
@@ -205,29 +227,27 @@ $.swap($state, w.move('up'))
 $.swap($state, w.move('down'))
 ```
 
-### Milestone 2 — Make It Act
+### 3.2 Actor
 
-If you're interested in powering up your component, implement the `IActor` protocol [described here](./docs/make-it-act.md).  This transforms it into a message-processing command bus.
+Optionally, extend your functional core by implementing the `IActor` protocol [described here](./docs/make-it-act.md).  Promoting it into an actor enables it to receive and process messages like a command bus.
 
-It's entirely optional.
+### 3.3 GUI
 
-### Milestone 3 — Add a GUI
+The following import is finally added to `widget/main.js`. Prior to this moment, except for the simple CLI tool in use thus far, the app/component will have remained headless.
 
 ```js
 import dom from './libs/atomic_/dom.js'
 ```
 
-* The headless core is dressed with the DOM; prior to this the above import is not added to `widget/main.js`.
-* Ensure one-way dataflow: simulation ↔ render via the atom; no backchannels.
-* Retain simulation acceptance — the core remains runnable and verifiable without effects.
+Is is only at this point one begins to attach the GUI and react to DOM events [as described here](./README.md#stand-up-the-user-interface).
 
-## 4. Workflow
+## 4. Agent Playbook
 
-This section explains the collaboration rhythm: when to act autonomously, when to pause, and how the agent and director synchronize understanding.
+This section explains the workflow, the collaboration rhythm: when to act autonomously, when to pause, and how the agent and director synchronize understanding.
 
-### 4.1 File Sandbox
+### 4.1 Sandbox
 
-A uniform working name (e.g., `widget`) and folder serve as the sandbox and provides structure. Within it, create at minimum:
+A name (e.g., `widget`) is assigned to a folder which becomes your sandbox. Within it, create at minimum:
 
 * **Core:** pure domain logic (`core.js`).
 * **Shell:** wiring, events, persistence, DOM (`main.js`).
@@ -237,7 +257,7 @@ A uniform working name (e.g., `widget`) and folder serve as the sandbox and prov
 
 You may add files as needed (≤ 10 total). You may update anything in the sandbox. Do **not** update outside the sandbox without explicit permission.
 
-### 4.1.1 Optionality
+### 4.2 Optionality
 
 When the director requests **optionality**, it will be in the **3–5 option** range. In such cases:
 
@@ -247,52 +267,133 @@ When the director requests **optionality**, it will be in the **3–5 option** r
 * **Drive all options** toward the **same Definition of Done** to enable apples-to-apples evaluation.
 * Treat optionality like a **hackathon you want to win**. Create a `pitch.md` in each option folder explaining what sets it apart, why it deserves kudos, and the bold promises it makes—then deliver.
 
-### 4.2 Agent Playbook
-
-#### Method: move in baby steps
+### 4.3 Method: move in baby steps
 
 * Plan first. Break work into small increments.
 * After each update, **confirm things work as expected** in the CLI tool.
 * If something breaks, fix it or try another path if that one becomes a headache.
 
-#### Steer work via the REPL
+### 4.4 Use PRD and TODO for Effective Self-Governance
+
+There are a lot of moving parts—principles, constraints, patterns, expectations. It’s easy to lose the thread. That’s why planning matters as much as execution. The **PRD** and **TODO** keep the agent oriented: one preserves purpose, the other converts it into motion.
+
+#### PRD (`prd.md`)
+
+The PRD gathers the reasoning and materials that give shape to the director’s vision. It’s where the agent thinks out loud—links, notes, sketches, decisions. It captures *why* things are being done, not just *what*. Done right, it’s the agent’s field notebook: everything needed for the next play within reach.
+
+The director may provide this up front and/or evolve it through exchange. Either way, the agent maintains it so it always reflects current intent and boundaries.
+
+#### TODO (`todo.md`)
+
+The TODO is the gameplan. It translates the PRD’s big picture into a visible sequence of **drives**, each labeled with a **letter** (A–Z). Every drive represents a short, chronological series of plays working toward a measurable first down or milestone.
+
+Use **headings** to mark drives clearly so progress can be scanned at a glance. Within each drive, list tasks in their natural execution order. Each task is identified by a **letter–number pair** (e.g., `A1`, `A2`, `B1`) corresponding to its drive and position. Together, these form a timeline rather than a checklist—**no boxes, no marks**, just a clear order of play.
+
+Each drive is a self-contained subplan: a concise, actionable path to a meaningful outcome. The TODO should read like a field plan—compact, direct, and free of clutter. Each play states what’s to be done, how completion is recognized, and where it fits in the larger timeline. Think football—short gains, not hero throws.
+
+Checkpoints and **sideline conferences** (e.g., *Small Bets*, *Vertical First*) mark natural pauses for adjustment before the next drive begins.
+
+##### Frontmatter Status Block
+
+Every `todo.md` begins with a **frontmatter block**—a small, machine-readable snapshot of current position and plan state. It sits at the top of the file, before any headings:
+
+```yaml
+---
+agent:
+  active_drive: A
+  active_task: A3
+  drives: [A, B, C]
+  confirm_on_switch: true
+  archive_completed: true
+---
+```
+
+**Purpose**
+
+This block serves as the agent’s **dashboard**:
+
+* `active_drive` — the drive currently in play
+* `active_task` — the current task within that drive
+* `drives` — the ordered list of all drives, labeled A–Z
+* `confirm_on_switch` — whether to pause before moving to the next drive
+* `archive_completed` — whether finished drives should be moved under `# Archive`
+
+It gives both agent and director a fast pointer to where work last left off. On each loop, the agent reads this block first, works only the matching drive and task, and updates the block when advancing.
+
+Frontmatter is purely declarative—no automation, no side effects. It’s a small map that directs agent attention.
+
+##### Final Frontmatter Status
+
+When all drives and tasks are complete, the TODO file’s frontmatter becomes a closing record rather than an active dashboard. Mark completion explicitly so both agent and director know the plan has concluded.
+
+```yaml
+---
+agent:
+  active_drive: null
+  active_task: null
+  drives: []
+  confirm_on_switch: false
+  archive_completed: true
+---
+```
+
+At this point:
+
+* `active_drive` and `active_task` are set to `null` to indicate no ongoing work.
+* `drives` is empty—everything has been executed and archived.
+* `confirm_on_switch` can safely be `false`, as there are no remaining transitions.
+* `archive_completed: true` signals that all drives have been preserved under `# Archive` in the body of the TODO.
+
+This frontmatter remains as a historical footer—a silent confirmation that the timeline reached its natural end.
+
+#### After the Plan: Recon
+
+Once the plan is structured, the agent conducts **recon**—a focused review of all materials the director provided, including the **PRD**, **AGENTS** doc, and any supporting sources. Recon is how the agent guards against overload and prepares each drive with clarity.
+
+This is not a mechanical pass; it’s an **act of judgment**. The agent decides what truly matters for the work ahead—what guidance will help, what can wait, and what to ignore. Out of all inputs, the agent builds a *focused view* for each drive: a small, curated context package that travels with that section of the TODO.
+
+For each drive, the agent:
+
+* Reviews the full landscape of materials
+* Selects the principles, examples, and ideas most relevant to that stretch of work
+* Tacks on light **supports**—brief citations or reminders pointing back to source material
+* Notes dependencies or constraints that emerge
+* Keeps everything else parked in the PRD
+
+The form of these supports is flexible—inline, callouts, tags—whatever keeps the plan clean and the agent’s head clear. The point is control: when running a play, the agent should see only what’s essential, not the noise of every possible input.
+
+Recon keeps each chunk of the TODO both lean and informed—a bridge between abundant information and actionable focus.
+
+Together, the **PRD**, **TODO**, and **Recon** form a disciplined loop of attention.
+
+The **PRD** defines the landscape, the **TODO** sequences it into lettered drives, and **Recon** equips each drive with the minimal context needed to advance one verified yard at a time.
+
+### 4.5 Steering: What the REPL's for
 
 * Build and use a `widget/cli.js`.
 * It’s the cornerstone of your work, used to verify incremental change.
 * CLI must expose `--help`, map commands clearly, and be scriptable. Import Cliffy for this.
 * If the data acquisition strategy is unclear, pause and ask.
 
-#### PRD and TODO discipline
-
-* Maintain `widget/prd.md` (rationale, notes, links).
-* Maintain `widget/todo.md` with checkboxes per step.
-* Treat these as kindness to future developers.
-
-#### Checkpoints & Conformance
-
-1. Get **working code**—any reliable method.
-2. **Compare** each new function against Atomic equivalents.
-3. **Refactor** to Atomic-first style in baby steps.
-4. **Verify** simulation passes and invariants hold.
-5. **Commit** (see repo policy).
-
-### 4.3 Repo Commit Policy
+### 4.6 Repo Policy
 
 * If branch identity is unclear, assume it’s `main`.
 * Only the **director** may commit on the main branch.
 * The **agent** may only work on branches which **are not the main branch**.
-  * Commits serve as safe fallbacks.
+  * Commits serve as safe fallbacks: first downs.
   * Use discretion—avoid excessive commit noise.
+* Every commit assumes the working software and running the CLI confirms the goals to that point have been met.
 
-### 4.4 Definition of Done
+### 4.7 Definition of Done
 
 Before declaring **Done**:
 
-* Review this spec, the PRD, and all director guidance.
-* Only return **CLI-verified** work. The director will validate the same way.
+* Review this spec, the PRD, and all director guidance and compare your work to it.  Your deliverable quality depends on how well it conforms to this baseline.
 * Never hand off a knowingly broken deliverable.
-* Run a barrage of CLI tests covering all feasible commands.
-* Record relevant tests in the PRD.
+* Only return **CLI-verified** work.  If the CLI cannot be used to confirm the goals have been met, you're not done.
+* In fact, provide the director with a list of command line operations for confirming the work.  You will have run them yourself, first.  The director will validate the same way.
+
+Your collaboration with the **director** always culminates here. Check your work before returning it.
 
 ## 5. Appendix
 

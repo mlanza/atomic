@@ -49,7 +49,7 @@ That earlier `concede` function still runs — it just becomes the reducer that 
 All messages share a simple shape:
 
 ```js
-{ type: "commit", details: { ... } }
+{ type: "concede", details: { ... } }
 ```
 
 We use **active voice** for commands and **past tense** for events.
@@ -88,19 +88,19 @@ That’s the entire simulation loop.
 
 Once you’re comfortable with **commands** and **events**, you can add a third kind of message: **effects**.
 
-An **effect** is an outbound request — something your component wants the outside world to do.
+An **effect** is an outbound request — something your component wants the outside world to do.  Thus, a command, but for an indeterminate actor.
 
 It’s still just a message, but it’s aimed beyond the component’s boundary.
 
 ### Why start without them
 
 Most of the time, you don’t need effects.
-External systems can simply **observe state changes** and react.
+The shell can simply **observe state changes** and react.
 
 If a game’s status changes to `"conceded"`, the UI or another process can notice and respond.
-That’s the **implicit model** — a simpler way to start.  You may never graduate to the **explicit model**.
+That’s the **implicit model** — a simpler way to start.  Graduating to the **explicit model** is optional.
 
-### When to add them
+### Modeling effects explicitly
 
 If you need a record or queue of outbound work, the actor can accumulate effects internally.
 You can inspect them with `glance()` and clear them with `drain()`:
@@ -110,45 +110,101 @@ You can inspect them with `glance()` and clear them with `drain()`:
 | **`glance(self)`** | View staged effects awaiting routing.        |
 | **`drain(self)`**  | Return the actor with those effects cleared. |
 
-This lets a **mediator** (or shell) look at the actor, pick up those messages, and route them elsewhere.
+This lets the shell — or perhaps some **mediator** — monitor the actor, pick up its messages, and route them elsewhere.
 
-Effects are **commands** meant for consumption by *external* components.
+## Dependency Inversion
 
-## Dependency Injection and Purity
+Actors model **intent** with commands; confirmed changes are **events**.
+`act` decides which events to produce; `actuate` applies them, purely.
 
-Whether an actor performs work or only describes it depends on what you inject into it.
+It's still just a reduction:
 
-During **dependency injection**, you decide whether it behaves as a **pure** or **impure** component.
+```
+command → act → events → actuate → next actor
+```
 
-* A **pure actor** only simulates side effects. It stages them as data but never performs IO.
-  For example, you might inject a service that uses a **seeded pseudo-random number generator** — still deterministic, still pure.
-* An **impure actor** may interpret those effects directly — say, by using the **standard random number generator**, introducing nondeterminism.
+At creation (`init`), you can **inject services** alongside state — this is where inversion shows up. The actor defines *what* should happen, not *how*.
 
-This is **dependency inversion** in action: the high-level component remains pure in design, while injected dependencies determine how (and whether) side effects are realized.
+You swap the service, not the logic.
 
-## The Implementer’s Responsibility
+In the earlier stages, `init` returned a plain JavaScript object. That was fine when the atom only needed a little data to begin simulating, but `init` is not a rule. It’s an idea: every atom needs an initial seed. What you plant there can be bare data or a richer type with its own contracted interface.
 
-If you’re implementing `IActor`, you define two gates:
+Thus `init` naturally gives way to more deliberate factories — constructors that assemble services, wrap data, and return something that knows how to act.
 
-* **`act`** — accepts commands, validates them, and generates and actuates events (and potentially effects).
-* **`actuate`** — applies events to state, deterministically and with no new messages.
+### A Common API, Two Dice
 
-Your component’s story is told entirely through those gates:
-commands propose change; events confirm it.
+Both dice share a `roll` interface and fix sides at construction. One is seeded and deterministic; the other uses real randomness.
+
+```js
+// dice.js
+export function pseudoRandomDie(seed, sides = 6) {
+  let s = seed >>> 0
+  function next() { s = (1664525 * s + 1013904223) >>> 0; return s }
+  return { roll() { return (next() % sides) + 1 } }
+}
+
+export function randomDie(sides = 6) {
+  return { roll() { return (Math.random() * sides | 0) + 1 } }
+}
+```
+
+### Using the Service Inside `act`
+
+The actor doesn’t know which die it has — only that it can `roll`. On `"roll"`, it generates a `"rolled"` event with `details`, then actuates it.
+
+```js
+// game/core.js
+
+//`init` promoted to a factory function
+export function pig(services = {}) {
+  return new Pig({ ..., services });
+}
+
+function act(self, command) {
+  if (command.type === 'roll') {
+    const rolled = self.services.die.roll()
+    const event = { type: 'rolled', details: { rolled } }
+    return actuate(self, event);
+  }
+  // ...
+  return self;
+}
+
+$.doto(Pig,
+  // .. implements protocols
+  _.implement(_.IActor, {act, actuate}));
+```
+
+### Seeding the Atom
+
+At startup, you choose whether [Pig](https://en.wikipedia.org/wiki/Pig_(dice_game)) simulates chance or actually employs it.
+
+```js
+// main.js
+const die = randomDie(); // or pseudoRandomDie(42)
+const $pig = $.atom(pig({ die })); //init
+
+$.swap($pig, _.act(_, { type: 'roll' }));
+```
+
+That’s dependency inversion in miniature — the actor stays pure and declarative; you decide whether the world is chaotic or predetermined.
+
+## Handling Errors
+
+This model is a hybrid, mostly pure, but there's no `Either` monad for accommodating errors.  Instead, I took a simpler route: I **throw errors** from within `act`. It’s less pure, but it’s pragmatic.
+
+I use these throws to uphold rules and reject invalid requests. They act as guardrails, signaling that the command shouldn’t proceed. From there, the **shell** catches them — treating each as though it were just another effect.
+
+If you wanted to push through to total purity, it wouldn’t take much. You could surface those failures as data instead of exceptions — registering them through the same `effects` API (`glance`, `drain`) and letting a handler route or record them as structured problems.
+
+As always in software, there’s freedom in the tradeoff. You can handle rejection as data or as control flow. For now, I lean toward throwing — a small concession to impurity in service of keeping things simple.
 
 ## Summary
 
-You began with a simple atom you swapped functions against.
-Now you’re swapping **messages**.
+You began with a simple atom you swapped functions against. Now you’re swapping **messages**.
 
-At first, there are only two:
-**commands** (intentions) and **events** (facts).
-That’s enough to build a fully simulated, replayable world.
+At first, there are only two: **commands** (intentions) and **events** (facts). That’s enough to build a fully simulated, replayable world.
 
-Later, you can add **effects** — outbound messages for the world —
-and choose between implicit (simpler) or explicit (staged and drained) models.
-You can even inject impure handlers to interpret those effects directly.
+Later, you can implement **effects** — outbound messages for the world — using an implicit (simpler) or explicit (staged and drained) model. You can even inject impure handlers to interpret those effects directly.
 
-Everything still happens *inside* the atom.
-The component remains a simulation —
-it just learned how to **act**.
+Everything still happens *inside* the atom. The component remains a simulation — you just taught it how to **act**.
