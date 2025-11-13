@@ -41,7 +41,13 @@ export default [{
     }),
     babel({
       exclude: 'node_modules/**',
-      babelHelpers: 'bundled'
+      babelHelpers: 'bundled',
+      presets: [
+        ["@babel/preset-modules"]
+      ],
+      plugins: [
+        "@babel/plugin-proposal-partial-application"
+      ]
     }),
     json(),
     terser({

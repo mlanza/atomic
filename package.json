@@ -4,7 +4,8 @@
   "scripts": {
     "bundle": "rollup --config",
     "develop": "rollup --config --watch",
-    "serve": "static ."
+    "serve": "static .",
+    "test": "static tests"
   },
   "type": "module",
   "engines": {
@@ -24,6 +25,7 @@
     "@rollup/plugin-node-resolve": "^13.1.3",
     "@rollup/plugin-replace": "^5.0.7",
     "core-js": "^3.21.1",
+    "node-static": "^0.7.11",
     "rollup": "^2.70.0",
     "rollup-plugin-import-map": "^2.2.2",
     "rollup-plugin-jscc": "^2.0.0",

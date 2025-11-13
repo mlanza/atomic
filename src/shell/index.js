@@ -16,7 +16,7 @@ export * from "./types.js";
 export * from "./protocols.js";
 export * from "./protocols/concrete.js";
 export * from "./effects.js";
-export {doto, fork, rand, randNth, shuffle, specify, implement, uid, guid} from "atomic/core"; //reexport side effecting ops
+export {doto, does, fork, rand, randNth, shuffle, specify, implement, uid, guid} from "atomic/core"; //reexport side effecting ops
 import {behaviors} from "./behaviors.js";
 import {nativeMap} from "./types/map.js";
 export * from "./behaviors.js";
