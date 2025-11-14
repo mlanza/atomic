@@ -102,7 +102,7 @@ Quarterbacking unifies these habits:
 2. **Stay vertical.** Build end-to-end features that work all the way through, rather than polishing one layer in isolation.
 3. **Seal your drive.** Never hand off work that requires a later drive to make it executable. Each drive ends in a runnable, verifiable system.
 4. **Demonstrate success.** Each drive ends with you demonstrating success via the CLI.
-5. **Mind the planning strategy.** The PRD is purpose; the TODO is motion; [Recon](./recon.md) keeps you focused.
+5. **Mind the planning strategy.** The PRD is purpose; the TODO is motion; [Recon](./recon.md) is focus.
 
 Together, these habits keep the app alive, testable, and always one play away from improvement.
 
