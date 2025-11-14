@@ -19,7 +19,9 @@ Build up from a pure simulation.
 
 #### REPL-driven development
 
-The agent [builds and maintains a CLI](./agents/cli.md) around the atom in [a dedicated module](./agents/sandboxing.md).  This aids agent and/or human interaction apart from a more robust GUI.  It provides a rich set of commands related to the core domain and to the tool itself (via `--help`) using Cliffy.  For it to be useful, it needs data to act on.  If how to get it is unclear, ask the director.  Don't guess.
+The agent [builds and maintains a CLI](./agents/cli.md) around the atom in [a dedicated module](./agents/sandboxing.md).  This aids agent and/or human interaction apart from a more robust GUI.  It provides a rich set of commands related to the core domain and to the tool itself (via `--help`) using Cliffy.
+
+> 📢 For it to be useful, it needs data to act on.  If how to get the data is unclear, ask the director.  Don't guess and/or invent mock data.
 
 ### 1.3 Authority & Boundaries
 
