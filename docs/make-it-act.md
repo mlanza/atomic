@@ -86,31 +86,25 @@ That’s the entire simulation loop.
 
 ## Expanding the Model: Effects
 
-Once you’re comfortable with **commands** and **events**, you can add a third kind of message: **effects**.
+Once you’re comfortable with **commands** and **events**, a third kind of message enters the picture: **effects**.
 
-An **effect** is an outbound request — something your component wants the outside world to do.  Thus, a command, but for an indeterminate actor.
+Here’s the twist — from the perspective of a component, effects don’t actually exist. A component never concerns itself with what the outside world should do. It has no awareness beyond its own boundaries.
 
-It’s still just a message, but it’s aimed beyond the component’s boundary.
+All authority flows downward. A component doesn’t reach upward to speculate or orchestrate. It owns its work and reports what happened — that’s what events are for.
 
-### Why start without them
+**Events describe facts. Commands express intent.**
 
-Most of the time, you don’t need effects.
-The shell can simply **observe state changes** and react.
+Effects, then, are not new kinds of messages. They’re **derived**. When a higher-level authority observes an event, it may choose to respond by sending new commands to its subordinates. This translation — from observed event to triggered command — is what we call an effect.
 
-If a game’s status changes to `"conceded"`, the UI or another process can notice and respond.
-That’s the **implicit model** — a simpler way to start.  Graduating to the **explicit model** is optional.
+In other words:
 
-### Modeling effects explicitly
+```
+Event  →  (orchestration logic)  →  Command(s)
+```
 
-If you need a record or queue of outbound work, the actor can accumulate effects internally.
-You can inspect them with `glance()` and clear them with `drain()`:
+The orchestration layer, whether a parent component or mediator, performs that translation. It observes child events, decides what they mean, and dispatches new commands downward in response.
 
-| Method             | Purpose                                      |
-| ------------------ | -------------------------------------------- |
-| **`glance(self)`** | View staged effects awaiting routing.        |
-| **`drain(self)`**  | Return the actor with those effects cleared. |
-
-This lets the shell — or perhaps some **mediator** — monitor the actor, pick up its messages, and route them elsewhere.
+Effects are therefore not things a component *emits* — they are commands *triggered* elsewhere in response to events. Events may continue bubbling up, giving higher authorities the context they need to direct their own domains.
 
 ## Dependency Inversion
 
@@ -195,7 +189,7 @@ This model is a hybrid, mostly pure, but there's no `Either` monad for accommoda
 
 I use these throws to uphold rules and reject invalid requests. They act as guardrails, signaling that the command shouldn’t proceed. From there, the **shell** catches them — treating each as though it were just another effect.
 
-If you wanted to push through to total purity, it wouldn’t take much. You could surface those failures as data instead of exceptions — registering them through the same `effects` API (`glance`, `drain`) and letting a handler route or record them as structured problems.
+If you wanted to push through to total purity, it wouldn’t take much. You could surface those failures in the component state instead of exceptions — and allow them to bubble up as error events which, in turn, produce effects.
 
 As always in software, there’s freedom in the tradeoff. You can handle rejection as data or as control flow. For now, I lean toward throwing — a small concession to impurity in service of keeping things simple.
 
@@ -203,8 +197,8 @@ As always in software, there’s freedom in the tradeoff. You can handle rejecti
 
 You began with a simple atom you swapped functions against. Now you’re swapping **messages**.
 
-At first, there are only two: **commands** (intentions) and **events** (facts). That’s enough to build a fully simulated, replayable world.
+There are only two: **commands** (intentions) and **events** (facts). That’s enough to build a fully simulated, replayable world.
 
-Later, you can implement **effects** — outbound messages for the world — using an implicit (simpler) or explicit (staged and drained) model. You can even inject impure handlers to interpret those effects directly.
+You can always generate whatever **effects**, commands for subordinates, you deem useful.
 
 Everything still happens *inside* the atom. The component remains a simulation — you just taught it how to **act**.
