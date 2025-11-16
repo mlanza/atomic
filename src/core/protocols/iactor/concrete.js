@@ -4,8 +4,6 @@ import {IFunctor} from "../ifunctor/instance.js";
 import {overload} from "../../core.js";
 
 export const act = IActor.act;
-export const glance = IActor.glance;
-export const drain = IActor.drain;
 export const events = IActor.events;
 export const undone = IActor.undone;
 
