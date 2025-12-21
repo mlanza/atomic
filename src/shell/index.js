@@ -215,6 +215,30 @@ export function see(...labels){
   return tee(_.partial(p.log, ...labels));
 }
 
+//provide a teeable, observable version of a pipeline using `sel` as debug options
+export function mileposts(sel = null, tee = see, make = _.pipe){
+  //`sel` may be either a string or an array
+  const includes = _.isString(sel) ? function(vals, val){
+    return _.includes(vals, _.str(val));
+  } : _.includes;
+  return sel ? function(...args){
+    const all = includes(sel, "*"); //mileposts only, "^*$" gets you everything
+    const initial = includes(sel, "^");
+    const terminal = includes(sel, "$");
+    const max = args.length - 1;
+    const final = all || includes(sel, max); //used to avoid redundant observations
+    const fs = _.chain(
+      _.reducekv(function(memo, key, f){ //mileposts are limited to 0..9 if `sel` is a string
+        const flags = max == key ? [key, "$"] : [key];
+        return _.concat(memo, all || includes(sel, key) ? [f, tee(...flags)] : [f]);
+      }, [], args),
+      initial ? fs => _.concat([tee("^")], fs) : _.identity,
+      terminal && !final ? fs => _.concat(fs, [tee("$")]) : _.identity,
+      _.toArray);
+    return make(...fs);
+  } : make;
+}
+
 function called4(fn, message, context, logger){
   return function(){
     const meta = Object.assign({}, context, {fn, arguments});
