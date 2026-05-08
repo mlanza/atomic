@@ -2,6 +2,7 @@ npm-debug.log
 node_modules/*
 public/data/*
 dist/atomic
+dist/cmd.js
 tests/main.js
 .DS_Store
 .vscode

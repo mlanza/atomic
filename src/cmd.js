@@ -1,5 +1,8 @@
 import _ from "./atomic_/core.js";
 import $ from "./atomic_/shell.js";
+//#if _EXPERIMENTAL
+import vd from "./atomic_/validates.js";
+//#endif
 import imm from "./atomic_/immutables.js";
 
 export const registry = {};
@@ -49,6 +52,10 @@ export default cmd;
 
 const dom = globalThis.document ? (await import("./atomic_/dom.js")).default : null;
 
+//#if _EXPERIMENTAL
+_.chain({_, $, imm, dom, vd}, _.compact, reg);
+//#else
 _.chain({_, $, imm, dom}, _.compact, reg);
+//#endif
 
 Object.assign(globalThis, {cmd});

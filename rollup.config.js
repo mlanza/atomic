@@ -13,12 +13,30 @@ const _RELEASE = process.argv.indexOf("--release") == -1 ? 0 : 1;
 console.log("options", {_CROSSREALM, _EXPERIMENTAL, _RELEASE});
 
 export default [{
+    input: ['src/cmd.js'],
+    output: {
+      dir: 'dist',
+      format: 'esm',
+      interop: "esModule"
+    },
+    external: [
+      './atomic_/core.js',
+      './atomic_/shell.js',
+      './atomic_/dom.js',
+      './atomic_/validates.js',
+      './atomic_/immutables.js'
+    ],
+    plugins: [jscc({
+      values: {_EXPERIMENTAL},
+    })]
+  }, {
   input: [
     'src/core.js',
     'src/shell.js',
     'src/dom.js',
+    _EXPERIMENTAL ? 'src/validates.js' : null,
     'src/immutables.js'
-  ],
+  ].filter(x => x),
   output: {
     dir: 'dist/atomic',
     format: 'esm',
@@ -33,6 +51,7 @@ export default [{
         "atomic/core": "./core.js",
         "atomic/shell": "./shell.js",
         "atomic/dom": "./dom.js",
+        "atomic/validates": "./validates.js",
         "atomic/immutables": "./immutables.js"
       }
     }),
