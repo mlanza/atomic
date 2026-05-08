@@ -7,7 +7,7 @@ import {optional} from "./construct.js";
 
 function check(self, obj){
   const found = _.get(obj, self.key);
-  if (_.isEmpty(found)) { //TODO _.blank?
+  if (!found) {
     return null;
   } else {
     return issues(p.check(self.constraint, found), p.scope(?, self.key));
