@@ -485,8 +485,10 @@ test("dom", function({assert, ako, eq, equals}){
   equals(_.chain({givenName: "Curly", surname: "Howard"}, who, dom.text), "Curly Howard");
   if (_.fluent) {
     equals(_.fluent(moe, dom.attr(_, "data-tagged", "tests"), _.get(_, "data-tagged")), "tests");
+    eq({id: "moe", "data-tagged": "tests"}, dom.attr(moe));
+  } else {
+    eq({id: "moe"}, dom.attr(moe));
   }
-  eq({id: "moe", "data-tagged": "tests"}, dom.attr(moe));
   _.chain(stooges, dom.append(_, div({id: 'branding'}, span("Three Blind Mice"))));
   ako(_.chain(stooges, dom.sel("#branding", _), _.first), HTMLDivElement, "Found by id");
   equals(_.chain(stooges, dom.sel("#branding span", _), _.map(dom.text, _), _.first), "Three Blind Mice", "Read text content");
