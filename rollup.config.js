@@ -30,12 +30,31 @@ export default [{
       values: {_EXPERIMENTAL},
     })]
   }, {
+    input: ['src/tests.js'],
+    output: {
+      dir: 'tests',
+      format: 'esm',
+      interop: "esModule"
+    },
+    external: [
+      "./test.js",
+      "../dist/cmd.js",
+      '../dist/atomic_/core.js',
+      '../dist/atomic_/shell.js',
+      '../dist/atomic_/dom.js',
+      '../dist/atomic_/validates.js',
+      '../dist/atomic_/immutables.js'
+    ],
+    plugins: [jscc({
+      values: {_EXPERIMENTAL},
+    })]
+  }, {
   input: [
-    'src/core.js',
-    'src/shell.js',
-    'src/dom.js',
-    _EXPERIMENTAL ? 'src/validates.js' : null,
-    'src/immutables.js'
+    'src/atomic/core.js',
+    'src/atomic/shell.js',
+    'src/atomic/dom.js',
+    _EXPERIMENTAL ? 'src/atomic/validates.js' : null,
+    'src/atomic/immutables.js'
   ].filter(x => x),
   output: {
     dir: 'dist/atomic',

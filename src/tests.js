@@ -1,10 +1,12 @@
-import _ from '../dist/atomic_/core.js';
-import dom from '../dist/atomic_/dom.js';
-import $ from '../dist/atomic_/shell.js';
-import vd from '../dist/atomic_/validates.js';
-import imm from '../dist/atomic_/immutables.js';
-import { failed, tests, test } from './test.js';
-import '../dist/cmd.js';
+import _ from "../dist/atomic_/core.js";
+import dom from "../dist/atomic_/dom.js";
+import $ from "../dist/atomic_/shell.js";
+//#if _EXPERIMENTAL
+import vd from "../dist/atomic_/validates.js";
+//#endif
+import imm from "../dist/atomic_/immutables.js";
+import {failed, tests, test} from "./test.js";
+import "../dist/cmd.js";
 
 //common data
 const stooges = ["Larry","Curly","Moe"],
@@ -520,12 +522,12 @@ test("lazy-seq", function({assert, ako, equals, notEquals, eq}){
         push    = effects.push.bind(effects),
         xs      = _.map(push, _.range(10)),
         nums    = _.map(_.identity, _.range(3)),
-        blank   = _.map(_.identity, _.range(0));
-        _.rest(nums);
+        blank   = _.map(_.identity, _.range(0)),
+        tail    = _.rest(nums);
   equals(effects.length, 0);
-  _.first(xs);
+  _.first(xs)
   equals(effects.length, 1);
-  _.first(xs);
+  _.first(xs)
   equals(effects.length, 1);
   _.second(xs);
   equals(effects.length, 2);
@@ -861,7 +863,7 @@ test("treating lists, vectors, sets, and maps as sequences", function({eq, allEq
     return val > 4 ? _.assoc(memo, key, val) : memo;
   }, {}, {human: 4.1, critter: 3.9}), {human: 4.1});
 
-  eq(_.take(3, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]), _.list(1, 2, 3));
+  eq(_.take(3, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]), _.list(1, 2, 3))
   eq(_.drop(3, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]), _.list(4, 5, 6, 7, 8, 9, 10));
 
   const foodJournal = [
@@ -919,7 +921,7 @@ test("treating lists, vectors, sets, and maps as sequences", function({eq, allEq
       {month: 2, day: 1, human: 4.9, critter: 2.1},
       {month: 2, day: 2, human: 5.0, critter: 2.5}));
 
-  equals(_.some(_.pipe(_.get(_, "critter"), _.gt(_, 5)), foodJournal), null);
+  equals(_.some(_.pipe(_.get(_, "critter"), _.gt(_, 5)), foodJournal), null)
   assert(_.some(_.pipe(_.get(_, "critter"), _.gt(_, 3)), foodJournal));
 
   eq(
@@ -979,7 +981,7 @@ test("treating lists, vectors, sets, and maps as sequences", function({eq, allEq
     {"favorite emotion": "gloomy", "sunlight reaction": "Glitter!"});
 
   eq(_.into(["cherry"], _.list("pine", "spruce"))
-    ["spruce"]);
+    ["cherry", "pine", "spruce"]);
 
   eq(_.into({"favorite animal": "kitty"}, {"least favorite smell": "dog",
     "relationship with teenager": "creepy"}),
@@ -1054,8 +1056,8 @@ test("record", function({assert, equals}){
   const sean = person([["name", "Sean"], ["surname", "Penn"], ["dob", _.date(1960, 8, 17)]]);
   const robin = person("Robin", "Wright", new Date(1966, 3, 8));
   const $robin = $.atom(_.journal(robin));
-  _.coerce({name: "Dylan", surname: "Penn", dob: _.date(1991, 4, 13)}, Person);
-  _.coerce(robin, Object);
+  const dylanp = _.coerce({name: "Dylan", surname: "Penn", dob: _.date(1991, 4, 13)}, Person);
+  const robino = _.coerce(robin, Object);
   equals(_.chain($robin, _.deref, _.deref, _.get(_, "surname")), "Wright");
   $.swap($robin, _.fmap(_, _.assoc(_, "surname", "Penn")));
   equals(_.chain($robin, _.deref, _.deref, _.get(_, "surname")), "Penn");
@@ -1104,7 +1106,7 @@ test("observable sharing", function({eq, assert}){
   exec($.map(fn, $double, $name), $.Observable.map(fn, $double, $name), "$.map v. $.calc with atoms");
 
   const $triple = $.toObservable(_.range(3));
-  $.atom(0);
+  const $thrice = $.atom(0);
   let $ten = $.Observable.fixed(10);
   exec($.map(_.add, $triple, $ten), $.Observable.map(_.add, $triple, $ten), "$.fixed");
   $ten = $.fixed(10);
@@ -1364,7 +1366,7 @@ test("H2O: protocols as finite state machine, temperature-specified model", func
 
   const heat = _.partly(function(self, increase){
     return water(temp(self) + increase);
-  });
+  })
 
   const cool = _.partly(function(self, decrease){
     return water(temp(self) - decrease);
@@ -1430,6 +1432,7 @@ test("Turnstile: protocols as finite state machine", function({assert, throws, i
   assert(turnstile(ts1), "behaves as turnstile");
 });
 
+//#if _EXPERIMENTAL
 test("validation", function({assert, ako, equals, notEquals, isNil, isSome}){
   const zipCode = /^\d{5}(-\d{1,4})?$/;
   const birth = "7/10/1926";
@@ -1463,3 +1466,4 @@ test("validation", function({assert, ako, equals, notEquals, isNil, isSome}){
   isSome(status);
   //TODO add `when` to validate conditiontionally or allow condition to be checked before registering the validation?
 });
+//#endif

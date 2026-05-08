@@ -4,5 +4,6 @@ public/data/*
 dist/atomic
 dist/cmd.js
 tests/main.js
+tests/tests.js
 .DS_Store
 .vscode
