@@ -91,7 +91,7 @@ export default [{
     terser({
       compress: _RELEASE,
       mangle: false,
-      format: {
+      output: {
         indent_level: 2,
         comments: false,
         beautify: true
