@@ -3,28 +3,28 @@ import * as p from "../../protocols/concrete.js";
 import {ISwappable, IResettable, IPublish, ISubscribe} from "../../protocols.js";
 
 function path(self){
-  return self.path;
+  return typeof self.path === "function" ? self.path.call(self) : self.path;
 }
 
 function deref(self){
-  return _.getIn(_.deref(self.source), self.path);
+  return _.getIn(_.deref(self.source), path(self));
 }
 
 function reset(self, value){
   p.swap(self.source, function(state){
-    return _.assocIn(state, self.path, value);
+    return _.assocIn(state, path(self), value);
   });
 }
 
 function swap(self, f){
   p.swap(self.source, function(state){
-    return _.updateIn(state, self.path, f);
+    return _.updateIn(_, path(self), f);
   });
 }
 
 function sub(self, observer){
   return p.sub(self.source, function(state){
-    p.pub(observer, _.getIn(state, self.path));
+    p.pub(observer, _.getIn(state, path(self)));
   });
 }
 
