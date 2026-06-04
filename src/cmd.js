@@ -14,39 +14,27 @@ const monitors = monitor ? function(key){
   return monitor.includes("*") || monitor.includes(key);
 } : nomonitor ? function(key){
   return !nomonitor.includes(key);
-} : _.noop;
+} : _.constantly(false);
 
-function monitoring(symbol, object, log = $.log){
-  if (monitors(symbol) && _.satisfies($.ISubscribe, object)) {
-    $.sub(object, _.partial(log, symbol));
-  }
+function reg0(){
+  return registry;
 }
 
-function register(symbols){
+function reg1(symbols, log = $.log){
   Object.assign(registry, symbols);
-}
-
-function registerWithMonitoring(symbols, log = $.log){
-  register(symbols);
   for(const [symbol, object] of Object.entries(symbols)){
-    monitoring(symbol, object, log);
+    if (monitors(symbol) && _.satisfies($.ISubscribe, object)) {
+      $.sub(object, _.partial(log, symbol));
+    }
   }
 }
 
-export const reg = monitors === _.noop ? register : registerWithMonitoring;
+export const reg = _.overload(reg0, reg1);
 
-function cmd0({target = globalThis, log = $.log} = {}){
+export function cmd(target = globalThis, log = $.log){
   Object.assign(target, registry);
   log("Loaded", registry);
 }
-
-async function cmd2(symbol, path, {target = globalThis, log = $.log} = {}){
-  const obj = await import(path);
-  target[symbol] = Object.keys(obj).length == 1 && obj.default != null ? obj.default : obj;
-  log(`Loaded: ${symbol}`, obj);
-}
-
-export const cmd = _.overload(cmd0, cmd0, cmd2, cmd2);
 
 export default cmd;
 
@@ -58,4 +46,4 @@ _.chain({_, $, imm, dom, vd}, _.compact, reg);
 _.chain({_, $, imm, dom}, _.compact, reg);
 //#endif
 
-Object.assign(globalThis, {cmd});
+Object.assign(globalThis, {cmd, reg});
