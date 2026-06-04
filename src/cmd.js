@@ -5,7 +5,7 @@ import vd from "./atomic_/validates.js";
 //#endif
 import imm from "./atomic_/immutables.js";
 
-export const registry = {};
+const registry = {};
 const params = new URLSearchParams(globalThis.location ? location.search : "");
 const monitor = _.maybe(params.get("monitor"), _.split(_, ","));
 const nomonitor = _.maybe(params.get("nomonitor"), _.split(_, ","));
@@ -17,7 +17,7 @@ const monitors = monitor ? function(key){
 } : _.constantly(false);
 
 function reg0(){
-  return registry;
+  return Object.assign({}, registry);
 }
 
 function reg1(symbols, log = $.log){
