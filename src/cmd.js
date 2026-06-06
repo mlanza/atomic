@@ -23,8 +23,11 @@ function reg0(){
 function reg1(symbols, log = $.log){
   Object.assign(registry, symbols);
   for(const [symbol, object] of Object.entries(symbols)){
-    if (monitors(symbol) && _.satisfies($.ISubscribe, object)) {
+    if (!monitors(symbol)) continue;
+    if (_.satisfies($.ISubscribe, object)) {
       $.sub(object, _.partial(log, symbol));
+    } else {
+      log(symbol, object);
     }
   }
 }
