@@ -21,8 +21,11 @@ function reg0(){
 }
 
 function reg1(symbols, log = $.log){
-  Object.assign(registry, symbols);
   for(const [symbol, object] of Object.entries(symbols)){
+    if (registry[symbol]) {
+      throw new Error(`Symbol "${symbol}" is already registered.`);
+    }
+    registry[symbol] = object;
     if (!monitors(symbol)) continue;
     if (_.satisfies($.ISubscribe, object)) {
       $.sub(object, _.partial(log, symbol));

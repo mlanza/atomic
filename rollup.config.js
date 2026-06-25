@@ -5,12 +5,26 @@ import jscc from 'rollup-plugin-jscc';
 import replace from '@rollup/plugin-replace';
 import { terser } from "rollup-plugin-terser";
 import { rollupImportMapPlugin } from "rollup-plugin-import-map";
+import stage3 from "acorn-stage3";
 
 const _CROSSREALM = process.argv.indexOf("--crossrealm") == -1 ? 0 : 1;
 const _EXPERIMENTAL = process.argv.indexOf("--experimental") == -1 ? 0 : 1;
 const _RELEASE = process.argv.indexOf("--release") == -1 ? 0 : 1;
 
+const acornPlugins = [stage3];
+
 console.log("options", {_CROSSREALM, _EXPERIMENTAL, _RELEASE});
+
+const babelPlugin = babel({
+  exclude: 'node_modules/**',
+  babelHelpers: 'bundled',
+  presets: [
+    ["@babel/preset-modules"]
+  ],
+  plugins: [
+    "@babel/plugin-proposal-partial-application"
+  ]
+});
 
 export default [{
     input: ['src/cmd.js'],
@@ -26,9 +40,13 @@ export default [{
       './atomic_/validates.js',
       './atomic_/immutables.js'
     ],
-    plugins: [jscc({
-      values: {_EXPERIMENTAL},
-    })]
+    acornInjectPlugins: acornPlugins,
+    plugins: [
+      jscc({
+        values: {_EXPERIMENTAL},
+      }),
+      babelPlugin
+    ]
   }, {
     input: ['src/tests.js'],
     output: {
@@ -45,9 +63,13 @@ export default [{
       '../dist/atomic_/validates.js',
       '../dist/atomic_/immutables.js'
     ],
-    plugins: [jscc({
-      values: {_EXPERIMENTAL},
-    })]
+    acornInjectPlugins: acornPlugins,
+    plugins: [
+      jscc({
+        values: {_EXPERIMENTAL},
+      }),
+      babelPlugin
+    ]
   }, {
   input: [
     'src/atomic/core.js',
@@ -62,6 +84,7 @@ export default [{
     interop: "esModule"
   },
   external: ["immutable", "../immutable.js"],
+  acornInjectPlugins: acornPlugins,
   plugins: [
     resolve(),
     rollupImportMapPlugin({
@@ -77,16 +100,7 @@ export default [{
     jscc({
       values: {_CROSSREALM, _EXPERIMENTAL},
     }),
-    babel({
-      exclude: 'node_modules/**',
-      babelHelpers: 'bundled',
-      presets: [
-        ["@babel/preset-modules"]
-      ],
-      plugins: [
-        "@babel/plugin-proposal-partial-application"
-      ]
-    }),
+    babelPlugin,
     json(),
     terser({
       compress: _RELEASE,
