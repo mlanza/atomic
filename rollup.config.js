@@ -1,4 +1,3 @@
-import {babel} from '@rollup/plugin-babel';
 import resolve from '@rollup/plugin-node-resolve';
 import json  from '@rollup/plugin-json';
 import jscc from 'rollup-plugin-jscc';
@@ -14,14 +13,6 @@ const _RELEASE = process.argv.indexOf("--release") == -1 ? 0 : 1;
 const acornPlugins = [stage3];
 
 console.log("options", {_CROSSREALM, _EXPERIMENTAL, _RELEASE});
-
-const babelPlugin = babel({
-  exclude: 'node_modules/**',
-  babelHelpers: 'bundled',
-  presets: [
-    ["@babel/preset-modules"]
-  ]
-});
 
 export default [{
     input: ['src/cmd.js'],
@@ -41,8 +32,7 @@ export default [{
     plugins: [
       jscc({
         values: {_EXPERIMENTAL},
-      }),
-      babelPlugin
+      })
     ]
   }, {
     input: ['src/tests.js'],
@@ -64,8 +54,7 @@ export default [{
     plugins: [
       jscc({
         values: {_EXPERIMENTAL},
-      }),
-      babelPlugin
+      })
     ]
   }, {
   input: [
@@ -97,7 +86,6 @@ export default [{
     jscc({
       values: {_CROSSREALM, _EXPERIMENTAL},
     }),
-    babelPlugin,
     json(),
     terser({
       compress: _RELEASE,
