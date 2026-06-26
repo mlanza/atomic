@@ -4,7 +4,7 @@ import {fork} from "../../protocols/iforkable/concrete.js";
 import {detect} from "../lazy-seq/concrete.js"
 import {coerce} from "../../coerce.js";
 
-export const toPromise = coerce(?, Promise);
+export const toPromise = x => coerce(x, Promise);
 
 export function awaits(f){
   return function(...args){

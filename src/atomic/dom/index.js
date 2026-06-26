@@ -15,7 +15,7 @@ export {append, prepend, before, after, omit, empty} from "atomic/shell";
 
 import {behaviors} from "./behaviors.js";
 export * from "./behaviors.js";
-export const behave = _.behaves(behaviors, ?);
+export const behave = x => _.behaves(behaviors, x);
 
 export const ready = _.assume(isHTMLDocument, document, function ready(document, callback) {
   if (document.readyState !== 'loading') {
@@ -62,7 +62,7 @@ export const depressed = $.shared($.atom, function(el){
       $.chan(el, "keydown keyup"),
         scan(function(memo, e){
           if (e.type === "keyup") {
-            memo = _.filtera(_.notEq(e.key, ?), memo);
+            memo = _.filtera(x => _.notEq(e.key, x), memo);
           } else if (!_.includes(memo, e.key)) {
             memo = _.conj(memo, e.key);
           }
@@ -95,7 +95,7 @@ function attrN(self, ...kvps){
   }
 }
 
-export const attr = _.overload(null, _.comp(_.into({}, ?), $.assert), attr2, attr3, attrN);
+export const attr = _.overload(null, _.comp(x => _.into({}, x), $.assert), attr2, attr3, attrN);
 
 function removeAttr2(self, key){
   self.removeAttribute(key);
@@ -198,7 +198,7 @@ export const option = _.assume(isHTMLDocument, document, _.overload(null, null, 
   return element(document, "option", {value: key}, value);
 }));
 
-export const toFragment = _.coerce(?, DocumentFragment);
+export const toFragment = x => _.coerce(x, DocumentFragment);
 
 (function(){
 
@@ -256,7 +256,7 @@ export const toFragment = _.coerce(?, DocumentFragment);
 })();
 
 _.addMethod(_.coerce, [NodeList, Array], Array.from);
-_.addMethod(_.coerce, [URLSearchParams, Object], _.into({}, ?));
+_.addMethod(_.coerce, [URLSearchParams, Object], x => _.into({}, x));
 _.addMethod(_.coerce, [Object, URLSearchParams], function(obj){
   const params = new URLSearchParams();
   for(const [key, value] of Object.entries(obj)){

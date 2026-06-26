@@ -12,4 +12,4 @@ export function serialSet(entries = [], serialize = JSON.stringify){
   return p.conj(new SerialSet({}, serialize), ...Array.from(entries));
 }
 
-export const sset = serialSet(?, str);
+export const sset = xs => serialSet(xs, str);

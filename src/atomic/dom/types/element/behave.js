@@ -191,7 +191,7 @@ function includes(self, target){
     const [key, value] = target;
     return _.contains(self, key, value);
   } else {
-    return !!_.detect(_.isIdentical(target, ?), children(self));
+    return !!_.detect(x => _.isIdentical(target, x), children(self));
   }
 }
 
@@ -272,13 +272,13 @@ function reduce(self, f, init){
 
 function chan2(el, key) {
   return $.observable(function(observer){
-    return on3(el, key, $.pub(observer, ?));
+    return on3(el, key, v => $.pub(observer, v));
   });
 }
 
 function chan3(el, key, selector){
   return $.observable(function(observer){
-    return on4(el, key, selector, $.pub(observer, ?));
+    return on4(el, key, selector, v => $.pub(observer, v));
   });
 }
 
@@ -286,7 +286,7 @@ const chan = _.overload(null, null, chan2, chan3);
 
 function on3(el, key, callback){
   if (key.indexOf(" ") > -1) {
-    return _.does(..._.mapa(on3(el, ?, callback), key.split(" ")));
+    return _.does(..._.mapa(evt => on3(el, evt, callback), key.split(" ")));
   } else {
     el.addEventListener(key, callback);
     return function(){

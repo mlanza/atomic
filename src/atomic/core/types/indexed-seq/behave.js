@@ -77,7 +77,7 @@ function count(self){
 }
 
 function includes(self, x){
-  return detect(p.equiv(x, ?), drop(self.start, self.seq));
+  return detect(v => p.equiv(x, v), drop(self.start, self.seq));
 }
 
 export default does(

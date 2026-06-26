@@ -73,7 +73,7 @@ export const mapa = comp(toArray, map);
 
 export function mapArgs(xf, f){
   return function(...args){
-    return apply(f, args.map(maybe(?, xf)));
+    return apply(f, args.map(arg => maybe(arg, xf)));
   }
 }
 

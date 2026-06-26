@@ -20,7 +20,7 @@ export {doto, does, fork, rand, randNth, shuffle, specify, implement, uid, guid}
 import {behaviors} from "./behaviors.js";
 import {nativeMap} from "./types/map.js";
 export * from "./behaviors.js";
-export const behave = _.behaves(behaviors, ?);
+export const behave = x => _.behaves(behaviors, x);
 
 function into2(to, from){
   return _.reduce(function(memo, value){
@@ -39,7 +39,7 @@ export const into = _.overload(null, null, into2, into3);
 
 export function collect(atom){
   return function(value){ //return observer
-    p.swap(atom, _.conj(?, value));
+    p.swap(atom, xs => _.conj(xs, value));
   }
 }
 
@@ -83,7 +83,7 @@ function fromPromise2(promise, init){
   return share(Observable.fromPromise(promise), atom(init));
 }
 
-export const fromPromise = _.overload(null, fromPromise2(?, null), fromPromise2);
+export const fromPromise = _.overload(null, x => fromPromise2(x, null), fromPromise2);
 
 (function(){
 
@@ -208,7 +208,7 @@ export function tee(f){
 }
 
 export function peek(logger){
-  return tee(p.log(logger, ?));
+  return tee(x => p.log(logger, x));
 }
 
 export function see(...labels){

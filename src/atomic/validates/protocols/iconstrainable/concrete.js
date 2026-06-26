@@ -8,5 +8,5 @@ function constraints2(self, f){
 export const constraints = _.overload(null, IConstrainable.constraints, constraints2);
 
 export function constrain(self, constraint){
-  return constraints(self, _.append(?, constraint));
+  return constraints(self, x => _.append(x, constraint));
 }

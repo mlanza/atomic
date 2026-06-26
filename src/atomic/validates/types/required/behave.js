@@ -10,7 +10,7 @@ function check(self, obj){
   if (!found) {
     return [issue(self, [self.key])];
   } else {
-    return issues(p.check(self.constraint, found), p.scope(?, self.key));
+    return issues(p.check(self.constraint, found), x => p.scope(x, self.key));
   }
 }
 

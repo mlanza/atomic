@@ -20,7 +20,7 @@ export const replace    = unbind(String.prototype.replace);
 export const subs       = unbind(String.prototype.substring);
 export const lowerCase  = unbind(String.prototype.toLowerCase);
 export const upperCase  = unbind(String.prototype.toUpperCase);
-export const titleCase  = replace(?, /(^|\s|\.)(\S|\.)/g, upperCase);
+export const titleCase  = v => replace(v, /(^|\s|\.)(\S|\.)/g, upperCase);
 export const lpad       = unbind(String.prototype.padStart);
 export const rpad       = unbind(String.prototype.padEnd);
 export const trim       = unbind(String.prototype.trim);

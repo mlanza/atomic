@@ -5,8 +5,8 @@ import {issue} from "../issue.js";
 
 function check(self, coll){
   return _.maybe(coll, _.mapIndexed(function(idx, item){
-    return _.map(p.scope(?, idx), p.check(self.constraint, item));
-  }, ?), _.concatenated, _.compact, _.toArray, _.blot);
+    return _.map(x => p.scope(x, idx), p.check(self.constraint, item));
+  }, coll), _.concatenated, _.compact, _.toArray, _.blot);
 }
 
 export default _.does(

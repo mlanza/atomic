@@ -12,18 +12,18 @@ function conj(self, value){
   const part = self.partition(value);
   return new PartSet(self.partition, self.store, chain(
     p.contains(self.parts, part) ? self.parts : p.assoc(self.parts, part, self.store(value)),
-    p.update(?, part, p.conj(?, value))));
+    coll => p.update(coll, part, subcoll => p.conj(subcoll, value))));
 }
 
 function disj(self, value){
   const part = self.partition(value);
   return new PartSet(self.partition, self.store,
-    p.contains(self.parts, part) ? p.update(self.parts, part, p.disj(?, value)) : self.parts);
+    p.contains(self.parts, part) ? p.update(self.parts, part, subcoll => p.disj(subcoll, value)) : self.parts);
 }
 
 function includes(self, value){
   const part = self.partition(value);
-  return maybe(self.parts, p.get(?, part), p.includes(?, value));
+  return maybe(self.parts, x => p.get(x, part), x => p.includes(x, value));
 }
 
 function lookup(self, value){

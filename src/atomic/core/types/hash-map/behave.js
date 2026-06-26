@@ -32,7 +32,7 @@ function assoc(self, key, value){
   const {h, idx, candidates} = getHashIndex(self, key);
   const mapped = !candidates ?
     p.assoc(self.mapped, h, [[key, value]]) :
-    idx == null ? p.update(self.mapped, h, p.conj(?, [key, value])) : p.assocIn(self.mapped, [h, idx], [key, value]);
+    idx == null ? p.update(self.mapped, h, coll => p.conj(coll, [key, value])) : p.assocIn(self.mapped, [h, idx], [key, value]);
   const length = idx == null ? self.length + 1 : self.length;
   return new HashMap(mapped, length, self.equals);
 }
@@ -60,11 +60,11 @@ function dissoc(self, key){
 }
 
 function keys(self){
-  return mapcat(map(([key, _]) => key, ?), p.vals(self.mapped));
+  return mapcat(coll => map(([key, _]) => key, coll), p.vals(self.mapped));
 }
 
 function vals(self){
-  return mapcat(map(([_, val]) => val, ?), p.vals(self.mapped));
+  return mapcat(coll => map(([_, val]) => val, coll), p.vals(self.mapped));
 }
 
 function contains(self, key) {

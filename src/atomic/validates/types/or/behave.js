@@ -4,7 +4,7 @@ import {ICheckable} from "../../protocols.js";
 import {or} from "./construct.js";
 
 function check(self, value){
-  return _.detect(_.isSome, _.map(p.check(?, value), self.constraints));
+  return _.detect(_.isSome, _.map(x => p.check(x, value), self.constraints));
 }
 
 function conj(self, constraint){

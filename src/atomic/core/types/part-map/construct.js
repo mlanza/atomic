@@ -23,10 +23,10 @@ export function hashClamp(n) {
   }
 }
 
-export const pmap = partMap(?,
+export const pmap = entries => partMap(entries,
   pipe(hash, hashClamp(11)),
   constantly(partMap([],
-    pipe(str("a", ?), hash, hashClamp(11)),
+    pipe(x => str("a", x), hash, hashClamp(11)),
     constantly(partMap([],
-      pipe(str("b", ?), hash, hashClamp(11)),
+      pipe(x => str("b", x), hash, hashClamp(11)),
       constantly({}))))));

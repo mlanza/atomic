@@ -31,11 +31,11 @@ const parents = _.comp(_.parents, seq);
 const contents = _.comp(IContent.contents, seq);
 
 function sel(self, selector){
-  return _.maybe(self, seq, _.filter(matches(?, selector), ?));
+  return _.maybe(self, seq, coll => _.filter(el => matches(el, selector), coll));
 }
 
 function closest(self, selector){
-  return _.maybe(self, seq, _.closest(?, selector));
+  return _.maybe(self, seq, el => _.closest(el, selector));
 }
 
 function reduce(self, f, init){

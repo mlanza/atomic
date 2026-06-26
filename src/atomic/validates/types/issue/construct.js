@@ -24,7 +24,7 @@ function issues2(xs, f) {
       return issues2(x, f);
     });
   } else if (_.satisfies(_.ISeqable, xs)) {
-    return _.chain(xs, _.seq, _.map(f, ?), _.flatten, _.compact, _.blot);
+    return _.chain(xs, _.seq, ys => _.map(f, ys), _.flatten, _.compact, _.blot);
   }
 }
 
@@ -36,7 +36,7 @@ function issuing2(x, issue){
 
 function issuing3(x, valid, issue){
   if (_.isPromise(x)) {
-    return _.fmap(x, valid, issuing(?, valid, issue));
+    return _.fmap(x, valid, y => issuing(y, valid, issue));
   } else if (valid(x)) {
     return null;
   } else {

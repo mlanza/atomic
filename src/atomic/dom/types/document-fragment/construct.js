@@ -4,6 +4,6 @@ import {isHTMLDocument} from "../html-document/construct.js";
 
 export const fragment = _.assume(isHTMLDocument, document, function fragment(document, ...contents){
   return _.doto(document.createDocumentFragment(),
-    embed(?, contents));
+    el => embed(el, contents));
 });
 

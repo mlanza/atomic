@@ -45,7 +45,9 @@ export function between(min, max){
 
 export function keyed(keys){
   return _.apply(_.juxt, _.mapa(function(key){
-    return _.get(?, key);
+    return function(x){
+      return _.get(x, key);
+    };
   }, keys));
 }
 

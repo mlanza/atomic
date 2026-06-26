@@ -74,7 +74,7 @@ function reducekv(xs, f, init){
 }
 
 function omit(self, value){
-  return filtera(complement(equiv(value, ?)), self);
+  return filtera(complement(x => equiv(value, x)), self);
 }
 
 function reverse(self){

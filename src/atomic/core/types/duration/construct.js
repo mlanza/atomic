@@ -4,7 +4,7 @@ import {isNumber} from "../number/concrete.js";
 import {coerce} from "../../coerce.js";
 import * as p from "./protocols.js";
 
-export const toDuration = coerce(?, Duration);
+export const toDuration = x => coerce(x, Duration);
 
 export function Duration(units){
   this.units = units;
@@ -39,7 +39,7 @@ export const duration = overload(null, branch(isNumber, milliseconds, constructs
   return milliseconds(end - start);
 });
 
-export const weeks = comp(days, mult(?, 7));
+export const weeks = comp(days, x => mult(x, 7));
 
 Duration.prototype[Symbol.toStringTag] = "Duration";
 Duration.prototype.valueOf = valueOf;

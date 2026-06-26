@@ -16,7 +16,7 @@ function doing1(f){
 
 function doing2(f, order){
   return function(self, ...xs){
-    each(f(self, ?), order(xs));
+    each(x => f(self, x), order(xs));
   }
 }
 

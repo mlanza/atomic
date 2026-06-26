@@ -19,7 +19,7 @@ export function itopic(assoc, dissoc, {equals = equiv, assertArity1 = identity, 
   }
 
   function assert1(self){
-    return seq(mapcat(assert2(self, ?), keys(self)));
+    return seq(mapcat(x => assert2(self, x), keys(self)));
   }
 
   const assert = overload(null, assertArity1(assert1), assertArity2(assert2), assoc);
@@ -41,9 +41,9 @@ export function blottable(self){
   return blot(self) == null;
 }
 
-export const seqIndexed = mapIndexed(array, ?);
+export const seqIndexed = xs => mapIndexed(array, xs);
 
-const sequence1 = map(identity, ?);
+const sequence1 = xs => map(identity, xs);
 
 function sequence2(xform, coll){
   return seq(coll) ? lazySeq(function(){

@@ -16,7 +16,7 @@ import * as p from "./protocols.js";
 import behave from "../object/behave.js";
 
 function assert1(self){
-  return mapcat(p.assert(self, ?), p.keys(self));
+  return mapcat(key => p.assert(self, key), p.keys(self));
 }
 
 function seq(self){
@@ -47,9 +47,9 @@ export function record(Type){
   }
 
   function assert2(self, key){
-    return maybe(p.get(self, key), array, fold(function(memo, value){
+    return maybe(p.get(self, key), array, x => fold(function(memo, value){
       return p.conj(memo, [key, value]);
-    }, [], ?));
+    }, [], x));
   }
 
   const assert = overload(null, assert1, assert2, p.assoc);
@@ -87,11 +87,13 @@ export function record(Type){
 
   function from(init){
     if (isObject(init)) {
-      return construct(Type, ?);
+      return x => construct(Type, x);
     } else if (isArray(init)) {
-      return fold(function(memo, [key, value]){
-        return p.assert(memo, key, value);
-      }, construct(Type, {}), ?);
+      return function(x){
+        return fold(function(memo, [key, value]){
+          return p.assert(memo, key, value);
+        }, construct(Type, {}), x);
+      };
     }
     return make;
   }
@@ -103,9 +105,9 @@ export function multirecord(Type, {defaults, multiple} = {defaults: constantly([
   const make = record(Type);
 
   function assert2(self, key){
-    return maybe(p.get(self, key), multiple(key) ? identity : array, fold(function(memo, value){
+    return maybe(p.get(self, key), multiple(key) ? identity : array, x => fold(function(memo, value){
       return p.conj(memo, [key, value]);
-    }, [], ?));
+    }, [], x));
   }
 
   function assert3(self, key, value){

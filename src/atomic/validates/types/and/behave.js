@@ -2,10 +2,10 @@ import * as _ from "atomic/core";
 import * as p from "../../protocols/concrete.js";
 import {ICheckable} from "../../protocols.js";
 import {and} from "./construct.js";
-import {issue, issues} from "../issue.js";
+import {issues} from "../issue.js";
 
 function check(self, value){
-  return issues(self.constraints, p.check(?, value));
+  return issues(self.constraints, x => p.check(x, value));
 }
 
 function conj(self, constraint){

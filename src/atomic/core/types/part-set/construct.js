@@ -17,10 +17,10 @@ export function partSet(items = [], partition, store, parts = {}){
   return reduce(conj, new PartSet(partition, store, parts), items);
 }
 
-export const pset = partSet(?,
+export const pset = items => partSet(items,
   pipe(hash, hashClamp(22)),
   constantly(partSet([],
-    pipe(str("1", ?), hash, hashClamp(22)),
+    pipe(x => str("1", x), hash, hashClamp(22)),
     constantly(partSet([],
-      pipe(str("2", ?), hash, hashClamp(22)),
+      pipe(x => str("2", x), hash, hashClamp(22)),
       constantly(set([])))))));

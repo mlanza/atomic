@@ -161,8 +161,8 @@ export function lift(g, f){ //also `lift(attempt, f)`
   }
 }
 
-export const partly = lift(part, ?);
-export const partially = lift(partial, ?);
+export const partly = f => lift(part, f);
+export const partially = f => lift(partial, f);
 export const deferring = partially;
 
 export function factory(f, ...args){

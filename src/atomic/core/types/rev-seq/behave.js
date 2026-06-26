@@ -24,7 +24,7 @@ function keys(self){
 }
 
 function vals(self){
-  return map(nth(self, ?), keys(self));
+  return map(idx => nth(self, idx), keys(self));
 }
 
 function nth(self, idx){

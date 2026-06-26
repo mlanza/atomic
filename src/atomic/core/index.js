@@ -29,9 +29,9 @@ iprotocol(Protocol);
 
 import {behaviors} from "./behaviors.js";
 export * from "./behaviors.js";
-export const behave = behaves(behaviors, ?);
+export const behave = x => behaves(behaviors, x);
 
-export const numeric = test(/^\d+$/i, ?);
+export const numeric = x => test(/^\d+$/i, x);
 
 (function(){
   function fillProp(obj, key, value){
@@ -92,7 +92,7 @@ function recurs2(pd, step) {
   return recurrence(p.start(pd), p.end(pd), step);
 }
 
-export const recurs = overload(null, recurs2(?, days(1)), recurs2);
+export const recurs = overload(null, x => recurs2(x, days(1)), recurs2);
 
 export function inclusive(self){
   return new self.constructor(self.start, p.add(self.end, self.step), self.step, self.direction);
@@ -124,10 +124,10 @@ export function edit(self, key, f){
 
 export function editIn(self, path, f){
   const addr = p.clone(path);
-  let obj = chain(self, grab(?, path), p.clone);
+  let obj = chain(self, x => grab(x, path), p.clone);
   obj = f(obj) || obj; //use command or query
   while (addr.length) {
-    let parent = chain(self, grab(?, butlast(addr)), p.clone);
+    let parent = chain(self, x => grab(x, butlast(addr)), p.clone);
     let key = last(addr);
     parent[key] = obj;
     obj = parent;
@@ -194,7 +194,7 @@ export function distinctly(set){
 
 export const distinct = distinctly(hashSet([], p.equiv));
 export const unique = distinct;
-export const second = branch(satisfies(ISeq, ?), comp(ISeq.first, ISeq.rest), p.prop("second"));
+export const second = branch(x => satisfies(ISeq, x), comp(ISeq.first, ISeq.rest), p.prop("second"));
 
 export function expands(f){
   function expand(...contents){
@@ -264,7 +264,7 @@ function decorating4(target, source, pred, f){
 export const decorating = overload(null, null, decorating2, decorating3, decorating4);
 
 //can be used to expose all module exports
-export const inventory = pipe(Object.keys, join(",\n", ?), str("{\n", ?, "\n}"));
+export const inventory = pipe(Object.keys, x => join(",\n", x), x => str("{\n", x, "\n}"));
 export const fmt = expands(str);
 
 export function when(pred, ...xs) {
@@ -367,11 +367,11 @@ export function unfork(self){
   });
 }
 
-addMethod(coerce, [T.HashMap, Array], into([], ?));
-addMethod(coerce, [T.HashSet, Array], into([], ?));
-addMethod(coerce, [T.SerialSet, Array], into([], ?));
+addMethod(coerce, [T.HashMap, Array], x => into([], x));
+addMethod(coerce, [T.HashSet, Array], x => into([], x));
+addMethod(coerce, [T.SerialSet, Array], x => into([], x));
 addMethod(coerce, [Set, Array], unary(Array.from));
-addMethod(coerce, [Array, T.HashSet], into(set([]), ?));
+addMethod(coerce, [Array, T.HashSet], x => into(set([]), x));
 addMethod(coerce, [Array, Set], arr => new Set(arr));
 addMethod(coerce, [Array, T.HashMap], T.hashMap);
 addMethod(coerce, [Number, String], unary(str));
@@ -384,7 +384,7 @@ addMethod(coerce, [Promise, Promise], identity);
 addMethod(coerce, [Error, Promise], unfork);
 addMethod(coerce, [T.Task, Promise], unfork);
 addMethod(coerce, [Object, Object], identity);
-addMethod(coerce, [Array, Object], into({}, ?));
+addMethod(coerce, [Array, Object], x => into({}, x));
 addMethod(coerce, [Array, Array], identity);
 //#if _EXPERIMENTAL
 addMethod(coerce, [T.Right, Promise], unfork);
@@ -400,5 +400,5 @@ addMethod(coerce, [T.Nil, Array], emptyArray);
 addMethod(coerce, [T.IndexedSeq, Array], unary(Array.from));
 addMethod(coerce, [T.RevSeq, Array], unary(Array.from));
 addMethod(coerce, [T.LazySeq, Array], unary(Array.from))
-addMethod(coerce, [Object, Array], into([], ?));
-addMethod(coerce, [String, Array], p.split(?, ""));
+addMethod(coerce, [Object, Array], x => into([], x));
+addMethod(coerce, [String, Array], x => p.split(x, ""));

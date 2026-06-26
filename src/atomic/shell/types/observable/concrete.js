@@ -68,7 +68,7 @@ function share2(source, sink){
 export const share = _.overload(null, share1, share2);
 
 export function shared(sink, ...fs){
-  return _.comp(sharing(?, sink), ...fs);
+  return _.comp(source => sharing(source, sink), ...fs);
 }
 
 export function sharing(source, init){
@@ -77,7 +77,7 @@ export function sharing(source, init){
 
 function seed2(init, source){
   return observable(function(observer){
-    const handle = pub(observer, ?);
+    const handle = v => pub(observer, v);
     handle(init());
     return sub(source, handle);
   });
@@ -103,11 +103,11 @@ function interact(key, f, el){
 function indexed(sources){
   return observable(function(observer){
     return _.chain(sources,
-      _.mapIndexed(function(key, source){
+      x => _.mapIndexed(function(key, source){
         return sub(source, function(value){
           pub(observer, {key, value});
         });
-      }, ?),
+      }, x),
       _.toArray,
       _.spread(_.does));
   })
@@ -198,7 +198,7 @@ function when2(interval, f){
   return seed(f, tick(interval, f));
 }
 
-const when = _.overload(null, when2(?, time), when2);
+const when = _.overload(null, interval => when2(interval, time), when2);
 
 function map2(f, source){
   return pipe(source, _.map(f), _.dedupe());
@@ -236,7 +236,7 @@ function hist2(size, source){
   return pipe(source, t.hist(size));
 }
 
-const hist = _.overload(null, hist2(2, ?), hist2);
+const hist = _.overload(null, source => hist2(2, source), hist2);
 
 function fromCollection(coll){
   return observable(function(observer){
@@ -253,7 +253,7 @@ function fromCollection(coll){
 function fromPromise(promise){
   return observable(function(observer){
     promise.
-      then(pub(observer, ?), err(observer, ?)).
+      then(v => pub(observer, v), e => err(observer, e)).
       then(function(){
         complete(observer);
       });
@@ -261,7 +261,7 @@ function fromPromise(promise){
 }
 
 function fromSource(source){ //can be used to cover a source making it readonly
-  return observable(sub(source, ?));
+  return observable(obs => sub(source, obs));
 }
 
 export const fromEvent = chan;

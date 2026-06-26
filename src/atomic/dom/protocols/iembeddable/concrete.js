@@ -8,10 +8,8 @@ export const embeddables = IEmbeddable.embeddables;
 function embed3(add, parent, children){
   _.chain(children,
     _.flatten,
-    _.mapcat(embeddables(?, parent.ownerDocument), ?),
-    $.each(function(child){
-      _.isFunction(child) ? child(parent, add) : add(parent, child);
-    }, ?));
+    y => _.mapcat(x => embeddables(x, parent.ownerDocument), y),
+    xs => $.each(child => _.isFunction(child) ? child(parent, add) : add(parent, child), xs));
 }
 
 function embed2(parent, children){

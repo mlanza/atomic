@@ -1,6 +1,6 @@
 import * as _ from "atomic/core";
 
-export const isWeakSet = _.is(?, WeakSet);
+export const isWeakSet = x => _.is(x, WeakSet);
 
 function weakSet1(arr){
   return new WeakSet(arr);

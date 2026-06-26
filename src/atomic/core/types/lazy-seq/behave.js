@@ -97,11 +97,11 @@ function append(self, other){
 }
 
 function omit(self, value){
-  return remove(p.equiv(value, ?), self);
+  return remove(x => p.equiv(value, x), self);
 }
 
 function includes(self, value){
-  return detect(p.equiv(value, ?), self);
+  return detect(x => p.equiv(value, x), self);
 }
 
 const reverse = comp(p.reverse, toArray);

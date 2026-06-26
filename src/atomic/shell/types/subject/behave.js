@@ -17,14 +17,14 @@ function sub(self, observer){
 
 function pub(self, message){
   if (!self.terminated){
-    notify(self, p.pub(?, message));
+    notify(self, o => p.pub(o, message));
   }
 }
 
 function err(self, error){
   if (!self.terminated){
     self.terminated = {how: "error", error};
-    notify(self, p.err(?, error));
+    notify(self, o => p.err(o, error));
     p.empty(self.observers); //release references
   }
 }

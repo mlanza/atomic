@@ -16,7 +16,7 @@ function handle(self, message, next){
     if (self.queued.length) {
       const queued = self.queued;
       self.queued = [];
-      $.each(p.dispatch(self.bus, ?), queued);
+      $.each(msg => p.dispatch(self.bus, msg), queued);
     }
   }
 }

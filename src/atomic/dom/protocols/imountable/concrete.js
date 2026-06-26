@@ -2,7 +2,7 @@ import * as _ from "atomic/core";
 import * as $ from "atomic/shell";
 import {IMountable} from "./instance.js";
 
-export const isMountable = _.satisfies(IMountable, ?);
+export const isMountable = x => _.satisfies(IMountable, x);
 
 export function mounts(self){
   _.specify(IMountable, {}, self);

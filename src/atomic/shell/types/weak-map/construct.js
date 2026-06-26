@@ -1,6 +1,6 @@
 import * as _ from "atomic/core";
 
-export const isWeakMap = _.is(?, WeakMap);
+export const isWeakMap = x => _.is(x, WeakMap);
 
 function weakMap1(obj){
   return new WeakMap(obj);

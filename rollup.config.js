@@ -20,9 +20,6 @@ const babelPlugin = babel({
   babelHelpers: 'bundled',
   presets: [
     ["@babel/preset-modules"]
-  ],
-  plugins: [
-    "@babel/plugin-proposal-partial-application"
   ]
 });
 

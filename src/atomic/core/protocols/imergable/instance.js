@@ -13,7 +13,9 @@ function mergeWith3(f, init, x){
 }
 
 function mergeWithN(f, init, ...xs){
-  return p.reduce(mergeWith3(f, ?, ?), init, xs);
+  return p.reduce(function(memo, value){
+    return mergeWith3(f, memo, value);
+  }, init, xs);
 }
 
 export const mergeWith = overload(null, null, null, mergeWith3, mergeWithN);

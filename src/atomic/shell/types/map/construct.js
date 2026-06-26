@@ -1,6 +1,6 @@
 import * as _ from "atomic/core";
 
-export const isMap = _.is(?, Map);
+export const isMap = x => _.is(x, Map);
 
 function map1(entries = []){
   return new Map(_.toArray(entries));

@@ -10,7 +10,7 @@ import {coerce} from "../../coerce.js";
 import * as p from "./protocols.js";
 import {is} from "../../protocols/imapentry/concrete.js";
 
-export const toObject = coerce(?, Object);
+export const toObject = x => coerce(x, Object);
 
 export function isObject(self){
   return is(self, Object);

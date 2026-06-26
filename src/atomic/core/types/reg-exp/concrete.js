@@ -30,7 +30,7 @@ function reFindAll2(text, find){
 }
 
 export function reFindAll(re, text){
-  return reFindAll2(text, reFind(re, ?));
+  return reFindAll2(text, x => reFind(re, x));
 }
 
 export function reMatches(re, s){

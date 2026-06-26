@@ -28,7 +28,7 @@ function keys(self){
 }
 
 function vals(self){
-  return map(p.nth(?, 1), p.seq(self.index));
+  return map(x => p.nth(x, 1), p.seq(self.index));
 }
 
 function seq(self){

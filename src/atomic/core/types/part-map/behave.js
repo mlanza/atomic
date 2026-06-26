@@ -17,7 +17,7 @@ function assoc(self, key, value){
   const part = self.partition(key);
   return new PartMap(self.partition, self.store, chain(
     p.contains(self.parts, part) ? self.parts : p.assoc(self.parts, part, self.store(key)),
-    p.assocIn(?, [part, key], value)));
+    x => p.assocIn(x, [part, key], value)));
 }
 
 function dissoc(self, key){
@@ -27,7 +27,7 @@ function dissoc(self, key){
 
 function contains(self, key){
   const part = self.partition(key);
-  return maybe(self.parts, p.get(?, part), p.contains(?, key));
+  return maybe(self.parts, x => p.get(x, part), x => p.contains(x, key));
 }
 
 function keys(self){

@@ -36,5 +36,5 @@ function subtract2(self, n){
 
 export const subtract = overload(constantly(0), identity, subtract2, reducing(subtract2));
 export const add = overload(constantly(0), identity, IAddable.add, reducing(IAddable.add));
-export const inc = overload(constantly(+1), IAddable.add(?, +1));
-export const dec = overload(constantly(-1), IAddable.add(?, -1));
+export const inc = overload(constantly(+1), x => IAddable.add(x, +1));
+export const dec = overload(constantly(-1), x => IAddable.add(x, -1));

@@ -34,9 +34,10 @@ export function dissocIn(self, keys){
       return self;
     case 1:
       return IMap.dissoc(self, key);
-    default:
+    default: {
       const ks = slice(keys), k = ks.pop();
-      return updateIn3(self, ks, IMap.dissoc(?, k));
+      return updateIn3(self, ks, v => IMap.dissoc(v, k));
+    }
   }
 }
 

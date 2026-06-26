@@ -15,6 +15,8 @@ export function verified(value, pred){
   return new Verified(value, pred);
 }
 
-export const fluent = thrush(verified(?, function(value){
-  return value !== undefined;
-}));
+export const fluent = thrush(function(v){
+  return verified(v, function(value){
+    return value !== undefined;
+  });
+});

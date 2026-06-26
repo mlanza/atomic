@@ -11,9 +11,7 @@ function conj(self, entry){
 function access(f){
 
   function value1(self){
-    return _.maybe(p.sel("option", self), _.detect(function(option){
-      return option.selected;
-    }, ?), f);
+    return _.maybe(p.sel("option", self), xs => _.detect(({selected}) => selected, xs), f);
   }
 
   function value2(self, value){
@@ -37,7 +35,7 @@ function access(f){
 
 }
 
-const text  = _.comp(_.either(?, ""), access(p.text)),
+const text  = _.comp(x => _.either(x, ""), access(p.text)),
       value = access(p.value);
 
 export default _.does(

@@ -16,7 +16,7 @@ function assoc(self, key, value){
   if (!candidates) {
     p.assoc(self.mapped, h, [[key, value]]);
   } else if (idx == null) {
-    p.update(self.mapped, h, _.conj(?, [key, value]));
+    p.update(self.mapped, h, coll => _.conj(coll, [key, value]));
   } else {
     p.assocIn(self.mapped, [h, idx], [key, value]);
   }

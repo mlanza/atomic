@@ -12,7 +12,7 @@ import * as p from "./protocols.js";
 import {keying} from "../../protocols/imapentry/concrete.js";
 
 function split2(self, step){
-  return map(period(?, step), recurrence(p.start(self), p.end(self), step));
+  return map(v => period(v, step), recurrence(p.start(self), p.end(self), step));
 }
 
 function split3(self, step, n){
@@ -22,7 +22,7 @@ function split3(self, step, n){
 const split = overload(null, null, split2, split3);
 
 function add(self, dur){
-  return p.end(self) ? new self.constructor(p.start(self), chain(self, p.end, p.add(?, dur))) : self;
+  return p.end(self) ? new self.constructor(p.start(self), chain(self, p.end, v => p.add(v, dur))) : self;
 }
 
 function merge(self, other){

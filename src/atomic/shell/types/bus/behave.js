@@ -8,7 +8,7 @@ function addMiddleware(self, middleware){
 
 function handle(self, message, next){
   const f = _.reduce(function(memo, middleware){
-    return p.handle(middleware, ?, memo);
+    return msg => p.handle(middleware, msg, memo);
   }, next || _.noop, _.reverse(self.middlewares));
   f(message);
 }

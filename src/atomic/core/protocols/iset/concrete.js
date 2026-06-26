@@ -8,7 +8,10 @@ import {ISet} from "./instance.js";
 
 export const disj = overload(null, identity, ISet.disj, reducing(ISet.disj));
 
-const union2 = reduce(ISet.unite, ?, ?);
+function union2(xs, ys){
+  return reduce(ISet.unite, xs, ys);
+}
+
 
 function intersection2(xs, ys){
   return reduce(function(memo, x){
@@ -23,7 +26,7 @@ function difference2(xs, ys){
 }
 
 export function subset(self, other){
-  return every(includes(other, ?), self);
+  return every(x => includes(other, x), self);
 }
 
 export function superset(self, other){
